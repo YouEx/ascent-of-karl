@@ -16,6 +16,12 @@ export interface ElementDef {
   note?: string;
   /** Kilde-URL til den historiske note (PRD §5: kildekrav pr. note) */
   sourceUrl?: string;
+  /**
+   * Karls stemning på bogens illustration (docs/design/bogen.md):
+   * fx "stolt", "ked", "flov", "fornaermet", "forvirret".
+   * Prototypen viser den som badge; senere er den brief til illustratoren.
+   */
+  karlMood?: string;
 }
 
 export interface ComboDef {
@@ -35,6 +41,8 @@ export interface ComboDef {
   ageUp?: boolean;
   /** Id på håndskrevet fortæller-replik (story-beat, højeste prioritet) */
   narratorLine?: string;
+  /** Tidslinje-gren: hovedspor (default) eller komisk sidegren (docs/design/bogen.md) */
+  spor?: "hoved" | "komisk";
 }
 
 export interface ProblemDef {

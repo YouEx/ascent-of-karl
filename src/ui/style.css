@@ -73,11 +73,86 @@ header h1 { margin: 0; font-size: 1.6rem; color: var(--accent); }
 .element .emoji { font-size: 1.6rem; }
 .element .name { font-size: 0.8rem; }
 
-#journal { margin: 1rem 0; color: var(--muted); }
-#journal summary { cursor: pointer; color: var(--accent); }
-.journal-entry { border-bottom: 1px solid #443a30; padding: 0.5rem 0; }
-.journal-entry p { margin: 0.25rem 0; }
 .note { color: var(--muted); font-size: 0.85rem; }
+
+/* --- Bogen: leksikon + forgrenet tidslinje (docs/design/bogen.md) --- */
+:root {
+  --paper: #f0e6d2;
+  --paper-edge: #d8c9a8;
+  --ink: #3d2f1f;
+  --ink-soft: #7a6a52;
+  --gren-hoved: #7a5b3a;
+  --gren-komisk: #c2762b;
+}
+
+#book {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 12px;
+  border: 1px solid var(--paper-edge);
+  box-shadow: inset 0 0 40px rgba(122, 91, 58, 0.12);
+  margin: 0.75rem 0;
+  overflow: hidden;
+}
+#book-tabs { display: flex; gap: 0.25rem; padding: 0.5rem 0.75rem 0; }
+.book-tab {
+  background: var(--paper-edge); color: var(--ink-soft); border: none;
+  border-radius: 8px 8px 0 0; padding: 0.35rem 0.8rem; cursor: pointer;
+  font-family: inherit; font-size: 0.85rem;
+}
+.book-tab.active { background: var(--paper); color: var(--ink); font-weight: bold; }
+
+#book-body { display: flex; gap: 0; min-height: 220px; }
+#timeline-wrap { flex: 1; overflow-x: auto; padding: 0.5rem; }
+#book-entry {
+  width: 220px; flex-shrink: 0; border-left: 1px dashed var(--paper-edge);
+  padding: 0.75rem; font-size: 0.9rem;
+}
+@media (max-width: 640px) {
+  #book-body { flex-direction: column; }
+  #book-entry { width: auto; border-left: none; border-top: 1px dashed var(--paper-edge); }
+}
+
+#timeline .edge {
+  fill: none; stroke: var(--gren-hoved); stroke-width: 2; opacity: 0.55;
+}
+#timeline .edge.komisk { stroke: var(--gren-komisk); stroke-dasharray: 6 3; }
+#timeline .node { cursor: pointer; }
+#timeline .node circle { fill: #faf3e3; stroke: var(--gren-hoved); stroke-width: 2; }
+#timeline .node.komisk circle { stroke: var(--gren-komisk); }
+#timeline .node.selected circle { stroke-width: 4; }
+#timeline .node.silhouette circle {
+  fill: none; stroke: var(--ink-soft); stroke-dasharray: 5 4; opacity: 0.6;
+}
+#timeline .glyph {
+  font-size: 20px; text-anchor: middle; dominant-baseline: central;
+}
+#timeline .silhouette .glyph { fill: var(--ink-soft); font-size: 16px; opacity: 0.7; }
+#timeline .label {
+  font-size: 9px; text-anchor: middle; fill: var(--ink);
+  font-family: Georgia, serif;
+}
+
+.entry-hint { color: var(--ink-soft); font-style: italic; }
+.entry .entry-emoji { font-size: 2.2rem; }
+.entry h3 { margin: 0.25rem 0; }
+.entry .note { color: var(--ink-soft); }
+.entry .mood {
+  font-size: 0.85rem; background: rgba(122, 91, 58, 0.1);
+  border-radius: 8px; padding: 0.3rem 0.5rem; display: inline-block;
+}
+.entry.blank { color: var(--ink-soft); font-style: italic; }
+
+/* --- Drag & drop --- */
+#drag-hint { color: var(--muted); font-size: 0.8rem; margin: 0.25rem 0; text-align: center; }
+.element { touch-action: none; user-select: none; }
+.element.dragging { opacity: 0.4; }
+.element.drop-target { border-color: var(--accent); transform: scale(1.06); }
+.drag-ghost {
+  position: fixed; pointer-events: none; z-index: 50;
+  font-size: 2rem; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
 
 #card, #banner {
   position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65);

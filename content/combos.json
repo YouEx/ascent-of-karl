@@ -37,6 +37,7 @@
     "result": "ristede-larver",
     "solves": "sult",
     "setsFlags": ["larver"],
+    "spor": "komisk",
     "narratorLine": "story-ristede-larver"
   },
   {
@@ -47,6 +48,7 @@
     "pair": ["mudder", "mudder"],
     "result": "mudderbad",
     "setsFlags": ["stinker"],
+    "spor": "komisk",
     "narratorLine": "story-mudderbad"
   },
   {
@@ -78,6 +80,7 @@
     "pair": ["larver", "ler"],
     "result": "larvefarm",
     "requiresFlags": ["larver"],
+    "spor": "komisk",
     "narratorLine": "story-larvefarm"
   }
 ]

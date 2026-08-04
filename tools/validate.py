@@ -67,6 +67,8 @@ def main() -> int:
         if key in combo_keys:
             err(f"Duplikeret kombination: {a}+{b} (samme flag-betingelser)")
         combo_keys[key] = c["result"]
+        if c.get("spor") not in (None, "hoved", "komisk"):
+            err(f"Kombination {a}+{b}: ugyldigt spor '{c['spor']}' (tilladt: hoved, komisk)")
 
     # --- Opnåelighed: simulér spillet til fixpoint (optimistisk ift. blockedByFlags) ---
     act_numbers = sorted(a["act"] for a in acts)
