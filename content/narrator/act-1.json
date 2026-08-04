@@ -1,0 +1,61 @@
+{
+  "_comment": "Seed-replikker. Triggertyper og prioritering følger PRD §2.4: story > adfaerd > flags > generisk_fiasko.",
+  "replikker": [
+    {
+      "id": "beat_gnist",
+      "type": "story",
+      "tekst": "En gnist. Efter blot fyrre forsøg. Darwin ville være... nå ja, han er ikke født endnu.",
+      "flags_kraevet": []
+    },
+    {
+      "id": "beat_ild",
+      "type": "story",
+      "tekst": "Ild! Menneskehedens største opdagelse, gjort af en mand, der i går spiste en bille for at se, hvad der ville ske.",
+      "flags_kraevet": []
+    },
+    {
+      "id": "beat_baal",
+      "type": "story",
+      "tekst": "Og således sad Karl ved sit bål — varm, tør og fuldstændig uvidende om, at han lige havde opfundet hygge.",
+      "flags_kraevet": []
+    },
+    {
+      "id": "beat_bronze",
+      "type": "story",
+      "tekst": "Bronze. En hel tidsalder opkaldt efter en legering, Karl lavede ved et uheld. Historien er skrevet af tilfældigheder og opvarmet malm.",
+      "flags_kraevet": []
+    },
+    {
+      "id": "adfaerd_stenspam_3",
+      "type": "adfaerd",
+      "trigger": { "stenspam": 3 },
+      "tekst": "Tredje gang med de samme to sten. Jeg beundrer din... konsekvens.",
+      "flags_kraevet": []
+    },
+    {
+      "id": "adfaerd_stenspam_5",
+      "type": "adfaerd",
+      "trigger": { "stenspam": 5 },
+      "tekst": "Fem gange. FEM. Stenene har ikke ændret sig siden sidst, Karl. Det har jeg heller ikke. Desværre.",
+      "flags_kraevet": []
+    },
+    {
+      "id": "fiasko_1",
+      "type": "generisk_fiasko",
+      "tekst": "Intet. Absolut intet. Historien noterer det ikke engang.",
+      "flags_kraevet": []
+    },
+    {
+      "id": "fiasko_2",
+      "type": "generisk_fiasko",
+      "tekst": "Interessant teori. Forkert, men interessant.",
+      "flags_kraevet": []
+    },
+    {
+      "id": "fiasko_3",
+      "type": "generisk_fiasko",
+      "tekst": "Karl kigger på resultatet. Resultatet kigger ikke tilbage, for der er intet resultat.",
+      "flags_kraevet": []
+    }
+  ]
+}

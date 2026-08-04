@@ -1,0 +1,15 @@
+{
+  "_comment": "Seed-/testdata for Akt I. Erstattes af prototypens kapitel 1-indhold i Step 1. Skema: id, navn, ikon, akt, start (true = i aktens åbningspulje).",
+  "elements": [
+    { "id": "sten", "navn": "Sten", "ikon": "🪨", "akt": 1, "start": true },
+    { "id": "pind", "navn": "Pind", "ikon": "🥢", "akt": 1, "start": true },
+    { "id": "graes", "navn": "Græs", "ikon": "🌾", "akt": 1, "start": true },
+    { "id": "malm", "navn": "Malm", "ikon": "⛰️", "akt": 1, "start": true },
+    { "id": "kobber", "navn": "Kobber", "ikon": "🟠", "akt": 1, "start": true },
+    { "id": "gnist", "navn": "Gnist", "ikon": "✨", "akt": 1, "start": false },
+    { "id": "ild", "navn": "Ild", "ikon": "🔥", "akt": 1, "start": false },
+    { "id": "baal", "navn": "Bål", "ikon": "🏕️", "akt": 1, "start": false },
+    { "id": "oekse", "navn": "Økse", "ikon": "🪓", "akt": 1, "start": false },
+    { "id": "bronze", "navn": "Bronze", "ikon": "🥉", "akt": 2, "start": false }
+  ]
+}

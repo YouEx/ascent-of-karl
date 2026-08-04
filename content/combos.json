@@ -1,0 +1,75 @@
+{
+  "_comment": "Seed-/testdata. Kolonner matcher content-pipelinen i PRD §5. flags_sat/flags_kraevet er lister af flag-id'er; loeser_problem refererer et problem-id fra acts/*.json.",
+  "combos": [
+    {
+      "element_a": "sten",
+      "element_b": "sten",
+      "resultat": "gnist",
+      "flavor": "Karl slår to sten mod hinanden. Igen. Denne gang sker der faktisk noget.",
+      "historisk_note": "Slagteknik med flint og svovlkis er en af de ældste kendte metoder til at lave ild.",
+      "kilde_url": "https://en.wikipedia.org/wiki/Fire_making",
+      "narrator_replik": "beat_gnist",
+      "flags_sat": [],
+      "flags_kraevet": [],
+      "loeser_problem": null,
+      "akt": 1,
+      "age_up": false
+    },
+    {
+      "element_a": "gnist",
+      "element_b": "graes",
+      "resultat": "ild",
+      "flavor": "Det tørre græs fænger. Karl er lige dele stolt og skrækslagen.",
+      "historisk_note": "Kontrolleret brug af ild går mindst 400.000 år tilbage — længe før moderne mennesker.",
+      "kilde_url": "https://en.wikipedia.org/wiki/Control_of_fire_by_early_humans",
+      "narrator_replik": "beat_ild",
+      "flags_sat": ["har_ild"],
+      "flags_kraevet": [],
+      "loeser_problem": null,
+      "akt": 1,
+      "age_up": false
+    },
+    {
+      "element_a": "ild",
+      "element_b": "pind",
+      "resultat": "baal",
+      "flavor": "Et rigtigt bål. Karl fryser ikke længere, og han har set ind i flammerne i tre timer.",
+      "historisk_note": "Bålet gav varme, beskyttelse og tilberedt mad — og blev omdrejningspunkt for socialt liv.",
+      "kilde_url": "https://en.wikipedia.org/wiki/Campfire",
+      "narrator_replik": "beat_baal",
+      "flags_sat": [],
+      "flags_kraevet": ["har_ild"],
+      "loeser_problem": "kulde",
+      "akt": 1,
+      "age_up": false
+    },
+    {
+      "element_a": "pind",
+      "element_b": "sten",
+      "resultat": "oekse",
+      "flavor": "En sten på en pind. Menneskehedens første patent, hvis nogen havde opfundet patenter.",
+      "historisk_note": "Skæftede stenøkser kendes fra mindst 40.000 år siden og revolutionerede træfældning.",
+      "kilde_url": "https://en.wikipedia.org/wiki/Hand_axe",
+      "narrator_replik": null,
+      "flags_sat": [],
+      "flags_kraevet": [],
+      "loeser_problem": "vaerktoej",
+      "akt": 1,
+      "age_up": false
+    },
+    {
+      "element_a": "kobber",
+      "element_b": "malm",
+      "resultat": "bronze",
+      "flavor": "Karl blander metaller uden at vide hvorfor. Resultatet er hårdere end alt, han har kendt.",
+      "historisk_note": "Bronze — kobber legeret med tin — gav navn til en hel epoke fra omkring 3300 f.v.t.",
+      "kilde_url": "https://en.wikipedia.org/wiki/Bronze_Age",
+      "narrator_replik": "beat_bronze",
+      "flags_sat": [],
+      "flags_kraevet": [],
+      "loeser_problem": null,
+      "akt": 1,
+      "age_up": true
+    }
+  ]
+}

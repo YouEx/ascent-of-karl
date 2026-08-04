@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kolde Karl</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #1c1712;
+        color: #f0e6d8;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+      }
+      #app { max-width: 480px; padding: 1.5rem; width: 100%; }
+      h1 { font-size: 1.4rem; letter-spacing: 0.05em; }
+      .narrator { font-style: italic; min-height: 3em; color: #cbb994; }
+      .grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .grid button {
+        font: inherit;
+        padding: 0.5rem 0.9rem;
+        border-radius: 0.6rem;
+        border: 1px solid #4a3f30;
+        background: #2a2318;
+        color: inherit;
+        cursor: pointer;
+      }
+      .grid button.selected { border-color: #cbb994; background: #3a3020; }
+      .ikon { margin-right: 0.4rem; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

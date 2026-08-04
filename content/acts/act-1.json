@@ -1,0 +1,13 @@
+{
+  "akt": 1,
+  "navn": "Stenalderen",
+  "problemer": [
+    { "id": "kulde", "titel": "Karl fryser", "obligatorisk": true },
+    { "id": "vaerktoej", "titel": "Karl mangler værktøj", "obligatorisk": true }
+  ],
+  "age_up": {
+    "resultat": "bronze",
+    "naeste_akt": 2,
+    "banner": "Bronzealderen"
+  }
+}
