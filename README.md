@@ -1,2 +1,3 @@
 # Coldcarl
-A game about Carl
+
+Nyt projekt — indhold og formål på vej.
