@@ -1,0 +1,29 @@
+{
+  "act": 2,
+  "lines": [
+    {
+      "id": "intro-act-2",
+      "text": "Bronzealderen. Nye marker, nye muligheder — og ja, Karl er her stadig. Resten af denne epoke er under opførelse. Selv historien har brug for en pause fra Karl."
+    },
+    {
+      "id": "a2-gf-1",
+      "text": "Ingenting. Bronzealderen er tydeligvis også en læringsproces."
+    },
+    {
+      "id": "a2-gf-2",
+      "text": "Nyt årtusinde, samme metode. Beundringsværdigt, på en måde."
+    },
+    {
+      "id": "a2-gf-3",
+      "text": "Historien venter tålmodigt. Det er dens ene styrke."
+    }
+  ],
+  "behavior": {
+    "spamElement": "bronze",
+    "spam": {},
+    "repeatCombo": {},
+    "failStreak": {}
+  },
+  "flagMemory": [],
+  "genericFailure": ["a2-gf-1", "a2-gf-2", "a2-gf-3"]
+}

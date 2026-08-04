@@ -1,0 +1,187 @@
+{
+  "act": 1,
+  "lines": [
+    {
+      "id": "intro-act-1",
+      "text": "I begyndelsen var der Karl. Historien havde bedt om en helt. Den fik Karl. Han fryser, han er sulten, og han har netop tabt en sten på sin egen fod. Lad os se, hvad menneskeheden kan blive til."
+    },
+    {
+      "id": "story-gnister",
+      "text": "Gnister! Karl slår to sten mod hinanden, og universet belønner ham med bittesmå stjerner. Det er det klogeste, han har gjort i dag. Det siger mest om dagen."
+    },
+    {
+      "id": "story-ild",
+      "text": "ILD! Menneskehedens første store opfindelse! Karl stirrer ind i flammerne med et udtryk, som om ilden opfandt ham. Lad os for historiens skyld sige, det var omvendt."
+    },
+    {
+      "id": "story-stenoekse",
+      "text": "En sten. På en pind. Jeg ved godt, det ikke lyder af meget — men vis lidt respekt. Det er bogstaveligt talt banebrydende."
+    },
+    {
+      "id": "story-spyd",
+      "text": "Et spyd! Fremragende. Nu kan Karl ramme ved siden af på meget længere afstand."
+    },
+    {
+      "id": "story-koed",
+      "text": "Karl har nedlagt et vildsvin. Vildsvinet var muligvis mest af alt overrasket. Men et bytte er et bytte, og historien dømmer ikke. Det gør jeg."
+    },
+    {
+      "id": "story-stegt-koed",
+      "text": "Duften af stegt kød breder sig over steppen. Et sted langt ude i fremtiden begynder nogen så småt at opfinde restaurantanmeldelser."
+    },
+    {
+      "id": "story-ristede-larver",
+      "text": "Larver. Han valgte... larverne. Der var en hel jagtscene planlagt, et helt måltid, men nej. Udmærket. Jeg noterer det. Historien noterer det. Larvemanden."
+    },
+    {
+      "id": "story-mudderbad",
+      "text": "Karl ruller sig i mudderet med en entusiasme, jeg sidst har set hos vildsvinet. Lugten kommer til at følge os begge resten af fortællingen."
+    },
+    {
+      "id": "story-keramik",
+      "text": "Brændt ler! Karl har opfundet keramik — og dermed, med tiden, arvestykker ingen tør smide ud."
+    },
+    {
+      "id": "story-damp",
+      "text": "Vand på ild. Det hvæser, det damper, det forsvinder. Husk dette øjeblik. Jeg siger ikke hvorfor. Men husk det."
+    },
+    {
+      "id": "story-malm",
+      "text": "Karl hakker glimtende sten ud af klippen. Han tror, det er pynt. Det er fremtiden."
+    },
+    {
+      "id": "story-kobber",
+      "text": "Metal! Blødt, bøjeligt, skinnende — Karl har smeltet sig frem til kobber og forsøger allerede at bide i det. Igen."
+    },
+    {
+      "id": "story-larvefarm",
+      "text": "Han... opdrætter dem nu. Larvemanden har fået en farm. Andre fortællere får pyramider og månelandinger. Jeg får en skål larver, der alle hedder Bent."
+    },
+    {
+      "id": "gate-act-1",
+      "text": "Nej. Nej, nej, nej. Man 'rykker ikke historien videre', mens man fryser, sulter eller står med bare næver. Løs dine problemer, Karl — så kan vi tale om bronze."
+    },
+    {
+      "id": "ageup-act-1",
+      "text": "Bronze! Hør efter, for det her er stort: Karl — KARL — har netop indledt en ny epoke. Historiebøgerne får travlt. Velkommen til Bronzealderen."
+    },
+    {
+      "id": "hint-kulde-1",
+      "text": "Der er koldt herude. Bemærkelsesværdigt koldt. Hvis bare noget kunne... varme."
+    },
+    {
+      "id": "hint-kulde-2",
+      "text": "Jeg så nogle gnister tidligere. Gnister. Og noget tørt. Jeg siger det bare, helt uden bagtanke."
+    },
+    {
+      "id": "hint-kulde-3",
+      "text": "Slå. Stenene. Sammen. Og sæt så ild i græsset. Skal jeg tegne det som hulemaleri?"
+    },
+    {
+      "id": "hint-vaerktoej-1",
+      "text": "Bare næver er et modigt valg. Evolutionært set."
+    },
+    {
+      "id": "hint-vaerktoej-2",
+      "text": "En sten er god. En pind er god. Sammen? Revolution."
+    },
+    {
+      "id": "hint-vaerktoej-3",
+      "text": "Sæt stenen på pinden, Karl. Det hedder en økse. Det kommer det til at hedde i meget lang tid."
+    },
+    {
+      "id": "hint-sult-1",
+      "text": "Karls mave knurrer så højt, at den skræmmer byttedyr væk. Ironien er ikke gået tabt på mig."
+    },
+    {
+      "id": "hint-sult-2",
+      "text": "Der går et vildsvin derovre. Karl har noget spidst. Jeg lader regnestykket stå et øjeblik."
+    },
+    {
+      "id": "hint-sult-3",
+      "text": "Spyd. Vildsvin. Ild. Middag. I dén rækkefølge, Karl."
+    },
+    {
+      "id": "spam-3",
+      "text": "Det er tredje gang med den sten. Jeg tæller. Det er åbenbart mit job nu."
+    },
+    {
+      "id": "spam-5",
+      "text": "Fem gange. Sten. Jeg begynder at tro, det er et statement."
+    },
+    {
+      "id": "spam-8",
+      "text": "Otte! Ved du hvad — gør du bare det. Så fortæller jeg historien om manden, der elskede sten højere end fremskridt."
+    },
+    {
+      "id": "repeat-3",
+      "text": "Samme kombination. Igen. Der findes et berømt citat om at gentage det samme og forvente et nyt resultat. Manden bag er ikke født endnu, men Karl arbejder hårdt på at gøre citatet nødvendigt."
+    },
+    {
+      "id": "repeat-6",
+      "text": "Seks gange i træk. Jeg respekterer dedikationen. Det er det pæneste ord, jeg har for det."
+    },
+    {
+      "id": "failstreak-4",
+      "text": "Fire fejlslagne forsøg i træk. Rom blev heller ikke bygget på én dag. Rom bliver i øvrigt heller ikke bygget af Karl."
+    },
+    {
+      "id": "failstreak-7",
+      "text": "Syv i træk. Skal vi holde en lille pause? Jeg kunne godt bruge en pause."
+    },
+    {
+      "id": "mem-larver",
+      "text": "Nå ja, undskyld — jeg glemte et øjeblik, hvem jeg taler til. Larvemanden. Fortsæt endelig.",
+      "requiresFlags": ["larver"],
+      "once": true
+    },
+    {
+      "id": "mem-stinker",
+      "text": "Jeg ville gerne kommentere din strategi, men jeg kan ikke koncentrere mig for lugten.",
+      "requiresFlags": ["stinker"],
+      "once": true
+    },
+    {
+      "id": "gf-1",
+      "text": "Ingenting. Bogstaveligt talt ingenting."
+    },
+    {
+      "id": "gf-2",
+      "text": "Historien noterer forsøget. I fodnoterne. Med meget lille skrift."
+    },
+    {
+      "id": "gf-3",
+      "text": "Modigt. Forkert, men modigt."
+    },
+    {
+      "id": "gf-4",
+      "text": "Det dér bliver ikke en epoke, Karl."
+    },
+    {
+      "id": "gf-5",
+      "text": "Selv græsset så flovt væk."
+    },
+    {
+      "id": "gf-6",
+      "text": "Jeg har fortalt om mange civilisationer. Ingen af dem startede sådan her."
+    }
+  ],
+  "behavior": {
+    "spamElement": "sten",
+    "spam": {
+      "3": "spam-3",
+      "5": "spam-5",
+      "8": "spam-8"
+    },
+    "repeatCombo": {
+      "3": "repeat-3",
+      "6": "repeat-6"
+    },
+    "failStreak": {
+      "4": "failstreak-4",
+      "7": "failstreak-7"
+    }
+  },
+  "flagMemory": ["mem-larver", "mem-stinker"],
+  "genericFailure": ["gf-1", "gf-2", "gf-3", "gf-4", "gf-5", "gf-6"]
+}

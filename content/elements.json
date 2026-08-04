@@ -1,0 +1,217 @@
+[
+  {
+    "id": "sten",
+    "name": "Sten",
+    "emoji": "🪨",
+    "act": 1,
+    "base": true,
+    "flavor": "Grå. Tung. Karls bedste ven og hyppigste samtalepartner."
+  },
+  {
+    "id": "pind",
+    "name": "Pind",
+    "emoji": "🪵",
+    "act": 1,
+    "base": true,
+    "flavor": "En pind af høj kvalitet. Det mener Karl i hvert fald, og han har set mange pinde."
+  },
+  {
+    "id": "graes",
+    "name": "Tørt græs",
+    "emoji": "🌾",
+    "act": 1,
+    "base": true,
+    "flavor": "Knastørt og let antændeligt. Foreløbig bruger Karl det som pude."
+  },
+  {
+    "id": "vand",
+    "name": "Vand",
+    "emoji": "💧",
+    "act": 1,
+    "base": true,
+    "flavor": "Vådt. Karl har smagt på det og kan bekræfte: meget vådt."
+  },
+  {
+    "id": "ler",
+    "name": "Ler",
+    "emoji": "🟤",
+    "act": 1,
+    "base": true,
+    "flavor": "Blødt og formbart. Ligesom Karls forhold til gode idéer."
+  },
+  {
+    "id": "baer",
+    "name": "Bær",
+    "emoji": "🫐",
+    "act": 1,
+    "base": true,
+    "flavor": "Muligvis spiselige. Karl bruger fugle-testen: hvis fuglen overlever, er det frokost."
+  },
+  {
+    "id": "larver",
+    "name": "Larver",
+    "emoji": "🐛",
+    "act": 1,
+    "base": true,
+    "flavor": "De vrider sig. Karl kigger på dem lidt for længe og lidt for interesseret."
+  },
+  {
+    "id": "dyr",
+    "name": "Vildsvin",
+    "emoji": "🐗",
+    "act": 1,
+    "base": true,
+    "flavor": "Et vildsvin, der har iagttaget Karl i tre dage og indtil videre ikke er imponeret."
+  },
+  {
+    "id": "gnister",
+    "name": "Gnister",
+    "emoji": "✨",
+    "act": 1,
+    "flavor": "Bittesmå stjerner, der lever i et halvt sekund. Karl klapper hver gang.",
+    "note": "Ildslagning i stenalderen brugte flint mod svovlkis (pyrit) — to sten er faktisk nok til gnister.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Fire_making"
+  },
+  {
+    "id": "ild",
+    "name": "Ild",
+    "emoji": "🔥",
+    "act": 1,
+    "flavor": "Varm, lysende og ikke spor glad for at blive rørt ved. Karl fandt selv ud af det sidste.",
+    "note": "Mennesket har kontrolleret ild i mindst 400.000 år — spor fra Wonderwerk-hulen antyder op mod en million år.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Control_of_fire_by_early_humans"
+  },
+  {
+    "id": "stenoekse",
+    "name": "Stenøkse",
+    "emoji": "🪓",
+    "act": 1,
+    "flavor": "En sten på en pind. Menneskehedens første abonnement på værktøj.",
+    "note": "De ældste stenredskaber er over 2,5 millioner år gamle — ældre end det moderne menneske selv.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Oldowan"
+  },
+  {
+    "id": "spyd",
+    "name": "Spyd",
+    "emoji": "🔱",
+    "act": 1,
+    "flavor": "Spidst i den ene ende. Karl holdt først i den forkerte.",
+    "note": "Jagtspyddene fra Schöningen i Tyskland er omkring 300.000 år gamle — verdens ældste bevarede jagtvåben.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sch%C3%B6ningen_spears"
+  },
+  {
+    "id": "koed",
+    "name": "Kød",
+    "emoji": "🥩",
+    "act": 1,
+    "flavor": "Frisk fra et vildsvin, der undervurderede Karl. En fejl, ingen havde regnet med.",
+    "note": "Kødspisning satte fart i menneskets hjerneudvikling — mere energi pr. mundfuld end nogen plante.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Expensive_tissue_hypothesis"
+  },
+  {
+    "id": "stegt-koed",
+    "name": "Stegt kød",
+    "emoji": "🍖",
+    "act": 1,
+    "flavor": "Sprødt udenpå, saftigt indeni. Karl har opfundet gastronomi og skal aldrig tilbage.",
+    "note": "Tilberedt mad gav mennesket flere kalorier for mindre tyggearbejde — en mulig nøgle til vores store hjerner.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cooking_hypothesis"
+  },
+  {
+    "id": "ristede-larver",
+    "name": "Ristede larver",
+    "emoji": "🍢",
+    "act": 1,
+    "flavor": "Sprøde. Nøddeagtige. Karl siger 'mums'. Fortælleren siger ingenting, meget højt.",
+    "note": "Cirka to milliarder mennesker spiser insekter i dag — larver er proteinrige og klimavenlige.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Entomophagy"
+  },
+  {
+    "id": "mudder",
+    "name": "Mudder",
+    "emoji": "🟫",
+    "act": 1,
+    "flavor": "Ler plus vand. Karl kalder det 'blød jord' og er meget stolt af navnet.",
+    "note": "Mudder og ler var menneskets første byggematerialer — soltørrede mursten er over 9.000 år gamle.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Mudbrick"
+  },
+  {
+    "id": "mudderbad",
+    "name": "Mudderbad",
+    "emoji": "🛁",
+    "act": 1,
+    "flavor": "Karl ruller sig grundigt. Han kalder det hudpleje. Vildsvinet nikker anerkendende.",
+    "note": "Svin bruger faktisk mudderbade som solcreme og insektbeskyttelse — det gjorde tidlige mennesker muligvis også.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Wallowing_in_animals"
+  },
+  {
+    "id": "keramik",
+    "name": "Keramik",
+    "emoji": "🏺",
+    "act": 1,
+    "flavor": "Brændt ler, der kan holde på vand. Karls første krukke er skæv, og han elsker den.",
+    "note": "Verdens ældste keramik er cirka 20.000 år gammel og blev fundet i Xianrendong-hulen i Kina.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Xianren_Cave"
+  },
+  {
+    "id": "damp",
+    "name": "Damp",
+    "emoji": "💨",
+    "act": 1,
+    "flavor": "Vandet hvæser og forsvinder op i luften. Karl er dybt fornærmet på vandets vegne.",
+    "note": "Dampkraft blev demonstreret allerede i antikken med Herons aeolipile — men først i 1700-tallet ændrede den verden.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Aeolipile"
+  },
+  {
+    "id": "malm",
+    "name": "Malm",
+    "emoji": "⛏️",
+    "act": 1,
+    "flavor": "Glimtende sten fra klippen. Karl tror, det er pynt. Det er fremtiden.",
+    "note": "De ældste kendte miner er over 40.000 år gamle — længe før nogen vidste, hvad metal var.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ngwenya_Mine"
+  },
+  {
+    "id": "kobber",
+    "name": "Kobber",
+    "emoji": "🟠",
+    "act": 1,
+    "flavor": "Blankt, rødligt og bøjeligt. Karl har prøvet at bide i det. To gange.",
+    "note": "Mennesket har bearbejdet kobber i næsten 10.000 år — de ældste fund stammer fra Anatolien.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Copper#History"
+  },
+  {
+    "id": "bronze",
+    "name": "Bronze",
+    "emoji": "🥉",
+    "act": 1,
+    "flavor": "Hårdere end kobber, flottere end sten. Karl har lavet en klump og viser den til alle.",
+    "note": "Bronze — kobber legeret med tin — opstod omkring 3300 f.Kr. og gav navn til en hel epoke.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Bronze_Age"
+  },
+  {
+    "id": "larvefarm",
+    "name": "Larvefarm",
+    "emoji": "🧺",
+    "act": 1,
+    "flavor": "En lerskål fuld af velplejede larver. Karl har givet dem navne. Alle hedder Bent.",
+    "note": "Insektopdræt er i dag en voksende industri — larver omdanner madaffald til protein bedre end noget husdyr.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Insect_farming"
+  },
+  {
+    "id": "korn",
+    "name": "Vildt korn",
+    "emoji": "🌾",
+    "act": 2,
+    "base": true,
+    "flavor": "Små frø på strå. En dame fra nabodalen påstår, man kan spise dem. Karl er skeptisk."
+  },
+  {
+    "id": "okse",
+    "name": "Okse",
+    "emoji": "🐂",
+    "act": 2,
+    "base": true,
+    "flavor": "Stor, stærk og forbløffende villig til at samarbejde. Mere end man kan sige om Karl."
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "act": 1,
+  "name": "Stenalderen",
+  "introLine": "intro-act-1",
+  "gateLine": "gate-act-1",
+  "ageUpLine": "ageup-act-1",
+  "problems": [
+    {
+      "id": "kulde",
+      "name": "Karl fryser",
+      "description": "Det er koldt på steppen. Karls gåsehud har fået gåsehud.",
+      "required": true,
+      "hints": ["hint-kulde-1", "hint-kulde-2", "hint-kulde-3"]
+    },
+    {
+      "id": "vaerktoej",
+      "name": "Bare næver",
+      "description": "Karl har to hænder og nul redskaber. Naturen griner ad ham.",
+      "required": true,
+      "hints": ["hint-vaerktoej-1", "hint-vaerktoej-2", "hint-vaerktoej-3"]
+    },
+    {
+      "id": "sult",
+      "name": "Karl er sulten",
+      "description": "Karls mave knurrer så højt, at vildsvinet holder afstand.",
+      "required": true,
+      "hints": ["hint-sult-1", "hint-sult-2", "hint-sult-3"]
+    }
+  ]
+}

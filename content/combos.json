@@ -1,0 +1,83 @@
+[
+  {
+    "pair": ["sten", "sten"],
+    "result": "gnister",
+    "narratorLine": "story-gnister"
+  },
+  {
+    "pair": ["gnister", "graes"],
+    "result": "ild",
+    "solves": "kulde",
+    "narratorLine": "story-ild"
+  },
+  {
+    "pair": ["sten", "pind"],
+    "result": "stenoekse",
+    "solves": "vaerktoej",
+    "narratorLine": "story-stenoekse"
+  },
+  {
+    "pair": ["stenoekse", "pind"],
+    "result": "spyd",
+    "narratorLine": "story-spyd"
+  },
+  {
+    "pair": ["spyd", "dyr"],
+    "result": "koed",
+    "narratorLine": "story-koed"
+  },
+  {
+    "pair": ["ild", "koed"],
+    "result": "stegt-koed",
+    "solves": "sult",
+    "narratorLine": "story-stegt-koed"
+  },
+  {
+    "pair": ["larver", "ild"],
+    "result": "ristede-larver",
+    "solves": "sult",
+    "setsFlags": ["larver"],
+    "narratorLine": "story-ristede-larver"
+  },
+  {
+    "pair": ["ler", "vand"],
+    "result": "mudder"
+  },
+  {
+    "pair": ["mudder", "mudder"],
+    "result": "mudderbad",
+    "setsFlags": ["stinker"],
+    "narratorLine": "story-mudderbad"
+  },
+  {
+    "pair": ["ler", "ild"],
+    "result": "keramik",
+    "narratorLine": "story-keramik"
+  },
+  {
+    "pair": ["ild", "vand"],
+    "result": "damp",
+    "narratorLine": "story-damp"
+  },
+  {
+    "pair": ["stenoekse", "sten"],
+    "result": "malm",
+    "narratorLine": "story-malm"
+  },
+  {
+    "pair": ["malm", "ild"],
+    "result": "kobber",
+    "narratorLine": "story-kobber"
+  },
+  {
+    "pair": ["kobber", "malm"],
+    "result": "bronze",
+    "ageUp": true
+  },
+  {
+    "pair": ["larver", "ler"],
+    "result": "larvefarm",
+    "requiresFlags": ["larver"],
+    "narratorLine": "story-larvefarm"
+  }
+]

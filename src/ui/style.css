@@ -1,0 +1,101 @@
+/* Midlertidig prototype-stil — endelig art-stil besluttes i Step 4 (hulemaleri-æstetik) */
+:root {
+  --bg: #1c1815;
+  --panel: #2a241f;
+  --panel-2: #332c25;
+  --text: #efe6d8;
+  --muted: #a89a86;
+  --accent: #e0a458;
+  --solved: #8fbf7f;
+  font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, "Times New Roman", serif;
+  min-height: 100vh;
+}
+
+#app { max-width: 720px; margin: 0 auto; padding: 1rem; }
+
+header { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+header h1 { margin: 0; font-size: 1.6rem; color: var(--accent); }
+#act-name { color: var(--muted); font-style: italic; flex: 1; }
+#reset {
+  background: none; border: 1px solid var(--muted); color: var(--muted);
+  border-radius: 6px; padding: 0.2rem 0.6rem; cursor: pointer; font-family: inherit;
+}
+
+#problems { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 0.75rem 0; }
+.problem {
+  background: var(--panel); border-radius: 999px; padding: 0.25rem 0.75rem;
+  font-size: 0.9rem; color: var(--muted);
+}
+.problem.solved { color: var(--solved); text-decoration: line-through; }
+
+#narrator {
+  background: var(--panel); border-left: 4px solid var(--accent);
+  border-radius: 8px; padding: 0.75rem 1rem; margin: 0.75rem 0; min-height: 4.5rem;
+}
+#narrator-label {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent);
+}
+#narrator-text { margin: 0.25rem 0 0; font-style: italic; line-height: 1.45; }
+
+#workbench { display: flex; align-items: center; gap: 0.75rem; margin: 1rem 0; }
+.slot {
+  flex: 1; background: var(--panel-2); border: 2px dashed var(--muted);
+  border-radius: 10px; padding: 0.75rem; text-align: center; min-height: 3rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.plus { color: var(--muted); font-size: 1.4rem; }
+#combine {
+  background: var(--accent); color: var(--bg); border: none; border-radius: 10px;
+  padding: 0.75rem 1.25rem; font-family: inherit; font-size: 1rem; cursor: pointer;
+}
+#combine:disabled { opacity: 0.4; cursor: default; }
+
+#grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 0.5rem; margin: 1rem 0;
+}
+.element {
+  background: var(--panel); border: 1px solid #443a30; border-radius: 10px;
+  color: var(--text); font-family: inherit; padding: 0.6rem 0.25rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+  cursor: pointer; transition: transform 80ms ease;
+}
+.element:hover { transform: translateY(-2px); border-color: var(--accent); }
+.element .emoji { font-size: 1.6rem; }
+.element .name { font-size: 0.8rem; }
+
+#journal { margin: 1rem 0; color: var(--muted); }
+#journal summary { cursor: pointer; color: var(--accent); }
+.journal-entry { border-bottom: 1px solid #443a30; padding: 0.5rem 0; }
+.journal-entry p { margin: 0.25rem 0; }
+.note { color: var(--muted); font-size: 0.85rem; }
+
+#card, #banner {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65);
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+#card[hidden], #banner[hidden] { display: none; }
+.card-inner, .banner-inner {
+  background: var(--panel); border: 2px solid var(--accent); border-radius: 14px;
+  padding: 1.5rem; max-width: 420px; text-align: center;
+}
+.card-emoji { font-size: 3rem; }
+.card-inner h2, .banner-inner h2 { color: var(--accent); margin: 0.5rem 0; }
+.solved-badge { color: var(--solved); font-weight: bold; }
+.card-inner button, .banner-inner button {
+  margin-top: 0.75rem; background: var(--accent); color: var(--bg); border: none;
+  border-radius: 8px; padding: 0.6rem 1.2rem; font-family: inherit; cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .element { transition: none; }
+}
