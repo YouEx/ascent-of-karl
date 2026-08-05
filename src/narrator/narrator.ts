@@ -62,9 +62,10 @@ export function freshNarratorState(seed = 1): NarratorState {
   };
 }
 
-/** En afspillet replik: id + den konkret valgte (og udfyldte) variant-tekst. */
+/** En afspillet replik: id, valgt variant-index (til lydfil-opslag) og udfyldt tekst. */
 export interface SpokenLine {
   id: string;
+  variant: number;
   text: string;
 }
 
@@ -134,13 +135,13 @@ export class Narrator {
   }
 
   /** Vælg en variant — aldrig den samme som sidst for samme replik. */
-  private pickVariant(def: NarratorLineDef): string {
-    if (def.variants.length === 1) return def.variants[0]!;
+  private pickVariant(def: NarratorLineDef): number {
+    if (def.variants.length === 1) return 0;
     const last = this.state.lastVariant[def.id];
     let index = Math.floor(this.rand() * def.variants.length);
     if (index === last) index = (index + 1) % def.variants.length;
     this.state.lastVariant[def.id] = index;
-    return def.variants[index]!;
+    return index;
   }
 
   /** Udfyld pladsholdere: {a}, {b}, {element} → elementnavne med små bogstaver. */
@@ -158,7 +159,8 @@ export class Narrator {
     const def = this.line(id);
     this.state.lastLineId = id;
     if (def.once) this.state.usedOnce.push(id);
-    return { id, text: this.fill(this.pickVariant(def), ctx) };
+    const variant = this.pickVariant(def);
+    return { id, variant, text: this.fill(def.variants[variant]!, ctx) };
   }
 
   private updateCounters(

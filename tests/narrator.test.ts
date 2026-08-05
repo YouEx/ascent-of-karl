@@ -223,6 +223,15 @@ describe("Narrator: nye adfærds-triggere", () => {
   });
 });
 
+describe("Narrator: variant-index til lydfiler", () => {
+  it("SpokenLine.variant peger på den valgte variant-tekst", () => {
+    const { engine, narrator } = setup();
+    const line = attempt(engine, narrator, "sten", "sten")!;
+    const def = narrator.line(line.id);
+    expect(def.variants[line.variant]).toBe(line.text);
+  });
+});
+
 describe("Narrator: resume", () => {
   it("giver en velkommen-tilbage-replik", () => {
     const { narrator } = setup();

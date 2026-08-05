@@ -36,5 +36,8 @@ npm run build      # typecheck + produktion-build
 - [x] Fortæller v2 — engelsk stemme i taleboble med mute, 5+ varianter pr.
       nøglebeat, playthrough-seed, nye triggers (sweep/hurtig/langsom) og
       AI-udkast-pipeline (`docs/design/fortaelleren.md`, `tools/generate_lines.py`)
+- [x] Fortæller-audio — pre-genereret scratch-voice (Edge TTS, 168 filer,
+      ~9 MB) med manifest, ducking og autoplay-håndtering
+      (`tools/generate_audio.py`)
 - [ ] Step 4 — vertical slice: art, lyd, voice, polish
 - Akt I er spilbar med 23 elementer, 15 kombinationer og 150+ fortæller-varianter

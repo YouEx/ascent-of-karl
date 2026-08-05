@@ -2,9 +2,11 @@ import { Engine } from "../core/engine";
 import { deserialize, serialize } from "../core/save";
 import { Narrator, freshNarratorState } from "../narrator/narrator";
 import type { NarratorState } from "../narrator/narrator";
+import type { SpokenLine } from "../narrator/narrator";
 import { loadContent } from "../content";
 import type { CombineOutcome, ElementDef } from "../core/types";
 import { BookView } from "./book";
+import { initAudio, playLine, stopAudio } from "./audio";
 
 const SAVE_KEY = "kolde-karl-save-v1";
 const NARRATOR_SAVE_KEY = "kolde-karl-narrator-v1";
@@ -88,7 +90,12 @@ let muted = localStorage.getItem(MUTE_KEY) === "1";
 let lastLineText = "";
 let lastAttemptAt: number | null = null;
 
-// --- Fortæller-tekst med typewriter; ny replik afbryder elegant (PRD §4.3) ---
+// --- Fortæller-replik: tekst med typewriter + evt. lydfil; ny replik afbryder elegant (PRD §4.3) ---
+function say(line: SpokenLine): void {
+  playLine(line, muted);
+  speak(line.text);
+}
+
 function speak(text: string): void {
   lastLineText = text;
   if (muted) return;
@@ -113,6 +120,7 @@ function renderMute(): void {
   el.muteBtn.setAttribute("aria-pressed", String(muted));
   el.bubble.classList.toggle("muted", muted);
   if (muted) {
+    stopAudio();
     if (typewriterTimer) clearInterval(typewriterTimer);
     el.narratorText.textContent = "…";
   } else if (lastLineText) {
@@ -185,7 +193,7 @@ function showAgeUpBanner(): void {
   document.getElementById("banner-close")!.addEventListener("click", () => {
     el.banner.hidden = true;
     const intro = narrator.actIntro();
-    if (intro) speak(intro.text);
+    if (intro) say(intro);
   });
 }
 
@@ -205,7 +213,7 @@ function performCombine(a: string, b: string): void {
     save();
     if (outcome.ageUp) showAgeUpBanner();
   }
-  if (line) speak(line.text);
+  if (line) say(line);
 
   selected = [null, null];
   renderSlots();
@@ -300,5 +308,7 @@ renderSlots();
 renderGrid();
 renderMute();
 book.render();
-const opening = resumed ? narrator.resume() : narrator.actIntro();
-if (opening) speak(opening.text);
+void initAudio().then(() => {
+  const opening = resumed ? narrator.resume() : narrator.actIntro();
+  if (opening) say(opening);
+});

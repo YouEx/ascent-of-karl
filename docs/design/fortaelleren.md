@@ -63,9 +63,29 @@ kommer fra puljerne, ikke fra live-kald.
   (`--act N --min 5`), og skribenten kuraterer. Validatoren fejler CI,
   hvis et nøglebeat kommer under 5 varianter.
 
+## Audio: pre-genereret scratch-voice (besluttet 2026-08-05)
+
+Al fortæller-lyd genereres **på forhånd** og shippes som filer — aldrig
+live-TTS (samme princip som tekst-pipelinen: gratis drift, offline, ens
+timing for alle spillere).
+
+- **Pipeline**: `tools/generate_audio.py` → én MP3 pr. variant
+  (`public/audio/<replik-id>.v<index>.mp3`) + `manifest.json`. UI'et
+  afspiller kun filer, der står i manifestet; mangler manifestet, er
+  spillet tekst-only.
+- **Scratch-stemme**: Edge TTS `en-GB-RyanNeural` (gratis, britisk
+  dokumentar-tone), rate -4 %, pitch -2 Hz. Akt I+II = 168 filer, ~9 MB.
+- **Regel**: voicede replikker må ikke bruge `{a}`/`{b}`-pladsholdere
+  (kombinatorisk eksplosion) — de forbliver tekst-only. `{element}`-replikker
+  kan senere pre-renderes pr. element, hvis de skal voices.
+- Afspilning: ny replik ducker den gamle (hurtigt fade); autoplay-blokering
+  håndteres ved at udskyde til første interaktion; mute-knappen stopper
+  også lyden.
+- Final voice besluttes i Step 4 efter playtest med scratch-stemmen
+  (menneskelig speaker eller premium-TTS — PRD §6, "largest single bet").
+
 ## Senere (ikke i denne version)
 
-- TTS/voice: replik-id → lydfil (PRD §4.3); mute-knappen styrer så også lyd.
 - "Director"-logik: vægt varianter efter flags (Grub Man-varianter af
   generiske replikker) — datamodellen understøtter det allerede via
   `requiresFlags` på replikker.
