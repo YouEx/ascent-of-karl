@@ -181,7 +181,8 @@
     "setsFlags": [
       "bilist"
     ],
-    "narratorLine": "story-flintmobil"
+    "narratorLine": "story-flintmobil",
+    "cost": 3
   },
   {
     "pair": [
@@ -196,7 +197,8 @@
       "bautasten"
     ],
     "result": "stenkreds",
-    "narratorLine": "story-stenkreds"
+    "narratorLine": "story-stenkreds",
+    "cost": 2
   },
   {
     "pair": [
@@ -255,7 +257,8 @@
     "setsFlags": [
       "rockstjerne"
     ],
-    "narratorLine": "story-rockband"
+    "narratorLine": "story-rockband",
+    "cost": 2
   },
   {
     "pair": [
@@ -299,7 +302,8 @@
       "nabo"
     ],
     "result": "larvebod",
-    "spor": "komisk"
+    "spor": "komisk",
+    "cost": 2
   },
   {
     "pair": [
@@ -323,7 +327,8 @@
       "nabo"
     ],
     "result": "landsby",
-    "narratorLine": "story-landsby"
+    "narratorLine": "story-landsby",
+    "cost": 2
   },
   {
     "pair": [
@@ -384,7 +389,8 @@
       "grottebryg"
     ],
     "result": "syner",
-    "spor": "komisk"
+    "spor": "komisk",
+    "cost": 2
   },
   {
     "pair": [
@@ -492,7 +498,8 @@
       "fjer",
       "skind"
     ],
-    "result": "festdragt"
+    "result": "festdragt",
+    "cost": 2
   },
   {
     "pair": [
@@ -503,7 +510,8 @@
     "spor": "komisk",
     "setsFlags": [
       "modeikon"
-    ]
+    ],
+    "cost": 2
   },
   {
     "pair": [
@@ -526,7 +534,8 @@
     ],
     "result": "stenkoncert",
     "spor": "komisk",
-    "narratorLine": "story-stenkoncert"
+    "narratorLine": "story-stenkoncert",
+    "cost": 3
   },
   {
     "pair": [
@@ -549,7 +558,8 @@
       "hytte"
     ],
     "result": "garage",
-    "spor": "komisk"
+    "spor": "komisk",
+    "cost": 2
   },
   {
     "pair": [
@@ -558,7 +568,8 @@
     ],
     "result": "drive-in",
     "spor": "komisk",
-    "narratorLine": "story-drive-in"
+    "narratorLine": "story-drive-in",
+    "cost": 2
   },
   {
     "pair": [
@@ -566,7 +577,8 @@
       "flintmobil"
     ],
     "result": "trafikprop",
-    "spor": "komisk"
+    "spor": "komisk",
+    "cost": 2
   },
   {
     "pair": [
@@ -703,5 +715,86 @@
       "nabo"
     ],
     "result": "fjer"
+  },
+  {
+    "pair": [
+      "fjer",
+      "fjer"
+    ],
+    "result": "vinger",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "knogle",
+      "saft"
+    ],
+    "result": "medicin"
+  },
+  {
+    "pair": [
+      "landsby",
+      "festdragt"
+    ],
+    "result": "kroning",
+    "cost": 3,
+    "ending": "king-karl"
+  },
+  {
+    "pair": [
+      "stenkoncert",
+      "trommesolo"
+    ],
+    "result": "legende",
+    "cost": 4,
+    "spor": "komisk",
+    "ending": "rock-legend"
+  },
+  {
+    "pair": [
+      "syner",
+      "hulemaleri"
+    ],
+    "result": "ind-i-maleriet",
+    "cost": 3,
+    "spor": "komisk",
+    "ending": "mad-painter"
+  },
+  {
+    "pair": [
+      "vinger",
+      "bautasten"
+    ],
+    "result": "flyveforsoeg",
+    "cost": 2,
+    "spor": "komisk",
+    "ending": "icarus"
+  },
+  {
+    "pair": [
+      "slagsmaal",
+      "koelle"
+    ],
+    "result": "krig",
+    "cost": 3,
+    "ending": "general"
+  },
+  {
+    "pair": [
+      "medicin",
+      "nabo"
+    ],
+    "result": "helbredelse",
+    "cost": 2,
+    "ending": "doctor"
+  },
+  {
+    "pair": [
+      "mudderkage",
+      "grottebryg"
+    ],
+    "result": "sidste-maaltid",
+    "spor": "komisk",
+    "ending": "gourmet"
   }
 ]

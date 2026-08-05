@@ -18,6 +18,58 @@
     3,
     4
   ],
+  "aging-1": [
+    0,
+    1
+  ],
+  "aging-10": [
+    0,
+    1
+  ],
+  "aging-5": [
+    0,
+    1
+  ],
+  "ending-doctor": [
+    0,
+    1,
+    2
+  ],
+  "ending-general": [
+    0,
+    1,
+    2
+  ],
+  "ending-gourmet": [
+    0,
+    1,
+    2
+  ],
+  "ending-icarus": [
+    0,
+    1,
+    2
+  ],
+  "ending-king": [
+    0,
+    1,
+    2
+  ],
+  "ending-legend": [
+    0,
+    1,
+    2
+  ],
+  "ending-oldage": [
+    0,
+    1,
+    2
+  ],
+  "ending-painter": [
+    0,
+    1,
+    2
+  ],
   "failstreak-4": [
     0,
     1,

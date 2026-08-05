@@ -45,6 +45,10 @@ def mermaid_for_act(act_num: int, elements, combos) -> str:
             marks.append(f'løser {c["solves"]}')
         if c.get("ageUp"):
             marks.append("AGE-UP")
+        if c.get("ending"):
+            marks.append(f'SLUTNING: {c["ending"]}')
+        if c.get("cost", 1) > 1:
+            marks.append(f'{c["cost"]} somre')
         if c.get("setsFlags"):
             marks.append("flag " + ",".join(c["setsFlags"]))
         label = f'|"{" · ".join(marks)}"|' if marks else ""
@@ -59,8 +63,12 @@ def mermaid_for_act(act_num: int, elements, combos) -> str:
     for c in combos:
         if c["result"] in ids_in_act and c.get("spor") == "komisk":
             lines.append(f"  class {c['result']} komisk")
+    for c in combos:
+        if c["result"] in ids_in_act and c.get("ending"):
+            lines.append(f"  class {c['result']} ending")
     lines.append("  classDef base fill:#e8dcc0,stroke:#7a5b3a")
     lines.append("  classDef komisk fill:#ffe0b3,stroke:#c2762b,stroke-dasharray: 5 3")
+    lines.append("  classDef ending fill:#2b2b2b,stroke:#e0a458,stroke-width:3px,color:#fff")
     return "\n".join(lines)
 
 

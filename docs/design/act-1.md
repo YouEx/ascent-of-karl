@@ -63,6 +63,32 @@ Rolling Stones (rockband), Cast Away/Wilson (ven), sushi (fisk).
 Historiske noter forbliver faktuelle — pop-noter er fakta OM referencen
 (fx "Flintstones (1960) var første primetime-tegnefilm").
 
+## Skæbner: Karls liv får en ende (2026-08-05)
+
+Hvert run varer **max 50 somre** (kombinationsforsøg = én sommer;
+`content/config.json`). Dybe/skøre opdagelser koster ekstra somre
+(`cost`-felt) — jo længere ud ad en gren, desto sværere at holde Karl i
+live. Fortælleren varsler alderdommen ved 10/5/1 somre tilbage.
+
+**8 slutninger** (`content/endings.json`) — ikke alle lykkelige:
+
+| Slutning | Udløses af | Tone |
+|---|---|---|
+| 👑 King Karl | landsby + festdragt | happy |
+| 🩹 Dr. Karl | medicin + nabo | happy |
+| 🌟 The Legend (evig turné) | stenkoncert + trommesolo | bittersweet |
+| 🕯️ A Whole Life (alderdom) | automatisk ved 50 somre | bittersweet |
+| ⚔️ General Karl | slagsmål + kølle | tragic |
+| 🪽 Almost Icarus (død) | vinger + bautasten | tragic |
+| 🖌️ The Mad Painter (galskab) | syner + hulemaleri | mad |
+| 🍲 Death by Cuisine (død) | mudderkage + grottebryg | komisk |
+
+En slutning afslutter runnet (motoren låser), fortælleren får sidste ord
+("THE END"), og et **achievement** låses op — persisteret på tværs af runs.
+Trofæ-modalen (🏆) viser låste skæbner som "???" — samme
+replayability-princip som tidslinjens silhuetter: man kan se AT der
+findes flere skæbner, ikke hvordan man når dem.
+
 ## Design-regler for udvidelser
 
 1. Nye kombinationer skal kunne *ræsonneres* (PRD §8-risiko: vilkårlighed).

@@ -43,6 +43,28 @@ export interface ComboDef {
   narratorLine?: string;
   /** Tidslinje-gren: hovedspor (default) eller komisk sidegren (docs/design/bogen.md) */
   spor?: "hoved" | "komisk";
+  /** Opdagelsen afslutter Karls liv/historie med denne slutning (endings.json) */
+  ending?: string;
+  /** Somre opdagelsen koster (default 1) — dybe grene æder levetiden hurtigere */
+  cost?: number;
+}
+
+/**
+ * En slutning på Karls liv (docs/design/act-1.md). Udløses af en kombination
+ * (`ComboDef.ending`) eller automatisk (alderdom ved turn-limit). Hver
+ * slutning låser et achievement op, som overlever på tværs af runs.
+ */
+export interface EndingDef {
+  id: string;
+  title: string;
+  emoji: string;
+  tone: "happy" | "tragic" | "mad" | "bittersweet" | "komisk";
+  /** Achievement-titlen der låses op ("You unlocked King Carl") */
+  achievement: string;
+  /** Replik-id — fortællerens afsluttende ord (3+ varianter) */
+  line: string;
+  /** Udløses automatisk (alderdom) i stedet for via kombination */
+  automatic?: boolean;
 }
 
 export interface ProblemDef {
@@ -111,6 +133,8 @@ export interface NarratorContentDef {
     elementSweep: Record<string, string>;
     /** Pulje der afspilles efter en meget lang pause */
     slow: string[];
+    /** Aldrings-advarsler; nøgle = resterende somre (fx "10", "5", "1") */
+    aging: Record<string, string>;
   };
   /** Flag-hukommelse: afspilles ved først mulige lejlighed når flags matcher ("Grub Man is back") */
   flagMemory: string[];
@@ -123,6 +147,11 @@ export interface ContentBundle {
   combos: ComboDef[];
   acts: ActDef[];
   narrator: NarratorContentDef[];
+  endings: EndingDef[];
+  config: {
+    /** Max antal kombinationsforsøg (somre) pr. run — derefter alderdoms-slutning */
+    turnLimit: number;
+  };
 }
 
 /** Resultat af et kombinationsforsøg (PRD §2.1 punkt 3) */

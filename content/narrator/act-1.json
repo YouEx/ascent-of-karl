@@ -580,6 +580,91 @@
         "modeikon"
       ],
       "once": true
+    },
+    {
+      "id": "ending-king",
+      "variants": [
+        "And so Karl was crowned — ruler of two huts, one boar, and a grub farm. He reigned wisely, which is to say he mostly left everyone alone. Long live King Karl. THE END.",
+        "The fanciest man in the valley kneels on a log and rises a king. His first decree: berries for everyone. His second: no more decrees. History rates him among its finest rulers. THE END.",
+        "King Karl the First — and, in fairness, the Only. His kingdom was small, his crown was heavy, and his people grunted approvingly until the end of his days. THE END."
+      ]
+    },
+    {
+      "id": "ending-legend",
+      "variants": [
+        "The band left the valley that night, and never truly stopped. Every cave got a show. Every show got a legend. Somewhere out there, they say, the drumming continues still. THE END.",
+        "Karl chose the tour. Forever. New caves, new crowds of confused wildlife, the same immortal song. He never came home — legends rarely do. THE END.",
+        "They played until the fires burned low, and then they played on. Karl the drummer became Karl the myth. The valley kept his hut just as he left it. He never needed it again. THE END."
+      ]
+    },
+    {
+      "id": "ending-painter",
+      "variants": [
+        "Karl stepped toward the painted wall, and then — well. The paintings gained one more figure that day: a small proud man among the boars. Ugh swears it waves at him. THE END.",
+        "He looked at the painting too long, and the painting looked back. When Ugh came home, the cave was empty and the wall was not. Karl had found a warmer place to live. THE END.",
+        "Some say the brew was strong. Some say the art was stronger. Either way, Karl now hunts painted boars beneath a painted sun, forever, and honestly? He looks happy. THE END."
+      ]
+    },
+    {
+      "id": "ending-icarus",
+      "variants": [
+        "He flew. For nearly a full second, Karl truly flew — and no one can take that from him, least of all the ground, which merely took everything else. Fly high, Karl. THE END.",
+        "From the standing stone he leapt, wings wide, heart wider. The landing was prehistoric. The attempt was immortal. Birds still tell their children about it. THE END.",
+        "Karl aimed for the sun and got remarkably little of the way there. But in that one airborne heartbeat, he was the freest man in history. THE END."
+      ]
+    },
+    {
+      "id": "ending-general",
+      "variants": [
+        "The war over the club consumed the valley: both huts, one friendship, every quiet evening. General Karl won it all, and stood alone among the trophies, wondering what exactly he'd won. THE END.",
+        "They called him General Karl, victor of the Valley War. Casualties: one friendship, irreplaceable. He kept the club. It never felt worth holding again. THE END.",
+        "Karl won the war. There was no war until Karl. Historians will note both facts, in that order, forever. THE END."
+      ]
+    },
+    {
+      "id": "ending-doctor",
+      "variants": [
+        "Ugh's headache passed, and word spread. Karl spent his remaining summers with herbs and patience, healing everything from bruises to bad moods. Dr. Karl — no licence, all heart. THE END.",
+        "The healer of the valley. Payment: berries, gratitude, the occasional decorated rock. Karl saved lives with weeds and confidence, and history forgives the confidence. THE END.",
+        "Karl found his calling in other people's aches. His clinic was a log. His waiting room was the valley. His legacy was everyone who got to grow old too. THE END."
+      ]
+    },
+    {
+      "id": "ending-gourmet",
+      "variants": [
+        "Mud pie and cave brew. The pairing that ended an era. Karl's last words were 'mmm', and the narrator on duty confirms he meant them. THE END.",
+        "The menu that history warned us about: seasoned earth with fermented berries. Karl died as he lived — full, happy, and catastrophically wrong about food. THE END.",
+        "Some explorers fall to beasts, some to winters. Karl fell to his own cooking, at his own table, mid-compliment to the chef. He was the chef. THE END."
+      ]
+    },
+    {
+      "id": "ending-oldage",
+      "variants": [
+        "And then, one quiet evening, Karl's summers simply ran out. He sat by the fire, surrounded by everything he'd made, and closed his eyes. A whole life, spent wondering 'what if?'. There are worse ways. THE END.",
+        "Fifty summers of stones and sparks and questionable decisions, and at the end of them: an old man by a warm fire, smiling at his strange little museum of inventions. Goodnight, Karl. THE END.",
+        "Karl grew old — genuinely, gloriously old, an achievement rarer in his age than any invention. The valley kept his discoveries. The narrator kept the stories. THE END."
+      ]
+    },
+    {
+      "id": "aging-10",
+      "variants": [
+        "Ten summers left in those bones, Karl. I'm just saying — if you have a masterpiece in you, now would be the time.",
+        "Karl's beard is more grey than brown now. Ten summers, give or take. The discoveries won't make themselves."
+      ]
+    },
+    {
+      "id": "aging-5",
+      "variants": [
+        "Five summers, Karl. The knees creak, the mornings hurt, and history sharpens its final pen.",
+        "Five left. Karl still runs everywhere, but now there's a small groan when he stands up. Time, dear listener, is undefeated."
+      ]
+    },
+    {
+      "id": "aging-1",
+      "variants": [
+        "One summer left. One. Whatever you're going to be remembered for, Karl — it's now.",
+        "The last summer. The fire feels warmer, the stones feel heavier, and every choice is the final word of the sentence."
+      ]
     }
   ],
   "behavior": {
@@ -607,7 +692,12 @@
     },
     "slow": [
       "slow-1"
-    ]
+    ],
+    "aging": {
+      "10": "aging-10",
+      "5": "aging-5",
+      "1": "aging-1"
+    }
   },
   "flagMemory": [
     "mem-larver",

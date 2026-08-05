@@ -232,6 +232,32 @@ describe("Narrator: variant-index til lydfiler", () => {
   });
 });
 
+describe("Narrator: slutninger og aldring", () => {
+  const baseState = {
+    act: 1,
+    flags: [],
+    solvedProblems: [],
+    attempts: 0,
+    ended: null,
+  };
+
+  it("slutningens replik overtrumfer alt andet", () => {
+    const { engine, narrator } = setup();
+    engine.loadState({ ...baseState, discovered: ["mudderkage", "grottebryg"] });
+    const line = attempt(engine, narrator, "mudderkage", "grottebryg");
+    expect(line?.id).toBe("ending-gourmet");
+    expect(line?.text).toContain("THE END");
+  });
+
+  it("aldrings-advarsel når 10 somre er tilbage", () => {
+    const { engine, narrator } = setup();
+    const limit = content.config.turnLimit;
+    engine.loadState({ ...baseState, discovered: ["baer", "ler"], attempts: limit - 11 });
+    const line = attempt(engine, narrator, "baer", "ler");
+    expect(line?.id).toBe("aging-10");
+  });
+});
+
 describe("Narrator: resume", () => {
   it("giver en velkommen-tilbage-replik", () => {
     const { narrator } = setup();

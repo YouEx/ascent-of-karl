@@ -808,6 +808,96 @@
     "act": 1
   },
   {
+    "id": "vinger",
+    "name": "Wings",
+    "emoji": "🪽",
+    "flavor": "Feathers lashed to Karl's arms. He flaps experimentally. The bird watches with grave professional concern.",
+    "note": "'Tower jumping' with homemade wings goes back over a thousand years — brave, well-documented, and rarely successful.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Early_flying_machines",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "medicin",
+    "name": "Herbal remedy",
+    "emoji": "🌿",
+    "flavor": "Bone-mashed herbs in berry juice. It tastes like punishment, which is how Karl knows it works.",
+    "note": "Neanderthal dental plaque shows they chewed yarrow and chamomile — bitter, non-nutritious, and medicinal.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/El_Sidr%C3%B3n_Cave",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "kroning",
+    "name": "Coronation",
+    "emoji": "👑",
+    "flavor": "The village gathers. The fanciest man in the valley kneels on a log and rises as king. Population under his rule: two, plus a boar.",
+    "note": "The world's oldest known crown, from the Nahal Mishmar hoard, is over 6,000 years old — copper, and surprisingly heavy-looking.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Nahal_Mishmar",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "legende",
+    "name": "The Legend",
+    "emoji": "🌟",
+    "flavor": "The band that never stops. Every night, a new cave. Every cave, the same song. It's perfect.",
+    "note": "Bob Dylan's 'Never Ending Tour' has run since 1988 — thousands of shows and counting.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Never_Ending_Tour",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "ind-i-maleriet",
+    "name": "Into the painting",
+    "emoji": "🖌️",
+    "flavor": "Karl stares at the painted boars until the painted boars stare back. Then he steps closer. Then closer still.",
+    "note": "Stendhal syndrome is a reported condition where overwhelming art causes dizziness and confusion — named after the author it floored in Florence.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Stendhal_syndrome",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "flyveforsoeg",
+    "name": "The Flight",
+    "emoji": "🪂",
+    "flavor": "From the top of the standing stone, wings wide, Karl leaps. For one glorious heartbeat, he flies.",
+    "note": "In the Greek myth, Icarus flew too close to the sun on wings of wax and feathers — history's most beautiful safety briefing.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Icarus",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "krig",
+    "name": "The War",
+    "emoji": "⚔️",
+    "flavor": "It started over a club. It ended over everything. Nobody remembers who swung first, and it no longer matters.",
+    "note": "Ötzi the Iceman, who died in the Alps 5,300 years ago, was killed by an arrow — one of prehistory's oldest cold cases.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/%C3%96tzi",
+    "karlMood": "ked",
+    "act": 1
+  },
+  {
+    "id": "helbredelse",
+    "name": "The Healing",
+    "emoji": "🩹",
+    "flavor": "Ugh had a headache. Karl had herbs, confidence, and no licence. Ugh survived — and that makes it medicine.",
+    "note": "Stone Age skulls show healed trepanation — patients actually survived having holes bored in their heads with stone tools.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Trepanning",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "sidste-maaltid",
+    "name": "The Last Supper",
+    "emoji": "🍲",
+    "flavor": "Mud pie, washed down with cave brew. A bold pairing. Too bold. Historians will ask why. The menu will answer.",
+    "note": "Tollund Man's last meal, 2,400 years ago, was a porridge of barley and seeds — we know prehistoric people by their dinners.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Tollund_Man",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
     "id": "korn",
     "name": "Wild grain",
     "emoji": "🌾",

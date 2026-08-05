@@ -42,6 +42,8 @@ app.innerHTML = `
   <header>
     <h1>Kolde Karl</h1>
     <div id="act-name"></div>
+    <span id="age" title="Every attempt costs a summer of Karl's life"></span>
+    <button id="trophies" title="Fates discovered">🏆</button>
     <button id="reset" title="Start over">↺ Start over</button>
   </header>
   <section id="narrator" aria-live="polite">
@@ -65,6 +67,8 @@ app.innerHTML = `
   <section id="grid" aria-label="Elements"></section>
   <div id="banner" hidden></div>
   <div id="card" hidden></div>
+  <div id="ending" hidden></div>
+  <div id="trophy-modal" hidden></div>
 `;
 
 const el = {
@@ -79,6 +83,10 @@ const el = {
   grid: document.getElementById("grid")!,
   banner: document.getElementById("banner")!,
   card: document.getElementById("card")!,
+  ending: document.getElementById("ending")!,
+  trophyModal: document.getElementById("trophy-modal")!,
+  trophiesBtn: document.getElementById("trophies")!,
+  age: document.getElementById("age")!,
   reset: document.getElementById("reset")!,
 };
 
@@ -133,6 +141,81 @@ el.muteBtn.addEventListener("click", () => {
   localStorage.setItem(MUTE_KEY, muted ? "1" : "0");
   renderMute();
 });
+
+// --- Achievements: skæbner overlever på tværs af runs (localStorage) ---
+const ACHIEVEMENTS_KEY = "kolde-karl-achievements";
+
+function loadAchievements(): Record<string, string> {
+  try {
+    return JSON.parse(localStorage.getItem(ACHIEVEMENTS_KEY) ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+function unlockAchievement(endingId: string): boolean {
+  const all = loadAchievements();
+  if (all[endingId]) return false;
+  all[endingId] = new Date().toISOString().slice(0, 10);
+  localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(all));
+  return true;
+}
+
+function renderTrophyModal(): void {
+  const unlocked = loadAchievements();
+  const rows = content.endings
+    .map((e) => {
+      if (unlocked[e.id]) {
+        return `<div class="trophy unlocked"><span class="t-emoji">${e.emoji}</span>
+          <div><strong>${e.achievement}</strong><br><small>${e.title} · ${unlocked[e.id]}</small></div></div>`;
+      }
+      return `<div class="trophy locked"><span class="t-emoji">❓</span>
+        <div><strong>???</strong><br><small>An undiscovered fate</small></div></div>`;
+    })
+    .join("");
+  el.trophyModal.innerHTML = `
+    <div class="modal-inner">
+      <h2>🏆 Karl's fates</h2>
+      <p class="modal-sub">${Object.keys(unlocked).length}/${content.endings.length} discovered — each run can end differently</p>
+      ${rows}
+      <button id="trophy-close">Close</button>
+    </div>`;
+  el.trophyModal.hidden = false;
+  document.getElementById("trophy-close")!.addEventListener("click", () => {
+    el.trophyModal.hidden = true;
+  });
+}
+
+el.trophiesBtn.addEventListener("click", renderTrophyModal);
+
+function renderAge(): void {
+  const spent = content.config.turnLimit - engine.remainingTurns();
+  el.age.textContent = `⏳ Summer ${Math.min(spent + 1, content.config.turnLimit)} of ${content.config.turnLimit}`;
+  el.age.classList.toggle("age-late", engine.remainingTurns() <= 10);
+}
+
+function showEndingScreen(): void {
+  const ending = engine.activeEnding();
+  if (!ending) return;
+  const isNew = unlockAchievement(ending.id);
+  const state = engine.getState();
+  document.body.classList.add("run-over");
+  el.ending.innerHTML = `
+    <div class="ending-inner tone-${ending.tone}">
+      <div class="ending-emoji">${ending.emoji}</div>
+      <h2>${ending.title}</h2>
+      <p class="ending-line">${lastLineText}</p>
+      <p class="ending-stats">${state.attempts} summers lived · ${state.discovered.length} discoveries · ${state.flags.length} quirks</p>
+      ${isNew ? `<p class="achievement">🏆 Achievement unlocked: <strong>${ending.achievement}</strong></p>` : `<p class="achievement known">🏆 ${ending.achievement}</p>`}
+      <button id="ending-restart">Live again</button>
+    </div>`;
+  el.ending.hidden = false;
+  document.getElementById("ending-restart")!.addEventListener("click", () => {
+    localStorage.removeItem(SAVE_KEY);
+    localStorage.removeItem(NARRATOR_SAVE_KEY);
+    location.reload();
+  });
+}
 
 function renderProblems(): void {
   const act = engine.currentAct();
@@ -198,15 +281,17 @@ function showAgeUpBanner(): void {
 }
 
 function performCombine(a: string, b: string): void {
+  if (engine.activeEnding()) return;
   const now = performance.now();
   const elapsedMs = lastAttemptAt === null ? undefined : now - lastAttemptAt;
   lastAttemptAt = now;
 
   const outcome = engine.combine(a, b);
   const line = narrator.react(a, b, outcome, elapsedMs);
+  const ending = engine.activeEnding();
 
   if (outcome.kind === "discovery") {
-    showDiscoveryCard(outcome);
+    if (!ending) showDiscoveryCard(outcome);
     renderGrid();
     renderProblems();
     book.render(outcome.element.id);
@@ -214,6 +299,11 @@ function performCombine(a: string, b: string): void {
     if (outcome.ageUp) showAgeUpBanner();
   }
   if (line) say(line);
+  renderAge();
+  if (ending) {
+    save();
+    showEndingScreen();
+  }
 
   selected = [null, null];
   renderSlots();
@@ -307,8 +397,16 @@ renderProblems();
 renderSlots();
 renderGrid();
 renderMute();
+renderAge();
 book.render();
-void initAudio().then(() => {
-  const opening = resumed ? narrator.resume() : narrator.actIntro();
-  if (opening) say(opening);
-});
+if (engine.activeEnding()) {
+  // Runnet var allerede slut da vi gemte — vis slutningen igen
+  const e = engine.activeEnding()!;
+  lastLineText = lastLineText || `${e.title}.`;
+  showEndingScreen();
+} else {
+  void initAudio().then(() => {
+    const opening = resumed ? narrator.resume() : narrator.actIntro();
+    if (opening) say(opening);
+  });
+}

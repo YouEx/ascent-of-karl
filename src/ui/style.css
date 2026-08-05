@@ -175,6 +175,64 @@ header h1 { margin: 0; font-size: 1.6rem; color: var(--accent); }
 }
 .entry.blank { color: var(--ink-soft); font-style: italic; }
 
+/* --- Alder, slutninger og achievements --- */
+#age { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+#age.age-late { color: #d98f6c; font-weight: bold; }
+#trophies {
+  background: none; border: 1px solid var(--muted); border-radius: 6px;
+  padding: 0.2rem 0.5rem; cursor: pointer; font-size: 0.9rem;
+}
+
+#ending, #trophy-modal {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.78);
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+  z-index: 60;
+}
+#ending[hidden], #trophy-modal[hidden] { display: none; }
+.ending-inner {
+  background: var(--panel); border: 3px solid var(--accent); border-radius: 16px;
+  padding: 2rem 1.75rem; max-width: 460px; text-align: center;
+}
+.ending-inner.tone-happy { border-color: #8fbf7f; }
+.ending-inner.tone-tragic { border-color: #b05f5f; }
+.ending-inner.tone-mad { border-color: #9f7fbf; }
+.ending-inner.tone-bittersweet { border-color: #c2a26b; }
+.ending-inner.tone-komisk { border-color: var(--gren-komisk); }
+.ending-emoji { font-size: 3.5rem; }
+.ending-inner h2 { color: var(--accent); margin: 0.5rem 0; font-size: 1.6rem; }
+.ending-line { font-style: italic; line-height: 1.5; }
+.ending-stats { color: var(--muted); font-size: 0.85rem; }
+.achievement {
+  background: rgba(224, 164, 88, 0.15); border-radius: 8px;
+  padding: 0.5rem 0.75rem; display: inline-block;
+}
+.achievement.known { opacity: 0.7; }
+.ending-inner button {
+  margin-top: 1rem; background: var(--accent); color: var(--bg); border: none;
+  border-radius: 10px; padding: 0.7rem 1.5rem; font-family: inherit;
+  font-size: 1rem; cursor: pointer;
+}
+
+.modal-inner {
+  background: var(--panel); border: 2px solid var(--accent); border-radius: 14px;
+  padding: 1.5rem; max-width: 420px; width: 100%; max-height: 80vh; overflow-y: auto;
+}
+.modal-inner h2 { color: var(--accent); margin: 0 0 0.25rem; }
+.modal-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0; }
+.trophy {
+  display: flex; gap: 0.75rem; align-items: center;
+  padding: 0.5rem 0; border-bottom: 1px solid #443a30;
+}
+.trophy .t-emoji { font-size: 1.6rem; }
+.trophy.locked { opacity: 0.45; }
+.trophy small { color: var(--muted); }
+.modal-inner button {
+  margin-top: 0.9rem; background: var(--accent); color: var(--bg); border: none;
+  border-radius: 8px; padding: 0.5rem 1.1rem; font-family: inherit; cursor: pointer;
+}
+
+body.run-over #grid, body.run-over #workbench { opacity: 0.4; pointer-events: none; }
+
 /* --- Drag & drop --- */
 #drag-hint { color: var(--muted); font-size: 0.8rem; margin: 0.25rem 0; text-align: center; }
 .element { touch-action: none; user-select: none; }

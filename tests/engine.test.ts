@@ -137,6 +137,48 @@ describe("Engine: age-up med blødt gate", () => {
   });
 });
 
+describe("Engine: slutninger og levetid", () => {
+  const baseState = {
+    act: 1,
+    flags: [],
+    solvedProblems: [],
+    attempts: 0,
+    ended: null,
+  };
+
+  it("en skæbne-kombination afslutter runnet og låser videre spil", () => {
+    const e = freshEngine();
+    e.loadState({ ...baseState, discovered: ["mudderkage", "grottebryg"] });
+    const outcome = e.combine("mudderkage", "grottebryg");
+    expect(outcome.kind).toBe("discovery");
+    expect(e.activeEnding()?.id).toBe("gourmet");
+    expect(() => e.combine("mudderkage", "grottebryg")).toThrow();
+  });
+
+  it("alderdommen indtræffer når somrene slipper op", () => {
+    const e = freshEngine();
+    const limit = content.config.turnLimit;
+    e.loadState({ ...baseState, discovered: ["baer", "ler"], attempts: limit - 1 });
+    e.combine("baer", "ler"); // fiasko — men sidste sommer
+    expect(e.activeEnding()?.id).toBe("et-helt-liv");
+    expect(e.remainingTurns()).toBe(0);
+  });
+
+  it("dybe opdagelser koster ekstra somre (cost)", () => {
+    const e = freshEngine();
+    e.loadState({ ...baseState, discovered: ["landsby", "festdragt"] });
+    e.combine("landsby", "festdragt"); // kroning, cost 3
+    expect(content.config.turnLimit - e.remainingTurns()).toBe(3);
+  });
+
+  it("gamle saves uden ended-felt kan stadig indlæses", () => {
+    const e = freshEngine();
+    const legacy = { act: 1, discovered: ["sten"], flags: [], solvedProblems: [], attempts: 5 };
+    e.loadState(legacy as never);
+    expect(e.activeEnding()).toBeNull();
+  });
+});
+
 describe("Save/load", () => {
   it("state overlever en serialiserings-rundtur", () => {
     const e = freshEngine();

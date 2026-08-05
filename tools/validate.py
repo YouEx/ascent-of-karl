@@ -48,6 +48,8 @@ def main() -> int:
     combos = load(CONTENT / "combos.json") or []
     acts = [a for p in sorted((CONTENT / "acts").glob("*.json")) if (a := load(p))]
     narrator = [n for p in sorted((CONTENT / "narrator").glob("*.json")) if (n := load(p))]
+    endings = load(CONTENT / "endings.json") or []
+    config = load(CONTENT / "config.json") or {}
 
     element_ids = {e["id"] for e in elements}
     if len(element_ids) != len(elements):
@@ -219,6 +221,46 @@ def main() -> int:
                 err(f"Opdagelsen '{e['id']}' mangler historisk note")
             elif not e.get("sourceUrl"):
                 err(f"Opdagelsen '{e['id']}' har en note uden kilde-URL")
+
+    # --- Slutninger: referencer, replikker og turn-limit ---
+    ending_ids = {e["id"] for e in endings}
+    if len(ending_ids) != len(endings):
+        err("Duplikerede slutnings-id'er i endings.json")
+    all_lines_by_id = {l["id"]: l for n in narrator for l in n["lines"]}
+    for e in endings:
+        line = all_lines_by_id.get(e["line"])
+        if not line:
+            err(f"Slutningen '{e['id']}' refererer ukendt replik '{e['line']}'")
+        elif len(line.get("variants", [])) < 3:
+            err(f"Slutningen '{e['id']}': replikken '{e['line']}' skal have mindst 3 varianter")
+        if not e.get("achievement"):
+            err(f"Slutningen '{e['id']}' mangler achievement-titel")
+        if e.get("tone") not in ("happy", "tragic", "mad", "bittersweet", "komisk"):
+            err(f"Slutningen '{e['id']}': ugyldig tone '{e.get('tone')}'")
+    autos = [e for e in endings if e.get("automatic")]
+    if len(autos) != 1:
+        err(f"Der skal være præcis én automatisk slutning (alderdom) — fandt {len(autos)}")
+    triggered = set()
+    for c in combos:
+        if "ending" in c:
+            if c["ending"] not in ending_ids:
+                err(f"Kombination {c['pair'][0]}+{c['pair'][1]}: ukendt slutning '{c['ending']}'")
+            triggered.add(c["ending"])
+        if "cost" in c and (not isinstance(c["cost"], int) or c["cost"] < 1):
+            err(f"Kombination {c['pair'][0]}+{c['pair'][1]}: cost skal være et heltal ≥ 1")
+    for e in endings:
+        if not e.get("automatic") and e["id"] not in triggered:
+            err(f"Slutningen '{e['id']}' udløses aldrig af nogen kombination")
+    turn_limit = config.get("turnLimit")
+    if not isinstance(turn_limit, int) or turn_limit < 10:
+        err(f"config.turnLimit skal være et heltal ≥ 10 (er {turn_limit!r})")
+    else:
+        main_track_cost = sum(
+            c.get("cost", 1) for c in combos
+            if c.get("solves") or c.get("ageUp")
+        )
+        if main_track_cost > turn_limit:
+            warn(f"Hovedsporets samlede cost ({main_track_cost}) overstiger turn-limit ({turn_limit})")
 
     # --- Flags der kræves men aldrig sættes ---
     set_flags = {f for c in combos for f in c.get("setsFlags", [])}

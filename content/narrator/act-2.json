@@ -46,8 +46,13 @@
     "failStreak": {},
     "fast": {},
     "elementSweep": {},
-    "slow": []
+    "slow": [],
+    "aging": {}
   },
   "flagMemory": [],
-  "genericFailure": ["a2-gf-1", "a2-gf-2", "a2-gf-3"]
+  "genericFailure": [
+    "a2-gf-1",
+    "a2-gf-2",
+    "a2-gf-3"
+  ]
 }

@@ -4,6 +4,7 @@ import type {
   ComboDef,
   ContentBundle,
   ElementDef,
+  EndingDef,
   ProblemDef,
 } from "./types";
 
@@ -13,8 +14,10 @@ export interface GameState {
   discovered: string[];
   flags: string[];
   solvedProblems: string[];
-  /** Antal kombinationsforsøg i alt (telemetri/adfærd) */
+  /** Forbrugte somre (kombinationsforsøg + ekstra cost på dybe opdagelser) */
   attempts: number;
+  /** Slutningens id når Karls liv/historie er forbi — null mens der spilles */
+  ended: string | null;
 }
 
 export function pairKey(a: string, b: string): string {
@@ -55,6 +58,7 @@ export class Engine {
       flags: [],
       solvedProblems: [],
       attempts: 0,
+      ended: null,
     };
   }
 
@@ -63,7 +67,9 @@ export class Engine {
   }
 
   loadState(state: GameState): void {
-    this.state = structuredClone(state);
+    const s = structuredClone(state);
+    // ended tilføjet senere — ældre saves mangler feltet
+    this.state = { ...s, ended: s.ended ?? null };
   }
 
   element(id: string): ElementDef {
@@ -105,6 +111,17 @@ export class Engine {
     );
   }
 
+  /** Slutningen der har afsluttet dette run — null mens der spilles */
+  activeEnding(): EndingDef | null {
+    if (!this.state.ended) return null;
+    return this.content.endings.find((e) => e.id === this.state.ended) ?? null;
+  }
+
+  /** Resterende somre af Karls liv */
+  remainingTurns(): number {
+    return Math.max(0, this.content.config.turnLimit - this.state.attempts);
+  }
+
   private flagsAllow(combo: ComboDef): boolean {
     const has = (f: string) => this.state.flags.includes(f);
     if (combo.requiresFlags?.some((f) => !has(f))) return false;
@@ -128,10 +145,23 @@ export class Engine {
    * Muterer state ved opdagelser; "known"/"nothing"/"gated" ændrer kun attempts-tælleren.
    */
   combine(a: string, b: string): CombineOutcome {
+    if (this.state.ended) {
+      throw new Error("Karls historie er slut — start et nyt liv");
+    }
     if (!this.isDiscovered(a) || !this.isDiscovered(b)) {
       throw new Error(`Kan ikke kombinere uopdagede elementer: ${a}, ${b}`);
     }
     this.state.attempts++;
+    const outcome = this.resolve(a, b);
+    // Slutninger: en skæbne-kombination, ellers alderdom når somrene slipper op
+    if (!this.state.ended && this.state.attempts >= this.content.config.turnLimit) {
+      const oldAge = this.content.endings.find((e) => e.automatic);
+      if (oldAge) this.state.ended = oldAge.id;
+    }
+    return outcome;
+  }
+
+  private resolve(a: string, b: string): CombineOutcome {
 
     const combo = this.matchCombo(a, b);
     if (!combo) return { kind: "nothing" };
@@ -151,6 +181,9 @@ export class Engine {
 
     this.state.discovered.push(combo.result);
     for (const flag of combo.setsFlags ?? []) this.setFlag(flag);
+    // Dybe opdagelser koster ekstra somre af Karls liv
+    if (combo.cost && combo.cost > 1) this.state.attempts += combo.cost - 1;
+    if (combo.ending) this.state.ended = combo.ending;
 
     let solved: ProblemDef | undefined;
     if (combo.solves && !this.isSolved(combo.solves)) {

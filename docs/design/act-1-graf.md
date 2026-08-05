@@ -3,8 +3,8 @@
 *Auto-genereret af `tools/story_graph.py` — redigér ikke i hånden.
 Regenerér efter content-ændringer.*
 
-- **83 elementer** (11 base)
-- **86 kombinationer** (26 på komisk spor, vist stiplet)
+- **92 elementer** (11 base)
+- **95 kombinationer** (31 på komisk spor, vist stiplet)
 - Kanter mærket med problem-løsninger, age-up og flags
 
 ```mermaid
@@ -25,6 +25,7 @@ flowchart LR
   fjer["🪶 Feather"]
   flintmobil["🚗 Footmobile"]
   floejte["🪈 Bone flute"]
+  flyveforsoeg["🪂 The Flight"]
   foenix["🐦‍🔥 Phoenix?"]
   fugl(["🐦 Bird"]):::base
   galleri["🖼️ Cave gallery"]
@@ -33,11 +34,13 @@ flowchart LR
   graes(["🌾 Dry grass"]):::base
   grottebryg["🍺 Cave brew"]
   haandaftryk["🖐️ Handprint wall"]
+  helbredelse["🩹 The Healing"]
   helligsted["⛩️ Shrine"]
   hjul["🛞 Wheel"]
   hulemaleri["🎨 Cave painting"]
   hytte["🛖 Hut"]
   ild["🔥 Fire"]
+  ind-i-maleriet["🖌️ Into the painting"]
   kaelk["🛷 Sledge"]
   keramik["🏺 Pottery"]
   knogle["🦴 Bone"]
@@ -45,14 +48,18 @@ flowchart LR
   kobber["🟠 Copper"]
   koed["🥩 Meat"]
   koelle["🏏 Club"]
+  krig["⚔️ The War"]
+  kroning["👑 Coronation"]
   kul["⚫ Charcoal"]
   landsby["🏘️ Village"]
   larvebod["🏪 Grub stand"]
   larvefarm["🧺 Grub farm"]
   larver(["🐛 Grubs"]):::base
+  legende["🌟 The Legend"]
   ler(["🟤 Clay"]):::base
   lerfigur["🪆 Clay figurine"]
   malm["⛏️ Ore"]
+  medicin["🌿 Herbal remedy"]
   modeshow["💃 Fashion show"]
   mudder["🟫 Mud"]
   mudderbad["🛁 Mud bath"]
@@ -70,6 +77,7 @@ flowchart LR
   rullesten["⚪ Round stone"]
   saft["🧃 Berry juice"]
   shaman["🧙 Shaman Ugh"]
+  sidste-maaltid["🍲 The Last Supper"]
   skind["🧥 Hide cloak"]
   slagsmaal["💢 First argument"]
   spyd["🔱 Spear"]
@@ -91,6 +99,7 @@ flowchart LR
   trommesolo["🎶 Drum solo"]
   vand(["💧 Water"]):::base
   ven["🫙 Pot friend"]
+  vinger["🪽 Wings"]
   vogn["🛒 Cart"]
   sten --> gnister
   gnister -->|"løser kulde"| ild
@@ -129,11 +138,11 @@ flowchart LR
   planker -..-> arbejdsbord
   hjul --> vogn
   planker --> vogn
-  vogn -..->|"flag bilist"| flintmobil
+  vogn -..->|"3 somre · flag bilist"| flintmobil
   nabo -..-> flintmobil
   sten --> bautasten
   mudder --> bautasten
-  bautasten --> stenkreds
+  bautasten -->|"2 somre"| stenkreds
   dyr -..-> tamsvin
   baer -..-> tamsvin
   vand -->|"løser sult"| fisk
@@ -144,7 +153,7 @@ flowchart LR
   sten --> hulemaleri
   stamme --> tromme
   pind --> tromme
-  tromme -..->|"flag rockstjerne"| rockband
+  tromme -..->|"2 somre · flag rockstjerne"| rockband
   nabo -..-> rockband
   baer --> grottebryg
   keramik --> grottebryg
@@ -153,12 +162,12 @@ flowchart LR
   keramik -..-> ven
   hulemaleri -..-> ven
   pind --> boomerang
-  larvefarm -..-> larvebod
+  larvefarm -..->|"2 somre"| larvebod
   nabo -..-> larvebod
   mudder --> mursten
   graes --> mursten
   mursten -->|"løser kulde"| hytte
-  hytte --> landsby
+  hytte -->|"2 somre"| landsby
   nabo --> landsby
   hytte -..->|"flag brandstifter"| nedbraendt-hytte
   ild -..-> nedbraendt-hytte
@@ -174,7 +183,7 @@ flowchart LR
   bautasten --> helligsted
   nabo --> shaman
   helligsted --> shaman
-  shaman -..-> syner
+  shaman -..->|"2 somre"| syner
   grottebryg -..-> syner
   ild --> kul
   stamme --> kul
@@ -202,23 +211,23 @@ flowchart LR
   fugl --> floejte
   skind --> farvet-skind
   baer --> farvet-skind
-  fjer --> festdragt
+  fjer -->|"2 somre"| festdragt
   skind --> festdragt
-  festdragt -..->|"flag modeikon"| modeshow
+  festdragt -..->|"2 somre · flag modeikon"| modeshow
   nabo -..-> modeshow
   ler --> lerfigur
   nabo --> lerfigur
   hulemaleri --> haandaftryk
   nabo --> haandaftryk
-  rockband -..-> stenkoncert
+  rockband -..->|"3 somre"| stenkoncert
   stenkreds -..-> stenkoncert
   tromme -..-> trommesolo
   hulemaleri --> galleri
-  flintmobil -..-> garage
+  flintmobil -..->|"2 somre"| garage
   hytte -..-> garage
-  flintmobil -..-> drive-in
+  flintmobil -..->|"2 somre"| drive-in
   hulemaleri -..-> drive-in
-  flintmobil -..-> trafikprop
+  flintmobil -..->|"2 somre"| trafikprop
   rullesten -..-> stenspil
   nabo -..-> brydekamp
   planker --> kaelk
@@ -250,6 +259,23 @@ flowchart LR
   nabo --> knogle
   fugl --> fjer
   nabo --> fjer
+  fjer -..-> vinger
+  knogle --> medicin
+  saft --> medicin
+  landsby -->|"SLUTNING: king-karl · 3 somre"| kroning
+  festdragt --> kroning
+  stenkoncert -..->|"SLUTNING: rock-legend · 4 somre"| legende
+  trommesolo -..-> legende
+  syner -..->|"SLUTNING: mad-painter · 3 somre"| ind-i-maleriet
+  hulemaleri -..-> ind-i-maleriet
+  vinger -..->|"SLUTNING: icarus · 2 somre"| flyveforsoeg
+  bautasten -..-> flyveforsoeg
+  slagsmaal -->|"SLUTNING: general · 3 somre"| krig
+  koelle --> krig
+  medicin -->|"SLUTNING: doctor · 2 somre"| helbredelse
+  nabo --> helbredelse
+  mudderkage -..->|"SLUTNING: gourmet"| sidste-maaltid
+  grottebryg -..-> sidste-maaltid
   class ristede-larver komisk
   class mudderbad komisk
   class larvefarm komisk
@@ -276,6 +302,19 @@ flowchart LR
   class stenspil komisk
   class brydekamp komisk
   class toemmermaend komisk
+  class vinger komisk
+  class legende komisk
+  class ind-i-maleriet komisk
+  class flyveforsoeg komisk
+  class sidste-maaltid komisk
+  class kroning ending
+  class legende ending
+  class ind-i-maleriet ending
+  class flyveforsoeg ending
+  class krig ending
+  class helbredelse ending
+  class sidste-maaltid ending
   classDef base fill:#e8dcc0,stroke:#7a5b3a
   classDef komisk fill:#ffe0b3,stroke:#c2762b,stroke-dasharray: 5 3
+  classDef ending fill:#2b2b2b,stroke:#e0a458,stroke-width:3px,color:#fff
 ```

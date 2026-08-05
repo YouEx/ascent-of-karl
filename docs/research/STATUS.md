@@ -8,11 +8,11 @@ fra Little Alchemy 1+2, Infinite Craft og 7 alchemy-kloner
 
 ## Vores adoption
 
-| Kategori | Antal | Andel af vores 86 kombinationer |
+| Kategori | Antal | Andel af vores 95 kombinationer |
 |---|---|---|
-| Ingredienspar genfindes i supersettet | 15 | 17% |
-| Resultatet findes (via anden opskrift) | 28 | 33% |
-| Helt egne opfindelser | 43 | 50% |
+| Ingredienspar genfindes i supersettet | 15 | 16% |
+| Resultatet findes (via anden opskrift) | 29 | 31% |
+| Helt egne opfindelser | 51 | 54% |
 
 ## Ingredienspar genfundet i supersettet
 
@@ -62,6 +62,7 @@ fra Little Alchemy 1+2, Infinite Craft og 7 alchemy-kloner
 - `fire + planks = charcoal` — resultatet findes i supersettet (anden opskrift)
 - `roast meat + neighbour = bone` — resultatet findes i supersettet (anden opskrift)
 - `bird + neighbour = feather` — resultatet findes i supersettet (anden opskrift)
+- `feather + feather = wings` — resultatet findes i supersettet (anden opskrift)
 
 ## Egne opfindelser (ikke i supersettet)
 
@@ -108,3 +109,11 @@ fra Little Alchemy 1+2, Infinite Craft og 7 alchemy-kloner
 - `berry juice + pottery = cave brew`
 - `stone + neighbour = standing stone`
 - `berries + round stone = berry juice`
+- `bone + berry juice = herbal remedy`
+- `village + feather cloak = coronation`
+- `stonehenge gig + drum solo = the legend`
+- `visions + cave painting = into the painting`
+- `wings + standing stone = the flight`
+- `first argument + club = the war`
+- `herbal remedy + neighbour = the healing`
+- `mud pie + cave brew = the last supper`

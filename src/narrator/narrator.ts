@@ -218,6 +218,10 @@ export class Narrator {
   private behaviorLine(elapsedMs?: number): string | undefined {
     const { behavior } = this.content();
 
+    // Aldring: advarsler når Karls somre slipper op (nøgle = resterende)
+    const agingHit = behavior.aging?.[String(this.engine.remainingTurns())];
+    if (agingHit) return agingHit;
+
     // Meget langsom: lang pause før netop dette forsøg (med cooldown)
     if (
       elapsedMs !== undefined &&
@@ -288,6 +292,13 @@ export class Narrator {
     this.updateCounters(a, b, outcome, elapsedMs);
     const act = this.engine.currentAct();
     const ctx = { a, b };
+
+    // 0. Slutninger overtrumfer alt — fortællerens sidste ord i dette run
+    const ending = this.engine.activeEnding();
+    if (ending && !this.state.usedOnce.includes(ending.line)) {
+      this.state.usedOnce.push(ending.line);
+      return this.speak(ending.line, ctx);
+    }
 
     // 1. Story-beats (håndskrevne, højeste prioritet)
     if (outcome.kind === "gated" && act.gateLine) return this.speak(act.gateLine, ctx);
