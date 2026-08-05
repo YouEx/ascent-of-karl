@@ -337,7 +337,9 @@
         "Ah, right, my apologies — I momentarily forgot who I'm talking to. Grub Man. Do carry on.",
         "Sorry — force of habit, expecting normal decisions. I forgot this is Grub Man's story now."
       ],
-      "requiresFlags": ["larver"],
+      "requiresFlags": [
+        "larver"
+      ],
       "once": true
     },
     {
@@ -346,7 +348,9 @@
         "I'd love to comment on your strategy, but I can't concentrate for the smell.",
         "Something about your recent... choices... has reached me all the way up here. I'm narrating through my nose now."
       ],
-      "requiresFlags": ["stinker"],
+      "requiresFlags": [
+        "stinker"
+      ],
       "once": true
     },
     {
@@ -412,6 +416,98 @@
         "Reality has reviewed your proposal and voted no.",
         "The laws of nature glance up, shake their heads, and return to work."
       ]
+    },
+    {
+      "id": "story-hjul",
+      "variants": [
+        "THE WHEEL. Do you understand what you've done, Karl? No. No, you're chasing it. Of course you're chasing it.",
+        "A round stone with a hole. It rolls. Karl has just invented the single most important machine part in history, and he's using it as a toy.",
+        "The wheel! Transportation! Industry! Progress! Karl, please stop rolling it at the boar.",
+        "History held its breath. The stone rolled. Karl giggled. That, dear listener, is how the wheel was invented.",
+        "One chiselled hole in one round stone, and suddenly the future has wheels. Karl takes a bow. The wheel rolls away mid-bow."
+      ]
+    },
+    {
+      "id": "story-flintmobil",
+      "variants": [
+        "A car. A foot-powered stone car. Karl steers, Ugh pushes, and somewhere a bedrock-dwelling family's lawyers begin to stir. Yabba dabba don't.",
+        "Behold the Footmobile: zero horsepower, two legpower, infinite confidence. This is either the dawn of the automobile or a very elaborate way to skin one's feet.",
+        "Karl and Ugh climb into the cart, push off with their feet, and scream downhill in history's first car. The brakes are also feet. There are no brakes.",
+        "The stone-age automobile. Fuel economy: berries. Top speed: regrettable. Karl honks. The horn is Ugh saying 'beep'.",
+        "Ten thousand years ahead of schedule, Karl invents the car. It runs on feet, fear, and friendship. Mostly feet."
+      ]
+    },
+    {
+      "id": "story-stenkreds",
+      "variants": [
+        "A circle of standing stones, aligned with the sunrise. Tourists will queue for this in a few thousand years, Karl. Well — for a better one. But still.",
+        "Karl arranges the stones in a great circle and steps back. It's majestic. It's mysterious. It's eighteen inches tall in places, but it's the thought that counts.",
+        "A stone circle! Scholars will one day debate its purpose for centuries. The purpose was 'Karl thought it looked neat'. Please, no one tell the scholars.",
+        "The stones stand in a perfect ring. Karl claims it tracks the sun. It tracks nothing. It's gorgeous and useless, like most monuments.",
+        "Stonehenge, first draft. The boar is already charging admission."
+      ]
+    },
+    {
+      "id": "story-fisk",
+      "variants": [
+        "Karl spears a fish, eats it raw, and announces the word 'sushi'. Ten thousand years too early, and without rice, but the confidence is there.",
+        "A fish! Straight from the river, straight past the fire, straight into Karl. He calls it cuisine. The fish had another word for it.",
+        "Dinner from the river. No cooking, no waiting, no survivors. Karl declares himself a chef. The river declines to comment.",
+        "One spear, one splash, one fish. The hunt Karl was actually built for, it turns out.",
+        "Karl catches a fish and eats it on the spot, raw. Somewhere in the very distant future, a Tokyo chef feels a disturbance."
+      ]
+    },
+    {
+      "id": "story-skind",
+      "variants": [
+        "A hide cloak! Warm, majestic, and only slightly haunted by its previous owner. Karl does a dramatic turn. The cold surrenders.",
+        "Karl wraps himself in boar hide and stops shivering for the first time in this story. Fashion and function, together at last, never to be seen together again.",
+        "Clothing! Karl has invented staying warm without setting anything on fire. Frankly, I didn't think restraint was on the menu.",
+        "The cloak settles on his shoulders and Karl grows three sizes in confidence. He is warm. He is mighty. He is wearing his dinner's jacket.",
+        "Behold: outerwear. The cold retreats, defeated by fashion. Karl practices his cape swirl. There will be many, many cape swirls."
+      ]
+    },
+    {
+      "id": "story-hulemaleri",
+      "variants": [
+        "Art! Karl smears berry juice on stone and steps back, moved. It's either a boar or a sunset. He refuses to explain. All great artists refuse to explain.",
+        "The first cave painting. Critics — one boar — call it 'derivative'. Of what, they cannot say. There is nothing to derive from. It's the first one.",
+        "Karl paints on the rock: himself, but taller, hunting a boar, but smaller. History's first painting is also history's first exaggeration.",
+        "Berry juice on stone, and suddenly Karl is an artist. He signs it with a handprint. The signature is bigger than the painting.",
+        "A painting! In forty-five thousand years, people will stand in queues to look at this sort of thing. Karl's queue is one boar long, and it's leaving."
+      ]
+    },
+    {
+      "id": "story-rockband",
+      "variants": [
+        "Karl on drums, Ugh on backing grunts, and a setlist of hitting things. They call themselves the rolling stones, because the stones roll. I will not be crediting them.",
+        "A rock band. Literally: the instruments are rocks. The audience is a boar. The reviews are grunts. It's still, somehow, better than some festivals I could mention.",
+        "Music is born! Karl drums, Ugh howls, the valley empties. Every great band clears the room before it fills one.",
+        "The stone-age supergroup debuts tonight: one drum, two grunts, zero rhythm. They already have creative differences.",
+        "Karl and Ugh form a band. Their first song is called 'Rock'. Their second song is also called 'Rock'. The album, unbelievably, is called 'Rock'."
+      ]
+    },
+    {
+      "id": "mem-bilist",
+      "variants": [
+        "Careful, everyone — Grand Prix champion coming through. On foot. In a car. Somehow both.",
+        "Ah yes, advice from the valley's only motorist. Do watch your speed, Karl — the pedestrians here bite."
+      ],
+      "requiresFlags": [
+        "bilist"
+      ],
+      "once": true
+    },
+    {
+      "id": "mem-rockstjerne",
+      "variants": [
+        "Sorry, I keep forgetting I'm narrating a rock star now. Should I be louder? More reverb? No?",
+        "The drummer of the valley's loudest — and only — band, everyone. Autographs are handprints, apparently."
+      ],
+      "requiresFlags": [
+        "rockstjerne"
+      ],
+      "once": true
     }
   ],
   "behavior": {
@@ -437,8 +533,24 @@
       "4": "sweep-4",
       "7": "sweep-7"
     },
-    "slow": ["slow-1"]
+    "slow": [
+      "slow-1"
+    ]
   },
-  "flagMemory": ["mem-larver", "mem-stinker"],
-  "genericFailure": ["gf-1", "gf-2", "gf-3", "gf-4", "gf-5", "gf-6", "gf-7", "gf-8"]
+  "flagMemory": [
+    "mem-larver",
+    "mem-stinker",
+    "mem-bilist",
+    "mem-rockstjerne"
+  ],
+  "genericFailure": [
+    "gf-1",
+    "gf-2",
+    "gf-3",
+    "gf-4",
+    "gf-5",
+    "gf-6",
+    "gf-7",
+    "gf-8"
+  ]
 }

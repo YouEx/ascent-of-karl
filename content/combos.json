@@ -1,86 +1,304 @@
 [
   {
-    "pair": ["sten", "sten"],
+    "pair": [
+      "sten",
+      "sten"
+    ],
     "result": "gnister",
     "narratorLine": "story-gnister"
   },
   {
-    "pair": ["gnister", "graes"],
+    "pair": [
+      "gnister",
+      "graes"
+    ],
     "result": "ild",
     "solves": "kulde",
     "narratorLine": "story-ild"
   },
   {
-    "pair": ["sten", "pind"],
+    "pair": [
+      "sten",
+      "pind"
+    ],
     "result": "stenoekse",
     "solves": "vaerktoej",
     "narratorLine": "story-stenoekse"
   },
   {
-    "pair": ["stenoekse", "pind"],
+    "pair": [
+      "stenoekse",
+      "pind"
+    ],
     "result": "spyd",
     "narratorLine": "story-spyd"
   },
   {
-    "pair": ["spyd", "dyr"],
+    "pair": [
+      "spyd",
+      "dyr"
+    ],
     "result": "koed",
     "narratorLine": "story-koed"
   },
   {
-    "pair": ["ild", "koed"],
+    "pair": [
+      "ild",
+      "koed"
+    ],
     "result": "stegt-koed",
     "solves": "sult",
     "narratorLine": "story-stegt-koed"
   },
   {
-    "pair": ["larver", "ild"],
+    "pair": [
+      "larver",
+      "ild"
+    ],
     "result": "ristede-larver",
     "solves": "sult",
-    "setsFlags": ["larver"],
+    "setsFlags": [
+      "larver"
+    ],
     "spor": "komisk",
     "narratorLine": "story-ristede-larver"
   },
   {
-    "pair": ["ler", "vand"],
+    "pair": [
+      "ler",
+      "vand"
+    ],
     "result": "mudder"
   },
   {
-    "pair": ["mudder", "mudder"],
+    "pair": [
+      "mudder",
+      "mudder"
+    ],
     "result": "mudderbad",
-    "setsFlags": ["stinker"],
+    "setsFlags": [
+      "stinker"
+    ],
     "spor": "komisk",
     "narratorLine": "story-mudderbad"
   },
   {
-    "pair": ["ler", "ild"],
+    "pair": [
+      "ler",
+      "ild"
+    ],
     "result": "keramik",
     "narratorLine": "story-keramik"
   },
   {
-    "pair": ["ild", "vand"],
+    "pair": [
+      "ild",
+      "vand"
+    ],
     "result": "damp",
     "narratorLine": "story-damp"
   },
   {
-    "pair": ["stenoekse", "sten"],
+    "pair": [
+      "stenoekse",
+      "sten"
+    ],
     "result": "malm",
     "narratorLine": "story-malm"
   },
   {
-    "pair": ["malm", "ild"],
+    "pair": [
+      "malm",
+      "ild"
+    ],
     "result": "kobber",
     "narratorLine": "story-kobber"
   },
   {
-    "pair": ["kobber", "malm"],
+    "pair": [
+      "kobber",
+      "malm"
+    ],
     "result": "bronze",
     "ageUp": true
   },
   {
-    "pair": ["larver", "ler"],
+    "pair": [
+      "larver",
+      "ler"
+    ],
     "result": "larvefarm",
-    "requiresFlags": ["larver"],
+    "requiresFlags": [
+      "larver"
+    ],
     "spor": "komisk",
     "narratorLine": "story-larvefarm"
+  },
+  {
+    "pair": [
+      "sten",
+      "vand"
+    ],
+    "result": "rullesten"
+  },
+  {
+    "pair": [
+      "rullesten",
+      "stenoekse"
+    ],
+    "result": "hjul",
+    "narratorLine": "story-hjul"
+  },
+  {
+    "pair": [
+      "stamme",
+      "stenoekse"
+    ],
+    "result": "planker"
+  },
+  {
+    "pair": [
+      "planker",
+      "planker"
+    ],
+    "result": "arbejdsbord",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "hjul",
+      "planker"
+    ],
+    "result": "vogn"
+  },
+  {
+    "pair": [
+      "vogn",
+      "nabo"
+    ],
+    "result": "flintmobil",
+    "spor": "komisk",
+    "setsFlags": [
+      "bilist"
+    ],
+    "narratorLine": "story-flintmobil"
+  },
+  {
+    "pair": [
+      "sten",
+      "mudder"
+    ],
+    "result": "bautasten"
+  },
+  {
+    "pair": [
+      "bautasten",
+      "bautasten"
+    ],
+    "result": "stenkreds",
+    "narratorLine": "story-stenkreds"
+  },
+  {
+    "pair": [
+      "dyr",
+      "baer"
+    ],
+    "result": "tamsvin",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "vand",
+      "spyd"
+    ],
+    "result": "fisk",
+    "solves": "sult",
+    "narratorLine": "story-fisk"
+  },
+  {
+    "pair": [
+      "koed",
+      "stenoekse"
+    ],
+    "result": "skind",
+    "solves": "kulde",
+    "setsFlags": [
+      "pelsklaedt"
+    ],
+    "narratorLine": "story-skind"
+  },
+  {
+    "pair": [
+      "baer",
+      "sten"
+    ],
+    "result": "hulemaleri",
+    "setsFlags": [
+      "kunstner"
+    ],
+    "narratorLine": "story-hulemaleri"
+  },
+  {
+    "pair": [
+      "stamme",
+      "pind"
+    ],
+    "result": "tromme"
+  },
+  {
+    "pair": [
+      "tromme",
+      "nabo"
+    ],
+    "result": "rockband",
+    "spor": "komisk",
+    "setsFlags": [
+      "rockstjerne"
+    ],
+    "narratorLine": "story-rockband"
+  },
+  {
+    "pair": [
+      "baer",
+      "keramik"
+    ],
+    "result": "grottebryg"
+  },
+  {
+    "pair": [
+      "grottebryg",
+      "nabo"
+    ],
+    "result": "stenalderfest",
+    "spor": "komisk",
+    "setsFlags": [
+      "festabe"
+    ]
+  },
+  {
+    "pair": [
+      "keramik",
+      "hulemaleri"
+    ],
+    "result": "ven",
+    "spor": "komisk",
+    "requiresFlags": [
+      "kunstner"
+    ]
+  },
+  {
+    "pair": [
+      "pind",
+      "pind"
+    ],
+    "result": "boomerang"
+  },
+  {
+    "pair": [
+      "larvefarm",
+      "nabo"
+    ],
+    "result": "larvebod",
+    "spor": "komisk"
   }
 ]

@@ -81,7 +81,7 @@ describe("Narrator: adfærd", () => {
     const { engine, narrator } = setup();
     const pairs: Array<[string, string]> = [
       ["baer", "ler"], ["baer", "vand"], ["baer", "graes"], ["baer", "larver"],
-      ["baer", "dyr"], ["baer", "pind"], ["larver", "vand"], ["larver", "graes"],
+      ["dyr", "pind"], ["baer", "pind"], ["larver", "vand"], ["larver", "graes"],
       ["larver", "dyr"], ["larver", "pind"], ["vand", "graes"], ["vand", "dyr"],
       ["vand", "pind"], ["graes", "dyr"], ["graes", "pind"], ["graes", "ler"],
     ];
@@ -102,7 +102,7 @@ describe("Narrator: hint-eskalering", () => {
     const seen: string[] = [];
     const pairs: Array<[string, string]> = [
       ["baer", "ler"], ["baer", "vand"], ["baer", "graes"], ["baer", "larver"],
-      ["baer", "dyr"], ["baer", "pind"], ["larver", "vand"], ["larver", "graes"],
+      ["dyr", "ler"], ["baer", "pind"], ["larver", "vand"], ["larver", "graes"],
       ["larver", "dyr"], ["larver", "pind"], ["vand", "graes"], ["vand", "dyr"],
       ["vand", "pind"], ["graes", "dyr"], ["graes", "ler"], ["ler", "pind"],
     ];
@@ -126,7 +126,7 @@ describe("Narrator: hint-eskalering", () => {
       attempt(engine, narrator, a, b);
     }
     attempt(engine, narrator, "sten", "sten"); // opdagelse
-    const line = attempt(engine, narrator, "baer", "dyr");
+    const line = attempt(engine, narrator, "dyr", "pind");
     expect(line?.id).not.toBe("hint-kulde-1");
   });
 });
@@ -200,7 +200,7 @@ describe("Narrator: nye adfærds-triggere", () => {
     const { engine, narrator } = setup();
     const pairs: Array<[string, string]> = [
       ["baer", "ler"], ["vand", "graes"], ["larver", "dyr"],
-      ["baer", "graes"], ["ler", "vand"], ["dyr", "pind"],
+      ["baer", "graes"], ["ler", "pind"], ["dyr", "pind"],
     ];
     let last;
     for (const [a, b] of pairs) last = attempt(engine, narrator, a, b, 500);

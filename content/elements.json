@@ -214,6 +214,212 @@
     "karlMood": "stolt"
   },
   {
+    "id": "stamme",
+    "name": "Log",
+    "emoji": "🪵",
+    "act": 1,
+    "base": true,
+    "flavor": "A fallen tree trunk. Karl has claimed it by sitting on it."
+  },
+  {
+    "id": "nabo",
+    "name": "Neighbour",
+    "emoji": "🧔",
+    "act": 1,
+    "base": true,
+    "flavor": "Another caveman. His name is Ugh. He communicates mostly through disappointed grunts."
+  },
+  {
+    "id": "rullesten",
+    "name": "Round stone",
+    "emoji": "⚪",
+    "act": 1,
+    "flavor": "Polished perfectly round by the river. Karl calls it 'the good rock' and guards it jealously.",
+    "note": "River pebbles really are rounded by erosion — tumbling water does in centuries what a stonemason does in days.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Pebble",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "hjul",
+    "name": "Wheel",
+    "emoji": "🛞",
+    "act": 1,
+    "flavor": "It rolls. It ROLLS. Karl has chased it across the valley twice already.",
+    "note": "The wheel arrived surprisingly late — around 3500 BC in Mesopotamia, long after farming and pottery.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Wheel",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "planker",
+    "name": "Planks",
+    "emoji": "🟫",
+    "act": 1,
+    "flavor": "Flat wood. Karl split a log and is now the valley's leading carpenter, by default.",
+    "note": "The oldest known woodworking, including split planks, predates modern humans — Neanderthals built with wood 400,000 years ago.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Woodworking",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "arbejdsbord",
+    "name": "Crafting table",
+    "emoji": "🟧",
+    "act": 1,
+    "flavor": "Four planks arranged in a square. Karl feels a strange urge to punch a tree.",
+    "note": "A certain block game with crafting tables became the best-selling video game of all time — over 300 million copies.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Minecraft",
+    "karlMood": "forvirret"
+  },
+  {
+    "id": "vogn",
+    "name": "Cart",
+    "emoji": "🛒",
+    "act": 1,
+    "flavor": "Wheels plus planks. It carries things so Karl doesn't have to. Civilization's true purpose, achieved.",
+    "note": "The earliest wagons appear around 3400 BC — and spread across Europe and Mesopotamia within a few centuries.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Wagon",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "flintmobil",
+    "name": "Footmobile",
+    "emoji": "🚗",
+    "act": 1,
+    "flavor": "A foot-powered stone-age car. Ugh rides shotgun. Karl makes engine noises with his mouth. Yabba dabba... something.",
+    "note": "The Flintstones (1960) was the first animated series in TV primetime — and its foot-powered car became an icon.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Flintstones",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "bautasten",
+    "name": "Standing stone",
+    "emoji": "🗿",
+    "act": 1,
+    "flavor": "A tall stone, raised on end for no practical reason. Karl touches it carefully, then throws a bone in the air. He doesn't know why.",
+    "note": "Thousands of menhirs — raised standing stones — dot Europe, some over 6,000 years old. Their purpose is still debated.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Menhir",
+    "karlMood": "forvirret"
+  },
+  {
+    "id": "stenkreds",
+    "name": "Stone circle",
+    "emoji": "🌀",
+    "act": 1,
+    "flavor": "A circle of standing stones. Karl aligned them with the sunrise by accident and takes full credit.",
+    "note": "Stonehenge was built in stages from about 3000 BC — with stones hauled up to 200 kilometres.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Stonehenge",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "tamsvin",
+    "name": "Pet boar",
+    "emoji": "🐖",
+    "act": 1,
+    "flavor": "The boar, bribed with berries into friendship. Karl has named him Dino. He answers to nothing.",
+    "note": "Pigs were domesticated around 8,500 BC — among the first animals after dogs.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Domestic_pig",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "fisk",
+    "name": "Fish",
+    "emoji": "🐟",
+    "act": 1,
+    "flavor": "Speared straight from the river. Karl eats it raw and declares it 'sushi', ten thousand years too early.",
+    "note": "Humans have fished for over 40,000 years — bone analysis of early modern humans shows regular freshwater fish dinners.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_fishing",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "skind",
+    "name": "Hide cloak",
+    "emoji": "🧥",
+    "act": 1,
+    "flavor": "A warm boar hide. Karl wears it like a cape and practices dramatic turns.",
+    "note": "Genetics dates clothing to at least 100,000 years ago — scientists worked it out by studying when clothing lice evolved.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_clothing_and_textiles",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "hulemaleri",
+    "name": "Cave painting",
+    "emoji": "🎨",
+    "act": 1,
+    "flavor": "Berry juice on stone. It's either a boar, a sunset, or Ugh. Karl refuses to explain his art.",
+    "note": "The oldest known cave paintings are over 45,000 years old — found in Sulawesi, Indonesia.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cave_painting",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "tromme",
+    "name": "Drum",
+    "emoji": "🥁",
+    "act": 1,
+    "flavor": "A hollow log plus a stick. Karl has rhythm. The valley disagrees.",
+    "note": "Drums are among humanity's oldest instruments — alligator-skin drums from China date to 5500 BC.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Drum",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "rockband",
+    "name": "Rock band",
+    "emoji": "🎸",
+    "act": 1,
+    "flavor": "Karl on drums, Ugh on backing grunts. They play rocks. They are, literally, a rock band.",
+    "note": "The Rolling Stones formed in 1962 — and are still rolling. Some stones gather no moss.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Rolling_Stones",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "grottebryg",
+    "name": "Cave brew",
+    "emoji": "🍺",
+    "act": 1,
+    "flavor": "Berries, left in a pot slightly too long. Karl calls it juice. The juice disagrees.",
+    "note": "The world's oldest known beer residue is 13,000 years old, found in Raqefet Cave in Israel — possibly older than bread.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_beer",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "stenalderfest",
+    "name": "Stone age party",
+    "emoji": "🎉",
+    "act": 1,
+    "flavor": "Two guests, one brew, infinite confidence. The boar is the bouncer.",
+    "note": "Archaeologists have found evidence of large prehistoric feasts — including a 12,000-year-old burial banquet with 71 tortoises.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Feast",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "ven",
+    "name": "Pot friend",
+    "emoji": "🫙",
+    "act": 1,
+    "flavor": "A pot with a face painted on it. Karl tells it everything. Its name is Wilson.",
+    "note": "In Cast Away (2000), Tom Hanks' best co-star was a volleyball named Wilson — proof that loneliness is a great animator.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cast_Away",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "boomerang",
+    "name": "Boomerang",
+    "emoji": "🪃",
+    "act": 1,
+    "flavor": "A bent stick that comes back. Karl has invented losing things professionally.",
+    "note": "The oldest known boomerang is 23,000 years old, carved from mammoth tusk — found in a cave in Poland.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Boomerang",
+    "karlMood": "forvirret"
+  },
+  {
+    "id": "larvebod",
+    "name": "Grub stand",
+    "emoji": "🏪",
+    "act": 1,
+    "flavor": "The valley's first restaurant. One item on the menu. Two stars, scratched on the rock outside.",
+    "note": "Ready-to-eat street food is ancient — Pompeii alone had around 80 thermopolia, the Roman world's snack bars.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Thermopolium",
+    "karlMood": "stolt"
+  },
+  {
     "id": "korn",
     "name": "Wild grain",
     "emoji": "🌾",

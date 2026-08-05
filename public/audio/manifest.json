@@ -127,7 +127,15 @@
     1,
     2
   ],
+  "mem-bilist": [
+    0,
+    1
+  ],
   "mem-larver": [
+    0,
+    1
+  ],
+  "mem-rockstjerne": [
     0,
     1
   ],
@@ -183,7 +191,35 @@
     3,
     4
   ],
+  "story-fisk": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-flintmobil": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-gnister": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hjul": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hulemaleri": [
     0,
     1,
     2,
@@ -246,6 +282,20 @@
     3,
     4
   ],
+  "story-rockband": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-skind": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-spyd": [
     0,
     1,
@@ -254,6 +304,13 @@
     4
   ],
   "story-stegt-koed": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-stenkreds": [
     0,
     1,
     2,
