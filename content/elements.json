@@ -420,6 +420,394 @@
     "karlMood": "stolt"
   },
   {
+    "id": "mursten",
+    "name": "Mud brick",
+    "emoji": "🧱",
+    "flavor": "Mud and straw, dried hard. Karl stacks two and calls himself an architect.",
+    "note": "Real mud bricks were tempered with straw — the fibres stop them cracking, a trick over 9,000 years old.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Mudbrick",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "hytte",
+    "name": "Hut",
+    "emoji": "🛖",
+    "flavor": "Four walls, one doorway, zero right angles. Karl calls it home. The draft calls it a suggestion.",
+    "note": "The oldest known shelters, like those at Terra Amata in France, are around 400,000 years old.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Terra_Amata_(archaeological_site)",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "landsby",
+    "name": "Village",
+    "emoji": "🏘️",
+    "flavor": "Two huts and a shared complaint about the weather. Civilization, technically.",
+    "note": "Çatalhöyük in Turkey, one of the world's first large villages, housed thousands of people 9,000 years ago — with no streets, people walked on the roofs.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/%C3%87atalh%C3%B6y%C3%BCk",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "nedbraendt-hytte",
+    "name": "Burnt-down hut",
+    "emoji": "🏚️",
+    "flavor": "Karl brought the fire inside to keep the hut warm. The hut is now extremely warm. Karl sits in the ashes insisting this is fine.",
+    "note": "The 'This is fine' dog, sipping coffee in a burning room, comes from KC Green's 2013 comic Gunshow.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Gunshow_(webcomic)",
+    "karlMood": "flov",
+    "act": 1
+  },
+  {
+    "id": "toemmerflaade",
+    "name": "Raft",
+    "emoji": "🏄",
+    "flavor": "A log that floats with Karl on top, mostly in that order.",
+    "note": "Humans reached Australia over 50,000 years ago — a sea crossing that must have required some kind of watercraft.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Prehistory_of_Australia",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "baad",
+    "name": "Canoe",
+    "emoji": "🛶",
+    "flavor": "A hollowed-out log. Karl paddles in circles, but with tremendous dignity.",
+    "note": "The Pesse canoe from the Netherlands is the world's oldest known boat — about 10,000 years old.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Pesse_canoe",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "roeg",
+    "name": "Smoke",
+    "emoji": "🌫️",
+    "flavor": "Fire's grey ghost. It follows Karl around the campfire no matter where he sits.",
+    "note": "Campfire smoke really does seem to follow you — you sit in the low-pressure wake your own body creates.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Campfire",
+    "karlMood": "fornaermet",
+    "act": 1
+  },
+  {
+    "id": "roegsignaler",
+    "name": "Smoke signals",
+    "emoji": "📶",
+    "flavor": "Karl sends Ugh a message in smoke. Ugh, forty metres away, shouts back. Technology has its critics.",
+    "note": "Smoke signals are among the oldest long-distance communication — used from ancient China to North America.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Smoke_signal",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "helligsted",
+    "name": "Shrine",
+    "emoji": "⛩️",
+    "flavor": "A painted stone in a special place. Karl lowers his voice near it. Even the boar walks around it.",
+    "note": "Göbekli Tepe in Turkey — a monumental sanctuary 11,500 years old — was built before farming, upending what we thought came first.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/G%C3%B6bekli_Tepe",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "shaman",
+    "name": "Shaman Ugh",
+    "emoji": "🧙",
+    "flavor": "Ugh has put on a feathered hat and now speaks exclusively in meaningful pauses.",
+    "note": "A 12,000-year-old grave at Hilazon Tachtit in Israel held a woman buried with 50 tortoise shells — likely one of the earliest known shamans.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Hilazon_Tachtit",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "syner",
+    "name": "Visions",
+    "emoji": "🍄",
+    "flavor": "Shaman Ugh drinks the brew and describes colours that don't exist. Karl takes notes on a rock.",
+    "note": "One theory holds that some cave art depicts shamanic trance visions — the debate keeps archaeologists happily furious.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cave_painting",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "kul",
+    "name": "Charcoal",
+    "emoji": "⚫",
+    "flavor": "Burnt wood, black and crumbly. Karl's hands, face and personality are now smudged.",
+    "note": "Charcoal was prehistoric art's favourite pencil — the great beasts of Chauvet Cave were drawn with it 36,000 years ago.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Chauvet_Cave",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "roeget-koed",
+    "name": "Smoked meat",
+    "emoji": "🥓",
+    "flavor": "Meat that met smoke and came out better. Karl has invented the delicatessen counter.",
+    "note": "Smoking is one of humanity's oldest preservation methods — smoke dries the meat and its compounds slow spoilage.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Smoking_(cooking)",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "saft",
+    "name": "Berry juice",
+    "emoji": "🧃",
+    "flavor": "Crushed berries. Karl drinks it, wears it, and paints with it — often in the same motion.",
+    "note": "Fruit pressing predates writing by millennia — the residue of crushed berries turns up on Stone Age grinding stones.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Fruit_press",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "mudderkage",
+    "name": "Mud pie",
+    "emoji": "🥧",
+    "flavor": "Mud, moulded into a cake, decorated with a berry. Karl takes a bite. Karl takes another bite. Narrator files a complaint.",
+    "note": "Eating earth — geophagy — is a real practice worldwide, sometimes for minerals, sometimes against toxins. Rarely for taste.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Geophagia",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "surf-n-turf",
+    "name": "Surf 'n' turf",
+    "emoji": "🍽️",
+    "flavor": "Fish AND meat on the same flat stone. Karl has invented fine dining, pending the invention of prices.",
+    "note": "'Surf and turf' hit American menus in the 1960s — the name for lobster-plus-steak spread from coastal restaurants.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Surf_and_turf",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "knogle",
+    "name": "Bone",
+    "emoji": "🦴",
+    "flavor": "Sturdy, useful, and slightly judgmental to hold. Karl waves it around for emphasis.",
+    "note": "Bone tools go back at least 1.5 million years — early humans were recycling their dinners into equipment.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Bone_tool",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "koelle",
+    "name": "Club",
+    "emoji": "🏏",
+    "flavor": "A bone lashed to a stick. The classic. Karl immediately rests it on his shoulder and feels ancient and mighty.",
+    "note": "The club is likely humanity's oldest weapon — so old that no first example survives, only its image in every cartoon caveman since.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Club_(weapon)",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "slagsmaal",
+    "name": "First argument",
+    "emoji": "💢",
+    "flavor": "Karl and Ugh disagree about a club, loudly, with gestures. They make up minutes later. The club is shared custody now.",
+    "note": "Prehistoric people argued too — skeletal finds show conflicts, but also healed wounds, meaning someone cared for the losers.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Prehistoric_warfare",
+    "karlMood": "flov",
+    "act": 1
+  },
+  {
+    "id": "knoglekast",
+    "name": "Bone toss",
+    "emoji": "🌌",
+    "flavor": "Karl throws the bone triumphantly into the air. For one slow, majestic moment, it seems to mean something enormous. Then it lands on Ugh.",
+    "note": "The bone-to-spaceship match cut in 2001: A Space Odyssey (1968) spans four million years in one frame — often called the greatest cut in film.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/2001:_A_Space_Odyssey",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "fugl",
+    "name": "Bird",
+    "emoji": "🐦",
+    "base": true,
+    "flavor": "Small, loud, and airborne — three things Karl will never be. It mocks him from a branch.",
+    "act": 1
+  },
+  {
+    "id": "foenix",
+    "name": "Phoenix?",
+    "emoji": "🐦‍🔥",
+    "flavor": "The bird flew through the campfire smoke and emerged dramatic and slightly singed. Karl is convinced it's immortal now. The bird milks it.",
+    "note": "The phoenix legend goes back at least to ancient Egypt and Herodotus — a bird reborn from its own ashes.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Phoenix_(mythology)",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "fjer",
+    "name": "Feather",
+    "emoji": "🪶",
+    "flavor": "Soft, elegant, aerodynamic. Karl sticks it behind his ear and becomes 40% more distinguished.",
+    "note": "Feathers were prized long before writing — Neanderthals harvested raptor feathers, apparently just for decoration.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Feather",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "floejte",
+    "name": "Bone flute",
+    "emoji": "🪈",
+    "flavor": "A bird bone with holes. Karl plays three notes: high, low, and regrettable.",
+    "note": "The world's oldest instruments are bird-bone flutes from Hohle Fels in Germany — over 40,000 years old.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Hohle_Fels",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "farvet-skind",
+    "name": "Dyed hide",
+    "emoji": "🧣",
+    "flavor": "The cloak, now berry-red. Karl twirls. The berries did not die in vain.",
+    "note": "Ochre-dyed materials go back over 100,000 years — colour was fashionable before almost anything else.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ochre",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "festdragt",
+    "name": "Feather cloak",
+    "emoji": "🦚",
+    "flavor": "Hide and feathers, worn with unbearable confidence. Karl no longer walks. He arrives.",
+    "note": "Feather cloaks were royal treasures in Hawaii — the ʻahuʻula of King Kamehameha used hundreds of thousands of feathers.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/%CA%BBAh%CA%BB_ula",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "modeshow",
+    "name": "Fashion show",
+    "emoji": "💃",
+    "flavor": "Karl walks the length of the log, turns, and walks back. Ugh holds up a leaf with a number scratched on it. It's a 4.",
+    "note": "The modern fashion show emerged in Paris couture salons around 1900 — the log runway came considerably earlier.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Fashion_show",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "lerfigur",
+    "name": "Clay figurine",
+    "emoji": "🪆",
+    "flavor": "A small clay person. It looks like Ugh, if Ugh were rounder and calmer. Ugh is flattered anyway.",
+    "note": "The Venus of Dolní Věstonice, a 29,000-year-old fired clay figurine, is among the oldest ceramic art on Earth.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Venus_of_Doln%C3%AD_V%C4%9Bstonice",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "haandaftryk",
+    "name": "Handprint wall",
+    "emoji": "🖐️",
+    "flavor": "Karl and Ugh press painted hands against the rock. It says 'we were here' in the oldest language there is.",
+    "note": "Hand stencils are among the most common cave art motifs worldwide — some in Indonesia are almost 40,000 years old.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cave_of_the_Hands",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "stenkoncert",
+    "name": "Stonehenge gig",
+    "emoji": "🤘",
+    "flavor": "The band plays inside the stone circle. Attendance: three. Volume: prehistoric. A tiny model of the venue would have been cheaper.",
+    "note": "In This Is Spinal Tap (1984), a mix-up delivers an 18-inch Stonehenge prop instead of 18 feet — comedy's greatest unit-conversion error.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/This_Is_Spinal_Tap",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "trommesolo",
+    "name": "Drum solo",
+    "emoji": "🎶",
+    "flavor": "Karl plays both drums at once. Time loses meaning. The boar leaves the venue.",
+    "note": "The marathon drum solo became rock legend with Led Zeppelin's 'Moby Dick' — live versions ran past twenty minutes.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Moby_Dick_(instrumental)",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "galleri",
+    "name": "Cave gallery",
+    "emoji": "🖼️",
+    "flavor": "Two paintings side by side. Karl stands back, squints, and moves one a finger-width to the left. Perfect.",
+    "note": "Lascaux's painted halls are nicknamed 'the Sistine Chapel of prehistory' — nearly 600 animals across its walls.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Lascaux",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "garage",
+    "name": "Garage",
+    "emoji": "🅿️",
+    "flavor": "A hut for the footmobile. The footmobile now lives better than Karl.",
+    "note": "As cars spread around 1900, houses grew garages — often converted from carriage houses and stables.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Garage_(residential)",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "drive-in",
+    "name": "Drive-in",
+    "emoji": "🎬",
+    "flavor": "Karl and Ugh park the footmobile in front of the cave paintings and watch them in silence. Ugh shushes the boar.",
+    "note": "The first drive-in theatre opened in New Jersey in 1933 — the screen was nailed to trees.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Drive-in_theater",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "trafikprop",
+    "name": "Traffic jam",
+    "emoji": "🚦",
+    "flavor": "Both footmobiles meet on the valley's only path. Neither will reverse. History's first traffic jam is now entering its third hour.",
+    "note": "Traffic congestion predates the car — ancient Rome banned daytime carts because of it.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Traffic_congestion",
+    "karlMood": "fornaermet",
+    "act": 1
+  },
+  {
+    "id": "stenspil",
+    "name": "Boules",
+    "emoji": "🎳",
+    "flavor": "Roll the round stone closest to the stick. Karl loses to Ugh eleven times and demands a twelfth.",
+    "note": "Throwing-stone games are ancient — the French pétanque descends from games the Romans already played.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/P%C3%A9tanque",
+    "karlMood": "fornaermet",
+    "act": 1
+  },
+  {
+    "id": "brydekamp",
+    "name": "Wrestling match",
+    "emoji": "🤼",
+    "flavor": "Karl versus Ugh, best of three falls. The boar referees, poorly.",
+    "note": "Wrestling may be the world's oldest sport — 15,000-year-old cave paintings in France appear to show wrestlers.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Wrestling",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "kaelk",
+    "name": "Sledge",
+    "emoji": "🛷",
+    "flavor": "Planks that slide. Karl hauls it uphill for an hour for six seconds of pure joy. Worth it.",
+    "note": "Sledges are older than wheels — heavy loads were dragged on runners millennia before anyone thought to roll them.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sled",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "toemmermaend",
+    "name": "Hangover",
+    "emoji": "🤕",
+    "flavor": "Karl and Ugh drank the whole pot. The sun is too loud. The grass is too loud. Ugh's breathing is DEFINITELY too loud.",
+    "note": "Hangover cures are as old as brewing — ancient remedies included raw eel and, in Mesopotamia, beer for breakfast.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Hangover",
+    "karlMood": "flov",
+    "act": 1
+  },
+  {
     "id": "korn",
     "name": "Wild grain",
     "emoji": "🌾",

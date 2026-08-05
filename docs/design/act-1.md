@@ -15,7 +15,23 @@ kombinationsmuligheder som muligt, inkl. skøre grene og pop culture.*
 
 Age-up: kobber + malm → bronze (uændret).
 
-## Spor og grene (44 elementer, 34 kombinationer)
+## Spor og grene (85 elementer, 86 kombinationer — bølge 1 af 200+-målet)
+
+> Overblik: se den auto-genererede graf i `act-1-graf.md`
+> (regenerér med `python3 tools/story_graph.py`). Adoption fra
+> research-supersettet spores i `../research/STATUS.md`.
+
+Bølge 1-spor (2026-08-05): **bolig** (mursten → hytte → landsby, hytte løser
+kulde; nedbrændt hytte = "this is fine"), **røg/ånd** (røg → røgsignaler;
+helligsted → shaman Ugh → syner), **knogle/jagt** (knogle → kølle →
+slagsmål; knoglekast = 2001-cut), **fugle** (føniks, fjer → festdragt →
+modeshow), **mad 2.0** (røget kød, saft, mudderkage der løser sult komisk,
+surf'n'turf), **kunst/musik 2.0** (lerfigur, håndaftryk, galleri, fløjte,
+Stonehenge-koncert = Spinal Tap, trommesolo), **transport 2.0** (tømmerflåde
+→ kano, kælk, garage, drive-in, trafikprop), **sport** (stenspil,
+brydekamp), **tømmermænd** — plus 14 alternative opskrifter, så centrale
+opdagelser kan ræsonneres ad flere veje (fx ild via gnister+pind,
+hulemaleri via kul+sten).
 
 - **Hovedsporet**: gnister → ild → økse → spyd → kød → stegt kød → malm →
   kobber → bronze.

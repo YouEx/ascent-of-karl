@@ -135,6 +135,14 @@
     0,
     1
   ],
+  "mem-modeikon": [
+    0,
+    1
+  ],
+  "mem-mudderspiser": [
+    0,
+    1
+  ],
   "mem-rockstjerne": [
     0,
     1
@@ -191,6 +199,13 @@
     3,
     4
   ],
+  "story-drive-in": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-fisk": [
     0,
     1,
@@ -226,6 +241,13 @@
     3,
     4
   ],
+  "story-hytte": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-ild": [
     0,
     1,
@@ -254,6 +276,13 @@
     3,
     4
   ],
+  "story-landsby": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-larvefarm": [
     0,
     1,
@@ -269,6 +298,13 @@
     4
   ],
   "story-mudderbad": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-mudderkage": [
     0,
     1,
     2,
@@ -304,6 +340,13 @@
     4
   ],
   "story-stegt-koed": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-stenkoncert": [
     0,
     1,
     2,

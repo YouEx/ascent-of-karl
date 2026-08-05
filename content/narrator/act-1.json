@@ -508,6 +508,78 @@
         "rockstjerne"
       ],
       "once": true
+    },
+    {
+      "id": "story-hytte",
+      "variants": [
+        "A hut! Walls! A roof! An indoors! Karl steps inside, listens to the wind NOT hitting him, and laughs like a madman. Home ownership does that.",
+        "Karl stacks mud bricks into a hut and stands in the doorway, arms crossed, radiating landlord energy. The cold has been evicted.",
+        "Four walls and a roof — Karl has invented 'inside'. He immediately goes back out to experience coming in again.",
+        "The hut is finished. It's crooked, it's cramped, and rain gets in on one side. Karl gives it five stars. He's the only reviewer.",
+        "Shelter, at last. Karl sleeps indoors tonight. The boar sleeps in the doorway. Nobody discussed this. It simply happened."
+      ]
+    },
+    {
+      "id": "story-landsby",
+      "variants": [
+        "Two huts. TWO. That's not a camp anymore, that's a village, with everything that entails: neighbours, gossip, and a shared opinion about the weather.",
+        "Ugh builds his hut next to Karl's, and civilization crosses an invisible line. Population: two. Committees: pending.",
+        "A village! Karl and Ugh now argue about where the path should go. There is no path. That's what the argument is about.",
+        "The settlement grows to two households. Karl calls it a city. I call it two huts. History will split the difference and call it a village.",
+        "Two huts, one shared fire, and the first unspoken agreement about whose turn it is to fetch water. Society has begun. May it forgive us."
+      ]
+    },
+    {
+      "id": "story-mudderkage",
+      "variants": [
+        "He's eating the mud. The mud pie was decorative, Karl. It was DECORATIVE. ...He's going in for seconds. Hunger: technically solved. Standards: unaccounted for.",
+        "A mud pie, with a berry on top for garnish. Karl eats it with the satisfaction of a man who has never been told no. I'm telling him no. He can't hear me.",
+        "Of all the food this valley offers — fish, meat, berries — Karl fills up on seasoned dirt. I've narrated extinctions with more dignity.",
+        "The mud pie is consumed. Karl pats his stomach, content. Somewhere, the concept of cuisine quietly weeps into its apron.",
+        "Hunger, defeated — by mud. Wars will be fought, empires will rise, and I will still be thinking about this moment."
+      ]
+    },
+    {
+      "id": "story-stenkoncert",
+      "variants": [
+        "The band plays inside the stone circle tonight. The acoustics are ancient, the crowd is one boar, and the stage is, mercifully, actual size.",
+        "A concert at the stone circle! The monument towers majestically over the band — which is more than can be said for certain other Stonehenge stage props.",
+        "Karl drums, Ugh grunts, the standing stones stand. It's the biggest gig in history. It is also the only gig in history.",
+        "Tonight only: live at the megalith! The band performs their entire catalogue — 'Rock' — twice. The stones do not dance. The boar does. A little.",
+        "The stone circle hosts its first concert. Attendance is three, if you count the shaman hat. Reviews call it 'loud' and 'over'."
+      ]
+    },
+    {
+      "id": "story-drive-in",
+      "variants": [
+        "Karl and Ugh park the footmobile in front of the painted wall and just... watch. Nobody speaks. The boar sells no popcorn, because popcorn hasn't been invented, and because he's a boar.",
+        "The drive-in is born: one car, one cave painting, two silent men watching art from their vehicle. Cinema had to start somewhere.",
+        "They drive TO the paintings. They could walk. It's eight metres. But no — this is a drive-in now, and some rituals matter.",
+        "The footmobile rolls to a stop before the gallery wall. Karl honks — Ugh says 'beep' — and the world's first movie night begins.",
+        "Two men, one stone car, and a wall of painted boars. They watch until the fire burns low. Then they watch a little longer. Art, ladies and gentlemen."
+      ]
+    },
+    {
+      "id": "mem-mudderspiser",
+      "variants": [
+        "Says the man who ate a mud pie. Voluntarily. With garnish.",
+        "I'd question this decision, but you once ate decorative mud, so the bar is subterranean."
+      ],
+      "requiresFlags": [
+        "mudderspiser"
+      ],
+      "once": true
+    },
+    {
+      "id": "mem-modeikon",
+      "variants": [
+        "Advice from the valley's leading fashion icon, everyone. The feathers ARE flattering, I'll give him that.",
+        "Careful — that opinion comes from a man Ugh once scored a 4. Out of an unspecified maximum."
+      ],
+      "requiresFlags": [
+        "modeikon"
+      ],
+      "once": true
     }
   ],
   "behavior": {
@@ -541,7 +613,9 @@
     "mem-larver",
     "mem-stinker",
     "mem-bilist",
-    "mem-rockstjerne"
+    "mem-rockstjerne",
+    "mem-mudderspiser",
+    "mem-modeikon"
   ],
   "genericFailure": [
     "gf-1",

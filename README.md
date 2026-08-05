@@ -39,5 +39,10 @@ npm run build      # typecheck + produktion-build
 - [x] Fortæller-audio — pre-genereret scratch-voice (Edge TTS, 168 filer,
       ~9 MB) med manifest, ducking og autoplay-håndtering
       (`tools/generate_audio.py`)
-- [ ] Step 4 — vertical slice: art, lyd, voice, polish
-- Akt I er spilbar med 23 elementer, 15 kombinationer og 150+ fortæller-varianter
+- [x] Akt I-fokus (se `ROADMAP.md` + `docs/design/act-1.md`): 85 elementer,
+      86 kombinationer, 236 fortæller-varianter — på vej mod 200+ kombinationer
+- [x] Research-superset: 14.913 opskrifter fra genren som idébank
+      (`docs/research/`), adoption spores i `STATUS.md`
+- [x] Story-grafer (`docs/design/act-1-graf.md`, auto-genereret) og
+      GitHub Pages-deploy-workflow
+- [ ] Step 4 — vertical slice: art, lyd, voice, polish (se `ROADMAP.md`)

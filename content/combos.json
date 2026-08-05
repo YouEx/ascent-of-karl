@@ -300,5 +300,408 @@
     ],
     "result": "larvebod",
     "spor": "komisk"
+  },
+  {
+    "pair": [
+      "mudder",
+      "graes"
+    ],
+    "result": "mursten"
+  },
+  {
+    "pair": [
+      "mursten",
+      "mursten"
+    ],
+    "result": "hytte",
+    "solves": "kulde",
+    "narratorLine": "story-hytte"
+  },
+  {
+    "pair": [
+      "hytte",
+      "nabo"
+    ],
+    "result": "landsby",
+    "narratorLine": "story-landsby"
+  },
+  {
+    "pair": [
+      "hytte",
+      "ild"
+    ],
+    "result": "nedbraendt-hytte",
+    "spor": "komisk",
+    "setsFlags": [
+      "brandstifter"
+    ]
+  },
+  {
+    "pair": [
+      "stamme",
+      "vand"
+    ],
+    "result": "toemmerflaade"
+  },
+  {
+    "pair": [
+      "toemmerflaade",
+      "stenoekse"
+    ],
+    "result": "baad"
+  },
+  {
+    "pair": [
+      "ild",
+      "graes"
+    ],
+    "result": "roeg"
+  },
+  {
+    "pair": [
+      "roeg",
+      "nabo"
+    ],
+    "result": "roegsignaler"
+  },
+  {
+    "pair": [
+      "hulemaleri",
+      "bautasten"
+    ],
+    "result": "helligsted"
+  },
+  {
+    "pair": [
+      "nabo",
+      "helligsted"
+    ],
+    "result": "shaman"
+  },
+  {
+    "pair": [
+      "shaman",
+      "grottebryg"
+    ],
+    "result": "syner",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "ild",
+      "stamme"
+    ],
+    "result": "kul"
+  },
+  {
+    "pair": [
+      "koed",
+      "roeg"
+    ],
+    "result": "roeget-koed"
+  },
+  {
+    "pair": [
+      "baer",
+      "vand"
+    ],
+    "result": "saft"
+  },
+  {
+    "pair": [
+      "mudder",
+      "baer"
+    ],
+    "result": "mudderkage",
+    "solves": "sult",
+    "spor": "komisk",
+    "setsFlags": [
+      "mudderspiser"
+    ],
+    "narratorLine": "story-mudderkage"
+  },
+  {
+    "pair": [
+      "fisk",
+      "stegt-koed"
+    ],
+    "result": "surf-n-turf",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "dyr",
+      "stenoekse"
+    ],
+    "result": "knogle"
+  },
+  {
+    "pair": [
+      "knogle",
+      "pind"
+    ],
+    "result": "koelle"
+  },
+  {
+    "pair": [
+      "koelle",
+      "nabo"
+    ],
+    "result": "slagsmaal",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "knogle",
+      "bautasten"
+    ],
+    "result": "knoglekast",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "fugl",
+      "ild"
+    ],
+    "result": "foenix",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "fugl",
+      "boomerang"
+    ],
+    "result": "fjer"
+  },
+  {
+    "pair": [
+      "knogle",
+      "fugl"
+    ],
+    "result": "floejte"
+  },
+  {
+    "pair": [
+      "skind",
+      "baer"
+    ],
+    "result": "farvet-skind"
+  },
+  {
+    "pair": [
+      "fjer",
+      "skind"
+    ],
+    "result": "festdragt"
+  },
+  {
+    "pair": [
+      "festdragt",
+      "nabo"
+    ],
+    "result": "modeshow",
+    "spor": "komisk",
+    "setsFlags": [
+      "modeikon"
+    ]
+  },
+  {
+    "pair": [
+      "ler",
+      "nabo"
+    ],
+    "result": "lerfigur"
+  },
+  {
+    "pair": [
+      "hulemaleri",
+      "nabo"
+    ],
+    "result": "haandaftryk"
+  },
+  {
+    "pair": [
+      "rockband",
+      "stenkreds"
+    ],
+    "result": "stenkoncert",
+    "spor": "komisk",
+    "narratorLine": "story-stenkoncert"
+  },
+  {
+    "pair": [
+      "tromme",
+      "tromme"
+    ],
+    "result": "trommesolo",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "hulemaleri",
+      "hulemaleri"
+    ],
+    "result": "galleri"
+  },
+  {
+    "pair": [
+      "flintmobil",
+      "hytte"
+    ],
+    "result": "garage",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "flintmobil",
+      "hulemaleri"
+    ],
+    "result": "drive-in",
+    "spor": "komisk",
+    "narratorLine": "story-drive-in"
+  },
+  {
+    "pair": [
+      "flintmobil",
+      "flintmobil"
+    ],
+    "result": "trafikprop",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "rullesten",
+      "rullesten"
+    ],
+    "result": "stenspil",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "nabo",
+      "nabo"
+    ],
+    "result": "brydekamp",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "planker",
+      "stamme"
+    ],
+    "result": "kaelk"
+  },
+  {
+    "pair": [
+      "grottebryg",
+      "grottebryg"
+    ],
+    "result": "toemmermaend",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "gnister",
+      "pind"
+    ],
+    "result": "ild",
+    "solves": "kulde",
+    "narratorLine": "story-ild"
+  },
+  {
+    "pair": [
+      "mudder",
+      "ild"
+    ],
+    "result": "keramik",
+    "narratorLine": "story-keramik"
+  },
+  {
+    "pair": [
+      "rullesten",
+      "pind"
+    ],
+    "result": "hjul",
+    "narratorLine": "story-hjul"
+  },
+  {
+    "pair": [
+      "kul",
+      "sten"
+    ],
+    "result": "hulemaleri",
+    "narratorLine": "story-hulemaleri"
+  },
+  {
+    "pair": [
+      "skind",
+      "keramik"
+    ],
+    "result": "tromme"
+  },
+  {
+    "pair": [
+      "toemmerflaade",
+      "spyd"
+    ],
+    "result": "fisk",
+    "solves": "sult",
+    "narratorLine": "story-fisk"
+  },
+  {
+    "pair": [
+      "saft",
+      "keramik"
+    ],
+    "result": "grottebryg"
+  },
+  {
+    "pair": [
+      "sten",
+      "nabo"
+    ],
+    "result": "bautasten"
+  },
+  {
+    "pair": [
+      "hjul",
+      "hjul"
+    ],
+    "result": "vogn"
+  },
+  {
+    "pair": [
+      "ild",
+      "ild"
+    ],
+    "result": "roeg"
+  },
+  {
+    "pair": [
+      "ild",
+      "planker"
+    ],
+    "result": "kul"
+  },
+  {
+    "pair": [
+      "baer",
+      "rullesten"
+    ],
+    "result": "saft"
+  },
+  {
+    "pair": [
+      "stegt-koed",
+      "nabo"
+    ],
+    "result": "knogle"
+  },
+  {
+    "pair": [
+      "fugl",
+      "nabo"
+    ],
+    "result": "fjer"
   }
 ]

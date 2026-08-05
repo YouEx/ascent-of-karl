@@ -80,7 +80,7 @@ describe("Narrator: adfærd", () => {
   it("ingen replik gentages to gange i træk over en lang fiasko-række", () => {
     const { engine, narrator } = setup();
     const pairs: Array<[string, string]> = [
-      ["baer", "ler"], ["baer", "vand"], ["baer", "graes"], ["baer", "larver"],
+      ["baer", "ler"], ["baer", "pind"], ["baer", "graes"], ["baer", "larver"],
       ["dyr", "pind"], ["baer", "pind"], ["larver", "vand"], ["larver", "graes"],
       ["larver", "dyr"], ["larver", "pind"], ["vand", "graes"], ["vand", "dyr"],
       ["vand", "pind"], ["graes", "dyr"], ["graes", "pind"], ["graes", "ler"],
@@ -101,7 +101,7 @@ describe("Narrator: hint-eskalering", () => {
     const { engine, narrator } = setup();
     const seen: string[] = [];
     const pairs: Array<[string, string]> = [
-      ["baer", "ler"], ["baer", "vand"], ["baer", "graes"], ["baer", "larver"],
+      ["baer", "ler"], ["baer", "pind"], ["baer", "graes"], ["baer", "larver"],
       ["dyr", "ler"], ["baer", "pind"], ["larver", "vand"], ["larver", "graes"],
       ["larver", "dyr"], ["larver", "pind"], ["vand", "graes"], ["vand", "dyr"],
       ["vand", "pind"], ["graes", "dyr"], ["graes", "ler"], ["ler", "pind"],
@@ -121,7 +121,7 @@ describe("Narrator: hint-eskalering", () => {
   it("en opdagelse nulstiller hint-tælleren", () => {
     const { engine, narrator } = setup();
     for (const [a, b] of [
-      ["baer", "ler"], ["baer", "vand"], ["baer", "graes"], ["baer", "larver"],
+      ["baer", "ler"], ["baer", "pind"], ["baer", "graes"], ["baer", "larver"],
     ] as const) {
       attempt(engine, narrator, a, b);
     }
@@ -139,7 +139,7 @@ describe("Narrator: flag-hukommelse", () => {
     attempt(engine, narrator, "larver", "ild"); // sætter flag "larver"
     const first = attempt(engine, narrator, "baer", "ler");
     expect(first?.id).toBe("mem-larver");
-    const second = attempt(engine, narrator, "baer", "vand");
+    const second = attempt(engine, narrator, "baer", "pind");
     expect(second?.id).not.toBe("mem-larver");
   });
 
@@ -189,7 +189,7 @@ describe("Narrator: nye adfærds-triggere", () => {
   it("samme element mod alt muligt udløser sweep med elementnavnet indsat", () => {
     const { engine, narrator } = setup();
     attempt(engine, narrator, "baer", "ler");
-    attempt(engine, narrator, "baer", "vand");
+    attempt(engine, narrator, "baer", "pind");
     attempt(engine, narrator, "baer", "graes");
     const line = attempt(engine, narrator, "baer", "larver");
     expect(line?.id).toBe("sweep-4");
@@ -210,7 +210,7 @@ describe("Narrator: nye adfærds-triggere", () => {
   it("en meget lang pause udløser slow-replikken", () => {
     const { engine, narrator } = setup();
     attempt(engine, narrator, "baer", "ler", 1000);
-    const line = attempt(engine, narrator, "baer", "vand", 60_000);
+    const line = attempt(engine, narrator, "baer", "pind", 60_000);
     expect(line?.id).toBe("slow-1");
   });
 
@@ -218,7 +218,7 @@ describe("Narrator: nye adfærds-triggere", () => {
     const { engine, narrator } = setup();
     const first = attempt(engine, narrator, "baer", "ler", 60_000);
     expect(first?.id).toBe("slow-1");
-    const second = attempt(engine, narrator, "baer", "vand", 60_000);
+    const second = attempt(engine, narrator, "baer", "pind", 60_000);
     expect(second?.id).not.toBe("slow-1");
   });
 });
