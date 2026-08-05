@@ -1,28 +1,28 @@
 {
   "act": 1,
-  "name": "Stenalderen",
+  "name": "The Stone Age",
   "introLine": "intro-act-1",
   "gateLine": "gate-act-1",
   "ageUpLine": "ageup-act-1",
   "problems": [
     {
       "id": "kulde",
-      "name": "Karl fryser",
-      "description": "Det er koldt på steppen. Karls gåsehud har fået gåsehud.",
+      "name": "Karl is freezing",
+      "description": "It's cold on the steppe. Karl's goosebumps have goosebumps.",
       "required": true,
       "hints": ["hint-kulde-1", "hint-kulde-2", "hint-kulde-3"]
     },
     {
       "id": "vaerktoej",
-      "name": "Bare næver",
-      "description": "Karl har to hænder og nul redskaber. Naturen griner ad ham.",
+      "name": "Bare hands",
+      "description": "Karl has two hands and zero tools. Nature is laughing at him.",
       "required": true,
       "hints": ["hint-vaerktoej-1", "hint-vaerktoej-2", "hint-vaerktoej-3"]
     },
     {
       "id": "sult",
-      "name": "Karl er sulten",
-      "description": "Karls mave knurrer så højt, at vildsvinet holder afstand.",
+      "name": "Karl is hungry",
+      "description": "Karl's stomach growls so loudly the boar keeps its distance.",
       "required": true,
       "hints": ["hint-sult-1", "hint-sult-2", "hint-sult-3"]
     }

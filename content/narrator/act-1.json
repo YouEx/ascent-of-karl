@@ -1,169 +1,417 @@
 {
   "act": 1,
+  "resumeLine": "resume-1",
   "lines": [
     {
       "id": "intro-act-1",
-      "text": "I begyndelsen var der Karl. Historien havde bedt om en helt. Den fik Karl. Han fryser, han er sulten, og han har netop tabt en sten på sin egen fod. Lad os se, hvad menneskeheden kan blive til."
+      "variants": [
+        "In the beginning, there was Karl. History asked for a hero. It got Karl. He's cold, he's hungry, and he has just dropped a rock on his own foot. Let's see what humanity becomes.",
+        "Welcome to the dawn of civilization. Population: one Karl. Current achievements: none. Current injuries: one stubbed toe. I have such high hopes.",
+        "Every great story begins somewhere. This one begins with a shivering man staring at a rock as if it owed him money. Onward, humanity.",
+        "Ah, the Stone Age. Endless possibility. Untouched wilderness. And Karl, who has spent the morning tasting rocks. We begin.",
+        "History will remember this moment. Unfortunately, I'm the one who has to narrate it: one cold, hungry man, two empty hands, and one deeply suspicious boar. Let us begin."
+      ]
+    },
+    {
+      "id": "resume-1",
+      "variants": [
+        "Oh. You're back. Karl waited. So did I. Nobody ever asks about me.",
+        "Look who returned. Karl hasn't moved. Neither, technically, has history.",
+        "Back again? Excellent. Karl spent the interim breathing loudly and losing a staring contest with the boar."
+      ]
     },
     {
       "id": "story-gnister",
-      "text": "Gnister! Karl slår to sten mod hinanden, og universet belønner ham med bittesmå stjerner. Det er det klogeste, han har gjort i dag. Det siger mest om dagen."
+      "variants": [
+        "Sparks! Karl smashes two stones together and the universe rewards him with tiny stars. It's the smartest thing he's done all day. That says more about the day.",
+        "Behold: sparks. Two rocks, one collision, a fleeting shower of light. Karl applauds. The rocks remain unimpressed.",
+        "He strikes stone against stone and — light! Brief, useless, beautiful light. Somewhere, the concept of fireworks just shuddered.",
+        "Sparks fly. Karl gasps. I gasp. The boar leaves. Progress smells like flint.",
+        "Two stones, struck together. Tiny stars, gone in half a second. Karl will be doing this for the next hour, mark my words."
+      ]
     },
     {
       "id": "story-ild",
-      "text": "ILD! Menneskehedens første store opfindelse! Karl stirrer ind i flammerne med et udtryk, som om ilden opfandt ham. Lad os for historiens skyld sige, det var omvendt."
+      "variants": [
+        "FIRE! Humanity's first great invention! Karl stares into the flames as though the fire invented him. For history's sake, let's say it was the other way round.",
+        "And there it was: fire. Warmth. Light. The end of raw everything. Karl pokes it immediately. Some lessons must be learned personally.",
+        "Fire! The single most important discovery of this age, and Karl found it. I'll be honest — I had money on the boar.",
+        "The grass catches, the flames rise, and Karl performs what historians will one day call a 'victory dance'. Fire, ladies and gentlemen. We have fire.",
+        "A spark, some dry grass, and suddenly: civilization's pilot light. Karl warms his hands and grins like he planned this all along. He did not."
+      ]
     },
     {
       "id": "story-stenoekse",
-      "text": "En sten. På en pind. Jeg ved godt, det ikke lyder af meget — men vis lidt respekt. Det er bogstaveligt talt banebrydende."
+      "variants": [
+        "A rock. On a stick. I know it doesn't sound like much — but show some respect. That right there is literally groundbreaking.",
+        "Karl ties a stone to a stick and holds it up like a newborn. The axe. Humanity's first subscription to tools.",
+        "Stone plus stick equals axe. Simple arithmetic, monumental consequences. Karl swings it once and nearly redefines his own timeline.",
+        "The axe is invented! Trees everywhere grow nervous. Karl mostly plans to use it for pointing at things.",
+        "An axe! Genuine technology! Karl is so proud he shows it to the boar, who was frankly expecting worse."
+      ]
     },
     {
       "id": "story-spyd",
-      "text": "Et spyd! Fremragende. Nu kan Karl ramme ved siden af på meget længere afstand."
+      "variants": [
+        "A spear! Excellent. Now Karl can miss things from much greater distances.",
+        "Sharp on one end, Karl on the other. History calls this a spear. I call it optimism with a handle.",
+        "The spear is born. Karl held the wrong end first — but only for a while, and that's what counts.",
+        "Pointy stick technology, achieved. Every predator in the valley has just been politely informed.",
+        "Karl sharpens a stick into a spear and immediately practices his heroic pose. The hunting can wait. The pose cannot."
+      ]
     },
     {
       "id": "story-koed",
-      "text": "Karl har nedlagt et vildsvin. Vildsvinet var muligvis mest af alt overrasket. Men et bytte er et bytte, og historien dømmer ikke. Det gør jeg."
+      "variants": [
+        "Karl has brought down a boar. The boar, frankly, seemed mostly surprised. But a catch is a catch, and history doesn't judge. I do.",
+        "Meat! Actual meat! The hunt was brief, undignified, and involved a great deal of screaming — from Karl — but the result speaks for itself.",
+        "Against every prediction, including mine, Karl has hunted successfully. The valley is quieter now. Also slightly more respectful.",
+        "The boar underestimated Karl. To be fair, so did I. So did Karl. Dinner is served regardless.",
+        "One spear, one boar, one very lucky throw. History will call it skill. We were both there. It wasn't."
+      ]
     },
     {
       "id": "story-stegt-koed",
-      "text": "Duften af stegt kød breder sig over steppen. Et sted langt ude i fremtiden begynder nogen så småt at opfinde restaurantanmeldelser."
+      "variants": [
+        "The smell of roast meat drifts across the steppe. Somewhere far in the future, someone begins inventing restaurant reviews.",
+        "Fire plus meat. Karl has invented cooking, and with it, the concept of dinner being worth waiting for.",
+        "Roast meat! Crispy outside, juicy inside, invented by a man who yesterday ate a beetle by accident. Growth.",
+        "Cooking, achieved. Karl takes one bite and makes a sound I can only describe as prehistoric joy.",
+        "He holds the meat over the flames and — civilization advances one delicious step. Raw food's long reign is over."
+      ]
     },
     {
       "id": "story-ristede-larver",
-      "text": "Larver. Han valgte... larverne. Der var en hel jagtscene planlagt, et helt måltid, men nej. Udmærket. Jeg noterer det. Historien noterer det. Larvemanden."
+      "variants": [
+        "Grubs. He chose... the grubs. There was a whole hunting scene planned. A whole meal. But no. Fine. I'm noting it down. History is noting it down. Grub Man.",
+        "Roasted grubs. Crispy, apparently. Nutty, apparently. I wouldn't know. I'm a narrator, and right now a deeply disappointed one.",
+        "He roasts the grubs. He eats the grubs. He says 'mmm'. I say nothing, very loudly. Grub Man.",
+        "Of all the paths history could take, Karl picks the one paved with roasted larvae. Bold. Wrong, but bold.",
+        "Dinner is served: grubs à la campfire. Karl looks proud. The boar looks relieved. I look for a different story to narrate."
+      ]
     },
     {
       "id": "story-mudderbad",
-      "text": "Karl ruller sig i mudderet med en entusiasme, jeg sidst har set hos vildsvinet. Lugten kommer til at følge os begge resten af fortællingen."
+      "variants": [
+        "Karl rolls in the mud with an enthusiasm I last saw in the boar. That smell will follow us both for the rest of this story.",
+        "A mud bath. He calls it skincare. The boar nods in professional approval. I shall breathe through my mouth from now on.",
+        "Karl discovers the mud bath and commits to it completely. Completely. There is mud in places history dare not describe.",
+        "Behold: the exact opposite of hygiene, performed with the confidence of a spa visit. The smell now arrives before he does.",
+        "He wallows. There is no kinder word. The boar takes notes. I take a step back. Everyone grows today."
+      ]
     },
     {
       "id": "story-keramik",
-      "text": "Brændt ler! Karl har opfundet keramik — og dermed, med tiden, arvestykker ingen tør smide ud."
+      "variants": [
+        "Baked clay! Karl has invented pottery — and with it, eventually, heirlooms nobody dares throw away.",
+        "Fire plus clay makes pottery. Karl's first pot is crooked, lopsided, and he loves it more than anything he owns. Which is a pot.",
+        "Pottery! Humanity can now store water, grain, and — give it a few millennia — decorative pebbles.",
+        "The clay hardens in the fire, and Karl holds up history's first pot. It leans. So does he. A matched set.",
+        "Karl bakes clay into a bowl and stares at it, awed. Ten thousand years from now, someone will pay a fortune for worse."
+      ]
     },
     {
       "id": "story-damp",
-      "text": "Vand på ild. Det hvæser, det damper, det forsvinder. Husk dette øjeblik. Jeg siger ikke hvorfor. Men husk det."
+      "variants": [
+        "Water on fire. It hisses, it steams, it vanishes. Remember this moment. I won't say why. But remember it.",
+        "The water hisses away into steam. Karl is deeply offended on the water's behalf. One day — no. Not yet. Forget I said anything.",
+        "Steam rises and disappears into the sky. Utterly useless. Utterly forgettable. ...Write it down anyway.",
+        "He pours water on the fire and watches the cloud rise. Nothing happens. Nothing will happen for another few hundred thousand years. Patience.",
+        "Steam. A puff of indignant air, gone in a second. Karl frowns at it. History quietly bookmarks the page."
+      ]
     },
     {
       "id": "story-malm",
-      "text": "Karl hakker glimtende sten ud af klippen. Han tror, det er pynt. Det er fremtiden."
+      "variants": [
+        "Karl chips glittering stones out of the rock face. He thinks it's decoration. It's the future.",
+        "Ore! Shiny rocks with delusions of grandeur — and for once, the delusions are entirely justified.",
+        "He mines the sparkly stones because they're pretty. Sometimes history advances for the silliest reasons. Usually, in fact.",
+        "Glittering ore, freshly hacked from the mountain. Karl plans to make a necklace. The Bronze Age has other ideas.",
+        "The rock face gives up its glittering secret. Karl pockets it, grinning. He has no idea. He never has any idea. It keeps working out anyway."
+      ]
     },
     {
       "id": "story-kobber",
-      "text": "Metal! Blødt, bøjeligt, skinnende — Karl har smeltet sig frem til kobber og forsøger allerede at bide i det. Igen."
+      "variants": [
+        "Metal! Soft, bendable, shiny — Karl has smelted his way to copper and is already trying to bite it. Again.",
+        "Copper! The first metal! Karl bends it, gasps, bends it back, gasps again. This could take a while.",
+        "From fire and ore comes copper. Karl holds the gleaming lump aloft like a trophy. For once, the drama is entirely appropriate.",
+        "The ore melts, and out comes actual metal. Karl checks his teeth on it. Twice. Some traditions start early.",
+        "Copper, smelted by Karl. The Stone Age just felt a chill run down its spine."
+      ]
     },
     {
       "id": "story-larvefarm",
-      "text": "Han... opdrætter dem nu. Larvemanden har fået en farm. Andre fortællere får pyramider og månelandinger. Jeg får en skål larver, der alle hedder Bent."
+      "variants": [
+        "He... he's breeding them now. Grub Man has a farm. Other narrators get pyramids and moon landings. I get a bowl of larvae, all named Bent.",
+        "A grub farm. Rows of pampered larvae in a clay bowl. He has named every single one Bent. Every. Single. One.",
+        "Agriculture arrives ten thousand years early — as a larvae ranch. I want to be angry. Mostly I'm impressed. Mostly angry.",
+        "Grub Man expands operations. There is now infrastructure. For grubs. History, I apologize for what I am about to record.",
+        "The grubs have a home, a schedule, and names. Karl has a farm and a dream. I have a headache and a deadline."
+      ]
     },
     {
       "id": "gate-act-1",
-      "text": "Nej. Nej, nej, nej. Man 'rykker ikke historien videre', mens man fryser, sulter eller står med bare næver. Løs dine problemer, Karl — så kan vi tale om bronze."
+      "variants": [
+        "No. No, no, no. One does not 'advance history' while freezing, starving, or standing around bare-handed. Solve your problems, Karl — then we can talk about bronze.",
+        "Bronze? BRONZE? You are cold, hungry, and unarmed. History has standards. Low ones, clearly, but standards.",
+        "Ah yes, let's skip to the Bronze Age while Karl's teeth are still chattering. No. Basics first. Epochs later.",
+        "The Bronze Age is a reward, not an escape route. Warm up, eat up, tool up — then knock again.",
+        "Denied. History's door has a bouncer, and tonight the bouncer is me. Come back warm, fed, and holding an axe."
+      ]
     },
     {
       "id": "ageup-act-1",
-      "text": "Bronze! Hør efter, for det her er stort: Karl — KARL — har netop indledt en ny epoke. Historiebøgerne får travlt. Velkommen til Bronzealderen."
+      "variants": [
+        "Bronze! Listen closely, because this is big: Karl — KARL — has just launched a new epoch. The history books are scrambling. Welcome to the Bronze Age.",
+        "Copper and ore become bronze, and just like that, the age turns. Somewhere, a historian faints. Welcome to the Bronze Age, Karl.",
+        "An entire age, named after the lump in Karl's hand. Bronze! Onward — the future is slightly harder and considerably shinier.",
+        "The Stone Age ends. Not with a whimper, but with Karl holding up a bronze lump and shouting 'shiny!'. Close enough. Welcome to the Bronze Age.",
+        "History turns the page, and against all editorial advice, Karl is still the protagonist. The Bronze Age begins!"
+      ]
     },
     {
       "id": "hint-kulde-1",
-      "text": "Der er koldt herude. Bemærkelsesværdigt koldt. Hvis bare noget kunne... varme."
+      "variants": [
+        "It is cold out here. Remarkably cold. If only something could... warm.",
+        "The wind bites, the night approaches, and Karl shivers. A source of heat would not go amiss."
+      ]
     },
     {
       "id": "hint-kulde-2",
-      "text": "Jeg så nogle gnister tidligere. Gnister. Og noget tørt. Jeg siger det bare, helt uden bagtanke."
+      "variants": [
+        "I saw sparks earlier. Sparks. And something dry. Just mentioning it. No agenda whatsoever.",
+        "Sparks are lovely. You know what sparks love? Something dry to land on. Purely an observation."
+      ]
     },
     {
       "id": "hint-kulde-3",
-      "text": "Slå. Stenene. Sammen. Og sæt så ild i græsset. Skal jeg tegne det som hulemaleri?"
+      "variants": [
+        "Strike. The stones. Together. Then introduce the grass to the result. Shall I draw it as a cave painting?",
+        "Stone on stone makes sparks. Sparks on dry grass make fire. Fire makes warm. Warm makes narrator stop hinting."
+      ]
     },
     {
       "id": "hint-vaerktoej-1",
-      "text": "Bare næver er et modigt valg. Evolutionært set."
+      "variants": [
+        "Bare hands. A bold choice, evolutionarily speaking.",
+        "Every other species has claws, fangs, or venom. Karl has fingers and confidence."
+      ]
     },
     {
       "id": "hint-vaerktoej-2",
-      "text": "En sten er god. En pind er god. Sammen? Revolution."
+      "variants": [
+        "A stone is good. A stick is good. Together? Revolution.",
+        "Some of history's finest ideas are just two ordinary things, joined. A stick, say. And a stone."
+      ]
     },
     {
       "id": "hint-vaerktoej-3",
-      "text": "Sæt stenen på pinden, Karl. Det hedder en økse. Det kommer det til at hedde i meget lang tid."
+      "variants": [
+        "Put the stone on the stick, Karl. It's called an axe. It will be called that for a very long time.",
+        "Stone. Stick. Attach. Axe. Four words, Karl. I believe in you. Three of the words, anyway."
+      ]
     },
     {
       "id": "hint-sult-1",
-      "text": "Karls mave knurrer så højt, at den skræmmer byttedyr væk. Ironien er ikke gået tabt på mig."
+      "variants": [
+        "Karl's stomach growls loudly enough to scare off the wildlife. The irony is not lost on me.",
+        "A hungry man surrounded by food he hasn't figured out yet. Nature's little joke."
+      ]
     },
     {
       "id": "hint-sult-2",
-      "text": "Der går et vildsvin derovre. Karl har noget spidst. Jeg lader regnestykket stå et øjeblik."
+      "variants": [
+        "There's a boar right over there. Karl owns something pointy. I'll leave the arithmetic on the table.",
+        "Pointy object. Large, edible animal. I trust even Karl can connect these dots. Eventually."
+      ]
     },
     {
       "id": "hint-sult-3",
-      "text": "Spyd. Vildsvin. Ild. Middag. I dén rækkefølge, Karl."
+      "variants": [
+        "Spear. Boar. Fire. Dinner. In that order, Karl.",
+        "Throw the spear at the boar. Put the result on the fire. Chew. I cannot simplify this further."
+      ]
     },
     {
       "id": "spam-3",
-      "text": "Det er tredje gang med den sten. Jeg tæller. Det er åbenbart mit job nu."
+      "variants": [
+        "That's the third time with the stone. I'm counting. Apparently that's my job now.",
+        "Three stone-based experiments in a row. The stone remains, as ever, a stone.",
+        "Stone again. Third time. I admire consistency. From a distance."
+      ]
     },
     {
       "id": "spam-5",
-      "text": "Fem gange. Sten. Jeg begynder at tro, det er et statement."
+      "variants": [
+        "Five times. Stone. I'm starting to think it's a statement.",
+        "Five stone attempts. At this point the stone deserves narrator credit.",
+        "Karl and the stone: attempt five. It's not a partnership. It's a hostage situation, and I can't tell who's who."
+      ]
     },
     {
       "id": "spam-8",
-      "text": "Otte! Ved du hvad — gør du bare det. Så fortæller jeg historien om manden, der elskede sten højere end fremskridt."
+      "variants": [
+        "Eight! You know what — you do you. I'll narrate the tale of the man who loved rocks more than progress.",
+        "Eight times. That stone has now seen more action than the entire rest of the valley.",
+        "Attempt eight with the stone. Historians will call this period 'The Stone Age', and honestly, now I understand why."
+      ]
     },
     {
       "id": "repeat-3",
-      "text": "Samme kombination. Igen. Der findes et berømt citat om at gentage det samme og forvente et nyt resultat. Manden bag er ikke født endnu, men Karl arbejder hårdt på at gøre citatet nødvendigt."
+      "variants": [
+        "Same combination. Again. There's a famous quote about repeating the same thing and expecting new results. Its author isn't born yet, but Karl is working hard to make the quote necessary.",
+        "That's the same combination as before. And before that. The result has not changed. I checked.",
+        "Again? It's still the same two things, Karl. Physics has not updated since your last attempt."
+      ]
     },
     {
       "id": "repeat-6",
-      "text": "Seks gange i træk. Jeg respekterer dedikationen. Det er det pæneste ord, jeg har for det."
+      "variants": [
+        "Six times in a row. I respect the dedication. That's the kindest word I have for it.",
+        "Six identical attempts. Somewhere, the concept of insanity is taking notes.",
+        "Six. In. A. Row. I have narrated glaciers with more improvisation."
+      ]
     },
     {
       "id": "failstreak-4",
-      "text": "Fire fejlslagne forsøg i træk. Rom blev heller ikke bygget på én dag. Rom bliver i øvrigt heller ikke bygget af Karl."
+      "variants": [
+        "Four failed attempts in a row. Rome wasn't built in a day either. Rome, incidentally, will not be built by Karl.",
+        "Four in a row. The good news: it can't get worse. The bad news: I've said that before.",
+        "A four-failure streak. Even the boar has stopped watching."
+      ]
     },
     {
       "id": "failstreak-7",
-      "text": "Syv i træk. Skal vi holde en lille pause? Jeg kunne godt bruge en pause."
+      "variants": [
+        "Seven straight. Shall we take a little break? I could use a little break.",
+        "Seven failures in a row. History is patient. I am part of history. I am strained.",
+        "Seven. At this point, randomly banging things together would statistically— actually, that IS what you're doing."
+      ]
+    },
+    {
+      "id": "fast-6",
+      "variants": [
+        "Slow down! You're combining things faster than I can mock them. And I am very fast.",
+        "Six attempts in as many breaths. This isn't alchemy, it's percussion.",
+        "Karl has entered a frenzy. Items are colliding. Narration is struggling to keep pace. Slow. Down."
+      ]
+    },
+    {
+      "id": "fast-12",
+      "variants": [
+        "Twelve rapid-fire attempts. I'm a narrator, not an auctioneer. Breathe, Karl.",
+        "This pace is unsustainable, unnecessary, and — fine, mildly entertaining. But mostly the first two.",
+        "Twelve! You cannot speed-run the dawn of civilization. Well. You can, apparently. You shouldn't."
+      ]
+    },
+    {
+      "id": "sweep-4",
+      "variants": [
+        "I see we're introducing the {element} to everything in the valley. It's not a networking event, Karl.",
+        "The {element} has now met almost everything Karl owns. None of them are getting along.",
+        "Ah, the classic strategy: take the {element} and apply it to the entire known world."
+      ]
+    },
+    {
+      "id": "sweep-7",
+      "variants": [
+        "Seven pairings for the {element} now. At some point this stops being science and starts being matchmaking.",
+        "The {element} would like a moment to itself. As would I.",
+        "Everything-plus-{element} is not a research method, Karl. It's a cry for help. And I hear you."
+      ]
+    },
+    {
+      "id": "slow-1",
+      "variants": [
+        "...And he's back! I'd nearly finished carving your absence into the rock, Karl.",
+        "That was a long pause. I narrated three imaginary civilizations in the meantime. All of them further along.",
+        "Take your time. The Stone Age lasted two and a half million years. You're apparently committed to experiencing all of it.",
+        "Welcome back. During the silence, the boar and I formed a book club.",
+        "A dramatic pause, was it? Dramatic pauses are supposed to end sooner. Trust the narrator on this one."
+      ]
     },
     {
       "id": "mem-larver",
-      "text": "Nå ja, undskyld — jeg glemte et øjeblik, hvem jeg taler til. Larvemanden. Fortsæt endelig.",
+      "variants": [
+        "Ah, right, my apologies — I momentarily forgot who I'm talking to. Grub Man. Do carry on.",
+        "Sorry — force of habit, expecting normal decisions. I forgot this is Grub Man's story now."
+      ],
       "requiresFlags": ["larver"],
       "once": true
     },
     {
       "id": "mem-stinker",
-      "text": "Jeg ville gerne kommentere din strategi, men jeg kan ikke koncentrere mig for lugten.",
+      "variants": [
+        "I'd love to comment on your strategy, but I can't concentrate for the smell.",
+        "Something about your recent... choices... has reached me all the way up here. I'm narrating through my nose now."
+      ],
       "requiresFlags": ["stinker"],
       "once": true
     },
     {
       "id": "gf-1",
-      "text": "Ingenting. Bogstaveligt talt ingenting."
+      "variants": [
+        "Nothing. Literally nothing.",
+        "And the result is: nothing. Brought to you by nothing.",
+        "Nothing happens. Somewhere, nothing continues to happen."
+      ]
     },
     {
       "id": "gf-2",
-      "text": "Historien noterer forsøget. I fodnoterne. Med meget lille skrift."
+      "variants": [
+        "History notes the attempt. In the footnotes. In very small handwriting.",
+        "Recorded for posterity: 'he tried'. That's the whole entry.",
+        "The chronicle grows by one line: 'no'."
+      ]
     },
     {
       "id": "gf-3",
-      "text": "Modigt. Forkert, men modigt."
+      "variants": [
+        "Brave. Wrong, but brave.",
+        "A courageous theory, executed confidently, and wrong.",
+        "Ten points for commitment. Zero for outcome."
+      ]
     },
     {
       "id": "gf-4",
-      "text": "Det dér bliver ikke en epoke, Karl."
+      "variants": [
+        "{a} and {b}. An inspired pairing. Inspired by what, I dare not ask.",
+        "{a} plus {b}? Even I didn't see that coming, and I've read the ending.",
+        "Combining {a} with {b}. Because of course. Why not."
+      ]
     },
     {
       "id": "gf-5",
-      "text": "Selv græsset så flovt væk."
+      "variants": [
+        "Even the grass looked away in embarrassment.",
+        "The valley witnessed that. All of it. I am so sorry, valley.",
+        "Somewhere nearby, the boar sighs."
+      ]
     },
     {
       "id": "gf-6",
-      "text": "Jeg har fortalt om mange civilisationer. Ingen af dem startede sådan her."
+      "variants": [
+        "That will not be an epoch, Karl.",
+        "Epochs have been founded on many things. Not that.",
+        "I checked the history books. That's not in them. There's a reason."
+      ]
+    },
+    {
+      "id": "gf-7",
+      "variants": [
+        "I have narrated many civilizations. None of them started like this.",
+        "In all my ages of narrating, that approach remains unprecedented. Congratulations?",
+        "New. Unquestionably new. Useful? Unquestionably not."
+      ]
+    },
+    {
+      "id": "gf-8",
+      "variants": [
+        "The {a} remains {a}. The {b} remains {b}. The universe remains unmoved.",
+        "Reality has reviewed your proposal and voted no.",
+        "The laws of nature glance up, shake their heads, and return to work."
+      ]
     }
   ],
   "behavior": {
@@ -180,8 +428,17 @@
     "failStreak": {
       "4": "failstreak-4",
       "7": "failstreak-7"
-    }
+    },
+    "fast": {
+      "6": "fast-6",
+      "12": "fast-12"
+    },
+    "elementSweep": {
+      "4": "sweep-4",
+      "7": "sweep-7"
+    },
+    "slow": ["slow-1"]
   },
   "flagMemory": ["mem-larver", "mem-stinker"],
-  "genericFailure": ["gf-1", "gf-2", "gf-3", "gf-4", "gf-5", "gf-6"]
+  "genericFailure": ["gf-1", "gf-2", "gf-3", "gf-4", "gf-5", "gf-6", "gf-7", "gf-8"]
 }

@@ -8,10 +8,12 @@ import { BookView } from "./book";
 
 const SAVE_KEY = "kolde-karl-save-v1";
 const NARRATOR_SAVE_KEY = "kolde-karl-narrator-v1";
+const MUTE_KEY = "kolde-karl-muted";
 
 const content = loadContent();
 const engine = new Engine(content);
-const narrator = new Narrator(engine);
+// Nyt seed pr. playthrough → nye variantvalg hver gang (docs/design/fortaelleren.md)
+const narrator = new Narrator(engine, freshNarratorState((Math.random() * 2 ** 31) | 0));
 
 // --- Autosave pr. opdagelse (PRD §4.1) ---
 function save(): void {
@@ -32,28 +34,33 @@ function tryLoad(): boolean {
   }
 }
 
-// --- DOM-skelet: bogen øverst, værkstedet nederst (docs/design/bogen.md) ---
+// --- DOM-skelet: bogen er primær; fortælleren taler fra en boble der peger ud af skærmen ---
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `
   <header>
     <h1>Kolde Karl</h1>
     <div id="act-name"></div>
-    <button id="reset" title="Start forfra">↺ Forfra</button>
+    <button id="reset" title="Start over">↺ Start over</button>
   </header>
-  <section id="book" aria-label="Menneskehedens leksikon"></section>
-  <section id="problems" aria-label="Karls problemer"></section>
   <section id="narrator" aria-live="polite">
-    <span id="narrator-label">Fortælleren</span>
-    <p id="narrator-text"></p>
+    <div id="bubble">
+      <div id="bubble-head">
+        <span id="narrator-label">The Narrator</span>
+        <button id="mute" aria-pressed="false" title="Mute the narrator">🔊</button>
+      </div>
+      <p id="narrator-text"></p>
+    </div>
   </section>
+  <section id="book" aria-label="The chronicle of mankind"></section>
+  <section id="problems" aria-label="Karl's problems"></section>
   <section id="workbench">
     <div class="slot" id="slot-a">?</div>
     <span class="plus">+</span>
     <div class="slot" id="slot-b">?</div>
-    <button id="combine" disabled>Kombinér</button>
+    <button id="combine" disabled>Combine</button>
   </section>
-  <p id="drag-hint">Træk et element ovenpå et andet — eller tryk på to og kombinér.</p>
-  <section id="grid" aria-label="Elementer"></section>
+  <p id="drag-hint">Drag one element onto another — or tap two and combine.</p>
+  <section id="grid" aria-label="Elements"></section>
   <div id="banner" hidden></div>
   <div id="card" hidden></div>
 `;
@@ -62,6 +69,8 @@ const el = {
   actName: document.getElementById("act-name")!,
   problems: document.getElementById("problems")!,
   narratorText: document.getElementById("narrator-text")!,
+  muteBtn: document.getElementById("mute") as HTMLButtonElement,
+  bubble: document.getElementById("bubble")!,
   slotA: document.getElementById("slot-a")!,
   slotB: document.getElementById("slot-b")!,
   combineBtn: document.getElementById("combine") as HTMLButtonElement,
@@ -75,9 +84,14 @@ const book = new BookView(engine, document.getElementById("book")!);
 
 let selected: [string | null, string | null] = [null, null];
 let typewriterTimer: ReturnType<typeof setInterval> | undefined;
+let muted = localStorage.getItem(MUTE_KEY) === "1";
+let lastLineText = "";
+let lastAttemptAt: number | null = null;
 
 // --- Fortæller-tekst med typewriter; ny replik afbryder elegant (PRD §4.3) ---
 function speak(text: string): void {
+  lastLineText = text;
+  if (muted) return;
   if (typewriterTimer) clearInterval(typewriterTimer);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reducedMotion) {
@@ -93,9 +107,28 @@ function speak(text: string): void {
   }, 18);
 }
 
+function renderMute(): void {
+  el.muteBtn.textContent = muted ? "🔇" : "🔊";
+  el.muteBtn.title = muted ? "Unmute the narrator" : "Mute the narrator";
+  el.muteBtn.setAttribute("aria-pressed", String(muted));
+  el.bubble.classList.toggle("muted", muted);
+  if (muted) {
+    if (typewriterTimer) clearInterval(typewriterTimer);
+    el.narratorText.textContent = "…";
+  } else if (lastLineText) {
+    speak(lastLineText);
+  }
+}
+
+el.muteBtn.addEventListener("click", () => {
+  muted = !muted;
+  localStorage.setItem(MUTE_KEY, muted ? "1" : "0");
+  renderMute();
+});
+
 function renderProblems(): void {
   const act = engine.currentAct();
-  el.actName.textContent = `Akt ${act.act}: ${act.name}`;
+  el.actName.textContent = `Act ${act.act}: ${act.name}`;
   el.problems.innerHTML = act.problems
     .map((p) => {
       const done = engine.isSolved(p.id);
@@ -123,13 +156,6 @@ function renderGrid(): void {
   }
 }
 
-function refreshAfterDiscovery(): void {
-  renderGrid();
-  renderProblems();
-  book.render();
-  save();
-}
-
 function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" }>): void {
   const d = outcome.element;
   el.card.innerHTML = `
@@ -138,8 +164,8 @@ function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" 
       <h2>${d.name}</h2>
       <p>${d.flavor ?? ""}</p>
       ${d.note ? `<p class="note">📜 ${d.note}</p>` : ""}
-      ${outcome.solved ? `<p class="solved-badge">✓ Problem løst: ${outcome.solved.name}</p>` : ""}
-      <button id="card-close">Skriv i bogen</button>
+      ${outcome.solved ? `<p class="solved-badge">✓ Problem solved: ${outcome.solved.name}</p>` : ""}
+      <button id="card-close">Write it in the book</button>
     </div>`;
   el.card.hidden = false;
   document.getElementById("card-close")!.addEventListener("click", () => {
@@ -151,9 +177,9 @@ function showAgeUpBanner(): void {
   const act = engine.currentAct();
   el.banner.innerHTML = `
     <div class="banner-inner">
-      <h2>⚱️ Ny epoke ⚱️</h2>
-      <p>Akt ${act.act}: ${act.name}</p>
-      <button id="banner-close">Ind i fremtiden</button>
+      <h2>⚱️ A new age ⚱️</h2>
+      <p>Act ${act.act}: ${act.name}</p>
+      <button id="banner-close">Into the future</button>
     </div>`;
   el.banner.hidden = false;
   document.getElementById("banner-close")!.addEventListener("click", () => {
@@ -164,12 +190,19 @@ function showAgeUpBanner(): void {
 }
 
 function performCombine(a: string, b: string): void {
+  const now = performance.now();
+  const elapsedMs = lastAttemptAt === null ? undefined : now - lastAttemptAt;
+  lastAttemptAt = now;
+
   const outcome = engine.combine(a, b);
-  const line = narrator.react(a, b, outcome);
+  const line = narrator.react(a, b, outcome, elapsedMs);
 
   if (outcome.kind === "discovery") {
     showDiscoveryCard(outcome);
-    refreshAfterDiscovery();
+    renderGrid();
+    renderProblems();
+    book.render(outcome.element.id);
+    save();
     if (outcome.ageUp) showAgeUpBanner();
   }
   if (line) speak(line.text);
@@ -254,7 +287,7 @@ el.combineBtn.addEventListener("click", () => {
 });
 
 el.reset.addEventListener("click", () => {
-  if (!confirm("Start helt forfra? Karl glemmer alt. Det er han god til.")) return;
+  if (!confirm("Start over completely? Karl forgets everything. He's good at that.")) return;
   localStorage.removeItem(SAVE_KEY);
   localStorage.removeItem(NARRATOR_SAVE_KEY);
   location.reload();
@@ -265,10 +298,7 @@ const resumed = tryLoad();
 renderProblems();
 renderSlots();
 renderGrid();
+renderMute();
 book.render();
-if (resumed) {
-  speak("Nå. Du er tilbage. Karl har ventet. Det har jeg også, men mig spørger ingen til.");
-} else {
-  const intro = narrator.actIntro();
-  if (intro) speak(intro.text);
-}
+const opening = resumed ? narrator.resume() : narrator.actIntro();
+if (opening) speak(opening.text);

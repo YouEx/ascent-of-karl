@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
-import { Narrator } from "../src/narrator/narrator";
+import { Narrator, freshNarratorState } from "../src/narrator/narrator";
 import { loadContent } from "../src/content";
 
 const content = loadContent();
@@ -12,9 +12,15 @@ function setup() {
 }
 
 /** Kør et forsøg og lad fortælleren reagere. */
-function attempt(engine: Engine, narrator: Narrator, a: string, b: string) {
+function attempt(
+  engine: Engine,
+  narrator: Narrator,
+  a: string,
+  b: string,
+  elapsedMs?: number,
+) {
   const outcome = engine.combine(a, b);
-  return narrator.react(a, b, outcome);
+  return narrator.react(a, b, outcome, elapsedMs);
 }
 
 describe("Narrator: prioritering", () => {
@@ -141,6 +147,88 @@ describe("Narrator: flag-hukommelse", () => {
     const { engine, narrator } = setup();
     const line = attempt(engine, narrator, "baer", "ler");
     expect(line?.id).not.toBe("mem-larver");
+  });
+});
+
+describe("Narrator: varianter og playthrough-seed", () => {
+  it("samme seed giver samme variantvalg (deterministisk pr. save)", () => {
+    const run = (seed: number) => {
+      const engine = new Engine(content);
+      const narrator = new Narrator(engine, freshNarratorState(seed));
+      return attempt(engine, narrator, "sten", "sten")?.text;
+    };
+    expect(run(42)).toBe(run(42));
+  });
+
+  it("forskellige seeds giver variation i replikkerne", () => {
+    const texts = new Set<string>();
+    for (let seed = 1; seed <= 10; seed++) {
+      const engine = new Engine(content);
+      const narrator = new Narrator(engine, freshNarratorState(seed));
+      texts.add(attempt(engine, narrator, "sten", "sten")!.text);
+    }
+    expect(texts.size).toBeGreaterThan(1);
+  });
+
+  it("samme replik bruger aldrig samme variant to gange i træk", () => {
+    const { engine, narrator } = setup();
+    engine.combine("sten", "sten");
+    // repeat-3 rammes ved 3, 4, 5... aldrig med samme variant to gange i træk
+    const texts: string[] = [];
+    for (let i = 0; i < 6; i++) {
+      const line = attempt(engine, narrator, "baer", "ler");
+      if (line?.id === "repeat-3") texts.push(line.text);
+    }
+    for (let i = 1; i < texts.length; i++) {
+      expect(texts[i]).not.toBe(texts[i - 1]);
+    }
+  });
+});
+
+describe("Narrator: nye adfærds-triggere", () => {
+  it("samme element mod alt muligt udløser sweep med elementnavnet indsat", () => {
+    const { engine, narrator } = setup();
+    attempt(engine, narrator, "baer", "ler");
+    attempt(engine, narrator, "baer", "vand");
+    attempt(engine, narrator, "baer", "graes");
+    const line = attempt(engine, narrator, "baer", "larver");
+    expect(line?.id).toBe("sweep-4");
+    expect(line?.text).toContain("berries");
+  });
+
+  it("meget hurtige forsøg i træk udløser fast-replikken", () => {
+    const { engine, narrator } = setup();
+    const pairs: Array<[string, string]> = [
+      ["baer", "ler"], ["vand", "graes"], ["larver", "dyr"],
+      ["baer", "graes"], ["ler", "vand"], ["dyr", "pind"],
+    ];
+    let last;
+    for (const [a, b] of pairs) last = attempt(engine, narrator, a, b, 500);
+    expect(last?.id).toBe("fast-6");
+  });
+
+  it("en meget lang pause udløser slow-replikken", () => {
+    const { engine, narrator } = setup();
+    attempt(engine, narrator, "baer", "ler", 1000);
+    const line = attempt(engine, narrator, "baer", "vand", 60_000);
+    expect(line?.id).toBe("slow-1");
+  });
+
+  it("slow har cooldown — fyrer ikke ved to lange pauser lige efter hinanden", () => {
+    const { engine, narrator } = setup();
+    const first = attempt(engine, narrator, "baer", "ler", 60_000);
+    expect(first?.id).toBe("slow-1");
+    const second = attempt(engine, narrator, "baer", "vand", 60_000);
+    expect(second?.id).not.toBe("slow-1");
+  });
+});
+
+describe("Narrator: resume", () => {
+  it("giver en velkommen-tilbage-replik", () => {
+    const { narrator } = setup();
+    const line = narrator.resume();
+    expect(line?.id).toBe("resume-1");
+    expect(line?.text.length).toBeGreaterThan(0);
   });
 });
 

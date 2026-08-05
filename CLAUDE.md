@@ -39,8 +39,10 @@ npm run build        # typecheck + produktion-build
 2. **Kør `npm test` og `npm run validate` før hvert commit.** CI kræver begge grønne.
 3. Fortæller-replikker refereres altid pr. id — validatoren fanger døde referencer.
 4. Historiske noter SKAL have `sourceUrl` (PRD §5: kildekrav pr. note).
-5. Al spiller-vendt tekst er på dansk (PRD §3.3). Kode og kommentarer: dansk
-   domænesprog er ok, hold identifiers ASCII (`stenoekse`, ikke `stenøkse`).
+5. Al spiller-vendt tekst er på ENGELSK (beslutning 2026-08-05, se
+   `docs/design/fortaelleren.md` — ophæver PRD §3.3's "dansk først").
+   Kode, kommentarer og docs: dansk domænesprog er ok, hold identifiers
+   ASCII (`stenoekse`, ikke `stenøkse`). Element-id'er forbliver danske.
 6. Engine- og narrator-tilstand skal altid kunne serialiseres (save/load).
 
 ## Tone (til indholdsarbejde)

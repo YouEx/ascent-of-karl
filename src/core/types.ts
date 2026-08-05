@@ -68,10 +68,16 @@ export interface ActDef {
   ageUpLine?: string;
 }
 
-/** En fortæller-replik. Tekst-first; audioId kobles på i Step 4 (PRD §4.3). */
+/**
+ * En fortæller-replik med variant-pulje (docs/design/fortaelleren.md).
+ * Hver afspilning vælger én variant via playthrough-seedet RNG, så to
+ * gennemspilninger ikke lyder ens. Tekst-first; audioId kobles på i Step 4.
+ * Varianter kan bruge pladsholdere: {a}, {b} (parrets navne), {element}
+ * (sweep-elementets navn) — udfyldes med små bogstaver.
+ */
 export interface NarratorLineDef {
   id: string;
-  text: string;
+  variants: string[];
   /** Vises kun hvis alle disse flags er sat */
   requiresFlags?: string[];
   /** Vises ikke hvis et af disse flags er sat */
@@ -88,6 +94,8 @@ export interface NarratorLineDef {
 export interface NarratorContentDef {
   act: number;
   lines: NarratorLineDef[];
+  /** Replik når spilleren vender tilbage til et gemt spil */
+  resumeLine?: string;
   behavior: {
     /** Elementet fortælleren driller spilleren for at spamme (Akt I: sten) */
     spamElement: string;
@@ -97,8 +105,14 @@ export interface NarratorContentDef {
     repeatCombo: Record<string, string>;
     /** Streak af fiaskoer i træk */
     failStreak: Record<string, string>;
+    /** Meget hurtige forsøg i træk (nøgle = streak-længde) */
+    fast: Record<string, string>;
+    /** Samme element kombineret med alt muligt i træk (nøgle = streak-længde) */
+    elementSweep: Record<string, string>;
+    /** Pulje der afspilles efter en meget lang pause */
+    slow: string[];
   };
-  /** Flag-hukommelse: afspilles ved først mulige lejlighed når flags matcher ("Larvemanden er tilbage") */
+  /** Flag-hukommelse: afspilles ved først mulige lejlighed når flags matcher ("Grub Man is back") */
   flagMemory: string[];
   /** Roterende pulje af generiske fiasko-replikker (aldrig samme to gange i træk) */
   genericFailure: string[];

@@ -38,6 +38,11 @@ def load(path: Path):
         return None
 
 
+def _combo_in_act(combo, act, elements) -> bool:
+    """En kombination hører til den akt dens resultat-element ligger i."""
+    return any(e["id"] == combo["result"] and e["act"] == act["act"] for e in elements)
+
+
 def main() -> int:
     elements = load(CONTENT / "elements.json") or []
     combos = load(CONTENT / "combos.json") or []
@@ -136,6 +141,9 @@ def main() -> int:
             if l["id"] in all_line_ids:
                 err(f"Duplikeret replik-id på tværs af akter: {l['id']}")
             all_line_ids.add(l["id"])
+            variants = l.get("variants")
+            if not isinstance(variants, list) or not variants:
+                err(f"Replik '{l['id']}': mangler variants-liste (mindst 1 tekst)")
 
     narrator_by_act = {n["act"]: n for n in narrator}
     for act in acts:
@@ -143,29 +151,47 @@ def main() -> int:
         if not n:
             err(f"Akt {act['act']}: intet fortæller-indhold (content/narrator/)")
             continue
-        line_ids = {l["id"] for l in n["lines"]}
+        lines_by_id = {l["id"]: l for l in n["lines"]}
 
-        def check_ref(ref: str | None, ctx: str) -> None:
-            if ref and ref not in line_ids:
+        def check_ref(ref: str | None, ctx: str, min_variants: int = 1) -> None:
+            if not ref:
+                return
+            if ref not in lines_by_id:
                 err(f"Akt {act['act']}: {ctx} refererer ukendt replik '{ref}'")
+                return
+            count = len(lines_by_id[ref].get("variants", []))
+            if count < min_variants:
+                err(
+                    f"Akt {act['act']}: '{ref}' ({ctx}) har {count} varianter — "
+                    f"kræver mindst {min_variants} (replayability, docs/design/fortaelleren.md)"
+                )
 
-        check_ref(act.get("introLine"), "introLine")
-        check_ref(act.get("gateLine"), "gateLine")
-        check_ref(act.get("ageUpLine"), "ageUpLine")
+        # Nøglebeats kræver mindst 5 varianter, så hvert playthrough lyder nyt
+        key_min = 5 if any(True for c in combos if _combo_in_act(c, act, elements)) else 1
+        check_ref(act.get("introLine"), "introLine", key_min)
+        check_ref(act.get("gateLine"), "gateLine", key_min)
+        check_ref(act.get("ageUpLine"), "ageUpLine", key_min)
+        check_ref(n.get("resumeLine"), "resumeLine")
         for p in act.get("problems", []):
             for h in p.get("hints", []):
                 check_ref(h, f"problemet '{p['id']}'s hints")
             if p.get("required") and not p.get("hints"):
                 warn(f"Akt {act['act']}: obligatorisk problem '{p['id']}' har ingen hint-eskalering")
 
+        for c in combos:
+            if c.get("narratorLine") and _combo_in_act(c, act, elements):
+                check_ref(c["narratorLine"], f"kombinationen {c['pair'][0]}+{c['pair'][1]}", 5)
+
         b = n["behavior"]
         if b["spamElement"] not in element_ids:
             err(f"Akt {act['act']}: spamElement '{b['spamElement']}' er ikke et element")
-        for pool_name in ("spam", "repeatCombo", "failStreak"):
+        for pool_name in ("spam", "repeatCombo", "failStreak", "fast", "elementSweep"):
             for threshold, ref in b.get(pool_name, {}).items():
                 if not threshold.isdigit():
                     err(f"Akt {act['act']}: {pool_name}-tærskel '{threshold}' er ikke et tal")
-                check_ref(ref, f"behavior.{pool_name}[{threshold}]")
+                check_ref(ref, f"behavior.{pool_name}[{threshold}]", 2)
+        for ref in b.get("slow", []):
+            check_ref(ref, "behavior.slow", 2)
         for ref in n.get("flagMemory", []):
             check_ref(ref, "flagMemory")
         generic = n.get("genericFailure", [])
@@ -173,6 +199,8 @@ def main() -> int:
             check_ref(ref, "genericFailure")
         if len(generic) < 2:
             err(f"Akt {act['act']}: genericFailure-puljen skal have mindst 2 replikker (no-repeat-reglen)")
+        if any(True for c in combos if _combo_in_act(c, act, elements)) and len(generic) < 6:
+            warn(f"Akt {act['act']}: kun {len(generic)} generiske fiasko-replikker — 6+ anbefales for varietet")
 
     # Nøglebeats uden replik (PRD §5: manglende replikker på nøglebeats)
     for c in combos:

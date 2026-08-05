@@ -31,7 +31,10 @@ npm run build      # typecheck + produktion-build
 - [x] Step 2 (v1) — fortæller-system: trigger-prioritering, adfærdstællere,
       flag-hukommelse, hint-eskalering, no-repeat
 - [x] Step 3 (v1) — problemer, blødt age-up-gate, Akt I → Akt II-overgang
-- [x] Bogen v1 — leksikon med forgrenet tidslinje, blanke sider som stiplede
-      silhuetter, drag-and-drop (se `docs/design/bogen.md`)
+- [x] Bogen v1 — leksikon med forgrenet tidslinje (collapsed som default),
+      blanke sider som stiplede silhuetter, drag-and-drop (`docs/design/bogen.md`)
+- [x] Fortæller v2 — engelsk stemme i taleboble med mute, 5+ varianter pr.
+      nøglebeat, playthrough-seed, nye triggers (sweep/hurtig/langsom) og
+      AI-udkast-pipeline (`docs/design/fortaelleren.md`, `tools/generate_lines.py`)
 - [ ] Step 4 — vertical slice: art, lyd, voice, polish
-- Akt I er spilbar med 23 elementer, 15 kombinationer og ~40 fortæller-replikker
+- Akt I er spilbar med 23 elementer, 15 kombinationer og 150+ fortæller-varianter

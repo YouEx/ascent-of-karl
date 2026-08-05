@@ -1,195 +1,195 @@
 [
   {
     "id": "sten",
-    "name": "Sten",
+    "name": "Stone",
     "emoji": "🪨",
     "act": 1,
     "base": true,
-    "flavor": "Grå. Tung. Karls bedste ven og hyppigste samtalepartner."
+    "flavor": "Grey. Heavy. Karl's best friend and most frequent conversation partner."
   },
   {
     "id": "pind",
-    "name": "Pind",
+    "name": "Stick",
     "emoji": "🪵",
     "act": 1,
     "base": true,
-    "flavor": "En pind af høj kvalitet. Det mener Karl i hvert fald, og han har set mange pinde."
+    "flavor": "A stick of exceptional quality. So says Karl, and he has seen many sticks."
   },
   {
     "id": "graes",
-    "name": "Tørt græs",
+    "name": "Dry grass",
     "emoji": "🌾",
     "act": 1,
     "base": true,
-    "flavor": "Knastørt og let antændeligt. Foreløbig bruger Karl det som pude."
+    "flavor": "Bone-dry and highly flammable. For now, Karl uses it as a pillow."
   },
   {
     "id": "vand",
-    "name": "Vand",
+    "name": "Water",
     "emoji": "💧",
     "act": 1,
     "base": true,
-    "flavor": "Vådt. Karl har smagt på det og kan bekræfte: meget vådt."
+    "flavor": "Wet. Karl has tasted it and can confirm: very wet."
   },
   {
     "id": "ler",
-    "name": "Ler",
+    "name": "Clay",
     "emoji": "🟤",
     "act": 1,
     "base": true,
-    "flavor": "Blødt og formbart. Ligesom Karls forhold til gode idéer."
+    "flavor": "Soft and mouldable. Much like Karl's relationship with good ideas."
   },
   {
     "id": "baer",
-    "name": "Bær",
+    "name": "Berries",
     "emoji": "🫐",
     "act": 1,
     "base": true,
-    "flavor": "Muligvis spiselige. Karl bruger fugle-testen: hvis fuglen overlever, er det frokost."
+    "flavor": "Possibly edible. Karl uses the bird test: if the bird survives, it's lunch."
   },
   {
     "id": "larver",
-    "name": "Larver",
+    "name": "Grubs",
     "emoji": "🐛",
     "act": 1,
     "base": true,
-    "flavor": "De vrider sig. Karl kigger på dem lidt for længe og lidt for interesseret."
+    "flavor": "They wriggle. Karl watches them a little too long and a little too fondly."
   },
   {
     "id": "dyr",
-    "name": "Vildsvin",
+    "name": "Wild boar",
     "emoji": "🐗",
     "act": 1,
     "base": true,
-    "flavor": "Et vildsvin, der har iagttaget Karl i tre dage og indtil videre ikke er imponeret."
+    "flavor": "A boar that has observed Karl for three days and remains unimpressed."
   },
   {
     "id": "gnister",
-    "name": "Gnister",
+    "name": "Sparks",
     "emoji": "✨",
     "act": 1,
-    "flavor": "Bittesmå stjerner, der lever i et halvt sekund. Karl klapper hver gang.",
-    "note": "Ildslagning i stenalderen brugte flint mod svovlkis (pyrit) — to sten er faktisk nok til gnister.",
+    "flavor": "Tiny stars that live for half a second. Karl applauds every time.",
+    "note": "Stone Age fire-starting struck flint against pyrite — two ordinary stones really can make sparks.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Fire_making",
     "karlMood": "stolt"
   },
   {
     "id": "ild",
-    "name": "Ild",
+    "name": "Fire",
     "emoji": "🔥",
     "act": 1,
-    "flavor": "Varm, lysende og ikke spor glad for at blive rørt ved. Karl fandt selv ud af det sidste.",
-    "note": "Mennesket har kontrolleret ild i mindst 400.000 år — spor fra Wonderwerk-hulen antyder op mod en million år.",
+    "flavor": "Warm, glowing, and not at all fond of being touched. Karl discovered that part personally.",
+    "note": "Humans have controlled fire for at least 400,000 years — traces from Wonderwerk Cave suggest up to a million.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Control_of_fire_by_early_humans",
     "karlMood": "stolt"
   },
   {
     "id": "stenoekse",
-    "name": "Stenøkse",
+    "name": "Stone axe",
     "emoji": "🪓",
     "act": 1,
-    "flavor": "En sten på en pind. Menneskehedens første abonnement på værktøj.",
-    "note": "De ældste stenredskaber er over 2,5 millioner år gamle — ældre end det moderne menneske selv.",
+    "flavor": "A rock on a stick. Humanity's first subscription to tools.",
+    "note": "The oldest stone tools are over 2.5 million years old — older than modern humans themselves.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Oldowan",
     "karlMood": "stolt"
   },
   {
     "id": "spyd",
-    "name": "Spyd",
+    "name": "Spear",
     "emoji": "🔱",
     "act": 1,
-    "flavor": "Spidst i den ene ende. Karl holdt først i den forkerte.",
-    "note": "Jagtspyddene fra Schöningen i Tyskland er omkring 300.000 år gamle — verdens ældste bevarede jagtvåben.",
+    "flavor": "Pointy at one end. Karl held the wrong one first.",
+    "note": "The Schöningen spears from Germany are about 300,000 years old — the world's oldest preserved hunting weapons.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sch%C3%B6ningen_spears",
     "karlMood": "flov"
   },
   {
     "id": "koed",
-    "name": "Kød",
+    "name": "Meat",
     "emoji": "🥩",
     "act": 1,
-    "flavor": "Frisk fra et vildsvin, der undervurderede Karl. En fejl, ingen havde regnet med.",
-    "note": "Kødspisning satte fart i menneskets hjerneudvikling — mere energi pr. mundfuld end nogen plante.",
+    "flavor": "Fresh from a boar that underestimated Karl. A mistake nobody saw coming.",
+    "note": "Eating meat accelerated human brain evolution — more energy per bite than any plant.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Expensive_tissue_hypothesis",
     "karlMood": "stolt"
   },
   {
     "id": "stegt-koed",
-    "name": "Stegt kød",
+    "name": "Roast meat",
     "emoji": "🍖",
     "act": 1,
-    "flavor": "Sprødt udenpå, saftigt indeni. Karl har opfundet gastronomi og skal aldrig tilbage.",
-    "note": "Tilberedt mad gav mennesket flere kalorier for mindre tyggearbejde — en mulig nøgle til vores store hjerner.",
+    "flavor": "Crispy outside, juicy inside. Karl has invented gastronomy and is never going back.",
+    "note": "Cooked food gave humans more calories for less chewing — a possible key to our big brains.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cooking_hypothesis",
     "karlMood": "stolt"
   },
   {
     "id": "ristede-larver",
-    "name": "Ristede larver",
+    "name": "Roasted grubs",
     "emoji": "🍢",
     "act": 1,
-    "flavor": "Sprøde. Nøddeagtige. Karl siger 'mums'. Fortælleren siger ingenting, meget højt.",
-    "note": "Cirka to milliarder mennesker spiser insekter i dag — larver er proteinrige og klimavenlige.",
+    "flavor": "Crispy. Nutty. Karl says 'mmm'. The narrator says nothing, very loudly.",
+    "note": "Around two billion people eat insects today — grubs are rich in protein and climate-friendly.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Entomophagy",
     "karlMood": "stolt"
   },
   {
     "id": "mudder",
-    "name": "Mudder",
+    "name": "Mud",
     "emoji": "🟫",
     "act": 1,
-    "flavor": "Ler plus vand. Karl kalder det 'blød jord' og er meget stolt af navnet.",
-    "note": "Mudder og ler var menneskets første byggematerialer — soltørrede mursten er over 9.000 år gamle.",
+    "flavor": "Clay plus water. Karl calls it 'soft dirt' and is very proud of the name.",
+    "note": "Mud and clay were humanity's first building materials — sun-dried bricks are over 9,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mudbrick",
     "karlMood": "stolt"
   },
   {
     "id": "mudderbad",
-    "name": "Mudderbad",
+    "name": "Mud bath",
     "emoji": "🛁",
     "act": 1,
-    "flavor": "Karl ruller sig grundigt. Han kalder det hudpleje. Vildsvinet nikker anerkendende.",
-    "note": "Svin bruger faktisk mudderbade som solcreme og insektbeskyttelse — det gjorde tidlige mennesker muligvis også.",
+    "flavor": "Karl rolls thoroughly. He calls it skincare. The boar nods in approval.",
+    "note": "Pigs really do use mud baths as sunscreen and insect protection — early humans possibly did too.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Wallowing_in_animals",
     "karlMood": "stolt"
   },
   {
     "id": "keramik",
-    "name": "Keramik",
+    "name": "Pottery",
     "emoji": "🏺",
     "act": 1,
-    "flavor": "Brændt ler, der kan holde på vand. Karls første krukke er skæv, og han elsker den.",
-    "note": "Verdens ældste keramik er cirka 20.000 år gammel og blev fundet i Xianrendong-hulen i Kina.",
+    "flavor": "Baked clay that holds water. Karl's first pot is crooked, and he loves it.",
+    "note": "The world's oldest pottery is about 20,000 years old, found in Xianrendong Cave in China.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Xianren_Cave",
     "karlMood": "stolt"
   },
   {
     "id": "damp",
-    "name": "Damp",
+    "name": "Steam",
     "emoji": "💨",
     "act": 1,
-    "flavor": "Vandet hvæser og forsvinder op i luften. Karl er dybt fornærmet på vandets vegne.",
-    "note": "Dampkraft blev demonstreret allerede i antikken med Herons aeolipile — men først i 1700-tallet ændrede den verden.",
+    "flavor": "The water hisses and vanishes into the air. Karl is deeply offended on the water's behalf.",
+    "note": "Steam power was demonstrated in antiquity with Heron's aeolipile — but only changed the world in the 1700s.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Aeolipile",
     "karlMood": "fornaermet"
   },
   {
     "id": "malm",
-    "name": "Malm",
+    "name": "Ore",
     "emoji": "⛏️",
     "act": 1,
-    "flavor": "Glimtende sten fra klippen. Karl tror, det er pynt. Det er fremtiden.",
-    "note": "De ældste kendte miner er over 40.000 år gamle — længe før nogen vidste, hvad metal var.",
+    "flavor": "Glittering stones from the rock face. Karl thinks it's decoration. It's the future.",
+    "note": "The oldest known mines are over 40,000 years old — long before anyone knew what metal was.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ngwenya_Mine",
     "karlMood": "forvirret"
   },
   {
     "id": "kobber",
-    "name": "Kobber",
+    "name": "Copper",
     "emoji": "🟠",
     "act": 1,
-    "flavor": "Blankt, rødligt og bøjeligt. Karl har prøvet at bide i det. To gange.",
-    "note": "Mennesket har bearbejdet kobber i næsten 10.000 år — de ældste fund stammer fra Anatolien.",
+    "flavor": "Shiny, reddish, and bendable. Karl has tried biting it. Twice.",
+    "note": "Humans have worked copper for almost 10,000 years — the oldest finds come from Anatolia.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Copper#History",
     "karlMood": "forvirret"
   },
@@ -198,35 +198,35 @@
     "name": "Bronze",
     "emoji": "🥉",
     "act": 1,
-    "flavor": "Hårdere end kobber, flottere end sten. Karl har lavet en klump og viser den til alle.",
-    "note": "Bronze — kobber legeret med tin — opstod omkring 3300 f.Kr. og gav navn til en hel epoke.",
+    "flavor": "Harder than copper, fancier than stone. Karl made a lump and shows it to everyone.",
+    "note": "Bronze — copper alloyed with tin — emerged around 3300 BC and gave its name to an entire era.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Bronze_Age",
     "karlMood": "stolt"
   },
   {
     "id": "larvefarm",
-    "name": "Larvefarm",
+    "name": "Grub farm",
     "emoji": "🧺",
     "act": 1,
-    "flavor": "En lerskål fuld af velplejede larver. Karl har givet dem navne. Alle hedder Bent.",
-    "note": "Insektopdræt er i dag en voksende industri — larver omdanner madaffald til protein bedre end noget husdyr.",
+    "flavor": "A clay bowl of well-groomed grubs. Karl has named them all. Every one is called Bent.",
+    "note": "Insect farming is a growing industry today — grubs turn food waste into protein better than any livestock.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Insect_farming",
     "karlMood": "stolt"
   },
   {
     "id": "korn",
-    "name": "Vildt korn",
+    "name": "Wild grain",
     "emoji": "🌾",
     "act": 2,
     "base": true,
-    "flavor": "Små frø på strå. En dame fra nabodalen påstår, man kan spise dem. Karl er skeptisk."
+    "flavor": "Tiny seeds on stalks. A woman from the next valley claims you can eat them. Karl is skeptical."
   },
   {
     "id": "okse",
-    "name": "Okse",
+    "name": "Ox",
     "emoji": "🐂",
     "act": 2,
     "base": true,
-    "flavor": "Stor, stærk og forbløffende villig til at samarbejde. Mere end man kan sige om Karl."
+    "flavor": "Big, strong, and surprisingly willing to cooperate. More than can be said for Karl."
   }
 ]
