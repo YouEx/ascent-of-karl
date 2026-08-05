@@ -45,4 +45,7 @@ npm run build      # typecheck + produktion-build
       (`docs/research/`), adoption spores i `STATUS.md`
 - [x] Story-grafer (`docs/design/act-1-graf.md`, auto-genereret) og
       GitHub Pages-deploy-workflow
+- [x] Mobil-først UI (`docs/design/ui-mobile.md`): titelskærm, fast
+      værksteds-dock i tommelfinger-zonen, bogen som sheet, søgning i
+      griddet, frontier-tidslinje
 - [ ] Step 4 — vertical slice: art, lyd, voice, polish (se `ROADMAP.md`)

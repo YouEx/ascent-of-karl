@@ -141,19 +141,30 @@ export class BookView {
   private renderTimelineSection(): void {
     const toggle = this.container.querySelector<HTMLButtonElement>("#timeline-toggle")!;
     const wrap = this.container.querySelector<HTMLElement>("#timeline-wrap")!;
-    const discoveredSet = new Set(this.engine.getState().discovered);
-    const { nodes } = buildTimeline(this.engine.content, this.selectedAct, discoveredSet);
-    const found = nodes.filter((n) => !n.base && n.discovered).length;
-    const total = nodes.filter((n) => !n.base).length;
+    const state = this.engine.getState();
+    const discoveredSet = new Set(state.discovered);
+    const { found, total } = buildTimeline(
+      this.engine.content, this.selectedAct, discoveredSet, new Set(state.flags),
+    );
 
     toggle.textContent = `${this.timelineOpen ? "▾" : "▸"} Timeline — ${found}/${total} discovered`;
     toggle.setAttribute("aria-expanded", String(this.timelineOpen));
     wrap.hidden = !this.timelineOpen;
-    if (this.timelineOpen) this.renderTimeline(wrap, discoveredSet);
+    if (this.timelineOpen) this.renderTimeline(wrap, discoveredSet, new Set(state.flags));
   }
 
-  private renderTimeline(wrap: HTMLElement, discovered: ReadonlySet<string>): void {
-    const { nodes, edges } = buildTimeline(this.engine.content, this.selectedAct, discovered);
+  private renderTimeline(
+    wrap: HTMLElement,
+    discovered: ReadonlySet<string>,
+    flags: ReadonlySet<string>,
+  ): void {
+    const { nodes, edges, hidden } = buildTimeline(
+      this.engine.content, this.selectedAct, discovered, flags,
+    );
+    if (nodes.length === 0) {
+      wrap.innerHTML = `<p class="timeline-empty">Nothing charted yet. Combine something.</p>`;
+      return;
+    }
 
     // Kolonner pr. dybde; hovedspor øverst, komiske grene nederst i kolonnen
     const byDepth = new Map<number, TimelineNode[]>();
@@ -190,10 +201,11 @@ export class BookView {
         const p = pos.get(n.id)!;
         const sel = n.id === this.selectedNode ? "selected" : "";
         if (!n.discovered) {
-          // Blank side: stiplet silhuet — retning uden spoilers
+          // Frontier: stiplet silhuet inden for rækkevidde — retning uden spoilers
           return `<g class="node silhouette ${sel}" data-id="${n.id}" transform="translate(${p.x},${p.y})">
             <circle r="${RADIUS}" />
             <text class="glyph">?</text>
+            <text class="label" y="${RADIUS + 13}">within reach</text>
           </g>`;
         }
         const def = this.engine.element(n.id);
@@ -205,9 +217,12 @@ export class BookView {
       })
       .join("");
 
+    const hint = hidden > 0
+      ? `<p class="timeline-hidden">Dotted circles are one combination away. ${hidden} more discoveries lie further out.</p>`
+      : "";
     wrap.innerHTML = `<svg id="timeline" viewBox="0 0 ${width} ${height}"
       width="${width}" height="${height}" role="img"
-      aria-label="Timeline of discoveries in this act">${svgEdges}${svgNodes}</svg>`;
+      aria-label="Timeline of discoveries in this act">${svgEdges}${svgNodes}</svg>${hint}`;
 
     for (const g of wrap.querySelectorAll<SVGGElement>(".node")) {
       g.addEventListener("click", () => {

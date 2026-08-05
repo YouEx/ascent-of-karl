@@ -14,6 +14,8 @@ export interface TimelineNode {
   /** Ligger på en komisk sidegren (alle veje hertil er komiske) */
   komisk: boolean;
   base: boolean;
+  /** Uopdaget, men kan nås med ÉN kombination af det spilleren allerede har */
+  frontier: boolean;
 }
 
 /** Kanter vises kun for opdagede resultater — opskrifter afsløres først når de er lavet. */
@@ -24,8 +26,14 @@ export interface TimelineEdge {
 }
 
 export interface Timeline {
+  /** Kun opdagede + frontier-noder — resten ville være en mur af spørgsmålstegn */
   nodes: TimelineNode[];
   edges: TimelineEdge[];
+  /** Elementer i akten der ligger længere ude og derfor ikke vises */
+  hidden: number;
+  /** Opdagede / mulige i alt (til tælleren) */
+  found: number;
+  total: number;
 }
 
 /** Dybde pr. element: korteste "opskriftsafstand" fra base-elementerne, flags ignoreret. */
@@ -59,27 +67,54 @@ function isKomisk(content: ContentBundle, elementId: string): boolean {
   return producers.length > 0 && producers.every((c) => c.spor === "komisk");
 }
 
+/** Kan opskriften laves lige nu med de opdagede elementer og de aktive flags? */
+function recipeAvailable(
+  combo: { pair: [string, string]; requiresFlags?: string[]; blockedByFlags?: string[] },
+  discovered: ReadonlySet<string>,
+  flags: ReadonlySet<string>,
+): boolean {
+  if (!discovered.has(combo.pair[0]) || !discovered.has(combo.pair[1])) return false;
+  if (combo.requiresFlags?.some((f) => !flags.has(f))) return false;
+  if (combo.blockedByFlags?.some((f) => flags.has(f))) return false;
+  return true;
+}
+
 /**
- * Byg tidslinjen for én akt.
- * Uopdagede elementer bliver noder uden kanter (stiplede silhuetter i bogen):
- * man kan se AT noget mangler og hvor på tidslinjen — ikke hvordan man når det.
+ * Byg tidslinjen for én akt (docs/design/ui-mobile.md).
+ *
+ * Progressive disclosure: vi viser opdagede noder plus "frontier" — de
+ * uopdagede der kan nås med ÉN kombination af det spilleren allerede har.
+ * Alt længere ude tælles kun (`hidden`). Uden det bliver bogen en mur af
+ * spørgsmålstegn, så snart akten vokser, og retningen drukner i støj.
  */
 export function buildTimeline(
   content: ContentBundle,
   act: number,
   discovered: ReadonlySet<string>,
+  flags: ReadonlySet<string> = new Set(),
 ): Timeline {
   const depths = computeDepths(content);
   const actElements = content.elements.filter((e) => e.act === act);
-  const nodeIds = new Set(actElements.map((e) => e.id));
 
-  const nodes: TimelineNode[] = actElements
+  const frontierIds = new Set<string>();
+  for (const combo of content.combos) {
+    if (discovered.has(combo.result)) continue;
+    if (recipeAvailable(combo, discovered, flags)) frontierIds.add(combo.result);
+  }
+
+  const visible = actElements.filter(
+    (e) => discovered.has(e.id) || frontierIds.has(e.id),
+  );
+  const nodeIds = new Set(visible.map((e) => e.id));
+
+  const nodes: TimelineNode[] = visible
     .map((e) => ({
       id: e.id,
       depth: depths.get(e.id) ?? 0,
       discovered: discovered.has(e.id),
       komisk: isKomisk(content, e.id),
       base: !!e.base,
+      frontier: !discovered.has(e.id),
     }))
     .sort((x, y) => x.depth - y.depth || x.id.localeCompare(y.id));
 
@@ -96,5 +131,14 @@ export function buildTimeline(
       edges.push({ from: input, to: combo.result, komisk: combo.spor === "komisk" });
     }
   }
-  return { nodes, edges };
+
+  const discoverable = actElements.filter((e) => !e.base);
+  const found = discoverable.filter((e) => discovered.has(e.id)).length;
+  return {
+    nodes,
+    edges,
+    hidden: actElements.length - visible.length,
+    found,
+    total: discoverable.length,
+  };
 }

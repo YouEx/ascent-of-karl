@@ -59,6 +59,14 @@ def main() -> int:
                 err(f"Duplikeret element-id: {e['id']}")
             seen.add(e["id"])
 
+    # Ikoner skal være unikke — to ens ikoner i griddet er ulæseligt (docs/design/ui-mobile.md)
+    by_emoji: dict[str, list[str]] = {}
+    for e in elements:
+        by_emoji.setdefault(e["emoji"], []).append(e["name"])
+    for emoji, names in by_emoji.items():
+        if len(names) > 1:
+            err(f"Ikonet {emoji} bruges af flere elementer: {', '.join(names)}")
+
     # --- Kombinationer refererer eksisterende elementer, ingen dubletter ---
     combo_keys: dict[tuple, str] = {}
     for c in combos:

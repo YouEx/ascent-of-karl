@@ -13,7 +13,13 @@ let current: HTMLAudioElement | null = null;
 let pending: string | null = null;
 let unlocked = false;
 
-export async function initAudio(): Promise<void> {
+/**
+ * @param unlockedByGesture Sæt når spillet startes fra et klik (titelskærmen) —
+ * så er browserens autoplay-politik allerede opfyldt, og første replik kan lyde
+ * med det samme i stedet for at vente på næste tryk.
+ */
+export async function initAudio(unlockedByGesture = false): Promise<void> {
+  unlocked = unlocked || unlockedByGesture;
   try {
     const resp = await fetch("audio/manifest.json");
     if (resp.ok) manifest = (await resp.json()) as Record<string, number[]>;

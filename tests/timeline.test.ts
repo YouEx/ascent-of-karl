@@ -23,23 +23,55 @@ describe("Timeline: dybder", () => {
   });
 });
 
-describe("Timeline: noder og silhuetter", () => {
-  it("uopdagede elementer er noder uden kanter — opskriften afsløres ikke", () => {
+describe("Timeline: frontier (progressive disclosure)", () => {
+  it("viser kun opdagede plus dem der kan nås med én kombination", () => {
     const t = buildTimeline(content, 1, new Set(["sten", "pind"]));
-    const ild = t.nodes.find((n) => n.id === "ild");
-    expect(ild).toBeDefined();
-    expect(ild!.discovered).toBe(false);
-    expect(t.edges).toHaveLength(0);
+    const ids = t.nodes.map((n) => n.id).sort();
+    // sten+sten=gnister, sten+pind=stenøkse, pind+pind=boomerang er inden for rækkevidde
+    expect(ids).toEqual(["boomerang", "gnister", "pind", "sten", "stenoekse"]);
+    // ild kræver gnister+græs — for langt ude, tælles kun
+    expect(ids).not.toContain("ild");
+    expect(t.hidden).toBeGreaterThan(50);
   });
 
+  it("markerer frontier-noder som uopdagede", () => {
+    const t = buildTimeline(content, 1, new Set(["sten", "pind"]));
+    const gnister = t.nodes.find((n) => n.id === "gnister")!;
+    expect(gnister.frontier).toBe(true);
+    expect(gnister.discovered).toBe(false);
+    const sten = t.nodes.find((n) => n.id === "sten")!;
+    expect(sten.frontier).toBe(false);
+    expect(sten.discovered).toBe(true);
+  });
+
+  it("respekterer flag-krav: låst opskrift er ikke frontier", () => {
+    const base = new Set(["larver", "ler"]);
+    // larvefarm kræver flaget "larver"
+    const uden = buildTimeline(content, 1, base);
+    expect(uden.nodes.map((n) => n.id)).not.toContain("larvefarm");
+    const med = buildTimeline(content, 1, base, new Set(["larver"]));
+    expect(med.nodes.map((n) => n.id)).toContain("larvefarm");
+  });
+
+  it("tæller opdagede ud af alle mulige opdagelser i akten", () => {
+    const t = buildTimeline(content, 1, new Set(["sten", "pind", "gnister"]));
+    expect(t.found).toBe(1); // kun gnister er en opdagelse (sten/pind er base)
+    expect(t.total).toBe(content.elements.filter((e) => e.act === 1 && !e.base).length);
+  });
+});
+
+describe("Timeline: kanter", () => {
   it("opdagede resultater får kanter fra deres ingredienser", () => {
     const discovered = new Set(["sten", "pind", "graes", "gnister", "ild"]);
     const t = buildTimeline(content, 1, discovered);
     expect(t.edges).toContainEqual({ from: "sten", to: "gnister", komisk: false });
     expect(t.edges).toContainEqual({ from: "gnister", to: "ild", komisk: false });
     expect(t.edges).toContainEqual({ from: "graes", to: "ild", komisk: false });
-    // stegt-koed er ikke opdaget → ingen kanter dertil
-    expect(t.edges.some((e) => e.to === "stegt-koed")).toBe(false);
+  });
+
+  it("frontier-noder får ingen kanter — opskriften afsløres ikke", () => {
+    const t = buildTimeline(content, 1, new Set(["sten", "pind"]));
+    expect(t.edges.some((e) => e.to === "gnister")).toBe(false);
   });
 
   it("selv-kombination giver én kant, ikke to", () => {
@@ -50,20 +82,22 @@ describe("Timeline: noder og silhuetter", () => {
 
   it("komiske grene tagges på både noder og kanter", () => {
     const discovered = new Set(["larver", "ild", "ristede-larver", "ler", "larvefarm"]);
-    const t = buildTimeline(content, 1, discovered);
+    const t = buildTimeline(content, 1, discovered, new Set(["larver"]));
     expect(t.nodes.find((n) => n.id === "ristede-larver")!.komisk).toBe(true);
     expect(t.nodes.find((n) => n.id === "larvefarm")!.komisk).toBe(true);
     expect(t.nodes.find((n) => n.id === "ild")!.komisk).toBe(false);
     expect(t.edges.find((e) => e.to === "ristede-larver")!.komisk).toBe(true);
   });
+});
 
+describe("Timeline: aktafgrænsning og sortering", () => {
   it("viser kun den valgte akts elementer", () => {
     const t = buildTimeline(content, 2, new Set(["korn", "okse", "sten"]));
     expect(t.nodes.map((n) => n.id).sort()).toEqual(["korn", "okse"]);
   });
 
-  it("noder er sorteret efter dybde (stabil bog-layout)", () => {
-    const t = buildTimeline(content, 1, new Set());
+  it("noder er sorteret efter dybde (stabilt bog-layout)", () => {
+    const t = buildTimeline(content, 1, new Set(["sten", "pind", "graes", "gnister", "ild"]));
     const depths = t.nodes.map((n) => n.depth);
     expect(depths).toEqual([...depths].sort((a, b) => a - b));
   });

@@ -10,7 +10,7 @@
   {
     "id": "pind",
     "name": "Stick",
-    "emoji": "🪵",
+    "emoji": "🥢",
     "act": 1,
     "base": true,
     "flavor": "A stick of exceptional quality. So says Karl, and he has seen many sticks."
@@ -18,7 +18,7 @@
   {
     "id": "graes",
     "name": "Dry grass",
-    "emoji": "🌾",
+    "emoji": "🍂",
     "act": 1,
     "base": true,
     "flavor": "Bone-dry and highly flammable. For now, Karl uses it as a pillow."
@@ -252,7 +252,7 @@
   {
     "id": "planker",
     "name": "Planks",
-    "emoji": "🟫",
+    "emoji": "🟧",
     "act": 1,
     "flavor": "Flat wood. Karl split a log and is now the valley's leading carpenter, by default.",
     "note": "The oldest known woodworking, including split planks, predates modern humans — Neanderthals built with wood 400,000 years ago.",
@@ -262,7 +262,7 @@
   {
     "id": "arbejdsbord",
     "name": "Crafting table",
-    "emoji": "🟧",
+    "emoji": "🧰",
     "act": 1,
     "flavor": "Four planks arranged in a square. Karl feels a strange urge to punch a tree.",
     "note": "A certain block game with crafting tables became the best-selling video game of all time — over 300 million copies.",

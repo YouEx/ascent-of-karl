@@ -9,7 +9,7 @@ Regenerér efter content-ændringer.*
 
 ```mermaid
 flowchart LR
-  arbejdsbord["🟧 Crafting table"]
+  arbejdsbord["🧰 Crafting table"]
   baad["🛶 Canoe"]
   baer(["🫐 Berries"]):::base
   bautasten["🗿 Standing stone"]
@@ -31,7 +31,7 @@ flowchart LR
   galleri["🖼️ Cave gallery"]
   garage["🅿️ Garage"]
   gnister["✨ Sparks"]
-  graes(["🌾 Dry grass"]):::base
+  graes(["🍂 Dry grass"]):::base
   grottebryg["🍺 Cave brew"]
   haandaftryk["🖐️ Handprint wall"]
   helbredelse["🩹 The Healing"]
@@ -67,8 +67,8 @@ flowchart LR
   mursten["🧱 Mud brick"]
   nabo(["🧔 Neighbour"]):::base
   nedbraendt-hytte["🏚️ Burnt-down hut"]
-  pind(["🪵 Stick"]):::base
-  planker["🟫 Planks"]
+  pind(["🥢 Stick"]):::base
+  planker["🟧 Planks"]
   ristede-larver["🍢 Roasted grubs"]
   rockband["🎸 Rock band"]
   roeg["🌫️ Smoke"]
