@@ -60,12 +60,32 @@
     1,
     2
   ],
+  "ending-living-god": [
+    0,
+    1,
+    2
+  ],
   "ending-oldage": [
     0,
     1,
     2
   ],
   "ending-painter": [
+    0,
+    1,
+    2
+  ],
+  "ending-remembered": [
+    0,
+    1,
+    2
+  ],
+  "ending-voyage": [
+    0,
+    1,
+    2
+  ],
+  "ending-winter": [
     0,
     1,
     2
@@ -244,6 +264,13 @@
     1,
     2
   ],
+  "story-broed": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-damp": [
     0,
     1,
@@ -252,6 +279,13 @@
     4
   ],
   "story-drive-in": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-familie": [
     0,
     1,
     2,
@@ -279,6 +313,13 @@
     3,
     4
   ],
+  "story-grav": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-hjul": [
     0,
     1,
@@ -286,7 +327,21 @@
     3,
     4
   ],
+  "story-hoest": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-hulemaleri": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hund": [
     0,
     1,
     2,
@@ -342,7 +397,35 @@
     3,
     4
   ],
+  "story-lov": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-lyn": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-malm": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-mammut": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-monolit": [
     0,
     1,
     2,
@@ -377,7 +460,28 @@
     3,
     4
   ],
+  "story-romance": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-skind": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-skrift": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-spejl": [
     0,
     1,
     2,
@@ -413,6 +517,13 @@
     4
   ],
   "story-stenoekse": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-toej": [
     0,
     1,
     2,

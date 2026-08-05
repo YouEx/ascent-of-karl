@@ -3,16 +3,18 @@
 *v1 = Akt I lanceret som poleret, gratis web-spil. Akt II-V venter til
 loopet er bevist (beslutning 2026-08-05, se docs/design/act-1.md).*
 
-## 🎯 Hovedmål: 200+ kombinationsmuligheder i Akt I
-
-Status og fremdrift:
+## 🎯 Hovedmål: 200+ kombinationsmuligheder i Akt I — **NÅET**
 
 | Bølge | Kombinationer (kumulativt) | Status |
 |---|---|---|
 | Fundament | 34 | ✅ |
 | Bølge 1: bolig, ånd, mode, sport, mad 2.0, transport 2.0 + alternative opskrifter | 86 | ✅ |
-| Bølge 2: superset-kuraterede spor (vejr/is, kærlighed/familie, handel, myter) | ~140 | ⬜ |
-| Bølge 3: dybere pop culture-kæder + flag-kombinationer på tværs af spor | 200+ | ⬜ |
+| Bølge 2: vejr/is, jagt 2.0, familie, handel/samfund, myter, krop, have | 146 | ✅ |
+| Bølge 3: fossiler, monolit, istid-dyr, brød, hav-myter, sport, skrift | **205** | ✅ |
+
+Akt I står nu på **167 elementer, 205 kombinationer, 12 skæbner og 343
+fortæller-varianter**. Næste indholdsarbejde bør drives af playtest-data,
+ikke af flere tal — se prioriteringen nedenfor.
 
 Værktøjer: `tools/superset_status.py` (adoption-tracking mod de 14.913
 research-opskrifter), `tools/story_graph.py` (Mermaid-overblik over sporene),
@@ -31,8 +33,11 @@ validator håndhæver kildekrav + variant-minimum.
 4. **Art-stilprøver** (PRD Step 4): 3 prøver af enkel streg/hulemaleri-stil
    med Karls stemninger (`karlMood`-felterne er briefen). Beslutning om
    Karl som synlig figur (PRD §9.2 — anbefalet: ja).
-5. **Telemetri (opt-in)** + tilgængelighed (skalerbar tekst, farveblind-
-   tilstand) — små indsatser, store playtest-gevinster.
+5. **Balancedata**: slutskærmen har nu en "Copy run summary"-knap
+   (slutning, somre, opdagelser, flags, minutter) som playtestere kan
+   indsende. Serverbaseret telemetri afventer beslutning om hosting.
+   Tilgængelighed: reduced-motion og rem-baseret typografi er på plads;
+   komiske spor markeres med stiplet streg, ikke kun farve.
 6. **Lyd-polish**: UI-lyde, opdagelses-sting, ambience. Beslutning om final
    voice (menneske vs. premium-TTS) på baggrund af playtest-data.
 7. **Distribution**: itch.io-side (gratis, lav friktion) → Steam-side når

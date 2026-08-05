@@ -263,6 +263,49 @@ def main() -> int:
     if not isinstance(turn_limit, int) or turn_limit < 10:
         err(f"config.turnLimit skal være et heltal ≥ 10 (er {turn_limit!r})")
     else:
+        # Billigste vej til hvert element: mængden af kombinationer der skal
+        # laves (delmål deles, derfor mængder frem for summer). Fixpunkt-
+        # iteration — grafen er lille nok til at det er øjeblikkeligt.
+        recipe_set: dict[str, frozenset[int]] = {
+            e["id"]: frozenset() for e in elements if e.get("base")
+        }
+
+        def cost_of(s: frozenset[int]) -> int:
+            return sum(combos[i].get("cost", 1) for i in s)
+
+        changed = True
+        while changed:
+            changed = False
+            for i, c in enumerate(combos):
+                a, b = c["pair"]
+                if a not in recipe_set or b not in recipe_set:
+                    continue
+                need = recipe_set[a] | recipe_set[b] | {i}
+                current = recipe_set.get(c["result"])
+                if current is None or cost_of(need) < cost_of(current):
+                    recipe_set[c["result"]] = need
+                    changed = True
+
+        for e in endings:
+            if e.get("automatic"):
+                continue
+            triggers = [c for c in combos if c.get("ending") == e["id"]]
+            costs = [cost_of(recipe_set[c["result"]]) for c in triggers
+                     if c["result"] in recipe_set]
+            if not costs:
+                continue  # allerede fanget som uudløst ovenfor
+            cheapest = min(costs)
+            if cheapest > turn_limit:
+                err(
+                    f"Slutningen '{e['id']}' kræver mindst {cheapest} somre, "
+                    f"men et run varer kun {turn_limit} — den kan aldrig nås"
+                )
+            elif cheapest > turn_limit * 0.8:
+                warn(
+                    f"Slutningen '{e['id']}' kræver {cheapest}/{turn_limit} somre "
+                    f"selv med perfekt spil — meget stram"
+                )
+
         main_track_cost = sum(
             c.get("cost", 1) for c in combos
             if c.get("solves") or c.get("ageUp")

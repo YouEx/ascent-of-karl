@@ -39,8 +39,8 @@ npm run build      # typecheck + produktion-build
 - [x] Fortæller-audio — pre-genereret scratch-voice (Edge TTS, 168 filer,
       ~9 MB) med manifest, ducking og autoplay-håndtering
       (`tools/generate_audio.py`)
-- [x] Akt I-fokus (se `ROADMAP.md` + `docs/design/act-1.md`): 85 elementer,
-      86 kombinationer, 236 fortæller-varianter — på vej mod 200+ kombinationer
+- [x] **Akt I komplet** (se `ROADMAP.md` + `docs/design/act-1.md`):
+      167 elementer, **205 kombinationer**, 12 skæbner, 343 fortæller-varianter
 - [x] Research-superset: 14.913 opskrifter fra genren som idébank
       (`docs/research/`), adoption spores i `STATUS.md`
 - [x] Story-grafer (`docs/design/act-1-graf.md`, auto-genereret) og

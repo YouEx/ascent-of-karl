@@ -796,5 +796,854 @@
     "result": "sidste-maaltid",
     "spor": "komisk",
     "ending": "gourmet"
+  },
+  {
+    "pair": [
+      "damp",
+      "damp"
+    ],
+    "result": "sky"
+  },
+  {
+    "pair": [
+      "sky",
+      "sky"
+    ],
+    "result": "regn"
+  },
+  {
+    "pair": [
+      "regn",
+      "bautasten"
+    ],
+    "result": "lyn",
+    "narratorLine": "story-lyn"
+  },
+  {
+    "pair": [
+      "lyn",
+      "graes"
+    ],
+    "result": "ild",
+    "solves": "kulde",
+    "narratorLine": "story-ild"
+  },
+  {
+    "pair": [
+      "sky",
+      "fjer"
+    ],
+    "result": "sne",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "sne",
+      "sne"
+    ],
+    "result": "is"
+  },
+  {
+    "pair": [
+      "is",
+      "sne"
+    ],
+    "result": "den-lange-vinter",
+    "cost": 2,
+    "ending": "long-winter"
+  },
+  {
+    "pair": [
+      "sne",
+      "planker"
+    ],
+    "result": "ski",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "graes",
+      "graes"
+    ],
+    "result": "reb"
+  },
+  {
+    "pair": [
+      "reb",
+      "reb"
+    ],
+    "result": "net"
+  },
+  {
+    "pair": [
+      "net",
+      "fisk"
+    ],
+    "result": "fangst"
+  },
+  {
+    "pair": [
+      "reb",
+      "pind"
+    ],
+    "result": "faelde"
+  },
+  {
+    "pair": [
+      "faelde",
+      "koed"
+    ],
+    "result": "ulv"
+  },
+  {
+    "pair": [
+      "ulv",
+      "stegt-koed"
+    ],
+    "result": "hund",
+    "setsFlags": [
+      "hundeejer"
+    ],
+    "narratorLine": "story-hund"
+  },
+  {
+    "pair": [
+      "reb",
+      "stenoekse"
+    ],
+    "result": "bue"
+  },
+  {
+    "pair": [
+      "bue",
+      "fjer"
+    ],
+    "result": "pil"
+  },
+  {
+    "pair": [
+      "pil",
+      "dyr"
+    ],
+    "result": "koed",
+    "narratorLine": "story-koed"
+  },
+  {
+    "pair": [
+      "stenalderfest",
+      "festdragt"
+    ],
+    "result": "romance",
+    "narratorLine": "story-romance"
+  },
+  {
+    "pair": [
+      "romance",
+      "hytte"
+    ],
+    "result": "familie",
+    "cost": 2,
+    "setsFlags": [
+      "familiefar"
+    ],
+    "narratorLine": "story-familie"
+  },
+  {
+    "pair": [
+      "familie",
+      "landsby"
+    ],
+    "result": "stammefolk",
+    "cost": 2
+  },
+  {
+    "pair": [
+      "knogle",
+      "helligsted"
+    ],
+    "result": "grav",
+    "narratorLine": "story-grav"
+  },
+  {
+    "pair": [
+      "grav",
+      "hulemaleri"
+    ],
+    "result": "eftermaele",
+    "cost": 3,
+    "ending": "remembered"
+  },
+  {
+    "pair": [
+      "keramik",
+      "gave"
+    ],
+    "result": "handel"
+  },
+  {
+    "pair": [
+      "nabo",
+      "keramik"
+    ],
+    "result": "gave"
+  },
+  {
+    "pair": [
+      "fisk",
+      "rullesten"
+    ],
+    "result": "skal"
+  },
+  {
+    "pair": [
+      "skal",
+      "handel"
+    ],
+    "result": "penge"
+  },
+  {
+    "pair": [
+      "penge",
+      "landsby"
+    ],
+    "result": "marked",
+    "cost": 2
+  },
+  {
+    "pair": [
+      "stammefolk",
+      "koelle"
+    ],
+    "result": "hoevding",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "hoevding",
+      "bautasten"
+    ],
+    "result": "lov",
+    "cost": 2,
+    "narratorLine": "story-lov"
+  },
+  {
+    "pair": [
+      "shaman",
+      "tromme"
+    ],
+    "result": "ritual"
+  },
+  {
+    "pair": [
+      "syner",
+      "grav"
+    ],
+    "result": "aand",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "aand",
+      "hulemaleri"
+    ],
+    "result": "myte"
+  },
+  {
+    "pair": [
+      "myte",
+      "stenkreds"
+    ],
+    "result": "solgud",
+    "cost": 2
+  },
+  {
+    "pair": [
+      "shaman",
+      "skind"
+    ],
+    "result": "maske"
+  },
+  {
+    "pair": [
+      "maske",
+      "ritual"
+    ],
+    "result": "dans",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "solgud",
+      "dans"
+    ],
+    "result": "levende-gud",
+    "cost": 3,
+    "spor": "komisk",
+    "ending": "living-god"
+  },
+  {
+    "pair": [
+      "knogle",
+      "fjer"
+    ],
+    "result": "naal"
+  },
+  {
+    "pair": [
+      "naal",
+      "skind"
+    ],
+    "result": "toej",
+    "solves": "kulde",
+    "narratorLine": "story-toej"
+  },
+  {
+    "pair": [
+      "naal",
+      "kul"
+    ],
+    "result": "tatovering",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "vand",
+      "keramik"
+    ],
+    "result": "spejl",
+    "narratorLine": "story-spejl"
+  },
+  {
+    "pair": [
+      "spejl",
+      "stenoekse"
+    ],
+    "result": "haarklip",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "knogle",
+      "reb"
+    ],
+    "result": "splint"
+  },
+  {
+    "pair": [
+      "baer",
+      "baer"
+    ],
+    "result": "froe"
+  },
+  {
+    "pair": [
+      "froe",
+      "mudder"
+    ],
+    "result": "have"
+  },
+  {
+    "pair": [
+      "have",
+      "regn"
+    ],
+    "result": "hoest",
+    "cost": 2,
+    "narratorLine": "story-hoest"
+  },
+  {
+    "pair": [
+      "hund",
+      "faelde"
+    ],
+    "result": "fangst"
+  },
+  {
+    "pair": [
+      "ski",
+      "sne"
+    ],
+    "result": "kaelk"
+  },
+  {
+    "pair": [
+      "toej",
+      "fjer"
+    ],
+    "result": "festdragt"
+  },
+  {
+    "pair": [
+      "reb",
+      "stamme"
+    ],
+    "result": "toemmerflaade"
+  },
+  {
+    "pair": [
+      "lyn",
+      "sten"
+    ],
+    "result": "gnister",
+    "narratorLine": "story-gnister"
+  },
+  {
+    "pair": [
+      "hund",
+      "nabo"
+    ],
+    "result": "jagtfoelge"
+  },
+  {
+    "pair": [
+      "sten",
+      "knogle"
+    ],
+    "result": "fossil"
+  },
+  {
+    "pair": [
+      "stamme",
+      "is"
+    ],
+    "result": "rav"
+  },
+  {
+    "pair": [
+      "rav",
+      "larver"
+    ],
+    "result": "myg-i-rav",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "fossil",
+      "myte"
+    ],
+    "result": "soeuhyre",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "fossil",
+      "mammut"
+    ],
+    "result": "mammuthus"
+  },
+  {
+    "pair": [
+      "bautasten",
+      "is"
+    ],
+    "result": "monolit",
+    "cost": 2,
+    "narratorLine": "story-monolit"
+  },
+  {
+    "pair": [
+      "monolit",
+      "aand"
+    ],
+    "result": "besoegende",
+    "spor": "komisk",
+    "cost": 2
+  },
+  {
+    "pair": [
+      "besoegende",
+      "hoevding"
+    ],
+    "result": "idol",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "baer",
+      "stamme"
+    ],
+    "result": "agern"
+  },
+  {
+    "pair": [
+      "agern",
+      "hund"
+    ],
+    "result": "faelde"
+  },
+  {
+    "pair": [
+      "dyr",
+      "sne"
+    ],
+    "result": "mammut",
+    "narratorLine": "story-mammut"
+  },
+  {
+    "pair": [
+      "mammut",
+      "jagtfoelge"
+    ],
+    "result": "koed",
+    "cost": 2,
+    "narratorLine": "story-koed"
+  },
+  {
+    "pair": [
+      "mammut",
+      "knogle"
+    ],
+    "result": "mammuthus"
+  },
+  {
+    "pair": [
+      "hoest",
+      "rullesten"
+    ],
+    "result": "mel"
+  },
+  {
+    "pair": [
+      "mel",
+      "vand"
+    ],
+    "result": "dej"
+  },
+  {
+    "pair": [
+      "dej",
+      "ild"
+    ],
+    "result": "broed",
+    "solves": "sult",
+    "narratorLine": "story-broed"
+  },
+  {
+    "pair": [
+      "broed",
+      "grottebryg"
+    ],
+    "result": "kro",
+    "cost": 2,
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "mel",
+      "keramik"
+    ],
+    "result": "dej"
+  },
+  {
+    "pair": [
+      "regn",
+      "landsby"
+    ],
+    "result": "oversvoemmelse",
+    "cost": 2,
+    "setsFlags": [
+      "oversvoemmet"
+    ]
+  },
+  {
+    "pair": [
+      "oversvoemmelse",
+      "myte"
+    ],
+    "result": "sunkne-by",
+    "cost": 2
+  },
+  {
+    "pair": [
+      "vand",
+      "aand"
+    ],
+    "result": "soeuhyre"
+  },
+  {
+    "pair": [
+      "ulv",
+      "syner"
+    ],
+    "result": "skovmand",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "brydekamp",
+      "tromme"
+    ],
+    "result": "traening",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "traening",
+      "bautasten"
+    ],
+    "result": "mester",
+    "spor": "komisk",
+    "cost": 2
+  },
+  {
+    "pair": [
+      "mester",
+      "festdragt"
+    ],
+    "result": "kroning",
+    "cost": 2
+  },
+  {
+    "pair": [
+      "helligsted",
+      "keramik"
+    ],
+    "result": "helligkrukke"
+  },
+  {
+    "pair": [
+      "helligkrukke",
+      "faelde"
+    ],
+    "result": "faeldegrav",
+    "spor": "komisk"
+  },
+  {
+    "pair": [
+      "idol",
+      "helligsted"
+    ],
+    "result": "ritual"
+  },
+  {
+    "pair": [
+      "knogle",
+      "naal"
+    ],
+    "result": "taellekaep"
+  },
+  {
+    "pair": [
+      "taellekaep",
+      "handel"
+    ],
+    "result": "regnskab"
+  },
+  {
+    "pair": [
+      "myte",
+      "symbol"
+    ],
+    "result": "skrift",
+    "cost": 3,
+    "narratorLine": "story-skrift"
+  },
+  {
+    "pair": [
+      "hulemaleri",
+      "taellekaep"
+    ],
+    "result": "symbol"
+  },
+  {
+    "pair": [
+      "hulemaleri",
+      "skind"
+    ],
+    "result": "kort"
+  },
+  {
+    "pair": [
+      "stenkreds",
+      "solgud"
+    ],
+    "result": "kalender",
+    "cost": 2
+  },
+  {
+    "pair": [
+      "kalender",
+      "hoest"
+    ],
+    "result": "broed",
+    "solves": "sult",
+    "narratorLine": "story-broed"
+  },
+  {
+    "pair": [
+      "baad",
+      "ven"
+    ],
+    "result": "havrejsen",
+    "cost": 3,
+    "ending": "voyage"
+  },
+  {
+    "pair": [
+      "kort",
+      "baad"
+    ],
+    "result": "havrejsen",
+    "cost": 3,
+    "ending": "voyage"
+  },
+  {
+    "pair": [
+      "hund",
+      "dyr"
+    ],
+    "result": "tamsvin"
+  },
+  {
+    "pair": [
+      "net",
+      "fugl"
+    ],
+    "result": "fjer"
+  },
+  {
+    "pair": [
+      "bue",
+      "nabo"
+    ],
+    "result": "jagtfoelge"
+  },
+  {
+    "pair": [
+      "is",
+      "keramik"
+    ],
+    "result": "spejl",
+    "narratorLine": "story-spejl"
+  },
+  {
+    "pair": [
+      "skrift",
+      "lov"
+    ],
+    "result": "regnskab"
+  },
+  {
+    "pair": [
+      "froe",
+      "hoest"
+    ],
+    "result": "have"
+  },
+  {
+    "pair": [
+      "broed",
+      "roeget-koed"
+    ],
+    "result": "surf-n-turf"
+  },
+  {
+    "pair": [
+      "kro",
+      "nabo"
+    ],
+    "result": "stenalderfest"
+  },
+  {
+    "pair": [
+      "marked",
+      "gave"
+    ],
+    "result": "penge"
+  },
+  {
+    "pair": [
+      "dans",
+      "stenalderfest"
+    ],
+    "result": "ritual"
+  },
+  {
+    "pair": [
+      "maske",
+      "hulemaleri"
+    ],
+    "result": "idol"
+  },
+  {
+    "pair": [
+      "hund",
+      "hund"
+    ],
+    "result": "jagtfoelge"
+  },
+  {
+    "pair": [
+      "sne",
+      "hytte"
+    ],
+    "result": "is"
+  },
+  {
+    "pair": [
+      "lyn",
+      "stamme"
+    ],
+    "result": "kul"
+  },
+  {
+    "pair": [
+      "regn",
+      "froe"
+    ],
+    "result": "have"
+  },
+  {
+    "pair": [
+      "fangst",
+      "ild"
+    ],
+    "result": "roeget-koed"
+  },
+  {
+    "pair": [
+      "skal",
+      "naal"
+    ],
+    "result": "smykke"
+  },
+  {
+    "pair": [
+      "smykke",
+      "romance"
+    ],
+    "result": "familie",
+    "cost": 2,
+    "narratorLine": "story-familie"
+  },
+  {
+    "pair": [
+      "mammut",
+      "skind"
+    ],
+    "result": "toej",
+    "solves": "kulde",
+    "narratorLine": "story-toej"
+  },
+  {
+    "pair": [
+      "rav",
+      "smykke"
+    ],
+    "result": "penge"
+  },
+  {
+    "pair": [
+      "kalender",
+      "shaman"
+    ],
+    "result": "myte"
+  },
+  {
+    "pair": [
+      "taellekaep",
+      "sten"
+    ],
+    "result": "kalender"
   }
 ]

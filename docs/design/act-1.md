@@ -15,7 +15,7 @@ kombinationsmuligheder som muligt, inkl. skøre grene og pop culture.*
 
 Age-up: kobber + malm → bronze (uændret).
 
-## Spor og grene (85 elementer, 86 kombinationer — bølge 1 af 200+-målet)
+## Spor og grene (167 elementer, 205 kombinationer — 200+-målet nået)
 
 > Overblik: se den auto-genererede graf i `act-1-graf.md`
 > (regenerér med `python3 tools/story_graph.py`). Adoption fra
@@ -50,6 +50,21 @@ hulemaleri via kul+sten).
 - **Diverse**: tamsvin ("Dino", Flintstones), boomerang (pind+pind),
   fisk/sushi, damp (foreshadowing Akt V).
 
+Bølge 2-spor: **vejr** (sky → regn → lyn, sne → is), **jagt 2.0** (reb →
+net/snare, ulv → **hund**, bue → pil), **familie** (romance → familie →
+stamme, grav → eftermæle), **handel** (gave → handel → muslingepenge →
+marked, høvding → den første lov), **myter** (ritual, ånd, myte, solgud,
+maske, dans), **krop** (nål → tøj, tatovering, spejl, hårklip, skinne) og
+**have** (frø → have → høst).
+
+Bølge 3-spor: **fossiler/rav** (myg i rav = Jurassic Park), **monolitten**
+(2001) → besøgende (ancient aliens-parodi), **istid-dyr** (mammut →
+mammutbenshus), **mad 3.0** (mel → dej → **brød** → kroen), **hav-myter**
+(oversvømmelse → den sunkne by = Doggerland, søuhyre, den behårede),
+**sport** (træningsmontage → mesteren), **skatte** (idol, fældegrav, den
+hellige krukke = gralsparodi) og **tal/skrift** (tællekæp → regnskab,
+symbol → **skrift**, kort, kalender).
+
 ## Nye personer
 
 - **Ugh (nabo)**: base-element. Muliggør alle sociale kombinationer
@@ -70,18 +85,25 @@ Hvert run varer **max 50 somre** (kombinationsforsøg = én sommer;
 (`cost`-felt) — jo længere ud ad en gren, desto sværere at holde Karl i
 live. Fortælleren varsler alderdommen ved 10/5/1 somre tilbage.
 
-**8 slutninger** (`content/endings.json`) — ikke alle lykkelige:
+**12 slutninger** (`content/endings.json`) — ikke alle lykkelige:
 
-| Slutning | Udløses af | Tone |
+| Slutning | Achievement | Tone |
 |---|---|---|
-| 👑 King Karl | landsby + festdragt | happy |
-| 🩹 Dr. Karl | medicin + nabo | happy |
-| 🌟 The Legend (evig turné) | stenkoncert + trommesolo | bittersweet |
-| 🕯️ A Whole Life (alderdom) | automatisk ved 50 somre | bittersweet |
-| ⚔️ General Karl | slagsmål + kølle | tragic |
-| 🪽 Almost Icarus (død) | vinger + bautasten | tragic |
-| 🖌️ The Mad Painter (galskab) | syner + hulemaleri | mad |
-| 🍲 Death by Cuisine (død) | mudderkage + grottebryg | komisk |
+| 👑 King Karl | King Karl | happy |
+| 🌟 The Legend | Rock Legend | bittersweet |
+| 🖌️ Into the Painting | The Mad Painter | mad |
+| 🪽 The Flight of Karl | Almost Icarus | tragic |
+| ⚔️ General Karl | General Karl | tragic |
+| 🩹 Dr. Karl | Dr. Karl | happy |
+| 🍲 The Last Supper | Death by Cuisine | komisk |
+| 🏔️ The Long Winter | The Long Winter | tragic |
+| 🕊️ Remembered | Remembered | bittersweet |
+| 🌞 The Living God | The Living God | mad |
+| ⛵ The Voyage | Into the Unknown | bittersweet |
+| 🕯️ A Whole Life | A Whole Life | bittersweet |
+
+Udløsere står i `content/endings.json` + `combos.json` (feltet
+`ending`); alderdommen er automatisk ved 50 somre.
 
 En slutning afslutter runnet (motoren låser), fortælleren får sidste ord
 ("THE END"), og et **achievement** låses op — persisteret på tværs af runs.

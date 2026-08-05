@@ -151,6 +151,7 @@ let typewriterTimer: ReturnType<typeof setInterval> | undefined;
 let muted = localStorage.getItem(MUTE_KEY) === "1";
 let lastLineText = "";
 let lastAttemptAt: number | null = null;
+let runStartedAt = performance.now();
 let query = "";
 let onlyNew = false;
 /** Opdaget i denne session — får ✨-markering så de er til at finde i et stort grid */
@@ -357,11 +358,30 @@ function showEndingScreen(): void {
         ? `<p class="achievement">🏆 Achievement unlocked: <strong>${ending.achievement}</strong></p>`
         : `<p class="achievement known">🏆 ${ending.achievement}</p>`}
       <button id="ending-restart">Live again</button>
+      <button id="ending-stats" class="secondary">Copy run summary</button>
     </div>`;
   el.ending.hidden = false;
   document.getElementById("ending-restart")!.addEventListener("click", () => {
     clearSave();
     location.reload();
+  });
+  // Playtest-hjælp (ROADMAP: balancedata): spilleren kan kopiere sit run
+  document.getElementById("ending-stats")!.addEventListener("click", async (e) => {
+    const summary = {
+      ending: ending.id,
+      summers: state.attempts,
+      discoveries: state.discovered.length,
+      solved: state.solvedProblems,
+      flags: state.flags,
+      minutes: Math.round((performance.now() - runStartedAt) / 60000),
+    };
+    const btn = e.currentTarget as HTMLButtonElement;
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(summary));
+      btn.textContent = "Copied ✓";
+    } catch {
+      btn.textContent = JSON.stringify(summary);
+    }
   });
 }
 
@@ -526,6 +546,7 @@ function showTitleScreen(): void {
 function startGame(resume: boolean): void {
   const resumed = resume && tryLoad();
   el.titleScreen.hidden = true;
+  runStartedAt = performance.now();
   renderAll();
   if (engine.activeEnding()) {
     lastLineText = lastLineText || `${engine.activeEnding()!.title}.`;

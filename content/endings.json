@@ -56,6 +56,38 @@
     "line": "ending-gourmet"
   },
   {
+    "id": "long-winter",
+    "title": "The Long Winter",
+    "emoji": "🏔️",
+    "tone": "tragic",
+    "achievement": "The Long Winter",
+    "line": "ending-winter"
+  },
+  {
+    "id": "remembered",
+    "title": "Remembered",
+    "emoji": "🕊️",
+    "tone": "bittersweet",
+    "achievement": "Remembered",
+    "line": "ending-remembered"
+  },
+  {
+    "id": "living-god",
+    "title": "The Living God",
+    "emoji": "🌞",
+    "tone": "mad",
+    "achievement": "The Living God",
+    "line": "ending-living-god"
+  },
+  {
+    "id": "voyage",
+    "title": "The Voyage",
+    "emoji": "⛵",
+    "tone": "bittersweet",
+    "achievement": "Into the Unknown",
+    "line": "ending-voyage"
+  },
+  {
     "id": "et-helt-liv",
     "title": "A Whole Life",
     "emoji": "🕯️",

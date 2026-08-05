@@ -26,11 +26,15 @@ def main() -> None:
 
     superset: dict[tuple[str, str], dict[str, str]] = {}
     results_in_superset: set[str] = set()
+    recipe_count = 0
     with SUPERSET.open(encoding="utf-8") as f:
         for row in csv.DictReader(f):
             key = tuple(sorted((row["element_a"], row["element_b"])))
-            superset[key] = row
+            # Samme par kan give forskellige resultater i forskellige spil;
+            # opslaget beholder ét, men vi tæller alle opskrifter.
+            superset.setdefault(key, row)
             results_in_superset.add(row["result"])
+            recipe_count += 1
 
     exact, partial, original = [], [], []
     for c in combos:
@@ -51,9 +55,10 @@ def main() -> None:
 
 *Auto-genereret af `tools/superset_status.py` — redigér ikke i hånden.*
 
-Supersettet (`superset.csv`) indeholder **{len(superset)} unikke opskrifter**
-fra Little Alchemy 1+2, Infinite Craft og 7 alchemy-kloner
-(se `README.md` for metodologi).
+Supersettet (`superset.csv`) indeholder **{recipe_count} opskrifter**
+fordelt på **{len(superset)} unikke ingredienspar** (samme par giver
+forskellige resultater i forskellige spil) fra Little Alchemy 1+2,
+Infinite Craft og 7 alchemy-kloner (se `README.md` for metodologi).
 
 ## Vores adoption
 

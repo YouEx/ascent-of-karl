@@ -898,6 +898,736 @@
     "act": 1
   },
   {
+    "id": "sky",
+    "name": "Cloud",
+    "emoji": "☁️",
+    "flavor": "Steam that got ambitious and left. Karl waves at it. It does not wave back.",
+    "note": "Clouds form when rising air cools and water vapour condenses onto dust — every drop needs a speck to cling to.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cloud",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "regn",
+    "name": "Rain",
+    "emoji": "🌧️",
+    "flavor": "The sky is leaking. Karl stands in it, arms out, deeply moved. He will regret this tonight.",
+    "note": "A single raindrop falls at around 30 km/h — and takes minutes to reach the ground from a tall cloud.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Rain",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "lyn",
+    "name": "Lightning",
+    "emoji": "⚡",
+    "flavor": "The storm hits the standing stone with a crack that rearranges Karl's opinions about everything.",
+    "note": "A lightning bolt heats the air around it to about 30,000 °C — five times hotter than the surface of the sun.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Lightning",
+    "karlMood": "fornaermet",
+    "act": 1
+  },
+  {
+    "id": "sne",
+    "name": "Snow",
+    "emoji": "❄️",
+    "flavor": "White feathers falling from the sky. Karl assumes a very large bird has had an accident.",
+    "note": "Snowflakes are almost always six-sided — a consequence of how water molecules lock together as they freeze.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Snowflake",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "is",
+    "name": "Ice",
+    "emoji": "🧊",
+    "flavor": "Water that has given up. Karl licks it. Karl regrets licking it.",
+    "note": "Ice floats because water is one of the rare substances that expands as it freezes — which is why lakes freeze from the top.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ice",
+    "karlMood": "flov",
+    "act": 1
+  },
+  {
+    "id": "ski",
+    "name": "Skis",
+    "emoji": "🎿",
+    "flavor": "Two planks and a downhill. Karl has invented going fast without meaning to.",
+    "note": "Preserved wooden skis from Scandinavia and Russia are over 5,000 years old — skis are about as old as the wheel.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_skiing",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "reb",
+    "name": "Rope",
+    "emoji": "🪢",
+    "flavor": "Twisted grass, surprisingly strong. Karl ties it around everything he owns, including himself.",
+    "note": "Twisted plant-fibre cord goes back at least 40,000 years — even Neanderthals made rope.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Rope",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "net",
+    "name": "Net",
+    "emoji": "🕸️",
+    "flavor": "A hole surrounded by rope. Karl is not sure how it works, but the fish agree that it does.",
+    "note": "A 10,000-year-old fishing net woven from willow was found preserved in a Finnish bog.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Antrea_Net",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "fangst",
+    "name": "Great catch",
+    "emoji": "🎣",
+    "flavor": "More fish than Karl can carry, count, or name. He is attempting all three.",
+    "note": "Net fishing feeds far more people than a spear ever could — it may have supported the first permanent settlements.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_fishing",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "faelde",
+    "name": "Snare",
+    "emoji": "🪤",
+    "flavor": "A loop of rope that hunts while Karl sleeps. His finest employee.",
+    "note": "Traps let one person out-hunt an entire party — they work all night and never argue.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Trapping",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "ulv",
+    "name": "Wolf",
+    "emoji": "🐺",
+    "flavor": "Drawn by the smell of meat. It watches Karl. Karl watches back. Neither blinks. Something is beginning.",
+    "note": "Wolves likely domesticated themselves — the boldest ones edged closer to human camps for scraps.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Wolf",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "hund",
+    "name": "Dog",
+    "emoji": "🐕",
+    "flavor": "The wolf stayed. It has a name now. It sleeps by the fire and considers Karl its slightly disappointing pet.",
+    "note": "Dogs were the first animal we domesticated — at least 15,000 years ago, long before any farm animal.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Origin_of_the_domestic_dog",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "bue",
+    "name": "Bow",
+    "emoji": "🏹",
+    "flavor": "A bent stick with a grudge. Karl fires it once and spends an hour looking for the arrow.",
+    "note": "The world's oldest complete bows come from Holmegård in Denmark and are about 10,000 years old.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Holmegaard_bow",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "pil",
+    "name": "Arrow",
+    "emoji": "🎯",
+    "flavor": "Straight, feathered, and gone. Always gone. Karl has now lost eleven.",
+    "note": "Stone points from South Africa suggest people were hunting with bows and arrows 64,000 years ago.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Arrow",
+    "karlMood": "flov",
+    "act": 1
+  },
+  {
+    "id": "romance",
+    "name": "Romance",
+    "emoji": "💘",
+    "flavor": "Somebody laughed at Karl's joke. On purpose. He has not been the same since.",
+    "note": "The 'Lovers of Valdaro' — two skeletons buried face to face, arms entwined — have lain together for 6,000 years.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Lovers_of_Valdaro",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "familie",
+    "name": "Family",
+    "emoji": "👨‍👩‍👦",
+    "flavor": "A hut, two adults, and a small loud person who has already eaten a rock. Genetics is a circle.",
+    "note": "A 4,600-year-old grave at Eulau in Germany holds the earliest genetically proven nuclear family — buried facing one another.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Corded_Ware_culture",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "stammefolk",
+    "name": "Tribe",
+    "emoji": "🏕️",
+    "flavor": "Enough people that Karl no longer knows everyone's business. He finds this outrageous.",
+    "note": "Hunter-gatherers lived in bands of roughly 25 — small enough that everyone knew everyone, and nobody was in charge.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Band_society",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "grav",
+    "name": "Burial",
+    "emoji": "⚰️",
+    "flavor": "Karl covers his friend in red ochre and sits with him a long time. Even the boar is quiet.",
+    "note": "The Red Lady of Paviland — actually a young man — was buried in Wales with red ochre 33,000 years ago.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Red_Lady_of_Paviland",
+    "karlMood": "ked",
+    "act": 1
+  },
+  {
+    "id": "eftermaele",
+    "name": "Legacy",
+    "emoji": "🕊️",
+    "flavor": "The story of Karl, painted on the wall so it outlasts him. It is mostly accurate. Mostly.",
+    "note": "The urge to be remembered may be humanity's oldest art project — burial goods and grave paintings both say 'this one mattered'.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Funerary_art",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "gave",
+    "name": "Gift",
+    "emoji": "🎁",
+    "flavor": "Karl hands Ugh a pot for no reason. Ugh is deeply suspicious and deeply pleased.",
+    "note": "Gift-giving builds obligation — anthropologists argue it, not barter, was the true origin of exchange.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Gift_economy",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "handel",
+    "name": "Trade",
+    "emoji": "🤝",
+    "flavor": "Two pots for one axe. Both men walk away convinced they won. That's trade.",
+    "note": "Stone Age obsidian travelled hundreds of kilometres from the nearest volcano — the first long-distance supply chains.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Obsidian",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "skal",
+    "name": "Shell",
+    "emoji": "🐚",
+    "flavor": "Pretty, useless, and therefore extremely valuable. Karl has grasped economics without meaning to.",
+    "note": "Perforated shell beads from Morocco are 142,000 years old — the oldest known jewellery.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Shell_money",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "penge",
+    "name": "Shell money",
+    "emoji": "💰",
+    "flavor": "Shells you can swap for anything. Karl now owns forty and refuses to explain why he needs them.",
+    "note": "Cowrie shells served as currency across Africa, Asia and the Pacific for thousands of years.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cowrie_shell_money",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "marked",
+    "name": "Market",
+    "emoji": "🎪",
+    "flavor": "Three people, six opinions, and one very loud pot salesman. Karl is the salesman.",
+    "note": "Marketplaces predate money — people gathered to swap goods, gossip and marriage partners in one trip.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Marketplace",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "hoevding",
+    "name": "Chief",
+    "emoji": "🫅",
+    "flavor": "Somebody has to decide where the fire goes. Ugh volunteered. Loudly. Karl is reconsidering democracy.",
+    "note": "Early leaders were 'big men' — influence came from generosity and persuasion, not the right to command.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Big_man_(anthropology)",
+    "karlMood": "fornaermet",
+    "act": 1
+  },
+  {
+    "id": "lov",
+    "name": "The first law",
+    "emoji": "📜",
+    "flavor": "Carved into the standing stone: DO NOT TAKE KARL'S GOOD ROCK. History's first legislation is deeply personal.",
+    "note": "The oldest written laws, the Code of Ur-Nammu, are 4,000 years old — but unwritten custom governed people long before.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Code_of_Ur-Nammu",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "ritual",
+    "name": "Ritual",
+    "emoji": "🔮",
+    "flavor": "Nobody remembers why they do it. Everybody agrees it would be bad to stop.",
+    "note": "Ritual may be older than religion — repeated, meaningful acts bind groups together whatever the belief behind them.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ritual",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "aand",
+    "name": "Ancestor spirit",
+    "emoji": "👻",
+    "flavor": "Karl is certain his grandfather is in that stone. His grandfather is, in fairness, under it.",
+    "note": "Ancestor veneration is one of the most widespread beliefs on Earth — the dead stay part of the family.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Veneration_of_the_dead",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "myte",
+    "name": "Myth",
+    "emoji": "📖",
+    "flavor": "The story of how Karl fought the boar and won. It grows by one boar every telling.",
+    "note": "Some myths may be genuinely ancient — folklorists trace certain tale types back thousands of years.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Comparative_mythology",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "solgud",
+    "name": "Sun god",
+    "emoji": "☀️",
+    "flavor": "The stone circle catches the sunrise, and Karl decides the sun did that on purpose, for him.",
+    "note": "Sun worship appears almost everywhere — Denmark's 3,400-year-old Trundholm sun chariot hauls the sun across the sky.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Trundholm_sun_chariot",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "maske",
+    "name": "Mask",
+    "emoji": "🎭",
+    "flavor": "Behind the mask, Karl is not Karl. He is Something Else. The boar is genuinely unsettled.",
+    "note": "The oldest known masks are 9,000-year-old carved stone faces from the Judean desert.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Mask",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "dans",
+    "name": "Ritual dance",
+    "emoji": "🕺",
+    "flavor": "Drums, masks, firelight, and two men moving in ways the human body was not built for.",
+    "note": "Dance may be older than speech — 9,000-year-old rock paintings at Bhimbetka in India show rows of dancers.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Bhimbetka_rock_shelters",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "naal",
+    "name": "Bone needle",
+    "emoji": "🪡",
+    "flavor": "A splinter of bone with a hole in it. It took Karl four days. He has aged visibly.",
+    "note": "The oldest known sewing needle — bird bone, 50,000 years old — came from Denisova Cave in Siberia.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sewing_needle",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "toej",
+    "name": "Sewn clothes",
+    "emoji": "👕",
+    "flavor": "Hide that fits. Karl turns slowly, admiring himself, and walks into the standing stone.",
+    "note": "Sewn, fitted clothing is what let humans survive ice-age winters and spread across the far north.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sewing",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "tatovering",
+    "name": "Tattoo",
+    "emoji": "🖋️",
+    "flavor": "Charcoal rubbed into small cuts. It says something profound. Ugh says it says 'BENT'.",
+    "note": "Ötzi the Iceman carries 61 tattoos — charcoal rubbed into fine incisions, mostly over aching joints.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_tattooing",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "spejl",
+    "name": "Reflection",
+    "emoji": "🪞",
+    "flavor": "Still water in a dark pot, and in it — a man. Karl stares. Karl has thoughts. Karl needs a moment.",
+    "note": "The oldest manufactured mirrors are 8,000-year-old polished obsidian discs from Çatalhöyük.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Mirror",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "haarklip",
+    "name": "Haircut",
+    "emoji": "💇",
+    "flavor": "Karl has seen himself and taken action. The result is uneven, dramatic, and entirely his own fault.",
+    "note": "Ötzi's hair was trimmed to about 9 cm and his beard was cut — Stone Age people groomed themselves carefully.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/%C3%96tzi",
+    "karlMood": "flov",
+    "act": 1
+  },
+  {
+    "id": "splint",
+    "name": "Splint",
+    "emoji": "🩼",
+    "flavor": "Ugh fell off the standing stone. Karl has bound his leg to a stick. Ugh will walk again, at a cost to his dignity.",
+    "note": "Stone Age skeletons show healed fractures — someone set the bone and cared for the patient for weeks.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Splint_(medicine)",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "froe",
+    "name": "Seeds",
+    "emoji": "🌱",
+    "flavor": "The bits of the berry Karl always spat out. It turns out they were the important bits.",
+    "note": "Seeds can wait decades for the right conditions — a 2,000-year-old date palm seed from Masada was successfully sprouted.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Judean_date_palm",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "have",
+    "name": "Garden",
+    "emoji": "🌻",
+    "flavor": "Karl put seeds in mud on purpose and now stares at the spot daily, willing it to do something.",
+    "note": "Before farming came tending — encouraging useful wild plants where they already grew.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Forest_gardening",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "hoest",
+    "name": "Harvest",
+    "emoji": "🌽",
+    "flavor": "Food that stayed where he put it and grew while he slept. Karl suspects witchcraft. Karl is delighted.",
+    "note": "The first harvests changed everything — surplus food meant storage, settlement, and eventually cities.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Neolithic_Revolution",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "den-lange-vinter",
+    "name": "The Long Winter",
+    "emoji": "🏔️",
+    "flavor": "The snow does not stop. The fire does not hold. Karl pulls the hide tighter and watches the white come.",
+    "note": "The last glacial maximum, around 20,000 years ago, buried northern Europe under ice a kilometre thick.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Last_Glacial_Maximum",
+    "karlMood": "ked",
+    "act": 1
+  },
+  {
+    "id": "levende-gud",
+    "name": "The Living God",
+    "emoji": "🌞",
+    "flavor": "Masked, drumming, lit from below — Karl stops being a man in the eyes of the tribe. Nobody corrects them. Least of all Karl.",
+    "note": "Divine kingship — rulers treated as gods on earth — appears independently in Egypt, Mesoamerica and Polynesia.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Divine_king",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "jagtfoelge",
+    "name": "Hunting party",
+    "emoji": "🫂",
+    "act": 1,
+    "flavor": "Two men and a dog with a plan. The plan is 'shout, and see what happens'. It works.",
+    "note": "Cooperative hunting with dogs may be why humans out-competed other predators — and other humans.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Hunting_dog",
+    "karlMood": "stolt"
+  },
+  {
+    "id": "fossil",
+    "name": "Fossil",
+    "emoji": "🦕",
+    "flavor": "A bone in the rock, from something enormous and long gone. Karl decides it was a very big boar.",
+    "note": "Fossils shaped myths for millennia — Greek griffins may be based on Protoceratops skulls found in Central Asia.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Fossil_legends",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "rav",
+    "name": "Amber",
+    "emoji": "🟡",
+    "flavor": "Frozen honey that isn't honey. Karl has tried to eat it twice and wear it once. The wearing went better.",
+    "note": "Baltic amber is 40-million-year-old tree resin — and it was traded across Europe along the ancient Amber Road.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Amber_Road",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "myg-i-rav",
+    "name": "Insect in amber",
+    "emoji": "🦟",
+    "flavor": "A grub, trapped in golden stone, perfectly preserved. Karl shows it to the shaman. The shaman has ideas. Terrible, wonderful ideas.",
+    "note": "DNA does not survive in amber — the famous mosquito-in-amber premise is, sadly for everyone, fiction.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Jurassic_Park_(film)",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "monolit",
+    "name": "The Monolith",
+    "emoji": "⬛",
+    "flavor": "A tall black stone, perfectly smooth, that absolutely nobody in this valley made. Karl touches it. Something in his head clicks.",
+    "note": "The monolith in 2001: A Space Odyssey was originally going to be a tetrahedron — Kubrick chose the slab for its clean, unreadable geometry.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Monolith_(Space_Odyssey)",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "besoegende",
+    "name": "The Visitors",
+    "emoji": "🛸",
+    "flavor": "Lights in the sky that the shaman insists are ancestors. Karl insists they are lights. Both are shouting.",
+    "note": "'Ancient astronaut' claims are firmly rejected by archaeologists — the evidence says the pyramids were built by well-fed, well-organised humans.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ancient_astronauts",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "agern",
+    "name": "Acorn",
+    "emoji": "🌰",
+    "flavor": "One acorn. Karl guards it with a devotion that is frankly disproportionate.",
+    "note": "Acorns fed people for millennia — leached of their bitterness, they were a staple across Europe, Asia and California.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Acorn",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "mammut",
+    "name": "Mammoth",
+    "emoji": "🦣",
+    "flavor": "Like the boar, but the size of a hut, and considerably less impressed by Karl.",
+    "note": "Woolly mammoths survived on Wrangel Island until about 4,000 years ago — they were still alive when the pyramids were built.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Woolly_mammoth",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "mammuthus",
+    "name": "Mammoth-bone hut",
+    "emoji": "🏛️",
+    "flavor": "A house built from the ribs of something enormous. It is warm, it is dry, and it stares at you slightly.",
+    "note": "Real mammoth-bone dwellings survive in Ukraine — one used the bones of at least 60 animals, 25,000 years ago.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Mammoth_bone_dwelling",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "mel",
+    "name": "Flour",
+    "emoji": "🍚",
+    "flavor": "Grain, crushed between two stones for an hour. Karl's arms hurt and he has produced one handful of dust.",
+    "note": "Grinding stones with flour residue have been found from 30,000 years ago — bread-making predates farming.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Quern-stone",
+    "karlMood": "flov",
+    "act": 1
+  },
+  {
+    "id": "dej",
+    "name": "Dough",
+    "emoji": "🥟",
+    "flavor": "Flour and water, kneaded into something alive-ish. Karl is unsettled by how much it resembles Ugh.",
+    "note": "Wild yeast is everywhere — leave flour and water out long enough and dough will start rising on its own.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sourdough",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "broed",
+    "name": "Bread",
+    "emoji": "🍞",
+    "flavor": "Warm, crusty and gone in ninety seconds. Karl immediately begins making more. This is now his personality.",
+    "note": "The oldest known bread — 14,400-year-old charred flatbread from Jordan — was baked 4,000 years before farming began.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_bread",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "kro",
+    "name": "The Tavern",
+    "emoji": "🍻",
+    "flavor": "Bread, brew and a flat stone to sit on. Ugh has started telling the boar story again. Nobody stops him.",
+    "note": "Beer and bread grew up together — some archaeologists argue we settled down to brew, not to bake.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_beer",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "oversvoemmelse",
+    "name": "The Flood",
+    "emoji": "🌊",
+    "flavor": "The rain did not stop. The river came for the village. Karl saved a pot, the dog, and none of the huts.",
+    "note": "Flood myths appear worldwide — many may echo real events, like the rapid sea-level rise at the end of the ice age.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Flood_myth",
+    "karlMood": "ked",
+    "act": 1
+  },
+  {
+    "id": "sunkne-by",
+    "name": "The Sunken Village",
+    "emoji": "🏝️",
+    "flavor": "Under the water lies a village that Karl swears was glorious. It had two huts. It is getting bigger every time he tells it.",
+    "note": "Doggerland — a real inhabited plain between Britain and Denmark — was swallowed by the North Sea around 6000 BC.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Doggerland",
+    "karlMood": "ked",
+    "act": 1
+  },
+  {
+    "id": "soeuhyre",
+    "name": "Lake monster",
+    "emoji": "🐉",
+    "flavor": "Something moved in the water. Probably a log. Karl has decided it was not a log, and the story is already improving.",
+    "note": "Lake monster legends span the globe — most sightings turn out to be otters, logs, or wishful thinking.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Lake_monster",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "skovmand",
+    "name": "The Hairy One",
+    "emoji": "🦧",
+    "flavor": "Big. Hairy. Seen only at dusk, only by Karl, and only after brew. The tribe is politely sceptical.",
+    "note": "Wild-man legends — from Bigfoot to the Yeti to Europe's medieval woodwose — turn up in almost every forested culture.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Wild_man",
+    "karlMood": "forvirret",
+    "act": 1
+  },
+  {
+    "id": "traening",
+    "name": "Training montage",
+    "emoji": "🥊",
+    "flavor": "Karl runs up the hill. Karl punches the log. Karl runs up the hill again. The drums are relentless and so is he.",
+    "note": "Athletic training as spectacle is ancient — Greek gymnasia trained citizens for war and games alike.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Gymnasium_(ancient_Greece)",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "mester",
+    "name": "The Champion",
+    "emoji": "🏅",
+    "flavor": "Karl stands atop the standing stone with his arms up. Ugh, defeated, is being a very good sport about it. Mostly.",
+    "note": "Winners at the ancient Olympics got an olive wreath — and free meals for life back home.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ancient_Olympic_Games",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "idol",
+    "name": "Golden idol",
+    "emoji": "🧿",
+    "flavor": "A small heavy figure that everyone wants and nobody should have. Karl swaps it for a bag of sand out of pure instinct.",
+    "note": "Cult figurines are among the oldest art we have — the Löwenmensch lion-man is 40,000 years old.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/L%C3%B6wenmensch_figurine",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "faeldegrav",
+    "name": "Booby trap",
+    "emoji": "💥",
+    "flavor": "Karl protects the shrine with a snare, a boulder and unearned confidence. He triggers it himself within the hour.",
+    "note": "Ancient tombs really were trapped — though the famous 'curse of the pharaohs' killed rather fewer people than the newspapers claimed.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Curse_of_the_pharaohs",
+    "karlMood": "flov",
+    "act": 1
+  },
+  {
+    "id": "helligkrukke",
+    "name": "The Sacred Pot",
+    "emoji": "🏆",
+    "flavor": "The most beautiful pot ever made, kept in the shrine, touched by no one. Ugh has been questing for it for three days. It is eight metres away.",
+    "note": "Grail legends grew from medieval romance — the quest matters more than the cup, which is arguably the whole point.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Holy_Grail",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "taellekaep",
+    "name": "Tally stick",
+    "emoji": "🧮",
+    "flavor": "One notch per pot traded. Karl has invented bookkeeping and immediately regrets the paperwork.",
+    "note": "The Ishango bone from Congo, carved with tally marks 20,000 years ago, may be humanity's oldest mathematics.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ishango_bone",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "regnskab",
+    "name": "Accounts",
+    "emoji": "📊",
+    "flavor": "Ugh owes Karl four pots. Karl owes Ugh nothing. Karl keeps the records. Ugh has begun asking questions.",
+    "note": "Writing began as accounting — the earliest cuneiform tablets are receipts for grain and beer, not poetry.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cuneiform",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "symbol",
+    "name": "Symbol",
+    "emoji": "🔣",
+    "flavor": "A mark that means something other than itself. Karl has just done the hardest thing a mind can do, and he's not even sweating.",
+    "note": "Abstract signs recur in cave art across Europe — the same 32 symbols, used for 30,000 years.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cave_painting",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "skrift",
+    "name": "Writing",
+    "emoji": "✍️",
+    "flavor": "Symbols in rows that hold a thought after the thinker has gone. Karl's first sentence is about his rock. Of course it is.",
+    "note": "Writing was invented independently at least three times — in Mesopotamia, China and Mesoamerica.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/History_of_writing",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "kort",
+    "name": "Map",
+    "emoji": "🗺️",
+    "flavor": "The valley, scratched on hide. It is not to scale. The boar is drawn much too large, for accuracy of feeling.",
+    "note": "A 14,000-year-old stone slab from Spain, the Abauntz map, may be the oldest known map — showing rivers, mountains and herds.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Abauntz_Lamizulo",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "kalender",
+    "name": "Calendar",
+    "emoji": "📅",
+    "flavor": "The stones tell Karl when the sun will return. He has never been more powerful or more insufferable.",
+    "note": "A 10,000-year-old row of pits in Scotland tracks lunar months — possibly the world's oldest calendar.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Warren_Field",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "havrejsen",
+    "name": "The Voyage",
+    "emoji": "⛵",
+    "flavor": "Karl pushes off with the pot-faced friend lashed to the prow, and paddles towards a horizon nobody has ever come back from.",
+    "note": "Humans crossed to Australia over 50,000 years ago — one of history's boldest journeys, made in boats we've never found.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Prehistory_of_Australia",
+    "karlMood": "stolt",
+    "act": 1
+  },
+  {
+    "id": "smykke",
+    "name": "Necklace",
+    "emoji": "📿",
+    "act": 1,
+    "flavor": "Shells on a cord. Karl made it for someone specific and is being extremely casual about the whole thing.",
+    "note": "Shell beads from Morocco are 142,000 years old — the oldest known jewellery, and proof we've always wanted to be looked at.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Bead",
+    "karlMood": "flov"
+  },
+  {
     "id": "korn",
     "name": "Wild grain",
     "emoji": "🌾",

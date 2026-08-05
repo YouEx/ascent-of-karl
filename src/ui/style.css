@@ -431,6 +431,10 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   padding: 0.5rem 0.75rem; display: block;
 }
 .achievement.known { opacity: 0.7; }
+.ending-inner button.secondary {
+  background: none; color: var(--muted); border: 1px solid var(--muted);
+  font-size: 0.85rem; margin-left: 0.4rem;
+}
 
 .modal-inner {
   background: var(--panel); border: 2px solid var(--accent); border-radius: 14px;
