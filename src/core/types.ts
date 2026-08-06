@@ -118,6 +118,8 @@ export interface NarratorContentDef {
   lines: NarratorLineDef[];
   /** Replik når spilleren vender tilbage til et gemt spil */
   resumeLine?: string;
+  /** Replik når en skæbne blev afværget, fordi Karl har for få opdagelser endnu */
+  deflectedEndingLine?: string;
   behavior: {
     /** Elementet fortælleren driller spilleren for at spamme (Akt I: sten) */
     spamElement: string;
@@ -151,6 +153,12 @@ export interface ContentBundle {
   config: {
     /** Max antal kombinationsforsøg (somre) pr. run — derefter alderdoms-slutning */
     turnLimit: number;
+    /**
+     * Antal opdagelser før skæbne-kombinationer kan afslutte runnet. Under
+     * grænsen sker opdagelsen, men Karl overlever — fortælleren afværger.
+     * Sikrer at et første run ikke kan slutte efter fem træk.
+     */
+    endingsUnlockAt: number;
   };
 }
 
@@ -164,7 +172,14 @@ export type CombineOutcome =
       ageUp: boolean;
       /** Akten opdagelsen skete i — ved age-up er engine allerede rykket til næste akt */
       act: ActDef;
+      /** Kombinationen bar en skæbne, men Karl havde for få opdagelser endnu */
+      endingDeflected?: boolean;
     }
-  | { kind: "known"; combo: ComboDef; element: ElementDef }
+  | {
+      kind: "known";
+      combo: ComboDef;
+      element: ElementDef;
+      endingDeflected?: boolean;
+    }
   | { kind: "gated"; combo: ComboDef; unsolved: ProblemDef[] }
   | { kind: "nothing" };

@@ -122,6 +122,32 @@ export class Engine {
     return Math.max(0, this.content.config.turnLimit - this.state.attempts);
   }
 
+  /**
+   * Antal ting Karl selv har opfundet. Base-elementerne tæller ikke med — de
+   * er verden han vågner op i, ikke noget han har udrettet. (Age-up lægger
+   * desuden næste akts base-elementer i puljen, som heller ikke er fortjent.)
+   */
+  inventions(): number {
+    return this.state.discovered.filter((id) => !this.element(id).base).length;
+  }
+
+  /** Er Karl nået langt nok til at hans historie må få en ende? */
+  endingsUnlocked(): boolean {
+    return this.inventions() >= this.content.config.endingsUnlockAt;
+  }
+
+  /**
+   * Lader en skæbne-kombination afslutte runnet — men kun når Karl har set nok
+   * af verden. Under grænsen returneres `true` som "afværget", så fortælleren
+   * kan kommentere. Skæbnen er ikke tabt: kombinationen kan gentages senere.
+   */
+  private applyEnding(combo: ComboDef): boolean {
+    if (!combo.ending) return false;
+    if (!this.endingsUnlocked()) return true;
+    this.state.ended = combo.ending;
+    return false;
+  }
+
   private flagsAllow(combo: ComboDef): boolean {
     const has = (f: string) => this.state.flags.includes(f);
     if (combo.requiresFlags?.some((f) => !has(f))) return false;
@@ -170,7 +196,10 @@ export class Engine {
     const act = this.currentAct();
 
     if (this.isDiscovered(combo.result)) {
-      return { kind: "known", combo, element };
+      // En skæbne der blev afværget tidligere kan opsøges igen — Karl går
+      // tilbage til klippen. Ellers ville et for tidligt forsøg låse den ude.
+      const deflected = this.applyEnding(combo);
+      return { kind: "known", combo, element, endingDeflected: deflected };
     }
 
     // Blødt gate (PRD §2.3): age-up nægtes indtil obligatoriske problemer er løst.
@@ -183,7 +212,7 @@ export class Engine {
     for (const flag of combo.setsFlags ?? []) this.setFlag(flag);
     // Dybe opdagelser koster ekstra somre af Karls liv
     if (combo.cost && combo.cost > 1) this.state.attempts += combo.cost - 1;
-    if (combo.ending) this.state.ended = combo.ending;
+    const endingDeflected = this.applyEnding(combo);
 
     let solved: ProblemDef | undefined;
     if (combo.solves && !this.isSolved(combo.solves)) {
@@ -199,9 +228,9 @@ export class Engine {
           this.state.discovered.push(el.id);
         }
       }
-      return { kind: "discovery", combo, element, solved, ageUp: true, act };
+      return { kind: "discovery", combo, element, solved, ageUp: true, act, endingDeflected };
     }
 
-    return { kind: "discovery", combo, element, solved, ageUp: false, act };
+    return { kind: "discovery", combo, element, solved, ageUp: false, act, endingDeflected };
   }
 }

@@ -300,6 +300,15 @@ export class Narrator {
       return this.speak(ending.line, ctx);
     }
 
+    // 0b. Afværget skæbne: Karl kiggede døden i øjnene og gik hjem igen
+    if (
+      (outcome.kind === "discovery" || outcome.kind === "known") &&
+      outcome.endingDeflected
+    ) {
+      const deflect = this.content().deflectedEndingLine;
+      if (deflect) return this.speak(deflect, ctx);
+    }
+
     // 1. Story-beats (håndskrevne, højeste prioritet)
     if (outcome.kind === "gated" && act.gateLine) return this.speak(act.gateLine, ctx);
     if (outcome.kind === "discovery") {

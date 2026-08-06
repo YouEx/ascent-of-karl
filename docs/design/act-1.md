@@ -85,6 +85,27 @@ Hvert run varer **max 50 somre** (kombinationsforsøg = én sommer;
 (`cost`-felt) — jo længere ud ad en gren, desto sværere at holde Karl i
 live. Fortælleren varsler alderdommen ved 10/5/1 somre tilbage.
 
+### Skæbne-gate: `endingsUnlockAt` (2026-08-06)
+
+Billigste vej til The Flight of Karl var **5 somre** — en playtester kunne
+afslutte sit allerførste run på fire kombinationer og have set 5 % af
+spillet. Skæbner er derfor gated på **14 opfindelser**.
+
+- Gaten tæller `Engine.inventions()` — *ikke* `discovered.length`. De 13
+  base-elementer er verden Karl vågner op i, ikke noget han har udrettet
+  (og age-up lægger næste akts base-elementer i puljen oveni).
+- Under grænsen sker opdagelsen normalt, men Karl overlever, og fortælleren
+  får sit eget beat (`ending-deflected`, 6 varianter): *"Death arrives,
+  looks at how little Karl has accomplished, and decides to come back when
+  there is more to work with."*
+- **Skæbnen går ikke tabt.** Kombinationen kan gentages senere; motoren
+  udløser slutningen på `known`-stien når grænsen er nået. Uden det ville
+  et for tidligt forsøg låse en slutning permanent ude.
+- Alderdommen (`automatic`) er *ikke* gated — 50 somre er 50 somre,
+  uanset hvor lidt Karl nåede.
+- Validatoren regner gaten med i nåbarheden: en slutning kræver
+  `max(opskrifts-cost, endingsUnlockAt)` somre.
+
 **12 slutninger** (`content/endings.json`) — ikke alle lykkelige:
 
 | Slutning | Achievement | Tone |

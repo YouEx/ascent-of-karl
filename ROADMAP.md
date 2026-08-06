@@ -22,9 +22,11 @@ validator håndhæver kildekrav + variant-minimum.
 
 ## Prioriteret vej til launch
 
-1. **Deploy til web NU** (GitHub Pages-workflow ligger klar — aktivér Pages
-   i repo-settings under "Build and deployment → GitHub Actions").
-   Spilbart link = playtests kan starte med det samme.
+1. **Deploy til web NU** — repo er public, Pages står på GitHub Actions, og
+   spillet ligger på `main`. Deployet afventer at GitHubs Actions-nedbrud
+   (incident 2026-08-06) er ovre; kør `deploy.yml` igen derefter.
+   Delekortet er på plads (`og:image`, beskrivelse, `lang="en"`,
+   web-manifest til hjemmeskærm), så linket kan sendes direkte til testere.
 2. **Playtest-runde 1** (PRD Step 5, fremrykket): 5-10 personer, uden
    forklaring. Mål: griner de, går de i stå, kan kombinationer ræsonneres?
    Fanger om fortæller-humoren lander FØR vi investerer i art/voice.
