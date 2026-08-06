@@ -397,6 +397,8 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   z-index: 60;
 }
 #card[hidden], #banner[hidden], #ending[hidden], #trophy-modal[hidden] { display: none; }
+/* Trofæ-modalen åbnes også FRA titelskærmen (z-index 70) og skal ligge over den */
+#trophy-modal { z-index: 80; }
 
 .card-inner, .banner-inner {
   background: var(--panel); border: 2px solid var(--accent); border-radius: 14px;

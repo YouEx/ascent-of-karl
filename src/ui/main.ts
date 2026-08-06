@@ -548,8 +548,15 @@ function startGame(resume: boolean): void {
   el.titleScreen.hidden = true;
   runStartedAt = performance.now();
   renderAll();
-  if (engine.activeEnding()) {
-    lastLineText = lastLineText || `${engine.activeEnding()!.title}.`;
+  const resumedEnding = engine.activeEnding();
+  if (resumedEnding) {
+    // Genoptaget afsluttet run: fortællerens sidste ord er ikke i hukommelsen
+    // længere, så vi henter replikkens første variant som gengivelse.
+    if (!lastLineText) {
+      const def = narrator.line(resumedEnding.line);
+      lastLineText = def.variants[0] ?? `${resumedEnding.title}.`;
+    }
+    el.narratorText.textContent = lastLineText;
     showEndingScreen();
     return;
   }
