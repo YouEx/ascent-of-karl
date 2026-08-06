@@ -1,0 +1,882 @@
+{
+  "act": 1,
+  "resumeLine": "resume-1",
+  "lines": [
+    {
+      "id": "intro-act-1",
+      "variants": [
+        "In the beginning, there was Karl. History asked for a hero. It got Karl. He's cold, he's hungry, and he has just dropped a rock on his own foot. Let's see what humanity becomes.",
+        "Welcome to the dawn of civilization. Population: one Karl. Current achievements: none. Current injuries: one stubbed toe. I have such high hopes.",
+        "Every great story begins somewhere. This one begins with a shivering man staring at a rock as if it owed him money. Onward, humanity.",
+        "Ah, the Stone Age. Endless possibility. Untouched wilderness. And Karl, who has spent the morning tasting rocks. We begin.",
+        "History will remember this moment. Unfortunately, I'm the one who has to narrate it: one cold, hungry man, two empty hands, and one deeply suspicious boar. Let us begin."
+      ]
+    },
+    {
+      "id": "resume-1",
+      "variants": [
+        "Oh. You're back. Karl waited. So did I. Nobody ever asks about me.",
+        "Look who returned. Karl hasn't moved. Neither, technically, has history.",
+        "Back again? Excellent. Karl spent the interim breathing loudly and losing a staring contest with the boar."
+      ]
+    },
+    {
+      "id": "story-gnister",
+      "variants": [
+        "Sparks! Karl smashes two stones together and the universe rewards him with tiny stars. It's the smartest thing he's done all day. That says more about the day.",
+        "Behold: sparks. Two rocks, one collision, a fleeting shower of light. Karl applauds. The rocks remain unimpressed.",
+        "He strikes stone against stone and — light! Brief, useless, beautiful light. Somewhere, the concept of fireworks just shuddered.",
+        "Sparks fly. Karl gasps. I gasp. The boar leaves. Progress smells like flint.",
+        "Two stones, struck together. Tiny stars, gone in half a second. Karl will be doing this for the next hour, mark my words."
+      ]
+    },
+    {
+      "id": "story-ild",
+      "variants": [
+        "FIRE! Humanity's first great invention! Karl stares into the flames as though the fire invented him. For history's sake, let's say it was the other way round.",
+        "And there it was: fire. Warmth. Light. The end of raw everything. Karl pokes it immediately. Some lessons must be learned personally.",
+        "Fire! The single most important discovery of this age, and Karl found it. I'll be honest — I had money on the boar.",
+        "The grass catches, the flames rise, and Karl performs what historians will one day call a 'victory dance'. Fire, ladies and gentlemen. We have fire.",
+        "A spark, some dry grass, and suddenly: civilization's pilot light. Karl warms his hands and grins like he planned this all along. He did not."
+      ]
+    },
+    {
+      "id": "story-stenoekse",
+      "variants": [
+        "A rock. On a stick. I know it doesn't sound like much — but show some respect. That right there is literally groundbreaking.",
+        "Karl ties a stone to a stick and holds it up like a newborn. The axe. Humanity's first subscription to tools.",
+        "Stone plus stick equals axe. Simple arithmetic, monumental consequences. Karl swings it once and nearly redefines his own timeline.",
+        "The axe is invented! Trees everywhere grow nervous. Karl mostly plans to use it for pointing at things.",
+        "An axe! Genuine technology! Karl is so proud he shows it to the boar, who was frankly expecting worse."
+      ]
+    },
+    {
+      "id": "story-spyd",
+      "variants": [
+        "A spear! Excellent. Now Karl can miss things from much greater distances.",
+        "Sharp on one end, Karl on the other. History calls this a spear. I call it optimism with a handle.",
+        "The spear is born. Karl held the wrong end first — but only for a while, and that's what counts.",
+        "Pointy stick technology, achieved. Every predator in the valley has just been politely informed.",
+        "Karl sharpens a stick into a spear and immediately practices his heroic pose. The hunting can wait. The pose cannot."
+      ]
+    },
+    {
+      "id": "story-koed",
+      "variants": [
+        "Karl has brought down a boar. The boar, frankly, seemed mostly surprised. But a catch is a catch, and history doesn't judge. I do.",
+        "Meat! Actual meat! The hunt was brief, undignified, and involved a great deal of screaming — from Karl — but the result speaks for itself.",
+        "Against every prediction, including mine, Karl has hunted successfully. The valley is quieter now. Also slightly more respectful.",
+        "The boar underestimated Karl. To be fair, so did I. So did Karl. Dinner is served regardless.",
+        "One spear, one boar, one very lucky throw. History will call it skill. We were both there. It wasn't."
+      ]
+    },
+    {
+      "id": "story-stegt-koed",
+      "variants": [
+        "The smell of roast meat drifts across the steppe. Somewhere far in the future, someone begins inventing restaurant reviews.",
+        "Fire plus meat. Karl has invented cooking, and with it, the concept of dinner being worth waiting for.",
+        "Roast meat! Crispy outside, juicy inside, invented by a man who yesterday ate a beetle by accident. Growth.",
+        "Cooking, achieved. Karl takes one bite and makes a sound I can only describe as prehistoric joy.",
+        "He holds the meat over the flames and — civilization advances one delicious step. Raw food's long reign is over."
+      ]
+    },
+    {
+      "id": "story-ristede-larver",
+      "variants": [
+        "Grubs. He chose... the grubs. There was a whole hunting scene planned. A whole meal. But no. Fine. I'm noting it down. History is noting it down. Grub Man.",
+        "Roasted grubs. Crispy, apparently. Nutty, apparently. I wouldn't know. I'm a narrator, and right now a deeply disappointed one.",
+        "He roasts the grubs. He eats the grubs. He says 'mmm'. I say nothing, very loudly. Grub Man.",
+        "Of all the paths history could take, Karl picks the one paved with roasted larvae. Bold. Wrong, but bold.",
+        "Dinner is served: grubs à la campfire. Karl looks proud. The boar looks relieved. I look for a different story to narrate."
+      ]
+    },
+    {
+      "id": "story-mudderbad",
+      "variants": [
+        "Karl rolls in the mud with an enthusiasm I last saw in the boar. That smell will follow us both for the rest of this story.",
+        "A mud bath. He calls it skincare. The boar nods in professional approval. I shall breathe through my mouth from now on.",
+        "Karl discovers the mud bath and commits to it completely. Completely. There is mud in places history dare not describe.",
+        "Behold: the exact opposite of hygiene, performed with the confidence of a spa visit. The smell now arrives before he does.",
+        "He wallows. There is no kinder word. The boar takes notes. I take a step back. Everyone grows today."
+      ]
+    },
+    {
+      "id": "story-keramik",
+      "variants": [
+        "Baked clay! Karl has invented pottery — and with it, eventually, heirlooms nobody dares throw away.",
+        "Fire plus clay makes pottery. Karl's first pot is crooked, lopsided, and he loves it more than anything he owns. Which is a pot.",
+        "Pottery! Humanity can now store water, grain, and — give it a few millennia — decorative pebbles.",
+        "The clay hardens in the fire, and Karl holds up history's first pot. It leans. So does he. A matched set.",
+        "Karl bakes clay into a bowl and stares at it, awed. Ten thousand years from now, someone will pay a fortune for worse."
+      ]
+    },
+    {
+      "id": "story-damp",
+      "variants": [
+        "Water on fire. It hisses, it steams, it vanishes. Remember this moment. I won't say why. But remember it.",
+        "The water hisses away into steam. Karl is deeply offended on the water's behalf. One day — no. Not yet. Forget I said anything.",
+        "Steam rises and disappears into the sky. Utterly useless. Utterly forgettable. ...Write it down anyway.",
+        "He pours water on the fire and watches the cloud rise. Nothing happens. Nothing will happen for another few hundred thousand years. Patience.",
+        "Steam. A puff of indignant air, gone in a second. Karl frowns at it. History quietly bookmarks the page."
+      ]
+    },
+    {
+      "id": "story-malm",
+      "variants": [
+        "Karl chips glittering stones out of the rock face. He thinks it's decoration. It's the future.",
+        "Ore! Shiny rocks with delusions of grandeur — and for once, the delusions are entirely justified.",
+        "He mines the sparkly stones because they're pretty. Sometimes history advances for the silliest reasons. Usually, in fact.",
+        "Glittering ore, freshly hacked from the mountain. Karl plans to make a necklace. The Bronze Age has other ideas.",
+        "The rock face gives up its glittering secret. Karl pockets it, grinning. He has no idea. He never has any idea. It keeps working out anyway."
+      ]
+    },
+    {
+      "id": "story-kobber",
+      "variants": [
+        "Metal! Soft, bendable, shiny — Karl has smelted his way to copper and is already trying to bite it. Again.",
+        "Copper! The first metal! Karl bends it, gasps, bends it back, gasps again. This could take a while.",
+        "From fire and ore comes copper. Karl holds the gleaming lump aloft like a trophy. For once, the drama is entirely appropriate.",
+        "The ore melts, and out comes actual metal. Karl checks his teeth on it. Twice. Some traditions start early.",
+        "Copper, smelted by Karl. The Stone Age just felt a chill run down its spine."
+      ]
+    },
+    {
+      "id": "story-larvefarm",
+      "variants": [
+        "He... he's breeding them now. Grub Man has a farm. Other narrators get pyramids and moon landings. I get a bowl of larvae, all named Bent.",
+        "A grub farm. Rows of pampered larvae in a clay bowl. He has named every single one Bent. Every. Single. One.",
+        "Agriculture arrives ten thousand years early — as a larvae ranch. I want to be angry. Mostly I'm impressed. Mostly angry.",
+        "Grub Man expands operations. There is now infrastructure. For grubs. History, I apologize for what I am about to record.",
+        "The grubs have a home, a schedule, and names. Karl has a farm and a dream. I have a headache and a deadline."
+      ]
+    },
+    {
+      "id": "gate-act-1",
+      "variants": [
+        "No. No, no, no. One does not 'advance history' while freezing, starving, or standing around bare-handed. Solve your problems, Karl — then we can talk about bronze.",
+        "Bronze? BRONZE? You are cold, hungry, and unarmed. History has standards. Low ones, clearly, but standards.",
+        "Ah yes, let's skip to the Bronze Age while Karl's teeth are still chattering. No. Basics first. Epochs later.",
+        "The Bronze Age is a reward, not an escape route. Warm up, eat up, tool up — then knock again.",
+        "Denied. History's door has a bouncer, and tonight the bouncer is me. Come back warm, fed, and holding an axe."
+      ]
+    },
+    {
+      "id": "ageup-act-1",
+      "variants": [
+        "Bronze! Listen closely, because this is big: Karl — KARL — has just launched a new epoch. The history books are scrambling. Welcome to the Bronze Age.",
+        "Copper and ore become bronze, and just like that, the age turns. Somewhere, a historian faints. Welcome to the Bronze Age, Karl.",
+        "An entire age, named after the lump in Karl's hand. Bronze! Onward — the future is slightly harder and considerably shinier.",
+        "The Stone Age ends. Not with a whimper, but with Karl holding up a bronze lump and shouting 'shiny!'. Close enough. Welcome to the Bronze Age.",
+        "History turns the page, and against all editorial advice, Karl is still the protagonist. The Bronze Age begins!"
+      ]
+    },
+    {
+      "id": "hint-kulde-1",
+      "variants": [
+        "It is cold out here. Remarkably cold. If only something could... warm.",
+        "The wind bites, the night approaches, and Karl shivers. A source of heat would not go amiss."
+      ]
+    },
+    {
+      "id": "hint-kulde-2",
+      "variants": [
+        "I saw sparks earlier. Sparks. And something dry. Just mentioning it. No agenda whatsoever.",
+        "Sparks are lovely. You know what sparks love? Something dry to land on. Purely an observation."
+      ]
+    },
+    {
+      "id": "hint-kulde-3",
+      "variants": [
+        "Strike. The stones. Together. Then introduce the grass to the result. Shall I draw it as a cave painting?",
+        "Stone on stone makes sparks. Sparks on dry grass make fire. Fire makes warm. Warm makes narrator stop hinting."
+      ]
+    },
+    {
+      "id": "hint-vaerktoej-1",
+      "variants": [
+        "Bare hands. A bold choice, evolutionarily speaking.",
+        "Every other species has claws, fangs, or venom. Karl has fingers and confidence."
+      ]
+    },
+    {
+      "id": "hint-vaerktoej-2",
+      "variants": [
+        "A stone is good. A stick is good. Together? Revolution.",
+        "Some of history's finest ideas are just two ordinary things, joined. A stick, say. And a stone."
+      ]
+    },
+    {
+      "id": "hint-vaerktoej-3",
+      "variants": [
+        "Put the stone on the stick, Karl. It's called an axe. It will be called that for a very long time.",
+        "Stone. Stick. Attach. Axe. Four words, Karl. I believe in you. Three of the words, anyway."
+      ]
+    },
+    {
+      "id": "hint-sult-1",
+      "variants": [
+        "Karl's stomach growls loudly enough to scare off the wildlife. The irony is not lost on me.",
+        "A hungry man surrounded by food he hasn't figured out yet. Nature's little joke."
+      ]
+    },
+    {
+      "id": "hint-sult-2",
+      "variants": [
+        "There's a boar right over there. Karl owns something pointy. I'll leave the arithmetic on the table.",
+        "Pointy object. Large, edible animal. I trust even Karl can connect these dots. Eventually."
+      ]
+    },
+    {
+      "id": "hint-sult-3",
+      "variants": [
+        "Spear. Boar. Fire. Dinner. In that order, Karl.",
+        "Throw the spear at the boar. Put the result on the fire. Chew. I cannot simplify this further."
+      ]
+    },
+    {
+      "id": "spam-3",
+      "variants": [
+        "That's the third time with the stone. I'm counting. Apparently that's my job now.",
+        "Three stone-based experiments in a row. The stone remains, as ever, a stone.",
+        "Stone again. Third time. I admire consistency. From a distance."
+      ]
+    },
+    {
+      "id": "spam-5",
+      "variants": [
+        "Five times. Stone. I'm starting to think it's a statement.",
+        "Five stone attempts. At this point the stone deserves narrator credit.",
+        "Karl and the stone: attempt five. It's not a partnership. It's a hostage situation, and I can't tell who's who."
+      ]
+    },
+    {
+      "id": "spam-8",
+      "variants": [
+        "Eight! You know what — you do you. I'll narrate the tale of the man who loved rocks more than progress.",
+        "Eight times. That stone has now seen more action than the entire rest of the valley.",
+        "Attempt eight with the stone. Historians will call this period 'The Stone Age', and honestly, now I understand why."
+      ]
+    },
+    {
+      "id": "repeat-3",
+      "variants": [
+        "Same combination. Again. There's a famous quote about repeating the same thing and expecting new results. Its author isn't born yet, but Karl is working hard to make the quote necessary.",
+        "That's the same combination as before. And before that. The result has not changed. I checked.",
+        "Again? It's still the same two things, Karl. Physics has not updated since your last attempt."
+      ]
+    },
+    {
+      "id": "repeat-6",
+      "variants": [
+        "Six times in a row. I respect the dedication. That's the kindest word I have for it.",
+        "Six identical attempts. Somewhere, the concept of insanity is taking notes.",
+        "Six. In. A. Row. I have narrated glaciers with more improvisation."
+      ]
+    },
+    {
+      "id": "failstreak-4",
+      "variants": [
+        "Four failed attempts in a row. Rome wasn't built in a day either. Rome, incidentally, will not be built by Karl.",
+        "Four in a row. The good news: it can't get worse. The bad news: I've said that before.",
+        "A four-failure streak. Even the boar has stopped watching."
+      ]
+    },
+    {
+      "id": "failstreak-7",
+      "variants": [
+        "Seven straight. Shall we take a little break? I could use a little break.",
+        "Seven failures in a row. History is patient. I am part of history. I am strained.",
+        "Seven. At this point, randomly banging things together would statistically— actually, that IS what you're doing."
+      ]
+    },
+    {
+      "id": "fast-6",
+      "variants": [
+        "Slow down! You're combining things faster than I can mock them. And I am very fast.",
+        "Six attempts in as many breaths. This isn't alchemy, it's percussion.",
+        "Karl has entered a frenzy. Items are colliding. Narration is struggling to keep pace. Slow. Down."
+      ]
+    },
+    {
+      "id": "fast-12",
+      "variants": [
+        "Twelve rapid-fire attempts. I'm a narrator, not an auctioneer. Breathe, Karl.",
+        "This pace is unsustainable, unnecessary, and — fine, mildly entertaining. But mostly the first two.",
+        "Twelve! You cannot speed-run the dawn of civilization. Well. You can, apparently. You shouldn't."
+      ]
+    },
+    {
+      "id": "sweep-4",
+      "variants": [
+        "I see we're introducing the {element} to everything in the valley. It's not a networking event, Karl.",
+        "The {element} has now met almost everything Karl owns. None of them are getting along.",
+        "Ah, the classic strategy: take the {element} and apply it to the entire known world."
+      ]
+    },
+    {
+      "id": "sweep-7",
+      "variants": [
+        "Seven pairings for the {element} now. At some point this stops being science and starts being matchmaking.",
+        "The {element} would like a moment to itself. As would I.",
+        "Everything-plus-{element} is not a research method, Karl. It's a cry for help. And I hear you."
+      ]
+    },
+    {
+      "id": "slow-1",
+      "variants": [
+        "...And he's back! I'd nearly finished carving your absence into the rock, Karl.",
+        "That was a long pause. I narrated three imaginary civilizations in the meantime. All of them further along.",
+        "Take your time. The Stone Age lasted two and a half million years. You're apparently committed to experiencing all of it.",
+        "Welcome back. During the silence, the boar and I formed a book club.",
+        "A dramatic pause, was it? Dramatic pauses are supposed to end sooner. Trust the narrator on this one."
+      ]
+    },
+    {
+      "id": "mem-larver",
+      "variants": [
+        "Ah, right, my apologies — I momentarily forgot who I'm talking to. Grub Man. Do carry on.",
+        "Sorry — force of habit, expecting normal decisions. I forgot this is Grub Man's story now."
+      ],
+      "requiresFlags": [
+        "larver"
+      ],
+      "once": true
+    },
+    {
+      "id": "mem-stinker",
+      "variants": [
+        "I'd love to comment on your strategy, but I can't concentrate for the smell.",
+        "Something about your recent... choices... has reached me all the way up here. I'm narrating through my nose now."
+      ],
+      "requiresFlags": [
+        "stinker"
+      ],
+      "once": true
+    },
+    {
+      "id": "gf-1",
+      "variants": [
+        "Nothing. Literally nothing.",
+        "And the result is: nothing. Brought to you by nothing.",
+        "Nothing happens. Somewhere, nothing continues to happen."
+      ]
+    },
+    {
+      "id": "gf-2",
+      "variants": [
+        "History notes the attempt. In the footnotes. In very small handwriting.",
+        "Recorded for posterity: 'he tried'. That's the whole entry.",
+        "The chronicle grows by one line: 'no'."
+      ]
+    },
+    {
+      "id": "gf-3",
+      "variants": [
+        "Brave. Wrong, but brave.",
+        "A courageous theory, executed confidently, and wrong.",
+        "Ten points for commitment. Zero for outcome."
+      ]
+    },
+    {
+      "id": "gf-4",
+      "variants": [
+        "{a} and {b}. An inspired pairing. Inspired by what, I dare not ask.",
+        "{a} plus {b}? Even I didn't see that coming, and I've read the ending.",
+        "Combining {a} with {b}. Because of course. Why not."
+      ]
+    },
+    {
+      "id": "gf-5",
+      "variants": [
+        "Even the grass looked away in embarrassment.",
+        "The valley witnessed that. All of it. I am so sorry, valley.",
+        "Somewhere nearby, the boar sighs."
+      ]
+    },
+    {
+      "id": "gf-6",
+      "variants": [
+        "That will not be an epoch, Karl.",
+        "Epochs have been founded on many things. Not that.",
+        "I checked the history books. That's not in them. There's a reason."
+      ]
+    },
+    {
+      "id": "gf-7",
+      "variants": [
+        "I have narrated many civilizations. None of them started like this.",
+        "In all my ages of narrating, that approach remains unprecedented. Congratulations?",
+        "New. Unquestionably new. Useful? Unquestionably not."
+      ]
+    },
+    {
+      "id": "gf-8",
+      "variants": [
+        "The {a} remains {a}. The {b} remains {b}. The universe remains unmoved.",
+        "Reality has reviewed your proposal and voted no.",
+        "The laws of nature glance up, shake their heads, and return to work."
+      ]
+    },
+    {
+      "id": "story-hjul",
+      "variants": [
+        "THE WHEEL. Do you understand what you've done, Karl? No. No, you're chasing it. Of course you're chasing it.",
+        "A round stone with a hole. It rolls. Karl has just invented the single most important machine part in history, and he's using it as a toy.",
+        "The wheel! Transportation! Industry! Progress! Karl, please stop rolling it at the boar.",
+        "History held its breath. The stone rolled. Karl giggled. That, dear listener, is how the wheel was invented.",
+        "One chiselled hole in one round stone, and suddenly the future has wheels. Karl takes a bow. The wheel rolls away mid-bow."
+      ]
+    },
+    {
+      "id": "story-flintmobil",
+      "variants": [
+        "A car. A foot-powered stone car. Karl steers, Ugh pushes, and somewhere a bedrock-dwelling family's lawyers begin to stir. Yabba dabba don't.",
+        "Behold the Footmobile: zero horsepower, two legpower, infinite confidence. This is either the dawn of the automobile or a very elaborate way to skin one's feet.",
+        "Karl and Ugh climb into the cart, push off with their feet, and scream downhill in history's first car. The brakes are also feet. There are no brakes.",
+        "The stone-age automobile. Fuel economy: berries. Top speed: regrettable. Karl honks. The horn is Ugh saying 'beep'.",
+        "Ten thousand years ahead of schedule, Karl invents the car. It runs on feet, fear, and friendship. Mostly feet."
+      ]
+    },
+    {
+      "id": "story-stenkreds",
+      "variants": [
+        "A circle of standing stones, aligned with the sunrise. Tourists will queue for this in a few thousand years, Karl. Well — for a better one. But still.",
+        "Karl arranges the stones in a great circle and steps back. It's majestic. It's mysterious. It's eighteen inches tall in places, but it's the thought that counts.",
+        "A stone circle! Scholars will one day debate its purpose for centuries. The purpose was 'Karl thought it looked neat'. Please, no one tell the scholars.",
+        "The stones stand in a perfect ring. Karl claims it tracks the sun. It tracks nothing. It's gorgeous and useless, like most monuments.",
+        "Stonehenge, first draft. The boar is already charging admission."
+      ]
+    },
+    {
+      "id": "story-fisk",
+      "variants": [
+        "Karl spears a fish, eats it raw, and announces the word 'sushi'. Ten thousand years too early, and without rice, but the confidence is there.",
+        "A fish! Straight from the river, straight past the fire, straight into Karl. He calls it cuisine. The fish had another word for it.",
+        "Dinner from the river. No cooking, no waiting, no survivors. Karl declares himself a chef. The river declines to comment.",
+        "One spear, one splash, one fish. The hunt Karl was actually built for, it turns out.",
+        "Karl catches a fish and eats it on the spot, raw. Somewhere in the very distant future, a Tokyo chef feels a disturbance."
+      ]
+    },
+    {
+      "id": "story-skind",
+      "variants": [
+        "A hide cloak! Warm, majestic, and only slightly haunted by its previous owner. Karl does a dramatic turn. The cold surrenders.",
+        "Karl wraps himself in boar hide and stops shivering for the first time in this story. Fashion and function, together at last, never to be seen together again.",
+        "Clothing! Karl has invented staying warm without setting anything on fire. Frankly, I didn't think restraint was on the menu.",
+        "The cloak settles on his shoulders and Karl grows three sizes in confidence. He is warm. He is mighty. He is wearing his dinner's jacket.",
+        "Behold: outerwear. The cold retreats, defeated by fashion. Karl practices his cape swirl. There will be many, many cape swirls."
+      ]
+    },
+    {
+      "id": "story-hulemaleri",
+      "variants": [
+        "Art! Karl smears berry juice on stone and steps back, moved. It's either a boar or a sunset. He refuses to explain. All great artists refuse to explain.",
+        "The first cave painting. Critics — one boar — call it 'derivative'. Of what, they cannot say. There is nothing to derive from. It's the first one.",
+        "Karl paints on the rock: himself, but taller, hunting a boar, but smaller. History's first painting is also history's first exaggeration.",
+        "Berry juice on stone, and suddenly Karl is an artist. He signs it with a handprint. The signature is bigger than the painting.",
+        "A painting! In forty-five thousand years, people will stand in queues to look at this sort of thing. Karl's queue is one boar long, and it's leaving."
+      ]
+    },
+    {
+      "id": "story-rockband",
+      "variants": [
+        "Karl on drums, Ugh on backing grunts, and a setlist of hitting things. They call themselves the rolling stones, because the stones roll. I will not be crediting them.",
+        "A rock band. Literally: the instruments are rocks. The audience is a boar. The reviews are grunts. It's still, somehow, better than some festivals I could mention.",
+        "Music is born! Karl drums, Ugh howls, the valley empties. Every great band clears the room before it fills one.",
+        "The stone-age supergroup debuts tonight: one drum, two grunts, zero rhythm. They already have creative differences.",
+        "Karl and Ugh form a band. Their first song is called 'Rock'. Their second song is also called 'Rock'. The album, unbelievably, is called 'Rock'."
+      ]
+    },
+    {
+      "id": "mem-bilist",
+      "variants": [
+        "Careful, everyone — Grand Prix champion coming through. On foot. In a car. Somehow both.",
+        "Ah yes, advice from the valley's only motorist. Do watch your speed, Karl — the pedestrians here bite."
+      ],
+      "requiresFlags": [
+        "bilist"
+      ],
+      "once": true
+    },
+    {
+      "id": "mem-rockstjerne",
+      "variants": [
+        "Sorry, I keep forgetting I'm narrating a rock star now. Should I be louder? More reverb? No?",
+        "The drummer of the valley's loudest — and only — band, everyone. Autographs are handprints, apparently."
+      ],
+      "requiresFlags": [
+        "rockstjerne"
+      ],
+      "once": true
+    },
+    {
+      "id": "story-hytte",
+      "variants": [
+        "A hut! Walls! A roof! An indoors! Karl steps inside, listens to the wind NOT hitting him, and laughs like a madman. Home ownership does that.",
+        "Karl stacks mud bricks into a hut and stands in the doorway, arms crossed, radiating landlord energy. The cold has been evicted.",
+        "Four walls and a roof — Karl has invented 'inside'. He immediately goes back out to experience coming in again.",
+        "The hut is finished. It's crooked, it's cramped, and rain gets in on one side. Karl gives it five stars. He's the only reviewer.",
+        "Shelter, at last. Karl sleeps indoors tonight. The boar sleeps in the doorway. Nobody discussed this. It simply happened."
+      ]
+    },
+    {
+      "id": "story-landsby",
+      "variants": [
+        "Two huts. TWO. That's not a camp anymore, that's a village, with everything that entails: neighbours, gossip, and a shared opinion about the weather.",
+        "Ugh builds his hut next to Karl's, and civilization crosses an invisible line. Population: two. Committees: pending.",
+        "A village! Karl and Ugh now argue about where the path should go. There is no path. That's what the argument is about.",
+        "The settlement grows to two households. Karl calls it a city. I call it two huts. History will split the difference and call it a village.",
+        "Two huts, one shared fire, and the first unspoken agreement about whose turn it is to fetch water. Society has begun. May it forgive us."
+      ]
+    },
+    {
+      "id": "story-mudderkage",
+      "variants": [
+        "He's eating the mud. The mud pie was decorative, Karl. It was DECORATIVE. ...He's going in for seconds. Hunger: technically solved. Standards: unaccounted for.",
+        "A mud pie, with a berry on top for garnish. Karl eats it with the satisfaction of a man who has never been told no. I'm telling him no. He can't hear me.",
+        "Of all the food this valley offers — fish, meat, berries — Karl fills up on seasoned dirt. I've narrated extinctions with more dignity.",
+        "The mud pie is consumed. Karl pats his stomach, content. Somewhere, the concept of cuisine quietly weeps into its apron.",
+        "Hunger, defeated — by mud. Wars will be fought, empires will rise, and I will still be thinking about this moment."
+      ]
+    },
+    {
+      "id": "story-stenkoncert",
+      "variants": [
+        "The band plays inside the stone circle tonight. The acoustics are ancient, the crowd is one boar, and the stage is, mercifully, actual size.",
+        "A concert at the stone circle! The monument towers majestically over the band — which is more than can be said for certain other Stonehenge stage props.",
+        "Karl drums, Ugh grunts, the standing stones stand. It's the biggest gig in history. It is also the only gig in history.",
+        "Tonight only: live at the megalith! The band performs their entire catalogue — 'Rock' — twice. The stones do not dance. The boar does. A little.",
+        "The stone circle hosts its first concert. Attendance is three, if you count the shaman hat. Reviews call it 'loud' and 'over'."
+      ]
+    },
+    {
+      "id": "story-drive-in",
+      "variants": [
+        "Karl and Ugh park the footmobile in front of the painted wall and just... watch. Nobody speaks. The boar sells no popcorn, because popcorn hasn't been invented, and because he's a boar.",
+        "The drive-in is born: one car, one cave painting, two silent men watching art from their vehicle. Cinema had to start somewhere.",
+        "They drive TO the paintings. They could walk. It's eight metres. But no — this is a drive-in now, and some rituals matter.",
+        "The footmobile rolls to a stop before the gallery wall. Karl honks — Ugh says 'beep' — and the world's first movie night begins.",
+        "Two men, one stone car, and a wall of painted boars. They watch until the fire burns low. Then they watch a little longer. Art, ladies and gentlemen."
+      ]
+    },
+    {
+      "id": "mem-mudderspiser",
+      "variants": [
+        "Says the man who ate a mud pie. Voluntarily. With garnish.",
+        "I'd question this decision, but you once ate decorative mud, so the bar is subterranean."
+      ],
+      "requiresFlags": [
+        "mudderspiser"
+      ],
+      "once": true
+    },
+    {
+      "id": "mem-modeikon",
+      "variants": [
+        "Advice from the valley's leading fashion icon, everyone. The feathers ARE flattering, I'll give him that.",
+        "Careful — that opinion comes from a man Ugh once scored a 4. Out of an unspecified maximum."
+      ],
+      "requiresFlags": [
+        "modeikon"
+      ],
+      "once": true
+    },
+    {
+      "id": "ending-king",
+      "variants": [
+        "And so Karl was crowned — ruler of two huts, one boar, and a grub farm. He reigned wisely, which is to say he mostly left everyone alone. Long live King Karl. THE END.",
+        "The fanciest man in the valley kneels on a log and rises a king. His first decree: berries for everyone. His second: no more decrees. History rates him among its finest rulers. THE END.",
+        "King Karl the First — and, in fairness, the Only. His kingdom was small, his crown was heavy, and his people grunted approvingly until the end of his days. THE END."
+      ]
+    },
+    {
+      "id": "ending-legend",
+      "variants": [
+        "The band left the valley that night, and never truly stopped. Every cave got a show. Every show got a legend. Somewhere out there, they say, the drumming continues still. THE END.",
+        "Karl chose the tour. Forever. New caves, new crowds of confused wildlife, the same immortal song. He never came home — legends rarely do. THE END.",
+        "They played until the fires burned low, and then they played on. Karl the drummer became Karl the myth. The valley kept his hut just as he left it. He never needed it again. THE END."
+      ]
+    },
+    {
+      "id": "ending-painter",
+      "variants": [
+        "Karl stepped toward the painted wall, and then — well. The paintings gained one more figure that day: a small proud man among the boars. Ugh swears it waves at him. THE END.",
+        "He looked at the painting too long, and the painting looked back. When Ugh came home, the cave was empty and the wall was not. Karl had found a warmer place to live. THE END.",
+        "Some say the brew was strong. Some say the art was stronger. Either way, Karl now hunts painted boars beneath a painted sun, forever, and honestly? He looks happy. THE END."
+      ]
+    },
+    {
+      "id": "ending-icarus",
+      "variants": [
+        "He flew. For nearly a full second, Karl truly flew — and no one can take that from him, least of all the ground, which merely took everything else. Fly high, Karl. THE END.",
+        "From the standing stone he leapt, wings wide, heart wider. The landing was prehistoric. The attempt was immortal. Birds still tell their children about it. THE END.",
+        "Karl aimed for the sun and got remarkably little of the way there. But in that one airborne heartbeat, he was the freest man in history. THE END."
+      ]
+    },
+    {
+      "id": "ending-general",
+      "variants": [
+        "The war over the club consumed the valley: both huts, one friendship, every quiet evening. General Karl won it all, and stood alone among the trophies, wondering what exactly he'd won. THE END.",
+        "They called him General Karl, victor of the Valley War. Casualties: one friendship, irreplaceable. He kept the club. It never felt worth holding again. THE END.",
+        "Karl won the war. There was no war until Karl. Historians will note both facts, in that order, forever. THE END."
+      ]
+    },
+    {
+      "id": "ending-doctor",
+      "variants": [
+        "Ugh's headache passed, and word spread. Karl spent his remaining summers with herbs and patience, healing everything from bruises to bad moods. Dr. Karl — no licence, all heart. THE END.",
+        "The healer of the valley. Payment: berries, gratitude, the occasional decorated rock. Karl saved lives with weeds and confidence, and history forgives the confidence. THE END.",
+        "Karl found his calling in other people's aches. His clinic was a log. His waiting room was the valley. His legacy was everyone who got to grow old too. THE END."
+      ]
+    },
+    {
+      "id": "ending-gourmet",
+      "variants": [
+        "Mud pie and cave brew. The pairing that ended an era. Karl's last words were 'mmm', and the narrator on duty confirms he meant them. THE END.",
+        "The menu that history warned us about: seasoned earth with fermented berries. Karl died as he lived — full, happy, and catastrophically wrong about food. THE END.",
+        "Some explorers fall to beasts, some to winters. Karl fell to his own cooking, at his own table, mid-compliment to the chef. He was the chef. THE END."
+      ]
+    },
+    {
+      "id": "ending-oldage",
+      "variants": [
+        "And then, one quiet evening, Karl's summers simply ran out. He sat by the fire, surrounded by everything he'd made, and closed his eyes. A whole life, spent wondering 'what if?'. There are worse ways. THE END.",
+        "Fifty summers of stones and sparks and questionable decisions, and at the end of them: an old man by a warm fire, smiling at his strange little museum of inventions. Goodnight, Karl. THE END.",
+        "Karl grew old — genuinely, gloriously old, an achievement rarer in his age than any invention. The valley kept his discoveries. The narrator kept the stories. THE END."
+      ]
+    },
+    {
+      "id": "aging-10",
+      "variants": [
+        "Ten summers left in those bones, Karl. I'm just saying — if you have a masterpiece in you, now would be the time.",
+        "Karl's beard is more grey than brown now. Ten summers, give or take. The discoveries won't make themselves."
+      ]
+    },
+    {
+      "id": "aging-5",
+      "variants": [
+        "Five summers, Karl. The knees creak, the mornings hurt, and history sharpens its final pen.",
+        "Five left. Karl still runs everywhere, but now there's a small groan when he stands up. Time, dear listener, is undefeated."
+      ]
+    },
+    {
+      "id": "aging-1",
+      "variants": [
+        "One summer left. One. Whatever you're going to be remembered for, Karl — it's now.",
+        "The last summer. The fire feels warmer, the stones feel heavier, and every choice is the final word of the sentence."
+      ]
+    },
+    {
+      "id": "story-lyn",
+      "variants": [
+        "The storm finds the standing stone, and the world turns white for half a heartbeat. Karl has never been so afraid or so impressed.",
+        "LIGHTNING. It hits the tall stone with a crack that rearranges Karl's insides and several of his opinions.",
+        "Fire from the sky, unasked for, aimed at the tallest thing around — which Karl helpfully built last week.",
+        "The sky cracks open. Karl falls over. The boar falls over. Somewhere, the concept of religion takes its first breath.",
+        "A flash, a bang, and the smell of burnt stone. Karl decides on the spot that the sky is a person, and that it is angry."
+      ]
+    },
+    {
+      "id": "story-hund",
+      "variants": [
+        "The wolf came for the meat. It stayed for Karl. Nobody has explained why to either of them, and nobody needs to.",
+        "It won't leave. It sleeps by the fire, eats his food, and looks at Karl like he's the pet. Humanity has made its first friend.",
+        "One roast dinner, shared with a wolf, and fifteen thousand years of loyalty begin right here. Well done, Karl. Genuinely.",
+        "The wolf takes the meat from his hand. Something enormous just happened, and only I noticed.",
+        "Karl has a dog. Karl did not plan to have a dog. The dog planned this from the beginning."
+      ]
+    },
+    {
+      "id": "story-romance",
+      "variants": [
+        "Somebody laughed at Karl's joke tonight. On purpose. He is now walking into things at a rate I find concerning.",
+        "Firelight, brew, and a shared look across the party. Karl's heart is doing something his heart has never done.",
+        "Romance arrives in the valley. Karl responds by talking about rocks for forty minutes. Astonishingly, it works.",
+        "Two people, one fire, and a silence that is suddenly a very different kind of silence.",
+        "Karl is in love. His hair is combed. His pot is polished. He has said the word 'nice' four times about the weather."
+      ]
+    },
+    {
+      "id": "story-familie",
+      "variants": [
+        "A hut, two adults, and one small loud person who has already eaten a rock. The circle continues. Heaven help us all.",
+        "Karl is a father. He holds the child like it's made of pottery and cries in a way he will deny forever.",
+        "A family! Karl now spends his days retrieving small people from places small people should not be. He has never been happier.",
+        "The hut is fuller. The nights are shorter. The rock-tasting tradition continues into a second generation.",
+        "Karl has made something that will outlast every axe, pot and standing stone he owns. He's currently using it to hold his brew."
+      ]
+    },
+    {
+      "id": "story-grav",
+      "variants": [
+        "Karl covers his friend in red earth and sits with him until the fire dies. Even the boar keeps its distance tonight.",
+        "A grave, dug carefully, marked with ochre. This is what separates us from everything else: we say goodbye.",
+        "He buries him properly. Facing the sunrise, because Karl thinks that matters. It does — it always has.",
+        "The first goodbye. Karl has no words for it, so he uses red earth and silence instead. They work.",
+        "Death arrives in the valley, and Karl answers it the only way anyone ever has: carefully, with dirt-stained hands and no idea what to say."
+      ]
+    },
+    {
+      "id": "story-lov",
+      "variants": [
+        "Carved into the standing stone for all eternity: DO NOT TAKE KARL'S GOOD ROCK. History's first legislation is deeply, deeply personal.",
+        "The first law! Not about murder, not about theft — about one specific rock, belonging to one specific man.",
+        "Rules, carved in stone, where everyone can see them. It's the beginning of civilization, and it's about a pebble.",
+        "Karl legislates. Ugh objects. The stone remains neutral, which is more than can be said for anyone else.",
+        "The law is carved and the valley is bound by it. Three people live here. Two of them can't read."
+      ]
+    },
+    {
+      "id": "story-spejl",
+      "variants": [
+        "Still water in a dark pot, and in it — a man. Karl stares. Karl leans closer. Karl needs a moment alone.",
+        "For the first time in his life, Karl sees Karl. The silence goes on for a long, long while.",
+        "He looks into the water and meets someone he has never met. They regard each other with mutual concern.",
+        "Karl discovers his own face. Reactions in the valley are mixed, chiefly from Karl.",
+        "The reflection appears, and history's first existential crisis begins in a clay pot."
+      ]
+    },
+    {
+      "id": "story-hoest",
+      "variants": [
+        "Food that grew where he put it, while he slept. Karl suspects sorcery. It's agriculture, which is close enough to change everything.",
+        "The harvest! Karl planted seeds in mud and the earth handed them back multiplied. Nothing will ever be the same.",
+        "He sowed, he waited, he ate. Between those three words lies the end of wandering and the beginning of everything else.",
+        "Karl gathers his crop with the expression of a man who has cheated the universe and got away with it.",
+        "A garden that feeds him. From here comes surplus, then storage, then villages, then cities — all from a man who once ate mud on purpose."
+      ]
+    },
+    {
+      "id": "ending-winter",
+      "variants": [
+        "The snow did not stop. Karl kept the fire going for as long as there was wood, then held the hide tight and watched the white come. Some winters are longer than a life. THE END.",
+        "It got cold, and then it got colder, and then it stayed. Karl's last fire went out quietly, and the valley slept under a metre of snow. THE END.",
+        "The long winter took the valley — the huts, the paintings, the boar, and finally Karl, wrapped in his cloak, waiting for a spring that came too late. THE END."
+      ]
+    },
+    {
+      "id": "ending-remembered",
+      "variants": [
+        "Karl painted the story of his friend on the cave wall so it would outlast them both. It did. Forty thousand years later, someone stood in that cave and wept. THE END.",
+        "The grave, the painting, the story told and retold. Karl spent his last summers making sure nobody would be forgotten — and in doing so, wasn't. THE END.",
+        "He gave the valley its memory. Long after the huts fell and the fire went cold, the red handprints stayed on the rock, saying: we were here. THE END."
+      ]
+    },
+    {
+      "id": "ending-living-god",
+      "variants": [
+        "Masked, drumming, lit from below — the tribe stopped seeing Karl and started seeing Something Else. Nobody corrected them. Least of all Karl. THE END.",
+        "They knelt. Karl, who cannot reliably light a fire, accepted their worship with tremendous dignity and never took the mask off again. THE END.",
+        "The sun rose through the stone circle, the drums hit, and a man became a god in the eyes of everyone present — including, fatally, his own. THE END."
+      ]
+    },
+    {
+      "id": "story-toej",
+      "variants": [
+        "Sewn clothes! Hide that actually fits, stitched with a bone needle. Karl is warm, smug, and turning slowly to be admired.",
+        "Needle, sinew, hide — and suddenly Karl is dressed rather than draped. The cold has lost for good.",
+        "Fitted clothing. It sounds small. It is the reason humans survive winters that kill everything else.",
+        "Karl pulls on the first tailored garment in history and immediately walks into the standing stone, unable to see past his own collar.",
+        "Stitch by stitch, Karl invents staying warm on purpose. The hide cloak era is over; the tailoring era begins."
+      ]
+    },
+    {
+      "id": "story-monolit",
+      "variants": [
+        "A tall black slab, perfectly smooth, standing where nothing stood yesterday. Nobody in this valley made that. Karl touches it, and something in his skull quietly clicks into place.",
+        "The monolith. Featureless, flawless, and deeply, deeply wrong. Karl stares at it for an hour and comes away with ideas he cannot explain.",
+        "It is black, it is smooth, and it hums at a frequency just below hearing. I have narrated four million years and I have never seen this before.",
+        "Karl approaches the slab with his hand out. Somewhere far above, something is watching, and taking notes.",
+        "A perfect black rectangle in the middle of the steppe. Karl walks around it twice, then hits it with a bone. Some traditions start early."
+      ]
+    },
+    {
+      "id": "story-mammut",
+      "variants": [
+        "It's a boar. A boar the size of a hut, wearing a fur coat and carrying two spears in its face. Karl reassesses several life goals.",
+        "A mammoth! Magnificent, enormous, and entirely uninterested in Karl, which is the only reason he's still narrating.",
+        "Karl meets the mammoth. Karl is roughly one leg tall. Nobody moves for a very long time.",
+        "Six tonnes of shaggy indifference walks past the camp. Karl waves. The mammoth does not wave. Mammoths never do.",
+        "The largest thing Karl has ever seen, and his first instinct is to throw a stick at it. Restraint, for once, prevails."
+      ]
+    },
+    {
+      "id": "story-broed",
+      "variants": [
+        "BREAD. Flour, water, fire — and the smell that will define human happiness for the next fourteen thousand years. Karl eats the entire loaf standing up.",
+        "The dough goes into the ashes and comes out golden. Karl takes one bite and makes a noise I am not going to describe.",
+        "Bread! The food that built civilizations, invented right here by a man who once seasoned a mud pie.",
+        "Warm, crusty, and gone in ninety seconds. Karl is already making more. This is his personality now.",
+        "He bakes the first loaf. Empires will be fed on this. Wars will be fought over it. Karl just wants another slice."
+      ]
+    },
+    {
+      "id": "story-skrift",
+      "variants": [
+        "Marks in rows that hold a thought after the thinker is gone. Karl has invented writing. His first sentence is about his rock. Of course it is.",
+        "Writing! Thought, made to survive its owner. Everything I say from now on could, in principle, be checked. I'm not thrilled.",
+        "Symbols, lined up, meaning something. This is the moment history stops depending on people like me and starts depending on people like Karl. Good luck, everyone.",
+        "He scratches the marks into the stone and steps back. Memory has just escaped the skull. Nothing will ever be forgotten again — including this.",
+        "The first written words in the valley, and they read: KARL WAS HERE. Four thousand years of literature begin with graffiti."
+      ]
+    },
+    {
+      "id": "ending-voyage",
+      "variants": [
+        "Karl pushed off at dawn with the pot lashed to the prow and paddled towards a horizon nobody had ever come back from. The valley waited. The valley is still waiting. THE END.",
+        "He took the boat, the map, and the pot with the face on it, and he went to see what was past the water. Nobody knows what he found. Everybody knows he went. THE END.",
+        "The last anyone saw of Karl, he was a dot on the water, talking cheerfully to a pot. Somewhere out there is a beach with his footprints on it. THE END."
+      ]
+    }
+  ],
+  "behavior": {
+    "spamElement": "sten",
+    "spam": {
+      "3": "spam-3",
+      "5": "spam-5",
+      "8": "spam-8"
+    },
+    "repeatCombo": {
+      "3": "repeat-3",
+      "6": "repeat-6"
+    },
+    "failStreak": {
+      "4": "failstreak-4",
+      "7": "failstreak-7"
+    },
+    "fast": {
+      "6": "fast-6",
+      "12": "fast-12"
+    },
+    "elementSweep": {
+      "4": "sweep-4",
+      "7": "sweep-7"
+    },
+    "slow": [
+      "slow-1"
+    ],
+    "aging": {
+      "10": "aging-10",
+      "5": "aging-5",
+      "1": "aging-1"
+    }
+  },
+  "flagMemory": [
+    "mem-larver",
+    "mem-stinker",
+    "mem-bilist",
+    "mem-rockstjerne",
+    "mem-mudderspiser",
+    "mem-modeikon"
+  ],
+  "genericFailure": [
+    "gf-1",
+    "gf-2",
+    "gf-3",
+    "gf-4",
+    "gf-5",
+    "gf-6",
+    "gf-7",
+    "gf-8"
+  ]
+}

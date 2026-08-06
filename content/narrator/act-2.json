@@ -1,0 +1,58 @@
+{
+  "act": 2,
+  "resumeLine": "resume-2",
+  "lines": [
+    {
+      "id": "intro-act-2",
+      "variants": [
+        "The Bronze Age. New fields, new possibilities — and yes, Karl is still here. The rest of this epoch is under construction. Even history needs a break from Karl.",
+        "Welcome to the Bronze Age: currently one empty field, two curious animals, and a man clutching a lump of bronze. More history coming soon.",
+        "A new age dawns, gleaming and bronze. Also, largely unbuilt. Consider this a scenic overlook."
+      ]
+    },
+    {
+      "id": "resume-2",
+      "variants": [
+        "Back again. The Bronze Age waited politely.",
+        "You return! The ox is pleased. The grain is indifferent. I am professional."
+      ]
+    },
+    {
+      "id": "a2-gf-1",
+      "variants": [
+        "Nothing. The Bronze Age is evidently also a learning process.",
+        "No result. Bronze does not make the ideas better, it turns out."
+      ]
+    },
+    {
+      "id": "a2-gf-2",
+      "variants": [
+        "New millennium, same method. Admirable, in a way.",
+        "A fresh age, an old strategy. Some things survive every epoch. Unfortunately."
+      ]
+    },
+    {
+      "id": "a2-gf-3",
+      "variants": [
+        "History waits patiently. It's history's one great strength.",
+        "The epoch is young. Karl has plenty of time to fill it with... this."
+      ]
+    }
+  ],
+  "behavior": {
+    "spamElement": "bronze",
+    "spam": {},
+    "repeatCombo": {},
+    "failStreak": {},
+    "fast": {},
+    "elementSweep": {},
+    "slow": [],
+    "aging": {}
+  },
+  "flagMemory": [],
+  "genericFailure": [
+    "a2-gf-1",
+    "a2-gf-2",
+    "a2-gf-3"
+  ]
+}

@@ -1,0 +1,533 @@
+{
+  "a2-gf-1": [
+    0,
+    1
+  ],
+  "a2-gf-2": [
+    0,
+    1
+  ],
+  "a2-gf-3": [
+    0,
+    1
+  ],
+  "ageup-act-1": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "aging-1": [
+    0,
+    1
+  ],
+  "aging-10": [
+    0,
+    1
+  ],
+  "aging-5": [
+    0,
+    1
+  ],
+  "ending-doctor": [
+    0,
+    1,
+    2
+  ],
+  "ending-general": [
+    0,
+    1,
+    2
+  ],
+  "ending-gourmet": [
+    0,
+    1,
+    2
+  ],
+  "ending-icarus": [
+    0,
+    1,
+    2
+  ],
+  "ending-king": [
+    0,
+    1,
+    2
+  ],
+  "ending-legend": [
+    0,
+    1,
+    2
+  ],
+  "ending-living-god": [
+    0,
+    1,
+    2
+  ],
+  "ending-oldage": [
+    0,
+    1,
+    2
+  ],
+  "ending-painter": [
+    0,
+    1,
+    2
+  ],
+  "ending-remembered": [
+    0,
+    1,
+    2
+  ],
+  "ending-voyage": [
+    0,
+    1,
+    2
+  ],
+  "ending-winter": [
+    0,
+    1,
+    2
+  ],
+  "failstreak-4": [
+    0,
+    1,
+    2
+  ],
+  "failstreak-7": [
+    0,
+    1,
+    2
+  ],
+  "fast-12": [
+    0,
+    1,
+    2
+  ],
+  "fast-6": [
+    0,
+    1,
+    2
+  ],
+  "gate-act-1": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "gf-1": [
+    0,
+    1,
+    2
+  ],
+  "gf-2": [
+    0,
+    1,
+    2
+  ],
+  "gf-3": [
+    0,
+    1,
+    2
+  ],
+  "gf-5": [
+    0,
+    1,
+    2
+  ],
+  "gf-6": [
+    0,
+    1,
+    2
+  ],
+  "gf-7": [
+    0,
+    1,
+    2
+  ],
+  "gf-8": [
+    1,
+    2
+  ],
+  "hint-kulde-1": [
+    0,
+    1
+  ],
+  "hint-kulde-2": [
+    0,
+    1
+  ],
+  "hint-kulde-3": [
+    0,
+    1
+  ],
+  "hint-sult-1": [
+    0,
+    1
+  ],
+  "hint-sult-2": [
+    0,
+    1
+  ],
+  "hint-sult-3": [
+    0,
+    1
+  ],
+  "hint-vaerktoej-1": [
+    0,
+    1
+  ],
+  "hint-vaerktoej-2": [
+    0,
+    1
+  ],
+  "hint-vaerktoej-3": [
+    0,
+    1
+  ],
+  "intro-act-1": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "intro-act-2": [
+    0,
+    1,
+    2
+  ],
+  "mem-bilist": [
+    0,
+    1
+  ],
+  "mem-larver": [
+    0,
+    1
+  ],
+  "mem-modeikon": [
+    0,
+    1
+  ],
+  "mem-mudderspiser": [
+    0,
+    1
+  ],
+  "mem-rockstjerne": [
+    0,
+    1
+  ],
+  "mem-stinker": [
+    0,
+    1
+  ],
+  "repeat-3": [
+    0,
+    1,
+    2
+  ],
+  "repeat-6": [
+    0,
+    1,
+    2
+  ],
+  "resume-1": [
+    0,
+    1,
+    2
+  ],
+  "resume-2": [
+    0,
+    1
+  ],
+  "slow-1": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "spam-3": [
+    0,
+    1,
+    2
+  ],
+  "spam-5": [
+    0,
+    1,
+    2
+  ],
+  "spam-8": [
+    0,
+    1,
+    2
+  ],
+  "story-broed": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-damp": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-drive-in": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-familie": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-fisk": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-flintmobil": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-gnister": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-grav": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hjul": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hoest": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hulemaleri": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hund": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hytte": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-ild": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-keramik": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-kobber": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-koed": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-landsby": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-larvefarm": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-lov": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-lyn": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-malm": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-mammut": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-monolit": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-mudderbad": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-mudderkage": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-ristede-larver": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-rockband": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-romance": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-skind": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-skrift": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-spejl": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-spyd": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-stegt-koed": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-stenkoncert": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-stenkreds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-stenoekse": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-toej": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ]
+}

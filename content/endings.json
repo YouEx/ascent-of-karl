@@ -1,0 +1,99 @@
+[
+  {
+    "id": "king-karl",
+    "title": "King Karl",
+    "emoji": "👑",
+    "tone": "happy",
+    "achievement": "King Karl",
+    "line": "ending-king"
+  },
+  {
+    "id": "rock-legend",
+    "title": "The Legend",
+    "emoji": "🌟",
+    "tone": "bittersweet",
+    "achievement": "Rock Legend",
+    "line": "ending-legend"
+  },
+  {
+    "id": "mad-painter",
+    "title": "Into the Painting",
+    "emoji": "🖌️",
+    "tone": "mad",
+    "achievement": "The Mad Painter",
+    "line": "ending-painter"
+  },
+  {
+    "id": "icarus",
+    "title": "The Flight of Karl",
+    "emoji": "🪽",
+    "tone": "tragic",
+    "achievement": "Almost Icarus",
+    "line": "ending-icarus"
+  },
+  {
+    "id": "general",
+    "title": "General Karl",
+    "emoji": "⚔️",
+    "tone": "tragic",
+    "achievement": "General Karl",
+    "line": "ending-general"
+  },
+  {
+    "id": "doctor",
+    "title": "Dr. Karl",
+    "emoji": "🩹",
+    "tone": "happy",
+    "achievement": "Dr. Karl",
+    "line": "ending-doctor"
+  },
+  {
+    "id": "gourmet",
+    "title": "The Last Supper",
+    "emoji": "🍲",
+    "tone": "komisk",
+    "achievement": "Death by Cuisine",
+    "line": "ending-gourmet"
+  },
+  {
+    "id": "long-winter",
+    "title": "The Long Winter",
+    "emoji": "🏔️",
+    "tone": "tragic",
+    "achievement": "The Long Winter",
+    "line": "ending-winter"
+  },
+  {
+    "id": "remembered",
+    "title": "Remembered",
+    "emoji": "🕊️",
+    "tone": "bittersweet",
+    "achievement": "Remembered",
+    "line": "ending-remembered"
+  },
+  {
+    "id": "living-god",
+    "title": "The Living God",
+    "emoji": "🌞",
+    "tone": "mad",
+    "achievement": "The Living God",
+    "line": "ending-living-god"
+  },
+  {
+    "id": "voyage",
+    "title": "The Voyage",
+    "emoji": "⛵",
+    "tone": "bittersweet",
+    "achievement": "Into the Unknown",
+    "line": "ending-voyage"
+  },
+  {
+    "id": "et-helt-liv",
+    "title": "A Whole Life",
+    "emoji": "🕯️",
+    "tone": "bittersweet",
+    "achievement": "A Whole Life",
+    "line": "ending-oldage",
+    "automatic": true
+  }
+]
