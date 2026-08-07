@@ -5,7 +5,7 @@
  * Unit tests kunne ikke fange det; det kræver en rigtig browser med rigtig
  * history og rigtigt fokus. Kør: node tools/ux_audit.mjs [url]
  */
-import { chromium } from "playwright-core";
+import { chromium } from "playwright";
 
 const URL = process.argv[2] ?? "http://localhost:5199/";
 const MOBILE = { width: 390, height: 844 };

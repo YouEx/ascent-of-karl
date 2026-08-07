@@ -45,8 +45,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Uden version: bruger projektets egen playwright, så browser-build og
+      # bibliotek matcher. En pinnet version her hentede v1155, mens
+      # biblioteket ville have v1234, og jobbet fejlede.
       - name: Hent Chromium
-        run: npx --yes playwright@1.50.0 install --with-deps chromium
+        run: npx playwright install --with-deps chromium
       - name: Start dev-server
         run: |
           npx vite --port 5199 --strictPort &
