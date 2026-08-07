@@ -235,12 +235,24 @@ describe("Narrator: nye adfærds-triggere", () => {
     expect(line?.id).toBe("slow-1");
   });
 
-  it("slow har cooldown — fyrer ikke ved to lange pauser lige efter hinanden", () => {
+  it("slow fyrer HØJST ÉN gang pr. run, uanset hvor mange pauser der er", () => {
+    // Målt til 2,8 gange pr. run før: sjov én gang, docerende tre.
     const { engine, narrator } = setup();
     const first = attempt(engine, narrator, "baer", "ler", 60_000);
     expect(first?.id).toBe("slow-1");
-    const second = attempt(engine, narrator, "baer", "pind", 60_000);
-    expect(second?.id).not.toBe("slow-1");
+    for (const [a, b] of [
+      ["baer", "pind"], ["ler", "pind"], ["dyr", "pind"], ["fugl", "pind"],
+      ["stamme", "pind"], ["graes", "pind"], ["vand", "pind"],
+    ] as const) {
+      expect(attempt(engine, narrator, a, b, 60_000)?.id).not.toBe("slow-1");
+    }
+  });
+
+  it("engangs-reglen overlever save/load", () => {
+    const { engine, narrator } = setup();
+    attempt(engine, narrator, "baer", "ler", 60_000);
+    const revived = new Narrator(engine, JSON.parse(JSON.stringify(narrator.getState())));
+    expect(attempt(engine, revived, "baer", "pind", 60_000)?.id).not.toBe("slow-1");
   });
 });
 

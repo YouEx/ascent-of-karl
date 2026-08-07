@@ -40,6 +40,12 @@ export interface NarratorState {
   /** Forsøgstæller + hvornår slow-puljen sidst fyrede (cooldown) */
   attempts: number;
   lastSlowAttempt: number;
+  /**
+   * Har "du var længe om det"-replikken lydt i dette run?
+   * Den fyrede 2,8 gange pr. run og blev spillets mest hørte adfærds-replik
+   * — sjov én gang, docerende tre. Nu højst én gang pr. liv.
+   */
+  slowUsed: boolean;
 }
 
 export function freshNarratorState(seed = 1): NarratorState {
@@ -62,6 +68,7 @@ export function freshNarratorState(seed = 1): NarratorState {
     discoveryIndex: 0,
     attempts: 0,
     lastSlowAttempt: -100,
+    slowUsed: false,
   };
 }
 
@@ -90,8 +97,6 @@ const HINT_STEP = 4;
 const SLOW_MS = 45_000;
 /** Et forsøg hurtigere end dette efter det forrige regnes som "meget hurtigt" (ms) */
 const FAST_MS = 2_000;
-/** Mindst så mange forsøg mellem to slow-kommentarer */
-const SLOW_COOLDOWN = 5;
 
 /**
  * Fortælleren reagerer på hvert kombinationsforsøg med præcis én (eller ingen) replik.
@@ -245,13 +250,16 @@ export class Narrator {
     const agingHit = behavior.aging?.[String(this.engine.remainingTurns())];
     if (agingHit) return agingHit;
 
-    // Meget langsom: lang pause før netop dette forsøg (med cooldown)
+    // Meget langsom: lang pause før netop dette forsøg. Højst ÉN gang pr.
+    // run — reglen hænger på triggeren, ikke på replik-id'et, så den holder
+    // også når puljen får flere replikker.
     if (
+      !this.state.slowUsed &&
       elapsedMs !== undefined &&
       elapsedMs >= SLOW_MS &&
-      behavior.slow.length > 0 &&
-      this.state.attempts - this.state.lastSlowAttempt >= SLOW_COOLDOWN
+      behavior.slow.length > 0
     ) {
+      this.state.slowUsed = true;
       this.state.lastSlowAttempt = this.state.attempts;
       return behavior.slow[Math.floor(this.rand() * behavior.slow.length)];
     }
