@@ -6,6 +6,7 @@ import { loadContent } from "../content";
 import type { CombineOutcome, ElementDef } from "../core/types";
 import { BookView } from "./book";
 import { initAudio, playLine, stopAudio } from "./audio";
+import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 
 const SAVE_KEY = "kolde-karl-save-v1";
 const NARRATOR_SAVE_KEY = "kolde-karl-narrator-v1";
@@ -269,11 +270,17 @@ function openBook(): void {
   el.bookPanel.classList.add("open");
   document.body.classList.add("book-open");
   book.render();
+  openOverlay(el.bookPanel, {
+    label: "The book — your encyclopedia of history",
+    onClose: () => {
+      el.bookPanel.classList.remove("open");
+      document.body.classList.remove("book-open");
+    },
+  });
 }
 
 function closeBook(): void {
-  el.bookPanel.classList.remove("open");
-  document.body.classList.remove("book-open");
+  if (el.bookPanel.classList.contains("open")) closeTopOverlay();
 }
 
 el.bookBtn.addEventListener("click", () =>
@@ -294,9 +301,18 @@ function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" 
       <button id="card-close">Write it in the book</button>
     </div>`;
   el.card.hidden = false;
-  document.getElementById("card-close")!.addEventListener("click", () => {
-    el.card.hidden = true;
+  openOverlay(el.card, {
+    label: `Discovered: ${d.name}`,
+    // Combine-knappen deaktiveres når slots ryddes, så den kan ikke tage
+    // fokus tilbage. Bogen er det naturlige næste sted efter en opdagelse.
+    fallbackFocus: () => el.bookBtn,
+    onClose: () => {
+      el.card.hidden = true;
+    },
   });
+  document
+    .getElementById("card-close")!
+    .addEventListener("click", () => closeTopOverlay());
 }
 
 function showAgeUpBanner(): void {
@@ -308,11 +324,19 @@ function showAgeUpBanner(): void {
       <button id="banner-close">Into the future</button>
     </div>`;
   el.banner.hidden = false;
-  document.getElementById("banner-close")!.addEventListener("click", () => {
-    el.banner.hidden = true;
-    const intro = narrator.actIntro();
-    if (intro) say(intro);
+  // Uanset hvordan banneret lukkes (knap, baggrund, Esc, back) skal
+  // akt-introen lyde — ellers straffes spilleren for at lukke "forkert".
+  openOverlay(el.banner, {
+    label: `A new age: Act ${act.act}, ${act.name}`,
+    onClose: () => {
+      el.banner.hidden = true;
+      const intro = narrator.actIntro();
+      if (intro) say(intro);
+    },
   });
+  document
+    .getElementById("banner-close")!
+    .addEventListener("click", () => closeTopOverlay());
 }
 
 function renderTrophyModal(): void {
@@ -334,9 +358,15 @@ function renderTrophyModal(): void {
       <button id="trophy-close">Close</button>
     </div>`;
   el.trophyModal.hidden = false;
-  document.getElementById("trophy-close")!.addEventListener("click", () => {
-    el.trophyModal.hidden = true;
+  openOverlay(el.trophyModal, {
+    label: "Karl's fates",
+    onClose: () => {
+      el.trophyModal.hidden = true;
+    },
   });
+  document
+    .getElementById("trophy-close")!
+    .addEventListener("click", () => closeTopOverlay());
 }
 
 el.trophiesBtn.addEventListener("click", renderTrophyModal);
@@ -361,6 +391,16 @@ function showEndingScreen(): void {
       <button id="ending-stats" class="secondary">Copy run summary</button>
     </div>`;
   el.ending.hidden = false;
+  // Terminal (se docs/design/ux-checklist.md §1): runnet ER slut, så der er
+  // ingen tilstand at vende tilbage til. "Live again" er den fremadrettede
+  // handling der opløser den — derfor ingen baggrundsklik/Esc/back her.
+  openOverlay(el.ending, {
+    label: `Karl's fate: ${ending.title}`,
+    terminal: true,
+    onClose: () => {
+      el.ending.hidden = true;
+    },
+  });
   document.getElementById("ending-restart")!.addEventListener("click", () => {
     clearSave();
     location.reload();
@@ -578,5 +618,6 @@ function renderAll(): void {
 }
 
 // --- Opstart ---
+initOverlays();
 renderAll();
 showTitleScreen();

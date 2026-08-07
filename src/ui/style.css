@@ -298,6 +298,7 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
 #book-close {
   position: sticky; top: 0; float: right; z-index: 2;
   background: var(--panel); border-color: #443a30;
+  min-width: var(--tap); min-height: var(--tap);
 }
 
 #book {
@@ -389,6 +390,16 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: bold;
 }
 .title-hint { color: var(--muted); font-size: 0.8rem; margin-top: 1.5rem; }
+
+/* ---------- Overlejringer (docs/design/ux-checklist.md) ---------- */
+/* Baggrunden må ikke scrolle med, mens en overlejring er åben */
+body.overlay-open { overflow: hidden; }
+
+/* Fokus skal være synligt — det er halvdelen af en tastatur-flugtvej */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
 
 /* ---------- Modaler ---------- */
 #card, #banner, #ending, #trophy-modal {

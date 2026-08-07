@@ -44,6 +44,10 @@ npm run build        # typecheck + produktion-build
    Kode, kommentarer og docs: dansk domænesprog er ok, hold identifiers
    ASCII (`stenoekse`, ikke `stenøkse`). Element-id'er forbliver danske.
 6. Engine- og narrator-tilstand skal altid kunne serialiseres (save/load).
+7. **Nye overlejringer skal gå gennem `openOverlay()`** (`src/ui/overlay.ts`)
+   og tilføjes til `OVERLAYS` i `tools/ux_audit.mjs`. Se
+   `docs/design/ux-checklist.md` — princippet er ingen blindgyder: mindst to
+   veje ud, og browserens back lukker overlejringen i stedet for spillet.
 
 ## Tone (til indholdsarbejde)
 
