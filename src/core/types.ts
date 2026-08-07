@@ -22,6 +22,11 @@ export interface ElementDef {
    * Prototypen viser den som badge; senere er den brief til illustratoren.
    */
   karlMood?: string;
+  /**
+   * Kategori (docs/design/decisions.md). Beslutninger svarer på KATEGORIEN,
+   * ikke på elementet — ellers ville fire beslutninger kræve 748 replikker.
+   */
+  tag?: string;
 }
 
 export interface ComboDef {
@@ -176,6 +181,37 @@ export interface ChallengeDef {
   minPage?: number;
 }
 
+/**
+ * Et svar på en beslutning, defineret pr. element-kategori.
+ * `default` fanger alt andet, så ethvert element giver et meningsfuldt svar.
+ */
+export interface DecisionResponse {
+  /** Kongens karakter, 1-5 */
+  score: number;
+  /** Replik-id (5+ varianter) */
+  line: string;
+  /** Hvor meget svaret flytter runnet i hver retning */
+  tracks?: Record<string, number>;
+  /** Flags svaret sætter — dét der lader ét valg lukke en anden dør */
+  setsFlags?: string[];
+}
+
+/**
+ * En beslutning: verden stiller Karl et spørgsmål på en fast side, og
+ * spillerens næste kombination er svaret.
+ */
+export interface DecisionDef {
+  id: string;
+  emoji: string;
+  title: string;
+  /** Situationen — replik-id med 5+ varianter */
+  line: string;
+  /** Siden den altid dukker op på (10, 20, 30, 40) */
+  page: number;
+  /** Svar pr. element-kategori. SKAL indeholde "default". */
+  responses: Record<string, DecisionResponse>;
+}
+
 export interface ContentBundle {
   elements: ElementDef[];
   combos: ComboDef[];
@@ -183,6 +219,7 @@ export interface ContentBundle {
   narrator: NarratorContentDef[];
   endings: EndingDef[];
   challenges: ChallengeDef[];
+  decisions: DecisionDef[];
   config: {
     /** Max antal kombinationsforsøg (somre) pr. run — derefter alderdoms-slutning */
     turnLimit: number;
