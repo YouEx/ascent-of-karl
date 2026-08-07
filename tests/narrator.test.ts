@@ -5,6 +5,26 @@ import { loadContent } from "../src/content";
 
 const content = loadContent();
 
+/**
+ * Fylder op med opfundne elementer, så Karl er over skæbne-grænsen.
+ * Skæbner er gated på antal opfindelser (se Engine.endingsUnlocked); tests der
+ * vil ramme en slutning skal derfor have et liv bag sig først.
+ */
+function withInventions(discovered: string[]): string[] {
+  const endingResults = new Set(
+    content.combos.filter((c) => c.ending).map((c) => c.result),
+  );
+  const padding = content.elements
+    .filter(
+      (e) =>
+        !e.base && !discovered.includes(e.id) && !endingResults.has(e.id),
+    )
+    .map((e) => e.id)
+    .slice(0, content.config.endingsUnlockAt);
+  return [...discovered, ...padding];
+}
+
+
 function setup() {
   const engine = new Engine(content);
   const narrator = new Narrator(engine);
@@ -243,7 +263,10 @@ describe("Narrator: slutninger og aldring", () => {
 
   it("slutningens replik overtrumfer alt andet", () => {
     const { engine, narrator } = setup();
-    engine.loadState({ ...baseState, discovered: ["mudderkage", "grottebryg"] });
+    engine.loadState({
+      ...baseState,
+      discovered: withInventions(["mudderkage", "grottebryg"]),
+    });
     const line = attempt(engine, narrator, "mudderkage", "grottebryg");
     expect(line?.id).toBe("ending-gourmet");
     expect(line?.text).toContain("THE END");

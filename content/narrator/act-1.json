@@ -827,6 +827,17 @@
         "He took the boat, the map, and the pot with the face on it, and he went to see what was past the water. Nobody knows what he found. Everybody knows he went. THE END.",
         "The last anyone saw of Karl, he was a dot on the water, talking cheerfully to a pot. Somewhere out there is a beach with his footprints on it. THE END."
       ]
+    },
+    {
+      "id": "ending-deflected",
+      "variants": [
+        "Karl stands at the edge of something final, considers it seriously, and then remembers he has not finished being curious yet. Not today.",
+        "This was, by every reasonable measure, how Karl's story ends. Karl declines. There is still too much he has not ruined.",
+        "Death arrives, looks at how little Karl has accomplished, and decides to come back when there is more to work with.",
+        "A lesser man would have died here. Karl is not a lesser man. Karl is an unfinished one.",
+        "Karl peers into the abyss. The abyss peers back, sees a man who has not yet invented bread, and lets him go.",
+        "And so Karl very nearly concluded. He puts it off. There are, he feels, still things to combine."
+      ]
     }
   ],
   "behavior": {
@@ -878,5 +889,6 @@
     "gf-6",
     "gf-7",
     "gf-8"
-  ]
+  ],
+  "deflectedEndingLine": "ending-deflected"
 }

@@ -182,6 +182,8 @@ def main() -> int:
         check_ref(act.get("gateLine"), "gateLine", key_min)
         check_ref(act.get("ageUpLine"), "ageUpLine", key_min)
         check_ref(n.get("resumeLine"), "resumeLine")
+        # Afværget skæbne er et nøglebeat: spilleren rammer den tidligt og ofte
+        check_ref(n.get("deflectedEndingLine"), "deflectedEndingLine", key_min)
         for p in act.get("problems", []):
             for h in p.get("hints", []):
                 check_ref(h, f"problemet '{p['id']}'s hints")
@@ -260,6 +262,15 @@ def main() -> int:
         if not e.get("automatic") and e["id"] not in triggered:
             err(f"Slutningen '{e['id']}' udløses aldrig af nogen kombination")
     turn_limit = config.get("turnLimit")
+    unlock_at = config.get("endingsUnlockAt")
+    if not isinstance(unlock_at, int) or unlock_at < 0:
+        err(f"config.endingsUnlockAt skal være et heltal ≥ 0 (er {unlock_at!r})")
+        unlock_at = 0
+    elif isinstance(turn_limit, int) and unlock_at > turn_limit * 0.6:
+        warn(
+            f"config.endingsUnlockAt ({unlock_at}) er over 60 % af turn-limit "
+            f"({turn_limit}) — spilleren når knap at bruge sine skæbner"
+        )
     if not isinstance(turn_limit, int) or turn_limit < 10:
         err(f"config.turnLimit skal være et heltal ≥ 10 (er {turn_limit!r})")
     else:
@@ -294,7 +305,9 @@ def main() -> int:
                      if c["result"] in recipe_set]
             if not costs:
                 continue  # allerede fanget som uudløst ovenfor
-            cheapest = min(costs)
+            # Skæbner er desuden gated på antal opdagelser; hver opdagelse
+            # koster mindst én sommer, så gaten er en reel nedre grænse.
+            cheapest = max(min(costs), unlock_at)
             if cheapest > turn_limit:
                 err(
                     f"Slutningen '{e['id']}' kræver mindst {cheapest} somre, "

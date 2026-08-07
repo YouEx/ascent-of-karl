@@ -1,0 +1,19 @@
+{
+  "name": "Kolde Karl",
+  "short_name": "Kolde Karl",
+  "description": "A stone-age man. A sarcastic narrator. Fifty summers to make history — or a mess.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a1613",
+  "theme_color": "#1a1613",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

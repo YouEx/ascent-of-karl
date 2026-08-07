@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manuel start: under GitHubs Actions-nedbrud 2026-08-06 blev push- og
+  # pull_request-events droppet, og der var ingen måde at få CI til at køre
+  # igen uden en tom commit.
+  workflow_dispatch:
 
 jobs:
   validate-content:

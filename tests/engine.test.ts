@@ -10,6 +10,25 @@ function freshEngine(): Engine {
 }
 
 /** Spiller hovedsporet frem til (men ikke inklusive) bronze. */
+/**
+ * Fylder op med opfundne elementer, så Karl er over skæbne-grænsen.
+ * Skæbner er gated på antal opfindelser (se Engine.endingsUnlocked); tests der
+ * vil ramme en slutning skal derfor have et liv bag sig først.
+ */
+function withInventions(discovered: string[]): string[] {
+  const endingResults = new Set(
+    content.combos.filter((c) => c.ending).map((c) => c.result),
+  );
+  const padding = content.elements
+    .filter(
+      (e) =>
+        !e.base && !discovered.includes(e.id) && !endingResults.has(e.id),
+    )
+    .map((e) => e.id)
+    .slice(0, content.config.endingsUnlockAt);
+  return [...discovered, ...padding];
+}
+
 function playMainTrack(e: Engine): void {
   e.combine("sten", "sten"); // gnister
   e.combine("gnister", "graes"); // ild → løser kulde
@@ -148,7 +167,10 @@ describe("Engine: slutninger og levetid", () => {
 
   it("en skæbne-kombination afslutter runnet og låser videre spil", () => {
     const e = freshEngine();
-    e.loadState({ ...baseState, discovered: ["mudderkage", "grottebryg"] });
+    e.loadState({
+      ...baseState,
+      discovered: withInventions(["mudderkage", "grottebryg"]),
+    });
     const outcome = e.combine("mudderkage", "grottebryg");
     expect(outcome.kind).toBe("discovery");
     expect(e.activeEnding()?.id).toBe("gourmet");
@@ -195,5 +217,66 @@ describe("Save/load", () => {
   it("afviser ugyldige save-filer", () => {
     expect(() => deserialize('{"version":1,"state":{}}')).toThrow();
     expect(() => deserialize('{"version":99,"state":{}}')).toThrow();
+  });
+});
+
+describe("Engine: skæbner er gated på antal opfindelser", () => {
+  /** Korteste vej til Ikaros-slutningen: fire kombinationer. */
+  function flyToTheSun(e: Engine): void {
+    e.combine("fugl", "nabo"); // fjer
+    e.combine("fjer", "fjer"); // vinger
+    e.combine("sten", "nabo"); // bautasten
+    e.combine("vinger", "bautasten"); // flyveforsoeg → icarus
+  }
+
+  it("base-elementer tæller ikke som opfindelser", () => {
+    const e = freshEngine();
+    expect(e.inventions()).toBe(0);
+    e.combine("sten", "sten");
+    expect(e.inventions()).toBe(1);
+  });
+
+  it("afværger en skæbne når Karl har opfundet for lidt", () => {
+    const e = freshEngine();
+    flyToTheSun(e);
+    const s = e.getState();
+    expect(s.ended).toBeNull();
+    expect(s.discovered).toContain("flyveforsoeg");
+    expect(e.inventions()).toBeLessThan(content.config.endingsUnlockAt);
+  });
+
+  it("melder afværgningen tilbage, så fortælleren kan reagere", () => {
+    const e = freshEngine();
+    e.combine("fugl", "nabo");
+    e.combine("fjer", "fjer");
+    e.combine("sten", "nabo");
+    const outcome = e.combine("vinger", "bautasten");
+    expect(outcome.kind).toBe("discovery");
+    if (outcome.kind === "discovery") expect(outcome.endingDeflected).toBe(true);
+  });
+
+  it("mister ikke skæbnen: den kan opsøges igen når grænsen er nået", () => {
+    const e = freshEngine();
+    flyToTheSun(e);
+    expect(e.getState().ended).toBeNull();
+
+    // Karl lever videre og opfinder sig op over grænsen
+    const s = e.getState();
+    e.loadState({ ...s, discovered: withInventions(s.discovered) });
+    expect(e.inventions()).toBeGreaterThanOrEqual(content.config.endingsUnlockAt);
+
+    // Samme kombination igen — nu er resultatet kendt, men skæbnen venter
+    const again = e.combine("vinger", "bautasten");
+    expect(again.kind).toBe("known");
+    expect(e.getState().ended).toBe("icarus");
+  });
+
+  it("alderdommen rammer uanset hvor lidt Karl har opfundet", () => {
+    const e = freshEngine();
+    while (e.getState().attempts < content.config.turnLimit) {
+      e.combine("sten", "vand");
+    }
+    const ending = e.activeEnding();
+    expect(ending?.automatic).toBe(true);
   });
 });

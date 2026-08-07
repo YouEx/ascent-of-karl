@@ -1,3 +1,4 @@
 {
-  "turnLimit": 50
+  "turnLimit": 50,
+  "endingsUnlockAt": 14
 }
