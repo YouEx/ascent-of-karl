@@ -400,7 +400,9 @@
         "Nothing happens. Somewhere, nothing continues to happen.",
         "Karl combines them with great ceremony. The world declines to participate.",
         "Nothing happens, but it happens with real conviction.",
-        "Those two have met. They have chosen to remain strangers."
+        "Those two have met. They have chosen to remain strangers.",
+        "Karl presents them to each other formally. They decline to be introduced.",
+        "Nothing. The two objects return to being scenery."
       ]
     },
     {
@@ -411,7 +413,9 @@
         "The chronicle grows by one line: 'no'.",
         "Karl waits for something. Karl keeps waiting. This is the whole event.",
         "A brave attempt, undone by reality's refusal to cooperate.",
-        "He presses them together harder, as though force were the missing ingredient. It is not."
+        "He presses them together harder, as though force were the missing ingredient. It is not.",
+        "He waits. Nothing waits back.",
+        "A failed union. The valley notes it and moves on."
       ]
     },
     {
@@ -422,7 +426,9 @@
         "Ten points for commitment. Zero for outcome.",
         "Two objects. One optimist. No result.",
         "That produced a sound, which Karl mistook for progress.",
-        "The valley remains exactly as it was, which is a kind of achievement in itself."
+        "The valley remains exactly as it was, which is a kind of achievement in itself.",
+        "Zero. Karl seems fine about it, which is worrying.",
+        "The world stays exactly as it was, which took no effort at all."
       ]
     },
     {
@@ -433,7 +439,9 @@
         "Combining {a} with {b}. Because of course. Why not.",
         "Karl looks at me. I look back. Neither of us can help the other here.",
         "Nope. Beautifully, resoundingly nope.",
-        "Those don't go together. They've talked it over. They're firm."
+        "Those don't go together. They've talked it over. They're firm.",
+        "Karl looks at them accusingly. They are objects. They don't care.",
+        "No. Karl accepts this at roughly the speed of a glacier."
       ]
     },
     {
@@ -444,7 +452,9 @@
         "Somewhere nearby, the boar sighs.",
         "Karl attempts an unnatural union. Nature files an objection.",
         "That's a no. A polite one, but a no.",
-        "He shakes them. Shaking is not a technique, Karl."
+        "He shakes them. Shaking is not a technique, Karl.",
+        "Nature declines the application without giving reasons.",
+        "He rubs them together hopefully. Friction is not a shortcut."
       ]
     },
     {
@@ -455,7 +465,9 @@
         "I checked the history books. That's not in them. There's a reason.",
         "The result is a fine dust of disappointment and nothing else.",
         "Not everything combines. It's the first hard lesson, and he's taking it badly.",
-        "Karl frowns. Somewhere, the concept of chemistry frowns back."
+        "Karl frowns. Somewhere, the concept of chemistry frowns back.",
+        "Nothing at all. The morning continues regardless.",
+        "That combination has no future, and Karl has no memory of it by tomorrow."
       ]
     },
     {
@@ -466,7 +478,9 @@
         "New. Unquestionably new. Useful? Unquestionably not.",
         "Rejected. Try telling him that gently; he doesn't listen to me.",
         "Two things touched. History did not notice.",
-        "That went nowhere, but it went there quickly."
+        "That went nowhere, but it went there quickly.",
+        "Rejected on the spot, without appeal.",
+        "Two things touched briefly and agreed to forget it."
       ]
     },
     {
@@ -477,7 +491,9 @@
         "The laws of nature glance up, shake their heads, and return to work.",
         "Karl has discovered a new way to make nothing. That's eight or nine now.",
         "Unsuccessful. Karl remains undefeated in enthusiasm, though.",
-        "The universe reviews the proposal and returns it unsigned."
+        "The universe reviews the proposal and returns it unsigned.",
+        "Another nothing for the collection. It's a large collection.",
+        "Karl remains undefeated in enthusiasm and winless in results."
       ]
     },
     {
@@ -1365,6 +1381,84 @@
         "He burned out slowly, surrounded by things he had invented and none of them medicine. THE END",
         "Karl died of something that will have a name in nine thousand years. THE END"
       ]
+    },
+    {
+      "id": "gf-9",
+      "variants": [
+        "Karl holds them together and waits, with the patience of a man who has confused hoping for doing.",
+        "He tried. The universe, as is its custom, declined to comment.",
+        "Those two have nothing to say to each other. Karl keeps introducing them anyway.",
+        "No. But said kindly, because he's trying.",
+        "The combination fails. Karl's expression does not change, which suggests he hasn't noticed.",
+        "Nothing doing. He turns them over and tries the same thing from a different angle, which is the same thing.",
+        "Not everything wants to become something else. Some things are content.",
+        "That went precisely nowhere, at considerable speed."
+      ]
+    },
+    {
+      "id": "gf-10",
+      "variants": [
+        "Karl frowns at his hands as though they had betrayed him. They have not. They did exactly what he asked.",
+        "A failure so complete it almost circles back to being interesting. Almost.",
+        "He blows on them. I don't know why he blows on them. He doesn't know why he blows on them.",
+        "Nope. Karl files this away in the part of his mind reserved for things that didn't work, which is most of it.",
+        "The two objects remain stubbornly two objects.",
+        "Nothing. But he's warming up, in the sense that he's now slightly out of breath.",
+        "He shakes them next to his ear, listening for progress. There is none.",
+        "Unsuccessful. Karl looks around to see if anyone noticed. Only me. Always only me."
+      ]
+    },
+    {
+      "id": "gf-11",
+      "variants": [
+        "The valley waits. The valley continues to wait. The valley has learned patience from watching this man.",
+        "Nothing happened, and it happened thoroughly.",
+        "Karl attempts an unlikely marriage. The parties involved refuse to attend.",
+        "That didn't work, but I want to acknowledge the confidence with which it didn't.",
+        "He holds the pose a moment longer, in case the world is slow.",
+        "A miss. Karl adds it to a growing collection he will never review.",
+        "Two things, briefly adjacent, now merely nearby.",
+        "It didn't take. Karl is undeterred, which is either his best or his worst quality."
+      ]
+    },
+    {
+      "id": "gf-12",
+      "variants": [
+        "Karl squints. Squinting is not a catalyst, but nobody has told him.",
+        "That combination has been tried by nobody, for good reason, and now by Karl.",
+        "The result is a small silence, and then a slightly larger one.",
+        "No reaction. Karl checks whether he's holding them the right way round. He is. It doesn't help.",
+        "Failure, but the productive kind — he now knows one more thing that doesn't work.",
+        "The world declines. Politely, but firmly, and for the eleventh time this morning.",
+        "He puts them down. He picks them up. He puts them down again. This is the scientific method's larval stage.",
+        "Nothing came of it. Karl is already reaching for something else, which is, I suppose, the spirit."
+      ]
+    },
+    {
+      "id": "gf-13",
+      "variants": [
+        "Karl looks at the sky, as though it might offer notes. It does not.",
+        "That was optimistic. I admire optimism. I do not reward it.",
+        "The pairing fails. Somewhere, a principle of chemistry that hasn't been discovered yet feels vindicated.",
+        "Nothing. Karl mutters. The muttering is not language yet, but it's getting there.",
+        "He bangs them together, harder this time. Volume is not a reagent, Karl.",
+        "Unproductive. Though he did get a satisfying noise out of it, which he seems to count as partial credit.",
+        "The two remain themselves. Deeply, unhelpfully themselves.",
+        "Not this time. Possibly not any time. Certainly not this time."
+      ]
+    },
+    {
+      "id": "gf-14",
+      "variants": [
+        "A wasted summer, but a cheerful one.",
+        "Nothing. Karl sits down. Karl stands up. Karl tries again, having changed nothing.",
+        "That's a no from the world, delivered without explanation, as is the world's habit.",
+        "He turns one of them around and tries again immediately. Same result, slightly rotated.",
+        "The combination is rejected. Karl takes it well, having no concept of taking it badly.",
+        "Nothing at all. In fairness, that IS a result.",
+        "Karl has proven, once more, that most things do not go together. It's important work. Nobody will thank him.",
+        "It failed. He looks pleased anyway. I've stopped trying to understand him."
+      ]
     }
   ],
   "behavior": {
@@ -1415,7 +1509,13 @@
     "gf-5",
     "gf-6",
     "gf-7",
-    "gf-8"
+    "gf-8",
+    "gf-9",
+    "gf-10",
+    "gf-11",
+    "gf-12",
+    "gf-13",
+    "gf-14"
   ],
   "deflectedEndingLine": "ending-deflected",
   "discoveryFallback": [

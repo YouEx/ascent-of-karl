@@ -202,6 +202,19 @@ def main() -> int:
                  f"— spilleren hører dem ofte, sigt efter mindst 8")
         for ref in fallback:
             check_ref(ref, "discoveryFallback", key_min)
+        # Fiasko-puljen er den mest hørte tekst i spillet: målt til ~15 af de
+        # ~29 replikker pr. run. Rotationen cykler gennem ID'er, så antallet
+        # af replikker betyder lige så meget som varianterne i hver.
+        gf = n.get("genericFailure") or []
+        gf_variants = sum(len(lines_by_id[i]["variants"]) for i in gf if i in lines_by_id)
+        if act_has_combos:
+            if len(gf) < 12:
+                warn(f"Akt {act['act']}: kun {len(gf)} generiske fiasko-replikker "
+                     f"— spilleren hører ~15 pr. run, sigt efter mindst 12 forskellige")
+            if gf_variants < 80:
+                warn(f"Akt {act['act']}: fiasko-puljen har {gf_variants} varianter "
+                     f"— under 80 begynder gentagelserne at kunne høres")
+            info(f"Fiasko-pulje (mest hørte tekst): {len(gf)} replikker, {gf_variants} varianter")
         # Afværget skæbne er et nøglebeat: spilleren rammer den tidligt og ofte
         check_ref(n.get("deflectedEndingLine"), "deflectedEndingLine", key_min)
         for p in act.get("problems", []):
