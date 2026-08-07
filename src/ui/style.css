@@ -459,14 +459,53 @@ body.overlay-open { overflow: hidden; }
   mask-image: radial-gradient(circle, #000 25%, transparent 70%);
   animation: spin 14s linear infinite;
 }
-/* Gnister der skyder udad, én gang */
+/* Gnister der skyder udad, én gang. --n = antal, så de fordeles jævnt. */
 .card-burst { position: absolute; inset: 0; }
 .card-burst i {
   position: absolute; top: 50%; left: 50%;
   width: 4px; height: 4px; border-radius: 50%;
   background: var(--accent);
-  transform: rotate(calc(var(--i) * 45deg)) translateY(0);
+  transform: rotate(calc(var(--i) * (360deg / var(--n, 8)))) translateY(0);
   animation: spark 620ms ease-out forwards;
+}
+
+/* Sjældenhed i bogen — genfindes efter fundets øjeblik */
+.rarity {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 2px 7px; border-radius: 999px; vertical-align: middle;
+  border: 1px solid currentColor; font-family: system-ui, sans-serif;
+}
+.rarity-common { color: #8a7a68; }
+.rarity-rare { color: #b8763a; }
+.rarity-unique { color: #a8791f; background: #f3e2b455; }
+
+/* ---------- Sjældenhed: tre niveauer af fejring ---------- */
+/* common: roligt pop, ingen stråler — de fleste fund skal ikke larme */
+.tier-common .card-kicker { color: var(--muted); letter-spacing: 0.14em; }
+
+/* rare: stråler og otte gnister */
+.tier-rare .card-kicker { color: var(--accent); }
+.tier-rare { border-color: var(--accent); }
+
+/* unique: halo, dobbelt så mange gnister, pulserende ramme */
+.tier-unique { border-width: 3px; animation: unique-frame 2.4s ease-in-out infinite; }
+.tier-unique .card-kicker { color: #ffd479; letter-spacing: 0.26em; }
+.tier-unique .card-rays { opacity: 0.3; animation-duration: 7s; }
+.tier-unique .card-emoji { font-size: 4.2rem; }
+.card-halo {
+  position: absolute; top: 50%; left: 50%;
+  width: 120px; aspect-ratio: 1; transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd47955 0%, transparent 70%);
+  animation: halo 1.8s ease-in-out infinite;
+}
+@keyframes halo {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; }
+}
+@keyframes unique-frame {
+  0%, 100% { box-shadow: 0 0 0 0 #ffd47900; }
+  50% { box-shadow: 0 0 22px 2px #ffd47955; }
 }
 .card-flavor { margin: 0.35rem 0 0.6rem; }
 
@@ -483,8 +522,11 @@ body.overlay-open { overflow: hidden; }
 
 /* Fest er ikke vigtigere end folks velbefindende */
 @media (prefers-reduced-motion: reduce) {
-  .card-emoji, .card-rays, .card-burst i { animation: none; }
+  .card-emoji, .card-rays, .card-burst i,
+  .card-halo, .tier-unique { animation: none; }
   .card-burst { display: none; }
+  /* Sjældenheden skal stadig kunne aflæses — bare uden bevægelse */
+  .tier-unique { box-shadow: 0 0 18px 2px #ffd47955; }
 }
 .card-inner h2, .banner-inner h2 { color: var(--accent); margin: 0.5rem 0; }
 .note { color: var(--muted); font-size: 0.85rem; }

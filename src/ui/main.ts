@@ -7,6 +7,7 @@ import type { CombineOutcome, ElementDef } from "../core/types";
 import { BookView } from "./book";
 import { initAudio, playLine, stopAudio } from "./audio";
 import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
+import { RARITY_LABEL, computeRarity } from "../core/rarity";
 
 const SAVE_KEY = "kolde-karl-save-v1";
 const NARRATOR_SAVE_KEY = "kolde-karl-narrator-v1";
@@ -144,6 +145,9 @@ const el = {
   restart: document.getElementById("restart")!,
   titleScreen: document.getElementById("title-screen")!,
 };
+
+// Sjældenhed udledes én gang af indholdet — den kan ikke ændre sig i et run
+const rarity = computeRarity(content);
 
 const book = new BookView(engine, document.getElementById("book")!);
 
@@ -315,13 +319,20 @@ function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" 
   // "Write it in the book" antydede et valg der ikke findes — opdagelsen er
   // allerede skrevet ind. Kortet er en belønning, ikke en formular: emojien
   // står i centrum med stråler bagved, og knappen bekræfter bare.
+  //
+  // Sjældenheden (src/core/rarity.ts) styrer hvor stort det fejres: common
+  // får et roligt pop, rare får stråler og gnister, unique får hele showet.
+  const tier = rarity.get(d.id)?.tier ?? "common";
+  const sparks = tier === "unique" ? 16 : tier === "rare" ? 8 : 0;
   el.card.innerHTML = `
-    <div class="card-inner">
-      <p class="card-kicker">New discovery</p>
+    <div class="card-inner tier-${tier}">
+      <p class="card-kicker">${RARITY_LABEL[tier]}</p>
       <div class="card-stage">
-        <div class="card-rays" aria-hidden="true"></div>
+        ${tier === "common" ? "" : '<div class="card-rays" aria-hidden="true"></div>'}
+        ${tier === "unique" ? '<div class="card-halo" aria-hidden="true"></div>' : ""}
         <div class="card-burst" aria-hidden="true">
-          ${Array.from({ length: 8 }, (_, i) => `<i style="--i:${i}"></i>`).join("")}
+          ${Array.from({ length: sparks }, (_, i) =>
+            `<i style="--i:${i};--n:${sparks}"></i>`).join("")}
         </div>
         <div class="card-emoji">${d.emoji}</div>
       </div>

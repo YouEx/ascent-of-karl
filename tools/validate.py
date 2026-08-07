@@ -30,6 +30,14 @@ def warn(msg: str) -> None:
     warnings.append(msg)
 
 
+notes: list[str] = []
+
+
+def info(msg: str) -> None:
+    """Rapport uden dom — vises altid, fejler aldrig."""
+    notes.append(msg)
+
+
 def load(path: Path):
     try:
         return json.loads(path.read_text(encoding="utf-8"))
@@ -274,6 +282,63 @@ def main() -> int:
         if not e.get("automatic") and e["id"] not in triggered:
             err(f"Slutningen '{e['id']}' udløses aldrig af nogen kombination")
 
+    # Sjældenhed (src/core/rarity.ts) udledes af grafen — samme formel her, så
+    # fordelingen kan ses og ikke skrider ubemærket når indholdet vokser.
+    rarity_depth = {e["id"]: 0 for e in elements if e.get("base")}
+    _ch = True
+    while _ch:
+        _ch = False
+        for c in combos:
+            a, b = c["pair"]
+            if a in rarity_depth and b in rarity_depth:
+                d = max(rarity_depth[a], rarity_depth[b]) + 1
+                if c["result"] not in rarity_depth or d < rarity_depth[c["result"]]:
+                    rarity_depth[c["result"]] = d
+                    _ch = True
+    n_recipes: dict[str, int] = {}
+    used_as: set[str] = set()
+    ending_els: set[str] = set()
+    max_cost: dict[str, int] = {}
+    for c in combos:
+        n_recipes[c["result"]] = n_recipes.get(c["result"], 0) + 1
+        used_as.update(c["pair"])
+        if c.get("ending"):
+            ending_els.add(c["result"])
+        max_cost[c["result"]] = max(max_cost.get(c["result"], 1), c.get("cost", 1))
+
+    base_ids = {e["id"] for e in elements if e.get("base")}
+
+    def _tier(eid: str) -> str:
+        if eid in base_ids:
+            score = 0
+        else:
+            score = rarity_depth.get(eid, 0)
+            if n_recipes.get(eid, 0) == 1:
+                score += 2
+            if eid not in used_as:
+                score += 2
+            score += 2 * (max_cost.get(eid, 1) - 1)
+        if eid in ending_els or score >= 14:
+            return "unique"
+        return "rare" if score >= 8 else "common"
+
+    dist = {"common": 0, "rare": 0, "unique": 0}
+    for e in elements:
+        dist[_tier(e["id"])] += 1
+    total_els = len(elements)
+    info(
+        f"Sjældenhed: {dist['common']} common ({dist['common']*100//total_els} %), "
+        f"{dist['rare']} rare ({dist['rare']*100//total_els} %), "
+        f"{dist['unique']} unique ({dist['unique']*100//total_els} %)"
+    )
+    if dist["unique"] > total_els * 0.10:
+        warn(f"{dist['unique']} unique-elementer er over 10 % — 'unique' mister sin betydning")
+    if dist["common"] < total_els * 0.45:
+        warn(f"Kun {dist['common']} common — de fleste fund bør være almindelige")
+    for eid in ending_els:
+        if _tier(eid) != "unique":
+            err(f"Slutnings-elementet '{eid}' er ikke unique — det er runnets klimaks")
+
     # Obligatoriske problemer er spillets sidequests: de skal kunne løses på
     # mange måder, ellers føles de som én rigtig løsning man skal gætte.
     MIN_SOLUTIONS = 10
@@ -368,6 +433,8 @@ def main() -> int:
             if f not in set_flags:
                 err(f"Kombination {c['pair'][0]}+{c['pair'][1]} kræver flag '{f}', som aldrig sættes")
 
+    for note in notes:
+        print(f"ℹ️  {note}")
     for w in warnings:
         print(f"⚠️  {w}")
     for e_ in errors:
