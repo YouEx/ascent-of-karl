@@ -177,11 +177,23 @@ def main() -> int:
                 )
 
         # Nøglebeats kræver mindst 5 varianter, så hvert playthrough lyder nyt
-        key_min = 5 if any(True for c in combos if _combo_in_act(c, act, elements)) else 1
+        act_has_combos = any(True for c in combos if _combo_in_act(c, act, elements))
+        key_min = 5 if act_has_combos else 1
         check_ref(act.get("introLine"), "introLine", key_min)
         check_ref(act.get("gateLine"), "gateLine", key_min)
         check_ref(act.get("ageUpLine"), "ageUpLine", key_min)
         check_ref(n.get("resumeLine"), "resumeLine")
+        # En opdagelse må aldrig møde tavshed: kun få kombinationer har en
+        # håndskrevet replik, så fallback-puljen bærer resten af spillet.
+        fallback = n.get("discoveryFallback") or []
+        if not fallback and act_has_combos:
+            err(f"Akt {act['act']}: mangler discoveryFallback — opdagelser uden "
+                f"håndskrevet replik ville møde tavshed")
+        elif fallback and len(fallback) < 8:
+            warn(f"Akt {act['act']}: kun {len(fallback)} generiske opdagelses-replikker "
+                 f"— spilleren hører dem ofte, sigt efter mindst 8")
+        for ref in fallback:
+            check_ref(ref, "discoveryFallback", key_min)
         # Afværget skæbne er et nøglebeat: spilleren rammer den tidligt og ofte
         check_ref(n.get("deflectedEndingLine"), "deflectedEndingLine", key_min)
         for p in act.get("problems", []):

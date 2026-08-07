@@ -238,7 +238,10 @@
       "variants": [
         "That's the third time with the stone. I'm counting. Apparently that's my job now.",
         "Three stone-based experiments in a row. The stone remains, as ever, a stone.",
-        "Stone again. Third time. I admire consistency. From a distance."
+        "Stone again. Third time. I admire consistency. From a distance.",
+        "Third time with the stone. I'm keeping a tally now, which was not in my job description.",
+        "Stone, again. I've started narrating the stone's inner life out of boredom.",
+        "The stone has now been in three consecutive experiments. It has notes."
       ]
     },
     {
@@ -246,7 +249,10 @@
       "variants": [
         "Five times. Stone. I'm starting to think it's a statement.",
         "Five stone attempts. At this point the stone deserves narrator credit.",
-        "Karl and the stone: attempt five. It's not a partnership. It's a hostage situation, and I can't tell who's who."
+        "Karl and the stone: attempt five. It's not a partnership. It's a hostage situation, and I can't tell who's who.",
+        "Five in a row with the stone. This has moved from method to devotion.",
+        "The stone would like to see other people, Karl.",
+        "Five! At this rate the stone will outrank you in the eventual tribe."
       ]
     },
     {
@@ -254,7 +260,10 @@
       "variants": [
         "Eight! You know what — you do you. I'll narrate the tale of the man who loved rocks more than progress.",
         "Eight times. That stone has now seen more action than the entire rest of the valley.",
-        "Attempt eight with the stone. Historians will call this period 'The Stone Age', and honestly, now I understand why."
+        "Attempt eight with the stone. Historians will call this period 'The Stone Age', and honestly, now I understand why.",
+        "Eight consecutive stone experiments. I'm no longer narrating a man. I'm narrating a relationship.",
+        "Eight. The stone has done nothing to deserve this, and neither have I.",
+        "Karl and the stone: eight rounds. The stone is winning on points."
       ]
     },
     {
@@ -262,7 +271,10 @@
       "variants": [
         "Same combination. Again. There's a famous quote about repeating the same thing and expecting new results. Its author isn't born yet, but Karl is working hard to make the quote necessary.",
         "That's the same combination as before. And before that. The result has not changed. I checked.",
-        "Again? It's still the same two things, Karl. Physics has not updated since your last attempt."
+        "Again? It's still the same two things, Karl. Physics has not updated since your last attempt.",
+        "Same two. Third time. The result is aging like milk.",
+        "Karl repeats himself. It didn't work the first time either, but he was younger then.",
+        "Identical attempt. The universe has not changed its mind in the last four seconds."
       ]
     },
     {
@@ -270,7 +282,10 @@
       "variants": [
         "Six times in a row. I respect the dedication. That's the kindest word I have for it.",
         "Six identical attempts. Somewhere, the concept of insanity is taking notes.",
-        "Six. In. A. Row. I have narrated glaciers with more improvisation."
+        "Six. In. A. Row. I have narrated glaciers with more improvisation.",
+        "Six times. Six! Karl, the answer isn't hiding in there.",
+        "This is now less an experiment and more a ritual, and a bad one.",
+        "Six identical attempts. I admire the stamina and question everything else."
       ]
     },
     {
@@ -278,7 +293,10 @@
       "variants": [
         "Four failed attempts in a row. Rome wasn't built in a day either. Rome, incidentally, will not be built by Karl.",
         "Four in a row. The good news: it can't get worse. The bad news: I've said that before.",
-        "A four-failure streak. Even the boar has stopped watching."
+        "A four-failure streak. Even the boar has stopped watching.",
+        "Four misses running. Karl's confidence remains untouched by evidence.",
+        "Four in a row. He's not discouraged, which is either heroic or a symptom.",
+        "That's four. The book is getting restless."
       ]
     },
     {
@@ -286,7 +304,10 @@
       "variants": [
         "Seven straight. Shall we take a little break? I could use a little break.",
         "Seven failures in a row. History is patient. I am part of history. I am strained.",
-        "Seven. At this point, randomly banging things together would statistically— actually, that IS what you're doing."
+        "Seven. At this point, randomly banging things together would statistically— actually, that IS what you're doing.",
+        "Seven failures. At this point the failures have a rhythm. Almost musical.",
+        "Seven. I'd suggest a different approach, but you'd have to have an approach first.",
+        "Seven misses. Karl has invented the losing streak, which is technically a first."
       ]
     },
     {
@@ -294,7 +315,10 @@
       "variants": [
         "Slow down! You're combining things faster than I can mock them. And I am very fast.",
         "Six attempts in as many breaths. This isn't alchemy, it's percussion.",
-        "Karl has entered a frenzy. Items are colliding. Narration is struggling to keep pace. Slow. Down."
+        "Karl has entered a frenzy. Items are colliding. Narration is struggling to keep pace. Slow. Down.",
+        "Six attempts in the time it takes to think about one. Slow down; the elements aren't going anywhere.",
+        "You're moving faster than Karl can process. He's still holding the last two.",
+        "Speed is not the missing ingredient here, but by all means continue."
       ]
     },
     {
@@ -302,7 +326,10 @@
       "variants": [
         "Twelve rapid-fire attempts. I'm a narrator, not an auctioneer. Breathe, Karl.",
         "This pace is unsustainable, unnecessary, and — fine, mildly entertaining. But mostly the first two.",
-        "Twelve! You cannot speed-run the dawn of civilization. Well. You can, apparently. You shouldn't."
+        "Twelve! You cannot speed-run the dawn of civilization. Well. You can, apparently. You shouldn't.",
+        "Twelve rapid attempts. Karl's arms are a blur and his face is entirely blank.",
+        "At this pace you'll exhaust the valley before lunch.",
+        "Twelve! Karl has stopped looking at what he's making. So have I, mostly."
       ]
     },
     {
@@ -310,7 +337,10 @@
       "variants": [
         "I see we're introducing the {element} to everything in the valley. It's not a networking event, Karl.",
         "The {element} has now met almost everything Karl owns. None of them are getting along.",
-        "Ah, the classic strategy: take the {element} and apply it to the entire known world."
+        "Ah, the classic strategy: take the {element} and apply it to the entire known world.",
+        "The {element} again. You're introducing it to everyone in the valley, one at a time.",
+        "{element} plus everything. A strategy, of sorts. Not a good one, but of sorts.",
+        "Karl works through the list with the {element} in hand, like a man handing out flyers."
       ]
     },
     {
@@ -318,7 +348,10 @@
       "variants": [
         "Seven pairings for the {element} now. At some point this stops being science and starts being matchmaking.",
         "The {element} would like a moment to itself. As would I.",
-        "Everything-plus-{element} is not a research method, Karl. It's a cry for help. And I hear you."
+        "Everything-plus-{element} is not a research method, Karl. It's a cry for help. And I hear you.",
+        "Seven partners for the {element}. It's not choosy, and neither are you.",
+        "The {element} has now met most of the known world. Nothing has come of it.",
+        "Still the {element}. I've begun to suspect this is affection rather than method."
       ]
     },
     {
@@ -328,14 +361,19 @@
         "That was a long pause. I narrated three imaginary civilizations in the meantime. All of them further along.",
         "Take your time. The Stone Age lasted two and a half million years. You're apparently committed to experiencing all of it.",
         "Welcome back. During the silence, the boar and I formed a book club.",
-        "A dramatic pause, was it? Dramatic pauses are supposed to end sooner. Trust the narrator on this one."
+        "A dramatic pause, was it? Dramatic pauses are supposed to end sooner. Trust the narrator on this one.",
+        "Karl waited. The valley waited. A cloud went by, unimpressed.",
+        "Take your time. Karl certainly is. He's found a bug to watch.",
+        "Long pause. Karl sat down. I considered a nap. History held its breath and then let it out again.",
+        "Somewhere in that silence, a summer went by. That's how this works."
       ]
     },
     {
       "id": "mem-larver",
       "variants": [
         "Ah, right, my apologies — I momentarily forgot who I'm talking to. Grub Man. Do carry on.",
-        "Sorry — force of habit, expecting normal decisions. I forgot this is Grub Man's story now."
+        "Sorry — force of habit, expecting normal decisions. I forgot this is Grub Man's story now.",
+        "The grub man returns. The valley has not forgotten. The valley never forgets a grub."
       ],
       "requiresFlags": [
         "larver"
@@ -346,7 +384,8 @@
       "id": "mem-stinker",
       "variants": [
         "I'd love to comment on your strategy, but I can't concentrate for the smell.",
-        "Something about your recent... choices... has reached me all the way up here. I'm narrating through my nose now."
+        "Something about your recent... choices... has reached me all the way up here. I'm narrating through my nose now.",
+        "He still smells of that. I've stopped mentioning it, mostly."
       ],
       "requiresFlags": [
         "stinker"
@@ -356,9 +395,12 @@
     {
       "id": "gf-1",
       "variants": [
-        "Nothing. Literally nothing.",
+        "Nothing. And not an interesting nothing either — the plain kind, with no aftertaste.",
         "And the result is: nothing. Brought to you by nothing.",
-        "Nothing happens. Somewhere, nothing continues to happen."
+        "Nothing happens. Somewhere, nothing continues to happen.",
+        "Karl combines them with great ceremony. The world declines to participate.",
+        "Nothing happens, but it happens with real conviction.",
+        "Those two have met. They have chosen to remain strangers."
       ]
     },
     {
@@ -366,7 +408,10 @@
       "variants": [
         "History notes the attempt. In the footnotes. In very small handwriting.",
         "Recorded for posterity: 'he tried'. That's the whole entry.",
-        "The chronicle grows by one line: 'no'."
+        "The chronicle grows by one line: 'no'.",
+        "Karl waits for something. Karl keeps waiting. This is the whole event.",
+        "A brave attempt, undone by reality's refusal to cooperate.",
+        "He presses them together harder, as though force were the missing ingredient. It is not."
       ]
     },
     {
@@ -374,7 +419,10 @@
       "variants": [
         "Brave. Wrong, but brave.",
         "A courageous theory, executed confidently, and wrong.",
-        "Ten points for commitment. Zero for outcome."
+        "Ten points for commitment. Zero for outcome.",
+        "Two objects. One optimist. No result.",
+        "That produced a sound, which Karl mistook for progress.",
+        "The valley remains exactly as it was, which is a kind of achievement in itself."
       ]
     },
     {
@@ -382,7 +430,10 @@
       "variants": [
         "{a} and {b}. An inspired pairing. Inspired by what, I dare not ask.",
         "{a} plus {b}? Even I didn't see that coming, and I've read the ending.",
-        "Combining {a} with {b}. Because of course. Why not."
+        "Combining {a} with {b}. Because of course. Why not.",
+        "Karl looks at me. I look back. Neither of us can help the other here.",
+        "Nope. Beautifully, resoundingly nope.",
+        "Those don't go together. They've talked it over. They're firm."
       ]
     },
     {
@@ -390,7 +441,10 @@
       "variants": [
         "Even the grass looked away in embarrassment.",
         "The valley witnessed that. All of it. I am so sorry, valley.",
-        "Somewhere nearby, the boar sighs."
+        "Somewhere nearby, the boar sighs.",
+        "Karl attempts an unnatural union. Nature files an objection.",
+        "That's a no. A polite one, but a no.",
+        "He shakes them. Shaking is not a technique, Karl."
       ]
     },
     {
@@ -398,7 +452,10 @@
       "variants": [
         "That will not be an epoch, Karl.",
         "Epochs have been founded on many things. Not that.",
-        "I checked the history books. That's not in them. There's a reason."
+        "I checked the history books. That's not in them. There's a reason.",
+        "The result is a fine dust of disappointment and nothing else.",
+        "Not everything combines. It's the first hard lesson, and he's taking it badly.",
+        "Karl frowns. Somewhere, the concept of chemistry frowns back."
       ]
     },
     {
@@ -406,7 +463,10 @@
       "variants": [
         "I have narrated many civilizations. None of them started like this.",
         "In all my ages of narrating, that approach remains unprecedented. Congratulations?",
-        "New. Unquestionably new. Useful? Unquestionably not."
+        "New. Unquestionably new. Useful? Unquestionably not.",
+        "Rejected. Try telling him that gently; he doesn't listen to me.",
+        "Two things touched. History did not notice.",
+        "That went nowhere, but it went there quickly."
       ]
     },
     {
@@ -414,7 +474,10 @@
       "variants": [
         "The {a} remains {a}. The {b} remains {b}. The universe remains unmoved.",
         "Reality has reviewed your proposal and voted no.",
-        "The laws of nature glance up, shake their heads, and return to work."
+        "The laws of nature glance up, shake their heads, and return to work.",
+        "Karl has discovered a new way to make nothing. That's eight or nine now.",
+        "Unsuccessful. Karl remains undefeated in enthusiasm, though.",
+        "The universe reviews the proposal and returns it unsigned."
       ]
     },
     {
@@ -491,7 +554,8 @@
       "id": "mem-bilist",
       "variants": [
         "Careful, everyone — Grand Prix champion coming through. On foot. In a car. Somehow both.",
-        "Ah yes, advice from the valley's only motorist. Do watch your speed, Karl — the pedestrians here bite."
+        "Ah yes, advice from the valley's only motorist. Do watch your speed, Karl — the pedestrians here bite.",
+        "The man who invented the car before the road. It still bothers me."
       ],
       "requiresFlags": [
         "bilist"
@@ -502,7 +566,8 @@
       "id": "mem-rockstjerne",
       "variants": [
         "Sorry, I keep forgetting I'm narrating a rock star now. Should I be louder? More reverb? No?",
-        "The drummer of the valley's loudest — and only — band, everyone. Autographs are handprints, apparently."
+        "The drummer of the valley's loudest — and only — band, everyone. Autographs are handprints, apparently.",
+        "Somewhere a drum is still ringing from that concert. Somewhere a neighbour is still upset."
       ],
       "requiresFlags": [
         "rockstjerne"
@@ -563,7 +628,8 @@
       "id": "mem-mudderspiser",
       "variants": [
         "Says the man who ate a mud pie. Voluntarily. With garnish.",
-        "I'd question this decision, but you once ate decorative mud, so the bar is subterranean."
+        "I'd question this decision, but you once ate decorative mud, so the bar is subterranean.",
+        "He ate the mud. I was there. I narrated it. I'd like that removed from my record."
       ],
       "requiresFlags": [
         "mudderspiser"
@@ -574,7 +640,8 @@
       "id": "mem-modeikon",
       "variants": [
         "Advice from the valley's leading fashion icon, everyone. The feathers ARE flattering, I'll give him that.",
-        "Careful — that opinion comes from a man Ugh once scored a 4. Out of an unspecified maximum."
+        "Careful — that opinion comes from a man Ugh once scored a 4. Out of an unspecified maximum.",
+        "Dressed for an occasion that will not be invented for eleven thousand years."
       ],
       "requiresFlags": [
         "modeikon"
@@ -649,21 +716,27 @@
       "id": "aging-10",
       "variants": [
         "Ten summers left in those bones, Karl. I'm just saying — if you have a masterpiece in you, now would be the time.",
-        "Karl's beard is more grey than brown now. Ten summers, give or take. The discoveries won't make themselves."
+        "Karl's beard is more grey than brown now. Ten summers, give or take. The discoveries won't make themselves.",
+        "Ten summers left. Karl's knees have opinions about the remaining schedule.",
+        "Ten. The light's getting lower. Not dramatically. Just enough to notice."
       ]
     },
     {
       "id": "aging-5",
       "variants": [
         "Five summers, Karl. The knees creak, the mornings hurt, and history sharpens its final pen.",
-        "Five left. Karl still runs everywhere, but now there's a small groan when he stands up. Time, dear listener, is undefeated."
+        "Five left. Karl still runs everywhere, but now there's a small groan when he stands up. Time, dear listener, is undefeated.",
+        "Five summers. Karl is slower now, and kinder, and no wiser.",
+        "Five left. He's started looking at the horizon more than at his hands."
       ]
     },
     {
       "id": "aging-1",
       "variants": [
         "One summer left. One. Whatever you're going to be remembered for, Karl — it's now.",
-        "The last summer. The fire feels warmer, the stones feel heavier, and every choice is the final word of the sentence."
+        "The last summer. The fire feels warmer, the stones feel heavier, and every choice is the final word of the sentence.",
+        "One summer. Make it something. Or don't — that's a story too.",
+        "The last summer. Karl doesn't know. I do. I'm not going to tell him."
       ]
     },
     {
@@ -838,6 +911,166 @@
         "Karl peers into the abyss. The abyss peers back, sees a man who has not yet invented bread, and lets him go.",
         "And so Karl very nearly concluded. He puts it off. There are, he feels, still things to combine."
       ]
+    },
+    {
+      "id": "disc-1",
+      "variants": [
+        "Karl made a thing. The thing is now a fact of the world, whether the world wanted it or not.",
+        "And there it is. History shuffles a step sideways to make room.",
+        "It enters the world. It did not ask to. Neither did we.",
+        "He looks at it the way a dog looks at a door it opened by accident.",
+        "Ladies and gentlemen, the valley will never be quite the same — in ways nobody will notice for four thousand years."
+      ]
+    },
+    {
+      "id": "disc-2",
+      "variants": [
+        "Karl holds it up to the light, which is his entire quality-control process.",
+        "He seems pleased. I've decided not to ruin it for him.",
+        "And Karl is already looking for something to hit with it.",
+        "Karl's contribution to civilisation grows by one confusing unit.",
+        "Somewhere, a future museum curator feels a chill and doesn't know why."
+      ]
+    },
+    {
+      "id": "disc-3",
+      "variants": [
+        "He invented that the way lightning invents a forest fire. Enthusiastically, and without a plan.",
+        "You made that. I want it on record that this was your idea.",
+        "I've written it down. That's what the book is for. That's what I'm for.",
+        "Karl beholds it. Neither of us is sure what happens next.",
+        "It joins the collection. The collection is starting to look like evidence."
+      ]
+    },
+    {
+      "id": "disc-4",
+      "variants": [
+        "Progress, technically. The most generous kind.",
+        "Karl invents it and immediately forgets how. This will be a recurring theme.",
+        "Not the worst thing he's done today. Not a high bar, but a bar.",
+        "Karl's hands are doing better work than his plans.",
+        "Arrived at through a process I'd describe as 'confident'."
+      ]
+    },
+    {
+      "id": "disc-5",
+      "variants": [
+        "Karl didn't know that would work. Karl still doesn't know why it worked.",
+        "The world gains an object. Karl gains a small, unearned swagger.",
+        "He's holding it wrong already.",
+        "Invented, catalogued, and about to be misused.",
+        "And so it came to be, through what historians will kindly call experimentation."
+      ]
+    },
+    {
+      "id": "disc-6",
+      "variants": [
+        "Somewhere far ahead, this leads to something enormous. Karl will not live to see it, and would not understand it if he did.",
+        "A small stone in a very long road. Karl is standing on it, wondering why it's flat.",
+        "Civilisation nods, briefly, and moves on.",
+        "The kind of thing that ends up in a museum with a label nobody reads.",
+        "One more thing that will outlive him."
+      ]
+    },
+    {
+      "id": "disc-7",
+      "variants": [
+        "Karl celebrates. The celebration is mostly arm movement.",
+        "He's grinning. I hate that it's working on me.",
+        "Karl has decided this makes him a genius. Let him have it.",
+        "Karl does a small dance. Nobody taught him that. Nobody will thank you.",
+        "His proudest moment so far today, which tells you about today."
+      ]
+    },
+    {
+      "id": "disc-8",
+      "variants": [
+        "I'll be honest: I didn't see that coming, and I've read ahead.",
+        "Fine. Sure. The book has pages left.",
+        "That's not how I'd have done it. That's not how anyone would have done it.",
+        "In doing that, Karl has raised several questions I'm not equipped to answer.",
+        "My notes for this section simply say 'oh'."
+      ]
+    },
+    {
+      "id": "disc-9",
+      "variants": [
+        "Two things went in, a third came out, and none of them consented.",
+        "The universe permits this. The universe permits a great deal.",
+        "That combination should not have worked. And yet.",
+        "Physics looked away for a second and this happened.",
+        "Proof that the world is more forgiving than it looks."
+      ]
+    },
+    {
+      "id": "disc-10",
+      "variants": [
+        "Karl's ancestors would be proud, if he knew what ancestors were.",
+        "Add it to the pile. The pile is becoming a civilisation.",
+        "That's another one. You're getting good at this. Don't let it go to your head — Karl already has.",
+        "The book gets heavier. So does the responsibility, though Karl hasn't noticed either.",
+        "One more line in a story nobody's telling but me."
+      ]
+    },
+    {
+      "id": "disc-11",
+      "variants": [
+        "Karl smells it first. That's his method. It's not a good method.",
+        "He tried to eat it. Of course he did.",
+        "Karl licks it, considers, and files the result somewhere in that skull of his.",
+        "Tested, tasted, and provisionally approved.",
+        "First he poked it. Then he trusted it. That's the whole scientific revolution, compressed."
+      ]
+    },
+    {
+      "id": "disc-12",
+      "variants": [
+        "And the valley grows a little stranger.",
+        "The neighbours will have opinions.",
+        "Ugh looks over. Ugh grunts. It's the highest praise available.",
+        "Word of this will spread, slowly, at the speed of grunting.",
+        "Karl's reputation adjusts by an amount too small to measure."
+      ]
+    },
+    {
+      "id": "disc-13",
+      "variants": [
+        "Well. That's a direction.",
+        "Not the direction I expected, but I've stopped expecting.",
+        "The story bends. I follow. That's the arrangement.",
+        "And the plot quietly rewrites itself around it.",
+        "I had a whole speech prepared for something else. It'll keep."
+      ]
+    },
+    {
+      "id": "disc-14",
+      "variants": [
+        "Karl stares at it for a long moment. Something is happening behind his eyes. Probably.",
+        "He's thinking. Give him a second. Give him a few.",
+        "Karl has an idea. Karl loses the idea. Karl has it again.",
+        "For one shining instant Karl understood exactly what he'd done.",
+        "The understanding lasted about as long as this sentence."
+      ]
+    },
+    {
+      "id": "disc-15",
+      "variants": [
+        "Useful, arguably. Argue with the book.",
+        "I'd call it a breakthrough if I hadn't seen what he does with breakthroughs.",
+        "Practical! Almost suspiciously so.",
+        "Genuinely handy, which puts it in a minority around here.",
+        "This one might actually help. Write it down twice."
+      ]
+    },
+    {
+      "id": "disc-16",
+      "variants": [
+        "Karl is now, by the standards of his time, an inventor. The standards of his time are not high.",
+        "Another entry. Another summer spent.",
+        "Time passes. Things get made. That's most of history, really.",
+        "He'll forget this by winter. The world won't.",
+        "And the sun goes down on a slightly different valley."
+      ]
     }
   ],
   "behavior": {
@@ -890,5 +1123,23 @@
     "gf-7",
     "gf-8"
   ],
-  "deflectedEndingLine": "ending-deflected"
+  "deflectedEndingLine": "ending-deflected",
+  "discoveryFallback": [
+    "disc-1",
+    "disc-2",
+    "disc-3",
+    "disc-4",
+    "disc-5",
+    "disc-6",
+    "disc-7",
+    "disc-8",
+    "disc-9",
+    "disc-10",
+    "disc-11",
+    "disc-12",
+    "disc-13",
+    "disc-14",
+    "disc-15",
+    "disc-16"
+  ]
 }

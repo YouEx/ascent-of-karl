@@ -214,7 +214,9 @@ header h1 {
   justify-content: center;
   gap: 0.2rem;
   cursor: pointer;
-  touch-action: none;
+  /* touch-action: none fjernet 2026-08-07 sammen med drag. Den slog
+     browserens egne gestus fra, så en swipe der startede på et element
+     ikke kunne scrolle griddet — netop den fejl drag-fjernelsen skulle løse. */
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   transition: transform 80ms ease, border-color 80ms ease;
@@ -227,8 +229,6 @@ header h1 {
   content: "✨";
   position: absolute; top: 2px; right: 4px; font-size: 0.7rem;
 }
-.element.dragging { opacity: 0.35; }
-.element.drop-target { border-color: var(--accent); transform: scale(1.06); }
 #grid-empty { color: var(--muted); text-align: center; font-style: italic; }
 
 /* ---------- Dock: værkstedet i tommelfinger-zonen ---------- */
@@ -263,7 +263,6 @@ header h1 {
   cursor: pointer;
 }
 .slot.filled { border-style: solid; border-color: var(--accent); }
-.slot.drop-target { border-color: var(--accent); background: #3d342b; }
 .plus { color: var(--muted); font-size: 1.1rem; }
 #combine {
   min-height: var(--tap);
@@ -415,7 +414,66 @@ body.overlay-open { overflow: hidden; }
   background: var(--panel); border: 2px solid var(--accent); border-radius: 14px;
   padding: 1.5rem; max-width: 420px; text-align: center;
 }
-.card-emoji { font-size: 3rem; }
+/* ---------- Opdagelseskort: "new item unlocked" ---------- */
+.card-kicker {
+  text-transform: uppercase; letter-spacing: 0.18em;
+  font-size: 0.72rem; color: var(--accent);
+  margin: 0 0 0.75rem;
+}
+.card-stage {
+  position: relative; height: 132px;
+  display: grid; place-items: center;
+  margin-bottom: 0.25rem;
+}
+.card-emoji {
+  font-size: 3.6rem; position: relative; z-index: 2;
+  animation: pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+/* Roterende stråler bagved genstanden. Skal være KVADRATISK — i en bred,
+   lav boks strækkes den koniske gradient til en ellipse, og strålerne
+   bliver skæve. Masken toner dem ud, så de ikke ender i en hård kant. */
+.card-rays {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 260px; aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  /* repeating-, ikke conic-: en almindelig conic-gradient gentager ikke, så
+     stop-punkter der kun dækker 0-60° lader resten af cirklen arve den sidste
+     farve — resultatet var én kile i øverste højre hjørne. */
+  background: repeating-conic-gradient(
+    var(--accent) 0deg 5deg, transparent 5deg 30deg);
+  opacity: 0.18;
+  -webkit-mask-image: radial-gradient(circle, #000 25%, transparent 70%);
+  mask-image: radial-gradient(circle, #000 25%, transparent 70%);
+  animation: spin 14s linear infinite;
+}
+/* Gnister der skyder udad, én gang */
+.card-burst { position: absolute; inset: 0; }
+.card-burst i {
+  position: absolute; top: 50%; left: 50%;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent);
+  transform: rotate(calc(var(--i) * 45deg)) translateY(0);
+  animation: spark 620ms ease-out forwards;
+}
+.card-flavor { margin: 0.35rem 0 0.6rem; }
+
+@keyframes pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  70% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spark {
+  0% { transform: rotate(calc(var(--i) * 45deg)) translateY(-6px) scale(1); opacity: 1; }
+  100% { transform: rotate(calc(var(--i) * 45deg)) translateY(-62px) scale(0); opacity: 0; }
+}
+
+/* Fest er ikke vigtigere end folks velbefindende */
+@media (prefers-reduced-motion: reduce) {
+  .card-emoji, .card-rays, .card-burst i { animation: none; }
+  .card-burst { display: none; }
+}
 .card-inner h2, .banner-inner h2 { color: var(--accent); margin: 0.5rem 0; }
 .note { color: var(--muted); font-size: 0.85rem; }
 .solved-badge { color: var(--solved); font-weight: bold; }
@@ -463,11 +521,6 @@ body.overlay-open { overflow: hidden; }
 .trophy.locked { opacity: 0.45; }
 .trophy small { color: var(--muted); }
 
-.drag-ghost {
-  position: fixed; pointer-events: none; z-index: 80;
-  font-size: 2.2rem; transform: translate(-50%, -50%);
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
-}
 
 /* ---------- Desktop: bogen inline, dock i flow ---------- */
 @media (min-width: 820px) {

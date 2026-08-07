@@ -242,7 +242,7 @@ function renderGrid(): void {
     btn.className = `element ${freshFinds.has(def.id) ? "is-new" : ""}`;
     btn.dataset.id = def.id;
     btn.innerHTML = `<span class="emoji">${def.emoji}</span><span class="name">${def.name}</span>`;
-    attachDrag(btn, def);
+    attachSelect(btn, def);
     el.grid.appendChild(btn);
   }
   el.gridEmpty.hidden = visible.length > 0;
@@ -291,14 +291,24 @@ el.bookClose.addEventListener("click", closeBook);
 // --- Modaler ---
 function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" }>): void {
   const d = outcome.element;
+  // "Write it in the book" antydede et valg der ikke findes — opdagelsen er
+  // allerede skrevet ind. Kortet er en belønning, ikke en formular: emojien
+  // står i centrum med stråler bagved, og knappen bekræfter bare.
   el.card.innerHTML = `
     <div class="card-inner">
-      <div class="card-emoji">${d.emoji}</div>
+      <p class="card-kicker">New discovery</p>
+      <div class="card-stage">
+        <div class="card-rays" aria-hidden="true"></div>
+        <div class="card-burst" aria-hidden="true">
+          ${Array.from({ length: 8 }, (_, i) => `<i style="--i:${i}"></i>`).join("")}
+        </div>
+        <div class="card-emoji">${d.emoji}</div>
+      </div>
       <h2>${d.name}</h2>
-      <p>${d.flavor ?? ""}</p>
+      <p class="card-flavor">${d.flavor ?? ""}</p>
       ${d.note ? `<p class="note">📜 ${d.note}</p>` : ""}
       ${outcome.solved ? `<p class="solved-badge">✓ Problem solved: ${outcome.solved.name}</p>` : ""}
-      <button id="card-close">Write it in the book</button>
+      <button id="card-close">Nice</button>
     </div>`;
   el.card.hidden = false;
   openOverlay(el.card, {
@@ -457,10 +467,14 @@ function performCombine(a: string, b: string): void {
   renderSlots();
 }
 
-// --- Interaktion: drag ovenpå et andet element er primær; tap-tap er fallback ---
-const DRAG_THRESHOLD = 8;
-let ghost: HTMLElement | null = null;
-
+/**
+ * Interaktion: tap-tap (PRD §2.1 afviger bevidst fra drag).
+ *
+ * Drag blev fjernet 2026-08-07: griddet er blevet langt nok til at kræve
+ * scroll, og en drag-gestus der starter på et element stjæler den lodrette
+ * bevægelse fra scrollen. Man kunne ikke komme ned i listen uden at samle
+ * noget op. Tap-tap kan begge dele uden at slås om den samme bevægelse.
+ */
 function selectElement(def: ElementDef): void {
   if (!selected[0]) selected[0] = def.id;
   else if (!selected[1]) selected[1] = def.id;
@@ -468,74 +482,11 @@ function selectElement(def: ElementDef): void {
   renderSlots();
 }
 
-function attachDrag(btn: HTMLButtonElement, def: ElementDef): void {
-  btn.addEventListener("pointerdown", (down) => {
-    down.preventDefault();
-    btn.setPointerCapture(down.pointerId);
-    let moved = false;
-
-    const onMove = (move: PointerEvent) => {
-      if (
-        !moved &&
-        Math.hypot(move.clientX - down.clientX, move.clientY - down.clientY) < DRAG_THRESHOLD
-      ) {
-        return;
-      }
-      if (!moved) {
-        moved = true;
-        ghost = document.createElement("div");
-        ghost.className = "drag-ghost";
-        ghost.textContent = def.emoji;
-        document.body.appendChild(ghost);
-        btn.classList.add("dragging");
-      }
-      ghost!.style.left = `${move.clientX}px`;
-      ghost!.style.top = `${move.clientY}px`;
-      for (const other of document.querySelectorAll(".drop-target")) {
-        other.classList.remove("drop-target");
-      }
-      const target = document
-        .elementFromPoint(move.clientX, move.clientY)
-        ?.closest<HTMLElement>(".element, .slot");
-      target?.classList.add("drop-target");
-    };
-
-    const onUp = (up: PointerEvent) => {
-      btn.removeEventListener("pointermove", onMove);
-      btn.removeEventListener("pointerup", onUp);
-      btn.removeEventListener("pointercancel", onUp);
-      btn.classList.remove("dragging");
-      ghost?.remove();
-      ghost = null;
-      for (const other of document.querySelectorAll(".drop-target")) {
-        other.classList.remove("drop-target");
-      }
-      if (up.type === "pointercancel") return;
-
-      if (!moved) {
-        freshFinds.delete(def.id);
-        btn.classList.remove("is-new");
-        selectElement(def);
-        return;
-      }
-      const target = document
-        .elementFromPoint(up.clientX, up.clientY)
-        ?.closest<HTMLElement>(".element, .slot");
-      if (!target) return;
-      // Slip på et element (også sig selv) → kombinér straks
-      if (target.dataset.id) {
-        performCombine(def.id, target.dataset.id);
-      } else if (target.classList.contains("slot")) {
-        // Slip i en slot i docken → læg elementet der
-        if (target.id === "slot-a") selected[0] = def.id;
-        else selected[1] = def.id;
-        renderSlots();
-      }
-    };
-
-    btn.addEventListener("pointermove", onMove);
-    btn.addEventListener("pointerup", onUp);
-    btn.addEventListener("pointercancel", onUp);
+function attachSelect(btn: HTMLButtonElement, def: ElementDef): void {
+  btn.addEventListener("click", () => {
+    freshFinds.delete(def.id);
+    btn.classList.remove("is-new");
+    selectElement(def);
   });
 }
 

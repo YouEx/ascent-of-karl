@@ -301,3 +301,64 @@ describe("Narrator: save/load", () => {
     expect(line?.id).toBe("repeat-3");
   });
 });
+
+describe("Narrator: en opdagelse møder aldrig tavshed", () => {
+  it("kommenterer også kombinationer uden håndskrevet replik", () => {
+    const { engine, narrator } = setup();
+    // nabo + fugl -> fjer har ingen narratorLine; før faldt den lydløst igennem
+    const combo = content.combos.find(
+      (c) => c.result === "fjer" && !c.narratorLine,
+    );
+    expect(combo, "forudsætning: fjer har ingen håndskrevet replik").toBeTruthy();
+
+    const line = attempt(engine, narrator, "nabo", "fugl");
+    expect(line, "fortælleren tav ved en opdagelse").toBeTruthy();
+    expect(line!.text.length).toBeGreaterThan(10);
+  });
+
+  it("bruger ingen pladsholdere — puljen skal kunne indtales", () => {
+    // Lyd-pipelinen springer varianter med {} over. Ville opdagelses-puljen
+    // bruge {element}, ville fortælleren være tavs i spillets vigtigste
+    // øjeblik. Kortet viser navnet; replikken behøver ikke gentage det.
+    const act1 = content.narrator.find((n) => n.act === 1)!;
+    for (const id of act1.discoveryFallback ?? []) {
+      const def = act1.lines.find((l) => l.id === id)!;
+      for (const v of def.variants) expect(v).not.toContain("{");
+    }
+  });
+
+  it("gentager ikke samme opdagelses-replik to gange i træk", () => {
+    const { engine, narrator } = setup();
+    const ids: string[] = [];
+    for (const [a, b] of [
+      ["nabo", "fugl"], ["sten", "vand"], ["ler", "vand"], ["pind", "pind"],
+    ] as const) {
+      const line = attempt(engine, narrator, a, b);
+      if (line) ids.push(line.id);
+    }
+    for (let i = 1; i < ids.length; i++) expect(ids[i]).not.toBe(ids[i - 1]);
+  });
+});
+
+describe("Narrator: spam-tælleren nulstilles", () => {
+  it("nævner ikke stenen når spilleren er gået videre til noget andet", () => {
+    const { engine, narrator } = setup();
+    // Tre mislykkede forsøg med sten bringer tælleren til spam-tærsklen
+    attempt(engine, narrator, "sten", "graes");
+    attempt(engine, narrator, "sten", "ler");
+    attempt(engine, narrator, "sten", "larver");
+
+    // Herefter noget helt uden sten: replikken må ikke handle om sten
+    const line = attempt(engine, narrator, "pind", "graes");
+    expect(line?.id).not.toMatch(/^spam-/);
+    if (line) expect(line.text.toLowerCase()).not.toContain("stone");
+  });
+
+  it("fyrer stadig når stenen faktisk bruges tre gange i træk", () => {
+    const { engine, narrator } = setup();
+    attempt(engine, narrator, "sten", "graes");
+    attempt(engine, narrator, "sten", "ler");
+    const line = attempt(engine, narrator, "sten", "larver");
+    expect(line?.id).toBe("spam-3");
+  });
+});

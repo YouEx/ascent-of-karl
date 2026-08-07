@@ -142,6 +142,12 @@ export interface NarratorContentDef {
   flagMemory: string[];
   /** Roterende pulje af generiske fiasko-replikker (aldrig samme to gange i træk) */
   genericFailure: string[];
+  /**
+   * Roterende pulje til opdagelser uden håndskrevet replik. En opdagelse må
+   * aldrig møde tavshed — det er spillets vigtigste øjeblik.
+   * Bruger {element} til det netop opfundne.
+   */
+  discoveryFallback?: string[];
 }
 
 export interface ContentBundle {
