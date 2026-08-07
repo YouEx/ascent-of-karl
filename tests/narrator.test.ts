@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
+import { freshChallengeState } from "../src/core/challenge";
 import { Narrator, freshNarratorState } from "../src/narrator/narrator";
 import { loadContent } from "../src/content";
 
@@ -259,6 +260,8 @@ describe("Narrator: slutninger og aldring", () => {
     solvedProblems: [],
     attempts: 0,
     ended: null,
+    challenges: freshChallengeState(),
+    seed: 1,
   };
 
   it("slutningens replik overtrumfer alt andet", () => {

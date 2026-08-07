@@ -1271,6 +1271,100 @@
         "Coated in river mud and hide. Insulated, effective, and profoundly unpopular.",
         "He's warm. He also smells like the bottom of everything. Trade-offs."
       ]
+    },
+    {
+      "id": "challenge-ulve",
+      "variants": [
+        "Wolves. Four of them, at the treeline, deciding whether Karl counts as food. He does. The only question is whether he can change their minds.",
+        "Yellow eyes in the dark between the trunks. They have been watching for a while. Karl has just noticed.",
+        "The pack has found him. They are patient, well-fed, and curious rather than desperate — which is worse, somehow.",
+        "Wolves at the treeline. Karl has a few summers to become either dangerous or unappetising.",
+        "They are not growling. That's the part I'd worry about, if I were him. And I am, a little."
+      ]
+    },
+    {
+      "id": "challenge-ulve-loest",
+      "variants": [
+        "The {element}. Nobody would have chosen it. Karl chose it, and the wolves have decided the treeline is fine after all.",
+        "He brandished the {element}. The pack conferred briefly and withdrew, with the air of animals who have remembered a prior engagement.",
+        "Against every reasonable expectation, the {element} did it. The wolves leave. Karl remains. History proceeds.",
+        "The {element}! The lead wolf looks at it, looks at Karl, and makes the sensible choice.",
+        "Solved with a {element}, of all things. I'd mock him, but he's alive and I'm the one who has to keep narrating."
+      ]
+    },
+    {
+      "id": "challenge-toerke",
+      "variants": [
+        "The stream has stopped. Not slowed — stopped. The stones where the water used to be are pale and dry and wrong.",
+        "No rain for weeks, and this morning the stream simply wasn't there. Karl stands in the bed of it, confused.",
+        "The valley is drying. Karl has a few summers to solve a problem older than his species.",
+        "Dry. The stream, the mud, Karl's mouth. Something has to change, and it will not be the weather.",
+        "The water is gone. Karl looks upstream, hopefully, at more nothing."
+      ]
+    },
+    {
+      "id": "challenge-toerke-loest",
+      "variants": [
+        "The {element}. It should not have worked. The valley is drinking anyway.",
+        "With a {element}, of all things, Karl finds water. I have stopped predicting this man.",
+        "The {element} does it. Karl drinks, and does not thank anyone, because there is nobody to thank and no word for it.",
+        "Water again — via the {element}. That's not how anyone would have solved it. It is, however, solved.",
+        "He held up the {element} and the drought lost its nerve. Roughly speaking."
+      ]
+    },
+    {
+      "id": "challenge-sygdom",
+      "variants": [
+        "The fever came in the night. Karl is hot, shaking, and talking to people who are not there.",
+        "Something is wrong with him. He is burning and cold at once, and the valley has no word for either.",
+        "Fever. Karl has a few summers left in him, and fewer if this continues.",
+        "He's sick. Genuinely, frighteningly sick, in an age with no idea what sickness is.",
+        "The fever has him. I have narrated worse, but not much, and not this close."
+      ]
+    },
+    {
+      "id": "challenge-sygdom-loest",
+      "variants": [
+        "The {element}. It made no medical sense and it worked, which describes most of medicine for the next ten thousand years.",
+        "Karl recovers. The {element} gets the credit. The credit may be misplaced, but the man is breathing.",
+        "The fever breaks. He'll swear it was the {element}, and nobody can prove otherwise.",
+        "Cured — allegedly — by a {element}. Write it down. Someone will believe it for centuries.",
+        "The {element} did something. Karl is upright and complaining, which is how you know he's better."
+      ]
+    },
+    {
+      "id": "challenge-varsel",
+      "variants": [
+        "Time is running short.",
+        "Not much left of this.",
+        "The frist narrows.",
+        "Karl is running out of summers for this one.",
+        "Whatever he's going to do, it should be soon."
+      ]
+    },
+    {
+      "id": "ending-aedt",
+      "variants": [
+        "They came at dusk, and they were quicker than he was. Karl's story ends at a treeline, mid-sentence. THE END",
+        "The wolves did not hurry. They did not need to. Somewhere a book closes on a half-written page. THE END",
+        "He ran. It was the right instinct and the wrong speed. THE END"
+      ]
+    },
+    {
+      "id": "ending-toerstet",
+      "variants": [
+        "The stream never came back, and neither did Karl. The valley kept its shape and lost its only inventor. THE END",
+        "He walked upstream looking for water and did not stop in time. The dry season took him quietly. THE END",
+        "No water, no Karl. History pauses here and picks up somewhere else entirely. THE END"
+      ]
+    },
+    {
+      "id": "ending-feberen",
+      "variants": [
+        "The fever took him on the fourth night, while he was explaining something urgent to nobody. THE END",
+        "He burned out slowly, surrounded by things he had invented and none of them medicine. THE END",
+        "Karl died of something that will have a name in nine thousand years. THE END"
+      ]
     }
   ],
   "behavior": {
@@ -1341,5 +1435,6 @@
     "disc-14",
     "disc-15",
     "disc-16"
-  ]
+  ],
+  "challengeWarningLine": "challenge-varsel"
 }

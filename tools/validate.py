@@ -278,9 +278,49 @@ def main() -> int:
             triggered.add(c["ending"])
         if "cost" in c and (not isinstance(c["cost"], int) or c["cost"] < 1):
             err(f"Kombination {c['pair'][0]}+{c['pair'][1]}: cost skal være et heltal ≥ 1")
+    challenges = load(CONTENT / "challenges.json") or []
+    challenge_endings = {c["failEnding"] for c in challenges}
     for e in endings:
-        if not e.get("automatic") and e["id"] not in triggered:
+        if e.get("automatic") or e.get("viaChallenge"):
+            continue
+        if e["id"] not in triggered:
             err(f"Slutningen '{e['id']}' udløses aldrig af nogen kombination")
+    for e in endings:
+        if e.get("viaChallenge") and e["id"] not in challenge_endings:
+            err(f"Slutningen '{e['id']}' er markeret viaChallenge, men intet challenge bruger den")
+
+    # --- Challenges (docs/design/challenges.md) ---
+    ch_ids: set[str] = set()
+    for c in challenges:
+        if c["id"] in ch_ids:
+            err(f"Duplikeret challenge-id: {c['id']}")
+        ch_ids.add(c["id"])
+        for ref in c["solvedBy"]:
+            if ref not in element_ids:
+                err(f"Challenge '{c['id']}': ukendt element i solvedBy: '{ref}'")
+        # Et challenge man kun kan løse på én måde er en gætteleg, ikke en prøve
+        if len(c["solvedBy"]) < 5:
+            err(f"Challenge '{c['id']}' har kun {len(c['solvedBy'])} oplagte "
+                f"løsninger — kræver mindst 5, ellers er det en gætteleg")
+        if c["failEnding"] not in {e["id"] for e in endings}:
+            err(f"Challenge '{c['id']}': ukendt failEnding '{c['failEnding']}'")
+        if not isinstance(c.get("turns"), int) or c["turns"] < 2:
+            err(f"Challenge '{c['id']}': turns skal være et heltal ≥ 2")
+        # Replikkerne skal findes og have variation — et challenge er et
+        # nøglebeat, man kan møde i mange forskellige runs.
+        for ref, what in ((c["line"], "line"), (c["successLine"], "successLine")):
+            if ref not in all_line_ids:
+                err(f"Challenge '{c['id']}': ukendt replik '{ref}' ({what})")
+            else:
+                cnt = next(
+                    len(l["variants"]) for n2 in narrator for l in n2["lines"] if l["id"] == ref
+                )
+                if cnt < 5:
+                    err(f"Challenge '{c['id']}': '{ref}' har {cnt} varianter — kræver mindst 5")
+    if challenges:
+        info(f"Challenges: {len(challenges)} stk., "
+             f"{sum(len(c['solvedBy']) for c in challenges) // max(len(challenges), 1)} "
+             f"oplagte løsninger i snit")
 
     # Sjældenhed (src/core/rarity.ts) udledes af grafen — samme formel her, så
     # fordelingen kan ses og ikke skrider ubemærket når indholdet vokser.

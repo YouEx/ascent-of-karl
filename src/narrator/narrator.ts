@@ -339,6 +339,20 @@ export class Narrator {
       return this.speak(ending.line, ctx);
     }
 
+    // 0a. Challenges presser alt andet i baggrunden — de har en frist
+    if (outcome.challenge) {
+      const ch = outcome.challenge;
+      if (ch.kind === "spawned") return this.speak(ch.def.line, ctx);
+      if (ch.kind === "solved") {
+        return this.speak(ch.def.successLine, { ...ctx, element: ch.by.name });
+      }
+      // "failed" håndteres af slutnings-grenen ovenfor (state.ended er sat)
+      if (ch.kind === "ticking" && ch.turnsLeft <= 2) {
+        const warn = this.content().challengeWarningLine;
+        if (warn) return this.speak(warn, ctx);
+      }
+    }
+
     // 0b. Afværget skæbne: Karl kiggede døden i øjnene og gik hjem igen
     if (
       (outcome.kind === "discovery" || outcome.kind === "known") &&

@@ -5,6 +5,7 @@ import act2 from "../content/acts/act-2.json";
 import narrator1 from "../content/narrator/act-1.json";
 import narrator2 from "../content/narrator/act-2.json";
 import endings from "../content/endings.json";
+import challenges from "../content/challenges.json";
 import config from "../content/config.json";
 import type { ContentBundle } from "./core/types";
 
@@ -21,6 +22,7 @@ export function loadContent(): ContentBundle {
     acts: [act1, act2],
     narrator: [narrator1, narrator2],
     endings,
+    challenges,
     config,
   } as unknown as ContentBundle;
 }

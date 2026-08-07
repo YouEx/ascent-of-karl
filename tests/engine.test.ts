@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
+import { freshChallengeState } from "../src/core/challenge";
 import { deserialize, serialize } from "../src/core/save";
 import { loadContent } from "../src/content";
 
@@ -163,6 +164,8 @@ describe("Engine: slutninger og levetid", () => {
     solvedProblems: [],
     attempts: 0,
     ended: null,
+    challenges: freshChallengeState(),
+    seed: 1,
   };
 
   it("en skæbne-kombination afslutter runnet og låser videre spil", () => {
@@ -273,6 +276,12 @@ describe("Engine: skæbner er gated på antal opfindelser", () => {
 
   it("alderdommen rammer uanset hvor lidt Karl har opfundet", () => {
     const e = freshEngine();
+    // Tøm challenge-puljen, så testen måler alderdommen og intet andet
+    const s0 = e.getState();
+    e.loadState({
+      ...s0,
+      challenges: { ...s0.challenges, seen: content.challenges.map((c) => c.id) },
+    });
     while (e.getState().attempts < content.config.turnLimit) {
       e.combine("sten", "vand");
     }

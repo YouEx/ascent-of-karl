@@ -16,6 +16,9 @@ const ACHIEVEMENTS_KEY = "kolde-karl-achievements";
 
 const content = loadContent();
 const engine = new Engine(content);
+// Challenges spawner ud fra dette seed — nyt pr. liv, gemt i saven, så et
+// genindlæst run ikke kan ryste terningerne igen.
+engine.loadState({ ...engine.getState(), seed: (Math.random() * 2 ** 31) | 0 });
 // Nyt seed pr. playthrough → nye variantvalg hver gang (docs/design/fortaelleren.md)
 const narrator = new Narrator(engine, freshNarratorState((Math.random() * 2 ** 31) | 0));
 
@@ -91,6 +94,7 @@ app.innerHTML = `
     </div>
   </section>
 
+  <section id="challenge" hidden aria-live="assertive"></section>
   <section id="problems" aria-label="Karl's problems"></section>
 
   <div id="tools">
@@ -123,6 +127,7 @@ app.innerHTML = `
 const el = {
   age: document.getElementById("age")!,
   problems: document.getElementById("problems")!,
+  challenge: document.getElementById("challenge")!,
   narratorText: document.getElementById("narrator-text")!,
   bubble: document.getElementById("bubble")!,
   muteBtn: document.getElementById("mute") as HTMLButtonElement,
@@ -417,6 +422,9 @@ function showEndingScreen(): void {
   const ending = engine.activeEnding();
   if (!ending) return;
   const isNew = unlockAchievement(ending.id);
+  // Carl the Lucky: hele livet igennem uden ét eneste challenge.
+  // Ved 3 %-stigende-til-15 % sker det i under 1 % af alle runs.
+  const lucky = engine.neverChallenged() && unlockAchievement("carl-the-lucky");
   const state = engine.getState();
   document.body.classList.add("run-over");
   closeBook();
@@ -429,6 +437,10 @@ function showEndingScreen(): void {
       ${isNew
         ? `<p class="achievement">🏆 Achievement unlocked: <strong>${ending.achievement}</strong></p>`
         : `<p class="achievement known">🏆 ${ending.achievement}</p>`}
+      ${lucky
+        ? `<p class="achievement">🍀 Achievement unlocked: <strong>Carl the Lucky</strong><br>
+             <small>A whole life, and the world never once came for him.</small></p>`
+        : ""}
       <button id="ending-restart">Live again</button>
       <button id="ending-stats" class="secondary">Copy run summary</button>
     </div>`;
@@ -490,6 +502,7 @@ function performCombine(a: string, b: string): void {
   }
   if (line) say(line);
   renderAge();
+  renderChallenge();
   if (ending) {
     save();
     showEndingScreen();
@@ -590,8 +603,33 @@ function startGame(resume: boolean): void {
   });
 }
 
+/**
+ * Challenge-banneret. Bevidst placeret ØVERST og med aria-live="assertive":
+ * en frist der løber er ikke noget man må overse, og den er den eneste
+ * situation i spillet hvor tid faktisk presser.
+ */
+function renderChallenge(): void {
+  const ch = engine.activeChallenge();
+  if (!ch) {
+    el.challenge.hidden = true;
+    return;
+  }
+  const { def, active } = ch;
+  const urgent = active.turnsLeft <= 2;
+  el.challenge.innerHTML = `
+    <div class="challenge-inner${urgent ? " urgent" : ""}">
+      <span class="ch-emoji">${def.emoji}</span>
+      <div class="ch-body">
+        <strong>${def.title}</strong>
+        <span class="ch-turns">${active.turnsLeft} summer${active.turnsLeft === 1 ? "" : "s"} to find a way out</span>
+      </div>
+    </div>`;
+  el.challenge.hidden = false;
+}
+
 function renderAll(): void {
   renderAge();
+  renderChallenge();
   renderProblems();
   renderSlots();
   renderGrid();
