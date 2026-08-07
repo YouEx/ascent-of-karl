@@ -1642,5 +1642,205 @@
     "act": 2,
     "base": true,
     "flavor": "Big, strong, and surprisingly willing to cooperate. More than can be said for Karl."
+  },
+  {
+    "id": "benkniv",
+    "emoji": "🔪",
+    "name": "Bone knife",
+    "act": 1,
+    "flavor": "A splinter of bone, worked to an edge. Karl cuts himself learning this.",
+    "note": "Bone tools hold an edge poorly but sharpen easily — early humans used them for hides and sinew, not butchery.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Bone_tool",
+    "karlMood": "😌 Karl is quietly competent"
+  },
+  {
+    "id": "gravestok",
+    "emoji": "🦯",
+    "name": "Digging stick",
+    "act": 1,
+    "flavor": "A stick, hardened in fire. The simplest tool that ever changed a diet.",
+    "note": "Fire-hardening a wooden point drives out moisture and roughly doubles its durability — the technique predates stone hafting.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Digging_stick",
+    "karlMood": "🙂 Karl feels resourceful"
+  },
+  {
+    "id": "hammer",
+    "emoji": "🔨",
+    "name": "Hammer",
+    "act": 1,
+    "flavor": "A stone lashed to a handle. Karl's arm has been upgraded.",
+    "note": "Hafting — binding a stone head to a handle — multiplies force and is one of the great cognitive leaps of the Stone Age.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Hafting",
+    "karlMood": "😃 Karl is delighted"
+  },
+  {
+    "id": "haandkile",
+    "emoji": "⚒️",
+    "name": "Hand axe",
+    "act": 1,
+    "flavor": "Knapped on both faces. The Swiss army knife of the Palaeolithic.",
+    "note": "The Acheulean hand axe stayed in use, almost unchanged, for over a million years — the longest-running design in human history.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Hand_axe",
+    "karlMood": "😌 Karl is quietly competent"
+  },
+  {
+    "id": "skraber",
+    "emoji": "🗡️",
+    "name": "Hide scraper",
+    "act": 1,
+    "flavor": "For getting the parts of the animal off the other parts of the animal.",
+    "note": "Scrapers are the most common tool in Palaeolithic sites — hide processing was constant, unglamorous work.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Scraper_(archaeology)",
+    "karlMood": "😐 Karl is unimpressed"
+  },
+  {
+    "id": "slynge",
+    "emoji": "🎽",
+    "name": "Sling",
+    "act": 1,
+    "flavor": "A stone, a cord, and a great deal of unearned confidence.",
+    "note": "A sling stone can exceed 100 km/h. Roman writers rated slingers above archers at short range.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sling_(weapon)",
+    "karlMood": "😃 Karl is delighted"
+  },
+  {
+    "id": "harpun",
+    "emoji": "🪝",
+    "name": "Harpoon",
+    "act": 1,
+    "flavor": "Barbed, so the fish keeps the point and Karl keeps the fish.",
+    "note": "Barbed bone harpoons from Katanda, Congo, are around 90,000 years old — far older than anyone expected when they were found.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Harpoon",
+    "karlMood": "😃 Karl is delighted"
+  },
+  {
+    "id": "flint",
+    "emoji": "🪚",
+    "name": "Heat-treated flint",
+    "act": 1,
+    "flavor": "Baked in the embers until it flakes like glass. Karl has no idea why this works.",
+    "note": "Heating silcrete and flint to ~250 °C changes its structure and makes it far easier to knap — evidence for this goes back 70,000 years.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Heat_treating",
+    "karlMood": "🤨 Karl is suspicious"
+  },
+  {
+    "id": "spydspids",
+    "emoji": "📌",
+    "name": "Stone-tipped spear",
+    "act": 1,
+    "flavor": "The spear, but with opinions at the end.",
+    "note": "Stone-tipped spears appear around 500,000 years ago — before our own species did.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Spear",
+    "karlMood": "😌 Karl is quietly competent"
+  },
+  {
+    "id": "morter",
+    "emoji": "🪣",
+    "name": "Mortar and pestle",
+    "act": 1,
+    "flavor": "A hollow stone and a smaller stone. Karl grinds things. Karl grinds everything.",
+    "note": "Grinding stones let people eat seeds and roots that are inedible whole — the technology that made grain worth farming.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Mortar_and_pestle",
+    "karlMood": "🙂 Karl feels resourceful"
+  },
+  {
+    "id": "aeg",
+    "emoji": "🥚",
+    "name": "Egg",
+    "act": 1,
+    "flavor": "Taken from a nest by a man with no sense of consequence.",
+    "note": "Ostrich eggshell water flasks from the Kalahari are over 60,000 years old — the egg was container and meal both.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Bird_egg",
+    "karlMood": "🙂 Karl feels resourceful"
+  },
+  {
+    "id": "agerngroed",
+    "emoji": "🥣",
+    "name": "Acorn mush",
+    "act": 1,
+    "flavor": "Bitter, grey, filling. Two out of three is enough when you're hungry.",
+    "note": "Acorns need leaching to remove tannins — the process was known independently across four continents.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Acorn#Human_consumption",
+    "karlMood": "😐 Karl is unimpressed"
+  },
+  {
+    "id": "honning",
+    "emoji": "🍯",
+    "name": "Honey",
+    "act": 1,
+    "flavor": "Karl has been stung eleven times. Karl considers this a fair trade.",
+    "note": "An 8,000-year-old rock painting in Spain shows a person on ropes raiding a wild bees' nest — honey-hunting is older than farming.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Honey_hunting",
+    "karlMood": "😃 Karl is delighted"
+  },
+  {
+    "id": "flaesk",
+    "emoji": "🍗",
+    "name": "Roast pork",
+    "act": 1,
+    "flavor": "Dino was a good pig. Dino was also, ultimately, a pig.",
+    "note": "Pigs were domesticated at least 9,000 years ago in Anatolia, independently of their domestication in China.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Domestic_pig",
+    "karlMood": "😢 Karl is comically sad"
+  },
+  {
+    "id": "oesters",
+    "emoji": "🦪",
+    "name": "Shellfish",
+    "act": 1,
+    "flavor": "Prised off a rock and eaten on the spot. Karl's face suggests regret and triumph in equal measure.",
+    "note": "Shell middens along ancient coastlines are among the richest archaeological sites we have — coastal foraging may have fed the first migrations out of Africa.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Midden",
+    "karlMood": "🤨 Karl is suspicious"
+  },
+  {
+    "id": "baalstegt-aeg",
+    "emoji": "🍳",
+    "name": "Fire-baked egg",
+    "act": 1,
+    "flavor": "Cooked in its own shell in the ashes. Karl burns his fingers and does it again.",
+    "note": "Cooking makes protein far easier to digest — a leading theory holds that fire, not hunting, is what let our brains grow.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cooking_hypothesis",
+    "karlMood": "😃 Karl is delighted"
+  },
+  {
+    "id": "sengeleje",
+    "emoji": "🛏️",
+    "name": "Grass bedding",
+    "act": 1,
+    "flavor": "A heap of dry grass. Karl sleeps in it like a very large, very pleased dog.",
+    "note": "Sibudu Cave in South Africa preserves 77,000-year-old plant bedding — layered with insect-repelling leaves.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sibudu_Cave",
+    "karlMood": "🙂 Karl feels resourceful"
+  },
+  {
+    "id": "dunkappe",
+    "emoji": "🧤",
+    "name": "Down cloak",
+    "act": 1,
+    "flavor": "Feathers stuffed between two hides. Karl looks absurd and is deeply, gloriously warm.",
+    "note": "Trapped air, not the feathers themselves, does the insulating — the same principle as every winter coat since.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Thermal_insulation",
+    "karlMood": "😄 Karl is immensely proud"
+  },
+  {
+    "id": "klyngen",
+    "emoji": "🤗",
+    "name": "The huddle",
+    "act": 1,
+    "flavor": "Karl and the neighbour, back to back, saying nothing. It is the warmest either of them has been.",
+    "note": "Huddling is the oldest thermoregulation strategy there is — shared body heat cuts individual heat loss dramatically.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Huddling",
+    "karlMood": "😌 Karl is quietly competent"
+  },
+  {
+    "id": "mudderlag",
+    "emoji": "🫧",
+    "name": "Mud coat",
+    "act": 1,
+    "flavor": "Smeared head to toe. It keeps the cold out and everyone else at a distance.",
+    "note": "Mud coating is used by elephants and pigs against sun and parasites; it insulates as it dries.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Mud_bath",
+    "karlMood": "😐 Karl is unimpressed"
   }
 ]

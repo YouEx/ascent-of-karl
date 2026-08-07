@@ -3,18 +3,22 @@
 *Auto-genereret af `tools/story_graph.py` — redigér ikke i hånden.
 Regenerér efter content-ændringer.*
 
-- **165 elementer** (11 base)
-- **205 kombinationer** (48 på komisk spor, vist stiplet)
+- **185 elementer** (11 base)
+- **225 kombinationer** (48 på komisk spor, vist stiplet)
 - Kanter mærket med problem-løsninger, age-up og flags
 
 ```mermaid
 flowchart LR
   aand["👻 Ancestor spirit"]
+  aeg["🥚 Egg"]
   agern["🌰 Acorn"]
+  agerngroed["🥣 Acorn mush"]
   arbejdsbord["🧰 Crafting table"]
   baad["🛶 Canoe"]
+  baalstegt-aeg["🍳 Fire-baked egg"]
   baer(["🫐 Berries"]):::base
   bautasten["🗿 Standing stone"]
+  benkniv["🔪 Bone knife"]
   besoegende["🛸 The Visitors"]
   boomerang["🪃 Boomerang"]
   broed["🍞 Bread"]
@@ -26,6 +30,7 @@ flowchart LR
   dej["🥟 Dough"]
   den-lange-vinter["🏔️ The Long Winter"]
   drive-in["🎬 Drive-in"]
+  dunkappe["🧤 Down cloak"]
   dyr(["🐗 Wild boar"]):::base
   eftermaele["🕊️ Legacy"]
   faelde["🪤 Snare"]
@@ -36,6 +41,8 @@ flowchart LR
   festdragt["🦚 Feather cloak"]
   fisk["🐟 Fish"]
   fjer["🪶 Feather"]
+  flaesk["🍗 Roast pork"]
+  flint["🪚 Heat-treated flint"]
   flintmobil["🚗 Footmobile"]
   floejte["🪈 Bone flute"]
   flyveforsoeg["🪂 The Flight"]
@@ -49,10 +56,14 @@ flowchart LR
   gnister["✨ Sparks"]
   graes(["🍂 Dry grass"]):::base
   grav["⚰️ Burial"]
+  gravestok["🦯 Digging stick"]
   grottebryg["🍺 Cave brew"]
   haandaftryk["🖐️ Handprint wall"]
+  haandkile["⚒️ Hand axe"]
   haarklip["💇 Haircut"]
+  hammer["🔨 Hammer"]
   handel["🤝 Trade"]
+  harpun["🪝 Harpoon"]
   have["🌻 Garden"]
   havrejsen["⛵ The Voyage"]
   helbredelse["🩹 The Healing"]
@@ -61,6 +72,7 @@ flowchart LR
   hjul["🛞 Wheel"]
   hoest["🌽 Harvest"]
   hoevding["🫅 Chief"]
+  honning["🍯 Honey"]
   hulemaleri["🎨 Cave painting"]
   hund["🐕 Dog"]
   hytte["🛖 Hut"]
@@ -72,6 +84,7 @@ flowchart LR
   kaelk["🛷 Sledge"]
   kalender["📅 Calendar"]
   keramik["🏺 Pottery"]
+  klyngen["🤗 The huddle"]
   knogle["🦴 Bone"]
   knoglekast["🌌 Bone toss"]
   kobber["🟠 Copper"]
@@ -102,9 +115,11 @@ flowchart LR
   mester["🏅 The Champion"]
   modeshow["💃 Fashion show"]
   monolit["⬛ The Monolith"]
+  morter["🪣 Mortar and pestle"]
   mudder["🟫 Mud"]
   mudderbad["🛁 Mud bath"]
   mudderkage["🥧 Mud pie"]
+  mudderlag["🫧 Mud coat"]
   mursten["🧱 Mud brick"]
   myg-i-rav["🦟 Insect in amber"]
   myte["📖 Myth"]
@@ -112,6 +127,7 @@ flowchart LR
   nabo(["🧔 Neighbour"]):::base
   nedbraendt-hytte["🏚️ Burnt-down hut"]
   net["🕸️ Net"]
+  oesters["🦪 Shellfish"]
   oversvoemmelse["🌊 The Flood"]
   penge["💰 Shell money"]
   pil["🎯 Arrow"]
@@ -130,15 +146,18 @@ flowchart LR
   romance["💘 Romance"]
   rullesten["⚪ Round stone"]
   saft["🧃 Berry juice"]
+  sengeleje["🛏️ Grass bedding"]
   shaman["🧙 Shaman Ugh"]
   sidste-maaltid["🍲 The Last Supper"]
   skal["🐚 Shell"]
   ski["🎿 Skis"]
   skind["🧥 Hide cloak"]
   skovmand["🦧 The Hairy One"]
+  skraber["🗡️ Hide scraper"]
   skrift["✍️ Writing"]
   sky["☁️ Cloud"]
   slagsmaal["💢 First argument"]
+  slynge["🎽 Sling"]
   smykke["📿 Necklace"]
   sne["❄️ Snow"]
   soeuhyre["🐉 Lake monster"]
@@ -146,6 +165,7 @@ flowchart LR
   spejl["🪞 Reflection"]
   splint["🩼 Splint"]
   spyd["🔱 Spear"]
+  spydspids["📌 Stone-tipped spear"]
   stamme(["🪵 Log"]):::base
   stammefolk["🏕️ Tribe"]
   stegt-koed["🍖 Roast meat"]
@@ -562,6 +582,46 @@ flowchart LR
   shaman --> myte
   taellekaep --> kalender
   sten --> kalender
+  knogle -->|"løser vaerktoej"| benkniv
+  rullesten --> benkniv
+  pind -->|"løser vaerktoej"| gravestok
+  ild --> gravestok
+  sten -->|"løser vaerktoej"| hammer
+  reb --> hammer
+  rullesten -->|"løser vaerktoej"| haandkile
+  sten --> haandkile
+  sten -->|"løser vaerktoej"| skraber
+  skind --> skraber
+  reb -->|"løser vaerktoej"| slynge
+  rullesten --> slynge
+  knogle -->|"løser vaerktoej"| harpun
+  spyd --> harpun
+  sten -->|"løser vaerktoej"| flint
+  ild --> flint
+  sten -->|"løser vaerktoej"| spydspids
+  spyd --> spydspids
+  agern -->|"løser vaerktoej"| morter
+  sten --> morter
+  fugl -->|"løser sult"| aeg
+  reb --> aeg
+  agern -->|"løser sult"| agerngroed
+  morter --> agerngroed
+  baer -->|"løser sult"| honning
+  larver --> honning
+  tamsvin -->|"løser sult"| flaesk
+  ild --> flaesk
+  net -->|"løser sult"| oesters
+  vand --> oesters
+  aeg -->|"løser sult"| baalstegt-aeg
+  ild --> baalstegt-aeg
+  graes -->|"løser kulde"| sengeleje
+  skind --> sengeleje
+  fjer -->|"løser kulde"| dunkappe
+  reb --> dunkappe
+  nabo -->|"løser kulde"| klyngen
+  skind --> klyngen
+  mudder -->|"løser kulde"| mudderlag
+  skind --> mudderlag
   class ristede-larver komisk
   class mudderbad komisk
   class larvefarm komisk

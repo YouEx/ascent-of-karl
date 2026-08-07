@@ -1071,6 +1071,206 @@
         "He'll forget this by winter. The world won't.",
         "And the sun goes down on a slightly different valley."
       ]
+    },
+    {
+      "id": "story-benkniv",
+      "variants": [
+        "Bone against stone, and an edge appears. Karl tests it on his thumb, because of course he does.",
+        "A knife of bone. Not a good knife. But the word 'knife' now exists, and that's the hard part.",
+        "Karl has made a blade out of an animal. The animal would have opinions, if it still had them.",
+        "An edge, from a thing that used to walk. Karl has crossed a line he doesn't know is there.",
+        "The bone gives him a blade. It will dull by evening, and he will make another. That's the deal."
+      ]
+    },
+    {
+      "id": "story-gravestok",
+      "variants": [
+        "He holds the stick in the fire until it's hard. This is metallurgy's great-grandfather, and it's a stick.",
+        "Fire-hardened. Karl doesn't know why it works and I'm not going to be the one to tell him.",
+        "A pointed stick that stays pointed. Half of human history is downstream of this.",
+        "The fire takes the water out and leaves the hardness in. Karl calls this 'the good stick' and guards it.",
+        "A stick that fights back against the ground. Roots everywhere are quietly worried."
+      ]
+    },
+    {
+      "id": "story-hammer",
+      "variants": [
+        "Stone, meet handle. Handle, meet leverage. Karl, meet a whole new category of accident.",
+        "He's tied the rock to the stick. It took four attempts and one bruised foot, but he's tied the rock to the stick.",
+        "The hammer. Now every problem has a candidate solution, whether it deserves one or not.",
+        "Force, multiplied. Karl's problems have not changed, but his answer to all of them just did.",
+        "He binds stone to wood and something clicks — in the lashing, and somewhere behind his eyes."
+      ]
+    },
+    {
+      "id": "story-haandkile",
+      "variants": [
+        "Flake by flake, a shape emerges. It fits his hand like it was waiting for him.",
+        "A hand axe. Karl's descendants will make this exact object for a million years and barely change a line.",
+        "He knapped it wrong twice and right once. That ratio will define his career.",
+        "It sits in his palm like it grew there. A shape that will outlast his species' patience for it.",
+        "One tool for cutting, scraping, digging and, when necessary, arguing."
+      ]
+    },
+    {
+      "id": "story-skraber",
+      "variants": [
+        "Unpleasant work with an unglamorous tool. Most of civilisation is built out of exactly this.",
+        "A scraper. It does one job, badly, forever — and it is nonetheless indispensable.",
+        "Karl scrapes. The hide gives up. Somewhere a future coat becomes possible.",
+        "The dull, essential work of turning an animal into a thing you can wear.",
+        "Scrape, scrape, scrape. History is mostly this, and rarely says so."
+      ]
+    },
+    {
+      "id": "story-slynge",
+      "variants": [
+        "He whirls it over his head and lets go. The stone leaves at a speed nobody in this valley has seen before.",
+        "A sling! Karl is now dangerous at a distance, which is new, and frankly concerning.",
+        "One rock, one cord, and the invention of the ranged mistake.",
+        "The stone leaves faster than anything Karl has thrown, and lands somewhere he did not intend.",
+        "A sling. Distance is now a weapon, and Karl has terrible aim and total confidence."
+      ]
+    },
+    {
+      "id": "story-harpun",
+      "variants": [
+        "Barbs. Karl has understood that a point which lets go is only half a point.",
+        "A harpoon. The fish's day is about to get considerably worse.",
+        "He carved the barbs backwards first. He carved them backwards second, too. Third time, harpoon.",
+        "Barbed bone on a shaft. The river has stopped being scenery and started being a larder.",
+        "It holds what it hits. Karl finds this deeply satisfying and slightly frightening."
+      ]
+    },
+    {
+      "id": "story-flint",
+      "variants": [
+        "He left the stone in the embers overnight. This morning it flakes like glass, and Karl thinks he's been blessed.",
+        "Heat-treated flint. Seventy thousand years ahead of anyone writing this down.",
+        "The fire changed the stone. Karl cannot explain it, and has therefore decided it is magic.",
+        "The stone came out of the fire different. Karl has no theory. Karl has results.",
+        "Baked rock that flakes like glass. He'll never understand it, and he'll never stop doing it."
+      ]
+    },
+    {
+      "id": "story-spydspids",
+      "variants": [
+        "A stone point, bound to a shaft. The spear is no longer a threat — it's a promise.",
+        "Karl has upgraded the pointy end. It was already the good end.",
+        "Stone-tipped. Now it goes in, rather than merely arriving.",
+        "Stone bound to shaft. The spear graduates.",
+        "Now it doesn't merely poke. Now it commits."
+      ]
+    },
+    {
+      "id": "story-morter",
+      "variants": [
+        "He grinds the acorn between two stones and gets flour, and a great deal of grit.",
+        "A mortar. Karl has discovered that hard things become food if you hit them enough.",
+        "Grinding. Slow, dull, and the single reason grain was ever worth planting.",
+        "Two stones and endless patience. Karl has invented the most boring revolution in history.",
+        "Grind, grind, grind. Somewhere at the end of this motion lies bread, beer, and cities."
+      ]
+    },
+    {
+      "id": "story-aeg",
+      "variants": [
+        "Karl takes the egg. The bird registers a complaint that will echo down the generations.",
+        "An egg. He eats it raw, standing up, maintaining eye contact with the nest.",
+        "Nest robbed. Karl's dinner solved. The bird's afternoon ruined. History rarely notes the bird.",
+        "One egg, warm from the nest. Karl feels briefly guilty and then extremely full.",
+        "He takes it, and the bird's shrieking follows him halfway across the valley."
+      ]
+    },
+    {
+      "id": "story-agerngroed",
+      "variants": [
+        "Ground, soaked, and boiled into a grey paste. It's food. That's the entire compliment available.",
+        "Acorn mush. Bitter enough to make him blink, filling enough to make him continue.",
+        "He leached the tannins out by accident, in a puddle, over three days. Sometimes laziness is technique.",
+        "Grey, bitter, and sufficient. Karl eats the whole thing and asks for nothing else, having nothing else to ask.",
+        "It tastes like a floor. It is, however, definitively food."
+      ]
+    },
+    {
+      "id": "story-honning",
+      "variants": [
+        "He followed the insects to the nest, took the comb, and was punished eleven times for it. Worth it, he'd say, if he could say things.",
+        "Honey! Karl's first taste of something purely, uselessly delicious. He is changed.",
+        "Stung repeatedly, grinning throughout. The first man to decide that pain was an acceptable price for sweetness.",
+        "He came back sticky, swollen, and radiant. The valley's first man to suffer for pleasure.",
+        "Honey. Karl licks his fingers for a full minute and forgets every sting."
+      ]
+    },
+    {
+      "id": "story-flaesk",
+      "variants": [
+        "Karl had named it. Karl had fed it. Karl is now eating it, and not making eye contact with anyone.",
+        "The pig has moved from 'pet' to 'protein'. Karl chews slowly and thinks about nothing at all, very hard.",
+        "Farewell, Dino. You were a fine companion and, it turns out, an excellent meal.",
+        "He looks at the fire. He looks at where the pig used to stand. He eats.",
+        "Dino's contribution to Karl's survival is total and, from Dino's perspective, involuntary."
+      ]
+    },
+    {
+      "id": "story-oesters",
+      "variants": [
+        "He drags the net through the shallows and comes up with shellfish. Karl eats one raw and makes a face nobody should have to see.",
+        "Shellfish. The sea, it turns out, has been quietly setting the table this whole time.",
+        "Prised off the rocks and swallowed with real commitment. The valley's first seafood course.",
+        "Salt, grit, and something like the sea itself. Karl gags, then reaches for another.",
+        "The shore gives up its shellfish. Karl gives up his dignity. Both parties call it even."
+      ]
+    },
+    {
+      "id": "story-baalstegt-aeg",
+      "variants": [
+        "Buried in the ashes until it hisses. Karl burns his fingers, drops it, and eats it off the ground anyway.",
+        "A cooked egg. Simple, warm, and quietly one of the best things that has ever happened to him.",
+        "Fire plus egg. Karl has stumbled into breakfast about eleven thousand years early.",
+        "It hisses in the ashes and comes out perfect. Karl has no word for 'perfect' yet, but he has the feeling.",
+        "Warm food, on purpose, for the first time in a while. Small miracle. Big consequences."
+      ]
+    },
+    {
+      "id": "story-sengeleje",
+      "variants": [
+        "A bed. Karl lies down on purpose for the first time in his life, rather than simply stopping.",
+        "Dry grass under a hide. Karl sleeps through the night and wakes up briefly convinced he has died and it went well.",
+        "Bedding. Small, soft, and the reason he'll live long enough to invent anything else.",
+        "Grass and hide. Karl sleeps like a man who has finally been forgiven for something.",
+        "He piles it up, lies down, and produces a noise of contentment that will embarrass him later."
+      ]
+    },
+    {
+      "id": "story-dunkappe",
+      "variants": [
+        "Feathers, stuffed between hides. He looks like a startled bird and he does not care at all.",
+        "A down cloak. Karl is warm. Karl is ridiculous. Karl is warm.",
+        "Eleven thousand years before anyone patents this, Karl gets there by stuffing a coat with birds.",
+        "Stuffed with feathers, sealed with hide. Karl is a walking pillow and a warm one.",
+        "It rustles when he moves. He moves more than necessary."
+      ]
+    },
+    {
+      "id": "story-klyngen",
+      "variants": [
+        "The two of them sit back to back under one hide, staring in opposite directions, saying nothing. It works.",
+        "Shared warmth. Neither will mention it tomorrow. Both will remember it for years.",
+        "Karl and Ugh, huddled together against the cold. The valley's first act of friendship, disguised as thermodynamics.",
+        "Two men, one hide, zero conversation, considerable warmth.",
+        "They sit like that until the fire dies. It is the closest either of them has come to saying something kind."
+      ]
+    },
+    {
+      "id": "story-mudderlag",
+      "variants": [
+        "He coats himself in mud and pulls the hide over. It works. It also means nobody comes near him for a week.",
+        "A mud coat. Warm, effective, and socially catastrophic.",
+        "Karl smells like a riverbed and is no longer shivering. He has decided this is a win.",
+        "Coated in river mud and hide. Insulated, effective, and profoundly unpopular.",
+        "He's warm. He also smells like the bottom of everything. Trade-offs."
+      ]
     }
   ],
   "behavior": {

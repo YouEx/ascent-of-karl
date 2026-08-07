@@ -211,7 +211,7 @@ describe("Narrator: nye adfærds-triggere", () => {
     attempt(engine, narrator, "baer", "ler");
     attempt(engine, narrator, "baer", "pind");
     attempt(engine, narrator, "baer", "graes");
-    const line = attempt(engine, narrator, "baer", "larver");
+    const line = attempt(engine, narrator, "baer", "fugl");
     expect(line?.id).toBe("sweep-4");
     expect(line?.text).toContain("berries");
   });

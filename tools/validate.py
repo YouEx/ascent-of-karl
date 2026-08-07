@@ -273,6 +273,29 @@ def main() -> int:
     for e in endings:
         if not e.get("automatic") and e["id"] not in triggered:
             err(f"Slutningen '{e['id']}' udløses aldrig af nogen kombination")
+
+    # Obligatoriske problemer er spillets sidequests: de skal kunne løses på
+    # mange måder, ellers føles de som én rigtig løsning man skal gætte.
+    MIN_SOLUTIONS = 10
+    for act in acts:
+        for p in act.get("problems", []):
+            if not p.get("required"):
+                continue
+            solvers = [c for c in combos if c.get("solves") == p["id"]]
+            if len(solvers) < MIN_SOLUTIONS:
+                err(
+                    f"Problemet '{p['id']}' ({p.get('name')}) har kun "
+                    f"{len(solvers)} løsninger — kræver mindst {MIN_SOLUTIONS}, "
+                    f"så spilleren kan finde sin egen vej"
+                )
+            # Hver løsning skal have sin egen replik; ellers føles alternativerne
+            # som den samme løsning i forklædning.
+            without = [c for c in solvers if not c.get("narratorLine")]
+            if without:
+                err(
+                    f"Problemet '{p['id']}': {len(without)} løsning(er) uden "
+                    f"narratorLine — hver vej skal have sin egen kommentar"
+                )
     turn_limit = config.get("turnLimit")
     unlock_at = config.get("endingsUnlockAt")
     if not isinstance(unlock_at, int) or unlock_at < 0:

@@ -453,6 +453,34 @@
     4,
     5
   ],
+  "story-aeg": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-agerngroed": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-baalstegt-aeg": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-benkniv": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-broed": [
     0,
     1,
@@ -474,6 +502,13 @@
     3,
     4
   ],
+  "story-dunkappe": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-familie": [
     0,
     1,
@@ -482,6 +517,20 @@
     4
   ],
   "story-fisk": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-flaesk": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-flint": [
     0,
     1,
     2,
@@ -509,6 +558,34 @@
     3,
     4
   ],
+  "story-gravestok": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-haandkile": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-hammer": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-harpun": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-hjul": [
     0,
     1,
@@ -517,6 +594,13 @@
     4
   ],
   "story-hoest": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-honning": [
     0,
     1,
     2,
@@ -552,6 +636,13 @@
     4
   ],
   "story-keramik": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-klyngen": [
     0,
     1,
     2,
@@ -621,6 +712,13 @@
     3,
     4
   ],
+  "story-morter": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-mudderbad": [
     0,
     1,
@@ -629,6 +727,20 @@
     4
   ],
   "story-mudderkage": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-mudderlag": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-oesters": [
     0,
     1,
     2,
@@ -656,6 +768,13 @@
     3,
     4
   ],
+  "story-sengeleje": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-skind": [
     0,
     1,
@@ -663,7 +782,21 @@
     3,
     4
   ],
+  "story-skraber": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-skrift": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-slynge": [
     0,
     1,
     2,
@@ -678,6 +811,13 @@
     4
   ],
   "story-spyd": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-spydspids": [
     0,
     1,
     2,

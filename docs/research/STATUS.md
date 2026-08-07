@@ -9,11 +9,11 @@ Infinite Craft og 7 alchemy-kloner (se `README.md` for metodologi).
 
 ## Vores adoption
 
-| Kategori | Antal | Andel af vores 205 kombinationer |
+| Kategori | Antal | Andel af vores 225 kombinationer |
 |---|---|---|
-| Ingredienspar genfindes i supersettet | 24 | 12% |
-| Resultatet findes (via anden opskrift) | 68 | 33% |
-| Helt egne opfindelser | 113 | 55% |
+| Ingredienspar genfindes i supersettet | 27 | 12% |
+| Resultatet findes (via anden opskrift) | 72 | 32% |
+| Helt egne opfindelser | 126 | 56% |
 
 ## Ingredienspar genfundet i supersettet
 
@@ -41,6 +41,9 @@ Infinite Craft og 7 alchemy-kloner (se `README.md` for metodologi).
 - `flour + water = dough` — matcher `dough` (clones;little-alchemy)
 - `dough + fire = bread` — matcher `bread` (clones;little-alchemy)
 - `dog + dog = hunting party` — matcher `puppy love` (clones)
+- `stick + fire = digging stick` — matcher `matches` (clones)
+- `stone + fire = heat-treated flint` — matcher `metal` (clones;little-alchemy)
+- `egg + fire = fire-baked egg` — matcher `omelette` (clones;little-alchemy)
 
 ## Resultater der findes i supersettet med andre opskrifter
 
@@ -112,6 +115,10 @@ Infinite Craft og 7 alchemy-kloner (se `README.md` for metodologi).
 - `rain + seeds = garden` — resultatet findes i supersettet (anden opskrift)
 - `necklace + romance = family` — resultatet findes i supersettet (anden opskrift)
 - `tally stick + stone = calendar` — resultatet findes i supersettet (anden opskrift)
+- `stone + rope = hammer` — resultatet findes i supersettet (anden opskrift)
+- `bone + spear = harpoon` — resultatet findes i supersettet (anden opskrift)
+- `bird + rope = egg` — resultatet findes i supersettet (anden opskrift)
+- `berries + grubs = honey` — resultatet findes i supersettet (anden opskrift)
 
 ## Egne opfindelser (ikke i supersettet)
 
@@ -228,3 +235,16 @@ Infinite Craft og 7 alchemy-kloner (se `README.md` for metodologi).
 - `mammoth + hide cloak = sewn clothes`
 - `amber + necklace = shell money`
 - `calendar + shaman ugh = myth`
+- `bone + round stone = bone knife`
+- `round stone + stone = hand axe`
+- `stone + hide cloak = hide scraper`
+- `rope + round stone = sling`
+- `stone + spear = stone-tipped spear`
+- `acorn + stone = mortar and pestle`
+- `acorn + mortar and pestle = acorn mush`
+- `pet boar + fire = roast pork`
+- `net + water = shellfish`
+- `dry grass + hide cloak = grass bedding`
+- `feather + rope = down cloak`
+- `neighbour + hide cloak = the huddle`
+- `mud + hide cloak = mud coat`

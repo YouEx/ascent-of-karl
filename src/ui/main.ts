@@ -227,6 +227,26 @@ function renderSlots(): void {
   el.slotA.classList.toggle("filled", !!a);
   el.slotB.classList.toggle("filled", !!b);
   el.combineBtn.disabled = !(a && b);
+  renderSelection();
+}
+
+/**
+ * Markér de valgte elementer i griddet. Uden dette var den eneste synlige
+ * markering browserens fokus-ring på den sidst klikkede knap — så det så ud
+ * som om kun ét af de to valgte var aktivt.
+ *
+ * Opdaterer klasser på eksisterende knapper i stedet for at gentegne
+ * griddet, så scroll-position og fokus ikke ryger ved hvert valg.
+ */
+function renderSelection(): void {
+  for (const btn of el.grid.querySelectorAll<HTMLElement>(".element")) {
+    const id = btn.dataset.id!;
+    const count = selected.filter((s) => s === id).length;
+    btn.classList.toggle("is-selected", count > 0);
+    // Samme element i begge slots (fx sten + sten) — vis at det tæller to gange
+    btn.classList.toggle("is-selected-twice", count === 2);
+    btn.setAttribute("aria-pressed", String(count > 0));
+  }
 }
 
 function renderGrid(): void {
@@ -246,6 +266,7 @@ function renderGrid(): void {
     el.grid.appendChild(btn);
   }
   el.gridEmpty.hidden = visible.length > 0;
+  renderSelection();
 }
 
 function renderBookBadge(): void {

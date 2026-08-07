@@ -1645,5 +1645,185 @@
       "sten"
     ],
     "result": "kalender"
+  },
+  {
+    "pair": [
+      "knogle",
+      "rullesten"
+    ],
+    "result": "benkniv",
+    "solves": "vaerktoej",
+    "narratorLine": "story-benkniv"
+  },
+  {
+    "pair": [
+      "pind",
+      "ild"
+    ],
+    "result": "gravestok",
+    "solves": "vaerktoej",
+    "narratorLine": "story-gravestok"
+  },
+  {
+    "pair": [
+      "sten",
+      "reb"
+    ],
+    "result": "hammer",
+    "solves": "vaerktoej",
+    "narratorLine": "story-hammer"
+  },
+  {
+    "pair": [
+      "rullesten",
+      "sten"
+    ],
+    "result": "haandkile",
+    "solves": "vaerktoej",
+    "narratorLine": "story-haandkile"
+  },
+  {
+    "pair": [
+      "sten",
+      "skind"
+    ],
+    "result": "skraber",
+    "solves": "vaerktoej",
+    "narratorLine": "story-skraber"
+  },
+  {
+    "pair": [
+      "reb",
+      "rullesten"
+    ],
+    "result": "slynge",
+    "solves": "vaerktoej",
+    "narratorLine": "story-slynge"
+  },
+  {
+    "pair": [
+      "knogle",
+      "spyd"
+    ],
+    "result": "harpun",
+    "solves": "vaerktoej",
+    "narratorLine": "story-harpun"
+  },
+  {
+    "pair": [
+      "sten",
+      "ild"
+    ],
+    "result": "flint",
+    "solves": "vaerktoej",
+    "narratorLine": "story-flint"
+  },
+  {
+    "pair": [
+      "sten",
+      "spyd"
+    ],
+    "result": "spydspids",
+    "solves": "vaerktoej",
+    "narratorLine": "story-spydspids"
+  },
+  {
+    "pair": [
+      "agern",
+      "sten"
+    ],
+    "result": "morter",
+    "solves": "vaerktoej",
+    "narratorLine": "story-morter"
+  },
+  {
+    "pair": [
+      "fugl",
+      "reb"
+    ],
+    "result": "aeg",
+    "solves": "sult",
+    "narratorLine": "story-aeg"
+  },
+  {
+    "pair": [
+      "agern",
+      "morter"
+    ],
+    "result": "agerngroed",
+    "solves": "sult",
+    "narratorLine": "story-agerngroed"
+  },
+  {
+    "pair": [
+      "baer",
+      "larver"
+    ],
+    "result": "honning",
+    "solves": "sult",
+    "narratorLine": "story-honning"
+  },
+  {
+    "pair": [
+      "tamsvin",
+      "ild"
+    ],
+    "result": "flaesk",
+    "solves": "sult",
+    "narratorLine": "story-flaesk"
+  },
+  {
+    "pair": [
+      "net",
+      "vand"
+    ],
+    "result": "oesters",
+    "solves": "sult",
+    "narratorLine": "story-oesters"
+  },
+  {
+    "pair": [
+      "aeg",
+      "ild"
+    ],
+    "result": "baalstegt-aeg",
+    "solves": "sult",
+    "narratorLine": "story-baalstegt-aeg"
+  },
+  {
+    "pair": [
+      "graes",
+      "skind"
+    ],
+    "result": "sengeleje",
+    "solves": "kulde",
+    "narratorLine": "story-sengeleje"
+  },
+  {
+    "pair": [
+      "fjer",
+      "reb"
+    ],
+    "result": "dunkappe",
+    "solves": "kulde",
+    "narratorLine": "story-dunkappe"
+  },
+  {
+    "pair": [
+      "nabo",
+      "skind"
+    ],
+    "result": "klyngen",
+    "solves": "kulde",
+    "narratorLine": "story-klyngen"
+  },
+  {
+    "pair": [
+      "mudder",
+      "skind"
+    ],
+    "result": "mudderlag",
+    "solves": "kulde",
+    "narratorLine": "story-mudderlag"
   }
 ]

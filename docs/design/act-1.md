@@ -5,13 +5,23 @@ den er rigtig fed** — Akt II-V venter til Akt I har bevist loopet i playtest.
 PRD'ens 15-25 elementer pr. akt er ophævet for Akt I: målet er så mange
 kombinationsmuligheder som muligt, inkl. skøre grene og pop culture.*
 
-## Problemer (obligatoriske, gater age-up)
+## Problemer = sidequests (obligatoriske, gater age-up)
 
-| Problem | Hovedløsning | Alternative løsninger |
+**Mindst 10 løsninger pr. obligatorisk problem** (håndhævet af validatoren,
+2026-08-07). Før havde "bare næver" kun én løsning, og sultens alternativer
+lå så dybt i træet at spilleren aldrig så dem — det fik problemerne til at
+føles som én rigtig løsning man skulle gætte, frem for en retning man selv
+vælger. Hver løsning har sin egen replik med 5 varianter; ellers er
+alternativerne bare den samme løsning i forklædning.
+
+| Problem | Antal | Spændvidde (dybde fra base) |
 |---|---|---|
-| Karl fryser | Ild (gnister + græs) | **Skind-kappe** (kød + økse) — flag `pelsklaedt` |
-| Bare næver | Stenøkse (sten + pind) | — |
-| Karl er sulten | Stegt kød | **Ristede larver** (flag `larver`), **Fisk/sushi** (vand + spyd) |
+| Karl fryser | 11 | ild (2) · dunkappe (2) · hytte (3) · skind (4) · sengeleje, klyngen, mudderlag, tøj (5) |
+| Bare næver | 11 | stenøkse (1) · hammer, håndkile, slynge, morter (2) · benkniv, gravestok, harpun, flint, spydspids (3) · skraber (5) |
+| Karl er sulten | 13 | honning (1) · mudderkage, æg (2) · ristede larver, fisk, agerngrød, flæsk, østers, bålstegt æg (3) · stegt kød (4) · brød (7) |
+
+Pointen er spændvidden: der skal være noget i dybde 1-2, ellers opdager
+spilleren aldrig at der ER alternativer.
 
 Age-up: kobber + malm → bronze (uændret).
 
