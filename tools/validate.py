@@ -30,6 +30,14 @@ def warn(msg: str) -> None:
     warnings.append(msg)
 
 
+notes: list[str] = []
+
+
+def info(msg: str) -> None:
+    """Rapport uden dom — vises altid, fejler aldrig."""
+    notes.append(msg)
+
+
 def load(path: Path):
     try:
         return json.loads(path.read_text(encoding="utf-8"))
@@ -177,11 +185,36 @@ def main() -> int:
                 )
 
         # Nøglebeats kræver mindst 5 varianter, så hvert playthrough lyder nyt
-        key_min = 5 if any(True for c in combos if _combo_in_act(c, act, elements)) else 1
+        act_has_combos = any(True for c in combos if _combo_in_act(c, act, elements))
+        key_min = 5 if act_has_combos else 1
         check_ref(act.get("introLine"), "introLine", key_min)
         check_ref(act.get("gateLine"), "gateLine", key_min)
         check_ref(act.get("ageUpLine"), "ageUpLine", key_min)
         check_ref(n.get("resumeLine"), "resumeLine")
+        # En opdagelse må aldrig møde tavshed: kun få kombinationer har en
+        # håndskrevet replik, så fallback-puljen bærer resten af spillet.
+        fallback = n.get("discoveryFallback") or []
+        if not fallback and act_has_combos:
+            err(f"Akt {act['act']}: mangler discoveryFallback — opdagelser uden "
+                f"håndskrevet replik ville møde tavshed")
+        elif fallback and len(fallback) < 8:
+            warn(f"Akt {act['act']}: kun {len(fallback)} generiske opdagelses-replikker "
+                 f"— spilleren hører dem ofte, sigt efter mindst 8")
+        for ref in fallback:
+            check_ref(ref, "discoveryFallback", key_min)
+        # Fiasko-puljen er den mest hørte tekst i spillet: målt til ~15 af de
+        # ~29 replikker pr. run. Rotationen cykler gennem ID'er, så antallet
+        # af replikker betyder lige så meget som varianterne i hver.
+        gf = n.get("genericFailure") or []
+        gf_variants = sum(len(lines_by_id[i]["variants"]) for i in gf if i in lines_by_id)
+        if act_has_combos:
+            if len(gf) < 12:
+                warn(f"Akt {act['act']}: kun {len(gf)} generiske fiasko-replikker "
+                     f"— spilleren hører ~15 pr. run, sigt efter mindst 12 forskellige")
+            if gf_variants < 80:
+                warn(f"Akt {act['act']}: fiasko-puljen har {gf_variants} varianter "
+                     f"— under 80 begynder gentagelserne at kunne høres")
+            info(f"Fiasko-pulje (mest hørte tekst): {len(gf)} replikker, {gf_variants} varianter")
         # Afværget skæbne er et nøglebeat: spilleren rammer den tidligt og ofte
         check_ref(n.get("deflectedEndingLine"), "deflectedEndingLine", key_min)
         for p in act.get("problems", []):
@@ -258,9 +291,129 @@ def main() -> int:
             triggered.add(c["ending"])
         if "cost" in c and (not isinstance(c["cost"], int) or c["cost"] < 1):
             err(f"Kombination {c['pair'][0]}+{c['pair'][1]}: cost skal være et heltal ≥ 1")
+    challenges = load(CONTENT / "challenges.json") or []
+    challenge_endings = {c["failEnding"] for c in challenges}
     for e in endings:
-        if not e.get("automatic") and e["id"] not in triggered:
+        if e.get("automatic") or e.get("viaChallenge"):
+            continue
+        if e["id"] not in triggered:
             err(f"Slutningen '{e['id']}' udløses aldrig af nogen kombination")
+    for e in endings:
+        if e.get("viaChallenge") and e["id"] not in challenge_endings:
+            err(f"Slutningen '{e['id']}' er markeret viaChallenge, men intet challenge bruger den")
+
+    # --- Challenges (docs/design/challenges.md) ---
+    ch_ids: set[str] = set()
+    for c in challenges:
+        if c["id"] in ch_ids:
+            err(f"Duplikeret challenge-id: {c['id']}")
+        ch_ids.add(c["id"])
+        for ref in c["solvedBy"]:
+            if ref not in element_ids:
+                err(f"Challenge '{c['id']}': ukendt element i solvedBy: '{ref}'")
+        # Et challenge man kun kan løse på én måde er en gætteleg, ikke en prøve
+        if len(c["solvedBy"]) < 5:
+            err(f"Challenge '{c['id']}' har kun {len(c['solvedBy'])} oplagte "
+                f"løsninger — kræver mindst 5, ellers er det en gætteleg")
+        if c["failEnding"] not in {e["id"] for e in endings}:
+            err(f"Challenge '{c['id']}': ukendt failEnding '{c['failEnding']}'")
+        if not isinstance(c.get("turns"), int) or c["turns"] < 2:
+            err(f"Challenge '{c['id']}': turns skal være et heltal ≥ 2")
+        # Replikkerne skal findes og have variation — et challenge er et
+        # nøglebeat, man kan møde i mange forskellige runs.
+        for ref, what in ((c["line"], "line"), (c["successLine"], "successLine")):
+            if ref not in all_line_ids:
+                err(f"Challenge '{c['id']}': ukendt replik '{ref}' ({what})")
+            else:
+                cnt = next(
+                    len(l["variants"]) for n2 in narrator for l in n2["lines"] if l["id"] == ref
+                )
+                if cnt < 5:
+                    err(f"Challenge '{c['id']}': '{ref}' har {cnt} varianter — kræver mindst 5")
+    if challenges:
+        info(f"Challenges: {len(challenges)} stk., "
+             f"{sum(len(c['solvedBy']) for c in challenges) // max(len(challenges), 1)} "
+             f"oplagte løsninger i snit")
+
+    # Sjældenhed (src/core/rarity.ts) udledes af grafen — samme formel her, så
+    # fordelingen kan ses og ikke skrider ubemærket når indholdet vokser.
+    rarity_depth = {e["id"]: 0 for e in elements if e.get("base")}
+    _ch = True
+    while _ch:
+        _ch = False
+        for c in combos:
+            a, b = c["pair"]
+            if a in rarity_depth and b in rarity_depth:
+                d = max(rarity_depth[a], rarity_depth[b]) + 1
+                if c["result"] not in rarity_depth or d < rarity_depth[c["result"]]:
+                    rarity_depth[c["result"]] = d
+                    _ch = True
+    n_recipes: dict[str, int] = {}
+    used_as: set[str] = set()
+    ending_els: set[str] = set()
+    max_cost: dict[str, int] = {}
+    for c in combos:
+        n_recipes[c["result"]] = n_recipes.get(c["result"], 0) + 1
+        used_as.update(c["pair"])
+        if c.get("ending"):
+            ending_els.add(c["result"])
+        max_cost[c["result"]] = max(max_cost.get(c["result"], 1), c.get("cost", 1))
+
+    base_ids = {e["id"] for e in elements if e.get("base")}
+
+    def _tier(eid: str) -> str:
+        if eid in base_ids:
+            score = 0
+        else:
+            score = rarity_depth.get(eid, 0)
+            if n_recipes.get(eid, 0) == 1:
+                score += 2
+            if eid not in used_as:
+                score += 2
+            score += 2 * (max_cost.get(eid, 1) - 1)
+        if eid in ending_els or score >= 14:
+            return "unique"
+        return "rare" if score >= 8 else "common"
+
+    dist = {"common": 0, "rare": 0, "unique": 0}
+    for e in elements:
+        dist[_tier(e["id"])] += 1
+    total_els = len(elements)
+    info(
+        f"Sjældenhed: {dist['common']} common ({dist['common']*100//total_els} %), "
+        f"{dist['rare']} rare ({dist['rare']*100//total_els} %), "
+        f"{dist['unique']} unique ({dist['unique']*100//total_els} %)"
+    )
+    if dist["unique"] > total_els * 0.10:
+        warn(f"{dist['unique']} unique-elementer er over 10 % — 'unique' mister sin betydning")
+    if dist["common"] < total_els * 0.45:
+        warn(f"Kun {dist['common']} common — de fleste fund bør være almindelige")
+    for eid in ending_els:
+        if _tier(eid) != "unique":
+            err(f"Slutnings-elementet '{eid}' er ikke unique — det er runnets klimaks")
+
+    # Obligatoriske problemer er spillets sidequests: de skal kunne løses på
+    # mange måder, ellers føles de som én rigtig løsning man skal gætte.
+    MIN_SOLUTIONS = 10
+    for act in acts:
+        for p in act.get("problems", []):
+            if not p.get("required"):
+                continue
+            solvers = [c for c in combos if c.get("solves") == p["id"]]
+            if len(solvers) < MIN_SOLUTIONS:
+                err(
+                    f"Problemet '{p['id']}' ({p.get('name')}) har kun "
+                    f"{len(solvers)} løsninger — kræver mindst {MIN_SOLUTIONS}, "
+                    f"så spilleren kan finde sin egen vej"
+                )
+            # Hver løsning skal have sin egen replik; ellers føles alternativerne
+            # som den samme løsning i forklædning.
+            without = [c for c in solvers if not c.get("narratorLine")]
+            if without:
+                err(
+                    f"Problemet '{p['id']}': {len(without)} løsning(er) uden "
+                    f"narratorLine — hver vej skal have sin egen kommentar"
+                )
     turn_limit = config.get("turnLimit")
     unlock_at = config.get("endingsUnlockAt")
     if not isinstance(unlock_at, int) or unlock_at < 0:
@@ -333,6 +486,8 @@ def main() -> int:
             if f not in set_flags:
                 err(f"Kombination {c['pair'][0]}+{c['pair'][1]} kræver flag '{f}', som aldrig sættes")
 
+    for note in notes:
+        print(f"ℹ️  {note}")
     for w in warnings:
         print(f"⚠️  {w}")
     for e_ in errors:

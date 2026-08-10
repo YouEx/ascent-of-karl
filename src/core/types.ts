@@ -22,6 +22,11 @@ export interface ElementDef {
    * Prototypen viser den som badge; senere er den brief til illustratoren.
    */
   karlMood?: string;
+  /**
+   * Kategori (docs/design/decisions.md). Beslutninger svarer på KATEGORIEN,
+   * ikke på elementet — ellers ville fire beslutninger kræve 748 replikker.
+   */
+  tag?: string;
 }
 
 export interface ComboDef {
@@ -65,6 +70,8 @@ export interface EndingDef {
   line: string;
   /** Udløses automatisk (alderdom) i stedet for via kombination */
   automatic?: boolean;
+  /** Udløses af et tabt challenge frem for en kombination */
+  viaChallenge?: boolean;
 }
 
 export interface ProblemDef {
@@ -120,6 +127,8 @@ export interface NarratorContentDef {
   resumeLine?: string;
   /** Replik når en skæbne blev afværget, fordi Karl har for få opdagelser endnu */
   deflectedEndingLine?: string;
+  /** Replik når fristen på et challenge er ved at løbe ud */
+  challengeWarningLine?: string;
   behavior: {
     /** Elementet fortælleren driller spilleren for at spamme (Akt I: sten) */
     spamElement: string;
@@ -142,6 +151,65 @@ export interface NarratorContentDef {
   flagMemory: string[];
   /** Roterende pulje af generiske fiasko-replikker (aldrig samme to gange i træk) */
   genericFailure: string[];
+  /**
+   * Roterende pulje til opdagelser uden håndskrevet replik. En opdagelse må
+   * aldrig møde tavshed — det er spillets vigtigste øjeblik.
+   * Bruger {element} til det netop opfundne.
+   */
+  discoveryFallback?: string[];
+}
+
+/**
+ * Et challenge: en trussel med en frist. Til forskel fra aktens valgfrie
+ * problemer kan man ikke gå udenom — løber somrene ud, slutter historien.
+ */
+export interface ChallengeDef {
+  id: string;
+  emoji: string;
+  title: string;
+  /** Situationen, som fortælleren præsenterer den */
+  line: string;
+  /** Antal somre til at finde en udvej */
+  turns: number;
+  /** Elementer der ALTID løser den — de oplagte svar */
+  solvedBy: string[];
+  /** Replik når challenget løses (bruger {element}) */
+  successLine: string;
+  /** Slutningen hvis fristen løber ud */
+  failEnding: string;
+  /** Dukker tidligst op på denne side — giver plads til at nå værktøjet */
+  minPage?: number;
+}
+
+/**
+ * Et svar på en beslutning, defineret pr. element-kategori.
+ * `default` fanger alt andet, så ethvert element giver et meningsfuldt svar.
+ */
+export interface DecisionResponse {
+  /** Kongens karakter, 1-5 */
+  score: number;
+  /** Replik-id (5+ varianter) */
+  line: string;
+  /** Hvor meget svaret flytter runnet i hver retning */
+  tracks?: Record<string, number>;
+  /** Flags svaret sætter — dét der lader ét valg lukke en anden dør */
+  setsFlags?: string[];
+}
+
+/**
+ * En beslutning: verden stiller Karl et spørgsmål på en fast side, og
+ * spillerens næste kombination er svaret.
+ */
+export interface DecisionDef {
+  id: string;
+  emoji: string;
+  title: string;
+  /** Situationen — replik-id med 5+ varianter */
+  line: string;
+  /** Siden den altid dukker op på (10, 20, 30, 40) */
+  page: number;
+  /** Svar pr. element-kategori. SKAL indeholde "default". */
+  responses: Record<string, DecisionResponse>;
 }
 
 export interface ContentBundle {
@@ -150,6 +218,8 @@ export interface ContentBundle {
   acts: ActDef[];
   narrator: NarratorContentDef[];
   endings: EndingDef[];
+  challenges: ChallengeDef[];
+  decisions: DecisionDef[];
   config: {
     /** Max antal kombinationsforsøg (somre) pr. run — derefter alderdoms-slutning */
     turnLimit: number;
@@ -162,8 +232,18 @@ export interface ContentBundle {
   };
 }
 
+/** Hvad der skete med challenget i denne tur (docs/design/challenges.md) */
+export type ChallengeEvent =
+  | { kind: "spawned"; def: ChallengeDef }
+  | { kind: "ticking"; def: ChallengeDef; turnsLeft: number }
+  | { kind: "solved"; def: ChallengeDef; by: ElementDef }
+  | { kind: "failed"; def: ChallengeDef };
+
 /** Resultat af et kombinationsforsøg (PRD §2.1 punkt 3) */
-export type CombineOutcome =
+export type CombineOutcome = {
+  /** Sat når turen også rørte et challenge */
+  challenge?: ChallengeEvent;
+} & (
   | {
       kind: "discovery";
       combo: ComboDef;
@@ -182,4 +262,4 @@ export type CombineOutcome =
       endingDeflected?: boolean;
     }
   | { kind: "gated"; combo: ComboDef; unsolved: ProblemDef[] }
-  | { kind: "nothing" };
+  | { kind: "nothing" });

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "ulve",
+    "emoji": "🐺",
+    "title": "Wolves at the treeline",
+    "line": "challenge-ulve",
+    "turns": 4,
+    "minPage": 6,
+    "solvedBy": [
+      "ild",
+      "spyd",
+      "hund",
+      "bue",
+      "slynge",
+      "stenoekse",
+      "faelde",
+      "hytte",
+      "harpun",
+      "koelle"
+    ],
+    "successLine": "challenge-ulve-loest",
+    "failEnding": "aedt"
+  },
+  {
+    "id": "toerke",
+    "emoji": "☀️",
+    "title": "The stream has stopped",
+    "line": "challenge-toerke",
+    "turns": 5,
+    "minPage": 12,
+    "solvedBy": [
+      "keramik",
+      "regn",
+      "have",
+      "toemmerflaade",
+      "baad",
+      "gravestok",
+      "morter",
+      "sne",
+      "is"
+    ],
+    "successLine": "challenge-toerke-loest",
+    "failEnding": "toerstet"
+  },
+  {
+    "id": "sygdom",
+    "emoji": "🤒",
+    "title": "The fever",
+    "line": "challenge-sygdom",
+    "turns": 4,
+    "minPage": 18,
+    "solvedBy": [
+      "medicin",
+      "shaman",
+      "ild",
+      "toej",
+      "hytte",
+      "sengeleje",
+      "honning",
+      "helligsted",
+      "ritual",
+      "splint"
+    ],
+    "successLine": "challenge-sygdom-loest",
+    "failEnding": "feberen"
+  }
+]

@@ -35,9 +35,17 @@ export interface NarratorState {
   usedOnce: string[];
   /** Rotationsindeks i den generiske fiasko-pulje */
   genericIndex: number;
+  /** Rotation i puljen af generiske opdagelses-replikker */
+  discoveryIndex: number;
   /** Forsøgstæller + hvornår slow-puljen sidst fyrede (cooldown) */
   attempts: number;
   lastSlowAttempt: number;
+  /**
+   * Har "du var længe om det"-replikken lydt i dette run?
+   * Den fyrede 2,8 gange pr. run og blev spillets mest hørte adfærds-replik
+   * — sjov én gang, docerende tre. Nu højst én gang pr. liv.
+   */
+  slowUsed: boolean;
 }
 
 export function freshNarratorState(seed = 1): NarratorState {
@@ -57,9 +65,22 @@ export function freshNarratorState(seed = 1): NarratorState {
     lastVariant: {},
     usedOnce: [],
     genericIndex: 0,
+    discoveryIndex: 0,
     attempts: 0,
     lastSlowAttempt: -100,
+    slowUsed: false,
   };
+}
+
+/**
+ * Kontekst til pladsholdere. `a`/`b` er element-id'er på det kombinerede par;
+ * `element` er et allerede opslået navn (bruges ved opdagelser, hvor
+ * {element} skal være det netop opfundne).
+ */
+interface LineContext {
+  a?: string;
+  b?: string;
+  element?: string;
 }
 
 /** En afspillet replik: id, valgt variant-index (til lydfil-opslag) og udfyldt tekst. */
@@ -76,8 +97,6 @@ const HINT_STEP = 4;
 const SLOW_MS = 45_000;
 /** Et forsøg hurtigere end dette efter det forrige regnes som "meget hurtigt" (ms) */
 const FAST_MS = 2_000;
-/** Mindst så mange forsøg mellem to slow-kommentarer */
-const SLOW_COOLDOWN = 5;
 
 /**
  * Fortælleren reagerer på hvert kombinationsforsøg med præcis én (eller ingen) replik.
@@ -145,17 +164,20 @@ export class Narrator {
   }
 
   /** Udfyld pladsholdere: {a}, {b}, {element} → elementnavne med små bogstaver. */
-  private fill(text: string, ctx?: { a?: string; b?: string }): string {
+  private fill(text: string, ctx?: LineContext): string {
     const name = (id: string | null | undefined) =>
       id ? this.engine.element(id).name.toLowerCase() : "";
+    // {element} peger normalt på det element spilleren fejer med; ved en
+    // opdagelse er det i stedet det netop opfundne, som ctx leverer direkte.
+    const element = ctx?.element?.toLowerCase() ?? name(this.state.sweepElement);
     return text
       .replaceAll("{a}", name(ctx?.a))
       .replaceAll("{b}", name(ctx?.b))
-      .replaceAll("{element}", name(this.state.sweepElement));
+      .replaceAll("{element}", element);
   }
 
   /** Vælg en replik og bogfør den, så den aldrig gentages i træk. */
-  private speak(id: string, ctx?: { a?: string; b?: string }): SpokenLine {
+  private speak(id: string, ctx?: LineContext): SpokenLine {
     const def = this.line(id);
     this.state.lastLineId = id;
     if (def.once) this.state.usedOnce.push(id);
@@ -173,8 +195,14 @@ export class Narrator {
     const key = pairKey(a, b);
     this.state.attempts++;
 
+    // Sammenhængende brug af spam-elementet. Tælleren SKAL nulstilles: uden
+    // det stod den fast på fx 3, og behavior.spam["3"] matchede så på hvert
+    // eneste efterfølgende forsøg — spilleren fik "tredje gang med stenen"
+    // mens de kombinerede bær med bær.
     if (a === c.behavior.spamElement || b === c.behavior.spamElement) {
       this.state.spamCount++;
+    } else {
+      this.state.spamCount = 0;
     }
 
     const identicalPair = this.state.lastPair === key;
@@ -222,13 +250,16 @@ export class Narrator {
     const agingHit = behavior.aging?.[String(this.engine.remainingTurns())];
     if (agingHit) return agingHit;
 
-    // Meget langsom: lang pause før netop dette forsøg (med cooldown)
+    // Meget langsom: lang pause før netop dette forsøg. Højst ÉN gang pr.
+    // run — reglen hænger på triggeren, ikke på replik-id'et, så den holder
+    // også når puljen får flere replikker.
     if (
+      !this.state.slowUsed &&
       elapsedMs !== undefined &&
       elapsedMs >= SLOW_MS &&
-      behavior.slow.length > 0 &&
-      this.state.attempts - this.state.lastSlowAttempt >= SLOW_COOLDOWN
+      behavior.slow.length > 0
     ) {
+      this.state.slowUsed = true;
       this.state.lastSlowAttempt = this.state.attempts;
       return behavior.slow[Math.floor(this.rand() * behavior.slow.length)];
     }
@@ -269,6 +300,22 @@ export class Narrator {
     return undefined;
   }
 
+  /**
+   * Roterende pulje til opdagelser uden håndskrevet replik. Samme
+   * no-repeat-princip som de generiske fiaskoer, så en spiller der opdager
+   * meget ikke hører det samme to gange i træk.
+   */
+  private discoveryLine(): string | undefined {
+    const pool = (this.content().discoveryFallback ?? []).filter((id) => {
+      const def = this.line(id);
+      return this.flagsAllow(def) && id !== this.state.lastLineId;
+    });
+    if (pool.length === 0) return undefined;
+    const id = pool[this.state.discoveryIndex % pool.length];
+    this.state.discoveryIndex++;
+    return id;
+  }
+
   private genericFailureLine(): string {
     const pool = this.content().genericFailure.filter((id) => {
       const def = this.line(id);
@@ -300,6 +347,20 @@ export class Narrator {
       return this.speak(ending.line, ctx);
     }
 
+    // 0a. Challenges presser alt andet i baggrunden — de har en frist
+    if (outcome.challenge) {
+      const ch = outcome.challenge;
+      if (ch.kind === "spawned") return this.speak(ch.def.line, ctx);
+      if (ch.kind === "solved") {
+        return this.speak(ch.def.successLine, { ...ctx, element: ch.by.name });
+      }
+      // "failed" håndteres af slutnings-grenen ovenfor (state.ended er sat)
+      if (ch.kind === "ticking" && ch.turnsLeft <= 2) {
+        const warn = this.content().challengeWarningLine;
+        if (warn) return this.speak(warn, ctx);
+      }
+    }
+
     // 0b. Afværget skæbne: Karl kiggede døden i øjnene og gik hjem igen
     if (
       (outcome.kind === "discovery" || outcome.kind === "known") &&
@@ -315,6 +376,12 @@ export class Narrator {
       // Ved age-up er engine allerede i næste akt — brug akten opdagelsen skete i.
       if (outcome.ageUp && outcome.act.ageUpLine) return this.speak(outcome.act.ageUpLine, ctx);
       if (outcome.combo.narratorLine) return this.speak(outcome.combo.narratorLine, ctx);
+      // En opdagelse må ALDRIG møde tavshed. Kun 38 af 205 kombinationer har
+      // en håndskrevet replik; resten faldt før igennem uden en lyd.
+      const generic = this.discoveryLine();
+      if (generic) {
+        return this.speak(generic, { ...ctx, element: outcome.element.name });
+      }
       return undefined;
     }
 

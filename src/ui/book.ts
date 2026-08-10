@@ -1,6 +1,8 @@
 import type { Engine } from "../core/engine";
 import { buildTimeline } from "../core/timeline";
 import type { TimelineNode } from "../core/timeline";
+import { RARITY_LABEL, computeRarity } from "../core/rarity";
+import type { RarityInfo } from "../core/rarity";
 
 /**
  * Bogen: leksikonet er den primære flade — det åbne opslag viser den valgte
@@ -24,6 +26,7 @@ const MOOD_LABELS: Record<string, string> = {
 };
 
 export class BookView {
+  private readonly rarity: Map<string, RarityInfo>;
   private selectedAct: number;
   private selectedNode: string | null = null;
   private timelineOpen: boolean;
@@ -32,6 +35,7 @@ export class BookView {
     private engine: Engine,
     private container: HTMLElement,
   ) {
+    this.rarity = computeRarity(engine.content);
     this.selectedAct = engine.currentAct().act;
     this.timelineOpen = localStorage.getItem(TIMELINE_OPEN_KEY) === "1";
     container.innerHTML = `
@@ -127,10 +131,12 @@ export class BookView {
     }
     const def = this.engine.element(this.selectedNode);
     const mood = def.karlMood ? MOOD_LABELS[def.karlMood] : undefined;
+    // Sjældenheden skal kunne genfindes senere, ikke kun ses i fundets øjeblik
+    const tier = this.rarity.get(def.id)?.tier ?? "common";
     entry.innerHTML = `<div class="entry">
       <div class="entry-emoji">${def.emoji}</div>
       <div class="entry-body">
-        <h3>${def.name}</h3>
+        <h3>${def.name} <span class="rarity rarity-${tier}">${RARITY_LABEL[tier]}</span></h3>
         <p>${def.flavor ?? ""}</p>
         ${def.note ? `<p class="note">📜 ${def.note}</p>` : ""}
         ${mood ? `<p class="mood">${mood}</p>` : ""}

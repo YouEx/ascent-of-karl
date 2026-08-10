@@ -95,5 +95,32 @@
     "achievement": "A Whole Life",
     "line": "ending-oldage",
     "automatic": true
+  },
+  {
+    "id": "aedt",
+    "title": "Eaten",
+    "emoji": "🐺",
+    "tone": "tragic",
+    "achievement": "Wolf Food",
+    "line": "ending-aedt",
+    "viaChallenge": true
+  },
+  {
+    "id": "toerstet",
+    "title": "The Dry Season",
+    "emoji": "🏜️",
+    "tone": "tragic",
+    "achievement": "The Dry Season",
+    "line": "ending-toerstet",
+    "viaChallenge": true
+  },
+  {
+    "id": "feberen",
+    "title": "The Fever Took Him",
+    "emoji": "🕯️",
+    "tone": "tragic",
+    "achievement": "The Fever",
+    "line": "ending-feberen",
+    "viaChallenge": true
   }
 ]

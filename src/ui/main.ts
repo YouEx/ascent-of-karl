@@ -6,6 +6,8 @@ import { loadContent } from "../content";
 import type { CombineOutcome, ElementDef } from "../core/types";
 import { BookView } from "./book";
 import { initAudio, playLine, stopAudio } from "./audio";
+import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
+import { RARITY_LABEL, computeRarity } from "../core/rarity";
 
 const SAVE_KEY = "kolde-karl-save-v1";
 const NARRATOR_SAVE_KEY = "kolde-karl-narrator-v1";
@@ -14,6 +16,9 @@ const ACHIEVEMENTS_KEY = "kolde-karl-achievements";
 
 const content = loadContent();
 const engine = new Engine(content);
+// Challenges spawner ud fra dette seed — nyt pr. liv, gemt i saven, så et
+// genindlæst run ikke kan ryste terningerne igen.
+engine.loadState({ ...engine.getState(), seed: (Math.random() * 2 ** 31) | 0 });
 // Nyt seed pr. playthrough → nye variantvalg hver gang (docs/design/fortaelleren.md)
 const narrator = new Narrator(engine, freshNarratorState((Math.random() * 2 ** 31) | 0));
 
@@ -89,6 +94,7 @@ app.innerHTML = `
     </div>
   </section>
 
+  <section id="challenge" hidden aria-live="assertive"></section>
   <section id="problems" aria-label="Karl's problems"></section>
 
   <div id="tools">
@@ -121,6 +127,7 @@ app.innerHTML = `
 const el = {
   age: document.getElementById("age")!,
   problems: document.getElementById("problems")!,
+  challenge: document.getElementById("challenge")!,
   narratorText: document.getElementById("narrator-text")!,
   bubble: document.getElementById("bubble")!,
   muteBtn: document.getElementById("mute") as HTMLButtonElement,
@@ -143,6 +150,9 @@ const el = {
   restart: document.getElementById("restart")!,
   titleScreen: document.getElementById("title-screen")!,
 };
+
+// Sjældenhed udledes én gang af indholdet — den kan ikke ændre sig i et run
+const rarity = computeRarity(content);
 
 const book = new BookView(engine, document.getElementById("book")!);
 
@@ -226,6 +236,26 @@ function renderSlots(): void {
   el.slotA.classList.toggle("filled", !!a);
   el.slotB.classList.toggle("filled", !!b);
   el.combineBtn.disabled = !(a && b);
+  renderSelection();
+}
+
+/**
+ * Markér de valgte elementer i griddet. Uden dette var den eneste synlige
+ * markering browserens fokus-ring på den sidst klikkede knap — så det så ud
+ * som om kun ét af de to valgte var aktivt.
+ *
+ * Opdaterer klasser på eksisterende knapper i stedet for at gentegne
+ * griddet, så scroll-position og fokus ikke ryger ved hvert valg.
+ */
+function renderSelection(): void {
+  for (const btn of el.grid.querySelectorAll<HTMLElement>(".element")) {
+    const id = btn.dataset.id!;
+    const count = selected.filter((s) => s === id).length;
+    btn.classList.toggle("is-selected", count > 0);
+    // Samme element i begge slots (fx sten + sten) — vis at det tæller to gange
+    btn.classList.toggle("is-selected-twice", count === 2);
+    btn.setAttribute("aria-pressed", String(count > 0));
+  }
 }
 
 function renderGrid(): void {
@@ -241,10 +271,11 @@ function renderGrid(): void {
     btn.className = `element ${freshFinds.has(def.id) ? "is-new" : ""}`;
     btn.dataset.id = def.id;
     btn.innerHTML = `<span class="emoji">${def.emoji}</span><span class="name">${def.name}</span>`;
-    attachDrag(btn, def);
+    attachSelect(btn, def);
     el.grid.appendChild(btn);
   }
   el.gridEmpty.hidden = visible.length > 0;
+  renderSelection();
 }
 
 function renderBookBadge(): void {
@@ -269,11 +300,17 @@ function openBook(): void {
   el.bookPanel.classList.add("open");
   document.body.classList.add("book-open");
   book.render();
+  openOverlay(el.bookPanel, {
+    label: "The book — your encyclopedia of history",
+    onClose: () => {
+      el.bookPanel.classList.remove("open");
+      document.body.classList.remove("book-open");
+    },
+  });
 }
 
 function closeBook(): void {
-  el.bookPanel.classList.remove("open");
-  document.body.classList.remove("book-open");
+  if (el.bookPanel.classList.contains("open")) closeTopOverlay();
 }
 
 el.bookBtn.addEventListener("click", () =>
@@ -284,19 +321,45 @@ el.bookClose.addEventListener("click", closeBook);
 // --- Modaler ---
 function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" }>): void {
   const d = outcome.element;
+  // "Write it in the book" antydede et valg der ikke findes — opdagelsen er
+  // allerede skrevet ind. Kortet er en belønning, ikke en formular: emojien
+  // står i centrum med stråler bagved, og knappen bekræfter bare.
+  //
+  // Sjældenheden (src/core/rarity.ts) styrer hvor stort det fejres: common
+  // får et roligt pop, rare får stråler og gnister, unique får hele showet.
+  const tier = rarity.get(d.id)?.tier ?? "common";
+  const sparks = tier === "unique" ? 16 : tier === "rare" ? 8 : 0;
   el.card.innerHTML = `
-    <div class="card-inner">
-      <div class="card-emoji">${d.emoji}</div>
+    <div class="card-inner tier-${tier}">
+      <p class="card-kicker">${RARITY_LABEL[tier]}</p>
+      <div class="card-stage">
+        ${tier === "common" ? "" : '<div class="card-rays" aria-hidden="true"></div>'}
+        ${tier === "unique" ? '<div class="card-halo" aria-hidden="true"></div>' : ""}
+        <div class="card-burst" aria-hidden="true">
+          ${Array.from({ length: sparks }, (_, i) =>
+            `<i style="--i:${i};--n:${sparks}"></i>`).join("")}
+        </div>
+        <div class="card-emoji">${d.emoji}</div>
+      </div>
       <h2>${d.name}</h2>
-      <p>${d.flavor ?? ""}</p>
+      <p class="card-flavor">${d.flavor ?? ""}</p>
       ${d.note ? `<p class="note">📜 ${d.note}</p>` : ""}
       ${outcome.solved ? `<p class="solved-badge">✓ Problem solved: ${outcome.solved.name}</p>` : ""}
-      <button id="card-close">Write it in the book</button>
+      <button id="card-close">Nice</button>
     </div>`;
   el.card.hidden = false;
-  document.getElementById("card-close")!.addEventListener("click", () => {
-    el.card.hidden = true;
+  openOverlay(el.card, {
+    label: `Discovered: ${d.name}`,
+    // Combine-knappen deaktiveres når slots ryddes, så den kan ikke tage
+    // fokus tilbage. Bogen er det naturlige næste sted efter en opdagelse.
+    fallbackFocus: () => el.bookBtn,
+    onClose: () => {
+      el.card.hidden = true;
+    },
   });
+  document
+    .getElementById("card-close")!
+    .addEventListener("click", () => closeTopOverlay());
 }
 
 function showAgeUpBanner(): void {
@@ -308,11 +371,19 @@ function showAgeUpBanner(): void {
       <button id="banner-close">Into the future</button>
     </div>`;
   el.banner.hidden = false;
-  document.getElementById("banner-close")!.addEventListener("click", () => {
-    el.banner.hidden = true;
-    const intro = narrator.actIntro();
-    if (intro) say(intro);
+  // Uanset hvordan banneret lukkes (knap, baggrund, Esc, back) skal
+  // akt-introen lyde — ellers straffes spilleren for at lukke "forkert".
+  openOverlay(el.banner, {
+    label: `A new age: Act ${act.act}, ${act.name}`,
+    onClose: () => {
+      el.banner.hidden = true;
+      const intro = narrator.actIntro();
+      if (intro) say(intro);
+    },
   });
+  document
+    .getElementById("banner-close")!
+    .addEventListener("click", () => closeTopOverlay());
 }
 
 function renderTrophyModal(): void {
@@ -334,9 +405,15 @@ function renderTrophyModal(): void {
       <button id="trophy-close">Close</button>
     </div>`;
   el.trophyModal.hidden = false;
-  document.getElementById("trophy-close")!.addEventListener("click", () => {
-    el.trophyModal.hidden = true;
+  openOverlay(el.trophyModal, {
+    label: "Karl's fates",
+    onClose: () => {
+      el.trophyModal.hidden = true;
+    },
   });
+  document
+    .getElementById("trophy-close")!
+    .addEventListener("click", () => closeTopOverlay());
 }
 
 el.trophiesBtn.addEventListener("click", renderTrophyModal);
@@ -345,6 +422,9 @@ function showEndingScreen(): void {
   const ending = engine.activeEnding();
   if (!ending) return;
   const isNew = unlockAchievement(ending.id);
+  // Carl the Lucky: hele livet igennem uden ét eneste challenge.
+  // Ved 3 %-stigende-til-15 % sker det i under 1 % af alle runs.
+  const lucky = engine.neverChallenged() && unlockAchievement("carl-the-lucky");
   const state = engine.getState();
   document.body.classList.add("run-over");
   closeBook();
@@ -357,10 +437,24 @@ function showEndingScreen(): void {
       ${isNew
         ? `<p class="achievement">🏆 Achievement unlocked: <strong>${ending.achievement}</strong></p>`
         : `<p class="achievement known">🏆 ${ending.achievement}</p>`}
+      ${lucky
+        ? `<p class="achievement">🍀 Achievement unlocked: <strong>Carl the Lucky</strong><br>
+             <small>A whole life, and the world never once came for him.</small></p>`
+        : ""}
       <button id="ending-restart">Live again</button>
       <button id="ending-stats" class="secondary">Copy run summary</button>
     </div>`;
   el.ending.hidden = false;
+  // Terminal (se docs/design/ux-checklist.md §1): runnet ER slut, så der er
+  // ingen tilstand at vende tilbage til. "Live again" er den fremadrettede
+  // handling der opløser den — derfor ingen baggrundsklik/Esc/back her.
+  openOverlay(el.ending, {
+    label: `Karl's fate: ${ending.title}`,
+    terminal: true,
+    onClose: () => {
+      el.ending.hidden = true;
+    },
+  });
   document.getElementById("ending-restart")!.addEventListener("click", () => {
     clearSave();
     location.reload();
@@ -408,6 +502,7 @@ function performCombine(a: string, b: string): void {
   }
   if (line) say(line);
   renderAge();
+  renderChallenge();
   if (ending) {
     save();
     showEndingScreen();
@@ -417,10 +512,14 @@ function performCombine(a: string, b: string): void {
   renderSlots();
 }
 
-// --- Interaktion: drag ovenpå et andet element er primær; tap-tap er fallback ---
-const DRAG_THRESHOLD = 8;
-let ghost: HTMLElement | null = null;
-
+/**
+ * Interaktion: tap-tap (PRD §2.1 afviger bevidst fra drag).
+ *
+ * Drag blev fjernet 2026-08-07: griddet er blevet langt nok til at kræve
+ * scroll, og en drag-gestus der starter på et element stjæler den lodrette
+ * bevægelse fra scrollen. Man kunne ikke komme ned i listen uden at samle
+ * noget op. Tap-tap kan begge dele uden at slås om den samme bevægelse.
+ */
 function selectElement(def: ElementDef): void {
   if (!selected[0]) selected[0] = def.id;
   else if (!selected[1]) selected[1] = def.id;
@@ -428,74 +527,11 @@ function selectElement(def: ElementDef): void {
   renderSlots();
 }
 
-function attachDrag(btn: HTMLButtonElement, def: ElementDef): void {
-  btn.addEventListener("pointerdown", (down) => {
-    down.preventDefault();
-    btn.setPointerCapture(down.pointerId);
-    let moved = false;
-
-    const onMove = (move: PointerEvent) => {
-      if (
-        !moved &&
-        Math.hypot(move.clientX - down.clientX, move.clientY - down.clientY) < DRAG_THRESHOLD
-      ) {
-        return;
-      }
-      if (!moved) {
-        moved = true;
-        ghost = document.createElement("div");
-        ghost.className = "drag-ghost";
-        ghost.textContent = def.emoji;
-        document.body.appendChild(ghost);
-        btn.classList.add("dragging");
-      }
-      ghost!.style.left = `${move.clientX}px`;
-      ghost!.style.top = `${move.clientY}px`;
-      for (const other of document.querySelectorAll(".drop-target")) {
-        other.classList.remove("drop-target");
-      }
-      const target = document
-        .elementFromPoint(move.clientX, move.clientY)
-        ?.closest<HTMLElement>(".element, .slot");
-      target?.classList.add("drop-target");
-    };
-
-    const onUp = (up: PointerEvent) => {
-      btn.removeEventListener("pointermove", onMove);
-      btn.removeEventListener("pointerup", onUp);
-      btn.removeEventListener("pointercancel", onUp);
-      btn.classList.remove("dragging");
-      ghost?.remove();
-      ghost = null;
-      for (const other of document.querySelectorAll(".drop-target")) {
-        other.classList.remove("drop-target");
-      }
-      if (up.type === "pointercancel") return;
-
-      if (!moved) {
-        freshFinds.delete(def.id);
-        btn.classList.remove("is-new");
-        selectElement(def);
-        return;
-      }
-      const target = document
-        .elementFromPoint(up.clientX, up.clientY)
-        ?.closest<HTMLElement>(".element, .slot");
-      if (!target) return;
-      // Slip på et element (også sig selv) → kombinér straks
-      if (target.dataset.id) {
-        performCombine(def.id, target.dataset.id);
-      } else if (target.classList.contains("slot")) {
-        // Slip i en slot i docken → læg elementet der
-        if (target.id === "slot-a") selected[0] = def.id;
-        else selected[1] = def.id;
-        renderSlots();
-      }
-    };
-
-    btn.addEventListener("pointermove", onMove);
-    btn.addEventListener("pointerup", onUp);
-    btn.addEventListener("pointercancel", onUp);
+function attachSelect(btn: HTMLButtonElement, def: ElementDef): void {
+  btn.addEventListener("click", () => {
+    freshFinds.delete(def.id);
+    btn.classList.remove("is-new");
+    selectElement(def);
   });
 }
 
@@ -567,8 +603,33 @@ function startGame(resume: boolean): void {
   });
 }
 
+/**
+ * Challenge-banneret. Bevidst placeret ØVERST og med aria-live="assertive":
+ * en frist der løber er ikke noget man må overse, og den er den eneste
+ * situation i spillet hvor tid faktisk presser.
+ */
+function renderChallenge(): void {
+  const ch = engine.activeChallenge();
+  if (!ch) {
+    el.challenge.hidden = true;
+    return;
+  }
+  const { def, active } = ch;
+  const urgent = active.turnsLeft <= 2;
+  el.challenge.innerHTML = `
+    <div class="challenge-inner${urgent ? " urgent" : ""}">
+      <span class="ch-emoji">${def.emoji}</span>
+      <div class="ch-body">
+        <strong>${def.title}</strong>
+        <span class="ch-turns">${active.turnsLeft} summer${active.turnsLeft === 1 ? "" : "s"} to find a way out</span>
+      </div>
+    </div>`;
+  el.challenge.hidden = false;
+}
+
 function renderAll(): void {
   renderAge();
+  renderChallenge();
   renderProblems();
   renderSlots();
   renderGrid();
@@ -578,5 +639,6 @@ function renderAll(): void {
 }
 
 // --- Opstart ---
+initOverlays();
 renderAll();
 showTitleScreen();

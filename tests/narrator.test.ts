@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
+import { freshChallengeState } from "../src/core/challenge";
 import { Narrator, freshNarratorState } from "../src/narrator/narrator";
 import { loadContent } from "../src/content";
 
@@ -211,7 +212,7 @@ describe("Narrator: nye adfærds-triggere", () => {
     attempt(engine, narrator, "baer", "ler");
     attempt(engine, narrator, "baer", "pind");
     attempt(engine, narrator, "baer", "graes");
-    const line = attempt(engine, narrator, "baer", "larver");
+    const line = attempt(engine, narrator, "baer", "fugl");
     expect(line?.id).toBe("sweep-4");
     expect(line?.text).toContain("berries");
   });
@@ -234,12 +235,24 @@ describe("Narrator: nye adfærds-triggere", () => {
     expect(line?.id).toBe("slow-1");
   });
 
-  it("slow har cooldown — fyrer ikke ved to lange pauser lige efter hinanden", () => {
+  it("slow fyrer HØJST ÉN gang pr. run, uanset hvor mange pauser der er", () => {
+    // Målt til 2,8 gange pr. run før: sjov én gang, docerende tre.
     const { engine, narrator } = setup();
     const first = attempt(engine, narrator, "baer", "ler", 60_000);
     expect(first?.id).toBe("slow-1");
-    const second = attempt(engine, narrator, "baer", "pind", 60_000);
-    expect(second?.id).not.toBe("slow-1");
+    for (const [a, b] of [
+      ["baer", "pind"], ["ler", "pind"], ["dyr", "pind"], ["fugl", "pind"],
+      ["stamme", "pind"], ["graes", "pind"], ["vand", "pind"],
+    ] as const) {
+      expect(attempt(engine, narrator, a, b, 60_000)?.id).not.toBe("slow-1");
+    }
+  });
+
+  it("engangs-reglen overlever save/load", () => {
+    const { engine, narrator } = setup();
+    attempt(engine, narrator, "baer", "ler", 60_000);
+    const revived = new Narrator(engine, JSON.parse(JSON.stringify(narrator.getState())));
+    expect(attempt(engine, revived, "baer", "pind", 60_000)?.id).not.toBe("slow-1");
   });
 });
 
@@ -259,6 +272,8 @@ describe("Narrator: slutninger og aldring", () => {
     solvedProblems: [],
     attempts: 0,
     ended: null,
+    challenges: freshChallengeState(),
+    seed: 1,
   };
 
   it("slutningens replik overtrumfer alt andet", () => {
@@ -299,5 +314,66 @@ describe("Narrator: save/load", () => {
     const outcome = engine.combine("baer", "ler");
     const line = restored.react("baer", "ler", outcome);
     expect(line?.id).toBe("repeat-3");
+  });
+});
+
+describe("Narrator: en opdagelse møder aldrig tavshed", () => {
+  it("kommenterer også kombinationer uden håndskrevet replik", () => {
+    const { engine, narrator } = setup();
+    // nabo + fugl -> fjer har ingen narratorLine; før faldt den lydløst igennem
+    const combo = content.combos.find(
+      (c) => c.result === "fjer" && !c.narratorLine,
+    );
+    expect(combo, "forudsætning: fjer har ingen håndskrevet replik").toBeTruthy();
+
+    const line = attempt(engine, narrator, "nabo", "fugl");
+    expect(line, "fortælleren tav ved en opdagelse").toBeTruthy();
+    expect(line!.text.length).toBeGreaterThan(10);
+  });
+
+  it("bruger ingen pladsholdere — puljen skal kunne indtales", () => {
+    // Lyd-pipelinen springer varianter med {} over. Ville opdagelses-puljen
+    // bruge {element}, ville fortælleren være tavs i spillets vigtigste
+    // øjeblik. Kortet viser navnet; replikken behøver ikke gentage det.
+    const act1 = content.narrator.find((n) => n.act === 1)!;
+    for (const id of act1.discoveryFallback ?? []) {
+      const def = act1.lines.find((l) => l.id === id)!;
+      for (const v of def.variants) expect(v).not.toContain("{");
+    }
+  });
+
+  it("gentager ikke samme opdagelses-replik to gange i træk", () => {
+    const { engine, narrator } = setup();
+    const ids: string[] = [];
+    for (const [a, b] of [
+      ["nabo", "fugl"], ["sten", "vand"], ["ler", "vand"], ["pind", "pind"],
+    ] as const) {
+      const line = attempt(engine, narrator, a, b);
+      if (line) ids.push(line.id);
+    }
+    for (let i = 1; i < ids.length; i++) expect(ids[i]).not.toBe(ids[i - 1]);
+  });
+});
+
+describe("Narrator: spam-tælleren nulstilles", () => {
+  it("nævner ikke stenen når spilleren er gået videre til noget andet", () => {
+    const { engine, narrator } = setup();
+    // Tre mislykkede forsøg med sten bringer tælleren til spam-tærsklen
+    attempt(engine, narrator, "sten", "graes");
+    attempt(engine, narrator, "sten", "ler");
+    attempt(engine, narrator, "sten", "larver");
+
+    // Herefter noget helt uden sten: replikken må ikke handle om sten
+    const line = attempt(engine, narrator, "pind", "graes");
+    expect(line?.id).not.toMatch(/^spam-/);
+    if (line) expect(line.text.toLowerCase()).not.toContain("stone");
+  });
+
+  it("fyrer stadig når stenen faktisk bruges tre gange i træk", () => {
+    const { engine, narrator } = setup();
+    attempt(engine, narrator, "sten", "graes");
+    attempt(engine, narrator, "sten", "ler");
+    const line = attempt(engine, narrator, "sten", "larver");
+    expect(line?.id).toBe("spam-3");
   });
 });

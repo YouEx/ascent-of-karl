@@ -33,3 +33,26 @@ jobs:
         run: npm test
       - name: Typecheck + build
         run: npm run build
+
+  ux-audit:
+    # UX-dommeren (docs/design/ux-checklist.md). Kræver en rigtig browser:
+    # flugtveje, fokus og history kan ikke testes i jsdom.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Uden version: bruger projektets egen playwright, så browser-build og
+      # bibliotek matcher. En pinnet version her hentede v1155, mens
+      # biblioteket ville have v1234, og jobbet fejlede.
+      - name: Hent Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start dev-server
+        run: |
+          npx vite --port 5199 --strictPort &
+          npx wait-on http://localhost:5199/ --timeout 60000
+      - name: UX-audit
+        run: npm run ux
