@@ -5,8 +5,10 @@
 ## Sprog: engelsk
 
 Fortælleren taler engelsk, og al spiller-vendt tekst er på engelsk. Det ophæver
-PRD §3.3's "dansk først" (opdateres ved næste PRD-versionsbump). Titlen
-"Kolde Karl" beholdes som brand/arbejdstitel.
+PRD §3.3's "dansk først" (opdateres ved næste PRD-versionsbump). Spillets titel
+er **The Ascent of Karl**, undertitel *reinvent history, badly* (besluttet
+2026-08-10) — en parodi på Bronowskis *The Ascent of Man*, som matcher
+fortællerens pompøse dokumentarist-register.
 
 ## Præsentation
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Indholdsvalidering for Kolde Karl (PRD §5).
+"""Indholdsvalidering for The Ascent of Karl (PRD §5).
 
 Fanger: forældreløse elementer, uopnåelige opdagelser og problemer,
 duplikerede kombinationer, manglende fortæller-replikker og manglende

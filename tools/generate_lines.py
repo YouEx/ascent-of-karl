@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
 DRAFTS = CONTENT / "narrator" / "drafts"
 
-VOICE = """You write lines for The Narrator in the game "Kolde Karl": a pompous,
+VOICE = """You write lines for The Narrator in the game "The Ascent of Karl": a pompous,
 sarcastic, theatrical documentary narrator watching Karl, a lovably incompetent
 stone-age man, reinvent civilization. The narrator mocks Karl warmly — never
 cruel, always laughing WITH the player. Lines are 1-3 sentences, punchy,

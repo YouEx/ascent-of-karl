@@ -70,7 +70,11 @@ export function openOverlay(element: HTMLElement, opts: OverlayOptions): void {
     history.pushState({ overlay: true }, "");
   }
 
-  // Fokus ind i overlejringen, så tastatur og skærmlæser følger med
+  // Fokus ind i overlejringen, så tastatur og skærmlæser følger med.
+  // Bemærk: det FØRSTE fokuserbare element skal ligge øverst i overlejringen.
+  // Ligger det under en lang, scrollende liste, ruller browseren det ind i
+  // billedet og springer forbi overskriften — derfor sidder trofæ-modalens
+  // lukkeknap i dens hoved og ikke under de 15 skæbner.
   const first = focusableIn(element)[0];
   (first ?? element).focus?.();
   if (!first) element.setAttribute("tabindex", "-1");

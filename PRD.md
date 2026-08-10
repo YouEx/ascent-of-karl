@@ -1,4 +1,4 @@
-# PRD: Kolde Karl
+# PRD: The Ascent of Karl
 ### Et story-drevet alchemy-spil med en sarkastisk fortæller
 
 **Version:** 0.1 (grundlag for udvikling)
@@ -222,7 +222,7 @@ Fortælleren har fire triggertyper, i prioriteret rækkefølge:
 1. Godot vs. web-stack — afgøres af spike
 2. Skal Karl være synlig karakter på skærmen (reagerer visuelt på flags) eller kun i tekst? *(Anbefaling: synlig — flags som visuelt payoff er stærkt)*
 3. Fortæller på dansk med engelske undertekster som kunstnerisk valg, eller fuld engelsk dub? *(Afgør før Step 6)*
-4. Navn: "Kolde Karl" er arbejdstitel — international titel skal findes (krav: fungerer på engelsk, antyder både historie og humor)
+4. ~~Navn~~ **Afklaret 2026-08-10:** titlen er **The Ascent of Karl**, undertitel *reinvent history, badly*. (Arbejdstitlen var "Kolde Karl".)
 
 ---
 

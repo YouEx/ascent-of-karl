@@ -90,7 +90,7 @@ async function freshGame(browser) {
   await page.goto(URL);
   await page.evaluate(() => localStorage.clear());
   await page.reload();
-  await page.waitForSelector("#title-screen .title-inner");
+  await page.waitForSelector("#title-screen .title-grid");
   await page.click("#t-new");
   await page.waitForSelector("#grid .element");
   await page.waitForTimeout(300);

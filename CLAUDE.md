@@ -1,4 +1,4 @@
-# Kolde Karl — udviklerguide
+# The Ascent of Karl — udviklerguide
 
 Læs `PRD.md` først — det er den styrende reference for al udvikling.
 
@@ -27,6 +27,10 @@ npm run build        # typecheck + produktion-build
 - `src/narrator/` — trigger-prioritering (story > adfærd > flags > generisk),
   tællere, hint-eskalering, no-repeat. Kender kun `Engine` og content-typerne.
 - `src/ui/` — al DOM og præsentation. Kun UI må røre `document`/`localStorage`.
+  `tokens.css` = designsystemets variabler, `style.css` = brugen af dem,
+  `icons.ts` = stregikoner til krommet.
+- `src/assets/` — skrifter og grafik Vite skal hashe. `public/` er for filer der
+  skal have et forudsigeligt navn (lyd, manifest, `karl.webp`, og OG-billedet).
 - `src/content.ts` — samler content-filerne. Eneste fil der importerer JSON.
 - `content/` — ALT indhold: elementer, kombinationer, akter, replikker.
   **Indhold må aldrig hardcodes i kode** (PRD §4.1).
@@ -48,6 +52,12 @@ npm run build        # typecheck + produktion-build
    og tilføjes til `OVERLAYS` i `tools/ux_audit.mjs`. Se
    `docs/design/ux-checklist.md` — princippet er ingen blindgyder: mindst to
    veje ud, og browserens back lukker overlejringen i stedet for spillet.
+8. **`DESIGN.md` er lov for alt visuelt.** Farver, typografi, form og bevægelse
+   findes som tokens i `src/ui/tokens.css` — skriv aldrig en rå hex-værdi eller
+   en font-familie i `style.css`. Ny farve eller nyt trin: opdatér DESIGN.md
+   FØRST, dernæst tokens.css, og brug så variablen. To hårde regler derfra:
+   emoji må kun komme fra `content/*.json` (aldrig i krom — brug `src/ui/icons.ts`),
+   og okker der bærer tekst eller fokus skal være `--ochre-ink`, ikke `--ochre`.
 
 ## Tone (til indholdsarbejde)
 

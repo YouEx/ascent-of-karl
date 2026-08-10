@@ -116,16 +116,20 @@ export class BookView {
     if (!this.selectedNode) {
       entry.innerHTML = `<div class="entry blank">
         <div class="entry-emoji">📖</div>
-        <h3>The Chronicle of Mankind</h3>
-        <p>Blank pages, waiting to be filled. Combine something below and history will write itself. Badly, probably, but it will.</p>
+        <div class="entry-body">
+          <h3>The Chronicle of Mankind</h3>
+          <p>Blank pages, waiting to be filled. Combine something below and history will write itself. Badly, probably, but it will.</p>
+        </div>
       </div>`;
       return;
     }
     if (!this.engine.isDiscovered(this.selectedNode)) {
       entry.innerHTML = `<div class="entry blank">
         <div class="entry-emoji">📄</div>
-        <h3>A blank page</h3>
-        <p>History is missing something here. Karl simply hasn't discovered it yet.</p>
+        <div class="entry-body">
+          <h3>A blank page</h3>
+          <p>History is missing something here. Karl simply hasn't discovered it yet.</p>
+        </div>
       </div>`;
       return;
     }

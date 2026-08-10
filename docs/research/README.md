@@ -1,7 +1,7 @@
 # Kombinations-superset (idébank til expansion packs)
 
 Et samlet, dedupliceret datasæt af kombinationsopskrifter fra genren —
-**udgangspunktet** for at udbygge Kolde Karls kombinationsmuligheder over tid.
+**udgangspunktet** for at udbygge kombinationsmulighederne i The Ascent of Karl over tid.
 Intet herfra shippes råt: hver adopteret opskrift kurateres med dansk
 domæne-id, engelsk flavor i Karls univers og en faktuel note med kilde
 (se designregler i `../design/act-1.md`).

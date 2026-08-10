@@ -1,13 +1,13 @@
 {
-  "name": "Kolde Karl",
-  "short_name": "Kolde Karl",
+  "name": "The Ascent of Karl",
+  "short_name": "The Ascent of Karl",
   "description": "A stone-age man. A sarcastic narrator. Fifty summers to make history — or a mess.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1a1613",
-  "theme_color": "#1a1613",
+  "background_color": "#c9defa",
+  "theme_color": "#c9defa",
   "icons": [
     {
       "src": "apple-touch-icon.png",

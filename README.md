@@ -1,4 +1,6 @@
-# Kolde Karl ❄️
+# The Ascent of Karl
+
+*reinvent history, badly*
 
 *Infinite Craft møder The Stanley Parable i menneskehedens historie.*
 

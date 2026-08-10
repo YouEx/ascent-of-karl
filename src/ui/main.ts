@@ -8,7 +8,11 @@ import { BookView } from "./book";
 import { initAudio, playLine, stopAudio } from "./audio";
 import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
+import { icons } from "./icons";
 
+// Nøglerne beholder deres oprindelige "kolde-karl"-navn selv om spillet er
+// omdøbt til The Ascent of Karl: de står i spillernes browsere, og en omdøbning
+// ville smide alle gemte spil og skæbner væk for at rette et navn ingen ser.
 const SAVE_KEY = "kolde-karl-save-v1";
 const NARRATOR_SAVE_KEY = "kolde-karl-narrator-v1";
 const MUTE_KEY = "kolde-karl-muted";
@@ -75,12 +79,12 @@ function unlockAchievement(endingId: string): boolean {
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `
   <header>
-    <h1>Kolde Karl</h1>
+    <h1>The Ascent of Karl</h1>
     <span id="age" title="Every attempt costs a summer of Karl's life"></span>
     <div class="header-actions">
-      <button id="book-btn" class="icon-btn" aria-label="Open the chronicle">📖<span id="book-badge"></span></button>
-      <button id="trophies" class="icon-btn" aria-label="Fates discovered">🏆</button>
-      <button id="restart" class="icon-btn" aria-label="Start over">↺</button>
+      <button id="book-btn" class="icon-btn" aria-label="Open the chronicle">${icons.book}<span id="book-badge"></span></button>
+      <button id="trophies" class="icon-btn" aria-label="Fates discovered">${icons.trophy}</button>
+      <button id="restart" class="icon-btn" aria-label="Start over">${icons.restart}</button>
     </div>
   </header>
 
@@ -88,7 +92,7 @@ app.innerHTML = `
     <div id="bubble">
       <div id="bubble-head">
         <span id="narrator-label">The Narrator</span>
-        <button id="mute" class="icon-btn" aria-pressed="false" aria-label="Mute the narrator">🔊</button>
+        <button id="mute" class="icon-btn" aria-pressed="false" aria-label="Mute the narrator">${icons.soundOn}</button>
       </div>
       <p id="narrator-text"></p>
     </div>
@@ -99,7 +103,7 @@ app.innerHTML = `
 
   <div id="tools">
     <input id="search" type="search" placeholder="Search elements…" aria-label="Search elements" autocomplete="off">
-    <button id="filter-new" class="chip-btn" aria-pressed="false">✨ New</button>
+    <button id="filter-new" class="chip-btn" aria-pressed="false">New finds</button>
   </div>
 
   <section id="grid" aria-label="Elements"></section>
@@ -113,7 +117,7 @@ app.innerHTML = `
   </div>
 
   <aside id="book-panel" aria-label="The chronicle of mankind">
-    <button id="book-close" class="icon-btn" aria-label="Close the chronicle">✕</button>
+    <button id="book-close" class="icon-btn" aria-label="Close the chronicle">${icons.close}</button>
     <section id="book"></section>
   </aside>
 
@@ -164,7 +168,7 @@ let lastAttemptAt: number | null = null;
 let runStartedAt = performance.now();
 let query = "";
 let onlyNew = false;
-/** Opdaget i denne session — får ✨-markering så de er til at finde i et stort grid */
+/** Opdaget i denne session — får en okker prik, så de er til at finde i et stort grid */
 const freshFinds = new Set<string>();
 
 // --- Fortæller ---
@@ -192,7 +196,7 @@ function speak(text: string): void {
 }
 
 function renderMute(): void {
-  el.muteBtn.textContent = muted ? "🔇" : "🔊";
+  el.muteBtn.innerHTML = muted ? icons.soundOff : icons.soundOn;
   el.muteBtn.setAttribute("aria-label", muted ? "Unmute the narrator" : "Mute the narrator");
   el.muteBtn.setAttribute("aria-pressed", String(muted));
   el.bubble.classList.toggle("muted", muted);
@@ -281,6 +285,8 @@ function renderGrid(): void {
 function renderBookBadge(): void {
   const count = engine.availableElements().filter((e) => !e.base).length;
   el.bookBadge.textContent = String(count);
+  // Et "0"-badge er støj: mærket findes for at sige "der er noget nyt derinde".
+  el.bookBadge.hidden = count === 0;
 }
 
 el.search.addEventListener("input", () => {
@@ -399,10 +405,14 @@ function renderTrophyModal(): void {
     .join("");
   el.trophyModal.innerHTML = `
     <div class="modal-inner">
-      <h2>🏆 Karl's fates</h2>
-      <p class="modal-sub">${Object.keys(unlocked).length}/${content.endings.length} discovered — each run can end differently</p>
+      <div class="modal-head">
+        <div>
+          <h2>Karl's fates</h2>
+          <p class="modal-sub">${Object.keys(unlocked).length}/${content.endings.length} discovered — each run can end differently</p>
+        </div>
+        <button id="trophy-close" class="icon-btn" aria-label="Close">${icons.close}</button>
+      </div>
       ${rows}
-      <button id="trophy-close">Close</button>
     </div>`;
   el.trophyModal.hidden = false;
   openOverlay(el.trophyModal, {
@@ -435,10 +445,10 @@ function showEndingScreen(): void {
       <p class="ending-line">${lastLineText}</p>
       <p class="ending-stats">${state.attempts} summers lived · ${state.discovered.length} discoveries · ${state.flags.length} quirks</p>
       ${isNew
-        ? `<p class="achievement">🏆 Achievement unlocked: <strong>${ending.achievement}</strong></p>`
-        : `<p class="achievement known">🏆 ${ending.achievement}</p>`}
+        ? `<p class="achievement">Achievement unlocked: <strong>${ending.achievement}</strong></p>`
+        : `<p class="achievement known">${ending.achievement}</p>`}
       ${lucky
-        ? `<p class="achievement">🍀 Achievement unlocked: <strong>Carl the Lucky</strong><br>
+        ? `<p class="achievement">Achievement unlocked: <strong>Carl the Lucky</strong><br>
              <small>A whole life, and the world never once came for him.</small></p>`
         : ""}
       <button id="ending-restart">Live again</button>
@@ -555,19 +565,44 @@ el.restart.addEventListener("click", () => {
 });
 
 // --- Titelskærm: første interaktion låser også lyd op (autoplay-politik) ---
+
+/**
+ * Båndene bag Karl. Rent dekorative (aria-hidden) og bevidst i SVG frem for
+ * billede: de skal kunne farves med tokens og skalere skarpt på ethvert
+ * viewport. `slice` bevarer kurvernes proportioner og beskærer i stedet for at
+ * strække dem — en ikke-uniform skalering ville gøre stregtykkelsen ujævn.
+ */
+const RIBBONS = `
+  <svg class="ribbons" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <path class="r1" d="M-140 196 C 210 74, 386 344, 716 226 S 1168 96, 1580 202"/>
+    <path class="r2" d="M-140 316 C 200 176, 372 470, 706 340 S 1160 196, 1580 312"/>
+    <path class="r3" d="M-140 398 C 260 306, 430 578, 830 434 S 1252 336, 1580 412"/>
+    <path class="r4" d="M-140 686 C 246 548, 388 872, 726 752 S 1186 630, 1580 690"/>
+    <path class="r5" d="M-140 782 C 306 700, 512 952, 906 828 S 1304 716, 1580 776"/>
+    <path class="r6" d="M-140 872 C 286 806, 470 1024, 886 918 S 1298 826, 1580 878"/>
+  </svg>`;
+
 function showTitleScreen(): void {
   const canContinue = hasSave();
   const unlocked = Object.keys(loadAchievements()).length;
   el.titleScreen.innerHTML = `
-    <div class="title-inner">
-      <h1>Kolde Karl</h1>
-      <p class="tagline">A stone-age man. A sarcastic narrator. Fifty summers to make history — or a mess.</p>
-      <div class="title-actions">
-        ${canContinue ? `<button id="t-continue" class="primary">Continue</button>` : ""}
-        <button id="t-new" class="${canContinue ? "" : "primary"}">${canContinue ? "New life" : "Begin"}</button>
-        <button id="t-fates">🏆 Fates ${unlocked}/${content.endings.length}</button>
+    ${RIBBONS}
+    <div class="title-grid">
+      <div class="title-copy">
+        <h1>The Ascent<span> of Karl</span></h1>
+        <p class="title-sub">reinvent history, badly</p>
+        <p class="tagline">A stone-age man. A sarcastic narrator. Fifty summers to make history — or a mess.</p>
+        <div class="title-actions">
+          ${canContinue ? `<button id="t-continue" class="primary">Continue</button>` : ""}
+          <button id="t-new" class="${canContinue ? "" : "primary"}">${canContinue ? "New life" : "Begin"}</button>
+          <button id="t-fates">Fates <span class="fates-count">${unlocked}/${content.endings.length}</span></button>
+        </div>
+        <p class="title-hint">Drag one element onto another to combine them.</p>
       </div>
-      <p class="title-hint">Drag one element onto another to combine them.</p>
+      <div class="title-art">
+        <img src="karl.webp" width="594" height="712"
+             alt="Karl, a bewildered stone-age man in a yellow fur, holding a rock" />
+      </div>
     </div>`;
   el.titleScreen.hidden = false;
 

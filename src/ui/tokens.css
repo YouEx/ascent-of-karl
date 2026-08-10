@@ -1,0 +1,150 @@
+/* ==========================================================================
+   The Ascent of Karl — designtokens
+   Implementerer DESIGN.md. Ændrer du en værdi her, skal DESIGN.md følge med.
+   Farverne er pixelsamplet fra referencebilledet, ikke gættet.
+   ========================================================================== */
+
+/* --- Selvhostede variable fonte (offline-krav, PRD §5) -------------------- */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../assets/fonts/fraunces-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../assets/fonts/fraunces-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../assets/fonts/jakarta-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../assets/fonts/jakarta-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  /* --- Lærred: ét sammenhængende daggry over hele viewporten ------------- */
+  --dawn-blue: #c9defa;
+  --lilac-haze: #ded8f4;
+  --blush-pink: #f8ccd6;
+  --warm-mist: #fdefec;
+  --canvas: linear-gradient(
+    168deg,
+    var(--dawn-blue) 0%,
+    var(--lilac-haze) 38%,
+    var(--blush-pink) 74%,
+    var(--warm-mist) 100%
+  );
+
+  /* --- Papir: flader der bærer indhold ---------------------------------- */
+  --paper: #f5f3ea;
+  --chalk: #fbfaf6;
+  --paper-edge: #e7e2d3;
+
+  /* --- Blæk -------------------------------------------------------------- */
+  --ink: #16151a;
+  --ink-soft: #55535f;
+  --rule: rgba(22, 21, 26, 0.14);
+  --rule-strong: rgba(22, 21, 26, 0.45);
+  --veil: rgba(22, 21, 26, 0.42);
+
+  /* --- Accent: én, og kun én -------------------------------------------- */
+  --ochre: #a9722b;
+  --ochre-tint: rgba(169, 114, 43, 0.12);
+  /* Samme kulør, mørkere: okker på pastel giver kun 3.0:1 som tekst, hvilket
+     dumper WCAG AA. --ochre-ink rammer >=4.7:1 mod hver eneste lærredsstop og
+     er DEN eneste okker der må bære bogstaver eller et fokusfelt. */
+  --ochre-ink: #7a531f;
+
+  /* --- Tilstande: semantik, ikke dekoration ------------------------------ */
+  --moss: #4f7a45;
+  --rust: #a24b37;
+  --plum: #6b4e96;
+  --bronze: #8a6a3b;
+
+  /* --- Illustrationslag: aldrig i UI ------------------------------------ */
+  --ribbon-sky: #a3cdfd;
+  --ribbon-cyan: #8fd9ee;
+  --ribbon-rose: #fab3e7;
+  /* Karls guld (#FED831) står bevidst IKKE her. Den findes kun i tegningen —
+     et token ville være en invitation til at bruge den på en knap, og
+     DESIGN.md §2 forbyder netop det. */
+
+  /* --- Typografi --------------------------------------------------------- */
+  --font-display: "Fraunces", ui-serif, serif;
+  --font-ui: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --measure: 65ch;
+
+  --step-hero: clamp(2.75rem, 8.5vw, 5.5rem);
+  --step-title: clamp(1.5rem, 4vw, 2rem);
+  --step-narrator: clamp(1rem, 2.4vw, 1.15rem);
+  --step-body: 1rem;
+  --step-label: 0.875rem;
+  --step-kicker: 0.72rem;
+
+  /* --- Rum og form ------------------------------------------------------- */
+  --pad: 0.75rem;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+
+  /* Skygger tones mod baggrundens kulør — aldrig neutral grå, aldrig farvet glød */
+  --shadow-paper: 0 6px 24px rgba(58, 44, 84, 0.1);
+  --shadow-lift: 0 14px 40px rgba(58, 44, 84, 0.16);
+
+  /* --- Bevægelse --------------------------------------------------------- */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-press: 120ms;
+  --dur-move: 220ms;
+  --dur-celebrate: 420ms;
+
+  /* Touch: min. 44pt (Apple HIG) / 48dp (Material) */
+  --tap: 48px;
+  --dock-h: 76px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+
+  font-size: 16px;
+}
+
+/* --- Kornet: ét fast lag, aldrig gentaget pr. element --------------------- */
+/* Baggrundsstøj holder den flade gradient fra at "bande" på store skærme.
+   pointer-events: none, så laget aldrig kan spærre for et klik. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  /* Kornet er det ØVERSTE lag: filmkorn ligger på hele billedet, også på
+     titelskærmen (z-index 70) og modaler (60-80). pointer-events: none gør
+     laget ufarligt trods den høje z-index. */
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
