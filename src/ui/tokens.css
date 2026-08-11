@@ -92,8 +92,12 @@
      mere korn gør kun fladen mørkere. Referencens ekstra energi er malet
      penselstruktur i en grovere skala, ikke filmkorn. */
   --grain-opacity: 0.16;
-  --tile-lit: #e8d3b9;
-  --tile-shade: #dec3a6;
+  /* Målt tværsnit i referencens kort: top (233,213,189) mod vores (228,207,181),
+     bund (223,197,167) mod vores (221,195,167). Kortets øverste tredjedel var
+     5 enheder for mørk — nok til at gitterets lyse andel faldt fra 36 % til
+     21 %, fordi hele fladen lå lige UNDER 200 hvor referencens ligger lige over. */
+  --tile-lit: #f2e2cd;
+  --tile-shade: #e2c9ac;
   /* Kortets udskæring, målt i tværsnit gennem referencens kortkant:
      en lys fas yderst og en mørkere rille indenfor. */
   --tile-bevel: #e4cbaf;

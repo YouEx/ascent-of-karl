@@ -516,8 +516,8 @@ header h1 {
   align-content: start;
 }
 .element {
-  /* Referencen måler kortet 133 x 121. Bredden bestemmes af griddet; højden
-     sættes her, så pitchen rammer referencens 138 med 17 px rækkeluft. */
+  /* Målt om: kortet er 129 x 118 med 146,7 px vandret og 136 px lodret
+     pitch. Bredden sættes af griddet, højden her. */
   min-height: 121px;
   background-color: var(--tile-shade);
   background-image: var(--grain),
@@ -1530,7 +1530,19 @@ img.card-glyph {
   #problems { order: 4; margin-top: 18px; }
   #dock { order: 5; margin-top: 15px; }  /* 13 + 3: krønikens flade satte panelets højde 3 px anderledes */
   #tools { order: 6; position: static; margin-top: 21px; }  /* 21 - 5: kontrollen fylder nu hele rammens 54 px og skal starte på y=708 */
-  #grid { order: 7; margin-top: 23px; }  /* 23 - 10 + 5: værktøjsrækken blev 10 px højere og rykkede 5 px op */
+  /* Målt kortpitch i referencen: søjlerne begynder på 2, 148, 292, 441, 588,
+     736 og 882 — altså 146,7 px pitch med 129 px kort. Vores var 141/119, og
+     forskellen stablede sig til 31 px på syvende søjle, en tredjedel af et
+     kort. Referencens syvende kort er derfor SKÅRET af rammen (dets lyse
+     flade måler 86 px mod de øvriges 112), og det skal vores også være:
+     7x129 + 6x17,7 = 1009 px i en 978 px bred region. */
+  #grid {
+    order: 7; margin-top: 23px;
+    grid-template-columns: repeat(7, 129px);
+    column-gap: 17.7px;
+    row-gap: 17px;
+    overflow: hidden;
+  }
   #grid-empty { order: 8; }
 
   /* Målt i referencen: versalhøjden er 28 px mod vores 17 ved 1.5rem.
