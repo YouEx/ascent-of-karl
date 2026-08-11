@@ -94,6 +94,7 @@ function unlockAchievement(endingId: string): boolean {
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `
   <header>
+    <span class="mark" aria-hidden="true"></span>
     <h1>The Ascent of Karl</h1>
     <span id="age" title="Every attempt costs a summer of Karl's life"></span>
     <div class="header-actions">

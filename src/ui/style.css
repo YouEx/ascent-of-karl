@@ -85,9 +85,9 @@ header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  /* 81 px i referencen. Titlen fylder 47 px ved 2.45rem, ikonknapperne 48,
-     så luften er 16 px i alt — ikke 32 som da titlen var halvt så stor. */
-  padding: 0.5rem var(--app-inset);
+  /* 81 px i referencen. Mærket er 72 px højt og bestemmer nu højden, så luften
+     er 4 px i top og bund — ikke 8, som da titlen var det højeste element. */
+  padding: 0.25rem var(--app-inset);
   /* Bleeder ud til rammens kant, ikke til indholdsspalten: referencens
      header spænder hele 1112 px (rect 168..1280), mens indholdet under den
      står inde ved 978. Den negative margin SKAL derfor følge --app-inset —
@@ -98,10 +98,25 @@ header {
      klippe dem — både headeren og værktøjslinjen er position: sticky, og
      en klippende forælder slår sticky fra. */
   border-radius: calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px) 0 0;
-  background: linear-gradient(to bottom, rgba(251, 250, 246, 0.92), rgba(251, 250, 246, 0.6));
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* Målt i referencen: #dfcdbf — nøjagtig den --titlebar-token der allerede
+     lå ubrugt. Vi kørte med en gennemsigtig hvid gradient, så headeren blev
+     #e5dcdd: et mælket glaspanel oven på et maleri. Referencens header er
+     BEMALET pergament, ikke matteret glas, så den er uigennemsigtig.
+     Sjette gang i denne skærm at en rigtig token findes og ikke bruges. */
+  background: var(--titlebar);
   border-bottom: 1px solid var(--rule);
+}
+/*
+ * Mærket: figuren i hulemundingen, samme tegning som titelskærmens brikker.
+ * Referencen måler den 64x72 med 26 px indrykning fra rammens kant — den er
+ * spillets logo, og headeren var uden det. Tegningen lå allerede i repoet
+ * (chip-figure.webp) og blev kun brugt ét sted.
+ */
+header .mark {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 72px;
+  background: url("../assets/art/mark-figure.webp") no-repeat center / contain;
 }
 header h1 {
   margin: 0;
@@ -254,6 +269,12 @@ header h1 {
   font-style: normal;
   font-size: 1.05em;
   margin-right: 0.15rem;
+  /* Referencens emblemer er MALEDE — dæmpede, mørke, i chippens egen
+     familie. Systememojier kommer ud i fuld kulør og skriger mod
+     pergamentet. multiply sætter dem ned i pillen, og afmætningen tager
+     plastikglansen af dem. */
+  filter: saturate(0.5) contrast(1.1) brightness(0.86);
+  mix-blend-mode: multiply;
 }
 /*
  * Chippen bærer problemets farve, ikke bare dets navn. Målt på referencen:
@@ -1299,13 +1320,20 @@ img.card-glyph {
     display: flex;
     flex-direction: column;
   }
+  /* Referencens lodrette rytme er IKKE ensartet: 20, 18, 18, 13, 21, 23 px.
+     Vi kørte 20 px hele vejen, og de tre for store mellemrum stablede sig
+     til +11 px inden dokken — nok til at trække geom ned på slots, combine,
+     search og grid samtidig. Flex-gap sættes derfor til nul og hvert
+     mellemrum måles for sig. Fordi gap er 0, kan margin her ikke
+     dobbelttælle, som den gjorde for #problems og #book-panel. */
+  #app { gap: 0; }
   header { order: 1; }
-  #narrator { order: 2; position: static; }
-  #book-panel { order: 3; }
-  #problems { order: 4; }
-  #dock { order: 5; }
-  #tools { order: 6; position: static; }
-  #grid { order: 7; }
+  #narrator { order: 2; position: static; margin-top: 20px; }
+  #book-panel { order: 3; margin-top: 18px; }
+  #problems { order: 4; margin-top: 18px; }
+  #dock { order: 5; margin-top: 13px; }
+  #tools { order: 6; position: static; margin-top: 21px; }
+  #grid { order: 7; margin-top: 23px; }
   #grid-empty { order: 8; }
 
   /* Målt i referencen: versalhøjden er 28 px mod vores 17 ved 1.5rem.
