@@ -61,7 +61,13 @@ body {
   min-height: calc(100dvh - 8px);
   border: 1px solid rgb(0 0 0 / 0.12);
   border-radius: var(--radius-xl);
-  background: rgb(251 250 246 / 0.14);
+  /* Fladen inden for rammen er MÅLT af referencen, ikke lavet af et slør
+     oven på et maleri der ikke er referencens. Se tools/art/build_app_field.py:
+     hver pixel inden for rammen bærer i forvejen referencens eget slør, så de
+     er den rigtige kilde til præcis det, der skal stå bag UI'et.
+     Det gamle rgb(251 250 246 / 0.14) gjorde chippernes bånd fersken, hvor
+     referencen er rosa-mauve (206,172,162) — tone stod fast på 0.291. */
+  background: url("../assets/art/app-field.webp") center top / 100% 100% no-repeat;
   padding: 0 var(--app-inset);
   display: flex;
   flex-direction: column;
