@@ -104,6 +104,8 @@ header {
      BEMALET pergament, ikke matteret glas, så den er uigennemsigtig.
      Sjette gang i denne skærm at en rigtig token findes og ikke bruges. */
   background: var(--titlebar);
+  background-image: var(--grain);
+  background-blend-mode: overlay;
   border-bottom: 1px solid var(--rule);
 }
 /*
@@ -205,6 +207,8 @@ header h1 {
      #f5f3ea og altså både lysere og køligere. Forskellen var usynlig mod den
      gamle blege gradient og blev først tydelig, da lærredet blev et maleri. */
   background: var(--parchment);
+  background-image: var(--grain);
+  background-blend-mode: overlay;
   border: 1px solid var(--rule);
   border-radius: var(--radius-lg);
   border-top-right-radius: 2px;
@@ -255,6 +259,8 @@ header h1 {
 #problems { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 .problem {
   background: var(--paper);
+  background-image: var(--grain);
+  background-blend-mode: overlay;
   border: 1px solid var(--rule);
   border-radius: 999px;
   /* Referencens chip-række er 53 px høj, vores var 31. Højden ligger i
@@ -282,17 +288,17 @@ header h1 {
  * Hver familie er sit eget lille klima — man aflæser rækken før man læser den.
  */
 .problem.tint-cold {
-  background: var(--chip-cold);
+  background-color: var(--chip-cold);
   border-color: var(--chip-cold-edge);
   color: var(--chip-cold-ink);
 }
 .problem.tint-craft {
-  background: var(--chip-craft);
+  background-color: var(--chip-craft);
   border-color: var(--chip-craft-edge);
   color: var(--chip-craft-ink);
 }
 .problem.tint-hunger {
-  background: var(--chip-hunger);
+  background-color: var(--chip-hunger);
   border-color: var(--chip-hunger-edge);
   color: var(--chip-hunger-ink);
 }
@@ -328,6 +334,7 @@ header h1 {
   flex: 1;
   min-height: var(--tap);
   background: var(--search-fill);
+  background-blend-mode: normal, overlay;
   border: 1px solid var(--rule);
   border-radius: var(--radius);
   color: var(--ink);
@@ -336,10 +343,11 @@ header h1 {
   /* Forstørrelsesglasset i referencen er tegnet ind i feltet, ikke lagt
      ved siden af. Det er ren krom (streg, ingen illustration), så det bor
      som inline-SVG i baggrunden og følger tekstens farve. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b2f27' stroke-width='2.1' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.4'/%3E%3Cpath d='M15.4 15.4 21 21'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 0.85rem center;
-  background-size: 1.15rem 1.15rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b2f27' stroke-width='2.1' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.4'/%3E%3Cpath d='M15.4 15.4 21 21'/%3E%3C/svg%3E"),
+                    var(--grain);
+  background-repeat: no-repeat, repeat;
+  background-position: 0.85rem center, 0 0;
+  background-size: 1.15rem 1.15rem, auto;
   padding: 0 0.75rem 0 2.6rem;
 }
 #search::placeholder { color: var(--ink-soft); }
@@ -389,7 +397,10 @@ header h1 {
   /* Referencen måler kortet 133 x 121. Bredden bestemmes af griddet; højden
      sættes her, så pitchen rammer referencens 138 med 17 px rækkeluft. */
   min-height: 121px;
-  background: linear-gradient(to bottom, var(--tile-lit), var(--tile-shade));
+  background-color: var(--tile-shade);
+  background-image: var(--grain),
+                    linear-gradient(to bottom, var(--tile-lit), var(--tile-shade));
+  background-blend-mode: overlay, normal;
   border: 1px solid var(--tile-contour);
   border-radius: var(--radius);
   /*
@@ -491,6 +502,8 @@ header h1 {
      Samme fejl som griddets kort havde — en token der findes bruges ikke, og
      fladen står som printerpapir midt i et maleri. */
   background: var(--slot-fill);
+  background-image: var(--grain);
+  background-blend-mode: overlay;
   /* Referencen har TO kanter: en lys cremeramme yderst og en stiplet, mørkere
      linje inde i den. Den ydre laves med box-shadow frem for et ekstra
      element, så feltet stadig er én kasse i DOM'en. */
@@ -632,11 +645,11 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   /* Referencens krønike har hulemalerier i højre tredjedel: jægerfigurer
      malet ind i pergamentet, ikke lagt ovenpå. multiply lader dem sætte sig
      i papiret, så de læses som pigment og ikke som et klistermærke. */
-  background-image: url("../assets/art/orn-hunt.webp");
-  background-repeat: no-repeat;
-  background-position: right 1.5rem top 0.5rem;
-  background-size: auto 78%;
-  background-blend-mode: multiply;
+  background-image: url("../assets/art/orn-hunt.webp"), var(--grain);
+  background-repeat: no-repeat, repeat;
+  background-position: right 1.5rem top 0.5rem, 0 0;
+  background-size: auto 78%, auto;
+  background-blend-mode: multiply, overlay;
 }
 #book-tabs { display: flex; gap: 0.25rem; padding: 0.5rem 0.75rem 0; flex-wrap: wrap; }
 .book-tab {

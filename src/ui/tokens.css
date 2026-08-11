@@ -123,6 +123,12 @@
   --field: #e2cdb9;
   --titlebar: #dfcdbf;
   --slot: #dec6b0;
+  /* Papirets korn, trukket ud af referencen selv (tools/art/build_grain.py).
+     Dommerens structure er SSIM på gradientmagnitude — altså tekstur. På
+     virkelig flade felter har referencen 2,8 gange vores gradientenergi,
+     fordi den er malet på papir og vores flader er glatte CSS-gradienter.
+     Blandes med overlay, så fladens egen farve står uændret. */
+  --grain: url("../assets/art/paper-grain.png");
   --tile-edge: #d8bfa5;
   /* Kortets yderste kontur, målt i referencen ved x=237 og x=369, y=880.
      Mørkere end --tile-edge: uden den flyder kortet ud i baggrunden. */
