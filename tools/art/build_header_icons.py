@@ -12,7 +12,8 @@ papirfarven, RGB beholdes råt. Kanterne får en pergamentfarvet bræmme, men da
 ikonerne lægges tilbage PÅ pergament, er den bræmme netop rigtig.
 
 Tælleren ved siden af titlen har sit eget lille bæger — en anden tegning, ikke
-den store skaleret ned, så den skæres ud for sig.
+den store skaleret ned, så den skæres ud for sig. Fortællerens højttaler ligger
+samme sted i metoden og er derfor med her, selvom den ikke sidder i headeren.
 """
 
 from pathlib import Path
@@ -30,6 +31,8 @@ ICONS = {
     "icon-trophy": (1156, 36, 1186, 66),
     "icon-restart": (1221, 36, 1252, 66),
     "counter-trophy": (607, 38, 631, 64),
+    # Fortællerens højttaler: et malet mørkt ikon, ikke en SVG i en hvid pille.
+    "icon-speaker": (1160, 128, 1192, 154),
 }
 # Under dette falder alfa til nul. Papirets egen kornstruktur ligger på ~28 i
 # sum-afstand, så 34 lader kornet være og tager kun glyffen med.

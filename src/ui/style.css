@@ -279,41 +279,27 @@ header h1 {
   position: sticky;
   top: 3.25rem;
   z-index: 15;
-  padding: 0.5rem 0;
+  /* Målt: referencens boble fylder HELE regionen (kant på y=105 og y=251
+     inden for rect [237,105,978,145]). Vores boble sad 8 px inde i toppen
+     og bunden, så den synlige flade var 129 px hvor referencens er 145. */
+  padding: 0;
 }
 #bubble {
   position: relative;
-  /* Pergament, ikke printerpapir. Referencens boble måler #ebdbc5; --paper er
-     #f5f3ea og altså både lysere og køligere. Forskellen var usynlig mod den
-     gamle blege gradient og blev først tydelig, da lærredet blev et maleri. */
-  background: var(--parchment);
-  background-image: var(--grain);
-  background-blend-mode: overlay;
-  border: 1px solid var(--rule);
+  /* Hele boblens flade er skåret ud af referencen (build_narrator_paper.py).
+     Målingen: referencens venstre kant har en MALET bueskytte — kolonne
+     10-50 bærer 24-42 mørke pixels pr. søjle, hvor kolonne 60-110 har 0-7 —
+     plus ornamenter, et mørkere bånd langs kanten og en varm åring i hele
+     fladen. Vi havde intet af det, og strukturen stod på 0,470.
+     Kant, skygge og korn er malet ind i billedet og må derfor ikke lægges
+     ovenpå igen. */
+  background: url("../assets/art/narrator-paper.webp") no-repeat center / 100% 100%;
   border-radius: var(--radius-lg);
   border-top-right-radius: 2px;
-  box-shadow: var(--shadow-paper);
-  /* Referencens boble er 129 px høj inde i en 145 px region; vores var 115.
-     Luften lægges i boblen, ikke i sektionen, så det er den SYNLIGE flade
-     der vokser — en usynlig sektionspolstring ville ramme måltallet uden at
-     ligne referencen. min-height binder ikke: teksten er allerede højere. */
-  padding: 0.95rem 0.9rem 1.15rem;
+  /* Venstre polstring er bueskyttens plads: referencens etiket OG brødtekst
+     begynder begge på x=117 i panelet, altså lige efter figuren. */
+  padding: 27px 22px 32px 117px;
   min-height: 5rem;
-}
-/* Halen peger ud af skærmen: fortælleren er til stede, men aldrig synlig. */
-#bubble::after {
-  content: "";
-  position: absolute; top: -14px; right: 18px;
-  border-left: 22px solid transparent;
-  border-bottom: 15px solid var(--rule-strong);
-  transform: skewX(28deg);
-}
-#bubble::before {
-  content: "";
-  position: absolute; top: -12px; right: 20px;
-  border-left: 19px solid transparent;
-  border-bottom: 13px solid var(--parchment);
-  transform: skewX(28deg); z-index: 1;
 }
 #bubble.muted { opacity: 0.55; border-style: dashed; }
 #bubble-head { display: flex; justify-content: space-between; align-items: center; }
@@ -322,17 +308,30 @@ header h1 {
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-weight: 600;
-  color: var(--ink-soft);
+  /* Målt kerne i referencens etiket: (96,58,33) — brændt umbra, ikke den
+     grå-violette --ink-soft (83,81,93). */
+  color: rgb(96 58 33);
 }
-#mute { min-width: 36px; min-height: 36px; }
-#mute svg { width: 18px; height: 18px; }
+/* Referencens højttaler er et malet mørkt ikon direkte på pergamentet, ikke
+   en SVG i en hvid pille. Målt 23x20. */
+#mute {
+  min-width: 32px; min-height: 28px;
+  background: none; border: none; box-shadow: none; padding: 0;
+}
+#mute svg { display: none; }
+#mute::after {
+  content: "";
+  display: block; width: 23px; height: 20px; margin: 0 auto;
+  background: url("../assets/art/ui/icon-speaker.webp") no-repeat center / contain;
+}
 #narrator-text {
   margin: 0.15rem 0 0;
   font-family: var(--font-display);
   font-style: italic;
   font-size: var(--step-narrator);
   line-height: 1.5;
-  max-width: var(--measure);
+  /* Målt: referencens første linje løber fra x=117 til x=818 i panelet. */
+  max-width: 705px;
 }
 
 /* ---------- Problemer ---------- */
