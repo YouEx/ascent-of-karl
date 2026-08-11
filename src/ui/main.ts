@@ -125,9 +125,9 @@ app.innerHTML = `
   <p id="grid-empty" hidden>Nothing matches that. Karl checked twice.</p>
 
   <div id="dock">
-    <div class="slot" id="slot-a">?</div>
+    <div class="slot" id="slot-a"></div>
     <span class="plus">+</span>
-    <div class="slot" id="slot-b">?</div>
+    <div class="slot" id="slot-b"></div>
     <button id="combine" disabled>Combine</button>
   </div>
 
@@ -298,12 +298,28 @@ function renderProblems(): void {
     .problems.map((p) => {
       const done = engine.isSolved(p.id);
       const wanted = !done && p.id === pulled;
-      const cls = `problem${done ? " solved" : ""}${wanted ? " wanted" : ""}`;
+      const tint = p.tint ? ` tint-${p.tint}` : "";
+      const cls = `problem${done ? " solved" : ""}${wanted ? " wanted" : ""}${tint}`;
       const hint = wanted ? " — the narrator wants this next" : "";
-      return `<span class="${cls}" title="${p.description}${hint}">${done ? "✓" : wanted ? "→" : "○"} ${p.name}</span>`;
+      // Emnet står først; status er farve og gennemstregning, ikke et tegn.
+      // Løst problem er undtagelsen: fluebenet er hele pointen med at se det.
+      const mark = done ? "✓" : (p.icon ?? (wanted ? "→" : "○"));
+      return `<span class="${cls}" title="${p.description}${hint}"><i class="problem-icon" aria-hidden="true">${mark}</i> ${p.name}</span>`;
     })
     .join("");
 }
+
+/**
+ * Det tomme felts tekst. Referencen skriver en invitation i to linjer i
+ * stedet for et spørgsmålstegn — "?" fortæller hverken hvad feltet vil have
+ * eller hvordan man giver det. Ligger her frem for i index.html, fordi
+ * renderSlots() skriver over markup'en ved første kald alligevel.
+ */
+const EMPTY_SLOT =
+  '<span class="slot-empty">' +
+  '<b>Select an element</b>' +
+  '<i>Drag or choose from below</i>' +
+  "</span>";
 
 function renderSlots(): void {
   const [a, b] = selected;
@@ -311,10 +327,10 @@ function renderSlots(): void {
   // Navnene kommer fra content/elements.json, ikke fra spilleren.
   el.slotA.innerHTML = a
     ? `${glyphHTML(a, engine.element(a).emoji, "slot-glyph")}<span>${engine.element(a).name}</span>`
-    : "?";
+    : EMPTY_SLOT;
   el.slotB.innerHTML = b
     ? `${glyphHTML(b, engine.element(b).emoji, "slot-glyph")}<span>${engine.element(b).name}</span>`
-    : "?";
+    : EMPTY_SLOT;
   el.slotA.classList.toggle("filled", !!a);
   el.slotB.classList.toggle("filled", !!b);
   el.combineBtn.disabled = !(a && b);

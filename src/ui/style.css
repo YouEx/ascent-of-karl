@@ -50,7 +50,18 @@ body {
   position: relative;
   z-index: 2;
   max-width: var(--app-max-w);
-  margin: 0 auto;
+  /* Referencens svævende vindue. Målt i target-2026-08-11.webp: rammen står
+     4 px fra top og bund, 1112 px bred og centreret, med hjørneradius ~22 px
+     (--radius-xl). Kanten er ÉN mørk hårlinje på ~12 % sort — ikke den store
+     bløde skygge registry-noten gættede på: målt udad fra kanten falder
+     baggrunden slet ikke, den springer kun i de to pixels selv.
+     Indersiden er et neutralt cremeslør; alfaen løst ud af farverne uden for
+     og inden for kanten gav 0.142/0.136/0.141 pr. kanal — altså 0.14 flat. */
+  margin: 4px auto;
+  min-height: calc(100dvh - 8px);
+  border: 1px solid rgb(0 0 0 / 0.12);
+  border-radius: var(--radius-xl);
+  background: rgb(251 250 246 / 0.14);
   padding: 0 var(--app-inset);
   display: flex;
   flex-direction: column;
@@ -60,7 +71,6 @@ body {
      mellemrum og sluttede 149 px over referencens bund, hvilket trak geom
      mod nul på narrator, chips, slots, search OG grid på én gang. */
   gap: var(--stack-gap);
-  min-height: 100dvh;
   /* Plads til den faste dock i tommelfinger-zonen */
   padding-bottom: calc(var(--dock-h) + var(--safe-b) + 0.5rem);
 }
@@ -75,14 +85,19 @@ header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  /* 81 px i referencen mod vores 65: en rem luft top og bund. */
-  padding: 1rem var(--app-inset);
+  /* 81 px i referencen. Titlen fylder 47 px ved 2.45rem, ikonknapperne 48,
+     så luften er 16 px i alt — ikke 32 som da titlen var halvt så stor. */
+  padding: 0.5rem var(--app-inset);
   /* Bleeder ud til rammens kant, ikke til indholdsspalten: referencens
      header spænder hele 1112 px (rect 168..1280), mens indholdet under den
      står inde ved 978. Den negative margin SKAL derfor følge --app-inset —
      stod der --pad, ville headeren bløde med et andet tal end #app polstrer
      med, og kanten ramte hverken ramme eller spalte. */
   margin: 0 calc(var(--app-inset) * -1);
+  /* Følger rammens hjørner. #app kan ikke bruge overflow: hidden til at
+     klippe dem — både headeren og værktøjslinjen er position: sticky, og
+     en klippende forælder slår sticky fra. */
+  border-radius: calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px) 0 0;
   background: linear-gradient(to bottom, rgba(251, 250, 246, 0.92), rgba(251, 250, 246, 0.6));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -126,8 +141,10 @@ header h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: 1px solid transparent;
+  /* Referencens ikonknapper har ramme og papirfyld i HVILE, ikke først ved
+     hover: de læses som knapper, ikke som løse glyffer i headeren. */
+  background: var(--paper);
+  border: 1px solid var(--rule);
   border-radius: var(--radius);
   color: var(--ink);
   font-size: 1.1rem;
@@ -229,8 +246,34 @@ header h1 {
      chippen selv, ikke i rækken: referencens chips er høje piller, ikke
      små mærkater med luft omkring. */
   padding: 0.65rem 1rem;
-  font-size: 0.85rem;
+  /* Målt tekstblok: referencen 16 px, vores 13 px ved 0.85rem. */
+  font-size: 1.05rem;
   color: var(--ink-soft);
+}
+.problem-icon {
+  font-style: normal;
+  font-size: 1.05em;
+  margin-right: 0.15rem;
+}
+/*
+ * Chippen bærer problemets farve, ikke bare dets navn. Målt på referencen:
+ * kulde #d3d0d1 på navy, værktøj #ebd2b3 på brunt, sult #edd6bf på mørkerødt.
+ * Hver familie er sit eget lille klima — man aflæser rækken før man læser den.
+ */
+.problem.tint-cold {
+  background: var(--chip-cold);
+  border-color: var(--chip-cold-edge);
+  color: var(--chip-cold-ink);
+}
+.problem.tint-craft {
+  background: var(--chip-craft);
+  border-color: var(--chip-craft-edge);
+  color: var(--chip-craft-ink);
+}
+.problem.tint-hunger {
+  background: var(--chip-hunger);
+  border-color: var(--chip-hunger-edge);
+  color: var(--chip-hunger-ink);
 }
 .problem.solved {
   color: var(--moss);
@@ -243,9 +286,10 @@ header h1 {
  * at lade være. Okker er systemets "opmærksomhed"-farve.
  */
 .problem.wanted {
-  color: var(--ochre-ink);
-  border-color: var(--ochre);
-  background: var(--ochre-tint);
+  /* Trækket må ikke overmale problemets egen farve — referencens chips
+     beholder deres klima uanset hvad fortælleren peger på. Så markeringen
+     er en okkerring uden om pillen, ikke en ny fyldfarve. */
+  box-shadow: 0 0 0 2px var(--ochre);
   font-weight: 600;
 }
 
@@ -262,13 +306,20 @@ header h1 {
 #search {
   flex: 1;
   min-height: var(--tap);
-  background: var(--chalk);
+  background: var(--search-fill);
   border: 1px solid var(--rule);
   border-radius: var(--radius);
   color: var(--ink);
   font-family: inherit;
   font-size: 1rem; /* 16px+ så iOS ikke zoomer ved fokus */
-  padding: 0 0.75rem;
+  /* Forstørrelsesglasset i referencen er tegnet ind i feltet, ikke lagt
+     ved siden af. Det er ren krom (streg, ingen illustration), så det bor
+     som inline-SVG i baggrunden og følger tekstens farve. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b2f27' stroke-width='2.1' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.4'/%3E%3Cpath d='M15.4 15.4 21 21'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0.85rem center;
+  background-size: 1.15rem 1.15rem;
+  padding: 0 0.75rem 0 2.6rem;
 }
 #search::placeholder { color: var(--ink-soft); }
 #search:focus-visible { outline: 2px solid var(--ochre-ink); outline-offset: 1px; }
@@ -316,7 +367,16 @@ header h1 {
   background: linear-gradient(to bottom, var(--tile-lit), var(--tile-shade));
   border: 1px solid var(--tile-edge);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-paper);
+  /*
+   * Referencens kort er UDSKÅRET, ikke klippet ud. Tværsnittet gennem
+   * venstre kant (y=840) måler: mørk kontur #65524b → lys fas #e4cbaf
+   * (2 px) → indre rille #cdaf93 (2 px) → fyld. Vores kort var en flad
+   * firkant uden kant overhovedet; det er hele forskellen mellem et papkort
+   * og en flise skåret i sten.
+   */
+  box-shadow: inset 0 0 0 2px var(--tile-bevel),
+              inset 0 0 0 4px var(--tile-groove),
+              var(--shadow-paper);
   color: var(--ink);
   font-family: inherit;
   padding: 0.5rem 0.25rem;
@@ -343,7 +403,9 @@ header h1 {
   /* Valgt = kortet løftes mod lyset, ikke skiftes til et andet materiale.
      var(--chalk) var næsten hvidt og brød papiret nu hvor kortene er tan. */
   background: linear-gradient(to bottom, #f2e2ca, #e9d1b5);
-  box-shadow: inset 0 0 0 1px var(--ochre), var(--shadow-paper);
+  box-shadow: inset 0 0 0 2px var(--tile-bevel),
+              inset 0 0 0 4px var(--tile-groove),
+              inset 0 0 0 1px var(--ochre), var(--shadow-paper);
 }
 /* Samme element i begge slots (sten + sten) */
 .element.is-selected-twice::before {
@@ -362,7 +424,7 @@ header h1 {
   object-fit: contain;
   filter: drop-shadow(0 1px 1px rgb(58 44 30 / 0.16));
 }
-.element .name { font-size: 0.78rem; text-align: center; line-height: 1.15; }
+.element .name { font-size: 1.05rem; text-align: center; line-height: 1.15; }
 /* Ny opdagelse: en okker prik — ikke en emoji i krommet */
 .element.is-new::after {
   content: "";
@@ -395,8 +457,15 @@ header h1 {
   flex: 1 1 0;
   min-width: 0;
   min-height: var(--tap);
-  background: var(--paper);
-  border: 2px dashed var(--rule-strong);
+  /* Målt i referencen: feltet er varm tan #dbc4b1, ikke --paper (#f5f3ea).
+     Samme fejl som griddets kort havde — en token der findes bruges ikke, og
+     fladen står som printerpapir midt i et maleri. */
+  background: var(--slot-fill);
+  /* Referencen har TO kanter: en lys cremeramme yderst og en stiplet, mørkere
+     linje inde i den. Den ydre laves med box-shadow frem for et ekstra
+     element, så feltet stadig er én kasse i DOM'en. */
+  border: 2px dashed var(--slot-dash);
+  box-shadow: 0 0 0 4px var(--slot-frame);
   border-radius: var(--radius);
   padding: 0.4rem;
   display: flex;
@@ -410,13 +479,52 @@ header h1 {
   cursor: pointer;
 }
 .slot.filled { border-style: solid; border-color: var(--ochre); background: var(--chalk); }
+/* Det tomme felts invitation. To linjer, som referencen: en fed antikva der
+   siger HVAD feltet vil have, og en lettere linje der siger HVORDAN. Kun i
+   tom tilstand — et fyldt felt er én linje med brik og navn. */
+.slot-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  line-height: 1.25;
+}
+.slot-empty b {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.slot-empty i {
+  font-style: normal;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
 /* Slotten er én linje med et lille billede foran navnet. gap frem for et
    mellemrum i teksten: der er ikke længere en tekstnode at sætte det i. */
 .slot { gap: 0.4rem; }
 .slot-glyph { font-size: 1.1rem; line-height: 1; flex: none; }
 img.slot-glyph { max-width: 34px; max-height: 26px; width: auto; height: auto; object-fit: contain; }
 .slot > span { overflow: hidden; text-overflow: ellipsis; }
-.plus { color: var(--ink-soft); font-size: 1.1rem; }
+/* Referencens plus er en lysende medaljon mellem felterne, ikke et tegn i
+   brødskrift: den binder de to felter sammen som ét regnestykke. Målt ~43 px
+   i diameter med en tyk mørk streg og et varmt skær udenom. */
+.plus {
+  flex: none;
+  width: 43px;
+  height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 42%, #f6e2c1, #edd3ae);
+  box-shadow: 0 0 12px 3px rgb(240 214 178 / 0.75);
+  color: var(--ink);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
 /* Primærknap = cremefarvet papir med blækkant (DESIGN.md §4), ikke en farveklat */
 /* Kombinér er skærmens primære handling, og referencen giver den en udskåret
    stentavle: faset inderramme, chevron over og under teksten, hvid antikva
@@ -1177,8 +1285,16 @@ img.card-glyph {
   #grid { order: 7; }
   #grid-empty { order: 8; }
 
-  header h1 { font-size: 1.5rem; }
+  /* Målt i referencen: versalhøjden er 28 px mod vores 17 ved 1.5rem.
+     Titlen er skærmens største typografiske element og bar en fjerdedel af
+     forskellen i headerens blækdækning (8.3 % mod vores 3.0 %). */
+  header h1 { font-size: 2.45rem; }
   #book-btn { display: none; }
+
+  /* Dokken er 109 px i referencen, og feltet FYLDER den: der er ingen luft
+     over eller under. Vi lod indholdet bestemme højden, og to-linjers
+     invitationen skubbede rækken til 121 — hvilket forskød alt derunder
+     (søgefelt +16, grid +13). Højden er derfor sat, ikke udledt. */
 
   #book-panel {
     position: static;
@@ -1197,9 +1313,14 @@ img.card-glyph {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-top: none;
-    padding: 0 0 0.75rem;
+    padding: 0;
   }
   .slot { min-height: 56px; }
+  /* Dokken er 109 px i referencen, og feltet FYLDER den: ingen luft over
+     eller under. Vi lod indholdet bestemme højden, og to-linjers
+     invitationen skubbede rækken til 121 — hvilket forskød alt derunder
+     (søgefelt +16, grid +13). Højden er derfor sat, ikke udledt. */
+  .slot, #combine { height: 109px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

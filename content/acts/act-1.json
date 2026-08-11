@@ -8,6 +8,8 @@
     {
       "id": "kulde",
       "name": "Karl is freezing",
+      "icon": "❄️",
+      "tint": "cold",
       "description": "It's cold on the steppe. Karl's goosebumps have goosebumps.",
       "required": true,
       "pull": "pull-kulde",
@@ -20,6 +22,8 @@
     {
       "id": "vaerktoej",
       "name": "Bare hands",
+      "icon": "✋",
+      "tint": "craft",
       "description": "Karl has two hands and zero tools. Nature is laughing at him.",
       "required": true,
       "pull": "pull-vaerktoej",
@@ -32,6 +36,8 @@
     {
       "id": "sult",
       "name": "Karl is hungry",
+      "icon": "🍖",
+      "tint": "hunger",
       "description": "Karl's stomach growls so loudly the boar keeps its distance.",
       "required": true,
       "pull": "pull-sult",

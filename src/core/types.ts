@@ -77,6 +77,17 @@ export interface EndingDef {
 export interface ProblemDef {
   id: string;
   name: string;
+  /**
+   * Emblem for problemets *emne* (❄️ for kulde, ✋ for værktøj). Referencen
+   * viser emnet, ikke status: en chip fortæller først hvad der er galt, og
+   * dernæst — via tint og gennemstregning — hvor langt Karl er med det.
+   */
+  icon?: string;
+  /**
+   * Semantisk farvefamilie, ikke en hex-værdi: indholdet siger "cold", og
+   * CSS ejer hvilken kulde det er. Kendte værdier: cold, craft, hunger.
+   */
+  tint?: string;
   /** Sådan præsenteres problemet i historien ("Karl fryser") */
   description: string;
   /** Obligatoriske problemer gater age-up (blødt gate, PRD §2.3) */

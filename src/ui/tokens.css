@@ -91,6 +91,32 @@
   --grain-opacity: 0.16;
   --tile-lit: #e8d3b9;
   --tile-shade: #dec3a6;
+  /* Kortets udskæring, målt i tværsnit gennem referencens kortkant:
+     en lys fas yderst og en mørkere rille indenfor. */
+  --tile-bevel: #e4cbaf;
+  --tile-groove: #cdaf93;
+  /* Kombinationsfelterne, målt i referencens dok (237..1039, 578..687).
+     Fyldet er varmere og mørkere end --paper; rammen er den lyse creme der
+     omkranser den stiplede linje udenfra. */
+  --slot-fill: #dbc4b1;
+  --slot-dash: #d4bca7;
+  --slot-frame: #dcbda0;
+  /* Problemchips, målt på referencens øverste rene fyldbånd (y 524–531).
+     Hvert problem har sin egen familie: kulde er kølig og grå, værktøj er
+     varm læder, sult er creme med tørret blod i skriften. Kanten er fyldet
+     mørknet ~10 %, blækket er målt i tekstbåndet. */
+  --chip-cold: #d3d0d1;
+  --chip-cold-edge: #bcbabd;
+  --chip-cold-ink: #11213a;
+  --chip-craft: #ebd2b3;
+  --chip-craft-edge: #d6b892;
+  --chip-craft-ink: #5f210b;
+  --chip-hunger: #edd6bf;
+  --chip-hunger-edge: #d8bda1;
+  --chip-hunger-ink: #6f1a0c;
+  /* Søgefeltet er ikke papir: referencens felt måler #dec8b4, altså samme
+     varme ler som dokken. --chalk (#f8f7f3) var næsten hvidt. */
+  --search-fill: #dec8b4;
   --field: #e2cdb9;
   --titlebar: #dfcdbf;
   --slot: #dec6b0;
@@ -200,7 +226,16 @@
 
   /* --- Typografi --------------------------------------------------------- */
   --font-display: "Fraunces", ui-serif, serif;
-  --font-ui: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  /*
+   * Referencen er sat med ÉN serif hele vejen igennem — chips, søgefelt,
+   * kortetiketter, knapper. Den grotesk vi kørte med (Plus Jakarta Sans)
+   * gjorde grænsefladen til en app oven på en tegning; med samme serif som
+   * overskrifterne bliver den til én håndskrevet krønike. Sansen bliver
+   * stående som token, fordi tal-tunge flader (fx tælleværker) stadig kan
+   * få brug for den — men intet i spillet peger på den længere.
+   */
+  --font-ui: "Fraunces", ui-serif, serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --measure: 65ch;
 
   --step-hero: clamp(2.75rem, 8.5vw, 5.5rem);
