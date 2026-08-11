@@ -27,21 +27,9 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
 PAINTED = ROOT / "docs/design/reference/bg-wide.png"
-TARGET = ROOT / "docs/design/reference/target-2026-08-11.webp"
-RENDER = ROOT / ".judge/latest/render/game.png"
 OUT_DIR = ROOT / "src/assets/art"
 WIDTHS = (1600, 2560)
 ASPECT = 21 / 9
-
-# De eneste søjler hvor BÅDE referencen og vores render viser ren baggrund:
-# vinduesrammen dækker alt derimellem. Målt på referencen (1448 px bred).
-MARGINS = ((15, 150), (1300, 1435))
-
-
-def _margin_pixels(path: Path) -> np.ndarray:
-    """Alle baggrundspixels fra de to margener, som Nx3 float."""
-    a = np.asarray(Image.open(path).convert("RGB")).astype(np.float64)
-    return np.concatenate([a[:, x0:x1].reshape(-1, 3) for x0, x1 in MARGINS])
 
 
 def _grade(src: Image.Image) -> Image.Image:
@@ -53,38 +41,40 @@ def _grade(src: Image.Image) -> Image.Image:
     margener og vores egne margener viser præcis den samme flade, så en
     affin graduering fra vores statistik til referencens er direkte målbar.
 
+    Tallene er MÅLT ÉN GANG og derefter frosset. De blev oprindeligt regnet
+    ud mod `.judge/latest/render/game.png`, men så snart den render viser en
+    allerede gradueret baggrund, måler scriptet sin egen rettelse og bliver
+    til identitet — næste kørsel ville give det ustøttede maleri tilbage.
+    Frosne konstanter gør bygget deterministisk fra kilden.
+
     Grå-verdens-metoden (bare skalere kanalmidler) blev fravalgt: den flytter
     kuløren, men lader vores for høje mætning stå. Reinhard i Lab flytter både
     midtpunkt og spredning, altså både kulør OG kontrast, som er de to ting
     dommeren målte forkert.
-    """
-    if not (TARGET.exists() and RENDER.exists()):
-        print("  (springer graduering over: mangler reference eller render)")
-        return src
 
+    AFVIST 2026-08-12 — en RÆKKEVIS efterjustering oveni. Tanken var, at et
+    landskab er sin lodrette progression, og at vores maleri var for lyst
+    præcis dér hvor problemchipsene sidder. Målingen sagde nej: lærredets
+    tone faldt fra 0,897 til 0,775 og chippenes fra 0,291 til 0,171.
+    Margenerne er de eneste rene baggrundssøjler, men netop derfor er de
+    IKKE repræsentative for fladen i midten — en margen-udledt rækkedelta
+    overkorrigerer alt det, rammen dækker.
+    """
     import cv2  # lokal import: kun graduering bruger OpenCV
 
-    def to_lab(rgb01: np.ndarray) -> np.ndarray:
-        """Ægte Lab (L 0-100, a/b ±127) — kræver float32-input i [0,1]."""
-        return cv2.cvtColor(rgb01.astype(np.float32), cv2.COLOR_RGB2LAB)
+    # Målt mellem referencens og vores egne margener (søjle 15-150 og
+    # 1300-1435 — de eneste steder hvor begge billeder viser ren baggrund).
+    mu_o = np.array([52.1, 15.1, 20.7])
+    mu_t = np.array([55.4, 9.8, 4.3])
+    gain = np.array([0.93, 0.75, 0.67])
 
-    lab_ours = to_lab((_margin_pixels(RENDER) / 255.0).reshape(1, -1, 3))[0]
-    lab_theirs = to_lab((_margin_pixels(TARGET) / 255.0).reshape(1, -1, 3))[0]
-
-    mu_o, sd_o = lab_ours.mean(axis=0), lab_ours.std(axis=0)
-    mu_t, sd_t = lab_theirs.mean(axis=0), lab_theirs.std(axis=0)
-    gain = np.where(sd_o > 1e-6, sd_t / sd_o, 1.0)
-    print(
-        f"  graduering  L {mu_o[0]:.1f}→{mu_t[0]:.1f}  "
-        f"a {mu_o[1]:+.1f}→{mu_t[1]:+.1f}  b {mu_o[2]:+.1f}→{mu_t[2]:+.1f}  "
-        f"gain {gain.round(2)}"
+    lab = cv2.cvtColor(
+        (np.asarray(src).astype(np.float32) / 255.0), cv2.COLOR_RGB2LAB
     )
-
-    lab = to_lab(np.asarray(src).astype(np.float64) / 255.0)
     lab = ((lab - mu_o) * gain + mu_t).astype(np.float32)
     rgb = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
-    out = np.clip(rgb * 255.0, 0, 255).astype(np.uint8)
-    return Image.fromarray(out)
+    print(f"  graduering  b {mu_o[2]:+.1f}→{mu_t[2]:+.1f}  gain {gain}")
+    return Image.fromarray(np.clip(rgb * 255.0, 0, 255).astype(np.uint8))
 
 
 def main() -> None:

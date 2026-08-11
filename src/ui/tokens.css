@@ -76,6 +76,9 @@
   /* --- Papir: seks trin, alle varme. Lyshedstrappen = fremtrædelse. ----- */
   --chronicle: #eee0cd;
   --parchment: #ecdcc7;
+  /* Aktplaketten — skærmens eneste mørke flade, målt i referencen. */
+  --act-badge: #1d3145;
+  --act-badge-ink: #f8ebec;
   --tile: #e7d3ba;
   /* Kortpapiret er ikke fladt i referencen. Målt i et elementkorts venstre
      margen falder det jævnt fra #e8d3b9 øverst til #dec3a6 nederst — papir

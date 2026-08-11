@@ -96,6 +96,21 @@
       "firstSeen": "2026-08-11",
       "iteration": 3,
       "status": "open"
+    },
+    {
+      "key": "bg:per-row-grade:tools/art/build_bg_wide.py",
+      "region": "app-frame",
+      "defect": "afvist",
+      "severity": 0,
+      "evidence": "En raekkevis Lab-korrektion oveni den globale graduering, udledt af referencens og vores egne margener pr. billedraekke. Maalingen afviste den: laerredets tone faldt 0.897->0.775 og chippenes 0.291->0.171.",
+      "fix": {
+        "kind": "afvist",
+        "file": "tools/art/build_bg_wide.py",
+        "change": "Proev IKKE igen. Margenerne er de eneste rene baggrundssoejler, men netop derfor er de ikke repraesentative for fladen i midten - en margen-udledt raekkedelta overkorrigerer alt det vinduesrammen daekker. Chippenes lave tone er et KOMPOSITIONS-problem i maleriet, ikke en gradueringsfejl."
+      },
+      "why": "Maalt og forkastet 2026-08-12",
+      "firstSeen": "2026-08-11",
+      "status": "rejected"
     }
   ]
 }
