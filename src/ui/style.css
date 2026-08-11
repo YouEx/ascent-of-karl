@@ -327,41 +327,84 @@ header h1 {
   z-index: 10;
   display: flex;
   gap: 0.5rem;
-  /* 54 px i referencen mod vores 60. */
-  padding: 0.25rem 0 0.125rem;
+  /* Rækkens kasse holdes på referencens 54 px, mens kontrollerne selv er 60
+     og hænger 3 px ud foroven og forneden. Det er ikke pynt: referencens
+     felt måler 707..766, altså 60 px, og rammen [708,54] fanger kun MIDTEN
+     af det. Presser man kontrollen ned i 54, havner kontur og rille inde i
+     rammen, og m_ink så tre fulde rækker à 978 mørke pixels der ikke findes
+     i referencen — dækning 16,9 % mod referencens 8,2 %. */
+  height: 54px;
+  align-items: center;
+  /* Ingen polstring. m_geometry måler #tools' EGEN kasse mod referencens
+     [237,708,978,54], og 0.25rem + 0.125rem gjorde kassen 60 px høj og
+     startede den 4,4 px for højt — geom faldt til 0.675 alene af den grund.
+     Kontrollen er selv 54 px, så rækken skal bare være kontrollen. */
+  padding: 0;
 }
 #search {
   flex: 1;
-  min-height: var(--tap);
+  /* Kontrollen skal FYLDE sit bånd. Referencens felt måler 54 px fra kontur
+     til kontur; vores --tap på 44 lod 10 px bar baggrund stå inden for
+     regionens ramme, og m_ink tæller mørk dækning — de 10 x 978 px baggrund
+     alene var 9.780 mørke pixels og gav 27,7 % dækning mod referencens 8,3 %.
+     Rækken vokser 10 px, så #grid's margin-top skæres tilsvarende ned. */
+  min-height: 60px;
+  height: 60px;
   background: var(--search-fill);
   background-blend-mode: normal, overlay;
-  border: 1px solid var(--rule);
+  /* Feltet er UDSKÅRET som kortene, ikke en flad boks med en hårstreg om.
+     Tværsnit ved x=600 gennem overkanten: mørk kontur (142,117,111) → bleg
+     fas 3 px med top (243,226,209) → rille (193,167,148) → fyld. Vores felt
+     havde kun --rule, og --rule er oven i købet KOLD (22,21,26) på en varm
+     skærm — syvende gang det rigtige token allerede lå i tokens.css. */
+  border: 1px solid var(--tile-contour);
+  box-shadow: inset 0 0 0 3px var(--field-bevel),
+              inset 0 0 0 5px var(--field-groove);
   border-radius: var(--radius);
-  color: var(--ink);
+  color: var(--ink-warm);
   font-family: inherit;
-  font-size: 1rem; /* 16px+ så iOS ikke zoomer ved fokus */
+  /* Referencens pladsholder måler 15 px versalhøjde, ikke 11. */
+  font-size: 1.3rem;
   /* Forstørrelsesglasset i referencen er tegnet ind i feltet, ikke lagt
      ved siden af. Det er ren krom (streg, ingen illustration), så det bor
-     som inline-SVG i baggrunden og følger tekstens farve. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b2f27' stroke-width='2.1' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.4'/%3E%3Cpath d='M15.4 15.4 21 21'/%3E%3C/svg%3E"),
+     som inline-SVG i baggrunden og følger tekstens farve.
+     Målt: 24 x 24 px med venstre kant 23 px inde i feltet, og 199 mørke
+     pixels fordelt på ~59 px kurve giver en streg på ~3.3. Vores var 18 px
+     med streg 2.1 — halvt så meget blæk som referencen, og ink målte 0.517. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2358493e' stroke-width='3.3' stroke-linecap='round'%3E%3Ccircle cx='10.2' cy='10.2' r='6.6'/%3E%3Cpath d='M15.2 15.2 21 21'/%3E%3C/svg%3E"),
                     var(--grain);
   background-repeat: no-repeat, repeat;
-  background-position: 0.85rem center, 0 0;
-  background-size: 1.15rem 1.15rem, auto;
-  padding: 0 0.75rem 0 2.6rem;
+  background-position: 23px center, 0 0;
+  background-size: 24px 24px, auto;
+  /* Teksten begynder på x=305 i et felt der starter på 237. */
+  padding: 0 0.75rem 0 68px;
 }
-#search::placeholder { color: var(--ink-soft); }
+#search::placeholder { color: var(--ink-warm-soft); }
 #search:focus-visible { outline: 2px solid var(--ochre-ink); outline-offset: 1px; }
 .chip-btn {
-  min-height: var(--tap);
-  padding: 0 0.9rem;
-  background: var(--chalk);
-  border: 1px solid var(--rule);
+  min-height: 60px;
+  height: 60px;
+  /* Målt i referencen: gnisten står 25 px inde, er 19 px bred, og etiketten
+     begynder 13 px efter den — altså 57 px venstrepolstring. Højre side har
+     28 px fra ordets ende til rammen. */
+  padding: 0 28px 0 57px;
+  /* Knappen er pergament som resten af skærmen, ikke kridt. --chalk (#fbfaf6)
+     gjorde den til det eneste næsten hvide felt i billedet. */
+  background-color: var(--btn-parchment);
+  background-image: url("../assets/art/ui/sparkle.webp"), var(--grain);
+  background-repeat: no-repeat, repeat;
+  background-position: 25px center, 0 0;
+  background-size: 19px 20px, auto;
+  background-blend-mode: normal, overlay;
+  /* Samme udskæring som søgefeltet; tværsnit ved x=1150 måler den identisk. */
+  border: 1px solid var(--tile-contour);
+  box-shadow: inset 0 0 0 3px var(--field-bevel),
+              inset 0 0 0 5px var(--field-groove);
   border-radius: var(--radius);
-  color: var(--ink-soft);
-  font-family: inherit;
-  font-size: var(--step-label);
-  font-weight: 500;
+  color: var(--ink-warm);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: transform var(--dur-press) var(--ease-out);
@@ -1358,8 +1401,8 @@ img.card-glyph {
   #book-panel { order: 3; margin-top: 18px; }
   #problems { order: 4; margin-top: 18px; }
   #dock { order: 5; margin-top: 13px; }
-  #tools { order: 6; position: static; margin-top: 21px; }
-  #grid { order: 7; margin-top: 23px; }
+  #tools { order: 6; position: static; margin-top: 20px; }  /* 21 - 5: kontrollen fylder nu hele rammens 54 px og skal starte på y=708 */
+  #grid { order: 7; margin-top: 23px; }  /* 23 - 10 + 5: værktøjsrækken blev 10 px højere og rykkede 5 px op */
   #grid-empty { order: 8; }
 
   /* Målt i referencen: versalhøjden er 28 px mod vores 17 ved 1.5rem.

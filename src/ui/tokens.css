@@ -133,6 +133,14 @@
   /* Kortets yderste kontur, målt i referencen ved x=237 og x=369, y=880.
      Mørkere end --tile-edge: uden den flyder kortet ud i baggrunden. */
   --tile-contour: #c3a382;
+
+  /* Søgefeltets og New finds' fas er LYSERE end kortenes. Tværsnit ved x=600
+     og x=1150 måler mørk kontur → bleg fas 3 px med top #f3e2d1 → rille 2 px
+     #c1a794 → fyld. Kortenes --tile-bevel (#e4cbaf) er 15 for mørk her. */
+  --field-bevel: #f3e2d1;
+  --field-groove: #c1a794;
+  /* New finds er pergament, ikke kridt. Målt fyld i knappen: 227,206,185. */
+  --btn-parchment: #e3ceb9;
   --dashed: #cbb19e;
   --frame: #ccadab;
 
