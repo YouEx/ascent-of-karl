@@ -72,7 +72,10 @@ const OVERLAYS = [
         }));
       });
       await p.reload();
-      await p.click("#t-continue");
+      // #t-primary er ét knap-id for både "Continue" og "Begin" — etiketten
+      // skifter med save-tilstanden, id'et gør ikke. Her FINDES der en save,
+      // så knappen hedder "Continue".
+      await p.click("#t-primary");
       await p.waitForTimeout(700);
     },
     isOpen: (p) => p.locator("#ending").isVisible(),
@@ -90,8 +93,14 @@ async function freshGame(browser) {
   await page.goto(URL);
   await page.evaluate(() => localStorage.clear());
   await page.reload();
-  await page.waitForSelector("#title-screen .title-grid");
-  await page.click("#t-new");
+  // Vent på selve knappen, ikke på en layout-beholder. Titelskærmen er nu
+  // bygget om tre gange, og hver gang tog en omdøbt wrapper (.title-grid →
+  // .title-panel) CI med i faldet, uden at der var noget i vejen med spillet.
+  // Knappen, vi er ved at trykke på, er det eneste, testen faktisk afhænger af.
+  // Med tømt localStorage hedder #t-primary "Begin"; #t-new findes kun, når
+  // der ER en save at komme videre fra.
+  await page.waitForSelector("#title-screen #t-primary");
+  await page.click("#t-primary");
   await page.waitForSelector("#grid .element");
   await page.waitForTimeout(300);
   return page;
