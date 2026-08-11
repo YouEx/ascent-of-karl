@@ -361,6 +361,14 @@ header h1 {
   filter: saturate(0.5) contrast(1.1) brightness(0.86);
   mix-blend-mode: multiply;
 }
+/* Det udskårne ikon er allerede referencens egen farve og tone — filteret
+   og multiply var kompensation for systememojiernes plastikkulør og ville
+   nu sværte et billede, der i forvejen passer. */
+img.problem-icon {
+  filter: none;
+  mix-blend-mode: normal;
+  vertical-align: -0.35em;
+}
 /*
  * Chippen bærer problemets farve, ikke bare dets navn. Målt på referencen:
  * kulde #d3d0d1 på navy, værktøj #ebd2b3 på brunt, sult #edd6bf på mørkerødt.
@@ -471,7 +479,7 @@ header h1 {
      løber 708..765, vores 705..762. transform frem for margin, fordi
      m_geometry måler #tools' EGEN kasse — en margin ville flytte den kasse
      og koste mere end den vinder. */
-  transform: translateY(3px);
+  transform: translateY(2px);
 }
 #search::placeholder { color: var(--ink-warm-soft); }
 #search:focus-visible { outline: 2px solid var(--ochre-ink); outline-offset: 1px; }
@@ -507,7 +515,7 @@ header h1 {
   cursor: pointer;
   white-space: nowrap;
   /* Samme 3 px som søgefeltet — de to kontroller er ét bånd. */
-  transform: translateY(3px);
+  transform: translateY(2px);
   transition: transform var(--dur-press) var(--ease-out);
 }
 .chip-btn:active { transform: translateY(4px); }
@@ -1567,7 +1575,7 @@ img.card-glyph {
   #narrator { order: 2; position: static; margin-top: 20px; }
   #book-panel { order: 3; margin-top: 17px; }
   #problems { order: 4; margin-top: 18px; }
-  #dock { order: 5; margin-top: 15px; }  /* 13 + 3: krønikens flade satte panelets højde 3 px anderledes */
+  #dock { order: 5; margin-top: 12.5px; }  /* 15 - 2,5: de udskårne problemikoner gjorde chip-rækken 3,5 px højere */
   #tools { order: 6; position: static; margin-top: 21px; }  /* 21 - 5: kontrollen fylder nu hele rammens 54 px og skal starte på y=708 */
   /* Målt kortpitch i referencen: søjlerne begynder på 2, 148, 292, 441, 588,
      736 og 882 — altså 146,7 px pitch med 129 px kort. Vores var 141/119, og

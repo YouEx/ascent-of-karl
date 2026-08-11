@@ -9,7 +9,7 @@ import { initAudio, playLine, stopAudio } from "./audio";
 import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
-import { glyphHTML } from "./art";
+import { glyphHTML, problemGlyphHTML } from "./art";
 import { PlaytestLog } from "./playtest";
 import {
   activeScenario,
@@ -306,8 +306,14 @@ function renderProblems(): void {
       const hint = wanted ? " — the narrator wants this next" : "";
       // Emnet står først; status er farve og gennemstregning, ikke et tegn.
       // Løst problem er undtagelsen: fluebenet er hele pointen med at se det.
-      const mark = done ? "✓" : (p.icon ?? (wanted ? "→" : "○"));
-      return `<span class="${cls}" title="${p.description}${hint}"><i class="problem-icon" aria-hidden="true">${mark}</i> ${p.name}</span>`;
+      // Løst eller udpeget problem har et TEGN, ikke et maleri: fluebenet og
+      // pilen er status, og status skal kunne skifte uden at motivet skifter.
+      const mark = done ? "✓" : wanted ? "→" : (p.icon ?? "○");
+      const icon =
+        done || wanted
+          ? `<i class="problem-icon" aria-hidden="true">${mark}</i>`
+          : problemGlyphHTML(p.id, mark, "problem-icon");
+      return `<span class="${cls}" title="${p.description}${hint}">${icon} ${p.name}</span>`;
     })
     .join("");
 }

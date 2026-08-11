@@ -22,6 +22,41 @@ for (const [path, url] of Object.entries(files)) {
   art.set(id, url);
 }
 
+/**
+ * Problemknappernes ikoner. Egen mappe frem for elements/, fordi hasArt()
+ * bruges til at afgøre om et ELEMENT er malet — et problem er ikke et
+ * element, og id'erne kunne kollidere.
+ */
+const problemFiles = import.meta.glob<string>("../assets/art/problems/*.webp", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+
+import problemSizes from "../assets/art/problems/sizes.json";
+
+const problemArt = new Map<string, string>();
+for (const [path, url] of Object.entries(problemFiles)) {
+  const id = path.slice(path.lastIndexOf("/") + 1, -".webp".length);
+  problemArt.set(id, url);
+}
+
+/**
+ * Problemets ikon som HTML. Referencens ikoner er malede — systemets emoji
+ * står blegt og fladt ved siden af, og i ét tilfælde viste vores endda et
+ * andet motiv end referencen.
+ */
+export function problemGlyphHTML(id: string, fallback: string, cls: string): string {
+  const url = problemArt.get(id);
+  if (!url) return `<i class="${cls}" aria-hidden="true">${fallback}</i>`;
+  // Målene kommer fra sizes.json, skrevet af build_problem_icons.py. Filerne
+  // er skåret ved 3x for skarphed på hi-dpi, men skal STÅ i referencens
+  // størrelse — og de tre er ikke lige store der, så en fælles højde i CSS
+  // ville presse dem til samme mål.
+  const [w, h] = (problemSizes as Record<string, number[]>)[id] ?? [24, 24];
+  return `<img class="${cls} ${cls}-art" src="${url}" width="${w}" height="${h}" alt="" aria-hidden="true" draggable="false">`;
+}
+
 /** Har elementet et maleri, eller falder det tilbage på emoji? */
 export function hasArt(id: string): boolean {
   return art.has(id);
