@@ -18,6 +18,22 @@
       "status": "open"
     },
     {
+      "key": "narrator:color:src/ui/style.css",
+      "region": "narrator",
+      "defect": "color",
+      "severity": 4,
+      "evidence": "Referencens boblepapir måler median #ebdbc5 i midterfeltet (rect 237,105,978,145, midterudsnit uden ornament og kant). #bubble bruger var(--paper) = #f5f3ea, som er både lysere og køligere. Vores eget token --parchment er #ecdcc7 — 2 enheder fra det målte. Regionens tone står på 0.310 og er den næstlaveste metrik i regionen. Fejlen blev synlig først da lærredet blev et maleri: mod den gamle blege gradient lignede en næsten hvid boble et papir.",
+      "fix": {
+        "kind": "structure",
+        "file": "src/ui/style.css",
+        "change": "#bubble background skal være var(--parchment) i stedet for var(--paper). Skift ikke selve --paper-tokenet: det bruges også af andre flader, og en global ændring ville flytte dem med."
+      },
+      "why": null,
+      "firstSeen": "2026-08-11",
+      "iteration": 2,
+      "status": "open"
+    },
+    {
       "key": "grid:size:src/ui/style.css",
       "region": "grid",
       "defect": "size",

@@ -20,9 +20,30 @@ body {
   line-height: 1.55;
   min-height: 100dvh;
   -webkit-text-size-adjust: 100%;
-  /* Ét sammenhængende daggry bag hele spillet — fixed, så gradienten ikke
-     ruller med og afslører sin ende på en lang side. */
-  background: var(--canvas) fixed;
+  /* Ét sammenhængende daggry bag hele spillet — fixed, så baggrunden ikke
+     ruller med og afslører sin ende på en lang side.
+
+     Lærredet er et MALERI, ikke en gradient. Dommeren målte hele fladen som
+     forkert materiale: referencen er et malet landskab, og ingen gradient
+     kan efterligne dets korn. Maleriet er 21:9 og `cover`es, så det passer
+     fra 4:3 op til ultrabredt uden et billede per rude.
+
+     Gradienten bliver liggende UNDER som reserve, så ruden aldrig blinker
+     hvid mens webp'en hentes. */
+  background:
+    url("../assets/art/bg-wide-1600.webp") center center / cover no-repeat fixed,
+    var(--canvas-fallback) fixed;
+  background-color: var(--valley-dark);
+}
+
+/* Store og tætte skærme henter det dobbelte maleri. Grænsen er sat på bredde
+   frem for dpr, fordi `cover` skalerer efter den længste side af ruden. */
+@media (min-width: 1100px), (min-resolution: 2dppx) {
+  body {
+    background-image:
+      url("../assets/art/bg-wide-2560.webp"),
+      var(--canvas-fallback);
+  }
 }
 
 #app {
@@ -141,7 +162,10 @@ header h1 {
 }
 #bubble {
   position: relative;
-  background: var(--paper);
+  /* Pergament, ikke printerpapir. Referencens boble måler #ebdbc5; --paper er
+     #f5f3ea og altså både lysere og køligere. Forskellen var usynlig mod den
+     gamle blege gradient og blev først tydelig, da lærredet blev et maleri. */
+  background: var(--parchment);
   border: 1px solid var(--rule);
   border-radius: var(--radius-lg);
   border-top-right-radius: 2px;
@@ -161,7 +185,7 @@ header h1 {
   content: "";
   position: absolute; top: -12px; right: 20px;
   border-left: 19px solid transparent;
-  border-bottom: 13px solid var(--paper);
+  border-bottom: 13px solid var(--parchment);
   transform: skewX(28deg); z-index: 1;
 }
 #bubble.muted { opacity: 0.55; border-style: dashed; }

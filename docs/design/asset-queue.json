@@ -17,6 +17,23 @@
       "firstSeen": "2026-08-11",
       "iteration": 1,
       "status": "open"
+    },
+    {
+      "key": "narrator:missing-asset:UI-narrator-archer",
+      "region": "narrator",
+      "defect": "missing-asset",
+      "severity": 3,
+      "evidence": "Referencens boble har et malet buskyttemærke i venstre margen, cirka 46x60 px ved boblens venstre kant, tegnet i samme okkerbrune streg som de øvrige hulemalerier. Vores boble har intet mærke; venstre margen er tomt papir. Regionens struct står på 0.442, og overlayet i .judge/latest/overlay/game/narrator.png viser mærket som den eneste store formforskel ud over boblebredden.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "UI-narrator-archer",
+        "spec": "Hulemaleri-figur af en bueskytte i profil, okkerbrun streg på gennemsigtig baggrund, cirka 46x60 px ved 1x. Samme håndtegnede streg og samme okker som orn-hunt.webp. Skal ligge som ornament i boblens venstre margen, ikke som ikon i en ramme.",
+        "producer": "tools/art/build_ui.py"
+      },
+      "why": null,
+      "firstSeen": "2026-08-11",
+      "iteration": 2,
+      "status": "open"
     }
   ]
 }
