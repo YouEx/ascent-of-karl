@@ -9,6 +9,7 @@ import { initAudio, playLine, stopAudio } from "./audio";
 import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
+import { glyphHTML } from "./art";
 import { PlaytestLog } from "./playtest";
 import {
   activeScenario,
@@ -306,8 +307,14 @@ function renderProblems(): void {
 
 function renderSlots(): void {
   const [a, b] = selected;
-  el.slotA.textContent = a ? `${engine.element(a).emoji} ${engine.element(a).name}` : "?";
-  el.slotB.textContent = b ? `${engine.element(b).emoji} ${engine.element(b).name}` : "?";
+  // innerHTML frem for textContent: brikken kan være et maleri, ikke et tegn.
+  // Navnene kommer fra content/elements.json, ikke fra spilleren.
+  el.slotA.innerHTML = a
+    ? `${glyphHTML(a, engine.element(a).emoji, "slot-glyph")}<span>${engine.element(a).name}</span>`
+    : "?";
+  el.slotB.innerHTML = b
+    ? `${glyphHTML(b, engine.element(b).emoji, "slot-glyph")}<span>${engine.element(b).name}</span>`
+    : "?";
   el.slotA.classList.toggle("filled", !!a);
   el.slotB.classList.toggle("filled", !!b);
   el.combineBtn.disabled = !(a && b);
@@ -345,7 +352,7 @@ function renderGrid(): void {
     const btn = document.createElement("button");
     btn.className = `element ${freshFinds.has(def.id) ? "is-new" : ""}`;
     btn.dataset.id = def.id;
-    btn.innerHTML = `<span class="emoji">${def.emoji}</span><span class="name">${def.name}</span>`;
+    btn.innerHTML = `${glyphHTML(def.id, def.emoji)}<span class="name">${def.name}</span>`;
     attachSelect(btn, def);
     el.grid.appendChild(btn);
   }
@@ -416,7 +423,7 @@ function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" 
           ${Array.from({ length: sparks }, (_, i) =>
             `<i style="--i:${i};--n:${sparks}"></i>`).join("")}
         </div>
-        <div class="card-emoji">${d.emoji}</div>
+        <div class="card-emoji">${glyphHTML(d.id, d.emoji, "card-glyph")}</div>
       </div>
       <h2>${d.name}</h2>
       <p class="card-flavor">${d.flavor ?? ""}</p>

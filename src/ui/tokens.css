@@ -77,6 +77,20 @@
   --chronicle: #eee0cd;
   --parchment: #ecdcc7;
   --tile: #e7d3ba;
+  /* Kortpapiret er ikke fladt i referencen. Målt i et elementkorts venstre
+     margen falder det jævnt fra #e8d3b9 øverst til #dec3a6 nederst — papir
+     der fanger lys ovenfra. To tokens frem for en færdig gradient, så slots
+     og felter kan arve samme papir uden at kopiere vinklen. */
+  /* Kornets styrke er en skrue, ikke en konstant, så ruteren kan dreje på
+     den. Den kan bare ikke lukke materialitetshullet: referencens gitter
+     måler 17,2 i højpasenergi mod vores 12,0, men at skrue kornet fra 0,16
+     til 0,34 flytter mater fra 0,683 til 0,677. Støjen ligger på
+     baseFrequency 0,9 — under den blur-radius på 2,0 metrikken måler med, så
+     mere korn gør kun fladen mørkere. Referencens ekstra energi er malet
+     penselstruktur i en grovere skala, ikke filmkorn. */
+  --grain-opacity: 0.16;
+  --tile-lit: #e8d3b9;
+  --tile-shade: #dec3a6;
   --field: #e2cdb9;
   --titlebar: #dfcdbf;
   --slot: #dec6b0;
@@ -251,7 +265,7 @@ body::after {
      laget ufarligt trods den høje z-index. */
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.16;
+  opacity: var(--grain-opacity);
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }

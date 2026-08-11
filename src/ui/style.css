@@ -280,16 +280,26 @@ header h1 {
 }
 
 /* ---------- Element-grid ---------- */
+/* Målt på referencen (region 237,785,978,262): kortene er 118-126 px brede,
+   median 122, søjleafstand 147 (altså 25 px luft) og rækkeafstand 139 med
+   118 px høje kort (21 px luft). Vi lå på 96/8 og fik 9 per række, hvilket
+   forskød hvert eneste kort fra række 2 og frem.
+
+   minmax står på 118, ikke 122: auto-fill regner floor((978+25)/(min+25)),
+   og ved 122 giver det 6 søjler, ikke 7. Ved 118 giver det 7, og 1fr
+   strækker dem til 118,3 px — 4 px fra referencens 122. */
 #grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  column-gap: 25px;
+  row-gap: 21px;
   align-content: start;
 }
 .element {
-  min-height: 76px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
+  /* Kortet er næsten kvadratisk i referencen: 122 bredt, 118 højt. */
+  min-height: 118px;
+  background: linear-gradient(to bottom, var(--tile-lit), var(--tile-shade));
+  border: 1px solid var(--tile-edge);
   border-radius: var(--radius);
   box-shadow: var(--shadow-paper);
   color: var(--ink);
@@ -315,7 +325,9 @@ header h1 {
 /* Valgt: begge slots markeres, ikke kun den sidst rørte */
 .element.is-selected {
   border-color: var(--ochre);
-  background: var(--chalk);
+  /* Valgt = kortet løftes mod lyset, ikke skiftes til et andet materiale.
+     var(--chalk) var næsten hvidt og brød papiret nu hvor kortene er tan. */
+  background: linear-gradient(to bottom, #f2e2ca, #e9d1b5);
   box-shadow: inset 0 0 0 1px var(--ochre), var(--shadow-paper);
 }
 /* Samme element i begge slots (sten + sten) */
@@ -324,7 +336,17 @@ header h1 {
   position: absolute; top: 4px; left: 6px;
   font-size: 0.7rem; color: var(--ochre-ink); font-weight: 700;
 }
-.element .emoji { font-size: 1.7rem; line-height: 1; }
+.element .emoji { font-size: 2.6rem; line-height: 1; }
+/* Maleriet erstatter emojien i samme boks. Kassen er målt på referencen:
+   kunstblokken er 62-67 px høj og op til 91 px bred på tværs af sten, vand,
+   vildsvin og nabo. max- frem for faste mål: genstandene har hvert sit
+   format, og de skal fylde kassen ud, ikke rette sig ind efter et kvadrat. */
+.element .emoji-art {
+  max-width: 91px; max-height: 67px;
+  width: auto; height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 1px rgb(58 44 30 / 0.16));
+}
 .element .name { font-size: 0.78rem; text-align: center; line-height: 1.15; }
 /* Ny opdagelse: en okker prik — ikke en emoji i krommet */
 .element.is-new::after {
@@ -372,6 +394,12 @@ header h1 {
   cursor: pointer;
 }
 .slot.filled { border-style: solid; border-color: var(--ochre); background: var(--chalk); }
+/* Slotten er én linje med et lille billede foran navnet. gap frem for et
+   mellemrum i teksten: der er ikke længere en tekstnode at sætte det i. */
+.slot { gap: 0.4rem; }
+.slot-glyph { font-size: 1.1rem; line-height: 1; flex: none; }
+img.slot-glyph { max-width: 34px; max-height: 26px; width: auto; height: auto; object-fit: contain; }
+.slot > span { overflow: hidden; text-overflow: ellipsis; }
 .plus { color: var(--ink-soft); font-size: 1.1rem; }
 /* Primærknap = cremefarvet papir med blækkant (DESIGN.md §4), ikke en farveklat */
 #combine {
@@ -914,6 +942,15 @@ body.overlay-open { overflow: hidden; }
   font-size: 3.6rem; position: relative; z-index: 2;
   animation: pop var(--dur-celebrate) var(--ease-spring);
 }
+/* Belønningskortet viser genstanden stort. Kilden er 128 px, så den skaleres
+   op her — det bærer et malet motiv med bløde kanter, men ikke meget mere. */
+img.card-glyph {
+  display: block;
+  max-width: 130px; max-height: 96px; width: auto; height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgb(58 44 30 / 0.22));
+}
+.tier-unique img.card-glyph { max-width: 160px; max-height: 118px; }
 /* Roterende stråler bagved genstanden. Skal være KVADRATISK — i en bred,
    lav boks strækkes den koniske gradient til en ellipse, og strålerne
    bliver skæve. Masken toner dem ud, så de ikke ender i en hård kant. */
