@@ -229,6 +229,11 @@
      rammekant, og et brudpunkt ville få kanten til at springe i bredden
      midt i en vinduesændring. --pad som gulv, referencens mål som loft. */
   --app-inset: clamp(var(--pad), 4.63vw, 67px);
+  /* Afstanden mellem sektionerne i #app. Målt i referencen som mellemrummet
+     mellem nabo-regionernes rektangler: 20, 18, 18, 13, 21, 23 px. 20 px er
+     medianen. Flyder ikke: referencens rytme er den samme uanset bredde, og
+     et responsivt tal ville gøre målingen mod referencen meningsløs. */
+  --stack-gap: 20px;
   --radius-sm: 8px;
   --radius: 12px;
   --radius-lg: 16px;

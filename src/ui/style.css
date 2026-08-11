@@ -54,6 +54,12 @@ body {
   padding: 0 var(--app-inset);
   display: flex;
   flex-direction: column;
+  /* Referencens lodrette rytme. Målt mellem regionernes rektangler i
+     target-2026-08-11.webp: 20, 18, 18, 13, 21, 23 px — altså ~20 px hele
+     vejen ned. Uden denne gap stod hele stakken presset sammen med 0 px
+     mellemrum og sluttede 149 px over referencens bund, hvilket trak geom
+     mod nul på narrator, chips, slots, search OG grid på én gang. */
+  gap: var(--stack-gap);
   min-height: 100dvh;
   /* Plads til den faste dock i tommelfinger-zonen */
   padding-bottom: calc(var(--dock-h) + var(--safe-b) + 0.5rem);
@@ -69,7 +75,8 @@ header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem var(--app-inset);
+  /* 81 px i referencen mod vores 65: en rem luft top og bund. */
+  padding: 1rem var(--app-inset);
   /* Bleeder ud til rammens kant, ikke til indholdsspalten: referencens
      header spænder hele 1112 px (rect 168..1280), mens indholdet under den
      står inde ved 978. Den negative margin SKAL derfor følge --app-inset —
@@ -170,8 +177,12 @@ header h1 {
   border-radius: var(--radius-lg);
   border-top-right-radius: 2px;
   box-shadow: var(--shadow-paper);
-  padding: 0.5rem 0.9rem 0.7rem;
-  min-height: 4rem;
+  /* Referencens boble er 129 px høj inde i en 145 px region; vores var 115.
+     Luften lægges i boblen, ikke i sektionen, så det er den SYNLIGE flade
+     der vokser — en usynlig sektionspolstring ville ramme måltallet uden at
+     ligne referencen. min-height binder ikke: teksten er allerede højere. */
+  padding: 0.95rem 0.9rem 1.15rem;
+  min-height: 5rem;
 }
 /* Halen peger ud af skærmen: fortælleren er til stede, men aldrig synlig. */
 #bubble::after {
@@ -209,13 +220,16 @@ header h1 {
 }
 
 /* ---------- Problemer ---------- */
-#problems { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+#problems { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 .problem {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 999px;
-  padding: 0.3rem 0.7rem;
-  font-size: 0.8rem;
+  /* Referencens chip-række er 53 px høj, vores var 31. Højden ligger i
+     chippen selv, ikke i rækken: referencens chips er høje piller, ikke
+     små mærkater med luft omkring. */
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
   color: var(--ink-soft);
 }
 .problem.solved {
@@ -242,7 +256,8 @@ header h1 {
   z-index: 10;
   display: flex;
   gap: 0.5rem;
-  padding: 0.25rem 0 0.5rem;
+  /* 54 px i referencen mod vores 60. */
+  padding: 0.25rem 0 0.125rem;
 }
 #search {
   flex: 1;
@@ -368,7 +383,8 @@ header h1 {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.5rem 0.75rem calc(0.5rem + var(--safe-b));
+  /* 109 px i referencen mod vores 121: 6 px mindre luft top og bund. */
+  padding: 0.125rem 0.75rem calc(0.125rem + var(--safe-b));
   background: linear-gradient(to top, rgba(251, 250, 246, 0.95) 70%, rgba(251, 250, 246, 0));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -402,24 +418,44 @@ img.slot-glyph { max-width: 34px; max-height: 26px; width: auto; height: auto; o
 .slot > span { overflow: hidden; text-overflow: ellipsis; }
 .plus { color: var(--ink-soft); font-size: 1.1rem; }
 /* Primærknap = cremefarvet papir med blækkant (DESIGN.md §4), ikke en farveklat */
+/* Kombinér er skærmens primære handling, og referencen giver den en udskåret
+   stentavle: faset inderramme, chevron over og under teksten, hvid antikva
+   med mørk skygge. Målt i referencen (1058,578,157,109). Tavlen er ét billede
+   og ikke en skydedør som titelskærmens knapper — ornamenterne er centrerede,
+   og en gentaget midtersøjle ville sluge dem. */
 #combine {
-  min-height: var(--tap);
-  background: var(--paper);
-  color: var(--ink);
-  border: 1.5px solid var(--ink);
-  border-radius: var(--radius);
-  padding: 0 1.1rem;
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 600;
+  width: 157px;
+  height: 109px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: url("../assets/art/ui/combine-slab.webp") center / 100% 100% no-repeat;
+  /* Hvid antikva, ikke brun brødskrift: teksten står i en fordybning i sten
+     og skal læses mod den, ikke ligge på papir. */
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgb(40 26 16 / 0.85), 0 0 1px rgb(40 26 16 / 0.7);
   cursor: pointer;
-  box-shadow: var(--shadow-paper);
-  transition: transform var(--dur-press) var(--ease-out);
+  box-shadow: none;
+  transition: transform var(--dur-press) var(--ease-out),
+              filter var(--dur-press) var(--ease-out);
 }
+#combine:hover:not(:disabled) { filter: brightness(1.06); }
 #combine:active:not(:disabled) { transform: translateY(1px); }
 #combine:disabled {
-  opacity: 0.4; border-color: var(--rule-strong);
-  box-shadow: none; cursor: default;
+  /* Referencen viser pladen i FULD styrke, selv med to tomme felter: stenen er
+     scenografi, ikke en knap der må forsvinde. Deaktiveret markeres derfor på
+     teksten alene — de tomme felter siger i forvejen hvorfor der ikke kan
+     trykkes. Den gamle opacity 0.4 + grayscale gjorde combine til skærmens
+     svageste region (0.212). */
+  cursor: default;
+  color: #ece1d4;
+  text-shadow: 0 1px 2px rgb(40 26 16 / 0.6);
+  box-shadow: none;
 }
 
 body.run-over #grid, body.run-over #dock, body.run-over #tools {
