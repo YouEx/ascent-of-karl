@@ -772,18 +772,31 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   /* Referencens krønike har hulemalerier i højre tredjedel: jægerfigurer
      malet ind i pergamentet, ikke lagt ovenpå. multiply lader dem sætte sig
      i papiret, så de læses som pigment og ikke som et klistermærke. */
-  background-image: url("../assets/art/orn-hunt.webp"), var(--grain);
-  background-repeat: no-repeat, repeat;
-  background-position: right 1.5rem top 0.5rem, 0 0;
-  background-size: auto 78%, auto;
-  background-blend-mode: multiply, overlay;
+  /* Hele fladen er skåret ud af referencen (build_chronicle_paper.py).
+     Målingen der afgjorde det: referencen har 87-97 mørke pixels i HVER
+     række under hårstregen, hvor vi har 3 — og der står ingen tegning
+     dernede. Det er papirets egen grove åring og en gradient mod nederste
+     højre hjørne. Panelets blækdækning var 9,4 % mod referencens 17,1 %, og
+     forskellen er stort set kun fiber.
+     Billedet bærer derfor ALT: åringen, gradienten, hulemaleriet i højre
+     tredjedel og hårstregen over tidslinjen. orn-hunt.webp lå før her med
+     sit eget uigennemsigtige pergament og mix-blend-mode: multiply, som kun
+     kan gøre panelet mørkere — det blev en mørk firkant med synlig kant. */
+  background-image: url("../assets/art/chronicle-paper.webp");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
-#book-tabs { display: flex; gap: 0.25rem; padding: 0.5rem 0.75rem 0; flex-wrap: wrap; }
+/* Målt i referencen: plaketten sidder 20 px inde og 15 px ned fra panelets
+   hjørne — ikke 12/8. Den er panelets kapitelmarkør og skal stå frit. */
+#book-tabs { display: flex; gap: 0.25rem; padding: 15px 20px 0; flex-wrap: wrap; }
 .book-tab {
   background: transparent; color: var(--ink-soft); border: none;
   border-radius: 999px;
-  padding: 0.4rem 0.9rem; cursor: pointer;
-  font-family: inherit; font-size: var(--step-label); min-height: 40px;
+  /* Målt plakette i referencen: 205x31 px med et 168 px bredt skriftløb.
+     Vores var 168x168... nej: 168x40 med 132 px skrift — for lille skrift i
+     for høj pille. Skriften er 17 px (ikke 14), og højden er 31 (ikke 40). */
+  padding: 6px 18px 7px; cursor: pointer;
+  font-family: inherit; font-size: 1.0625rem; line-height: 1.05; min-height: 0;
 }
 /*
  * Den akt man står i er referencens eneste mørke flade på hele skærmen —
@@ -798,20 +811,42 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
 }
 
 /* Bogen er det eneste sted, hvor brødtekst må sættes i serif (DESIGN.md §4) */
-#book-entry { padding: 0.9rem 1rem 0.5rem; min-height: 5rem; font-family: var(--font-display); }
-.entry { display: flex; gap: 0.9rem; align-items: flex-start; }
+/* Bunden er trimmet, fordi den malede bog er 74 px hvor 📖 var 67: panelet
+   voksede 7 px og skubbede ALT under sig ned, så chips, dock, søgerække og
+   gitter mistede geometri på én gang. Højden er panelets kontrakt. */
+#book-entry { padding: 0.9rem 1rem 20px; min-height: 5rem; font-family: var(--font-display); }
+/* Målt: referencens tekstblok begynder 10 px længere ude end vores. */
+.entry { display: flex; gap: 1.52rem; align-items: flex-start; }
 .entry .entry-emoji { font-size: 4.2rem; line-height: 1; }
-.entry-body { flex: 1; font-size: 0.95rem; max-width: var(--measure); }
+/* Referencens krønike åbnes af en MALET opslået bog i brunt læder, ikke af
+   📖 — en blå-hvid emoji der er det eneste kolde element på hele skærmen.
+   Målt 95x74. */
+.entry .entry-book {
+  flex: 0 0 auto;
+  width: 95px;
+  height: 74px;
+  background: url("../assets/art/chronicle-book.webp") no-repeat center / contain;
+}
+/* Målt skriftløb i referencen: overskriften er 289 px bred hvor vores var
+   340, og brødtekstens første linje 537 mod vores 589. Begge var ca. 10 %
+   for store. Referencen brækker efter "history", fordi tekstblokken er
+   spærret ved ~550 px — 65ch lod linjen løbe helt ud til panelets kant. */
+.entry-body { flex: 1; font-size: 0.866rem; max-width: 505px; }
 /* Målt: referencens krønike-overskrift har en 20 px tekstblok mod vores 13.
    Den er panelets anker — uden den læses krøniken som en fodnote. */
-.entry h3 { margin: 0 0 0.25rem; font-size: 1.74rem; font-weight: 600; font-variation-settings: "WONK" 1; }
+.entry h3 { margin: 0 0 0.25rem; color: rgb(18 8 4); font-size: 1.479rem; font-weight: 600; font-variation-settings: "WONK" 1; }
 .entry p { margin: 0.25rem 0; }
 .entry .note { color: var(--ink-soft); font-size: 0.85rem; }
 .entry .mood {
   font-size: 0.85rem; background: rgba(138, 106, 59, 0.1);
   border-radius: var(--radius-sm); padding: 0.3rem 0.5rem; display: inline-block;
 }
-.entry.blank { color: var(--ink-soft); font-style: italic; }
+/* Målt: referencens tomme krønike er sat i FULDT blæk (12,2,0), ikke i
+   --ink-soft (83,81,93). Den grå-violette tone var skærmens eneste kolde
+   tekst og fik panelets vigtigste linje til at læse som en fodnote. */
+/* Målt kerne i referencens brødtekst: (35,24,20) — varmt sortbrunt, ikke
+   det køligere --ink (22,21,26) og slet ikke --ink-soft (83,81,93). */
+.entry.blank { font-style: italic; color: rgb(35 24 20); }
 
 #book-chips { display: flex; gap: 0.35rem; flex-wrap: wrap; padding: 0 1rem 0.6rem; }
 .chip {
@@ -821,10 +856,24 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
 .chip.active { border-color: var(--bronze); box-shadow: 0 0 0 1px var(--bronze); }
 
 #timeline-toggle {
-  display: block; width: 100%; text-align: left; background: none; border: none;
-  border-top: 1px solid var(--paper-edge); color: var(--ink-soft);
-  font-family: inherit; font-size: var(--step-label); padding: 0.7rem 1rem; cursor: pointer;
-  min-height: var(--tap);
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; text-align: left; background: none; border: none;
+  /* Ingen border-top: hårstregen er MALET i chronicle-paper.webp, som
+     referencen har den. To streger ville stå 2 px fra hinanden. */
+  /* Referencens tidslinjerække er sat i panelets egen skrift og mørke blæk,
+     ikke i en lille grå etikette — den er panelets fod, ikke en fodnote. */
+  color: var(--ink);
+  font-family: var(--font-display); font-size: 1.05rem;
+  padding: 0.4rem 1rem; cursor: pointer;
+  min-height: 0;
+}
+#timeline-toggle strong { font-weight: 600; }
+/* Messinguret, skåret ud af referencen. Målt 30x34. */
+.timeline-watch {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 34px;
+  background: url("../assets/art/chronicle-watch.webp") no-repeat center / contain;
 }
 #timeline-toggle:hover { color: var(--ink); }
 #timeline-wrap { overflow-x: auto; padding: 0.5rem; -webkit-overflow-scrolling: touch; }
@@ -1478,10 +1527,10 @@ img.card-glyph {
   #app { gap: 0; }
   header { order: 1; }
   #narrator { order: 2; position: static; margin-top: 20px; }
-  #book-panel { order: 3; margin-top: 18px; }
+  #book-panel { order: 3; margin-top: 17px; }
   #problems { order: 4; margin-top: 18px; }
-  #dock { order: 5; margin-top: 13px; }
-  #tools { order: 6; position: static; margin-top: 20px; }  /* 21 - 5: kontrollen fylder nu hele rammens 54 px og skal starte på y=708 */
+  #dock { order: 5; margin-top: 15px; }  /* 13 + 3: krønikens flade satte panelets højde 3 px anderledes */
+  #tools { order: 6; position: static; margin-top: 21px; }  /* 21 - 5: kontrollen fylder nu hele rammens 54 px og skal starte på y=708 */
   #grid { order: 7; margin-top: 23px; }  /* 23 - 10 + 5: værktøjsrækken blev 10 px højere og rykkede 5 px op */
   #grid-empty { order: 8; }
 

@@ -115,7 +115,7 @@ export class BookView {
     const entry = this.container.querySelector<HTMLElement>("#book-entry")!;
     if (!this.selectedNode) {
       entry.innerHTML = `<div class="entry blank">
-        <div class="entry-emoji">📖</div>
+        <div class="entry-emoji entry-book" aria-hidden="true"></div>
         <div class="entry-body">
           <h3>The Chronicle of Mankind</h3>
           <p>Blank pages, waiting to be filled. Combine something below and history will write itself. Badly, probably, but it will.</p>
@@ -157,7 +157,11 @@ export class BookView {
       this.engine.content, this.selectedAct, discoveredSet, new Set(state.flags),
     );
 
-    toggle.textContent = `${this.timelineOpen ? "▾" : "▸"} Timeline — ${found}/${total} discovered`;
+    // Uret er et billede skåret ud af referencen (.timeline-watch i CSS) —
+    // referencen har ingen ▸-trekant her. Tallet står fed, som i referencen.
+    toggle.innerHTML =
+      `<span class="timeline-watch" aria-hidden="true"></span>` +
+      `Timeline — <strong>${found}/${total}</strong> discovered`;
     toggle.setAttribute("aria-expanded", String(this.timelineOpen));
     wrap.hidden = !this.timelineOpen;
     if (this.timelineOpen) this.renderTimeline(wrap, discoveredSet, new Set(state.flags));
