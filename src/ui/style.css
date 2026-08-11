@@ -437,13 +437,18 @@ header h1 {
      havde kun --rule, og --rule er oven i købet KOLD (22,21,26) på en varm
      skærm — syvende gang det rigtige token allerede lå i tokens.css. */
   border: 1px solid var(--tile-contour);
+  /* Rillen er 1 px i referencen, ikke 2: række 3-4 i rammen tæller 804+483
+     mørke pixels der, hvor vores talte 944+953. */
   box-shadow: inset 0 0 0 3px var(--field-bevel),
-              inset 0 0 0 5px var(--field-groove);
+              inset 0 0 0 4px var(--field-groove);
   border-radius: var(--radius);
   color: var(--ink-warm);
   font-family: inherit;
-  /* Referencens pladsholder måler 15 px versalhøjde, ikke 11. */
-  font-size: 1.3rem;
+  /* Målt på GLYFLØBET, ikke versalhøjden: strengen er identisk i begge
+     billeder, så spændet ER skriftstørrelsesforholdet. Referencen løber
+     x=63..207 (144 px), vores løb 69..242 (173 px) — 20 % for stort, og
+     m_ink talte den ekstra sværte som 0,637. 1.3 x 0,832 = 1.082. */
+  font-size: 1.082rem;
   /* Forstørrelsesglasset i referencen er tegnet ind i feltet, ikke lagt
      ved siden af. Det er ren krom (streg, ingen illustration), så det bor
      som inline-SVG i baggrunden og følger tekstens farve.
@@ -453,10 +458,20 @@ header h1 {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2358493e' stroke-width='3.3' stroke-linecap='round'%3E%3Ccircle cx='10.2' cy='10.2' r='6.6'/%3E%3Cpath d='M15.2 15.2 21 21'/%3E%3C/svg%3E"),
                     var(--grain);
   background-repeat: no-repeat, repeat;
-  background-position: 23px center, 0 0;
-  background-size: 24px 24px, auto;
-  /* Teksten begynder på x=305 i et felt der starter på 237. */
-  padding: 0 0.75rem 0 68px;
+  /* Luppen måler 24 px bred i referencen (x 22..46) og vores kun 20, og
+     begge sad 3-4 px for højt: referencens glyfbånd ligger på y 22..35,
+     vores på 17..32. Både ikon og tekst skubbes ned. */
+  background-position: 22px center, 0 0;
+  background-size: 26px 26px, auto;
+  /* Pladsholderen begynder på x=63 i referencen, ikke 69. Og 4 px foroven,
+     fordi glyfbåndet stod 2 px højere end referencens selv efter at hele
+     kontrollen var skubbet ned. */
+  padding: 4px 0.75rem 0 62px;
+  /* Hele kontrollen stod 3 px for højt. Målt på ydersiden: referencens felt
+     løber 708..765, vores 705..762. transform frem for margin, fordi
+     m_geometry måler #tools' EGEN kasse — en margin ville flytte den kasse
+     og koste mere end den vinder. */
+  transform: translateY(3px);
 }
 #search::placeholder { color: var(--ink-warm-soft); }
 #search:focus-visible { outline: 2px solid var(--ochre-ink); outline-offset: 1px; }
@@ -477,18 +492,25 @@ header h1 {
   background-blend-mode: normal, overlay;
   /* Samme udskæring som søgefeltet; tværsnit ved x=1150 måler den identisk. */
   border: 1px solid var(--tile-contour);
+  /* Rillen er 1 px i referencen, ikke 2: række 3-4 i rammen tæller 804+483
+     mørke pixels der, hvor vores talte 944+953. */
   box-shadow: inset 0 0 0 3px var(--field-bevel),
-              inset 0 0 0 5px var(--field-groove);
+              inset 0 0 0 4px var(--field-groove);
   border-radius: var(--radius);
-  color: var(--ink-warm);
+  /* Målt kerne i referencen: (50,35,26). Vores stod på (26,18,14) — halvt
+     så lys, fordi 600 i en display-antikva sværter kraftigt op. Og
+     glyfløbet var 85 px mod referencens 80. */
+  color: rgb(50 35 26);
   font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 1.222rem;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
+  /* Samme 3 px som søgefeltet — de to kontroller er ét bånd. */
+  transform: translateY(3px);
   transition: transform var(--dur-press) var(--ease-out);
 }
-.chip-btn:active { transform: translateY(1px); }
+.chip-btn:active { transform: translateY(4px); }
 .chip-btn.active {
   color: var(--ochre-ink);
   background: var(--ochre-tint);
