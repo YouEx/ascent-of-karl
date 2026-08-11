@@ -109,6 +109,17 @@
   --stone-text: #f4e6d2;
   --stone-relief: 0 1px 0 rgba(26, 18, 14, 0.45);
 
+  /* --- Titelskærmens blæk. Målt direkte på referencen, ikke gættet:
+         overskriften er #422c1c, undertitlen på båndet #75481e og
+         knappernes tekst #42240c. Kun stenens højlys er lysnet, så
+         forløbet i bogstaverne kan ses på en skærm. ------------------- */
+  --title-stone-hi: #6a4b30;
+  --title-stone: #422c1c;
+  --title-stone-lo: #33210f;
+  --title-relief: rgba(247, 236, 219, 0.55);
+  --ribbon-ink: #6d4118; /* >=4.5:1 mod båndets egen flade */
+  --btn-ink: #42240c;
+
   /* --- Frost: den eneste kølige papirflade, til kulde-chips ------------ */
   --frost-chip: #cfccce;
 

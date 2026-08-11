@@ -39,7 +39,7 @@ from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "docs/design/reference/title-2026-08-11.webp"
-OUT_DIR = ROOT / "public/art"
+OUT_DIR = ROOT / "src/assets/art"
 
 # Mockuppens venstre halvdel. Til højre for dette begynder maleriet.
 COLUMN = 700
@@ -64,14 +64,38 @@ ERASE = [
     (474, 190, 634, 215),   # under hesten, forbi hånden
     (474, 215, 690, 300),   # under hånden, hvor der er fri bane til kanten
     (474, 300, 596, 462),   # ned forbi poten
-    (120, 430, 682, 542),   # bånd med undertitel
-    (168, 522, 642, 628),   # to linjer brødtekst
+    (120, 430, 682, 459),   # over båndet
+    (120, 516, 682, 542),   # under båndet
+    (168, 522, 642, 632),   # to linjer brødtekst
     (280, 592, 472, 650),   # ornamentskillelinje
     (120, 630, 682, 758),   # Begin- og Fates-knapper
     (164, 746, 642, 820),   # hjælpelinje
     (72, 636, 470, 802),    # forgrundsklippen, der skærer ind i arket
-    (76, 800, 682, 985),    # tipkort med ildflise
+    (60, 796, 700, 992),    # tipkort med ildflise, helt ud til billedkanten
 ]
+
+# Undertitlens bånd bliver liggende. Det er et malet stykke papir med sin egen
+# skygge og sine egne flossede ender — bygget om ville det blive en tegning af
+# et bånd. Kun teksten på det viskes væk.
+#
+# Hullet kan ikke fyldes med arkets papir: båndet har sin egen tone og sit eget
+# lodrette forløb, mørk kantstreg foroven og forneden og lys flade imellem.
+# Til gengæld er et bånd ensartet på langs, så profilen hentes fra de rene
+# søjler på BEGGE sider af teksten og trappes lineært hen over hullet. Kun én
+# side duer ikke: fladen har et sving i lyset, og et hul fyldt med venstre
+# sides tone stod ~10 niveauer mørkere end papiret omkring det.
+#
+# Fordi prøven indeholder båndets egne kantstreger ved y=466-472 og y=509-515,
+# gengiver stemplet dem af sig selv. Derfor må hullet gerne dække hele
+# båndets højde — det er nemmere at ramme end en stribe inde i fladen med fire
+# pixels luft til teksten.
+RIBBON_TEXT = (248, 464, 580, 517)
+RIBBON_LEFT = (198, 464, 246, 517)
+RIBBON_RIGHT = (582, 464, 622, 517)
+
+# Båndet er hverken tekst eller blankt ark. Det skal hverken viskes væk eller
+# tælle med, når arkets lysforløb måles.
+NOT_PAPER = (112, 452, 656, 522)
 
 # Rent pergament at tage kornet fra. Lappen SKAL være bar krakelering: en
 # første lap tog enden af båndet med, og dets snorekant blev derefter gentaget
@@ -92,10 +116,12 @@ CUT = (0, 0, COLUMN, 100)
 # kanten udad netop dér, hvor silhuetten føres lige ned.
 PATCH_BACK = (110, 636, 470, 800)
 
-# Under dette punkt dækker tipkortet arkets egen underkant, så den kan ikke
-# aflæses. Silhuetten føres lige ned i stedet — panelet løber alligevel ud
-# under skærmkanten, og den flossede venstrekant fortsætter uændret.
-EXTEND_FROM = 800
+# Fra dette punkt dækker først forgrundsklippen og siden tipkortet arkets egen
+# venstrekant, så den kan ikke aflæses. Silhuetten føres lige ned fra en række
+# OVER klippen i stedet. Blev den ført ned fra en række under den, arvede den
+# klippens kant, og der kom et firkantet hak på arkets venstre side.
+EXTEND_FROM = 640
+EXTEND_ROW = 628
 
 # Hvor langt inde i feltet indfarvningen når fuld styrke. Teksten skal ligge
 # mindst så langt inde i sin kasse, ellers står en kant af den tilbage.
@@ -135,6 +161,7 @@ def synth_grain(sample: np.ndarray, shape: tuple[int, int], rng) -> np.ndarray:
     står som blank plastik ved siden af papir.
     """
     h, w = shape
+    sample = sample.reshape(-1, 3)
     field = np.zeros((h, w))
     for sigma in (1.0, 2.0, 4.0, 8.0, 16.0, 32.0):
         field += gaussian(rng.standard_normal((h, w)), sigma) * sigma
@@ -142,7 +169,7 @@ def synth_grain(sample: np.ndarray, shape: tuple[int, int], rng) -> np.ndarray:
     # Lidt kraftigere end papirets målte spredning: den ægte krakelering er
     # skarpe streger, den syntetiske støj er blød, og uden et løft ser de
     # udfyldte felter glattere ud end kanterne omkring dem.
-    return np.dstack([field * sample[..., c].std() * 1.25 for c in range(3)])
+    return np.dstack([field * sample[..., c].std() * 1.1 for c in range(3)])
 
 
 def blend_weight(erased: np.ndarray) -> np.ndarray:
@@ -162,20 +189,54 @@ def blend_weight(erased: np.ndarray) -> np.ndarray:
     return np.clip(inside / EDGE_SOFTNESS, 0, 1)[..., None]
 
 
+def stamp_band(src: np.ndarray, hole, left, right, rng) -> None:
+    """Fylder et hul i en vandret ensartet flade med fladens egen linjeprofil.
+
+    Profilen tages på hver side af hullet og trappes lineært imellem dem, så
+    både fladens lodrette bygning og dens lys på langs følger med. Ændrer
+    `src` på stedet.
+    """
+    hx0, hy0, hx1, hy1 = hole
+    w = hx1 - hx0
+    lo = np.median(src[left[1]:left[3], left[0]:left[2]], axis=1)
+    hi = np.median(src[right[1]:right[3], right[0]:right[2]], axis=1)
+    t = np.linspace(0, 1, w)[None, :, None]
+    fill = lo[:, None, :] * (1 - t) + hi[:, None, :] * t
+
+    face = src[left[1] + 8:left[3] - 8, left[0]:left[2]]
+    grain = synth_grain(
+        (face - np.dstack([gaussian(face[..., c], 16.0) for c in range(3)])
+         ).reshape(-1, 3), (hy1 - hy0, w), rng,
+    )
+
+    box = np.zeros((hy1 - hy0, w), bool)
+    box[1:-1, 1:-1] = True
+    weight = np.clip(ndimage.distance_transform_edt(box) / 6.0, 0, 1)[..., None]
+    patch = src[hy0:hy1, hx0:hx1]
+    src[hy0:hy1, hx0:hx1] = (fill + grain) * weight + patch * (1 - weight)
+
+
 def main() -> None:
     full = Image.open(SOURCE).convert("RGB")
     src = np.asarray(full).astype(np.float64)[:, :COLUMN]
     lum = src @ np.array([0.2126, 0.7152, 0.0722])
 
+    stamp_band(src, RIBBON_TEXT, RIBBON_LEFT, RIBBON_RIGHT, np.random.default_rng(11))
+
     sheet = sheet_mask(lum)
     sheet[CUT[1]:CUT[3], CUT[0]:CUT[2]] = False
     sheet[PATCH_BACK[1]:PATCH_BACK[3], PATCH_BACK[0]:PATCH_BACK[2]] = True
-    sheet[EXTEND_FROM:] = sheet[EXTEND_FROM]
+    sheet[EXTEND_FROM:] = sheet[EXTEND_ROW]
 
     # Blankt papir: inde i arket, men uden for alt det, der skal væk.
     paper = sheet.copy()
-    for x0, y0, x1, y1 in ERASE:
+    for x0, y0, x1, y1 in [*ERASE, NOT_PAPER]:
         paper[y0:y1, x0:x1] = False
+    # Arkets højre kant er en blød overgang ind i maleriet. Den er grønlig og
+    # kun ~14 px bred, men den er den ENESTE "papir", der er tilbage mellem
+    # knapperne og hjælpelinjen — så fladen greb fat i den og trak hele
+    # underkanten grøn. Den tæller ikke med.
+    paper[:, 678:] = False
 
     # Belysningen — papirets store lys/skygge-forløb — tilpasses som en flade
     # over de pixels, der FAKTISK er blankt papir.
@@ -194,14 +255,30 @@ def main() -> None:
         u ** 3, u * u * v, u * v * v, v ** 3,
     ])
     basis = terms[paper]
+    #
+    # Fladen skal holdes i skak uden for det område, den er målt på. Nederst
+    # er der ingen papirpixels overhovedet, og en tredjegradsflade svinger:
+    # de nederste 200 rækker blæste ud i rent hvidt. Den klippes derfor til
+    # det interval, papiret faktisk befinder sig i.
     illum = np.zeros_like(src)
     for c in range(3):
-        coef, *_ = np.linalg.lstsq(basis, src[..., c][paper], rcond=None)
-        illum[..., c] = terms @ coef
+        seen = src[..., c][paper]
+        coef, *_ = np.linalg.lstsq(basis, seen, rcond=None)
+        lo, hi = np.percentile(seen, (1, 99))
+        illum[..., c] = np.clip(terms @ coef, lo, hi)
 
-    px, py, qx, qy = TEXTURE_PATCH
-    patch = src[py:qy, px:qx]
-    sample = patch - np.dstack([gaussian(patch[..., c], 52.0) for c in range(3)])
+    # Under den sidste række med rigtigt papirbelæg holdes lyset fast. Et ark
+    # bliver ikke lysere af, at man holder op med at måle på det, og en
+    # tredjegradsflade, der forlænges frit, gør netop dét.
+    rows = np.where(paper.sum(1) >= 40)[0]
+    illum[rows.max() + 1:] = illum[rows.max()]
+
+    # Kornets styrke måles som dét, lysfladen IKKE kan forklare, over alt det
+    # blanke papir. En lille lap kan ikke bruges: den fanger krakeleringen,
+    # men ikke de store skyer i papiret, og de udfyldte felter blev derfor
+    # fladere end arket omkring dem — tydeligst i den nederste halvdel, hvor
+    # næsten alt er fyldt ud.
+    sample = (src - illum)[paper]
     rng = np.random.default_rng(7)
 
     erased = np.zeros(src.shape[:2], bool)

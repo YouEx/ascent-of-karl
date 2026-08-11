@@ -442,162 +442,390 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
 #timeline .silhouette .label { fill: var(--ink-soft); font-style: italic; }
 
 /* ==========================================================================
-   Titelskærmen — spillets hero (DESIGN.md §5: delt, aldrig centreret)
+   Titelskærmen — spillets hero.
+
+   Skærmen er to malede plader og intet andet: dalen fylder ruden, og
+   pergamentarket ligger oven på den i venstre side. Begge er skåret ud af
+   den samme reference, så lys, kulør og pensel passer sammen af sig selv.
+
+   Arket har et fast forhold (692:907) og er derfor sin egen `container`.
+   Alt indhold på det måles i `cqw` og i procent af panelet — ikke i `rem`.
+   Grunden er, at ornamenterne er MALET ind i pladen på faste pladser:
+   hesten ligger inde i overskriften, hånden fem pixels til højre for
+   "Ascent", og båndet under den venter på undertitlen. Skalerer teksten
+   ikke nøjagtigt som pladen, glider den fra sine egne huller.
    ========================================================================== */
 #title-screen {
   position: fixed; inset: 0; z-index: 70;
-  background: var(--canvas);
-  overflow-y: auto;
-  display: grid;
-  place-items: center;
+  /* Scenepladen dækker 90.4vh i bredden, arket 70.2vh. Er ruden bredere end
+     summen, opstår der et hul mellem dem, som kun kan fyldes med slør. Derfor
+     får kompositionen en maksimal bredde og en ramme af dalens mørke tone i
+     stedet. 178vh holder 16:9 rammefri og begrænser sløret på ultrabredt.
+     Rammen forsvinder af sig selv, den dag baggrunden er ét bredt maleri —
+     se tools/art/build_scene_wide.py. */
+  --bar: max(0px, (100vw - 178vh) / 2);
+  /* Under pladen: dalens mørkeste tone, så der aldrig blinker hvidt frem
+     mens billedet henter, og så kanterne har noget at falde af mod. */
+  background: var(--valley-dark);
+  overflow: hidden;
 }
 #title-screen[hidden] { display: none; }
 
-/* Båndene er illustrationslaget: de ligger BAG indholdet i deres eget lag og
-   fanger aldrig et klik. Bevægelsen er meget langsom — den skal mærkes, ikke ses. */
-.ribbons {
+.title-stage {
+  position: absolute; top: 0; bottom: 0;
+  left: var(--bar); right: var(--bar);
+  /* Scenepladen er stående (896x992). Fylder man en liggende rude med
+     `cover`, forstørres Karl til det dobbelte, og maleriets dybde forsvinder.
+     Derfor lægges pladen i sin naturlige højde klods op ad højre kant —
+     bredden bliver da 90.4vh — og resten af ruden fyldes med pladens egen
+     venstre kant, sløret vandret og strakt. Sløringen bevarer dalens lodrette
+     lagdeling og opløser alt genkendeligt, så der hverken bliver et spejlbillede
+     eller en anden Karl. Feltet ligger under pergamentarket. */
+  --seam: calc(100% - 90.4vh);
+  background:
+    url("../assets/art/scene-ext.webp") left center / calc(var(--seam) + 200px) 100% no-repeat,
+    linear-gradient(
+      178deg,
+      #e7c3bc 0%,
+      #f1d1bf 18%,
+      #fae7b8 38%,
+      #c49f82 58%,
+      #dbaa86 78%,
+      #4a3b3c 100%
+    );
+}
+/* Den skarpe plade fades ind over 200 px, ellers står der en lige, lodret
+   kant mellem den slørede forlængelse og maleriet. */
+.title-stage::after {
+  content: "";
   position: absolute; inset: 0;
-  width: 100%; height: 100%;
+  background: url("../assets/art/title-scene-897.webp") right center / auto 100% no-repeat;
+  -webkit-mask-image: linear-gradient(to right, transparent var(--seam), #000 calc(var(--seam) + 200px));
+  mask-image: linear-gradient(to right, transparent var(--seam), #000 calc(var(--seam) + 200px));
   pointer-events: none;
-  z-index: 0;
-}
-.ribbons path {
-  fill: none;
-  stroke-linecap: round;
-  animation: ribbon-drift 26s ease-in-out infinite;
-}
-.ribbons path:nth-child(2) { animation-duration: 34s; animation-direction: reverse; }
-.ribbons path:nth-child(3) { animation-duration: 30s; animation-delay: -6s; }
-.ribbons path:nth-child(4) { animation-duration: 38s; animation-direction: reverse; animation-delay: -12s; }
-.ribbons path:nth-child(5) { animation-duration: 32s; animation-delay: -9s; }
-.ribbons path:nth-child(6) { animation-duration: 42s; animation-direction: reverse; animation-delay: -3s; }
-/* Båndenes farver hører til illustrationslaget og må aldrig bruges i UI'et.
-   Tykkelserne varierer bevidst: ensartede bånd ligner en graf, ikke en himmel. */
-.ribbons .r1 { stroke: var(--ribbon-sky); stroke-width: 30; opacity: 0.5; }
-.ribbons .r2 { stroke: var(--ribbon-cyan); stroke-width: 17; opacity: 0.55; }
-.ribbons .r3 { stroke: var(--ribbon-sky); stroke-width: 11; opacity: 0.5; }
-.ribbons .r4 { stroke: var(--ribbon-rose); stroke-width: 34; opacity: 0.5; }
-.ribbons .r5 { stroke: var(--ribbon-sky); stroke-width: 22; opacity: 0.5; }
-.ribbons .r6 { stroke: var(--ribbon-rose); stroke-width: 14; opacity: 0.45; }
-@keyframes ribbon-drift {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(-1.5%, 1.2%, 0); }
 }
 
-.title-grid {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 1240px;
-  padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 5vw, 3.5rem);
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  align-items: center;
-  gap: clamp(1.5rem, 4vw, 3rem);
+.title-panel {
+  position: absolute;
+  /* Over `.title-stage::after`. Pseudoelementet er sidste barn i kassetræet
+     og ville ellers male hen over arket, hver gang masken er uigennemsigtig
+     — hvilket den er i portræt, hvor `--seam` bliver negativ. */
+  z-index: 1;
+  left: calc(var(--bar) + 1.1vw); bottom: 0;
+  height: 92%;
+  aspect-ratio: 692 / 907;
+  max-width: 46%;
+  container-type: inline-size;
+  background: image-set(
+      url("../assets/art/title-parchment-692.webp") 1x,
+      url("../assets/art/title-parchment-692.webp") 2x
+    ) no-repeat center / 100% 100%;
 }
 
-.title-copy { min-width: 0; }
-.title-copy h1 {
+/* Blokkene sidder på faste pladser i procent af panelet, ikke i flow.
+   Båndet, hesten og hånden er malet ind på bestemte steder, og flow-højder
+   afhænger af skrifttypens metrik — én manglende font, og undertitlen
+   ville lande neden for sit eget bånd. */
+.title-block {
+  position: absolute;
+  left: 15%; right: 4%;
+  text-align: center;
+}
+
+/* --- Overskriften ------------------------------------------------------ */
+.title-mark {
+  top: 4.4%;
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-variation-settings: "opsz" 144, "SOFT" 20, "WONK" 1;
-  font-size: var(--step-hero);
-  line-height: 0.94;
-  letter-spacing: -0.022em;
-  color: var(--ink);
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0;
+  letter-spacing: -0.012em;
+  /* Bogstaverne er hugget i sten: mørk kerne, lysere top, og en tynd lys
+     kant forneden hvor lyset fanger den nederste facet. */
+  background: linear-gradient(
+    177deg,
+    var(--title-stone-hi) 0%,
+    var(--title-stone) 46%,
+    var(--title-stone-lo) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0.12cqw 0 var(--title-relief));
+}
+.title-mark span { display: block; }
+.title-mark .t-the { font-size: 10.2cqw; line-height: 1.04; }
+.title-mark .t-ascent { font-size: 14.9cqw; line-height: 0.9; }
+/* "of" står mellem to korte streger, som i referencen. Stregerne er
+   ornament og bærer ingen betydning. */
+.title-mark .t-of {
+  font-size: 5.6cqw; line-height: 1.5;
+  font-style: italic;
+  font-variation-settings: "opsz" 48, "SOFT" 40, "WONK" 1;
+  display: flex; align-items: center; justify-content: center; gap: 1.6cqw;
+}
+.title-mark .t-of::before,
+.title-mark .t-of::after {
+  content: ""; height: 0.2cqw; width: 9cqw;
+  background: var(--ornament); opacity: 0.75;
+}
+.title-mark .t-karl { font-size: 19.8cqw; line-height: 0.94; }
+
+/* --- Undertitlen på det malede bånd ------------------------------------ */
+.title-sub {
+  top: 42.9%;
   margin: 0;
-  text-wrap: balance;
-}
-.title-copy h1 span {
-  display: block;
-  font-weight: 400;
-  font-style: italic;
-  font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
-}
-/* Undertitlen er fortællerens egen tilføjelse — derfor serif, småt og skævt */
-.title-copy .title-sub {
   font-family: var(--font-display);
-  font-variation-settings: "opsz" 14, "SOFT" 40, "WONK" 1;
   font-style: italic;
-  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
-  color: var(--ochre-ink);
-  margin: 0.75rem 0 0;
-  letter-spacing: 0.01em;
+  font-weight: 600;
+  font-variation-settings: "opsz" 32, "SOFT" 40, "WONK" 1;
+  font-size: 4.3cqw;
+  line-height: 1;
+  color: var(--ribbon-ink);
 }
-.title-copy .tagline {
-  font-family: var(--font-ui);
-  font-size: clamp(1rem, 1.6vw, 1.15rem);
-  color: var(--ink-soft);
-  line-height: 1.5;
-  max-width: 34ch;
-  margin: 1.1rem 0 0;
+
+.title-tagline {
+  top: 49.0%;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 3.6cqw;
+  line-height: 1.42;
+  color: var(--ink-warm-soft);
 }
+
+/* Skillelinjen er referencens egen — et udsnit af maleriet, lagt med
+   `multiply`, så papiret under den bliver neutralt og kun mærket slår
+   igennem. Se `tools/art/build_ui.py` for hvorfor den ikke er tegnet. */
+.title-divider {
+  top: 57.2%;
+  height: 2.6cqw;
+  background: url("../assets/art/orn-divider.webp") no-repeat center / contain;
+  mix-blend-mode: multiply;
+}
+
+/* --- Knapperne --------------------------------------------------------- */
 .title-actions {
+  top: 62.4%;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  justify-content: center;
+  gap: 3.6cqw;
 }
-/* Referencens knap: cremefarvet papir, blækkant, blæktekst. Primær og
-   sekundær skilles ad med vægt og kant — ikke med farve. */
+/* Med et gemt spil er der tre knapper i stedet for to. Rækken er lige så
+   bred som før, så luften og polstringen må give sig — ikke skriftstørrelsen. */
+.title-actions.crowded { gap: 1.8cqw; }
+.title-actions.crowded .btn-stone { padding-inline: 3.4cqw; }
+.title-actions.crowded .btn-quiet { padding-inline: 2.4cqw; font-size: 3.8cqw; }
 .title-actions button {
-  min-height: 52px;
-  padding: 0 1.4rem;
-  background: var(--paper);
-  color: var(--ink);
-  border: 1px solid var(--rule-strong);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-paper);
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  font-weight: 500;
+  position: relative;
+  border: 0;
+  background: none;
+  padding: 0 4cqw;
+  min-height: 15cqw;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 1.8cqw;
+  font-family: var(--font-display);
+  color: var(--btn-ink);
   cursor: pointer;
   transition: transform var(--dur-press) var(--ease-out),
-              box-shadow var(--dur-press) var(--ease-out);
+              filter var(--dur-press) var(--ease-out);
 }
-.title-actions button:hover { box-shadow: var(--shadow-lift); }
-.title-actions button:active { transform: translateY(1px); box-shadow: var(--shadow-paper); }
-.title-actions button.primary { border: 1.5px solid var(--ink); font-weight: 600; }
+/* Stenknappen er skåret i tre: to hætter og en ren søjle fra fladen, der
+   gentages. Hver del skaleres til fuld højde, så det lodrette lysforløb i
+   stenen følger med, uanset hvor bred knappen bliver. */
+.title-actions .btn-stone {
+  font-size: 6.4cqw;
+  font-weight: 600;
+  font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
+  padding-inline: 5.2cqw;
+  background:
+    url("../assets/art/btn-begin-l.webp") left center / auto 100% no-repeat,
+    url("../assets/art/btn-begin-r.webp") right center / auto 100% no-repeat,
+    url("../assets/art/btn-begin-m.webp") center center / auto 100% repeat-x;
+}
+.title-actions .btn-quiet {
+  font-size: 4.3cqw;
+  min-height: 13.9cqw;
+  background:
+    url("../assets/art/btn-quiet-l.webp") left center / auto 100% no-repeat,
+    url("../assets/art/btn-quiet-r.webp") right center / auto 100% no-repeat,
+    url("../assets/art/btn-quiet-m.webp") center center / auto 100% repeat-x;
+}
+.title-actions button:hover { filter: brightness(1.04); }
+.title-actions button:active { transform: translateY(0.3cqw); }
+.title-actions .orn {
+  width: 7.4cqw; height: 7.4cqw;
+  background: no-repeat center / contain;
+  mix-blend-mode: multiply;
+  flex: none;
+}
+.title-actions .orn-spiral { background-image: url("../assets/art/orn-spiral.webp"); }
+.title-actions .orn-trophy {
+  background-image: url("../assets/art/orn-trophy.webp");
+  width: 4.6cqw; height: 6.8cqw;
+}
+.fates-count { font-variant-numeric: tabular-nums; color: var(--rust-warm); }
+
+/* --- Hjælpelinjen ------------------------------------------------------ */
 .title-hint {
-  color: var(--ink-soft);
-  font-size: 0.82rem;
-  margin-top: 1.5rem;
-  max-width: 34ch;
+  top: 76.0%;
+  margin: 0;
+  display: flex; align-items: center; justify-content: center; gap: 1.4cqw;
+  font-family: var(--font-display);
+  font-size: 2.9cqw;
+  color: var(--label-ink);
 }
-.fates-count { font-variant-numeric: tabular-nums; }
+.title-hint .orn-tap {
+  width: 3.4cqw; height: 3.6cqw;
+  background: url("../assets/art/orn-tap.webp") no-repeat center / contain;
+  mix-blend-mode: multiply;
+  flex: none;
+}
 
-/* Karl bryder ud over sin spaltekant, men lægger sig aldrig oven på teksten */
-.title-art {
-  position: relative;
-  justify-self: end;
-  width: 100%;
-  max-width: 460px;
+/* --- Tipkortet nederst på arket ---------------------------------------- */
+.title-tip {
+  top: 81.9%;
+  left: 10%; right: 5%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 3cqw;
+  padding: 2.4cqw 2.6cqw 4.6cqw;
+  text-align: left;
+  background: var(--chronicle);
+  border: 0.3cqw solid var(--tile-edge);
+  border-radius: 2.4cqw;
+  box-shadow: var(--shadow-paper);
 }
-.title-art img {
+.title-tip .tip-text { min-width: 0; }
+.tip-dots {
+  position: absolute; left: 0; right: 0; bottom: 1.4cqw;
+  display: flex; justify-content: center; gap: 1.6cqw;
+}
+.tip-dots button {
+  width: 1.7cqw; height: 1.7cqw; padding: 0;
+  border: 0; border-radius: 50%;
+  background: var(--ornament);
+  cursor: pointer;
+}
+.tip-dots button[aria-selected="true"] { background: var(--stone); }
+/* Prikkerne er 6 px brede ved fuld størrelse. Trykfeltet skal være
+   fingerstort, uden at prikkerne bliver det. */
+.tip-dots button::after {
+  content: ""; position: absolute;
+  width: 2.75rem; height: 2.75rem;
+  transform: translate(-50%, -50%);
+}
+.tip-dots button { position: relative; }
+
+.title-tip .tile {
+  width: 12.4cqw; height: 12.4cqw;
+  border-radius: 1.6cqw;
+  background: url("../assets/art/tile-fire.webp") no-repeat center / cover;
+}
+.title-tip strong {
   display: block;
-  width: 100%;
-  height: auto;
-  /* Skygge under ham, ikke omkring ham — han sidder på jorden */
-  filter: drop-shadow(0 18px 22px rgba(58, 44, 84, 0.22));
-  animation: karl-breathe 7s var(--ease-out) infinite;
-  transform-origin: 50% 100%;
+  font-family: var(--font-display);
+  font-size: 3.6cqw; font-weight: 600;
+  color: var(--ink-warm);
 }
-@keyframes karl-breathe {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(0, -6px, 0) rotate(-0.4deg); }
+.title-tip span {
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 3.2cqw;
+  color: var(--ink-warm-soft);
+}
+/* Jagtscenen er malet på kortet i referencen. Den er ornament: den ligger
+   yderst til højre, hvor der ikke står tekst, og forsvinder på smalle skærme. */
+.title-tip::after {
+  content: "";
+  position: absolute; right: 2cqw; top: 8%; bottom: 8%;
+  width: 15cqw;
+  background: url("../assets/art/orn-hunt.webp") no-repeat center / contain;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
-@media (max-width: 900px) {
-  .title-grid {
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    text-align: center;
-    gap: 1.25rem;
+/* --- Velkomstchippen svæver over himlen, ikke på arket ------------------ */
+.title-chip {
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--bar) + 1.9vw); top: 2.5%;
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.45rem 1.1rem 0.45rem 0.5rem;
+  background: var(--chronicle);
+  border: 1px solid var(--tile-edge);
+  border-radius: 0.7rem;
+  box-shadow: var(--shadow-paper);
+}
+.title-chip .figure {
+  width: 3rem; height: 2.7rem;
+  border-radius: 0.35rem;
+  background: url("../assets/art/chip-figure.webp") no-repeat center / cover;
+  flex: none;
+}
+.title-chip strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.95rem; font-weight: 600;
+  color: var(--ink-warm);
+}
+.title-chip span {
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--ink-warm-soft);
+}
+
+/* --- Trofæ og lyd øverst til højre i maleriet -------------------------- */
+.title-tools {
+  position: absolute;
+  z-index: 1;
+  right: calc(var(--bar) + 2.4vw); top: 2.8%;
+  display: flex; gap: 0.6rem;
+}
+.title-tools button {
+  width: 2.9rem; height: 2.9rem;
+  display: grid; place-items: center;
+  background: var(--chronicle);
+  border: 1px solid var(--tile-edge);
+  border-radius: 0.7rem;
+  box-shadow: var(--shadow-paper);
+  color: var(--label-ink);
+  cursor: pointer;
+  transition: transform var(--dur-press) var(--ease-out);
+}
+.title-tools button:hover { transform: translateY(-1px); }
+.title-tools svg { width: 1.35rem; height: 1.35rem; }
+
+/* --------------------------------------------------------------------------
+   Smalt: maleriet bliver baggrund for hele ruden, og arket bliver et kort,
+   der ligger midt i den. Pladen beholdes som fladen — den ER papiret — men
+   ornamenterne må ikke ende bag læsbar tekst, så teksten får sit eget
+   dæmpede lag at stå på.
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px), (max-aspect-ratio: 1/1) {
+  /* Stående rude: her er der ingen plads ved siden af arket, så maleriet
+     bliver ren baggrund. `cover` fra midten viser dal til venstre og klippe
+     til højre; Karl selv ligger bag arket i stedet for at blive skåret over
+     midt i ansigtet. Det brede felt og dets maske hører liggende ruder til. */
+  .title-stage {
+    background: url("../assets/art/title-scene-897.webp") 50% center / cover no-repeat,
+                var(--valley-dark);
   }
-  .title-copy .tagline, .title-hint { margin-inline: auto; }
-  .title-actions { justify-content: center; }
-  /* Karl falder UNDER teksten — aldrig bag den */
-  .title-art { order: 2; justify-self: center; max-width: 300px; }
+  .title-stage::after { display: none; }
+  .title-panel {
+    left: 50%; bottom: auto; top: 50%;
+    translate: -50% -50%;
+    height: min(92%, 128vw);
+    max-width: min(92%, 27rem);
+  }
+  .title-chip { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-actions button { transition: none; }
 }
 
 /* ---------- Overlejringer (docs/design/ux-checklist.md) ---------- */

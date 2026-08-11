@@ -183,6 +183,8 @@ let lineQueue: SpokenLine[] = [];
 let queueTimer: ReturnType<typeof setTimeout> | undefined;
 /** Pause mellem to takter, så det læses som et åndedrag og ikke som én tekst */
 const BEAT_PAUSE_MS = 900;
+// Tipkortet skal kunne læses færdigt af en langsom læser, før det bladrer.
+const TIP_ROTATE_MS = 7000;
 
 function say(line: SpokenLine): void {
   if (queueTimer) clearTimeout(queueTimer);
@@ -643,55 +645,128 @@ el.restart.addEventListener("click", () => {
 // --- Titelskærm: første interaktion låser også lyd op (autoplay-politik) ---
 
 /**
- * Båndene bag Karl. Rent dekorative (aria-hidden) og bevidst i SVG frem for
- * billede: de skal kunne farves med tokens og skalere skarpt på ethvert
- * viewport. `slice` bevarer kurvernes proportioner og beskærer i stedet for at
- * strække dem — en ikke-uniform skalering ville gøre stregtykkelsen ujævn.
+ * Titelskærmens tips. Prikkerne under kortet i referencen lover et kartotek,
+ * man kan bladre i — så skal der også være noget at blade i. Ét kort med tre
+ * prikker, der ikke gør noget, er en tegning af en funktion.
  */
-const RIBBONS = `
-  <svg class="ribbons" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-    <path class="r1" d="M-140 196 C 210 74, 386 344, 716 226 S 1168 96, 1580 202"/>
-    <path class="r2" d="M-140 316 C 200 176, 372 470, 706 340 S 1160 196, 1580 312"/>
-    <path class="r3" d="M-140 398 C 260 306, 430 578, 830 434 S 1252 336, 1580 412"/>
-    <path class="r4" d="M-140 686 C 246 548, 388 872, 726 752 S 1186 630, 1580 690"/>
-    <path class="r5" d="M-140 782 C 306 700, 512 952, 906 828 S 1304 716, 1580 776"/>
-    <path class="r6" d="M-140 872 C 286 806, 470 1024, 886 918 S 1298 826, 1580 878"/>
-  </svg>`;
+const TITLE_TIPS = [
+  { tile: "fire", title: "Fire: Best invention. Ever.", body: "Some combinations change everything." },
+  { tile: "fire", title: "The narrator has opinions.", body: "He will tell you what to do. He is not always right." },
+  { tile: "fire", title: "Fifty summers. That is all.", body: "Every attempt costs one, even the stupid ones." },
+];
+
+let tipIndex = 0;
+let tipTimer: ReturnType<typeof setInterval> | undefined;
+
+function renderTip(): void {
+  const host = document.getElementById("t-tip");
+  if (!host) return;
+  const tip = TITLE_TIPS[tipIndex]!;
+  host.innerHTML = `
+    <div class="tile" aria-hidden="true"></div>
+    <div class="tip-text">
+      <strong>${tip.title}</strong>
+      <span>${tip.body}</span>
+    </div>
+    <div class="tip-dots" role="tablist" aria-label="Tips">
+      ${TITLE_TIPS.map((_, i) => `
+        <button role="tab" data-tip="${i}" aria-selected="${i === tipIndex}"
+                aria-label="Tip ${i + 1} of ${TITLE_TIPS.length}"></button>`).join("")}
+    </div>`;
+  host.querySelectorAll<HTMLButtonElement>("[data-tip]").forEach((dot) => {
+    dot.addEventListener("click", () => {
+      tipIndex = Number(dot.dataset.tip);
+      // Bladrer man selv, holder karrusellen op med at bladre for én. Ellers
+      // hopper kortet væk under fingeren et par sekunder senere.
+      if (tipTimer) clearInterval(tipTimer);
+      tipTimer = undefined;
+      renderTip();
+    });
+  });
+}
 
 function showTitleScreen(): void {
   const canContinue = hasSave();
   const unlocked = Object.keys(loadAchievements()).length;
+  const crowded = canContinue ? " crowded" : "";
   el.titleScreen.innerHTML = `
-    ${RIBBONS}
-    <div class="title-grid">
-      <div class="title-copy">
-        <h1>The Ascent<span> of Karl</span></h1>
-        <p class="title-sub">reinvent history, badly</p>
-        <p class="tagline">A stone-age man. A sarcastic narrator. Fifty summers to make history — or a mess.</p>
-        <div class="title-actions">
-          ${canContinue ? `<button id="t-continue" class="primary">Continue</button>` : ""}
-          <button id="t-new" class="${canContinue ? "" : "primary"}">${canContinue ? "New life" : "Begin"}</button>
-          <button id="t-fates">Fates <span class="fates-count">${unlocked}/${content.endings.length}</span></button>
+    <div class="title-stage">
+      <div class="title-panel">
+        <h1 class="title-mark title-block">
+          <span class="t-the">The</span>
+          <span class="t-ascent">Ascent</span>
+          <span class="t-of">of</span>
+          <span class="t-karl">Karl</span>
+        </h1>
+        <p class="title-sub title-block">reinvent history, badly</p>
+        <p class="title-tagline title-block">
+          A stone-age man. A sarcastic narrator.<br>
+          Fifty summers to make history — or a mess.
+        </p>
+        <div class="title-divider title-block" aria-hidden="true"></div>
+        <div class="title-actions title-block${crowded}">
+          <button id="t-primary" class="btn-stone">
+            <span class="orn orn-spiral" aria-hidden="true"></span>${canContinue ? "Continue" : "Begin"}
+          </button>
+          ${canContinue ? `<button id="t-new" class="btn-quiet">New life</button>` : ""}
+          <button id="t-fates" class="btn-quiet">
+            <span class="orn orn-trophy" aria-hidden="true"></span>Fates
+            <span class="fates-count">${unlocked}/${content.endings.length}</span>
+          </button>
         </div>
-        <p class="title-hint">Drag one element onto another to combine them.</p>
+        <p class="title-hint title-block">
+          <span class="orn-tap" aria-hidden="true"></span>Tap one element, then a second — that is a combination.
+        </p>
+        <div id="t-tip" class="title-tip title-block"></div>
       </div>
-      <div class="title-art">
-        <img src="karl.webp" width="594" height="712"
-             alt="Karl, a bewildered stone-age man in a yellow fur, holding a rock" />
+      ${canContinue ? "" : `
+      <div class="title-chip">
+        <span class="figure" aria-hidden="true"></span>
+        <div>
+          <strong>Welcome, inventor.</strong>
+          <span>Ready to make history?</span>
+        </div>
+      </div>`}
+      <div class="title-tools">
+        <button id="t-trophies" aria-label="Fates you have reached">${icons.trophy}</button>
+        <button id="t-sound" aria-pressed="${muted}"
+                aria-label="${muted ? "Unmute the narrator" : "Mute the narrator"}">${muted ? icons.soundOff : icons.soundOn}</button>
       </div>
     </div>`;
   el.titleScreen.hidden = false;
 
-  document.getElementById("t-new")!.addEventListener("click", () => {
+  renderTip();
+  if (tipTimer) clearInterval(tipTimer);
+  tipTimer = setInterval(() => {
+    tipIndex = (tipIndex + 1) % TITLE_TIPS.length;
+    renderTip();
+  }, TIP_ROTATE_MS);
+
+  document.getElementById("t-primary")!.addEventListener("click", () => {
+    if (canContinue) return startGame(true);
     clearSave();
     startGame(false);
   });
-  document.getElementById("t-continue")?.addEventListener("click", () => startGame(true));
+  document.getElementById("t-new")?.addEventListener("click", () => {
+    clearSave();
+    startGame(false);
+  });
   document.getElementById("t-fates")!.addEventListener("click", renderTrophyModal);
+  document.getElementById("t-trophies")!.addEventListener("click", renderTrophyModal);
+  // Tandhjulet i referencen har ingen skærm at pege på: spillet har én
+  // indstilling, og det er lyden. Så er det den, knappen er.
+  document.getElementById("t-sound")!.addEventListener("click", () => {
+    muted = !muted;
+    localStorage.setItem(MUTE_KEY, muted ? "1" : "0");
+    renderMute();
+    showTitleScreen();
+  });
 }
 
 function startGame(resume: boolean): void {
   const resumed = resume && tryLoad();
+  if (tipTimer) clearInterval(tipTimer);
+  tipTimer = undefined;
   el.titleScreen.hidden = true;
   runStartedAt = performance.now();
   renderAll();
