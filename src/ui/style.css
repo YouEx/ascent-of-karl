@@ -623,34 +623,49 @@ header h1 {
   /* Målt i referencen: feltet er varm tan #dbc4b1, ikke --paper (#f5f3ea).
      Samme fejl som griddets kort havde — en token der findes bruges ikke, og
      fladen står som printerpapir midt i et maleri. */
-  background: var(--slot-fill);
-  background-image: var(--grain);
-  background-blend-mode: overlay;
-  /* Referencen har TO kanter: en lys cremeramme yderst og en stiplet, mørkere
-     linje inde i den. Den ydre laves med box-shadow frem for et ekstra
-     element, så feltet stadig er én kasse i DOM'en. */
-  border: 2px dashed var(--slot-dash);
-  box-shadow: 0 0 0 4px var(--slot-frame);
+  /* Hele fladen er skåret ud af referencen: korn, gradient, den stiplede
+     kant, den lyse cremeramme og spøgelsesomridset er malet ind i ét
+     billede. Derfor ingen border, ingen box-shadow og ingen --grain her —
+     de ville lægge sig oven i det, der allerede står på papiret. */
+  background: url("../assets/art/ui/slot-paper.webp") 0 0 / 100% 100% no-repeat;
+  border: 0;
   border-radius: var(--radius);
-  padding: 0.4rem;
+  /* Målt i referencen: teksten begynder 103 px inde, ikke i midten. Pladsen
+     til venstre er ikke tom — der ligger et håndtegnet spøgelsesomrids, som
+     ::before henter ind. Feltet er altså venstrestillet med en billedbane
+     foran, ikke en centreret etiket. */
+  position: relative;
+  padding: 0.4rem 0.4rem 0.4rem 103px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
+  justify-content: flex-start;
+  text-align: left;
   font-size: 0.85rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
 }
-.slot.filled { border-style: solid; border-color: var(--ochre); background: var(--chalk); }
+.slot.filled {
+  /* Et fyldt felt er ikke i referencen. Det malede papir tages af, så brikken
+     står på en ren flade med en tydelig okkerkant — spilleren skal kunne se
+     med ét blik, at feltet er optaget. */
+  background: var(--chalk);
+  border: 2px solid var(--ochre);
+  /* Et fyldt felt er én linje med brik og navn — den centreres igen, og
+     billedbanen forsvinder sammen med omridset. */
+  padding-left: 0.4rem;
+  justify-content: center;
+  text-align: center;
+}
+
 /* Det tomme felts invitation. To linjer, som referencen: en fed antikva der
    siger HVAD feltet vil have, og en lettere linje der siger HVORDAN. Kun i
    tom tilstand — et fyldt felt er én linje med brik og navn. */
 .slot-empty {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.15rem;
   line-height: 1.25;
 }
@@ -664,7 +679,9 @@ header h1 {
 .slot-empty i {
   font-style: normal;
   font-size: 0.95rem;
-  color: var(--ink-soft);
+  /* Målt kerne i referencen: (71,57,47), varm brun. --ink-soft er
+     grå-violet og ville stå koldt midt i papiret. */
+  color: rgb(71 57 47);
 }
 /* Slotten er én linje med et lille billede foran navnet. gap frem for et
    mellemrum i teksten: der er ikke længere en tekstnode at sætte det i. */
@@ -677,18 +694,18 @@ img.slot-glyph { max-width: 34px; max-height: 26px; width: auto; height: auto; o
    i diameter med en tyk mørk streg og et varmt skær udenom. */
 .plus {
   flex: none;
-  width: 43px;
-  height: 43px;
+  width: 62px;
+  height: 74px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 42%, #f6e2c1, #edd3ae);
-  box-shadow: 0 0 12px 3px rgb(240 214 178 / 0.75);
-  color: var(--ink);
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1;
+  /* Selve medaljonen er skåret ud af referencen: den malede ring, skæret og
+     det tykke korsstreg findes ikke som gradient. Tegnet i markup'en bliver
+     usynligt, men bliver stående for skærmlæsere. */
+  background: url("../assets/art/ui/dock-plus.webp") center / contain no-repeat;
+  font-size: 0;
+  line-height: 0;
+  color: transparent;
 }
 /* Primærknap = cremefarvet papir med blækkant (DESIGN.md §4), ikke en farveklat */
 /* Kombinér er skærmens primære handling, og referencen giver den en udskåret
