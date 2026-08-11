@@ -28,7 +28,7 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
 
 ## Prioriteret vej til launch
 
-1. **Deploy til web** — ✅ **LIVE** på <https://youex.github.io/Coldcarl/>
+1. **Deploy til web** — ✅ **LIVE** på <https://youex.github.io/ascent-of-karl/>
    (2026-08-10). Actions-nedbruddet fra 2026-08-06 er ovre; både `ci.yml` og
    `deploy.yml` er grønne. Delekortet er på plads og genereres nu fra
    designsystemet (`npm run social`), så linket kan sendes direkte til testere.

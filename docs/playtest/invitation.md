@@ -51,7 +51,7 @@ høflighed — og så måler du din egen invitation i stedet for spillet.
 >
 > Jeg svarer ikke på spørgsmål undervejs. Det er ikke fordi jeg er led.
 
-Link: <https://youex.github.io/Coldcarl/>
+Link: <https://youex.github.io/ascent-of-karl/>
 
 ---
 
@@ -60,7 +60,7 @@ Link: <https://youex.github.io/Coldcarl/>
 Kun hvis du ikke kan få dem på video. Du mister hvor de tøver, og det er
 halvdelen af udbyttet.
 
-> Spil det her i ~20 minutter: <https://youex.github.io/Coldcarl/>
+> Spil det her i ~20 minutter: <https://youex.github.io/ascent-of-karl/>
 >
 > Når du er færdig (eller går død i det), så tryk **"Copy run summary"** på
 > slutskærmen og send mig teksten. Og svar på de fem spørgsmål her:

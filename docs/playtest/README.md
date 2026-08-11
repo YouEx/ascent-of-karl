@@ -51,7 +51,7 @@ blive set på mens de spiller. Undgå folk der allerede har hørt om projektet
 - **Hver tester spiller alene.** To personer sammen løser opgaven i
   fællesskab og skjuler præcis den forvirring vi leder efter.
 
-Link: <https://youex.github.io/Coldcarl/>
+Link: <https://youex.github.io/ascent-of-karl/>
 
 ## Sådan gør du under sessionen
 
