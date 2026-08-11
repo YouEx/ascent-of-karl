@@ -578,7 +578,10 @@ img.slot-glyph { max-width: 34px; max-height: 26px; width: auto; height: auto; o
   width: 157px;
   height: 109px;
   min-height: 0;
-  padding: 0;
+  /* Teksten står ikke i tavlens lodrette midte. Målt sidder referencens
+     ord med centrum i y=51.5 af 109, altså 3 px over midten — den nederste
+     ornamentbort fylder mere end den øverste. Bundpolstring løfter den. */
+  padding: 0 0 6px;
   border: 0;
   border-radius: 0;
   background: url("../assets/art/ui/combine-slab.webp") center / 100% 100% no-repeat;
@@ -604,8 +607,9 @@ img.slot-glyph { max-width: 34px; max-height: 26px; width: auto; height: auto; o
      trykkes. Den gamle opacity 0.4 + grayscale gjorde combine til skærmens
      svageste region (0.212). */
   cursor: default;
-  color: #ece1d4;
-  text-shadow: 0 1px 2px rgb(40 26 16 / 0.6);
+  /* Teksten dæmpes IKKE. Referencen ER den tomme tilstand, og dens glyffyld er
+     målt til rent 255-hvidt; vores #ece1d4 gav 235,224,210 og trak combine ned
+     på både tone og ink. De tomme felter siger allerede at der ikke kan trykkes. */
   box-shadow: none;
 }
 
