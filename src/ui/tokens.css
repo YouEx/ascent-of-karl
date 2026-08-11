@@ -124,6 +124,9 @@
   --titlebar: #dfcdbf;
   --slot: #dec6b0;
   --tile-edge: #d8bfa5;
+  /* Kortets yderste kontur, målt i referencen ved x=237 og x=369, y=880.
+     Mørkere end --tile-edge: uden den flyder kortet ud i baggrunden. */
+  --tile-contour: #c3a382;
   --dashed: #cbb19e;
   --frame: #ccadab;
 

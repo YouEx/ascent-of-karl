@@ -367,26 +367,30 @@ header h1 {
 }
 
 /* ---------- Element-grid ---------- */
-/* Målt på referencen (region 237,785,978,262): kortene er 118-126 px brede,
-   median 122, søjleafstand 147 (altså 25 px luft) og rækkeafstand 139 med
-   118 px høje kort (21 px luft). Vi lå på 96/8 og fik 9 per række, hvilket
-   forskød hvert eneste kort fra række 2 og frem.
+/* Målt på referencen (region 237,785,978,262) med et tværsnit gennem kortets
+   kant ved y=880, ikke med et lyshedsfilter: kort 1 løber fra x 237 til 369
+   og næste kort begynder på 382. Kortet er altså 133 px bredt med 12 px luft,
+   ikke 122 med 25. Lodret måler rækkerne 121 px høje med 17 px luft (pitch
+   138). Vi kørte 118 x 116 med 25/21 — for smalle kort i for store mellemrum,
+   hvilket er halvdelen af regionens lave structure-tal.
 
-   minmax står på 118, ikke 122: auto-fill regner floor((978+25)/(min+25)),
-   og ved 122 giver det 6 søjler, ikke 7. Ved 118 giver det 7, og 1fr
-   strækker dem til 118,3 px — 4 px fra referencens 122. */
+   minmax står stadig på 118: auto-fill regner floor((978+12)/(min+12)), og
+   ved 118 giver det 7 søjler som referencen. 1fr strækker dem til 129,4 px.
+   Referencens 133 kræver 1003 px, mere end indholdsspalten er bred — det er
+   en artefakt af at forlægget er malet, ikke layoutet. */
 #grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
-  column-gap: 25px;
-  row-gap: 21px;
+  column-gap: 12px;
+  row-gap: 17px;
   align-content: start;
 }
 .element {
-  /* Kortet er næsten kvadratisk i referencen: 122 bredt, 118 højt. */
-  min-height: 118px;
+  /* Referencen måler kortet 133 x 121. Bredden bestemmes af griddet; højden
+     sættes her, så pitchen rammer referencens 138 med 17 px rækkeluft. */
+  min-height: 121px;
   background: linear-gradient(to bottom, var(--tile-lit), var(--tile-shade));
-  border: 1px solid var(--tile-edge);
+  border: 1px solid var(--tile-contour);
   border-radius: var(--radius);
   /*
    * Referencens kort er UDSKÅRET, ikke klippet ud. Tværsnittet gennem
@@ -394,6 +398,11 @@ header h1 {
    * (2 px) → indre rille #cdaf93 (2 px) → fyld. Vores kort var en flad
    * firkant uden kant overhovedet; det er hele forskellen mellem et papkort
    * og en flise skåret i sten.
+   *
+   * Fas og rille sad allerede rigtigt, men den YDERSTE mørke kontur manglede:
+   * vores tværsnit gik direkte fra baggrund (100,89,98) til fas (214,190,164),
+   * mens referencen har (195,163,130) i den yderste pixel. Randen bruger
+   * derfor --tile-contour, ikke den lysere --tile-edge.
    */
   box-shadow: inset 0 0 0 2px var(--tile-bevel),
               inset 0 0 0 4px var(--tile-groove),
