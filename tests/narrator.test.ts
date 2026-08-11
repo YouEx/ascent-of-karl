@@ -377,3 +377,227 @@ describe("Narrator: spam-tælleren nulstilles", () => {
     expect(line?.id).toBe("spam-3");
   });
 });
+
+/** Kør et forsøg og hent fortællerens ANDEN takt (træk eller trods). */
+function followUp(engine: Engine, narrator: Narrator, a: string, b: string) {
+  const outcome = engine.combine(a, b);
+  narrator.react(a, b, outcome);
+  return narrator.followUp(outcome);
+}
+
+describe("Narrator: trækket mod næste skridt", () => {
+  it("peger på aktens første uløste obligatoriske problem", () => {
+    const { narrator } = setup();
+    expect(narrator.currentPull()?.id).toBe("kulde");
+  });
+
+  it("åbner spillet med et træk, så historien har en retning fra takt ét", () => {
+    const { narrator } = setup();
+    expect(narrator.openingPull()?.id).toBe("pull-kulde");
+  });
+
+  it("rykker til næste problem når det aktuelle er løst", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    engine.combine("sten", "sten");
+    const line = followUp(engine, narrator, "gnister", "graes"); // løser kulde
+    expect(engine.isSolved("kulde")).toBe(true);
+    expect(line?.id).toBe("pull-vaerktoej");
+  });
+
+  it("gentager ikke samme træk på hver opdagelse", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    // Opdagelser der ikke løser kulde: trækket må ikke lyde igen med det samme
+    const first = followUp(engine, narrator, "sten", "sten");
+    expect(first?.id).not.toBe("pull-kulde");
+  });
+
+  it("tier ved age-up og slutninger, hvor historien har sin egen store takt", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    const outcome = engine.combine("sten", "sten");
+    const ageUp = { ...outcome, ageUp: true } as typeof outcome;
+    expect(narrator.followUp(ageUp)).toBeUndefined();
+  });
+
+  it("siger intet efter en fiasko — trækket hører til historiens takter", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    const outcome = engine.combine("sten", "graes"); // blindgyde
+    expect(outcome.kind).toBe("nothing");
+    expect(narrator.followUp(outcome)).toBeUndefined();
+  });
+});
+
+describe("Narrator: trods", () => {
+  it("bemærker at spilleren opfandt noget andet end det, der blev bedt om", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull(); // beder om varme
+    const line = followUp(engine, narrator, "sten", "pind"); // laver værktøj i stedet
+    expect(line?.id).toBe("defiance-1");
+  });
+
+  it("giver det komiske spor sit eget svar — det er dét, man trodser med", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    const line = followUp(engine, narrator, "nabo", "nabo"); // brydekamp, spor: komisk
+    expect(line?.id).toBe("defiance-comic");
+  });
+
+  it("tæller ikke fiaskoer som trods — at fejle er at prøve", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    for (let i = 0; i < 5; i++) narrator.followUp(engine.combine("sten", "graes"));
+    const line = followUp(engine, narrator, "sten", "pind");
+    expect(line?.id).toBe("defiance-1");
+  });
+
+  it("siger intet hvis han ikke har bedt om noget endnu", () => {
+    const { engine, narrator } = setup();
+    const line = followUp(engine, narrator, "sten", "pind");
+    expect(line?.id).not.toMatch(/^defiance/);
+  });
+
+  it("regner det ikke som trods når spilleren adlyder", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    engine.combine("sten", "sten");
+    const line = followUp(engine, narrator, "gnister", "graes"); // løser kulde
+    expect(line?.id).not.toMatch(/^defiance/);
+  });
+
+  it("eskalerer tonen når trodsen fortsætter", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    const seen: string[] = [];
+    for (const [a, b] of [
+      ["sten", "pind"],
+      ["ler", "vand"],
+      ["sten", "vand"],
+      ["pind", "pind"],
+      ["graes", "graes"],
+      ["stamme", "vand"],
+      ["baer", "vand"],
+    ] as const) {
+      const line = followUp(engine, narrator, a, b);
+      if (line?.id.startsWith("defiance")) seen.push(line.id);
+    }
+    expect(seen[0]).toBe("defiance-1");
+    expect(seen.length).toBeGreaterThan(1);
+    expect(new Set(seen).size).toBe(seen.length);
+    // Stigen skal gås trin for trin. Uden dette ville ["defiance-1",
+    // "defiance-4"] også bestå — og det var netop fejlen: et trin, der blev
+    // tiet ihjel af afkølingen, var tabt for resten af spillet.
+    const tiers = seen
+      .filter((id) => id !== "defiance-comic")
+      .map((id) => Number(id.replace("defiance-", "")));
+    const ladder = Object.keys(
+      content.narrator.find((n) => n.act === 1)!.defiance!,
+    )
+      .map(Number)
+      .sort((x, y) => x - y);
+    expect(tiers).toEqual(ladder.slice(0, tiers.length));
+  });
+
+  it("en trods, der ties ihjel af afkølingen, brænder ikke sit trin", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    expect(followUp(engine, narrator, "sten", "pind")?.id).toBe("defiance-1");
+    // Straks efter: stadig trods, men inden for afkølingen — han tier.
+    expect(followUp(engine, narrator, "ler", "vand")?.id ?? "").not.toMatch(/^defiance/);
+    // Når han taler igen, skal det være NÆSTE trin — ikke et hop forbi det.
+    const seen: string[] = [];
+    for (const [a, b] of [
+      ["sten", "vand"],
+      ["mudder", "graes"],
+      ["stamme", "pind"],
+      ["pind", "pind"],
+    ] as const) {
+      const line = followUp(engine, narrator, a, b);
+      if (line?.id.startsWith("defiance")) seen.push(line.id);
+    }
+    expect(seen[0]).toBe("defiance-2");
+  });
+
+  it("mister ikke et eneste trin, uanset hvor tæt trodsen kommer", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    const seen: string[] = [];
+    for (const [a, b] of [
+      ["sten", "pind"],
+      ["ler", "vand"],
+      ["sten", "vand"],
+      ["mudder", "graes"],
+      ["stamme", "pind"],
+      ["pind", "pind"],
+      ["stamme", "vand"],
+      ["baer", "sten"],
+      ["sten", "mudder"],
+      ["bautasten", "bautasten"],
+      ["hulemaleri", "bautasten"],
+    ] as const) {
+      const line = followUp(engine, narrator, a, b);
+      if (line?.id.startsWith("defiance-") && line.id !== "defiance-comic") seen.push(line.id);
+    }
+    const ladder = Object.values(
+      content.narrator.find((n) => n.act === 1)!.defiance!,
+    );
+    // Hele stigen skal være hørt. Det var netop det, fejlen kostede: trin 4 —
+    // hans sidste, opgivende replik — kunne forsvinde uden at være sagt.
+    expect(seen).toEqual(ladder);
+  });
+});
+
+describe("Narrator: genoptagelse må ikke gentage trækket", () => {
+  it("tier ved genindlæsning når trækket ikke har flyttet sig", () => {
+    const { engine, narrator } = setup();
+    expect(narrator.openingPull()?.id).toBe("pull-kulde");
+    for (const [a, b] of [
+      ["sten", "graes"],
+      ["ler", "ler"],
+    ] as const) {
+      attempt(engine, narrator, a, b);
+    }
+    const saved = narrator.getState();
+
+    const resumed = new Narrator(engine);
+    resumed.loadState(saved);
+    // Spilleren har allerede hørt replikken; chippen i UI'et står markeret.
+    expect(resumed.openingPull()).toBeUndefined();
+    expect(resumed.getState().lastPullAttempt).toBe(saved.lastPullAttempt);
+  });
+
+  it("siger trækket ved genindlæsning hvis historien er rykket imens", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    const saved = { ...narrator.getState(), pulledProblem: null };
+
+    const resumed = new Narrator(engine);
+    resumed.loadState(saved);
+    expect(resumed.openingPull()?.id).toBe("pull-kulde");
+  });
+
+  it("overlever et gemt spil fra før trods-stigen fandtes", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    const legacy = narrator.getState() as Partial<ReturnType<Narrator["getState"]>>;
+    delete legacy.spokenDefianceTiers;
+
+    const resumed = new Narrator(engine);
+    resumed.loadState(legacy as ReturnType<Narrator["getState"]>);
+    expect(resumed.getState().spokenDefianceTiers).toEqual([]);
+    expect(followUp(engine, resumed, "sten", "pind")?.id).toBe("defiance-1");
+  });
+});
+
+describe("Narrator: det komiske spor må ikke tabes til en timer", () => {
+  it("kommenterer den komiske omvej selv kort efter en tør bemærkning", () => {
+    const { engine, narrator } = setup();
+    narrator.openingPull();
+    expect(followUp(engine, narrator, "sten", "pind")?.id).toBe("defiance-1");
+    // Kun ét forsøg senere: den normale afkøling ville have tiet her
+    const comic = followUp(engine, narrator, "nabo", "nabo");
+    expect(comic?.id).toBe("defiance-comic");
+  });
+});

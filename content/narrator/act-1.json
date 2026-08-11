@@ -1509,6 +1509,79 @@
         "Karl has proven, once more, that most things do not go together. It's important work. Nobody will thank him.",
         "It failed. He looks pleased anyway. I've stopped trying to understand him."
       ]
+    },
+    {
+      "id": "pull-kulde",
+      "variants": [
+        "And so Karl needed warmth. If only the world around him contained objects. Objects that could be... applied to one another.",
+        "Night is coming, and Karl is cold. Somewhere in this landscape lies the answer to that. Not saying where. Just saying it lies.",
+        "Karl requires heat. The steppe offers stones, grass and indifference. Two of those are useful.",
+        "The cold settles in. What Karl wants — what history wants — is something bright and hot. He is standing in a field of raw material and no ideas.",
+        "Karl shivers. The natural next step is warmth. I mention this purely as a narrator, with no stake in the outcome whatsoever.",
+        "It falls to Karl now to invent warmth. He has hands, a landscape, and my full attention."
+      ]
+    },
+    {
+      "id": "pull-vaerktoej",
+      "variants": [
+        "And so Karl needed a tool. His hands have served him well, in the sense that they have served him at all.",
+        "What history wants next is an edge. Something harder than a hand and sharper than an opinion.",
+        "Karl needs something to hold. Something that makes the holding worthwhile. A stick is a start. A stick is not a finish.",
+        "The next chapter would be so much easier with a tool. Karl has none. Karl has enthusiasm, which is not the same.",
+        "It is time for Karl to hold something that improves him. I am told this is how progress begins.",
+        "Bare hands built nothing. This is not a metaphor; it is a status report."
+      ]
+    },
+    {
+      "id": "pull-sult",
+      "variants": [
+        "And so Karl needed to eat. He has a stomach and a landscape, and so far no arrangement between them.",
+        "Hunger arrives. The natural direction here is food. I say this as gently as a stomach allows.",
+        "Karl must eat. There are edible things nearby and Karl has met none of them formally.",
+        "The next thing history wants is dinner. Karl wants it too, which is a rare alignment.",
+        "Something must be eaten. Ideally something that agrees to it. That last part is optional.",
+        "Karl's stomach files a formal complaint. The natural remedy is food, though Karl's definition of food remains alarmingly broad."
+      ]
+    },
+    {
+      "id": "defiance-1",
+      "variants": [
+        "That is not what I asked for. It is, admittedly, a thing. History will note both facts.",
+        "I described a need. Karl has answered a different one entirely. Bold.",
+        "Not the direction I indicated. Not the direction at all, in fact. Onwards, apparently.",
+        "I pointed one way. Karl went the other and came back with that. I am writing it down.",
+        "A discovery! Unrelated to the problem at hand, but a discovery."
+      ]
+    },
+    {
+      "id": "defiance-2",
+      "variants": [
+        "I have described what history needs. Karl keeps inventing something adjacent to it at best.",
+        "I begin to suspect Karl is listening and then choosing. That is worse than not listening.",
+        "Again. I say one thing, the stone age says another. I am merely the narrator; the stone age has the final word.",
+        "My suggestions are, it seems, decorative.",
+        "For the record, I did say. I said quite clearly. And here we are, holding that."
+      ]
+    },
+    {
+      "id": "defiance-4",
+      "variants": [
+        "I have stopped suggesting. I am simply describing now. Karl does what Karl does and I write it down afterwards.",
+        "I no longer have preferences. I have observations.",
+        "The narrator withdraws his recommendations, which were apparently a formality.",
+        "I could tell you what history needs. I have. Repeatedly. Instead, look — Karl made that.",
+        "Very well. Karl leads, history follows, and I take notes at the back."
+      ]
+    },
+    {
+      "id": "defiance-comic",
+      "variants": [
+        "This is not progress. This is a detour with a souvenir. And yet the chronicle must record it.",
+        "History did not ask for this. History will, regrettably, remember it anyway.",
+        "I requested a solution. Karl has produced an anecdote.",
+        "Somewhere, the natural course of civilisation waits patiently. Karl is doing this instead.",
+        "That belongs in a different kind of book. It is going in this one."
+      ]
     }
   ],
   "behavior": {
@@ -1586,5 +1659,13 @@
     "disc-15",
     "disc-16"
   ],
-  "challengeWarningLine": "challenge-varsel"
+  "challengeWarningLine": "challenge-varsel",
+  "defiance": {
+    "1": "defiance-1",
+    "2": "defiance-2",
+    "4": "defiance-4"
+  },
+  "defianceComic": [
+    "defiance-comic"
+  ]
 }

@@ -81,6 +81,14 @@ export interface ProblemDef {
   description: string;
   /** Obligatoriske problemer gater age-up (blødt gate, PRD §2.3) */
   required: boolean;
+  /**
+   * Replik-id for fortællerens *træk*: han siger højt hvad historien vil
+   * herfra ("Nu skulle Karl varmes. Hvis blot der lå noget brugbart …").
+   * Trækket er ikke et hint til en spiller der sidder fast — det er en
+   * erklæret hensigt, som spilleren kan vælge at trodse. Uden den erklæring
+   * findes der ingen ulydighed at grine af.
+   */
+  pull?: string;
   /** Fortæller-eskalering: replik-id'er fra blide til tydelige vink (PRD §2.4) */
   hints?: string[];
 }
@@ -157,6 +165,20 @@ export interface NarratorContentDef {
    * Bruger {element} til det netop opfundne.
    */
   discoveryFallback?: string[];
+  /**
+   * Fortællerens reaktion når spilleren opfinder noget *andet* end det, han
+   * netop bad om. Nøgle = hvor mange gange spilleren har trodset ham i dette
+   * run, så tonen kan eskalere fra tør bemærkning til opgivende.
+   *
+   * Trodsen tælles KUN på opdagelser. At fejle undervejs er ikke ulydighed
+   * — det er at prøve. At opfinde noget helt andet er ulydighed.
+   */
+  defiance?: Record<string, string>;
+  /**
+   * Særlig reaktion når det trodsige fund ligger på det komiske spor
+   * (`spor: "komisk"`). Mudderkagen fortjener mere end en tør bemærkning.
+   */
+  defianceComic?: string[];
 }
 
 /**

@@ -10,21 +10,36 @@
       "name": "Karl is freezing",
       "description": "It's cold on the steppe. Karl's goosebumps have goosebumps.",
       "required": true,
-      "hints": ["hint-kulde-1", "hint-kulde-2", "hint-kulde-3"]
+      "pull": "pull-kulde",
+      "hints": [
+        "hint-kulde-1",
+        "hint-kulde-2",
+        "hint-kulde-3"
+      ]
     },
     {
       "id": "vaerktoej",
       "name": "Bare hands",
       "description": "Karl has two hands and zero tools. Nature is laughing at him.",
       "required": true,
-      "hints": ["hint-vaerktoej-1", "hint-vaerktoej-2", "hint-vaerktoej-3"]
+      "pull": "pull-vaerktoej",
+      "hints": [
+        "hint-vaerktoej-1",
+        "hint-vaerktoej-2",
+        "hint-vaerktoej-3"
+      ]
     },
     {
       "id": "sult",
       "name": "Karl is hungry",
       "description": "Karl's stomach growls so loudly the boar keeps its distance.",
       "required": true,
-      "hints": ["hint-sult-1", "hint-sult-2", "hint-sult-3"]
+      "pull": "pull-sult",
+      "hints": [
+        "hint-sult-1",
+        "hint-sult-2",
+        "hint-sult-3"
+      ]
     }
   ]
 }

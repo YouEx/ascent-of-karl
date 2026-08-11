@@ -44,6 +44,58 @@ Fem lag, der ganges med hinanden:
      den ikke fyrer konstant. Tid leveres af UI-laget; kernen måler aldrig
      selv tid (determinisme).
 
+## Trækket og trodsen (besluttet 2026-08-11)
+
+Fortælleren siger altid højt, hvad historien vil herfra: *"And so Karl needed
+warmth. If only the world around him contained objects…"* Det kaldes **trækket**
+(`pull`), og det ligger på problemet i `content/acts/*.json`.
+
+Trækket er ikke et hint til en spiller, der sidder fast — det system findes
+allerede som `hints`, og det eskalerer først efter fem fiaskoer. Trækket er en
+**erklæret hensigt**. Formålet er ikke at hjælpe; formålet er at give spilleren
+noget at være ulydig imod. Uden en erklæring findes der ingen ulydighed at grine
+af, og så er en komisk omvej bare en tilfældig kombination.
+
+**"Altid" opnås ved at stå fast, ikke ved at blive gentaget.** Fortælleren siger
+trækket ved spilstart og som anden takt efter en opdagelse, med afkøling
+(`PULL_COOLDOWN`), og skifter problemet, fyrer det straks — dét er historien der
+rykker. Imens markerer UI'et hele tiden det problem, han peger på (`.problem.wanted`,
+pil frem for cirkel), så hans hensigt er synlig uden at han skal docere. Det er
+den samme lektie som `slowUsed`: sjov én gang, docerende tre.
+
+Ved **genoptagelse** tier han, hvis trækket ikke har flyttet sig, mens han var
+væk. Ellers ville hver genindlæsning gentage en replik, spilleren allerede har
+hørt — og nulstille afkølingen til den næste ægte påmindelse. Chippen står
+stadig markeret; det er dér, "altid" bor.
+
+**Trodsen** (`defiance`) er betalingen. Opfinder spilleren noget andet end det,
+der blev bedt om, bemærker fortælleren det, og tonen eskalerer fra tør
+bemærkning til opgivende. Tre regler gør den skarp:
+
+1. **Kun opdagelser tæller.** At fejle undervejs er ikke ulydighed — det er at
+   prøve. At lykkes med noget *andet* er ulydighed.
+2. **Det komiske spor er undtaget fra afkølingen.** At vælge mudderkagen frem
+   for løsningen er hele pointen, og den vits må ikke tabes til en timer, der
+   blev sat for de tørre bemærkningers skyld. Det kan ikke spamme: komiske fund
+   er få, og en gentagelse er ikke en opdagelse.
+3. **Stigen gås nedefra, og intet trin kan tabes.** Trinnene er en tone-bue —
+   irritation, mistanke, opgivelse — ikke et regnskab. Fortælleren ser hver
+   trods (`defianceCount` tælles også når han tier), men *trinnet* rykker først,
+   når han rent faktisk siger noget (`spokenDefianceTiers`). Var nøglen bundet
+   til den rå tæller, ville en trods inden for afkølingen brænde sit trin, og
+   tælleren går kun opad: trinnet var så væk for resten af spillet — inklusive
+   hans sidste, opgivende replik. Derfor må replikkerne heller ikke tælle højt
+   ("Twice now…"), for et trin kan siges ved et hvilket som helst antal trodser.
+
+Fortælleren taler i **takter**. En opdagelse giver to: hvad der skete, og hvad
+historien vil herfra. UI-laget køer dem, så anden takt først skrives ud, når
+første er færdig. Ved age-up og slutninger tier trækket — historien har sin egen
+store takt dér.
+
+Validatoren håndhæver, at hvert obligatorisk problem har et træk med mindst fem
+varianter (det høres hver gang historien rykker), at trods-replikkerne findes,
+og at en akt med træk ikke mangler trods-kortet helt.
+
 ## AI-pipeline til varianter (PRD §5)
 
 **Princip: modellen genererer udkast i pipelinen — aldrig runtime.** Spillet

@@ -179,6 +179,17 @@ header h1 {
   border-color: rgba(79, 122, 69, 0.35);
   text-decoration: line-through;
 }
+/*
+ * Det problem fortælleren peger på lige nu. Markeringen er hele grunden til
+ * at ulydighed er sjov: kan man ikke se hvad han bad om, er det ikke et valg
+ * at lade være. Okker er systemets "opmærksomhed"-farve.
+ */
+.problem.wanted {
+  color: var(--ochre-ink);
+  border-color: var(--ochre);
+  background: var(--ochre-tint);
+  font-weight: 600;
+}
 
 /* ---------- Søg & filter ---------- */
 #tools {

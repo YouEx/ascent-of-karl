@@ -4,6 +4,7 @@ import type {
   CombineOutcome,
   NarratorContentDef,
   NarratorLineDef,
+  ProblemDef,
 } from "../core/types";
 
 /** Serialiserbar fortæller-tilstand (gemmes sammen med GameState). */
@@ -37,6 +38,24 @@ export interface NarratorState {
   genericIndex: number;
   /** Rotation i puljen af generiske opdagelses-replikker */
   discoveryIndex: number;
+  /**
+   * Problemet fortælleren senest pegede på. Ulydighed måles mod dette:
+   * har han ikke sagt noget højt, er der intet at trodse.
+   */
+  pulledProblem: string | null;
+  /** Forsøgsnummer da trækket sidst lød — giver afkøling, så han ikke tromler */
+  lastPullAttempt: number;
+  /** Hvor mange gange spilleren har opfundet noget andet end det, der blev bedt om */
+  defianceCount: number;
+  /**
+   * Trin på trods-stigen der allerede er hørt. Uden den ville en trods, der
+   * blev tiet ihjel af afkølingen, brænde sit trin: tælleren går kun opad, så
+   * trinnet ville aldrig komme igen — heller ikke fortællerens sidste,
+   * opgivende replik.
+   */
+  spokenDefianceTiers: number[];
+  /** Forsøgsnummer da trods-replikken sidst lød */
+  lastDefianceAttempt: number;
   /** Forsøgstæller + hvornår slow-puljen sidst fyrede (cooldown) */
   attempts: number;
   lastSlowAttempt: number;
@@ -66,6 +85,11 @@ export function freshNarratorState(seed = 1): NarratorState {
     usedOnce: [],
     genericIndex: 0,
     discoveryIndex: 0,
+    pulledProblem: null,
+    lastPullAttempt: -100,
+    defianceCount: 0,
+    spokenDefianceTiers: [],
+    lastDefianceAttempt: -100,
     attempts: 0,
     lastSlowAttempt: -100,
     slowUsed: false,
@@ -97,6 +121,24 @@ const HINT_STEP = 4;
 const SLOW_MS = 45_000;
 /** Et forsøg hurtigere end dette efter det forrige regnes som "meget hurtigt" (ms) */
 const FAST_MS = 2_000;
+/**
+ * Mindste antal forsøg mellem to træk om samme problem. Skifter problemet,
+ * fyrer trækket straks — dét er historien der rykker, ikke gentagelse.
+ * Fortællerens egen lektie fra `slowUsed` gælder her: sjov én gang,
+ * docerende tre.
+ */
+const PULL_COOLDOWN = 6;
+/** Mindste antal forsøg mellem to trods-replikker */
+const DEFIANCE_COOLDOWN = 3;
+/**
+ * Det komiske spor har ingen afkøling. At vælge mudderkagen frem for
+ * løsningen ER pointen med at være ulydig, og den vits må ikke tabes til en
+ * timer, der blev sat for de tørre bemærkningers skyld.
+ *
+ * Det kan ikke spamme: komiske fund er få, og en gentagelse er ikke en
+ * opdagelse — så hver af dem kan kun betale sig selv ud én gang.
+ */
+const DEFIANCE_COMIC_EXEMPT = true;
 
 /**
  * Fortælleren reagerer på hvert kombinationsforsøg med præcis én (eller ingen) replik.
@@ -401,6 +443,132 @@ export class Narrator {
 
     // 4. Generiske fiaskoer (roterende, aldrig samme to gange i træk)
     return this.speak(this.genericFailureLine(), ctx);
+  }
+
+  /**
+   * Problemet fortælleren peger på lige nu — historiens naturlige næste
+   * skridt. Rækkefølgen er akt-filens, så fortællingen har en rygrad:
+   * kulden først, så de bare hænder, så sulten.
+   *
+   * Bruges også af UI'et, så det aktuelle træk altid er synligt uden at
+   * fortælleren skal gentage sig. "Altid" opnås ved at stå fast, ikke ved
+   * at blive sagt igen og igen.
+   */
+  currentPull(): ProblemDef | undefined {
+    return this.engine.unsolvedRequiredProblems().find((p) => p.pull);
+  }
+
+  /**
+   * Fortællerens første træk, når spillet åbnes eller genoptages. Historien
+   * skal have en retning fra første takt — ellers er de tidlige forsøg bare
+   * famlen, og der er ingen erklæret hensigt at trodse.
+   *
+   * Ved genoptagelse siger han kun noget, hvis trækket har flyttet sig, mens
+   * han var tavs. Ellers ville hver genindlæsning gentage en replik, spilleren
+   * allerede har hørt, og nulstille afkølingen til den næste ægte påmindelse.
+   * Chippen i UI'et står stadig markeret — det er dér, "altid" bor.
+   */
+  openingPull(): SpokenLine | undefined {
+    if (this.engine.activeEnding()) return undefined;
+    const next = this.currentPull();
+    if (!next?.pull) return undefined;
+    if (this.state.pulledProblem === next.id) return undefined;
+    this.state.pulledProblem = next.id;
+    this.state.lastPullAttempt = this.state.attempts;
+    return this.speak(next.pull);
+  }
+
+  /**
+   * Anden takt efter en opdagelse: enten en bemærkning om at spilleren lige
+   * har trodset ham, eller et nyt træk mod det næste naturlige skridt.
+   *
+   * Kaldes af UI-laget EFTER `react()`, og køes bag historiereplikken:
+   * "Sådan gik det. — Og nu ville historien gerne dette."
+   */
+  followUp(outcome: CombineOutcome): SpokenLine | undefined {
+    if (outcome.kind !== "discovery") return undefined;
+    // Slutninger og age-up er historiens egne store takter. Et træk oveni
+    // ville tale hen over dem.
+    if (this.engine.activeEnding() || outcome.ageUp) return undefined;
+
+    const defiance = this.defianceLine(outcome);
+    if (defiance) return this.speak(defiance, { element: outcome.element.name });
+
+    const next = this.currentPull();
+    if (!next?.pull) {
+      this.state.pulledProblem = null;
+      return undefined;
+    }
+
+    const changed = this.state.pulledProblem !== next.id;
+    const cooled = this.state.attempts - this.state.lastPullAttempt >= PULL_COOLDOWN;
+    if (!changed && !cooled) return undefined;
+
+    this.state.pulledProblem = next.id;
+    this.state.lastPullAttempt = this.state.attempts;
+    return this.speak(next.pull, { element: outcome.element.name });
+  }
+
+  /**
+   * Trods: spilleren opfandt noget andet end det, fortælleren bad om.
+   *
+   * Tælles KUN på opdagelser. At fejle mens man prøver er ikke ulydighed —
+   * det er at prøve. At lykkes med noget helt andet er ulydighed, og det er
+   * dét, der er sjovt.
+   */
+  private defianceLine(outcome: CombineOutcome & { kind: "discovery" }): string | undefined {
+    const asked = this.state.pulledProblem;
+    if (!asked) return undefined; // han har ikke bedt om noget endnu
+    if (this.engine.isSolved(asked)) return undefined; // trækket lykkedes jo
+    if (outcome.combo.solves === asked) return undefined; // spilleren adlød
+
+    const { defiance, defianceComic } = this.content();
+    // Trodsen tælles altid — også når han tier. Han ser alt; han kommenterer
+    // bare ikke hver gang.
+    this.state.defianceCount++;
+    const since = this.state.attempts - this.state.lastDefianceAttempt;
+    const comic = outcome.combo.spor === "komisk" && !!defianceComic?.length;
+
+    if (!(comic && DEFIANCE_COMIC_EXEMPT) && since < DEFIANCE_COOLDOWN) {
+      return undefined;
+    }
+
+    let id: string | undefined;
+    if (comic) {
+      const pick = defianceComic![Math.floor(this.rand() * defianceComic!.length)]!;
+      if (pick !== this.state.lastLineId) id = pick;
+    }
+    id ??= this.defianceTierLine(defiance);
+    // Afkølingen bruges kun når han rent faktisk siger noget. Ellers ville en
+    // tavs trods skubbe den næste bemærkning væk uden grund.
+    if (id) this.state.lastDefianceAttempt = this.state.attempts;
+    return id;
+  }
+
+  /**
+   * Næste trin på trods-stigen: det laveste endnu uhørte trin, spilleren har
+   * optjent. Stigen er en tone-bue — mild irritation, mistanke, opgivelse — og
+   * den skal gås nedefra, ellers lyver den om, hvad han allerede har sagt.
+   *
+   * Til forskel fra `behavior.*`-tærsklerne kan et trin ikke tabes: tælleren
+   * går kun opad, så et trin, der blev tiet ihjel af afkølingen, ville ellers
+   * være væk for resten af spillet — inklusive hans sidste, opgivende replik.
+   * Derfor er trinnet ikke bundet til et præcist tal, og replikkerne tæller
+   * ikke højt.
+   *
+   * Er alle trin hørt, tier han. Det er ikke en mangel: han sagde selv, at han
+   * holdt op med at anbefale.
+   */
+  private defianceTierLine(defiance?: Record<string, string>): string | undefined {
+    if (!defiance) return undefined;
+    const earned = Object.keys(defiance)
+      .map(Number)
+      .filter((t) => t <= this.state.defianceCount && !this.state.spokenDefianceTiers.includes(t))
+      .sort((x, y) => x - y);
+    const tier = earned[0];
+    if (tier === undefined) return undefined;
+    this.state.spokenDefianceTiers.push(tier);
+    return defiance[String(tier)];
   }
 
   /** Fortællerens intro til den aktuelle akt (bruges ved spilstart og efter age-up). */

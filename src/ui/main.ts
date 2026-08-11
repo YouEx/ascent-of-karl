@@ -174,9 +174,51 @@ let onlyNew = false;
 const freshFinds = new Set<string>();
 
 // --- Fortæller ---
+/**
+ * Fortælleren taler i takter. En opdagelse kan give to: hvad der skete, og
+ * hvad historien vil herfra. De køes, så anden takt først skrives ud når
+ * første er færdig — ellers ville trækket overskrive sin egen optakt.
+ */
+let lineQueue: SpokenLine[] = [];
+let queueTimer: ReturnType<typeof setTimeout> | undefined;
+/** Pause mellem to takter, så det læses som et åndedrag og ikke som én tekst */
+const BEAT_PAUSE_MS = 900;
+
 function say(line: SpokenLine): void {
+  if (queueTimer) clearTimeout(queueTimer);
+  lineQueue = [];
   playLine(line, muted);
   speak(line.text);
+}
+
+/** Læg en efterfølgende takt i kø bag den, der spiller nu. */
+function sayAfter(line: SpokenLine | undefined): void {
+  if (!line) return;
+  lineQueue.push(line);
+  scheduleNextBeat();
+}
+
+function scheduleNextBeat(): void {
+  if (queueTimer || lineQueue.length === 0) return;
+  // Mutet fortæller skriver ikke, så der er ingen skrivetid at vente på.
+  const wait = muted ? BEAT_PAUSE_MS : typewriterMsLeft() + BEAT_PAUSE_MS;
+  queueTimer = setTimeout(() => {
+    queueTimer = undefined;
+    const next = lineQueue.shift();
+    if (!next) return;
+    playLine(next, muted);
+    speak(next.text);
+    scheduleNextBeat();
+  }, wait);
+}
+
+/** Skrivehastighed for skrivemaskine-effekten (ms pr. tegn) */
+const TYPE_MS = 18;
+/** Tegn der mangler at blive skrevet ud — driver pausen mellem to takter */
+let typewriterLeft = 0;
+
+function typewriterMsLeft(): number {
+  return typewriterLeft * TYPE_MS;
 }
 
 function speak(text: string): void {
@@ -185,16 +227,19 @@ function speak(text: string): void {
   if (typewriterTimer) clearInterval(typewriterTimer);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reducedMotion) {
+    typewriterLeft = 0;
     el.narratorText.textContent = text;
     return;
   }
   el.narratorText.textContent = "";
   let i = 0;
+  typewriterLeft = text.length;
   typewriterTimer = setInterval(() => {
     i++;
+    typewriterLeft = text.length - i;
     el.narratorText.textContent = text.slice(0, i);
     if (i >= text.length && typewriterTimer) clearInterval(typewriterTimer);
-  }, 18);
+  }, TYPE_MS);
 }
 
 function renderMute(): void {
@@ -226,11 +271,18 @@ function renderAge(): void {
 }
 
 function renderProblems(): void {
+  // Det problem fortælleren peger på markeres, så hans hensigt altid er
+  // synlig uden at han skal gentage sig. Dét er det, der gør ulydighed
+  // til et valg frem for et tilfælde.
+  const pulled = narrator.currentPull()?.id;
   el.problems.innerHTML = engine
     .currentAct()
     .problems.map((p) => {
       const done = engine.isSolved(p.id);
-      return `<span class="problem ${done ? "solved" : ""}" title="${p.description}">${done ? "✓" : "○"} ${p.name}</span>`;
+      const wanted = !done && p.id === pulled;
+      const cls = `problem${done ? " solved" : ""}${wanted ? " wanted" : ""}`;
+      const hint = wanted ? " — the narrator wants this next" : "";
+      return `<span class="${cls}" title="${p.description}${hint}">${done ? "✓" : wanted ? "→" : "○"} ${p.name}</span>`;
     })
     .join("");
 }
@@ -502,6 +554,10 @@ function performCombine(a: string, b: string): void {
   const outcome = engine.combine(a, b);
   const line = narrator.react(a, b, outcome, elapsedMs);
   const ending = engine.activeEnding();
+  // Beregnes FØR save() nedenfor: followUp() bogfører hvad fortælleren bad
+  // om og hvor tit han er blevet trodset. Kørte den efter gemmet, ville en
+  // genindlæsning nulstille hans hukommelse om sine egne opfordringer.
+  const followUp = ending ? undefined : narrator.followUp(outcome);
 
   // Blindgyden er det eneste datapunkt der ikke kan rekonstrueres bagefter
   if (outcome.kind === "nothing") playtest.miss(a, b, engine.getState().attempts);
@@ -517,6 +573,9 @@ function performCombine(a: string, b: string): void {
     if (outcome.ageUp) showAgeUpBanner();
   }
   if (line) say(line);
+  // Anden takt: fortælleren peger videre — eller bemærker at han lige blev
+  // ignoreret. Køes bag historiereplikken, så den ikke overskriver sin optakt.
+  sayAfter(followUp);
   renderAge();
   renderChallenge();
   if (ending) {
@@ -652,6 +711,11 @@ function startGame(resume: boolean): void {
   void initAudio(true).then(() => {
     const opening = resumed ? narrator.resume() : narrator.actIntro();
     if (opening) say(opening);
+    // Historien får sin retning med det samme. Uden et erklæret mål fra
+    // første takt er de første kombinationer bare famlen — og der er intet
+    // at trodse.
+    sayAfter(narrator.openingPull());
+    save();
   });
 }
 

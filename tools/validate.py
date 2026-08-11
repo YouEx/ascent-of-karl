@@ -222,6 +222,28 @@ def main() -> int:
                 check_ref(h, f"problemet '{p['id']}'s hints")
             if p.get("required") and not p.get("hints"):
                 warn(f"Akt {act['act']}: obligatorisk problem '{p['id']}' har ingen hint-eskalering")
+            # Trækket høres hver gang historien rykker — det er et nøglebeat.
+            check_ref(p.get("pull"), f"problemet '{p['id']}'s pull", key_min)
+            if p.get("required") and not p.get("pull") and act_has_combos:
+                warn(f"Akt {act['act']}: obligatorisk problem '{p['id']}' har intet pull "
+                     f"— fortælleren kan ikke pege på det, og så er der intet at trodse")
+
+        # Trods-replikkerne er ulydighedens betaling. Uden dem er trækket
+        # bare en huskeseddel.
+        pulled = [p for p in act.get("problems", []) if p.get("required") and p.get("pull")]
+        if act_has_combos and pulled and not (n.get("defiance") or {}):
+            warn(f"Akt {act['act']}: {len(pulled)} obligatoriske problemer har pull, men akten "
+                 f"har ingen defiance-replikker — fortælleren peger uden nogensinde at opdage, "
+                 f"at han bliver ignoreret")
+        for key, ref in (n.get("defiance") or {}).items():
+            if not key.isdigit() or int(key) < 1:
+                err(f"Akt {act['act']}: defiance-nøgle '{key}' skal være et positivt heltal")
+            check_ref(ref, f"defiance[{key}]", 5)
+        for ref in n.get("defianceComic") or []:
+            check_ref(ref, "defianceComic", 5)
+        if act_has_combos and (n.get("defiance") or {}) and not n.get("defianceComic"):
+            warn(f"Akt {act['act']}: ingen defianceComic — de komiske fund er "
+                 f"præcis dem, spilleren trodser med, og de fortjener et svar")
 
         for c in combos:
             if c.get("narratorLine") and _combo_in_act(c, act, elements):
