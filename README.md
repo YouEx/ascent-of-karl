@@ -42,7 +42,7 @@ npm run build      # typecheck + produktion-build
       ~9 MB) med manifest, ducking og autoplay-håndtering
       (`tools/generate_audio.py`)
 - [x] **Akt I komplet** (se `ROADMAP.md` + `docs/design/act-1.md`):
-      167 elementer, **205 kombinationer**, 12 skæbner, 349 fortæller-varianter
+      187 elementer, **225 kombinationer**, 15 skæbner, 770 fortæller-varianter
 - [x] Skæbne-gate: slutninger kræver 14 opfindelser, så et første run ikke
       kan slutte efter fire kombinationer (`docs/design/act-1.md`)
 - [x] Research-superset: 14.913 opskrifter fra genren som idébank

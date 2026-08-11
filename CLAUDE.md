@@ -30,11 +30,12 @@ npm run build        # typecheck + produktion-build
   `tokens.css` = designsystemets variabler, `style.css` = brugen af dem,
   `icons.ts` = stregikoner til krommet.
 - `src/assets/` — skrifter og grafik Vite skal hashe. `public/` er for filer der
-  skal have et forudsigeligt navn (lyd, manifest, `karl.webp`, og OG-billedet).
+  skal have et forudsigeligt navn (lyd, manifest, `karl.webp`, delekort og ikoner).
 - `src/content.ts` — samler content-filerne. Eneste fil der importerer JSON.
 - `content/` — ALT indhold: elementer, kombinationer, akter, replikker.
   **Indhold må aldrig hardcodes i kode** (PRD §4.1).
 - `tools/validate.py` — indholdsvalidering, kører i CI.
+- `tools/social/` — delekort og app-ikoner. Genereres, redigeres aldrig i hånden.
 
 ## Regler
 
@@ -58,6 +59,12 @@ npm run build        # typecheck + produktion-build
    FØRST, dernæst tokens.css, og brug så variablen. To hårde regler derfra:
    emoji må kun komme fra `content/*.json` (aldrig i krom — brug `src/ui/icons.ts`),
    og okker der bærer tekst eller fokus skal være `--ochre-ink`, ikke `--ochre`.
+9. **Delekort og ikoner tegnes ikke — de genereres.** Kilden er
+   `tools/social/card.html`; `npm run social` bygger dem (starter selv en
+   Vite-server; kræver ImageMagick). Ændrer du navn, undertitel, palet eller
+   Karl-tegningen, så kør scriptet igen og commit resultatet. Ret ALDRIG en
+   PNG i public/ i hånden — den bliver forældet uden at nogen opdager det,
+   fordi ingen ser sit eget delekort. Se `DESIGN.md` §7.
 
 ## Tone (til indholdsarbejde)
 

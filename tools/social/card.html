@@ -1,0 +1,185 @@
+<!doctype html>
+<!--
+  Kilde til delekortet og app-ikonerne. Renderes af tools/social/render.mjs.
+
+  Hele pointen med at bygge dem i HTML frem for i et billedprogram: kortet
+  arver de RIGTIGE tokens og den RIGTIGE Karl. Skifter designsystemet farve,
+  skal ingen huske at genskabe en PNG i hånden — man kører scriptet igen.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Social assets — The Ascent of Karl</title>
+    <link rel="stylesheet" href="/src/ui/tokens.css" />
+    <style>
+      body {
+        margin: 0;
+        background: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+        padding: 24px;
+      }
+
+      /* Fælles: daggry-lærred + filmkorn, præcis som i spillet */
+      .surface {
+        position: relative;
+        overflow: hidden;
+        background: var(--canvas);
+      }
+      .surface::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 9;
+        pointer-events: none;
+        opacity: 0.16;
+        mix-blend-mode: multiply;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+      }
+
+      .ribbons {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+      .ribbons path { fill: none; stroke-linecap: round; }
+      .ribbons .r1 { stroke: var(--ribbon-sky); stroke-width: 30; opacity: 0.5; }
+      .ribbons .r2 { stroke: var(--ribbon-cyan); stroke-width: 17; opacity: 0.55; }
+      .ribbons .r3 { stroke: var(--ribbon-sky); stroke-width: 11; opacity: 0.5; }
+      .ribbons .r4 { stroke: var(--ribbon-rose); stroke-width: 34; opacity: 0.5; }
+      .ribbons .r5 { stroke: var(--ribbon-sky); stroke-width: 22; opacity: 0.5; }
+      .ribbons .r6 { stroke: var(--ribbon-rose); stroke-width: 14; opacity: 0.45; }
+
+      /* ---------- Delekort 1200x630 ---------- */
+      #og {
+        width: 1200px;
+        height: 630px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+        align-items: center;
+        gap: 32px;
+        /* Rigelig luft: Twitter/X beskærer 1.91:1 til ~2:1, og et navn
+           der rammer kanten ville ryge med i beskæringen. */
+        padding: 56px 64px;
+        box-sizing: border-box;
+      }
+      #og .copy { position: relative; z-index: 2; min-width: 0; }
+      #og h1 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-variation-settings: "opsz" 144, "SOFT" 20, "WONK" 1;
+        font-size: 88px;
+        line-height: 0.94;
+        letter-spacing: -0.022em;
+        color: var(--ink);
+        margin: 0;
+      }
+      #og h1 span {
+        display: block;
+        font-weight: 400;
+        font-style: italic;
+        font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+      }
+      #og .sub {
+        font-family: var(--font-display);
+        font-variation-settings: "opsz" 14, "SOFT" 40, "WONK" 1;
+        font-style: italic;
+        font-size: 30px;
+        color: var(--ochre-ink);
+        margin: 18px 0 0;
+        letter-spacing: 0.01em;
+      }
+      #og .tagline {
+        font-family: var(--font-ui);
+        font-size: 22px;
+        color: var(--ink-soft);
+        line-height: 1.45;
+        max-width: 30ch;
+        /* balance frem for fri ombrydning: uden den ender sidste linje som
+           et enkelt ord, og et delekort har ikke råd til en horeunge */
+        text-wrap: balance;
+        margin: 26px 0 0;
+      }
+      #og .art {
+        position: relative;
+        z-index: 2;
+        justify-self: end;
+        align-self: end;
+        /* Karl sidder på gulvet i kortet, ikke midt i luften */
+        margin-bottom: -56px;
+      }
+      #og .art img {
+        display: block;
+        width: 440px;
+        height: auto;
+        filter: drop-shadow(0 18px 22px rgba(58, 44, 84, 0.22));
+      }
+
+      /* ---------- Ikoner: Karls ansigt beskåret kvadratisk ---------- */
+      /* Ét mærke i alle størrelser. Hår + øjne er den eneste del af
+         tegningen der stadig kan aflæses ved 16 px. */
+      .icon {
+        position: relative;
+        overflow: hidden;
+        display: block;
+      }
+      .icon .crop {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+      }
+      .icon .crop img {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        /* 594x712-originalen skaleres så hovedet udfylder rammen. Hovedets
+           midte ligger ved 39 % / 24 % af tegningen, så billedet forskydes
+           +11 % / +26 % af SIN EGEN størrelse for at flytte det punkt ind i
+           midten. Procenter gør beskæringen størrelsesuafhængig. */
+        width: 172%;
+        transform: translate(-50%, -50%) translate(11.3%, 26.1%);
+      }
+      .icon .ribbons { z-index: 1; }
+      /* Ingen filmkorn på ikonerne: ved 32-180 px kan kornet alligevel ikke
+         ses. (Det er ikke kornet der fylder — det er Karls malede tekstur.
+         Vægten tages af farvereduktionen i render.mjs.) */
+      .icon::after { display: none; }
+      #icon512 { width: 512px; height: 512px; }
+      #icon32 { width: 32px; height: 32px; }
+    </style>
+  </head>
+  <body>
+    <div id="og" class="surface">
+      <svg class="ribbons" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <path class="r1" d="M-140 196 C 210 74, 386 344, 716 226 S 1168 96, 1580 202" />
+        <path class="r2" d="M-140 316 C 200 176, 372 470, 706 340 S 1160 196, 1580 312" />
+        <path class="r3" d="M-140 398 C 260 306, 430 578, 830 434 S 1252 336, 1580 412" />
+        <path class="r4" d="M-140 686 C 246 548, 388 872, 726 752 S 1186 630, 1580 690" />
+        <path class="r5" d="M-140 782 C 306 700, 512 952, 906 828 S 1304 716, 1580 776" />
+        <path class="r6" d="M-140 872 C 286 806, 470 1024, 886 918 S 1298 826, 1580 878" />
+      </svg>
+      <div class="copy">
+        <h1>The Ascent<span>of Karl</span></h1>
+        <p class="sub">reinvent history, badly</p>
+        <p class="tagline">A stone-age man. A sarcastic narrator. Fifty summers to make history — or a mess.</p>
+      </div>
+      <div class="art"><img src="/karl.webp" width="594" height="712" alt="" /></div>
+    </div>
+
+    <div id="icon512" class="icon surface">
+      <svg class="ribbons" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <path class="r4" d="M-140 686 C 246 548, 388 872, 726 752 S 1186 630, 1580 690" />
+        <path class="r5" d="M-140 782 C 306 700, 512 952, 906 828 S 1304 716, 1580 776" />
+      </svg>
+      <div class="crop"><img src="/karl.webp" alt="" /></div>
+    </div>
+
+    <div id="icon32" class="icon surface">
+      <div class="crop"><img src="/karl.webp" alt="" /></div>
+    </div>
+  </body>
+</html>

@@ -91,7 +91,7 @@ header h1 {
 }
 .icon-btn:hover, .icon-btn:focus-visible { border-color: var(--rule-strong); background: var(--paper); }
 .icon-btn:active { transform: translateY(1px); }
-/* Ikoner er streg, ikke emoji (DESIGN.md §7) — de arver tekstfarven. */
+/* Ikoner er streg, ikke emoji (DESIGN.md §8) — de arver tekstfarven. */
 .icon-btn svg {
   width: 21px; height: 21px;
   fill: none; stroke: currentColor; stroke-width: 1.6;

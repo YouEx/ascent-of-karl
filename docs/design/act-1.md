@@ -25,7 +25,7 @@ spilleren aldrig at der ER alternativer.
 
 Age-up: kobber + malm → bronze (uændret).
 
-## Spor og grene (167 elementer, 205 kombinationer — 200+-målet nået)
+## Spor og grene (187 elementer, 225 kombinationer — 200+-målet nået)
 
 > Overblik: se den auto-genererede graf i `act-1-graf.md`
 > (regenerér med `python3 tools/story_graph.py`). Adoption fra

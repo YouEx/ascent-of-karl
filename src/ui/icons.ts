@@ -1,7 +1,7 @@
 /**
  * Streg-ikoner til UI-krommet.
  *
- * DESIGN.md §7 forbyder emoji i krommet: emoji hører til indholdet (elementer
+ * DESIGN.md §8 forbyder emoji i krommet: emoji hører til indholdet (elementer
  * og skæbner kommer fra content/*.json og ER spillets illustrationssprog), mens
  * en knap skal have et ikon vi selv kontrollerer. Emoji renderes desuden
  * forskelligt pr. platform og kan ikke arve tekstfarven — begge dele er

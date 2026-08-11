@@ -189,7 +189,45 @@ Karl checked twice."), aldrig "Ingen resultater".
 
 ---
 
-## 7. Anti-mønstre (forbudt)
+## 7. Delekort og ikoner
+
+Alle sociale aktiver og app-ikoner **genereres** fra designsystemet — de
+tegnes ikke i et billedprogram. Kilden er `tools/social/card.html`, og
+`npm run social` bygger dem. Scriptet starter sin egen Vite-server på en
+ledig port, så der er intet at huske at starte først. Kræver ImageMagick
+(`brew install imagemagick`).
+
+Reglen bag: et delekort lavet i hånden bliver forældet i samme øjeblik en
+token ændrer sig, og ingen opdager det — fordi ingen ser sit eget delekort.
+Da spillet skiftede navn, lå der i tre dage et kort med det gamle navn på
+hvert eneste link. Et script kan køres igen; en PNG kan kun huskes.
+
+| Fil | Mål | Format | Bruges til |
+|---|---|---|---|
+| `og-image.jpg` | 1200×630 | JPEG q88 | `og:image`, Twitter/X, iMessage, Slack |
+| `icon-512.png` | 512×512 | PNG, 192 farver | manifest, Android-splash |
+| `icon-192.png` | 192×192 | PNG, 192 farver | manifest |
+| `apple-touch-icon.png` | 180×180 | PNG, 192 farver | iOS-hjemmeskærm |
+| `favicon-32.png` | 32×32 | PNG | fanebladet |
+
+**Format er ikke en smagssag her.** Kortet er filmkorn over en blød
+gradient — det motiv er PNG dårligst til (1,1 MB mod 100 kB som JPEG).
+Ikonerne *skal* være PNG (manifest og apple-touch accepterer ikke JPEG), så
+vægten tages i stedet med farvereduktion: **192 farver uden dithering.**
+Dithering støjer synligt på pastellen og firedobler filen.
+
+**Motivet er det samme i alle størrelser:** Karl. Kortet viser ham helt, i
+samme komposition som titelskærmen. Ikonerne er hans ansigt beskåret
+kvadratisk — håret og øjnene er den eneste del af tegningen der stadig kan
+aflæses ved 32 px. Ingen særskilt logo-mærke, ingen initialer, intet
+abstrakt symbol: spillet har en hovedperson, og det er ham folk skal se i
+fanebladet.
+
+Filmkornet er slået fra på ikonerne. Ved 32-180 px kan det ikke ses.
+
+---
+
+## 8. Anti-mønstre (forbudt)
 
 - ❌ Ren sort `#000000` — brug `Ink`
 - ❌ Inter, Georgia, Times New Roman og system-serif

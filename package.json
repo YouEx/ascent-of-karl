@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate": "python3 tools/validate.py",
-    "ux": "node tools/ux_audit.mjs"
+    "ux": "node tools/ux_audit.mjs",
+    "social": "node tools/social/render.mjs"
   },
   "devDependencies": {
     "playwright": "^1.62.1",
