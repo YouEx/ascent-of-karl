@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "key": "chips:size:src/ui/style.css",
+      "region": "chips",
+      "defect": "size",
+      "severity": 4,
+      "evidence": "Afsloeret da #app gik 760->1112 px: chips faldt 0.399->0.360 (ink 0.472->0.341). Overlejringen viser at referencens chips er markant hoejere og bredere med stoerre type; vores udfyldte kun raekken ved den forkerte bredde.",
+      "fix": {
+        "kind": "structure",
+        "file": "src/ui/style.css",
+        "change": "Maal referencens chip-hoejde, vandrette udfyldning og skriftstoerrelse, og tokeniser dem foerst derefter. Uden et maalt tal har sloejfen intet at skrive."
+      },
+      "why": null,
+      "firstSeen": "2026-08-11",
+      "iteration": 1,
+      "status": "open"
+    },
+    {
+      "key": "grid:size:src/ui/style.css",
+      "region": "grid",
+      "defect": "size",
+      "severity": 3,
+      "evidence": "Faldt 0.400->0.383 ved samme aendring. Elementkortene fordeler sig anderledes i en 978 px raekke end i en 736 px; kortstoerrelsen skal maales mod referencen paa ny.",
+      "fix": {
+        "kind": "structure",
+        "file": "src/ui/style.css",
+        "change": "Maal referencens elementkort og saet kortbredde/-hoejde efter den, ikke efter den gamle smalle spalte"
+      },
+      "why": null,
+      "firstSeen": "2026-08-11",
+      "iteration": 1,
+      "status": "open"
+    }
+  ]
+}

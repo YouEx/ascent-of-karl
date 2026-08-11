@@ -199,6 +199,22 @@
 
   /* --- Rum og form ------------------------------------------------------- */
   --pad: 0.75rem;
+
+  /* Spillets skalstyring. Målt på referencen ved 1448 px bredde: den svævende
+     ramme spænder x=168..1280 (1112 px), og indholdet står inde i den ved
+     x=237..1215 (978 px). Forskellen på 67 px pr. side ER den malede
+     rammekant — ikke tilfældig luft.
+     Vi lå på 760 px i alt, altså 242 px for smalt i indholdet, hvilket viste
+     sig som et konstant dx +119 / dw −242 i HVER eneste region. Én værdi,
+     hele geometri-afstanden.
+     Egne tokens frem for --pad, fordi --pad bruges overalt: at ændre den
+     ville sprænge alt andet for at rette ét mål. */
+  --app-max-w: 1112px;
+  /* 67 px ved referencens 1448 px svarer til 4.63vw. Flydende frem for et
+     brudpunkt: en telefon skal ikke miste en tredjedel af bredden til en
+     rammekant, og et brudpunkt ville få kanten til at springe i bredden
+     midt i en vinduesændring. --pad som gulv, referencens mål som loft. */
+  --app-inset: clamp(var(--pad), 4.63vw, 67px);
   --radius-sm: 8px;
   --radius: 12px;
   --radius-lg: 16px;
@@ -238,4 +254,19 @@ body::after {
   opacity: 0.16;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* --- Frysning: kun for den visuelle dommer (?freeze=1) -------------------- */
+/* Én optagelse skal svare til én tilstand. Kører der en overgang, en
+   animation eller en caret-blink, når harnessen trykker på udløseren, er to
+   optagelser af SAMME tilstand forskellige — og så måler dommeren støj.
+   Reglen rammer kun sider åbnet med ?freeze=1; en spiller ser den aldrig.
+   Se plan/architecture-visual-judge-1.md fase 1 (TASK-004). */
+[data-freeze="true"] *,
+[data-freeze="true"] *::before,
+[data-freeze="true"] *::after {
+  transition: none !important;
+  animation: none !important;
+  caret-color: transparent !important;
+  scroll-behavior: auto !important;
 }

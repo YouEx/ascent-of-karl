@@ -2,3 +2,8 @@ node_modules/
 dist/
 *.local
 .DS_Store
+
+# Dommerens arbejdsmappe: skærmbilleder, overlejringer, scores, hovedbog.
+# Regenereres af `npm run judge`. Køerne under docs/design/ er derimod
+# versionerede — de er systemets hukommelse på tværs af sessioner.
+.judge/

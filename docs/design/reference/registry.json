@@ -1,0 +1,193 @@
+{
+  "$comment": [
+    "Regionsregister for den visuelle dommer.",
+    "rect er PIXELKOORDINATER I REFERENCEFILEN, målt på filen selv med",
+    "gradientanalyse (ikke gættet ud fra vores egen render — det ville låse",
+    "vores fejl fast som mål). anchor er CSS-selektoren i spillet.",
+    "Regioner sammenlignes via ankeret, ikke via faste rektangler: en komponent",
+    "der er rigtigt tegnet men forskudt skal score højt på UDSEENDE og udløse en",
+    "separat POSITIONSFEJL. Blandes de to, kan ingen af dem rettes.",
+    "Se plan/architecture-visual-judge-1.md fase 2."
+  ],
+  "version": 1,
+  "screens": [
+    {
+      "id": "game",
+      "file": "docs/design/reference/target-2026-08-11.webp",
+      "scenario": "act1-opening",
+      "nativeWidth": 1448,
+      "nativeHeight": 1086,
+      "$measured": "Panelets ydre kanter: x=168 og x=1280 (kanten går igen på 88-89 % af alle rækker). Indre indholdsspalte: x=237..1215.",
+      "regions": [
+        {
+          "id": "app-frame",
+          "rect": [168, 4, 1112, 1078],
+          "anchor": "#app",
+          "weight": 3,
+          "threshold": 0.82,
+          "note": "Referencens svævende vindue med radius, kant og stor blød skygge over maleriet. Findes ikke i spillet endnu — TASK-010 i design-visual-target-1.md."
+        },
+        {
+          "id": "header",
+          "rect": [168, 4, 1112, 81],
+          "anchor": "header",
+          "weight": 2,
+          "threshold": 0.85
+        },
+        {
+          "id": "narrator",
+          "rect": [237, 105, 978, 145],
+          "anchor": "#narrator",
+          "weight": 3,
+          "threshold": 0.85
+        },
+        {
+          "id": "chronicle",
+          "rect": [237, 268, 978, 226],
+          "anchor": "#book-panel",
+          "weight": 3,
+          "threshold": 0.85
+        },
+        {
+          "id": "chips",
+          "rect": [237, 512, 978, 53],
+          "anchor": "#problems",
+          "weight": 2,
+          "threshold": 0.85
+        },
+        {
+          "id": "slots",
+          "rect": [237, 578, 978, 109],
+          "anchor": "#dock",
+          "weight": 3,
+          "threshold": 0.85
+        },
+        {
+          "id": "combine",
+          "rect": [1058, 578, 157, 109],
+          "anchor": "#combine",
+          "weight": 2,
+          "threshold": 0.80,
+          "note": "Udskåret stentavle med facet og chevron-ornament. I dag en flad pille."
+        },
+        {
+          "id": "search",
+          "rect": [237, 708, 978, 54],
+          "anchor": "#tools",
+          "weight": 2,
+          "threshold": 0.85
+        },
+        {
+          "id": "grid",
+          "rect": [237, 785, 978, 262],
+          "anchor": "#grid",
+          "weight": 4,
+          "threshold": 0.75,
+          "note": "Højeste vægt: 187 malede elementillustrationer er ~80 % af arbejdet i design-visual-target-1.md. Lavere tærskel, fordi kunsten leveres i bølger og regionen ellers ville blokere hver eneste kørsel."
+        }
+      ]
+    },
+    {
+      "id": "title",
+      "file": "docs/design/reference/title-2026-08-11.webp",
+      "scenario": "title-fresh",
+      "nativeWidth": 1586,
+      "nativeHeight": 992,
+      "$measured": "Pergamentspalten x 0..~695, malet scene x ~690..1586. Panelets indhold måles i procent af panelhøjden 907 med y-forskydning 85 (pladen blev skåret ud af mockuppen der).",
+      "regions": [
+        {
+          "id": "headline",
+          "rect": [150, 130, 545, 320],
+          "anchor": ".title-mark",
+          "weight": 4,
+          "threshold": 0.85
+        },
+        {
+          "id": "ribbon",
+          "rect": [155, 462, 500, 52],
+          "anchor": ".title-sub",
+          "weight": 3,
+          "threshold": 0.85
+        },
+        {
+          "id": "tagline",
+          "rect": [190, 535, 440, 60],
+          "anchor": ".title-tagline",
+          "weight": 2,
+          "threshold": 0.85
+        },
+        {
+          "id": "divider",
+          "rect": [280, 605, 270, 28],
+          "anchor": ".title-divider",
+          "weight": 1,
+          "threshold": 0.80
+        },
+        {
+          "id": "actions",
+          "rect": [148, 650, 510, 78],
+          "anchor": ".title-actions",
+          "weight": 3,
+          "threshold": 0.82
+        },
+        {
+          "id": "hint",
+          "rect": [200, 765, 420, 32],
+          "anchor": ".title-hint",
+          "weight": 1,
+          "threshold": 0.85
+        },
+        {
+          "id": "tip-card",
+          "rect": [95, 830, 570, 125],
+          "anchor": "#t-tip",
+          "weight": 2,
+          "threshold": 0.82
+        },
+        {
+          "id": "chip",
+          "rect": [20, 25, 340, 65],
+          "anchor": ".title-chip",
+          "weight": 1,
+          "threshold": 0.82
+        },
+        {
+          "id": "tools",
+          "rect": [1385, 20, 180, 70],
+          "anchor": ".title-tools",
+          "weight": 1,
+          "threshold": 0.80
+        },
+        {
+          "id": "scene",
+          "rect": [700, 0, 886, 992],
+          "anchor": ".title-stage",
+          "mode": "rect",
+          "weight": 2,
+          "threshold": 0.60,
+          "note": "MALET FLADE, ikke et DOM-element: landskabet er en baggrund på .title-stage, som selv fylder hele skærmen. Klippes derfor ud af helskærmsbilledet på referencens eget rektangel (mode: rect), ellers ville hele titelskærmen blive sammenlignet med maleriets højre tredjedel. Lavest tærskel i registret: referencen er HÅNDMALET, og håndmalet lys på hver enkelt sten er fysisk uopnåeligt i HTML. Måles for at fange grove fejl (forkert beskæring, dobbelt-Karl, udtværet kant), ikke for at nå 1.0. RISK-003."
+        }
+      ]
+    }
+  ],
+  "allowedDeviations": [
+    {
+      "regions": ["combine"],
+      "aspect": "tone",
+      "reason": "Referencens Combine-flade #BC9776 med cremetekst giver 2,18:1 og er reelt ulæselig. --stone er mørknet til 4,59:1 med samme kulør.",
+      "authority": "DESIGN.md §2, tokens.css"
+    },
+    {
+      "regions": ["grid", "chips", "search", "chronicle"],
+      "aspect": "tone",
+      "reason": "Referencens etiketbrun #92745A giver 3,21:1 og dumper AA. --label-ink #66513F er samme kulør, hævet til >=4,5:1 mod hver papirflade.",
+      "authority": "DESIGN.md §2, tokens.css"
+    },
+    {
+      "regions": ["slots", "hint"],
+      "aspect": "content",
+      "reason": "Referencen siger 'Drag or choose from below'. Spillet siger 'Choose from below', fordi træk-og-slip ikke er den eneste vej — teksten må ikke love en interaktion som den eneste.",
+      "authority": "plan/design-visual-target-1.md CON-006"
+    }
+  ]
+}

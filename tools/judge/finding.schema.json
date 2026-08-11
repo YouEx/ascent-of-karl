@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": [
+    "Kontrakten mellem dommeren og sløjfen.",
+    "Defektlisten er LUKKET. Fritekst-defekter afvises. Et lukket ordforråd er",
+    "det, der gør fund rutebare og deduplikerbare — uden det kan ruteren ikke",
+    "afgøre, om et fund kan rettes med et token eller kræver malet kunst, og så",
+    "vil sløjfen forsøge at CSS-efterligne et maleri i det uendelige.",
+    "Se plan/architecture-visual-judge-1.md REQ-005, REQ-006, TASK-018."
+  ],
+  "type": "object",
+  "required": ["screen", "findings"],
+  "additionalProperties": false,
+  "properties": {
+    "screen": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/finding" }
+    }
+  },
+  "definitions": {
+    "finding": {
+      "type": "object",
+      "required": ["region", "defect", "severity", "evidence", "fix"],
+      "additionalProperties": false,
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Regions-id fra registry.json. Ukendte id'er afvises."
+        },
+        "defect": {
+          "enum": [
+            "size", "position", "spacing", "color", "weight", "font",
+            "radius", "shadow", "texture", "missing-asset",
+            "extra-element", "state-mismatch"
+          ]
+        },
+        "severity": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "evidence": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Hvad der ses, med tal fra metrikkerne eller computed styles. Selvsikkerhed uden belæg afvises — det er den eneste værn mod en dommer, der gætter overbevisende."
+        },
+        "fix": {
+          "oneOf": [
+            { "$ref": "#/definitions/tokenFix" },
+            { "$ref": "#/definitions/assetFix" },
+            { "$ref": "#/definitions/structureFix" }
+          ]
+        }
+      }
+    },
+    "tokenFix": {
+      "type": "object",
+      "required": ["kind", "token", "from", "to"],
+      "additionalProperties": false,
+      "description": "Det ENESTE fund sløjfen må anvende selv. Skrives til src/ui/tuning.css.",
+      "properties": {
+        "kind": { "const": "token" },
+        "token": { "type": "string", "pattern": "^--[a-z0-9-]+$" },
+        "from": { "type": "string" },
+        "to": { "type": "string" }
+      }
+    },
+    "assetFix": {
+      "type": "object",
+      "required": ["kind", "assetId", "spec"],
+      "additionalProperties": false,
+      "description": "Kan IKKE rettes med CSS. Ryger i docs/design/asset-queue.json. En sløjfe der forsøger at CSS-efterligne malet kunst, kører i ring.",
+      "properties": {
+        "kind": { "const": "asset" },
+        "assetId": { "type": "string", "pattern": "^[A-Z]+-[A-Za-z0-9-]+$" },
+        "spec": { "type": "string", "minLength": 20 },
+        "producer": {
+          "type": "string",
+          "description": "Scriptet der kan lave den, fx tools/art/build_ui.py"
+        }
+      }
+    },
+    "structureFix": {
+      "type": "object",
+      "required": ["kind", "file", "change"],
+      "additionalProperties": false,
+      "description": "Markup- eller layoutændring. Anvendes ALDRIG automatisk (CON-003): den kræver kontekst, som dommeren ikke har.",
+      "properties": {
+        "kind": { "const": "structure" },
+        "file": { "type": "string" },
+        "change": { "type": "string", "minLength": 20 }
+      }
+    }
+  }
+}

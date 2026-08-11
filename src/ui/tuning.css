@@ -1,0 +1,12 @@
+/* Genereret af den visuelle sløjfe — rediger ikke i hånden.
+ *
+ * Kun :root-tokenoverstyringer. Det er hele kontrakten: sløjfen må røre denne
+ * ene fil og intet andet. Alt, der kræver malet kunst, ryger i
+ * docs/design/asset-queue.json; alt, der kræver markup, i human-queue.json.
+ *
+ * Importeres efter tokens.css, så overstyringerne vinder på specificitet.
+ * Se plan/architecture-visual-judge-1.md REQ-004 og CON-003.
+ *
+ * Tom indtil første accepterede iteration. */
+:root {
+}

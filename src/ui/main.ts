@@ -10,6 +10,13 @@ import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
 import { PlaytestLog } from "./playtest";
+import {
+  activeScenario,
+  bootSeed,
+  isFrozen,
+  markReadyWhenPainted,
+  resetStorageForScenario,
+} from "./scenario";
 
 // Nøglerne beholder deres oprindelige "kolde-karl"-navn selv om spillet er
 // omdøbt til The Ascent of Karl: de står i spillernes browsere, og en omdøbning
@@ -19,14 +26,19 @@ const NARRATOR_SAVE_KEY = "kolde-karl-narrator-v1";
 const MUTE_KEY = "kolde-karl-muted";
 const ACHIEVEMENTS_KEY = "kolde-karl-achievements";
 
+// Et scenarie må ikke arve browserens historik: en maskine med et halvspillet
+// run ville måle noget helt andet end en ren. Ryddes FØR engine bygges.
+resetStorageForScenario([SAVE_KEY, NARRATOR_SAVE_KEY, ACHIEVEMENTS_KEY]);
+
 const content = loadContent();
 const engine = new Engine(content);
 const playtest = new PlaytestLog();
 // Challenges spawner ud fra dette seed — nyt pr. liv, gemt i saven, så et
-// genindlæst run ikke kan ryste terningerne igen.
-engine.loadState({ ...engine.getState(), seed: (Math.random() * 2 ** 31) | 0 });
+// genindlæst run ikke kan ryste terningerne igen. bootSeed() er fast under
+// frysning, så to optagelser af samme scenarie er identiske.
+engine.loadState({ ...engine.getState(), seed: bootSeed() });
 // Nyt seed pr. playthrough → nye variantvalg hver gang (docs/design/fortaelleren.md)
-const narrator = new Narrator(engine, freshNarratorState((Math.random() * 2 ** 31) | 0));
+const narrator = new Narrator(engine, freshNarratorState(bootSeed()));
 
 // --- Save/load (autosave pr. opdagelse, PRD §4.1) ---
 function save(): void {
@@ -228,7 +240,10 @@ function speak(text: string): void {
   if (muted) return;
   if (typewriterTimer) clearInterval(typewriterTimer);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reducedMotion) {
+  // Frysning behandles som reduceret bevægelse: linjen står færdig med det
+  // samme. En halvskrevet replik ("…who has spen") er den mest åbenlyse måde
+  // to optagelser af samme tilstand kan blive forskellige på.
+  if (reducedMotion || isFrozen()) {
     typewriterLeft = 0;
     el.narratorText.textContent = text;
     return;
@@ -737,10 +752,14 @@ function showTitleScreen(): void {
 
   renderTip();
   if (tipTimer) clearInterval(tipTimer);
-  tipTimer = setInterval(() => {
-    tipIndex = (tipIndex + 1) % TITLE_TIPS.length;
-    renderTip();
-  }, TIP_ROTATE_MS);
+  // Under frysning står kortet stille. En karrusel der bladrer, gør enhver
+  // optagelse til et lodtrækningsresultat.
+  if (!isFrozen()) {
+    tipTimer = setInterval(() => {
+      tipIndex = (tipIndex + 1) % TITLE_TIPS.length;
+      renderTip();
+    }, TIP_ROTATE_MS);
+  }
 
   document.getElementById("t-primary")!.addEventListener("click", () => {
     if (canContinue) return startGame(true);
@@ -833,3 +852,33 @@ function renderAll(): void {
 initOverlays();
 renderAll();
 showTitleScreen();
+applyScenario();
+
+/**
+ * Sætter spillet i den tilstand en reference viser, og melder klar.
+ *
+ * Tilstanden sættes DIREKTE frem for at klikke sig frem: en klikvej er både
+ * langsom og skrøbelig, og fejler den, får man en tavs forkert måling i
+ * stedet for en fejl. Se plan/architecture-visual-judge-1.md fase 1.
+ */
+function applyScenario(): void {
+  const spec = activeScenario();
+  if (spec) {
+    if (spec.tipIndex !== undefined) {
+      tipIndex = spec.tipIndex;
+      renderTip();
+    }
+    if (spec.start) {
+      el.titleScreen.hidden = true;
+      runStartedAt = performance.now();
+      renderAll();
+    }
+    if (spec.narratorText) {
+      lastLineText = spec.narratorText;
+      el.narratorText.textContent = spec.narratorText;
+    }
+  }
+  // Flaget sættes altid, også uden scenarie: harnessen skal kunne optage
+  // spillet som det er, uden at kende til scenarier.
+  void markReadyWhenPainted();
+}

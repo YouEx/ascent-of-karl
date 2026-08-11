@@ -1,4 +1,7 @@
 @import "./tokens.css";
+/* Efter tokens.css, så sløjfens overstyringer vinder. Genereret af
+   tools/judge/apply.mjs — se plan/architecture-visual-judge-1.md REQ-004. */
+@import "./tuning.css";
 
 /* The Ascent of Karl — UI.
    Designsystemet ligger i DESIGN.md, tokens i tokens.css. Ingen farve i denne
@@ -25,9 +28,9 @@ body {
 #app {
   position: relative;
   z-index: 2;
-  max-width: 760px;
+  max-width: var(--app-max-w);
   margin: 0 auto;
-  padding: 0 var(--pad);
+  padding: 0 var(--app-inset);
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
@@ -45,8 +48,13 @@ header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem var(--pad);
-  margin: 0 calc(var(--pad) * -1);
+  padding: 0.5rem var(--app-inset);
+  /* Bleeder ud til rammens kant, ikke til indholdsspalten: referencens
+     header spænder hele 1112 px (rect 168..1280), mens indholdet under den
+     står inde ved 978. Den negative margin SKAL derfor følge --app-inset —
+     stod der --pad, ville headeren bløde med et andet tal end #app polstrer
+     med, og kanten ramte hverken ramme eller spalte. */
+  margin: 0 calc(var(--app-inset) * -1);
   background: linear-gradient(to bottom, rgba(251, 250, 246, 0.92), rgba(251, 250, 246, 0.6));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -58,9 +66,21 @@ header h1 {
   font-weight: 600;
   font-variation-settings: "SOFT" 30, "WONK" 1;
   letter-spacing: -0.015em;
-  font-size: 1.15rem;
+  /* Flydende, fordi titlen står med white-space: nowrap: på en 390 px-skærm
+     lagde "The Ascent of Karl" + tælleren + de tre ikonknapper sig 5 px ud
+     over kanten og gav vandret scroll. Loftet er referencens mål, så store
+     ruder er uændrede. */
+  font-size: clamp(0.95rem, 3.4vw, 1.15rem);
   color: var(--ink);
   white-space: nowrap;
+  /* Ved 320 px kan titel + tæller + tre ikonknapper ikke være der samtidig.
+     Knapperne er 48 px, altså lige over det mindste fornuftige trykmål — de
+     skal ikke krympe. Titlen giver sig i stedet: min-width: 0 ophæver flex'
+     automatiske minimumsbredde, så den kan forkortes med ellipse frem for at
+     skubbe rækken ud over kanten. Vandret scroll er værre end en kort titel. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #age {
   color: var(--ink-soft);
