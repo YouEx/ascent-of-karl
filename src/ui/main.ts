@@ -284,7 +284,9 @@ el.muteBtn.addEventListener("click", () => {
 // --- Render ---
 function renderAge(): void {
   const spent = content.config.turnLimit - engine.remainingTurns();
-  el.age.textContent = `⏳ ${Math.min(spent + 1, content.config.turnLimit)}/${content.config.turnLimit}`;
+  // Bægeret er et billede skåret ud af referencen, ikke en emoji: ⏳ tegnes
+  // forskelligt på hver platform og lå 12 px for bredt. Se .age-mark i CSS.
+  el.age.textContent = `${Math.min(spent + 1, content.config.turnLimit)}/${content.config.turnLimit}`;
   el.age.title = `Summer ${Math.min(spent + 1, content.config.turnLimit)} of ${content.config.turnLimit} — every attempt costs one`;
   el.age.classList.toggle("age-late", engine.remainingTurns() <= 10);
 }

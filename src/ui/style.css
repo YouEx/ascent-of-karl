@@ -90,10 +90,16 @@ header {
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 18px;
   /* 81 px i referencen. Mærket er 72 px højt og bestemmer nu højden, så luften
      er 4 px i top og bund — ikke 8, som da titlen var det højeste element. */
-  padding: 0.25rem var(--app-inset);
+  /* Målt: referencens header polstrer 20 px — ikke --app-inset (69 px), som
+     indholdet under den bruger. Mærket står ved x 188 og den sidste knap
+     slutter ved 1260, begge 20 px fra rammen.
+     Lodret er 9/3 og ikke 6/6: referencens indhold ligger 4 px UNDER barens
+     midte, fordi baren har en skygge langs overkanten. Mærket er 68 px højt
+     og sætter dermed barens 80 px. */
+  padding: 9px 20px 3px;
   /* Bleeder ud til rammens kant, ikke til indholdsspalten: referencens
      header spænder hele 1112 px (rect 168..1280), mens indholdet under den
      står inde ved 978. Den negative margin SKAL derfor følge --app-inset —
@@ -110,8 +116,15 @@ header {
      BEMALET pergament, ikke matteret glas, så den er uigennemsigtig.
      Sjette gang i denne skærm at en rigtig token findes og ikke bruges. */
   background: var(--titlebar);
-  background-image: var(--grain);
-  background-blend-mode: overlay;
+  /* Referencens bar er ikke flad. Målt i en tom søjle: 193 øverst, 220 ved
+     y 40, 226 nederst — altså en skygge langs overkanten der dør ud over
+     ~34 px, og et svagt lys langs underkanten. Vores var 220 hele vejen, og
+     det er halvdelen af headerens manglende blækdækning: skyggen ligger lige
+     under regionens p85-tærskel og tælles som blæk i referencen. */
+  background-image: var(--grain),
+    linear-gradient(180deg, rgb(74 48 33 / 0.15), rgb(74 48 33 / 0) 34px),
+    linear-gradient(0deg, rgb(255 246 233 / 0.4), rgb(255 246 233 / 0) 26px);
+  background-blend-mode: overlay, normal, normal;
   border-bottom: 1px solid var(--rule);
 }
 /*
@@ -122,8 +135,12 @@ header {
  */
 header .mark {
   flex: 0 0 auto;
-  width: 64px;
-  height: 72px;
+  /* Skåret ud af referencen med alfa (tools/art/build_mark.py). Målt 81x68
+     med den bløde udtoning i klipperne med. Den gamle 64x72 var både
+     smallere, højere og stod med sit eget lyse pergament som en synlig
+     firkant på baren. */
+  width: 81px;
+  height: 68px;
   background: url("../assets/art/mark-figure.webp") no-repeat center / contain;
 }
 header h1 {
@@ -149,14 +166,71 @@ header h1 {
   text-overflow: ellipsis;
 }
 #age {
-  color: var(--ink-soft);
-  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  /* Referencen sætter tælleren i titlens skrift, mørk og med 18 px versalhøjde
+     — ikke som en lille grå bimærkat. Målt: "1/50" spænder x 637..673, y 43..60. */
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   margin-right: auto;
 }
+/* Guldbægeret foran tælleren. Skåret ud af referencen (build_header_icons.py),
+   fordi ⏳ tegnes forskelligt på hver platform og lå 28 px bredt mod
+   referencens 16. */
+#age::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 20px;
+  height: 21px;
+  background: url("../assets/art/ui/counter-trophy.webp") no-repeat center / contain;
+}
 #age.age-late { color: var(--rust); font-weight: 600; }
-.header-actions { display: flex; gap: 0.25rem; }
+/* 17 px målt mellem referencens to knapper (1194 -> 1211). */
+.header-actions { display: flex; gap: 17px; }
+
+/*
+ * Headerens knapper er HUGGET i pergamentet, ikke lagt ovenpå det. Målt i
+ * referencen: fyldet er barens egen tone (222,201,184 mod barens 220,200,186),
+ * så knappen har intet fyld — den er en kontur (184,159,142) med en bleg
+ * fals (236,220,207) inden for, og et lys langs underkanten. Vores var
+ * nær-hvide (242,240,232) firkanter, altså papir lagt PÅ sten.
+ * 50x50 målt (x 1145..1194 og 1211..1260, y 26..75).
+ */
+.header-actions .icon-btn {
+  width: 50px;
+  height: 50px;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 15px;
+  background: rgb(255 249 240 / 0.12);
+  border: 1px solid var(--tile-contour);
+  box-shadow:
+    inset 0 0 0 2px rgb(243 230 214 / 0.75),
+    inset 0 2px 4px rgb(74 48 33 / 0.1),
+    0 1px 0 rgb(255 250 242 / 0.5);
+}
+.header-actions .icon-btn:hover,
+.header-actions .icon-btn:focus-visible {
+  background: rgb(255 249 240 / 0.3);
+  border-color: var(--tile-contour);
+}
+/* Glyfferne er skåret ud af referencen (build_header_icons.py). Referencens
+   pokal er et malet guldbæger og dens omgør-pil er tyk og mørkebrun; vores
+   var 1,6 px sorte streger, og headerens blæk stod derfor på under halvdelen
+   af referencens. */
+#trophies svg, #restart svg { display: none; }
+#trophies::after, #restart::after {
+  content: "";
+  width: 25px;
+  height: 25px;
+  background: no-repeat center / contain;
+}
+#trophies::after { background-image: url("../assets/art/ui/icon-trophy.webp"); }
+#restart::after { background-image: url("../assets/art/ui/icon-restart.webp"); }
 
 .icon-btn {
   min-width: var(--tap);
