@@ -4,13 +4,13 @@ version: 1.0
 date_created: 2026-08-11
 last_updated: 2026-08-11
 owner: Martin (YouEx)
-status: 'Planned'
+status: 'In progress'
 tags: [design, assets, refactor, architecture]
 ---
 
 # Introduction
 
-![Status: Planned](https://img.shields.io/badge/status-Planned-blue)
+![Status: In progress](https://img.shields.io/badge/status-In%20progress-yellow)
 
 Referencebilledet viser en **anden hud på den samme maskine**. Det er hovedfundet i
 denne plan, og det ændrer hele omkostningsbilledet: hver eneste komponent i mockuppen
@@ -108,12 +108,12 @@ bagefter uden en eneste kodeændring.
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
 | TASK-001 | Læg referencebilledet i repoet som `docs/design/reference/target-2026-08-11.webp`, så planen ikke peger på en fil i `/tmp`. | ✅ | 2026-08-11 |
-| TASK-002 | Omskriv `DESIGN.md` §2 (Farvepalette) til den samplede palet: pergament `#ECDCC7`, krønikepergament `#EEE0CD`, flise `#E7D3BA`, flisekant `#D8BFA5`, felt `#E2CDB9`, slot `#DEC6B0`, stiplet kant `#CBB19E`, ramme `#CCADAB`, titellinje `#DCC9BC`, Combine-flade `#BC9776` med kant `#A88263`, akt-badge navy `#22384E`, aftenglød `#F5D9AC`. Behold `Ink`-familien. | | |
-| TASK-003 | Afgør CON-001 (serif vs. sans) og skriv beslutningen ind i §3 med begrundelse. Dette er den eneste opgave i planen der **kræver Martin**. | | |
-| TASK-004 | Omskriv §1 så hulemaleri-motivet er genindført som **ornament på pergament** (ikke den ophævede mørke læder-æstetik), og fjern selvmodsigelsen. | | |
-| TASK-005 | Omskriv §4 "Element-fliser" til illustration over navn med emoji-fallback, og tilføj afsnit om pergamenttekstur, revne kanter og udskåret Combine-knap. | | |
-| TASK-006 | Tilføj §9 "Elementkunst" med stilkontrakt: motiv centreret, lys fra øverste venstre, blød malerisk kant, ingen sort kontur, gennemsigtig baggrund, ingen indbagt skygge, kvadratisk lærred med fast luft omkring. Dette afsnit er prompt-kilden i fase 6. | | |
-| TASK-007 | Opdatér §8 (anti-mønstre) så `⏳` i titellinjen udpeges som det brud det er (CON-007), og tilføj forbud mod indbagte skygger i elementkunst. | | |
+| TASK-002 | Omskriv `DESIGN.md` §2 (Farvepalette) til den samplede palet: pergament `#ECDCC7`, krønikepergament `#EEE0CD`, flise `#E7D3BA`, flisekant `#D8BFA5`, felt `#E2CDB9`, slot `#DEC6B0`, stiplet kant `#CBB19E`, ramme `#CCADAB`, titellinje `#DCC9BC`, Combine-flade `#BC9776` med kant `#A88263`, akt-badge navy `#22384E`, aftenglød `#F5D9AC`. Behold `Ink`-familien. | ✅ | 2026-08-11 |
+| TASK-003 | Afgør CON-001 (serif vs. sans) og skriv beslutningen ind i §3 med begrundelse. Dette er den eneste opgave i planen der **kræver Martin**. | ✅ | 2026-08-11 |
+| TASK-004 | Omskriv §1 så hulemaleri-motivet er genindført som **ornament på pergament** (ikke den ophævede mørke læder-æstetik), og fjern selvmodsigelsen. | ✅ | 2026-08-11 |
+| TASK-005 | Omskriv §4 "Element-fliser" til illustration over navn med emoji-fallback, og tilføj afsnit om pergamenttekstur, revne kanter og udskåret Combine-knap. | ✅ | 2026-08-11 |
+| TASK-006 | Tilføj §9 "Elementkunst" med stilkontrakt: motiv centreret, lys fra øverste venstre, blød malerisk kant, ingen sort kontur, gennemsigtig baggrund, ingen indbagt skygge, kvadratisk lærred med fast luft omkring. Dette afsnit er prompt-kilden i fase 6. | ✅ | 2026-08-11 |
+| TASK-007 | Opdatér §8 (anti-mønstre) så `⏳` i titellinjen udpeges som det brud det er (CON-007), og tilføj forbud mod indbagte skygger i elementkunst. | ✅ | 2026-08-11 |
 
 ### Implementation Phase 2
 
@@ -205,7 +205,11 @@ bagefter uden en eneste kodeændring.
   dag adskiller fortællerens stemme fra spillerens værktøj — og lange lister af
   serif-etiketter i småstørrelse læses langsommere. **Tredje vej:** serif på alt
   narrativt *og* på elementnavne (de er indhold), sans på rene betjeningsflader
-  (søgefelt, knapper, tællere). Anbefales, men er Martins kald.
+  (søgefelt, knapper, tællere). **VALGT 11-08-2026** af Martin. Skrevet ind i
+  `DESIGN.md` §3 som en *mekanisk* regel frem for en smagsregel: kommer strengen
+  fra `content/*.json` eller fortællerens mund, er den Fraunces; er den skrevet i
+  grænsefladen, er den Plus Jakarta Sans. Fordelen ved den formulering er at
+  svaret kan slås op i kodebasen i stedet for at blive diskuteret.
 - **ALT-002**: *Problem-ikoner i `icons.ts` vs. `icon`-felt i content.* Content-feltet
   skalerer til akt 2 uden kodeændring; `icons.ts` holder krommet emoji-frit og
   vektorbaseret. Anbefaling: `icons.ts` med et opslag på problem-id, da antallet af

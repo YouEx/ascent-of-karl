@@ -37,6 +37,9 @@ npm run build        # typecheck + produktion-build
   **Indhold må aldrig hardcodes i kode** (PRD §4.1).
 - `tools/validate.py` — indholdsvalidering, kører i CI.
 - `tools/social/` — delekort og app-ikoner. Genereres, redigeres aldrig i hånden.
+- `docs/design/reference/` — Martins referencebilleder. Kilden til paletten;
+  farver samples som regionsmedianer, aldrig som enkelt-pixels.
+- `plan/` — implementeringsplaner for større visuelle/strukturelle spor.
 
 ## Regler
 
@@ -60,6 +63,10 @@ npm run build        # typecheck + produktion-build
    FØRST, dernæst tokens.css, og brug så variablen. To hårde regler derfra:
    emoji må kun komme fra `content/*.json` (aldrig i krom — brug `src/ui/icons.ts`),
    og okker der bærer tekst eller fokus skal være `--ochre-ink`, ikke `--ochre`.
+   **`tests/design-tokens.test.ts` håndhæver det maskinelt:** hver farve DESIGN.md
+   nævner skal findes som token, og hver tekstfarve skal klare 4,5:1 mod det
+   MØRKESTE papir den kan lande på — ikke mod det lyseste. Skal en farve bevidst
+   ikke være et token, skrives grunden i testens `REJECTED`-liste.
 9. **Delekort og ikoner tegnes ikke — de genereres.** Kilden er
    `tools/social/card.html`; `npm run social` bygger dem (starter selv en
    Vite-server; kræver ImageMagick). Ændrer du navn, undertitel, palet eller

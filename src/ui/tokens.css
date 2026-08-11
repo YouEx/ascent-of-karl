@@ -11,9 +11,10 @@
   font-weight: 300 700;
   font-display: swap;
   src: url("../assets/fonts/fraunces-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Fraunces";
@@ -21,9 +22,10 @@
   font-weight: 300 700;
   font-display: swap;
   src: url("../assets/fonts/fraunces-latin-ext.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
-    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
-    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
   font-family: "Plus Jakarta Sans";
@@ -31,9 +33,10 @@
   font-weight: 400 700;
   font-display: swap;
   src: url("../assets/fonts/jakarta-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Plus Jakarta Sans";
@@ -41,13 +44,86 @@
   font-weight: 400 700;
   font-display: swap;
   src: url("../assets/fonts/jakarta-latin-ext.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
-    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
-    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 :root {
-  /* --- Lærred: ét sammenhængende daggry over hele viewporten ------------- */
+  /* ====================================================================
+     MÅLPALET (DESIGN.md 11-08-2026)
+     Regionsmedianer fra docs/design/reference/target-2026-08-11.webp.
+     Efterprøv med Pillow mod filen — enkelt-pixel-sampling lyver.
+     ==================================================================== */
+
+  /* --- Lærred: et malet landskab. Farverne er dets egne og ligger UNDER
+         maleriet som background-color, så siden aldrig blinker hvid. ----- */
+  --dusk-violet: #8983a1;
+  --dusk-rose: #9d889e;
+  --haze: #e9bdaa;
+  --sunset-glow: #f5d9ac;
+  --valley-dark: #3e322d;
+  --canvas-fallback: linear-gradient(
+    168deg,
+    var(--dusk-violet) 0%,
+    var(--dusk-rose) 30%,
+    var(--haze) 55%,
+    var(--sunset-glow) 72%,
+    var(--valley-dark) 100%
+  );
+
+  /* --- Papir: seks trin, alle varme. Lyshedstrappen = fremtrædelse. ----- */
+  --chronicle: #eee0cd;
+  --parchment: #ecdcc7;
+  --tile: #e7d3ba;
+  --field: #e2cdb9;
+  --titlebar: #dfcdbf;
+  --slot: #dec6b0;
+  --tile-edge: #d8bfa5;
+  --dashed: #cbb19e;
+  --frame: #ccadab;
+
+  /* --- Blæk: VARMT. Koldt blæk på tan pergament ser beskidt ud. -------- */
+  --ink-warm: #1a120e;
+  --ink-warm-soft: #4a3d35;
+  /* Referencens etiketbrun #92745A giver kun 3.21:1 og dumper AA. Denne er
+     samme kulør, sænket til >=4.5:1 mod HVER papirflade (lavest 4.55:1 mod
+     --slot). Tekstfarve måles mod det MØRKESTE papir, ikke det lyseste. */
+  --label-ink: #66513f;
+  --rule-warm: rgba(26, 18, 14, 0.14);
+  --veil-warm: rgba(26, 18, 14, 0.46);
+
+  /* --- Navy: KUN akt-badgen. Bruges den bredt, betyder den intet. ------ */
+  --navy: #22384e;
+
+  /* --- Ornamentokker: kun grafik. Intet kontrastkrav — bærer aldrig
+         information. Er ornamentet læsbart, er det tegnet forkert. ------ */
+  --ornament: #c7a181;
+  --ornament-faint: #dbbb9c;
+
+  /* --- Sten: Combine. Referencens #BC9776 med cremetekst er 2.18:1 og
+         reelt ulæseligt; denne er mørknet til 4.59:1 med samme kulør. --- */
+  --stone: #846040;
+  --stone-edge: #a88263;
+  --stone-text: #f4e6d2;
+  --stone-relief: 0 1px 0 rgba(26, 18, 14, 0.45);
+
+  /* --- Frost: den eneste kølige papirflade, til kulde-chips ------------ */
+  --frost-chip: #cfccce;
+
+  /* --- Rust i den varme palet. Afløser --rust, men FØRST i fase 2-5:
+         --rust er live i fire selectors i style.css, og at ændre dens
+         værdi nu ville gøre en dokumentationsfase synlig. ------------- */
+  --rust-warm: #762214; /* >=6.38:1 mod hvert papirtrin */
+
+  /* ====================================================================
+     LEGACY START — pastelpaletten.
+     Komponenterne hænger stadig på præcis disse. Flyttes i
+     plan/design-visual-target-1.md fase 2-5, og SLETTES samlet når
+     sidste komponent er koblet om. Brug dem ikke i ny kode.
+     Alt EFTER "LEGACY SLUT" er permanent og må ikke røres.
+     ==================================================================== */
   --dawn-blue: #c9defa;
   --lilac-haze: #ded8f4;
   --blush-pink: #f8ccd6;
@@ -59,18 +135,15 @@
     var(--blush-pink) 74%,
     var(--warm-mist) 100%
   );
-
-  /* --- Papir: flader der bærer indhold ---------------------------------- */
   --paper: #f5f3ea;
   --chalk: #fbfaf6;
   --paper-edge: #e7e2d3;
-
-  /* --- Blæk -------------------------------------------------------------- */
   --ink: #16151a;
   --ink-soft: #55535f;
   --rule: rgba(22, 21, 26, 0.14);
   --rule-strong: rgba(22, 21, 26, 0.45);
   --veil: rgba(22, 21, 26, 0.42);
+  /* ==================== LEGACY SLUT ==================================== */
 
   /* --- Accent: én, og kun én -------------------------------------------- */
   --ochre: #a9722b;
@@ -81,8 +154,14 @@
   --ochre-ink: #7a531f;
 
   /* --- Tilstande: semantik, ikke dekoration ------------------------------ */
+  /* Problem-chips farves af deres TILSTAND, ikke ens: kulde er kold,
+     sult er rust, resten er neutral (DESIGN.md 2). */
   --moss: #4f7a45;
+  /* BEMÆRK: stadig pastelværdien. --rust bruges live fire steder i
+     style.css; den varme afløser hedder --rust-warm og kobles på i
+     fase 2-5 sammen med den hardkodede rgba(162,75,55) i ch-pulse. */
   --rust: #a24b37;
+  --frost: #182540; /* 9.57:1 på --frost-chip */
   --plum: #6b4e96;
   --bronze: #8a6a3b;
 
@@ -102,6 +181,7 @@
   --step-hero: clamp(2.75rem, 8.5vw, 5.5rem);
   --step-title: clamp(1.5rem, 4vw, 2rem);
   --step-narrator: clamp(1rem, 2.4vw, 1.15rem);
+  --step-element: 0.9rem;
   --step-body: 1rem;
   --step-label: 0.875rem;
   --step-kicker: 0.72rem;
