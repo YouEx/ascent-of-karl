@@ -306,13 +306,14 @@ function renderProblems(): void {
       const hint = wanted ? " — the narrator wants this next" : "";
       // Emnet står først; status er farve og gennemstregning, ikke et tegn.
       // Løst problem er undtagelsen: fluebenet er hele pointen med at se det.
-      // Løst eller udpeget problem har et TEGN, ikke et maleri: fluebenet og
-      // pilen er status, og status skal kunne skifte uden at motivet skifter.
-      const mark = done ? "✓" : wanted ? "→" : (p.icon ?? "○");
-      const icon =
-        done || wanted
-          ? `<i class="problem-icon" aria-hidden="true">${mark}</i>`
-          : problemGlyphHTML(p.id, mark, "problem-icon");
+      // Kun det LØSTE problem bytter motiv ud med et tegn — fluebenet er hele
+      // pointen med at se det. Fortællerens træk vises med okkerringen fra
+      // .wanted, ikke ved at male problemets ikon over: referencen viser
+      // sneflokken på den chip fortælleren peger på.
+      const mark = done ? "✓" : (p.icon ?? "○");
+      const icon = done
+        ? `<i class="problem-icon" aria-hidden="true">${mark}</i>`
+        : problemGlyphHTML(p.id, mark, "problem-icon");
       return `<span class="${cls}" title="${p.description}${hint}">${icon} ${p.name}</span>`;
     })
     .join("");
