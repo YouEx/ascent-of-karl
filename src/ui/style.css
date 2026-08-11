@@ -763,6 +763,15 @@ body.overlay-open { overflow: hidden; }
   background: none; color: var(--ink-soft); border: 1px solid var(--rule-strong);
   font-size: 0.85rem; font-weight: 500; margin-left: 0.4rem;
 }
+/* Nødudgang når clipboard nægtes: dataene skal stadig kunne markeres og
+   kopieres i hånden, så testerens run ikke går tabt på en tilladelse. */
+.playtest-dump {
+  width: 100%; height: 4.5rem; margin-top: 0.6rem;
+  font-family: var(--font-ui); font-size: 0.7rem;
+  color: var(--ink-soft); background: var(--chalk);
+  border: 1px solid var(--rule-strong); border-radius: var(--radius-sm);
+  padding: 0.5rem; resize: vertical;
+}
 
 .modal-inner {
   background: var(--chalk); border: 1px solid var(--rule); border-radius: var(--radius-xl);

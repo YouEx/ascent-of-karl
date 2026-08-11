@@ -9,6 +9,7 @@ import { initAudio, playLine, stopAudio } from "./audio";
 import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
+import { PlaytestLog } from "./playtest";
 
 // Nøglerne beholder deres oprindelige "kolde-karl"-navn selv om spillet er
 // omdøbt til The Ascent of Karl: de står i spillernes browsere, og en omdøbning
@@ -20,6 +21,7 @@ const ACHIEVEMENTS_KEY = "kolde-karl-achievements";
 
 const content = loadContent();
 const engine = new Engine(content);
+const playtest = new PlaytestLog();
 // Challenges spawner ud fra dette seed — nyt pr. liv, gemt i saven, så et
 // genindlæst run ikke kan ryste terningerne igen.
 engine.loadState({ ...engine.getState(), seed: (Math.random() * 2 ** 31) | 0 });
@@ -452,7 +454,7 @@ function showEndingScreen(): void {
              <small>A whole life, and the world never once came for him.</small></p>`
         : ""}
       <button id="ending-restart">Live again</button>
-      <button id="ending-stats" class="secondary">Copy run summary</button>
+      <button id="ending-stats" class="secondary">Copy playtest log</button>
     </div>`;
   el.ending.hidden = false;
   // Terminal (se docs/design/ux-checklist.md §1): runnet ER slut, så der er
@@ -469,22 +471,23 @@ function showEndingScreen(): void {
     clearSave();
     location.reload();
   });
-  // Playtest-hjælp (ROADMAP: balancedata): spilleren kan kopiere sit run
+  // Playtest-hjælp (ROADMAP prioritet 2): hele loggen, ikke kun dette run.
+  // En tester der spiller tre gange skal kunne nøjes med at kopiere én gang.
   document.getElementById("ending-stats")!.addEventListener("click", async (e) => {
-    const summary = {
-      ending: ending.id,
-      summers: state.attempts,
-      discoveries: state.discovered.length,
-      solved: state.solvedProblems,
-      flags: state.flags,
-      minutes: Math.round((performance.now() - runStartedAt) / 60000),
-    };
+    const payload = JSON.stringify(playtest.read());
     const btn = e.currentTarget as HTMLButtonElement;
     try {
-      await navigator.clipboard.writeText(JSON.stringify(summary));
+      await navigator.clipboard.writeText(payload);
       btn.textContent = "Copied ✓";
     } catch {
-      btn.textContent = JSON.stringify(summary);
+      // Uden clipboard-adgang (usikker kontekst, afvist tilladelse) er
+      // dataene stadig spillerens: læg dem et sted de kan markeres.
+      const out = document.createElement("textarea");
+      out.className = "playtest-dump";
+      out.readOnly = true;
+      out.value = payload;
+      btn.replaceWith(out);
+      out.select();
     }
   });
 }
@@ -500,6 +503,9 @@ function performCombine(a: string, b: string): void {
   const line = narrator.react(a, b, outcome, elapsedMs);
   const ending = engine.activeEnding();
 
+  // Blindgyden er det eneste datapunkt der ikke kan rekonstrueres bagefter
+  if (outcome.kind === "nothing") playtest.miss(a, b, engine.getState().attempts);
+
   if (outcome.kind === "discovery") {
     freshFinds.add(outcome.element.id);
     if (!ending) showDiscoveryCard(outcome);
@@ -514,6 +520,17 @@ function performCombine(a: string, b: string): void {
   renderAge();
   renderChallenge();
   if (ending) {
+    // Runnet slutter HER, ikke når skærmen vises: en genindlæsning på
+    // slutskærmen viser den igen, og så ville runnet blive talt to gange
+    // med en varighed på nul minutter.
+    playtest.run({
+      ending: ending.id,
+      summers: engine.getState().attempts,
+      discoveries: engine.getState().discovered.length,
+      solved: engine.getState().solvedProblems,
+      flags: engine.getState().flags,
+      minutes: Math.round((performance.now() - runStartedAt) / 60000),
+    });
     save();
     showEndingScreen();
   }

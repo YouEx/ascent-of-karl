@@ -93,7 +93,7 @@ Bemærkninger:
 
 ## Run-resumé
 
-Indsæt teksten fra **"Copy run summary"**:
+Indsæt teksten fra **"Copy playtest log"**:
 
 ```json
 ```

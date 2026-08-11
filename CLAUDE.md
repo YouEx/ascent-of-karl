@@ -28,7 +28,8 @@ npm run build        # typecheck + produktion-build
   tællere, hint-eskalering, no-repeat. Kender kun `Engine` og content-typerne.
 - `src/ui/` — al DOM og præsentation. Kun UI må røre `document`/`localStorage`.
   `tokens.css` = designsystemets variabler, `style.css` = brugen af dem,
-  `icons.ts` = stregikoner til krommet.
+  `icons.ts` = stregikoner til krommet, `playtest.ts` = logger blindgyder og
+  afsluttede runs lokalt (`docs/playtest/`).
 - `src/assets/` — skrifter og grafik Vite skal hashe. `public/` er for filer der
   skal have et forudsigeligt navn (lyd, manifest, `karl.webp`, delekort og ikoner).
 - `src/content.ts` — samler content-filerne. Eneste fil der importerer JSON.

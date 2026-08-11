@@ -55,7 +55,7 @@ Først her må du nævne ham.
 
 ## Data der skal med hjem
 
-- [ ] Run-resumé fra **"Copy run summary"** (`ending`, `summers`,
+- [ ] Run-resumé fra **"Copy playtest log"** (`ending`, `summers`,
       `discoveries`, `solved`, `flags`, `minutes`)
 - [ ] Enhed: telefon eller computer?
 - [ ] Spiller de crafting-spil i forvejen? (grupperingen fra `README.md`)

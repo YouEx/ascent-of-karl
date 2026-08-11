@@ -7,6 +7,7 @@ Udfyld løbende, ikke til sidst. Metode: `README.md`.*
 
 | # | Dato | Enhed | Crafting-erfaring | Slutning | Somre | Opdagelser | Min. | Grin |
 |---|---|---|---|---|---|---|---|---|
+| 0 (Martin) | | | forfatter — tæller ikke med | | | | | — |
 | 1 | | | | | | | | |
 | 2 | | | | | | | | |
 | 3 | | | | | | | | |
@@ -25,6 +26,15 @@ menneskes forvirring er støj; tre menneskers er et designproblem.*
 *Direkte input til bølge 2-content (ROADMAP 3). Notér den præcise
 formulering — "jeg troede ild + vand gav damp" er brugbart, "det var svært"
 er ikke.*
+
+*Spillets egen log (`misses` i "Copy playtest log") giver de samme par talt
+op og sorteret, uden at nogen skal huske dem. `firstSummer` fortæller hvor
+tidligt parret blev forventet: et par der prøves i sommer 3 er en manglende
+grundkombination, det samme par i sommer 40 er nærmere desperation.*
+
+| Par | Testere der prøvede det | Tidligste sommer | Beslutning |
+|---|---|---|---|
+| | | | |
 
 ### Replikker der lander
 

@@ -62,7 +62,7 @@ halvdelen af udbyttet.
 
 > Spil det her i ~20 minutter: <https://youex.github.io/ascent-of-karl/>
 >
-> Når du er færdig (eller går død i det), så tryk **"Copy run summary"** på
+> Når du er færdig (eller går død i det), så tryk **"Copy playtest log"** på
 > slutskærmen og send mig teksten. Og svar på de fem spørgsmål her:
 >
 > 1. Hvad troede du at spillet gik ud på de første 30 sekunder?

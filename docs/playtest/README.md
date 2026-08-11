@@ -53,7 +53,23 @@ blive set på mens de spiller. Undgå folk der allerede har hørt om projektet
 
 Link: <https://youex.github.io/ascent-of-karl/>
 
-## Sådan gør du under sessionen
+## Dig selv som tester 0
+
+Du kommer til at spille det selv først. Det er rigtigt at gøre — men vær
+skarp på hvad det kan og ikke kan afgøre, ellers forurener det runden.
+
+**Dit eget run er gyldigt bevis for:** at spillet kan gennemføres uden at
+gå i stykker, at turnøkonomien føles rigtig (50 somre — for kort, for langt?),
+at slutningen kommer på det rigtige tidspunkt, og at der ikke er UI-friktion
+du er holdt op med at lægge mærke til.
+
+**Dit eget run er IKKE bevis for:** at humoren lander (du skrev den), at
+kombinationerne kan ræsonneres (du kender dem), eller at onboardingen virker
+(du kan spillet). De tre spørgsmål øverst i dette dokument kan kun besvares
+af nogen der ikke er dig.
+
+Notér dit run i `resultater.md` som **tester 0**, adskilt fra de rigtige tal,
+og lad det ikke tælle med i griner-medianen.
 
 Hold kæft. Det er svært, og det er hele metoden.
 
@@ -109,9 +125,20 @@ puljen er blevet for stor til at overskue. Notér hvor skiftet sker.
 
 ## Efter sessionen
 
-1. Bed dem trykke **"Copy run summary"** på slutskærmen og sende teksten.
-   Den indeholder `ending`, `summers`, `discoveries`, `solved`, `flags` og
-   `minutes` — nok til at rekonstruere runnet uden telemetri.
+1. Bed dem trykke **"Copy playtest log"** på slutskærmen og sende teksten.
+   Den indeholder ét objekt pr. gennemført run (`ending`, `summers`,
+   `discoveries`, `solved`, `flags`, `minutes`) **og listen over blindgyder**
+   — hver kombination de prøvede som ikke findes, hvor mange gange, og hvilken
+   sommer de først prøvede den.
+
+   Blindgyderne er rundens vigtigste enkelttal. Alt andet kan rekonstrueres
+   bagefter; hvad nogen *forventede* kan ikke. Et par der går igen hos flere
+   testere er ikke en fejl de begik — det er indhold vi mangler, formuleret
+   i deres eget sprog. Læg dem i `resultater.md` under "Manglende kombinationer".
+
+   Loggen samler alle runs i samme browser, så en tester der spiller to gange
+   kun behøver at kopiere én gang til sidst. Den forlader ikke browseren af
+   sig selv, og den indeholder hverken navn, tidspunkt eller id.
 2. Send `skema.md`-spørgsmålene (eller stil dem mundtligt).
 3. Skriv dine observationer ind i `resultater.md` **samme dag**. Hukommelsen
    om hvor nogen tøvede holder sig ikke til næste morgen.
