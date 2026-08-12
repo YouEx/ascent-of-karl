@@ -29,7 +29,7 @@ Fingeraftrykket i dette dokument er bygget af et FJERDE, bevidst bredere tal: **
 | korpus | n | min | p1 | p5 | p10 | median | middel | max |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Håndskrevet (mod eget fingeraftryk) | 866 | 0.727 | 0.814 | 0.887 | 0.912 | 0.992 | 0.972 | 1.000 |
-| Grammatik (ekspanderet) | 306 | 0.738 | 0.883 | 0.912 | 0.940 | 0.998 | 0.982 | 1.000 |
+| Grammatik (ekspanderet) | 312 | 0.738 | 0.883 | 0.912 | 0.941 | 0.999 | 0.982 | 1.000 |
 | Bagte par (ekspanderet) | 908 | 0.807 | 0.824 | 0.838 | 0.848 | 0.910 | 0.916 | 1.000 |
 
 ## Hårde afvisninger
@@ -38,7 +38,7 @@ Pr.-kandidat optælling (én kandidat kan ramme flere kategorier, men tælles ku
 
 | korpus | n | mindst én | >3 sætninger | >32 ord | fejlmeddelelse | moderne ordforråd | genbrugt punchline |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Grammatik | 306 | 24 (7.8 %) | 16 (5.2 %) | 6 (2.0 %) | 0 (0.0 %) | 0 (0.0 %) | 2 (0.7 %) |
+| Grammatik | 312 | 24 (7.7 %) | 16 (5.1 %) | 6 (1.9 %) | 0 (0.0 %) | 0 (0.0 %) | 2 (0.6 %) |
 | Bagte par | 908 | 460 (50.7 %) | 34 (3.7 %) | 445 (49.0 %) | 0 (0.0 %) | 0 (0.0 %) | 2 (0.2 %) |
 
 **Bagte par: 445/908 (49.0 %) overskrider det hårde ordloft på 32 ord.** Det er den klart største enkeltstående afvisningsårsag i hele målingen, og den peger på en reel arkitektonisk uoverensstemmelse — se "Uoverensstemmelser med planen" nedenfor.
@@ -49,9 +49,9 @@ Tærsklen er en percentil af det håndskrevne korpus' EGEN scorefordeling — al
 
 | percentil | tærskel | grammatik fejler | bagte par fejler |
 |---|---:|---:|---:|
-| p1 | 0.8135 | 24/306 (7.8 %) | 460/908 (50.7 %) |
-| p5 | 0.8871 | 24/306 (7.8 %) | 464/908 (51.1 %) |
-| p10 | 0.9121 | 31/306 (10.1 %) | 488/908 (53.7 %) |
+| p1 | 0.8135 | 24/312 (7.7 %) | 460/908 (50.7 %) |
+| p5 | 0.8871 | 24/312 (7.7 %) | 464/908 (51.1 %) |
+| p10 | 0.9121 | 31/312 (9.9 %) | 488/908 (53.7 %) |
 
 **Valgt: p5 = 0.8871.**
 
@@ -171,7 +171,7 @@ Tærsklen er en percentil af det håndskrevne korpus' EGEN scorefordeling — al
 
 ### Genbrugte punchlines — alle 4 tilfælde
 
-Til kontekst: 108/819 håndskrevne punchlines er 3 ord eller kortere ("not today", "it is not", …) — med 1214 kandidatlinjer der hver slutter med en kort, almindelig negation, er en vis tilfældig sammenfald på netop DE korte, generiske lukninger statistisk venteligt, ikke nødvendigvis et tegn på at kandidatlinjen er en bevidst genbrug af en specifik joke. Alle fire er navngivet her og bør vurderes af et menneske (se `human-queue.json`):
+Til kontekst: 108/819 håndskrevne punchlines er 3 ord eller kortere ("not today", "it is not", …) — med 1220 kandidatlinjer der hver slutter med en kort, almindelig negation, er en vis tilfældig sammenfald på netop DE korte, generiske lukninger statistisk venteligt, ikke nødvendigvis et tegn på at kandidatlinjen er en bevidst genbrug af en specifik joke. Alle fire er navngivet her og bør vurderes af et menneske (se `human-queue.json`):
 
 - **grammar:locked:g-locked-3#0** — genbrugt punchline: "not today"
   > Karl isn't ready for what the stone and the stick become. He will be. Not today.
@@ -192,7 +192,7 @@ Til kontekst: 108/819 håndskrevne punchlines er 3 ord eller kortere ("not today
 
 4. **Planen siger "otte domme", koden og indholdet har syv.** TASK-020's tekst nævner "de otte domme" — men `src/core/types.ts`'s `Verdict`-type har netop 7 værdier (`locked`, `near-miss`, `self`, `inert`, `clash`, `plausible`, `absurd`), og `grammar-act-1.json` har konsekvent også kun disse 7. Formentlig en efterladt tekst fra en tidligere designfase snarere end et reelt indholdshul — nævnt for fuldstændighedens skyld, i samme ånd som 71-vs-74-fundet.
 
-5. **Planens bogstavelige eksempelord for "fejlmeddelelses-register" er selv falske positiver.** TASK-028's tekst nævner "cannot", "invalid", "try again" som eksempler. Testet ordret som blokerede enkeltord/-fraser mod alle 866 håndskrevne varianter: "cannot" gav 9 reelle hit i ægte, ikke-fejlmeddelelses-brug ("The pose cannot."), "can't" gav 6, "unable to" gav 1. Ordene er eksempler på REGISTERET (softwarefejl-tonefaldet), ikke en ordret liste der kan slås op som understrenge — en bogstavelig implementering ville have underkendt ægte, godkendt fortæller-tekst. `lexicon.json` bruger i stedet mere specifikke, stadig repræsentative fraser ("please try again", "invalid input/selection", …) der rammer samme register uden falske positiver (verificeret: 0 hit i 866 håndskrevne + 306 grammatik- + 908 par-varianter). Se `_forbiddenConstructionsKommentar` i `lexicon.json`.
+5. **Planens bogstavelige eksempelord for "fejlmeddelelses-register" er selv falske positiver.** TASK-028's tekst nævner "cannot", "invalid", "try again" som eksempler. Testet ordret som blokerede enkeltord/-fraser mod alle 866 håndskrevne varianter: "cannot" gav 9 reelle hit i ægte, ikke-fejlmeddelelses-brug ("The pose cannot."), "can't" gav 6, "unable to" gav 1. Ordene er eksempler på REGISTERET (softwarefejl-tonefaldet), ikke en ordret liste der kan slås op som understrenge — en bogstavelig implementering ville have underkendt ægte, godkendt fortæller-tekst. `lexicon.json` bruger i stedet mere specifikke, stadig repræsentative fraser ("please try again", "invalid input/selection", …) der rammer samme register uden falske positiver (verificeret: 0 hit i 866 håndskrevne + 312 grammatik- + 908 par-varianter). Se `_forbiddenConstructionsKommentar` i `lexicon.json`.
 
 6. **"car" er en etableret joke i korpus, ikke et stemmebrud.** Testet som moderne ordforråd, gav "car" 7 hit — men alle i en gentaget, tilsigtet anakronisme-joke (`story-flintmobil`, `mem-bilist`, `story-drive-in`: Karl opfinder bilen for tidligt). Fjernet fra `modernVocabulary`; øvrige moderne tech-ord (tv, mikroovn, internet, …) beholdes, da de ikke har samme etablerede kanon-status.
 
