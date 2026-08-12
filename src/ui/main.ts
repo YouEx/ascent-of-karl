@@ -1,6 +1,8 @@
 import { Engine } from "../core/engine";
+import { judgePair } from "../core/verdict";
 import { deserialize, serialize } from "../core/save";
 import { Narrator, freshNarratorState } from "../narrator/narrator";
+import { LiveNarrator } from "../narrator/live";
 import { loadPairs } from "../narrator/pairs";
 import type { NarratorState, SpokenLine } from "../narrator/narrator";
 import { loadContent } from "../content";
@@ -49,6 +51,13 @@ const narrator = new Narrator(engine, freshNarratorState(bootSeed()));
 const pairsReady = loadPairs(engine.currentAct().act).then((data) => {
   if (data) narrator.attachPairs(data);
 });
+
+// Sidste udvej for de par ingen har skrevet om: en replik hentet mens
+// spilleren stadig vælger. Er der ingen endpoint bygget ind, gør den
+// ingenting overhovedet — laget er en forbedring af halen, ikke en
+// afhængighed, og spillet skal kunne spilles offline uden at mangle noget.
+const live = new LiveNarrator();
+if (live.enabled) narrator.attachLive(live);
 
 // --- Save/load (autosave pr. opdagelse, PRD §4.1) ---
 function save(): void {
@@ -366,7 +375,37 @@ function renderSlots(): void {
   el.slotA.classList.toggle("filled", !!a);
   el.slotB.classList.toggle("filled", !!b);
   el.combineBtn.disabled = !(a && b);
+  if (a && b) prefetchLine(a, b);
   renderSelection();
+}
+
+/**
+ * Bed om en replik til parret NU, mens spillerens hånd stadig er på vej mod
+ * knappen. Det er hele grunden til at hooket sidder i renderSlots(): her er
+ * parret kendt, og der går typisk et sekund eller mere, før det bliver brugt.
+ *
+ * Dommen regnes ud på forhånd med motorens egen judgePair(). Den er ren og
+ * ser samme tilstand som ved trykket, så den kan ikke afvige — og skulle den
+ * mod forventning gøre det, rammer opslaget bare forbi, og grammatikken
+ * taler. Ingen af delene kan gå ud over spilleren.
+ */
+function prefetchLine(a: string, b: string): void {
+  if (!live.enabled) return;
+  const ea = engine.element(a);
+  const eb = engine.element(b);
+  // Findes parret som opskrift, er der ikke noget at undskylde.
+  if (engine.matchCombo(a, b)) return;
+  const { verdict } = judgePair(engine, ea, eb);
+  const problems = engine
+    .currentActProblems()
+    .filter((p) => !engine.isSolved(p.id));
+  void live.prefetch({
+    a: ea,
+    b: eb,
+    verdict,
+    need: problems[0]?.description,
+    summer: engine.getState().attempts,
+  });
 }
 
 /**

@@ -1,6 +1,7 @@
 import type { Engine } from "../core/engine";
 import { pairKey } from "../core/engine";
 import { grammarPool, pickGrammarLine, verdictContext } from "./grammar";
+import type { LiveNarrator } from "./live";
 import type { PairContent } from "./pairs";
 import { pairLineId } from "./pairs";
 import type {
@@ -216,6 +217,16 @@ export class Narrator {
   /** Selve de bagte replikker, holdt uden for det delte indhold (se attachPairs). */
   private pairDefs: Record<string, NarratorLineDef> = {};
 
+  /**
+   * Replikker skrevet på stedet til par ingen har nået at skrive om.
+   *
+   * Sat udefra (attachLive) og oftest slet ikke sat: er den undefined, findes
+   * laget ikke, og kæden nedenfor ser præcis ud som før. Det er med vilje
+   * ikke en konstruktør-parameter — enhver test, enhver måling og ethvert
+   * spil uden endpoint skal kunne bygge en fortæller uden at kende til den.
+   */
+  private live?: LiveNarrator;
+
   constructor(
     private engine: Engine,
     state?: NarratorState,
@@ -247,6 +258,11 @@ export class Narrator {
     if (this.engine.content.narrator.every((n) => n.act !== data.act)) return;
     for (const line of data.lines) this.pairDefs[line.id] = line;
     for (const key of data.pairs) this.pairLines.add(key);
+  }
+
+  /** Giv fortælleren adgang til replikker skrevet på stedet. Frivilligt. */
+  attachLive(live: LiveNarrator): void {
+    this.live = live;
   }
 
   private content(): NarratorContentDef {
@@ -633,13 +649,21 @@ export class Narrator {
     const baked = this.bakedPairLine(outcome);
     if (baked) return baked;
 
-    // 5. Grammatikken: en replik der nævner præcis de to ting, valgt ud fra
+    // 5. Replik skrevet på stedet til netop dette par, hvis den nåede frem
+    //    mens spilleren valgte. Står efter det bagte, fordi en replik en
+    //    skribent har siddet med altid slår en der blev skrevet på et sekund
+    //    — og før grammatikken, fordi den til gengæld ved præcis hvad de to
+    //    ting er, hvor grammatikken kun kender dommen.
+    const live = this.liveLine(outcome);
+    if (live) return live;
+
+    // 6. Grammatikken: en replik der nævner præcis de to ting, valgt ud fra
     //    motorens dom. Står før den generiske pulje, som dermed bliver en
     //    nødudgang der aldrig nås i praksis.
     const grammar = this.grammarLine(outcome);
     if (grammar) return grammar;
 
-    // 6. Generiske fiaskoer (roterende, aldrig samme to gange i træk)
+    // 7. Generiske fiaskoer (roterende, aldrig samme to gange i træk)
     return this.speak(this.genericFailureLine(), ctx);
   }
 
@@ -661,6 +685,27 @@ export class Narrator {
     const lookup = `${pairKey(outcome.a.id, outcome.b.id)}:${outcome.verdict}`;
     if (!this.pairLines.has(lookup)) return undefined;
     return this.speak(pairLineId(lookup), verdictContext(outcome.a, outcome.b, outcome.evidence));
+  }
+
+  /**
+   * Replikken der blev skrevet på stedet, hvis den nåede frem.
+   *
+   * Rent opslag i en cache — der ventes aldrig på noget her. Kaldet ud i
+   * verden skete, da spilleren fyldte det andet felt; er svaret ikke landet
+   * endnu, findes replikken ikke, og grammatikken taler. Spilleren mærker
+   * ingen forskel, ud over at nogle fiaskoer er bedre beskrevet end andre.
+   *
+   * Teksten får sit eget id (`live:` + par + dom) i stedet for at genbruge en
+   * bagt replik: id'et er nøglen til varianthukommelsen, og to forskellige
+   * skrevne replikker må aldrig kunne opfattes som varianter af hinanden.
+   */
+  private liveLine(outcome: CombineOutcome): SpokenLine | undefined {
+    if (outcome.kind !== "nofuse") return undefined;
+    const text = this.live?.get(outcome.a.id, outcome.b.id, outcome.verdict);
+    if (!text) return undefined;
+    const id = `live:${pairKey(outcome.a.id, outcome.b.id)}:${outcome.verdict}`;
+    this.state.lastLineId = id;
+    return { id, variant: 0, text };
   }
 
   /**

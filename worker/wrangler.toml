@@ -1,0 +1,12 @@
+name = "karl-narrator"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[vars]
+# Kun spillets egen adresse må kalde. Tom værdi = alle, hvilket kun bør bruges
+# lokalt: nøglen er workerens, og den betaler for hvert kald.
+ALLOWED_ORIGINS = "https://youex.github.io"
+MODEL = "gpt-4o-mini"
+
+# Nøglen sættes som secret, aldrig i denne fil:
+#   npx wrangler secret put OPENAI_API_KEY
