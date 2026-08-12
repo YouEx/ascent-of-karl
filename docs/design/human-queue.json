@@ -139,6 +139,54 @@
       "firstSeen": "2026-08-11",
       "iteration": 1,
       "status": "afvist"
+    },
+    {
+      "key": "pairs:wordcount:content/narrator/pairs-act-1.json",
+      "region": "pairs",
+      "defect": "wordcount",
+      "severity": 3,
+      "evidence": "Stemmedommerens hårde 32-ords-loft (TASK-028) rammer 445/908 (49,0 %) af de bagte par-varianter. Men disse 908 linjer er allerede godkendt af et menneske under TASK-023, gennem en ANDEN port: tools/check_pairs.py håndhæver i stedet et loft på 320 tegn, og alle 908 varianter overholder det præcist (målt max 317 tegn). 320 tegn engelsk prosa svarer typisk til 45-50 ord. Håndskrevne replikker har median 17 ord (p90 26, max 37); bagte par har median 32 ord (p90 43, max 58) — cirka dobbelt så langt. Se docs/design/narration-voice.md, 'Uoverensstemmelser med planen' punkt 2, for det fulde regnestykke og eksempler på de længste par-replikker.",
+      "fix": {
+        "kind": "afklaring",
+        "file": "tools/voice/judge.py",
+        "change": "Et menneske skal afgøre: (a) det hårde 32-ords-loft gælder kun grammatik/live-genereret tekst, og gate() skal undtage bagte par (de har allerede deres eget 320-tegns-loft via check_pairs.py), eller (b) 32-ords-loftet skal gælde overalt, og de 445 lange par-replikker skal redigeres ned til under 32 ord. Ændr IKKE reglen stiltiende for at få et grønt resultat — det er præcis den slags 'ønsketal' opgaven advarer imod."
+      },
+      "why": null,
+      "firstSeen": "2026-08-12",
+      "iteration": 1,
+      "status": "open"
+    },
+    {
+      "key": "pairs:score-marginal:content/narrator/pairs-act-1.json",
+      "region": "pairs",
+      "defect": "judge-vs-menneske",
+      "severity": 1,
+      "evidence": "Fire par-varianter passerer alle hårde afvisninger, men scorer lige under den kalibrerede tærskel (p5 = 0,8871), primært på lavt 'vocabulary'/'wordCount'-delscore: pairs:graes+hjul:plausible#0 (0,839, \"Karl packed dry grass around the wheel's rim, presumably for cushioning...\"), pairs:honning+ler:inert#1 (0,851, \"Honey heals, clay shapes: two proud little talents...\"), pairs:ler+saft:plausible#1 (0,871, \"Clay is, Karl will admit, much like his relationship with good ideas...\"), pairs:dyr+lerfigur:inert#1 (0,882, \"The clay figurine's entire career consists of resembling Ugh...\"). Ved manuel læsning lyder alle fire som fortælleren selv — dommeren har muligvis ikke ret her.",
+      "fix": {
+        "kind": "vurdering",
+        "file": "content/narrator/pairs-act-1.json",
+        "change": "Læs de fire linjer og afgør om de er i-stemme. Hvis ja: ingen ændring i indholdet, men overvej om tærsklen (p5) er for stram for netop denne slags kort-men-ordforrådsrig sætning. Hvis nej: de bør omskrives i en fremtidig bagerunde."
+      },
+      "why": null,
+      "firstSeen": "2026-08-12",
+      "iteration": 1,
+      "status": "open"
+    },
+    {
+      "key": "voice:punchline-reuse:tools/voice/judge.py",
+      "region": "grammar+pairs",
+      "defect": "genbrugt-punchline",
+      "severity": 1,
+      "evidence": "Fire kandidatlinjer (2 grammatik, 2 par) rammer den hårde afvisning 'genbrugt punchline', alle på meget korte, generiske lukninger: 'not today' (grammar:locked:g-locked-3#0), 'it is not' (grammar:self:g-self-1#1 OG pairs:hulemaleri+vand:absurd#2 — samme punchline rammes uafhængigt to gange), 'not that' (pairs:hjul+pind:near-miss#0). 108/819 (13,2 %) af de håndskrevne punchlines er selv 3 ord eller kortere, så en vis tilfældig sammenfald på netop disse korte, almindelige negationer er statistisk venteligt når 1214 kandidatlinjer genereres, ikke nødvendigvis et tegn på bevidst joke-genbrug.",
+      "fix": {
+        "kind": "afklaring",
+        "file": "tools/voice/judge.py",
+        "change": "Overvej om 'genbrugt punchline'-reglen bør undtage punchlines under en vis længde (fx <=3 ord) fra hard_reject, siden korte negationer er et sprogligt mønster, ikke en specifik vittighed. Rør ikke uden et menneskes bekræftelse — reglen er implementeret præcis som TASK-028 beder om."
+      },
+      "why": null,
+      "firstSeen": "2026-08-12",
+      "iteration": 1,
+      "status": "open"
     }
   ]
 }
