@@ -1,0 +1,333 @@
+{
+  "combos": [
+    {
+      "pair": [
+        "ristede-larver",
+        "nabo"
+      ],
+      "result": "gave"
+    },
+    {
+      "pair": [
+        "ristede-larver",
+        "grottebryg"
+      ],
+      "result": "stenalderfest"
+    },
+    {
+      "pair": [
+        "ristede-larver",
+        "surf-n-turf"
+      ],
+      "result": "sidste-maaltid"
+    },
+    {
+      "pair": [
+        "mudderbad",
+        "dyr"
+      ],
+      "result": "tamsvin"
+    },
+    {
+      "pair": [
+        "mudderbad",
+        "skind"
+      ],
+      "result": "mudderlag"
+    },
+    {
+      "pair": [
+        "mudderbad",
+        "ild"
+      ],
+      "result": "keramik"
+    },
+    {
+      "pair": [
+        "bronze",
+        "hulemaleri"
+      ],
+      "result": "idol"
+    },
+    {
+      "pair": [
+        "bronze",
+        "pind"
+      ],
+      "result": "hammer"
+    },
+    {
+      "pair": [
+        "bronze",
+        "nabo"
+      ],
+      "result": "handel"
+    },
+    {
+      "pair": [
+        "arbejdsbord",
+        "stamme"
+      ],
+      "result": "planker"
+    },
+    {
+      "pair": [
+        "arbejdsbord",
+        "knogle"
+      ],
+      "result": "benkniv"
+    },
+    {
+      "pair": [
+        "arbejdsbord",
+        "rullesten"
+      ],
+      "result": "hammer"
+    },
+    {
+      "pair": [
+        "larvebod",
+        "grottebryg"
+      ],
+      "result": "kro"
+    },
+    {
+      "pair": [
+        "larvebod",
+        "nabo"
+      ],
+      "result": "marked"
+    },
+    {
+      "pair": [
+        "larvebod",
+        "hulemaleri"
+      ],
+      "result": "eftermaele"
+    },
+    {
+      "pair": [
+        "nedbraendt-hytte",
+        "vand"
+      ],
+      "result": "kul"
+    },
+    {
+      "pair": [
+        "nedbraendt-hytte",
+        "nabo"
+      ],
+      "result": "hytte"
+    },
+    {
+      "pair": [
+        "nedbraendt-hytte",
+        "graes"
+      ],
+      "result": "ild"
+    },
+    {
+      "pair": [
+        "roegsignaler",
+        "hund"
+      ],
+      "result": "jagtfoelge"
+    },
+    {
+      "pair": [
+        "roegsignaler",
+        "nabo"
+      ],
+      "result": "handel"
+    },
+    {
+      "pair": [
+        "roegsignaler",
+        "hulemaleri"
+      ],
+      "result": "symbol"
+    },
+    {
+      "pair": [
+        "surf-n-turf",
+        "grottebryg"
+      ],
+      "result": "stenalderfest"
+    },
+    {
+      "pair": [
+        "surf-n-turf",
+        "nabo"
+      ],
+      "result": "gave"
+    },
+    {
+      "pair": [
+        "knoglekast",
+        "nabo"
+      ],
+      "result": "slagsmaal"
+    },
+    {
+      "pair": [
+        "knoglekast",
+        "hund"
+      ],
+      "result": "jagtfoelge"
+    },
+    {
+      "pair": [
+        "knoglekast",
+        "rullesten"
+      ],
+      "result": "stenspil"
+    },
+    {
+      "pair": [
+        "foenix",
+        "nabo"
+      ],
+      "result": "myte"
+    },
+    {
+      "pair": [
+        "foenix",
+        "hulemaleri"
+      ],
+      "result": "eftermaele"
+    },
+    {
+      "pair": [
+        "foenix",
+        "shaman"
+      ],
+      "result": "syner"
+    },
+    {
+      "pair": [
+        "floejte",
+        "tromme"
+      ],
+      "result": "rockband"
+    },
+    {
+      "pair": [
+        "floejte",
+        "shaman"
+      ],
+      "result": "ritual"
+    },
+    {
+      "pair": [
+        "floejte",
+        "hulemaleri"
+      ],
+      "result": "myte"
+    },
+    {
+      "pair": [
+        "farvet-skind",
+        "fjer"
+      ],
+      "result": "festdragt"
+    },
+    {
+      "pair": [
+        "farvet-skind",
+        "keramik"
+      ],
+      "result": "tromme"
+    },
+    {
+      "pair": [
+        "farvet-skind",
+        "nabo"
+      ],
+      "result": "klyngen"
+    },
+    {
+      "pair": [
+        "modeshow",
+        "nabo"
+      ],
+      "result": "kroning"
+    },
+    {
+      "pair": [
+        "modeshow",
+        "tromme"
+      ],
+      "result": "rockband"
+    },
+    {
+      "pair": [
+        "modeshow",
+        "grottebryg"
+      ],
+      "result": "stenalderfest"
+    },
+    {
+      "pair": [
+        "lerfigur",
+        "ild"
+      ],
+      "result": "keramik"
+    },
+    {
+      "pair": [
+        "lerfigur",
+        "bautasten"
+      ],
+      "result": "helligsted"
+    },
+    {
+      "pair": [
+        "lerfigur",
+        "nabo"
+      ],
+      "result": "gave"
+    },
+    {
+      "pair": [
+        "haandaftryk",
+        "bautasten"
+      ],
+      "result": "helligsted"
+    },
+    {
+      "pair": [
+        "haandaftryk",
+        "hulemaleri"
+      ],
+      "result": "galleri"
+    },
+    {
+      "pair": [
+        "haandaftryk",
+        "nabo"
+      ],
+      "result": "eftermaele"
+    },
+    {
+      "pair": [
+        "galleri",
+        "bautasten"
+      ],
+      "result": "helligsted"
+    },
+    {
+      "pair": [
+        "galleri",
+        "nabo"
+      ],
+      "result": "eftermaele"
+    },
+    {
+      "pair": [
+        "galleri",
+        "shaman"
+      ],
+      "result": "ritual"
+    }
+  ]
+}

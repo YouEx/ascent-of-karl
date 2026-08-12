@@ -1,0 +1,263 @@
+{
+  "combos": [
+    {
+      "pair": [
+        "slynge",
+        "dyr"
+      ],
+      "result": "koed"
+    },
+    {
+      "pair": [
+        "slynge",
+        "fugl"
+      ],
+      "result": "fjer"
+    },
+    {
+      "pair": [
+        "slynge",
+        "nabo"
+      ],
+      "result": "jagtfoelge"
+    },
+    {
+      "pair": [
+        "harpun",
+        "vand"
+      ],
+      "result": "fisk"
+    },
+    {
+      "pair": [
+        "harpun",
+        "dyr"
+      ],
+      "result": "koed"
+    },
+    {
+      "pair": [
+        "harpun",
+        "nabo"
+      ],
+      "result": "fangst"
+    },
+    {
+      "pair": [
+        "flint",
+        "stamme"
+      ],
+      "result": "planker"
+    },
+    {
+      "pair": [
+        "flint",
+        "dyr"
+      ],
+      "result": "skind"
+    },
+    {
+      "pair": [
+        "flint",
+        "knogle"
+      ],
+      "result": "benkniv"
+    },
+    {
+      "pair": [
+        "spydspids",
+        "dyr"
+      ],
+      "result": "koed"
+    },
+    {
+      "pair": [
+        "spydspids",
+        "vand"
+      ],
+      "result": "fisk"
+    },
+    {
+      "pair": [
+        "spydspids",
+        "nabo"
+      ],
+      "result": "jagtfoelge"
+    },
+    {
+      "pair": [
+        "agerngroed",
+        "dyr"
+      ],
+      "result": "tamsvin"
+    },
+    {
+      "pair": [
+        "agerngroed",
+        "grottebryg"
+      ],
+      "result": "sidste-maaltid"
+    },
+    {
+      "pair": [
+        "agerngroed",
+        "vand"
+      ],
+      "result": "grottebryg"
+    },
+    {
+      "pair": [
+        "honning",
+        "knogle"
+      ],
+      "result": "medicin"
+    },
+    {
+      "pair": [
+        "honning",
+        "nabo"
+      ],
+      "result": "gave"
+    },
+    {
+      "pair": [
+        "honning",
+        "baer"
+      ],
+      "result": "saft"
+    },
+    {
+      "pair": [
+        "flaesk",
+        "oesters"
+      ],
+      "result": "surf-n-turf"
+    },
+    {
+      "pair": [
+        "flaesk",
+        "grottebryg"
+      ],
+      "result": "kro"
+    },
+    {
+      "pair": [
+        "flaesk",
+        "nabo"
+      ],
+      "result": "stenalderfest"
+    },
+    {
+      "pair": [
+        "oesters",
+        "grottebryg"
+      ],
+      "result": "sidste-maaltid"
+    },
+    {
+      "pair": [
+        "baalstegt-aeg",
+        "grottebryg"
+      ],
+      "result": "sidste-maaltid"
+    },
+    {
+      "pair": [
+        "baalstegt-aeg",
+        "nabo"
+      ],
+      "result": "gave"
+    },
+    {
+      "pair": [
+        "baalstegt-aeg",
+        "broed"
+      ],
+      "result": "kro"
+    },
+    {
+      "pair": [
+        "sengeleje",
+        "nabo"
+      ],
+      "result": "romance"
+    },
+    {
+      "pair": [
+        "sengeleje",
+        "hund"
+      ],
+      "result": "familie"
+    },
+    {
+      "pair": [
+        "sengeleje",
+        "sne"
+      ],
+      "result": "den-lange-vinter"
+    },
+    {
+      "pair": [
+        "dunkappe",
+        "nabo"
+      ],
+      "result": "gave"
+    },
+    {
+      "pair": [
+        "dunkappe",
+        "sne"
+      ],
+      "result": "den-lange-vinter"
+    },
+    {
+      "pair": [
+        "dunkappe",
+        "festdragt"
+      ],
+      "result": "modeshow"
+    },
+    {
+      "pair": [
+        "klyngen",
+        "hytte"
+      ],
+      "result": "familie"
+    },
+    {
+      "pair": [
+        "klyngen",
+        "hulemaleri"
+      ],
+      "result": "eftermaele"
+    },
+    {
+      "pair": [
+        "klyngen",
+        "bautasten"
+      ],
+      "result": "helligsted"
+    },
+    {
+      "pair": [
+        "mudderlag",
+        "nabo"
+      ],
+      "result": "slagsmaal"
+    },
+    {
+      "pair": [
+        "mudderlag",
+        "sne"
+      ],
+      "result": "den-lange-vinter"
+    },
+    {
+      "pair": [
+        "mudderlag",
+        "dyr"
+      ],
+      "result": "koed"
+    }
+  ]
+}

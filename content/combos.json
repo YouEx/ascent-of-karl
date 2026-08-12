@@ -1866,5 +1866,929 @@
       "stenoekse"
     ],
     "result": "stamme"
+  },
+  {
+    "pair": [
+      "ristede-larver",
+      "nabo"
+    ],
+    "result": "gave"
+  },
+  {
+    "pair": [
+      "ristede-larver",
+      "grottebryg"
+    ],
+    "result": "stenalderfest"
+  },
+  {
+    "pair": [
+      "ristede-larver",
+      "surf-n-turf"
+    ],
+    "result": "sidste-maaltid"
+  },
+  {
+    "pair": [
+      "mudderbad",
+      "dyr"
+    ],
+    "result": "tamsvin"
+  },
+  {
+    "pair": [
+      "mudderbad",
+      "skind"
+    ],
+    "result": "mudderlag"
+  },
+  {
+    "pair": [
+      "mudderbad",
+      "ild"
+    ],
+    "result": "keramik"
+  },
+  {
+    "pair": [
+      "bronze",
+      "hulemaleri"
+    ],
+    "result": "idol"
+  },
+  {
+    "pair": [
+      "bronze",
+      "pind"
+    ],
+    "result": "hammer"
+  },
+  {
+    "pair": [
+      "bronze",
+      "nabo"
+    ],
+    "result": "handel"
+  },
+  {
+    "pair": [
+      "arbejdsbord",
+      "stamme"
+    ],
+    "result": "planker"
+  },
+  {
+    "pair": [
+      "arbejdsbord",
+      "knogle"
+    ],
+    "result": "benkniv"
+  },
+  {
+    "pair": [
+      "arbejdsbord",
+      "rullesten"
+    ],
+    "result": "hammer"
+  },
+  {
+    "pair": [
+      "larvebod",
+      "grottebryg"
+    ],
+    "result": "kro"
+  },
+  {
+    "pair": [
+      "larvebod",
+      "nabo"
+    ],
+    "result": "marked"
+  },
+  {
+    "pair": [
+      "larvebod",
+      "hulemaleri"
+    ],
+    "result": "eftermaele"
+  },
+  {
+    "pair": [
+      "nedbraendt-hytte",
+      "vand"
+    ],
+    "result": "kul"
+  },
+  {
+    "pair": [
+      "nedbraendt-hytte",
+      "nabo"
+    ],
+    "result": "hytte"
+  },
+  {
+    "pair": [
+      "nedbraendt-hytte",
+      "graes"
+    ],
+    "result": "ild"
+  },
+  {
+    "pair": [
+      "roegsignaler",
+      "hund"
+    ],
+    "result": "jagtfoelge"
+  },
+  {
+    "pair": [
+      "roegsignaler",
+      "nabo"
+    ],
+    "result": "handel"
+  },
+  {
+    "pair": [
+      "roegsignaler",
+      "hulemaleri"
+    ],
+    "result": "symbol"
+  },
+  {
+    "pair": [
+      "surf-n-turf",
+      "grottebryg"
+    ],
+    "result": "stenalderfest"
+  },
+  {
+    "pair": [
+      "surf-n-turf",
+      "nabo"
+    ],
+    "result": "gave"
+  },
+  {
+    "pair": [
+      "knoglekast",
+      "nabo"
+    ],
+    "result": "slagsmaal"
+  },
+  {
+    "pair": [
+      "knoglekast",
+      "hund"
+    ],
+    "result": "jagtfoelge"
+  },
+  {
+    "pair": [
+      "knoglekast",
+      "rullesten"
+    ],
+    "result": "stenspil"
+  },
+  {
+    "pair": [
+      "foenix",
+      "nabo"
+    ],
+    "result": "myte"
+  },
+  {
+    "pair": [
+      "foenix",
+      "hulemaleri"
+    ],
+    "result": "eftermaele"
+  },
+  {
+    "pair": [
+      "foenix",
+      "shaman"
+    ],
+    "result": "syner"
+  },
+  {
+    "pair": [
+      "floejte",
+      "tromme"
+    ],
+    "result": "rockband"
+  },
+  {
+    "pair": [
+      "floejte",
+      "shaman"
+    ],
+    "result": "ritual"
+  },
+  {
+    "pair": [
+      "floejte",
+      "hulemaleri"
+    ],
+    "result": "myte"
+  },
+  {
+    "pair": [
+      "farvet-skind",
+      "fjer"
+    ],
+    "result": "festdragt"
+  },
+  {
+    "pair": [
+      "farvet-skind",
+      "keramik"
+    ],
+    "result": "tromme"
+  },
+  {
+    "pair": [
+      "farvet-skind",
+      "nabo"
+    ],
+    "result": "klyngen"
+  },
+  {
+    "pair": [
+      "modeshow",
+      "nabo"
+    ],
+    "result": "kroning"
+  },
+  {
+    "pair": [
+      "modeshow",
+      "tromme"
+    ],
+    "result": "rockband"
+  },
+  {
+    "pair": [
+      "modeshow",
+      "grottebryg"
+    ],
+    "result": "stenalderfest"
+  },
+  {
+    "pair": [
+      "lerfigur",
+      "ild"
+    ],
+    "result": "keramik"
+  },
+  {
+    "pair": [
+      "lerfigur",
+      "bautasten"
+    ],
+    "result": "helligsted"
+  },
+  {
+    "pair": [
+      "lerfigur",
+      "nabo"
+    ],
+    "result": "gave"
+  },
+  {
+    "pair": [
+      "haandaftryk",
+      "bautasten"
+    ],
+    "result": "helligsted"
+  },
+  {
+    "pair": [
+      "haandaftryk",
+      "hulemaleri"
+    ],
+    "result": "galleri"
+  },
+  {
+    "pair": [
+      "haandaftryk",
+      "nabo"
+    ],
+    "result": "eftermaele"
+  },
+  {
+    "pair": [
+      "galleri",
+      "bautasten"
+    ],
+    "result": "helligsted"
+  },
+  {
+    "pair": [
+      "galleri",
+      "nabo"
+    ],
+    "result": "eftermaele"
+  },
+  {
+    "pair": [
+      "galleri",
+      "shaman"
+    ],
+    "result": "ritual"
+  },
+  {
+    "pair": [
+      "garage",
+      "nabo"
+    ],
+    "result": "landsby"
+  },
+  {
+    "pair": [
+      "garage",
+      "ild"
+    ],
+    "result": "nedbraendt-hytte"
+  },
+  {
+    "pair": [
+      "garage",
+      "stamme"
+    ],
+    "result": "hytte"
+  },
+  {
+    "pair": [
+      "drive-in",
+      "nabo"
+    ],
+    "result": "stenalderfest"
+  },
+  {
+    "pair": [
+      "drive-in",
+      "hulemaleri"
+    ],
+    "result": "galleri"
+  },
+  {
+    "pair": [
+      "drive-in",
+      "grottebryg"
+    ],
+    "result": "toemmermaend"
+  },
+  {
+    "pair": [
+      "trafikprop",
+      "nabo"
+    ],
+    "result": "slagsmaal"
+  },
+  {
+    "pair": [
+      "trafikprop",
+      "tromme"
+    ],
+    "result": "rockband"
+  },
+  {
+    "pair": [
+      "trafikprop",
+      "pind"
+    ],
+    "result": "hoevding"
+  },
+  {
+    "pair": [
+      "stenspil",
+      "nabo"
+    ],
+    "result": "brydekamp"
+  },
+  {
+    "pair": [
+      "stenspil",
+      "bautasten"
+    ],
+    "result": "stenkreds"
+  },
+  {
+    "pair": [
+      "stenspil",
+      "knogle"
+    ],
+    "result": "knoglekast"
+  },
+  {
+    "pair": [
+      "kaelk",
+      "hund"
+    ],
+    "result": "traening"
+  },
+  {
+    "pair": [
+      "kaelk",
+      "nabo"
+    ],
+    "result": "brydekamp"
+  },
+  {
+    "pair": [
+      "kaelk",
+      "sne"
+    ],
+    "result": "den-lange-vinter"
+  },
+  {
+    "pair": [
+      "toemmermaend",
+      "vand"
+    ],
+    "result": "helbredelse"
+  },
+  {
+    "pair": [
+      "toemmermaend",
+      "grottebryg"
+    ],
+    "result": "stenalderfest"
+  },
+  {
+    "pair": [
+      "toemmermaend",
+      "nabo"
+    ],
+    "result": "slagsmaal"
+  },
+  {
+    "pair": [
+      "kroning",
+      "bautasten"
+    ],
+    "result": "lov"
+  },
+  {
+    "pair": [
+      "kroning",
+      "nabo"
+    ],
+    "result": "hoevding"
+  },
+  {
+    "pair": [
+      "kroning",
+      "tromme"
+    ],
+    "result": "ritual"
+  },
+  {
+    "pair": [
+      "legende",
+      "hulemaleri"
+    ],
+    "result": "myte"
+  },
+  {
+    "pair": [
+      "legende",
+      "nabo"
+    ],
+    "result": "stammefolk"
+  },
+  {
+    "pair": [
+      "legende",
+      "grottebryg"
+    ],
+    "result": "romance"
+  },
+  {
+    "pair": [
+      "ind-i-maleriet",
+      "hulemaleri"
+    ],
+    "result": "aand"
+  },
+  {
+    "pair": [
+      "ind-i-maleriet",
+      "bautasten"
+    ],
+    "result": "helligsted"
+  },
+  {
+    "pair": [
+      "ind-i-maleriet",
+      "nabo"
+    ],
+    "result": "myte"
+  },
+  {
+    "pair": [
+      "flyveforsoeg",
+      "bautasten"
+    ],
+    "result": "splint"
+  },
+  {
+    "pair": [
+      "flyveforsoeg",
+      "nabo"
+    ],
+    "result": "legende"
+  },
+  {
+    "pair": [
+      "flyveforsoeg",
+      "fugl"
+    ],
+    "result": "traening"
+  },
+  {
+    "pair": [
+      "krig",
+      "nabo"
+    ],
+    "result": "stammefolk"
+  },
+  {
+    "pair": [
+      "krig",
+      "bautasten"
+    ],
+    "result": "grav"
+  },
+  {
+    "pair": [
+      "krig",
+      "hulemaleri"
+    ],
+    "result": "eftermaele"
+  },
+  {
+    "pair": [
+      "helbredelse",
+      "nabo"
+    ],
+    "result": "shaman"
+  },
+  {
+    "pair": [
+      "helbredelse",
+      "knogle"
+    ],
+    "result": "splint"
+  },
+  {
+    "pair": [
+      "helbredelse",
+      "ild"
+    ],
+    "result": "ritual"
+  },
+  {
+    "pair": [
+      "sidste-maaltid",
+      "nabo"
+    ],
+    "result": "grav"
+  },
+  {
+    "pair": [
+      "sidste-maaltid",
+      "grottebryg"
+    ],
+    "result": "toemmermaend"
+  },
+  {
+    "pair": [
+      "sidste-maaltid",
+      "baer"
+    ],
+    "result": "grottebryg"
+  },
+  {
+    "pair": [
+      "eftermaele",
+      "bautasten"
+    ],
+    "result": "monolit"
+  },
+  {
+    "pair": [
+      "eftermaele",
+      "hulemaleri"
+    ],
+    "result": "galleri"
+  },
+  {
+    "pair": [
+      "eftermaele",
+      "nabo"
+    ],
+    "result": "helligsted"
+  },
+  {
+    "pair": [
+      "tatovering",
+      "nabo"
+    ],
+    "result": "modeshow"
+  },
+  {
+    "pair": [
+      "tatovering",
+      "skind"
+    ],
+    "result": "maske"
+  },
+  {
+    "pair": [
+      "tatovering",
+      "fugl"
+    ],
+    "result": "hulemaleri"
+  },
+  {
+    "pair": [
+      "haarklip",
+      "nabo"
+    ],
+    "result": "modeshow"
+  },
+  {
+    "pair": [
+      "haarklip",
+      "skind"
+    ],
+    "result": "festdragt"
+  },
+  {
+    "pair": [
+      "haarklip",
+      "ild"
+    ],
+    "result": "roeg"
+  },
+  {
+    "pair": [
+      "slynge",
+      "dyr"
+    ],
+    "result": "koed"
+  },
+  {
+    "pair": [
+      "slynge",
+      "fugl"
+    ],
+    "result": "fjer"
+  },
+  {
+    "pair": [
+      "slynge",
+      "nabo"
+    ],
+    "result": "jagtfoelge"
+  },
+  {
+    "pair": [
+      "harpun",
+      "vand"
+    ],
+    "result": "fisk"
+  },
+  {
+    "pair": [
+      "harpun",
+      "dyr"
+    ],
+    "result": "koed"
+  },
+  {
+    "pair": [
+      "harpun",
+      "nabo"
+    ],
+    "result": "fangst"
+  },
+  {
+    "pair": [
+      "flint",
+      "stamme"
+    ],
+    "result": "planker"
+  },
+  {
+    "pair": [
+      "flint",
+      "dyr"
+    ],
+    "result": "skind"
+  },
+  {
+    "pair": [
+      "flint",
+      "knogle"
+    ],
+    "result": "benkniv"
+  },
+  {
+    "pair": [
+      "spydspids",
+      "dyr"
+    ],
+    "result": "koed"
+  },
+  {
+    "pair": [
+      "spydspids",
+      "vand"
+    ],
+    "result": "fisk"
+  },
+  {
+    "pair": [
+      "spydspids",
+      "nabo"
+    ],
+    "result": "jagtfoelge"
+  },
+  {
+    "pair": [
+      "agerngroed",
+      "dyr"
+    ],
+    "result": "tamsvin"
+  },
+  {
+    "pair": [
+      "agerngroed",
+      "grottebryg"
+    ],
+    "result": "sidste-maaltid"
+  },
+  {
+    "pair": [
+      "agerngroed",
+      "vand"
+    ],
+    "result": "grottebryg"
+  },
+  {
+    "pair": [
+      "honning",
+      "knogle"
+    ],
+    "result": "medicin"
+  },
+  {
+    "pair": [
+      "honning",
+      "nabo"
+    ],
+    "result": "gave"
+  },
+  {
+    "pair": [
+      "honning",
+      "baer"
+    ],
+    "result": "saft"
+  },
+  {
+    "pair": [
+      "flaesk",
+      "oesters"
+    ],
+    "result": "surf-n-turf"
+  },
+  {
+    "pair": [
+      "flaesk",
+      "grottebryg"
+    ],
+    "result": "kro"
+  },
+  {
+    "pair": [
+      "flaesk",
+      "nabo"
+    ],
+    "result": "stenalderfest"
+  },
+  {
+    "pair": [
+      "oesters",
+      "grottebryg"
+    ],
+    "result": "sidste-maaltid"
+  },
+  {
+    "pair": [
+      "baalstegt-aeg",
+      "grottebryg"
+    ],
+    "result": "sidste-maaltid"
+  },
+  {
+    "pair": [
+      "baalstegt-aeg",
+      "nabo"
+    ],
+    "result": "gave"
+  },
+  {
+    "pair": [
+      "baalstegt-aeg",
+      "broed"
+    ],
+    "result": "kro"
+  },
+  {
+    "pair": [
+      "sengeleje",
+      "nabo"
+    ],
+    "result": "romance"
+  },
+  {
+    "pair": [
+      "sengeleje",
+      "hund"
+    ],
+    "result": "familie"
+  },
+  {
+    "pair": [
+      "sengeleje",
+      "sne"
+    ],
+    "result": "den-lange-vinter"
+  },
+  {
+    "pair": [
+      "dunkappe",
+      "nabo"
+    ],
+    "result": "gave"
+  },
+  {
+    "pair": [
+      "dunkappe",
+      "sne"
+    ],
+    "result": "den-lange-vinter"
+  },
+  {
+    "pair": [
+      "dunkappe",
+      "festdragt"
+    ],
+    "result": "modeshow"
+  },
+  {
+    "pair": [
+      "klyngen",
+      "hytte"
+    ],
+    "result": "familie"
+  },
+  {
+    "pair": [
+      "klyngen",
+      "hulemaleri"
+    ],
+    "result": "eftermaele"
+  },
+  {
+    "pair": [
+      "klyngen",
+      "bautasten"
+    ],
+    "result": "helligsted"
+  },
+  {
+    "pair": [
+      "mudderlag",
+      "nabo"
+    ],
+    "result": "slagsmaal"
+  },
+  {
+    "pair": [
+      "mudderlag",
+      "sne"
+    ],
+    "result": "den-lange-vinter"
+  },
+  {
+    "pair": [
+      "mudderlag",
+      "dyr"
+    ],
+    "result": "koed"
   }
 ]

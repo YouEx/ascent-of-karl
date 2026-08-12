@@ -44,9 +44,25 @@ export function loadContent(): ContentBundle {
   // Den er en ren funktion af elements+combos, så alle kaldere får samme tal;
   // vi bygger alligevel nye objekter frem for at mutere JSON-modulets egne.
   const depths = computeDepths({ elements, combos } as unknown as ContentBundle);
+
+  // "Færdig" betyder: tingen indgår ikke i én eneste opskrift. Den er ikke et
+  // trin på vejen, den er enden på en. Det er udledt og aldrig skrevet i
+  // hånden, så tallet ikke kan komme i utakt med opskrifterne.
+  //
+  // Grunden til at det overhovedet er værd at vise: spilleren vælger to ting
+  // ad gangen, så hver færdig ting i inventaret gør alle senere valg ringere.
+  // Andelen af par der giver noget, falder fra 42,9 % i åbningen til 1,3 % til
+  // sidst, og en tredjedel af elementerne er ikke input nogen steder. Får man
+  // dem lagt til side som det de er — trofæer — kan resten findes igen.
+  const brugtSomInput = new Set<string>();
+  for (const k of combos as { pair: string[] }[]) {
+    for (const p of k.pair) brugtSomInput.add(p);
+  }
+
   const elementsWithDepth = (elements as { id: string }[]).map((el) => ({
     ...el,
     depth: depths.get(el.id) ?? 0,
+    terminal: !brugtSomInput.has(el.id),
   }));
 
   // JSON-import kan ikke udtrykke tuple-typen for `pair`; formen håndhæves af

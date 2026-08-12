@@ -100,6 +100,12 @@ export interface ElementDef {
    */
   depth?: number;
   /**
+   * Tingen indgår ikke i nogen opskrift — den er enden på en vej, ikke et trin
+   * på den. Udledes i loadContent() sammen med `depth`, af samme grund: et
+   * håndskrevet flag ville stå og lyve, første gang nogen tilføjede en opskrift.
+   */
+  terminal?: boolean;
+  /**
    * Klassifikation (content/taxonomy.json). Prædikaterne i
    * content/predicates.json dømmer på disse fire felter i stedet for på
    * navnelister, så alt der ligner en løsning også tæller som en.
