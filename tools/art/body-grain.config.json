@@ -1,0 +1,8 @@
+{
+  "size": 140,
+  "baseFrequency": 0.9,
+  "numOctaves": 3,
+  "rectOpacity": 0.5,
+  "grainOpacity": 0.16,
+  "output": "src/assets/art/body-grain.png"
+}

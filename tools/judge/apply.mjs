@@ -138,9 +138,28 @@ export function consolidateTokens(tokens) {
   });
 }
 
+/**
+ * Flader en journalpost af afviste fund ud til ALLE nøgler, den dækker.
+ *
+ * En afvist post kan repræsentere et konsolideret fund (se consolidateTokens,
+ * TASK-021): `.key` er kun VINDERENS region:defekt:token, mens `.consolidat-
+ * edFrom` rummer de tabende regioners nøgler for samme token. At kun læse
+ * `.key` — hvad route() gjorde før denne rettelse — glemmer de tabende
+ * nøgler, så den tabende regions IDENTISKE forslag ikke genkendes som
+ * "allerede afvist" og foreslås igen hver eneste iteration.
+ */
+export function rejectedKeys(ledger) {
+  const keys = new Set();
+  for (const r of ledger.rejected ?? []) {
+    keys.add(r.key);
+    for (const k of r.consolidatedFrom ?? []) keys.add(k);
+  }
+  return keys;
+}
+
 /** Ruter hvert fund til den ene kanal, der faktisk kan løse det. */
-function route(findings, ledger) {
-  const rejected = new Set(ledger.rejected?.map((r) => r.key) ?? []);
+export function route(findings, ledger) {
+  const rejected = rejectedKeys(ledger);
   const out = { tokens: [], assets: [], human: [], skipped: [] };
 
   for (const f of findings) {

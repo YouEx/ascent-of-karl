@@ -20,6 +20,7 @@
     "judge:score": "python3 tools/judge/metrics.py",
     "judge:report": "python3 tools/judge/overlay.py",
     "judge:apply": "node tools/judge/apply.mjs",
+    "judge:determinism": "node tools/judge/determinism.mjs",
     "judge": "npm run judge:capture && npm run judge:score && npm run judge:report",
     "pairs": "vite-node tools/pair_frequency.ts",
     "pairs:prepare": "vite-node tools/prepare_pairs.ts",

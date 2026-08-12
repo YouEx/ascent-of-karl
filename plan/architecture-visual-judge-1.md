@@ -153,7 +153,7 @@ fem er direkte årsag til et delsystem i denne plan.
 | TASK-003 | Definér de to scenarier der matcher referencerne: `title-fresh` (ingen save, Fates 0/15, tip-kort på tip 1) og `act1-opening` (0/174 opdaget, 11 baseelementer, tomme slots, chips freezing/bare hands/hungry, fortællerlinjen fra referencen). | ✅ | 2026-08-11 |
 | TASK-004 | Tilføj `?freeze=1`: sætter `document.documentElement.dataset.freeze`, hvilket via CSS slår alle `transition`/`animation` fra (`* { transition: none !important; animation: none !important; }`), fuldfører skrivemaskineeffekten øjeblikkeligt og stopper tip-karrusellens timer. | ✅ | 2026-08-11 |
 | TASK-005 | Tilføj `data-ready="true"` på `<html>` når første render er færdig **og** alle `<img>` i viewporten er `decode()`'d. Harnessen venter på dette flag frem for en fast `waitForTimeout` — en timeout er et gæt, et flag er et faktum. | ✅ | 2026-08-11 |
-| TASK-006 | Sikr determinisme: enhver `Math.random()` i renderstien seedes eller omgås under `freeze`. Verificér ved at optage `act1-opening` to gange og kræve identisk SHA-256 på de to PNG-filer. **Revideret 2026-08-12**: verifikationen dækkede kun `Math.random()` — den levende `feTurbulence`-kornfilter i `body::after` har ingen tilfældighedskilde, men Chromium rasterizerer den ikke bit-for-bit ens mellem kørsler. To optagelser afveg reelt med ~43 pixel, maks. kanaldelta 7/255. Bagt til en statisk `src/assets/art/body-grain.png` med bagt alfaopacitet (se TEST-001) — men efterprøvning over 8 kørsler i træk, ikke kun 2, viste at PRÆCIS samme 43-pixel/delta-7-mønster stadig indtraf (i 1 af 5, 2 af 5 og 2 af 8 kørsler på tværs af tre uafhængige målerækker), uanset om kilden var levende SVG eller statisk fil, og uanset om opaciteten sad i CSS' `opacity`-egenskab eller var bagt ind i pixlernes egen alfakanal (`opacity: 0` og `opacity: 1` var begge deterministiske i alle kørsler; kun brøkværdier derimellem var det ikke). Årsagen er Chromiums GPU-kompositering af et fladedækkende, halvgennemsigtigt `mix-blend-mode`-lag — en grænse i browserens rendering, ikke en resterende kodefejl. Determinismekravet er derfor lempet til en målt tolerance (se TEST-001) i stedet for identisk SHA-256; den statiske flise bevares, fordi den stadig fjerner indholds-kilden som en selvstændig variabel og gør optagelsen hurtigere. | ✅ | 2026-08-11 |
+| TASK-006 | Sikr determinisme: enhver `Math.random()` i renderstien seedes eller omgås under `freeze`. Verificér ved at optage `act1-opening` to gange og kræve identisk SHA-256 på de to PNG-filer. **Revideret 2026-08-12**: verifikationen dækkede kun `Math.random()` — den levende `feTurbulence`-kornfilter i `body::after` har ingen tilfældighedskilde, men Chromium rasterizerer den ikke bit-for-bit ens mellem kørsler. To optagelser afveg reelt med ~43 pixel, maks. kanaldelta 7/255. Bagt til en statisk `src/assets/art/body-grain.png` med bagt alfaopacitet (se TEST-001) — men efterprøvning over 8 kørsler i træk, ikke kun 2, viste at PRÆCIS samme 43-pixel/delta-7-mønster stadig indtraf (i 1 af 5, 2 af 5 og 2 af 8 kørsler på tværs af tre uafhængige målerækker), uanset om kilden var levende SVG eller statisk fil, og uanset om opaciteten sad i CSS' `opacity`-egenskab eller var bagt ind i pixlernes egen alfakanal (`opacity: 0` og `opacity: 1` var begge deterministiske i alle kørsler; kun brøkværdier derimellem var det ikke). Hverken at fjerne flisegentagelsen eller at slå GPU-kompositering fra i Chromium-opstarten ændrede noget — hvilket AFKRÆFTER GPU'en som isoleret skyldig snarere end bekræfter den. Årsagen er derfor bredere: en ikke-determinisme i Chromiums rendering/kompositering af et fladedækkende, halvgennemsigtigt `mix-blend-mode`-lag, ikke en resterende kodefejl og ikke isoleret til GPU'en specifikt. Determinismekravet er derfor lempet til en målt tolerance (se TEST-001) i stedet for identisk SHA-256; den statiske flise bevares, fordi den stadig fjerner indholds-kilden som en selvstændig variabel. **Yderligere revideret 2026-08-12**: en lempet tolerance, der kun stod som tekst i planen, var en påstand, ikke en port. `tools/judge/determinism.mjs` (+ `tools/judge/determinism_compare.py`, `npm run judge:determinism`) gør TEST-001 eksekverbar: 8 uafhængige optagelser (friske Chromium-processer) af `act1-opening` mod produktions-previewet, sammenlignet parvist (28 par), afvist hvis noget par overskrider 100 afvigende pixel eller kanaldelta 12/255. Komparatoren beviser sin egen grænse med syntetiske selvtests (100 px/delta 12 består præcist på grænsen, 101 px eller delta 13 fejler) før den dømmer rigtige optagelser. Tre uafhængige rigtige kørsler af porten: værste 43 px/Δ7, 0 px/Δ0, 43 px/Δ7 — alle bestået, med rigelig margin til 100/12. | ✅ | 2026-08-11 |
 ### Implementation Phase 2
 
 - GOAL-002: Registret. Efter denne fase findes der én maskinlæsbar sandhed om,
@@ -274,6 +274,13 @@ fem er direkte årsag til et delsystem i denne plan.
 - **FILE-008**: `tests/visual-baseline.json`, `tests/visual.test.ts` — nye.
 - **FILE-009**: `package.json` — nye scripts `judge`, `judge:score`,
   `judge:report`.
+- **FILE-010** (2026-08-12): `tools/judge/determinism.mjs`,
+  `tools/judge/determinism_compare.py` — nye. Den eksekverbare TEST-001-port
+  (`npm run judge:determinism`, se TEST-001 og TASK-006). `tools/art/
+  build_body_grain.mjs`, `tools/art/body-grain.config.json` — kornbagningens
+  parametre flyttet fra hardkodede konstanter og en død CSS-token
+  (`--grain-opacity`) til én kildefil, som både bagningen og et
+  `--check`-tjek (dimensioner, ikke gen-rendering, se TASK-006) læser.
 
 ## 6. Testing
 
@@ -289,15 +296,33 @@ fem er direkte årsag til et delsystem i denne plan.
   udelukket som forklaring) gentog et identisk ~43-pixel/maks.-delta-7-
   mønster sig i tre uafhængige målerækker (1 af 5, 2 af 5, 2 af 8 kørsler) —
   altid præcis samme antal pixel, samme maksimale delta, samme afgrænsning
-  (y 537–806, x 234–571 i `game`-skærmen). Det er Chromiums GPU-kompositering
-  af et fladedækkende, lavopacitets `multiply`-lag, ikke en indholdskilde
-  eller en opacitetsmetode, der kan fjernes fra applikationskoden —
-  bekræftet ved at `opacity: 0` og `opacity: 1` begge var deterministiske i
-  alle kørsler, mens enhver brøkværdi derimellem ikke var det, uanset GPU
-  slået til eller fra. Tolerancen (100 px / 12-delta) er sat med rigelig
-  margin over det målte (43 / 7) og ville stadig fange en reel regression —
-  en glemt animation, et manglende billede eller en ufrossen overgang
+  (y 537–806, x 234–571 i `game`-skærmen). Årsagen er en ikke-determinisme i
+  Chromiums rendering/kompositering af et fladedækkende, lavopacitets
+  `multiply`-lag, ikke en indholdskilde eller en opacitetsmetode, der kan
+  fjernes fra applikationskoden — `opacity: 0` og `opacity: 1` var begge
+  deterministiske i alle kørsler, mens enhver brøkværdi derimellem ikke var
+  det. At slå GPU-kompositering fra i Chromium-opstarten ÆNDREDE INTET ved
+  dette mønster, hvilket AFKRÆFTER GPU'en som isoleret årsag snarere end
+  bekræfter den — attributionen er derfor bevidst holdt til det bredere
+  "rendering/kompositering", ikke "GPU", fordi evidensen kun bærer den
+  bredere påstand. Tolerancen (100 px / 12-delta) er sat med rigelig margin
+  over det målte (43 / 7) og ville stadig fange en reel regression — en
+  glemt animation, et manglende billede eller en ufrossen overgang
   producerer langt bredere og kraftigere afvigelser end dette.
+  **Yderligere revideret 2026-08-12**: en tolerance, der kun står som tekst i
+  planen, er en påstand, ikke en port — enhver fremtidig ændring kunne
+  stille sammenligningen skævt uden at noget ville fejle. TEST-001 er derfor
+  gjort eksekverbar: `tools/judge/determinism_compare.py` (parvis
+  pixel-/deltasammenligning på tværs af ALLE par, ikke kun mod én
+  "kanonisk" kørsel — det værste par afgør, ikke et vilkårligt referencepar)
+  og `tools/judge/determinism.mjs` (orkestrerer mindst 8 optagelser i friske
+  Chromium-processer mod produktions-previewet, ét npm-kald:
+  `npm run judge:determinism`). Komparatoren beviser først sin egen grænse
+  med syntetiske selvtests — 100 px/delta 12 består præcist på grænsen,
+  101 px eller delta 13 fejler — før den får lov at dømme rigtige
+  optagelser. Tre uafhængige rigtige kørsler af porten gav: værste 43 px/Δ7,
+  0 px/Δ0, 43 px/Δ7 — alle bestået, ~2,3× margin på pixelantal og ~1,7×
+  margin på delta i forhold til det historisk værst målte.
 - **TEST-002**: Metrik-fornuft — en region sammenlignet med sig selv scorer
   1,0 på alle fem mål; en region sammenlignet med et sort felt scorer lavt på
   alle fem. Uden denne kan en itu metrik se ud som fremskridt.

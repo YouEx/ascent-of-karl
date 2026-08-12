@@ -7,7 +7,7 @@
 // ud som fremskridt, mens skærmen bliver værre at se på.
 import { describe, expect, it } from "vitest";
 // @ts-expect-error — værktøjet er ren JS uden typedeklaration; kontrakten testes her.
-import { acceptGate, consolidateTokens, resolveTokenWinners } from "../tools/judge/apply.mjs";
+import { acceptGate, consolidateTokens, rejectedKeys, resolveTokenWinners, route } from "../tools/judge/apply.mjs";
 
 type Regions = Record<string, number>;
 const mk = (overall: number, regions: Regions) => ({
@@ -140,5 +140,47 @@ describe("consolidateTokens (TASK-021)", () => {
     const out = consolidateTokens(findings);
     expect(out).toHaveLength(2);
     expect(out.every((f: any) => f.consolidatedFrom === undefined)).toBe(true);
+  });
+});
+
+describe("rejectedKeys / route — afvist hukommelse på tværs af regioner (defekt 4)", () => {
+  it("flader en konsolideret journalposts key OG consolidatedFrom ud", () => {
+    const ledger = {
+      rejected: [
+        { key: "slots:color:--slot-fill", consolidatedFrom: ["slots:color:--slot-fill", "chips:size:--slot-fill"] },
+      ],
+    };
+    const keys = rejectedKeys(ledger);
+    expect(keys.has("slots:color:--slot-fill")).toBe(true);
+    expect(keys.has("chips:size:--slot-fill")).toBe(true);
+  });
+
+  it("springer en tabende regions forslag over, selvom kun VINDERENS nøgle står som .key", () => {
+    // Reproducerer defekt 4 nøjagtigt: accept-porten afviste sidst en
+    // konsolideret rettelse, hvor `slots` vandt (severity 5) og `chips` tabte
+    // — journalen husker kun vinderens nøgle i .key, mens taberens nøgle kun
+    // findes i .consolidatedFrom. Den gamle route() byggede sit afvist-sæt
+    // udelukkende af `.key` og ville derfor IKKE genkende `chips`' identiske
+    // forslag som allerede afvist — det ville dukke op i out.tokens igen,
+    // hver eneste iteration, i stedet for i out.skipped.
+    const ledger = {
+      rejected: [
+        { key: "slots:color:--slot-fill", consolidatedFrom: ["slots:color:--slot-fill", "chips:size:--slot-fill"] },
+      ],
+    };
+    const findings = [mkFinding("chips", "size", 2, "--slot-fill", "#222222")];
+    const out = route(findings, ledger);
+    expect(out.tokens).toHaveLength(0);
+    expect(out.skipped).toHaveLength(1);
+    expect(out.skipped[0].key).toBe("chips:size:--slot-fill");
+    expect(out.skipped[0].why).toMatch(/tidligere afvist/);
+  });
+
+  it("ruter uændret et fund, hvis nøgle IKKE optræder i nogen afvist post", () => {
+    const ledger = { rejected: [{ key: "slots:color:--slot-fill", consolidatedFrom: ["slots:color:--slot-fill"] }] };
+    const findings = [mkFinding("chips", "size", 2, "--chip-cold", "#333333")];
+    const out = route(findings, ledger);
+    expect(out.tokens).toHaveLength(1);
+    expect(out.skipped).toHaveLength(0);
   });
 });

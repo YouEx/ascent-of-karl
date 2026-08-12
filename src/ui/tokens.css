@@ -84,21 +84,26 @@
      margen falder det jævnt fra #e8d3b9 øverst til #dec3a6 nederst — papir
      der fanger lys ovenfra. To tokens frem for en færdig gradient, så slots
      og felter kan arve samme papir uden at kopiere vinklen. */
-  /* Kornets styrke er en skrue, ikke en konstant, så ruteren kan dreje på
-     den. Den kan bare ikke lukke materialitetshullet: referencens gitter
-     måler 17,2 i højpasenergi mod vores 12,0, men at skrue kornet fra 0,16
-     til 0,34 flytter mater fra 0,683 til 0,677. Støjen ligger på
-     baseFrequency 0,9 — under den blur-radius på 2,0 metrikken måler med, så
-     mere korn gør kun fladen mørkere. Referencens ekstra energi er malet
-     penselstruktur i en grovere skala, ikke filmkorn.
-     Revideret 2026-08-12: tallet appliceres ikke længere via CSS'
-     `opacity`-egenskab (se body::after nedenfor) — det er bagt ind i
-     `body-grain.png`s alfakanal af tools/art/build_body_grain.mjs, som
-     gengiver PRÆCIS denne værdi. Ændrer du tallet her, skal du køre scriptet
-     igen, ellers driver token og fil fra hinanden — samme mønster som
-     `npm run social` i DESIGN.md §7 (en token der driver en committet,
-     genereret fil, opdaterer ikke sig selv). */
-  --grain-opacity: 0.16;
+  /* Kornets styrke var en skrue her, men er det ikke længere: en
+     korn-relateret CSS-egenskab kan ikke lukke materialitetshullet alligevel
+     — referencens gitter måler 17,2 i højpasenergi mod vores 12,0, men at
+     skrue kornet fra 0,16 til 0,34 flytter mater fra 0,683 til 0,677.
+     Støjen ligger på baseFrequency 0,9 — under den blur-radius på 2,0
+     metrikken måler med, så mere korn gør kun fladen mørkere. Referencens
+     ekstra energi er malet penselstruktur i en grovere skala, ikke filmkorn.
+     Revideret 2026-08-12: værdien bor IKKE længere som et CSS-token her —
+     kun i `tools/art/body-grain.config.json` (feltet `grainOpacity`), som
+     `tools/art/build_body_grain.mjs` læser og bager ind i
+     `body-grain.png`s alfakanal. Et `--grain-opacity`-token, der overlevede
+     bagningen (se body::after nedenfor), var et dødt håndtag: tuning.css
+     kunne "ændre" det uden nogen synlig effekt, fordi ingen regel længere
+     læste `var(--grain-opacity)` — farligt i et system, hvor rettelser
+     skrives af en automatisk sløjfe, ikke en person, der ville lægge mærke
+     til at intet skete. Kornstyrke er et byggeparameter for
+     assetgenerering, ikke en levende tuning-skrue; skru på tallet i
+     config-filen og kør scriptet igen for at regenerere PNG'en —
+     `node tools/art/build_body_grain.mjs --check` fælder dom, hvis filen og
+     konfigurationen driver fra hinanden. */
   /* Målt tværsnit i referencens kort: top (233,213,189) mod vores (228,207,181),
      bund (223,197,167) mod vores (221,195,167). Kortets øverste tredjedel var
      5 enheder for mørk — nok til at gitterets lyse andel faldt fra 36 % til
@@ -361,7 +366,8 @@ body::after {
      værdi mellem 0 og 1 kræver en isoleret gruppe-komposit (laget renderes
      til en offscreen-buffer, alfablandes derefter ind med `opacity` som
      faktor) — `opacity: 0` og `opacity: 1` var begge deterministiske i
-     alle kørsler, kun brøkværdier var det ikke. `--grain-opacity` er derfor
+     alle kørsler, kun brøkværdier var det ikke. Grain-opaciteten (nu kun
+     defineret i `tools/art/body-grain.config.json`, se ovenfor) er derfor
      bagt ind i PNG'ens egen alfakanal (build_body_grain.mjs ganger den ind
      i SVG'ens rect-opacity FØR rasterisering), og body::after kører selv
      med `opacity: 1`, så laget ikke længere har brug for gruppe-isolering.
@@ -369,16 +375,22 @@ body::after {
      viste PRÆCIS samme mønster igen (2 af 8), og hverken at fjerne
      flise-gentagelsen (baggrunden strakt som ét enkelt billede i stedet for
      ~88 fliser) eller at slå GPU-kompositering fra i Chromium-opstarten
-     ændrede noget. Konklusionen er derfor, at årsagen ikke er indholdet,
-     opacitetsmetoden eller flisningen, men en mere grundlæggende
-     ikke-determinisme i Chromiums GPU-kompositering af et fladedækkende,
-     halvgennemsigtigt `mix-blend-mode`-lag — en grænse i browserens
-     rendering, som ikke kan fjernes fra applikationskoden. Den bagte alfa
-     og `opacity: 1` bevares alligevel: de fjerner indholds-generering som
-     en selvstændig variabel og en overflødig kompositeringspasse, selvom de
-     ikke alene giver bit-identiske optagelser. TEST-001 er derfor lempet
-     til en målt pixel-tolerance i stedet for identisk SHA-256 — se
-     TASK-006/TEST-001 i planen for tallene og begrundelsen. */
+     (--disable-gpu-compositing) ændrede noget — hvilket AFKRÆFTER GPU'en
+     som en isoleret, selvstændig skyldig, for havde GPU-kompositeringen
+     alene været årsagen, ville CPU-baseret kompositering have løst det.
+     Konklusionen er derfor bredere og mere forsigtig end først antaget:
+     ikke indholdet, opacitetsmetoden, flisningen eller GPU'en specifikt,
+     men en mere grundlæggende ikke-determinisme i Chromiums rendering/
+     kompositering af et fladedækkende, halvgennemsigtigt
+     `mix-blend-mode`-lag — en grænse i browseren, som ikke kan fjernes fra
+     applikationskoden, og som eksperimentet ikke indsnævrer til ét bestemt
+     undersystem. Den bagte alfa og `opacity: 1` bevares alligevel: de
+     fjerner indholds-generering som en selvstændig variabel og en
+     overflødig kompositeringspasse, selvom de ikke alene giver
+     bit-identiske optagelser. TEST-001 er derfor lempet til en målt
+     pixel-tolerance i stedet for identisk SHA-256, håndhævet eksekverbart
+     af `npm run judge:determinism` — se TASK-006/TEST-001 i planen for
+     tallene og begrundelsen. */
   opacity: 1;
   mix-blend-mode: multiply;
   background-image: url("../assets/art/body-grain.png");
