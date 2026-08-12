@@ -90,7 +90,14 @@
      til 0,34 flytter mater fra 0,683 til 0,677. Støjen ligger på
      baseFrequency 0,9 — under den blur-radius på 2,0 metrikken måler med, så
      mere korn gør kun fladen mørkere. Referencens ekstra energi er malet
-     penselstruktur i en grovere skala, ikke filmkorn. */
+     penselstruktur i en grovere skala, ikke filmkorn.
+     Revideret 2026-08-12: tallet appliceres ikke længere via CSS'
+     `opacity`-egenskab (se body::after nedenfor) — det er bagt ind i
+     `body-grain.png`s alfakanal af tools/art/build_body_grain.mjs, som
+     gengiver PRÆCIS denne værdi. Ændrer du tallet her, skal du køre scriptet
+     igen, ellers driver token og fil fra hinanden — samme mønster som
+     `npm run social` i DESIGN.md §7 (en token der driver en committet,
+     genereret fil, opdaterer ikke sig selv). */
   --grain-opacity: 0.16;
   /* Målt tværsnit i referencens kort: top (233,213,189) mod vores (228,207,181),
      bund (223,197,167) mod vores (221,195,167). Kortets øverste tredjedel var
@@ -333,9 +340,48 @@ body::after {
      laget ufarligt trods den høje z-index. */
   z-index: 9999;
   pointer-events: none;
-  opacity: var(--grain-opacity);
+  /* Var en levende `feTurbulence`-SVG her. Chromium rasterizerer den filter-
+     type ikke bit-for-bit ens fra kørsel til kørsel — to optagelser af
+     PRÆCIS samme scenarie gav forskellig SHA-256, ~43 afvigende pixel,
+     maks. kanaldelta 7/255 (TASK-006/TEST-001). Bekræftet ved eksperiment:
+     samme optagelse med laget midlertidigt skjult var byte-identisk på
+     tværs af kørsler — filteret var skyldig, ikke fonte, animationer eller
+     billeder (de er allerede låst af markReadyWhenPainted() og
+     [data-freeze="true"]). Kornet er derfor bagt til en statisk flise
+     (tools/art/build_body_grain.mjs render selve denne SVG i en rigtig
+     browser ÉN gang) i stedet for slukket under frysning: at slukke det
+     ville måle en fladere overflade end den, spillere rent faktisk ser, og
+     forfalske netop den materiality-metrik, der findes for at fange
+     forskellen på malet tekstur og flad CSS.
+     Anden, uafhængig kilde fundet ved efterprøvning af selve rettelsen (5-8
+     kørsler ad gangen, ikke kun to): selv med den statiske flise gentog
+     PRÆCIS samme 43-pixel/delta-7-mønster sig i en mindre andel af
+     kørslerne (1 af 5, 2 af 5, 2 af 8 på tværs af tre uafhængige
+     målerækker). Mistanken faldt på CSS' brøk-`opacity`, som for enhver
+     værdi mellem 0 og 1 kræver en isoleret gruppe-komposit (laget renderes
+     til en offscreen-buffer, alfablandes derefter ind med `opacity` som
+     faktor) — `opacity: 0` og `opacity: 1` var begge deterministiske i
+     alle kørsler, kun brøkværdier var det ikke. `--grain-opacity` er derfor
+     bagt ind i PNG'ens egen alfakanal (build_body_grain.mjs ganger den ind
+     i SVG'ens rect-opacity FØR rasterisering), og body::after kører selv
+     med `opacity: 1`, så laget ikke længere har brug for gruppe-isolering.
+     DET LØSTE DET IKKE: en ny 8-kørsels-test af netop denne bagte variant
+     viste PRÆCIS samme mønster igen (2 af 8), og hverken at fjerne
+     flise-gentagelsen (baggrunden strakt som ét enkelt billede i stedet for
+     ~88 fliser) eller at slå GPU-kompositering fra i Chromium-opstarten
+     ændrede noget. Konklusionen er derfor, at årsagen ikke er indholdet,
+     opacitetsmetoden eller flisningen, men en mere grundlæggende
+     ikke-determinisme i Chromiums GPU-kompositering af et fladedækkende,
+     halvgennemsigtigt `mix-blend-mode`-lag — en grænse i browserens
+     rendering, som ikke kan fjernes fra applikationskoden. Den bagte alfa
+     og `opacity: 1` bevares alligevel: de fjerner indholds-generering som
+     en selvstændig variabel og en overflødig kompositeringspasse, selvom de
+     ikke alene giver bit-identiske optagelser. TEST-001 er derfor lempet
+     til en målt pixel-tolerance i stedet for identisk SHA-256 — se
+     TASK-006/TEST-001 i planen for tallene og begrundelsen. */
+  opacity: 1;
   mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-image: url("../assets/art/body-grain.png");
 }
 
 /* --- Frysning: kun for den visuelle dommer (?freeze=1) -------------------- */

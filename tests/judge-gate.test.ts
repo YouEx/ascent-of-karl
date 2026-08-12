@@ -7,7 +7,7 @@
 // ud som fremskridt, mens skærmen bliver værre at se på.
 import { describe, expect, it } from "vitest";
 // @ts-expect-error — værktøjet er ren JS uden typedeklaration; kontrakten testes her.
-import { acceptGate } from "../tools/judge/apply.mjs";
+import { acceptGate, consolidateTokens, resolveTokenWinners } from "../tools/judge/apply.mjs";
 
 type Regions = Record<string, number>;
 const mk = (overall: number, regions: Regions) => ({
@@ -69,5 +69,76 @@ describe("kontrakten med metrics.py", () => {
     const med = { overall: 0.4, screens: { game: { regions: { a: { overall: 0.4 } } } } };
     expect(() => acceptGate(uden, med)).toThrow(/overall mangler/);
     expect(() => acceptGate(med, uden)).toThrow(/overall mangler/);
+  });
+});
+
+// Fælles fabrik til fund, der foreslår en token-værdi. `key` matcher formatet
+// route() selv bruger (region:defect:token), så tests kan sammenligne mod det.
+const mkFinding = (region: string, defect: string, severity: number, token: string, to: string) => ({
+  region,
+  defect,
+  severity,
+  fix: { kind: "token", token, to },
+  key: `${region}:${defect}:${token}`,
+});
+
+describe("resolveTokenWinners (TASK-021 / defekt 2)", () => {
+  it("lader HØJESTE severity vinde, selv i den rækkefølge der reelt fejlede", () => {
+    // route() sorterer værste-først (faldende severity), så dette er nøjagtig
+    // den rækkefølge writeTuning() modtog i den fejlende kode: severity 5
+    // behandlet FØRST, severity 2 SIDST. Den gamle kode satte værdier i et
+    // Map i denne rækkefølge og lod Map.set overskrive — så den SIDST
+    // behandlede (severity 2) vandt, ikke den højeste. Havde fixet ikke
+    // virket, ville denne test have fanget det: den forventer #111111
+    // (severity 5), og den gamle kode ville have skrevet #222222.
+    const findings = [
+      mkFinding("slots", "color", 5, "--slot-fill", "#111111"),
+      mkFinding("chips", "size", 2, "--slot-fill", "#222222"),
+    ];
+    const winners = resolveTokenWinners(findings);
+    expect(winners.get("--slot-fill").fix.to).toBe("#111111");
+    expect(winners.get("--slot-fill").severity).toBe(5);
+  });
+
+  it("lader højeste severity vinde uanset rækkefølge (stigende også)", () => {
+    const findings = [
+      mkFinding("chips", "size", 2, "--slot-fill", "#222222"),
+      mkFinding("slots", "color", 5, "--slot-fill", "#111111"),
+    ];
+    expect(resolveTokenWinners(findings).get("--slot-fill").fix.to).toBe("#111111");
+  });
+
+  it("lader det først behandlede fund vinde ved uafgjort severity", () => {
+    const findings = [
+      mkFinding("slots", "color", 3, "--slot-fill", "#111111"),
+      mkFinding("chips", "size", 3, "--slot-fill", "#222222"),
+    ];
+    expect(resolveTokenWinners(findings).get("--slot-fill").fix.to).toBe("#111111");
+  });
+});
+
+describe("consolidateTokens (TASK-021)", () => {
+  it("samler samme token foreslået fra to regioner til ét fund med højeste severity", () => {
+    const findings = [
+      mkFinding("slots", "color", 5, "--slot-fill", "#111111"),
+      mkFinding("chips", "size", 2, "--slot-fill", "#222222"),
+    ];
+    const out = consolidateTokens(findings);
+    expect(out).toHaveLength(1);
+    expect(out[0].fix.to).toBe("#111111");
+    expect(out[0].severity).toBe(5);
+    expect(out[0].consolidatedFrom).toEqual(
+      expect.arrayContaining(["slots:color:--slot-fill", "chips:size:--slot-fill"]),
+    );
+  });
+
+  it("lader fund for forskellige tokens stå urørt, hver for sig", () => {
+    const findings = [
+      mkFinding("slots", "color", 4, "--slot-fill", "#111111"),
+      mkFinding("chips", "size", 3, "--chip-cold", "#333333"),
+    ];
+    const out = consolidateTokens(findings);
+    expect(out).toHaveLength(2);
+    expect(out.every((f: any) => f.consolidatedFrom === undefined)).toBe(true);
   });
 });

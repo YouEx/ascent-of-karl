@@ -94,6 +94,50 @@ function validate(doc, knownRegions) {
   return errs;
 }
 
+/**
+ * Vælger, for hvert token, HVILKET fund der vinder når flere foreslår en
+ * værdi til samme `--token` — højeste severity, ikke sidst behandlede.
+ *
+ * Ren funktion (ingen disk-adgang), fordi den er selve reglen, der tidligere
+ * var i stykker to steder på én gang: writeTuning() satte værdier i et Map i
+ * severity-sorteret (faldende) rækkefølge, og Map.set overskriver — så den
+ * SIDST behandlede vandt, hvilket er den LAVESTE severity, ikke den højeste.
+ * Ved uafgjort severity vinder det fund, der stod FØRST i inputlisten
+ * (stabilt og deterministisk, ikke tilfældigt hvem der "kom sidst").
+ */
+export function resolveTokenWinners(tokens) {
+  const winners = new Map(); // token -> vindende fund
+  for (const t of tokens) {
+    const current = winners.get(t.fix.token);
+    if (!current || t.severity > current.severity) winners.set(t.fix.token, t);
+  }
+  return winners;
+}
+
+/**
+ * Dedupérer fund på tværs af regioner: to regioner, der begge peger på samme
+ * `--token`, er ÉT fund for ruteren og journalen, ikke to. Uden dette skriver
+ * sløjfen samme variabel to gange i én iteration og tilskriver æren til den
+ * forkerte region, og to separate region:defect:token-nøgler forhindrer
+ * genkendelse af, at det reelt var samme rettelse. TASK-021.
+ */
+export function consolidateTokens(tokens) {
+  const winners = resolveTokenWinners(tokens);
+  // Alle nøgler pr. token, i den rækkefølge de optræder — også dem der taber.
+  // Uden dem kan en senere iteration ikke se, at regionen bag det tabende
+  // fund allerede fik sit token-forslag medregnet denne gang.
+  const keysByToken = new Map();
+  for (const t of tokens) {
+    const keys = keysByToken.get(t.fix.token) ?? [];
+    if (!keys.includes(t.key)) keys.push(t.key);
+    keysByToken.set(t.fix.token, keys);
+  }
+  return [...winners.entries()].map(([token, winner]) => {
+    const keys = keysByToken.get(token);
+    return keys.length > 1 ? { ...winner, consolidatedFrom: keys } : winner;
+  });
+}
+
 /** Ruter hvert fund til den ene kanal, der faktisk kan løse det. */
 function route(findings, ledger) {
   const rejected = new Set(ledger.rejected?.map((r) => r.key) ?? []);
@@ -116,6 +160,9 @@ function route(findings, ledger) {
       out.human.push({ ...f, key });
     }
   }
+  // Dedupér på tværs af regioner FØR sortering: samme --token fra to
+  // regioner er ét fund med den højeste severity (TASK-021).
+  out.tokens = consolidateTokens(out.tokens);
   // Værste først: alvorlighed er dommerens eneste prioriteringssignal.
   out.tokens.sort((a, b) => b.severity - a.severity);
   return out;
@@ -128,10 +175,14 @@ function writeTuning(tokens, iteration) {
 
   const prior = new Map();
   for (const m of existing.matchAll(/^\s*(--[a-z0-9-]+)\s*:\s*([^;]+);/gm)) prior.set(m[1], m[2].trim());
-  for (const t of tokens) prior.set(t.fix.token, t.fix.to);
+  // Højeste severity vinder — se resolveTokenWinners(). Beregnes her igen
+  // (billigt, og gør writeTuning korrekt uanset om kalderen allerede har
+  // dedupleret), så funktionen ikke er afhængig af at route() gjorde det.
+  const winners = resolveTokenWinners(tokens);
+  for (const [token, t] of winners) prior.set(token, t.fix.to);
 
   const lines = [...prior.entries()].map(([k, v]) => {
-    const t = tokens.find((x) => x.fix.token === k);
+    const t = winners.get(k);
     return t ? `  ${k}: ${v}; /* ${t.region}/${t.defect} — iter ${iteration} */` : `  ${k}: ${v};`;
   });
 

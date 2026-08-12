@@ -62,7 +62,7 @@ fem er direkte årsag til et delsystem i denne plan.
 | 2. Register | Hvilke referencer, hvilke regioner, hvilke DOM-ankre | `docs/design/reference/registry.json` |
 | 3. Optagelse | Pixels + DOM-mål, reproducerbart | `tools/judge/capture.mjs` |
 | 4. Metrikker | Fem ortogonale tal pr. region | `tools/judge/metrics.py` |
-| 5. Dommer + sløjfe | Fund → rute → anvend → efterprøv → journal | `tools/judge/judge.mjs`, `loop.mjs` |
+| 5. Dommer + sløjfe | Fund → rute → anvend → efterprøv → journal | `tools/judge/apply.mjs` (rute + anvend, bygget), `judge.mjs`, `loop.mjs` (vision-kald + efterprøv-sløjfe, ikke bygget endnu) |
 | 6. Fastfrysning | Accepterede scorer bliver en test | `tests/visual-baseline.json` |
 
 ## 1. Requirements & Constraints
@@ -70,9 +70,9 @@ fem er direkte årsag til et delsystem i denne plan.
 ### Kilde og sandhed
 
 - **REQ-001**: Referencerne er `docs/design/reference/title-2026-08-11.webp`
-  (titelskærm, 1586×992) og `docs/design/reference/game-2026-08-11.png`
-  (spilskærm, 1449×1086 — Martins billede af 11-08-2026, endnu ikke lagt i
-  repoet). Begge skal ligge i repoet, ikke i `~/Downloads`.
+  (titelskærm, 1586×992) og `docs/design/reference/target-2026-08-11.webp`
+  (spilskærm, 1449×1086 — Martins billede af 11-08-2026). Begge ligger i
+  repoet, ikke i `~/Downloads`.
 - **REQ-002**: Systemet måler mod referencen, men **DESIGN.md er stadig lov**.
   Hvor referencen bryder et tilgængelighedskrav, vinder DESIGN.md, og afvigelsen
   skrives ind i registret som en **tilladt afvigelse** med begrundelse. Ellers
@@ -148,12 +148,12 @@ fem er direkte årsag til et delsystem i denne plan.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-001 | Læg spilskærmsreferencen i repoet som `docs/design/reference/game-2026-08-11.png` (kilde: `~/Downloads/ChatGPT Image 11. aug. 2026, 15.11.13.png`, 1449×1086). Titelreferencen ligger der allerede. | ✅ | 2026-08-11 |
+| TASK-001 | Læg spilskærmsreferencen i repoet som `docs/design/reference/target-2026-08-11.webp` (kilde: `~/Downloads/ChatGPT Image 11. aug. 2026, 15.11.13.png`, 1449×1086 — endte som `.webp`, ikke det oprindeligt planlagte `game-2026-08-11.png`). Titelreferencen lå der allerede. | ✅ | 2026-08-11 |
 | TASK-002 | Tilføj `src/ui/scenario.ts` med `applyScenario(name)`: sætter save-tilstand, opdaget-mængde, aktiv fortællerlinje, chip-tilstande og slot-indhold direkte, uden at spille sig frem. Læses fra `?scenario=` i `main.ts` før første render. | ✅ | 2026-08-11 |
 | TASK-003 | Definér de to scenarier der matcher referencerne: `title-fresh` (ingen save, Fates 0/15, tip-kort på tip 1) og `act1-opening` (0/174 opdaget, 11 baseelementer, tomme slots, chips freezing/bare hands/hungry, fortællerlinjen fra referencen). | ✅ | 2026-08-11 |
 | TASK-004 | Tilføj `?freeze=1`: sætter `document.documentElement.dataset.freeze`, hvilket via CSS slår alle `transition`/`animation` fra (`* { transition: none !important; animation: none !important; }`), fuldfører skrivemaskineeffekten øjeblikkeligt og stopper tip-karrusellens timer. | ✅ | 2026-08-11 |
 | TASK-005 | Tilføj `data-ready="true"` på `<html>` når første render er færdig **og** alle `<img>` i viewporten er `decode()`'d. Harnessen venter på dette flag frem for en fast `waitForTimeout` — en timeout er et gæt, et flag er et faktum. | ✅ | 2026-08-11 |
-| TASK-006 | Sikr determinisme: enhver `Math.random()` i renderstien seedes eller omgås under `freeze`. Verificér ved at optage `act1-opening` to gange og kræve identisk SHA-256 på de to PNG-filer. | ✅ | 2026-08-11 |
+| TASK-006 | Sikr determinisme: enhver `Math.random()` i renderstien seedes eller omgås under `freeze`. Verificér ved at optage `act1-opening` to gange og kræve identisk SHA-256 på de to PNG-filer. **Revideret 2026-08-12**: verifikationen dækkede kun `Math.random()` — den levende `feTurbulence`-kornfilter i `body::after` har ingen tilfældighedskilde, men Chromium rasterizerer den ikke bit-for-bit ens mellem kørsler. To optagelser afveg reelt med ~43 pixel, maks. kanaldelta 7/255. Bagt til en statisk `src/assets/art/body-grain.png` med bagt alfaopacitet (se TEST-001) — men efterprøvning over 8 kørsler i træk, ikke kun 2, viste at PRÆCIS samme 43-pixel/delta-7-mønster stadig indtraf (i 1 af 5, 2 af 5 og 2 af 8 kørsler på tværs af tre uafhængige målerækker), uanset om kilden var levende SVG eller statisk fil, og uanset om opaciteten sad i CSS' `opacity`-egenskab eller var bagt ind i pixlernes egen alfakanal (`opacity: 0` og `opacity: 1` var begge deterministiske i alle kørsler; kun brøkværdier derimellem var det ikke). Årsagen er Chromiums GPU-kompositering af et fladedækkende, halvgennemsigtigt `mix-blend-mode`-lag — en grænse i browserens rendering, ikke en resterende kodefejl. Determinismekravet er derfor lempet til en målt tolerance (se TEST-001) i stedet for identisk SHA-256; den statiske flise bevares, fordi den stadig fjerner indholds-kilden som en selvstændig variabel og gør optagelsen hurtigere. | ✅ | 2026-08-11 |
 ### Implementation Phase 2
 
 - GOAL-002: Registret. Efter denne fase findes der én maskinlæsbar sandhed om,
@@ -174,7 +174,7 @@ fem er direkte årsag til et delsystem i denne plan.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-012 | Byg `tools/judge/capture.mjs`: starter `vite preview` selv (CON-004), sætter viewport til referencens native mål, loader `?scenario=X&freeze=1`, venter på `data-ready`, og skriver helskærmsbillede + per-region-udsnit til `.judge/<run>/render/`. | ✅ | 2026-08-11 |
+| TASK-012 | Byg `tools/judge/capture.mjs`: starter `vite preview` selv (CON-004), sætter viewport til referencens native mål, loader `?scenario=X&freeze=1`, venter på `data-ready`, og skriver helskærmsbillede + per-region-udsnit til `.judge/<run>/render/`. **Revideret 2026-08-12**: startede reelt dev-serveren (`vite`, ikke `vite preview`) — CON-004 var ikke opfyldt. A/B-målt på samme commit: dev- og preview-optagelser er hver især interne byte-identiske, men divergerer indbyrdes med op til 2/255 i header og de flader der arver dens baggrund, fordi prod-CSS-minificeringen skriver `rgb(74 48 33 / 0.15)` om til `#4a302126` (alfa afrundet til 38/255). Rettet til at bygge og starte `vite preview`, så dommeren måler det spillerne rent faktisk får. | ✅ | 2026-08-11 |
 | TASK-013 | Udvid `capture.mjs` med DOM-måldump: for hvert anker gemmes `getBoundingClientRect()` og udvalgte `getComputedStyle`-felter (`font-family`, `font-size`, `font-weight`, `line-height`, `letter-spacing`, `color`, `background-color`, `border-radius`, `box-shadow`, `padding`, `gap`) til `metrics.json`. Dette er GUD-002 i praksis. | ✅ | 2026-08-11 |
 | TASK-014 | Byg `tools/judge/metrics.py` med fem ortogonale mål pr. region: `structure` (SSIM på gradientmagnitude, gråtone — form uden farve), `tone` (ΔE2000 mellem regionsmedianer), `ink` (afvigelse i mørk-pixel-dækning — proxy for skriftvægt og -størrelse), `geometry` (normaliseret boks-forskydning og størrelsesafvigelse, fra DOM-mål ikke pixels) og `materiality`. | ✅ | 2026-08-11 |
 | TASK-015 | Implementér `materiality` som standardafvigelsen af et højpasfiltreret udsnit: den måler, om fladen har malet tekstur eller er en flad CSS-farve. Ingen standardmetrik navngiver vores største defektklasse; denne gør. | ✅ | 2026-08-11 |
@@ -190,7 +190,7 @@ fem er direkte årsag til et delsystem i denne plan.
 | TASK-018 | Definér fund-skemaet i `tools/judge/finding.schema.json`: `{ region, defect, severity: 1-5, evidence, fix: { kind: "token"\|"asset"\|"structure", ... } }` med `defect` bundet til listen i REQ-006. Ugyldig JSON afvises og genforespørges én gang. | ✅ | 2026-08-11 |
 | TASK-019 | Byg `tools/judge/judge.mjs`: sender pr. region referenceudsnit, renderudsnit, overlejring, de fem metrikker, DOM-computed-styles og regionens `allowedDeviations` til vision-modellen, og validerer svaret mod skemaet. | | |
 | TASK-020 | Skriv dommerens systemprompt eksplicit anti-prosa: den skal svare med den mindste ændring der lukker afstanden, angive `from`/`to` med enheder, og hellere sige `missing-asset` end at foreslå en CSS-efterligning af malet kunst. Selvsikkerhed uden `evidence` afvises. | | |
-| TASK-021 | Dedupér fund på tværs af regioner: samme token foreslået fra to regioner samles til ét fund med den højeste `severity`, så sløjfen ikke skriver samme variabel to gange i én iteration og tilskriver den anden skrivning æren. | | |
+| TASK-021 | Dedupér fund på tværs af regioner: samme token foreslået fra to regioner samles til ét fund med den højeste `severity`, så sløjfen ikke skriver samme variabel to gange i én iteration og tilskriver den anden skrivning æren. **Revideret 2026-08-12**: `writeTuning()` gjorde det modsatte — fund itereres i faldende `severity`, og et senere `Map.set` overskrev et tidligere, så den LAVESTE severity vandt (og kommentar-tilskrivningen pegede stadig på den højeste). Rettet med `resolveTokenWinners()` (rækkefølge-uafhængig, højeste severity vinder) og `consolidateTokens()` (denne opgaves regionstværgående samling, med `consolidatedFrom`-herkomst). | ✅ | 2026-08-12 |
 
 ### Implementation Phase 5
 
@@ -200,7 +200,7 @@ fem er direkte årsag til et delsystem i denne plan.
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
 | TASK-022 | Opret `src/ui/tuning.css` (importeret sidst i `style.css`, kun `:root`-overrides) og gør den til sløjfens **eneste** skrivemål. REQ-004. | | |
-| TASK-023 | Byg ruteren i `tools/judge/loop.mjs`: `token`→ skriv til `tuning.css`; `asset`→ tilføj til `docs/design/asset-queue.json` med spec og stop; `structure`→ skriv til arbejdskøen, anvend aldrig (CON-003). | | |
+| TASK-023 | Byg ruteren i `tools/judge/apply.mjs`: `token`→ skriv til `tuning.css`; `asset`→ tilføj til `docs/design/asset-queue.json` med spec og stop; `structure`→ skriv til arbejdskøen, anvend aldrig (CON-003). Landede i `apply.mjs`, ikke det oprindeligt planlagte `loop.mjs` (se FILE-006) — implementeret, bare aldrig afkrydset. | ✅ | 2026-08-12 |
 | TASK-024 | Implementér accept-porten: efter hver anvendelse køres optagelse + måling igen. Accepteres kun ved samlet forbedring **og** ingen region under −0,02 (CON-002). Ellers rulles `tuning.css` tilbage, og fundet markeres `rejected`. | | |
 | TASK-025 | Implementér journalen `.judge/<run>/ledger.json`: pr. iteration gemmes fund, anvendt ændring, før/efter-scorer, accepteret/fortrudt. Afviste fund fodres tilbage til dommeren som "dette er prøvet og gjorde det værre". Dette er hukommelsen fra punkt 5 i indledningen. | | |
 | TASK-026 | Implementér stopbetingelser: alle regioner over tærsklen, eller tre iterationer i træk uden accept, eller 12 iterationer (CON-001). Sidste to rapporteres som nederlag med den bedste opnåede tilstand og de blokerende fund. | | |
@@ -262,10 +262,13 @@ fem er direkte årsag til et delsystem i denne plan.
   `data-ready`.
 - **FILE-003**: `src/ui/tuning.css` — ny. Sløjfens eneste skrivemål.
 - **FILE-004**: `docs/design/reference/registry.json` — ny. Regioner og vægte.
-- **FILE-005**: `docs/design/reference/game-2026-08-11.png` — ny. Spilskærmens
+- **FILE-005**: `docs/design/reference/target-2026-08-11.webp` — ny. Spilskærmens
   reference.
 - **FILE-006**: `tools/judge/capture.mjs`, `metrics.py`, `overlay.py`,
-  `judge.mjs`, `loop.mjs`, `finding.schema.json` — nye.
+  `apply.mjs`, `finding.schema.json` — nye (rute + anvend landede i
+  `apply.mjs`, ikke i de oprindeligt planlagte `judge.mjs`/`loop.mjs`).
+  `judge.mjs` (vision-kald, TASK-019) og `loop.mjs` (efterprøv-sløjfe,
+  TASK-024–026) er endnu ikke bygget.
 - **FILE-007**: `docs/design/asset-queue.json` — ny, versioneret. Ruterens
   udgang for `asset`-fund.
 - **FILE-008**: `tests/visual-baseline.json`, `tests/visual.test.ts` — nye.
@@ -275,8 +278,26 @@ fem er direkte årsag til et delsystem i denne plan.
 ## 6. Testing
 
 - **TEST-001**: Determinisme — to på hinanden følgende optagelser af
-  `act1-opening` giver identisk SHA-256. Fejler den, er scenariesystemet ikke
-  færdigt, og alle andre tal er ugyldige.
+  `act1-opening` skal ligge inden for en målt tolerance: **højst 100
+  afvigende pixel og maks. kanaldelta 12/255** på hele skærmbilledet
+  (oprindeligt formuleret som identisk SHA-256). Fejler den langt ud over
+  dette, er scenariesystemet ikke færdigt, og alle andre tal er ugyldige.
+  **Revideret 2026-08-12**: kravet om byte-identisk SHA-256 viste sig
+  ureproducerbart efter grundig efterprøvning (se TASK-006). Selv efter
+  `body::after`s kornfilter blev bagt til en statisk fil MED bagt
+  alfaopacitet (ingen CSS-brøkopacitet; fliselagt gentagelse afprøvet og
+  udelukket som forklaring) gentog et identisk ~43-pixel/maks.-delta-7-
+  mønster sig i tre uafhængige målerækker (1 af 5, 2 af 5, 2 af 8 kørsler) —
+  altid præcis samme antal pixel, samme maksimale delta, samme afgrænsning
+  (y 537–806, x 234–571 i `game`-skærmen). Det er Chromiums GPU-kompositering
+  af et fladedækkende, lavopacitets `multiply`-lag, ikke en indholdskilde
+  eller en opacitetsmetode, der kan fjernes fra applikationskoden —
+  bekræftet ved at `opacity: 0` og `opacity: 1` begge var deterministiske i
+  alle kørsler, mens enhver brøkværdi derimellem ikke var det, uanset GPU
+  slået til eller fra. Tolerancen (100 px / 12-delta) er sat med rigelig
+  margin over det målte (43 / 7) og ville stadig fange en reel regression —
+  en glemt animation, et manglende billede eller en ufrossen overgang
+  producerer langt bredere og kraftigere afvigelser end dette.
 - **TEST-002**: Metrik-fornuft — en region sammenlignet med sig selv scorer
   1,0 på alle fem mål; en region sammenlignet med et sort felt scorer lavt på
   alle fem. Uden denne kan en itu metrik se ud som fremskridt.

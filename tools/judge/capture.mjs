@@ -1,9 +1,10 @@
 /**
  * Optagelse — den visuelle dommers øjne.
  *
- * Starter selv en dev-server, sætter viewporten til referencens native mål,
- * booter spillet ind i det scenarie referencen viser, venter på at siden
- * faktisk er malet færdig, og skriver tre ting til disk:
+ * Bygger spillet og server det bundtede resultat med `vite preview`
+ * (CON-004), sætter viewporten til referencens native mål, booter spillet
+ * ind i det scenarie referencen viser, venter på at siden faktisk er malet
+ * færdig, og skriver tre ting til disk:
  *
  *   render/<screen>.png        helskærmsbilledet
  *   render/<screen>/<id>.png   ét udsnit pr. region, klippet efter DOM-ankeret
@@ -13,12 +14,22 @@
  * dommeren have TALLET — ikke gætte det ud af pixels. Forskellen er
  * "font-size er 15px, referencen måler ~19px" mod "teksten ser lille ud".
  *
+ * Hvorfor preview og ikke dev-serveren: målt 2026-08-12 i en A/B mellem de
+ * to på samme commit — to optagelser mod dev er byte-identiske, to mod
+ * preview er byte-identiske, men dev ≠ preview (op til 2/255 i header og de
+ * flader, der arver dens baggrund). Årsagen er CSS-minificeringen: kilden
+ * skriver `rgb(74 48 33 / 0.15)`, prod-bundtet skriver `#4a302126` — en hex-
+ * alfa på 38/255 = 0,149, afrundet fra 0,15. Dev-serveren giver browseren
+ * decimaltallet ufortyndet; kun prod-bundtet får den afrunding, spillerne
+ * rent faktisk ser. Dommeren skal måle det spillerne får, ikke kilden før
+ * minificering — derfor bygges der her, hver gang, før serveren startes.
+ *
  * Serveren startes og stoppes her (ikke antaget kørende): den dør, når dens
  * shell høstes, og en optagelse mod en død server giver et hvidt billede og
  * en score der ser ud som et sammenbrud.
  *
  * Kør:  node tools/judge/capture.mjs [--screen game|title|all] [--out DIR]
- * Se plan/architecture-visual-judge-1.md fase 3 (TASK-012, TASK-013).
+ * Se plan/architecture-visual-judge-1.md fase 3 (TASK-012, TASK-013, CON-004).
  */
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
@@ -41,10 +52,29 @@ const STYLE_FIELDS = [
   "paddingLeft", "gap", "display", "justifyContent", "alignItems",
 ];
 
+/** Bygger produktionsbundtet, som `startServer` derefter server (CON-004). */
+async function build() {
+  await new Promise((res, rej) => {
+    const proc = spawn("npx", ["vite", "build"], {
+      cwd: ROOT,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stderr = "";
+    proc.stderr.on("data", (d) => {
+      stderr += d;
+    });
+    proc.on("exit", (code) => {
+      if (code === 0) res();
+      else rej(new Error(`vite build fejlede (kode ${code}):\n${stderr}`));
+    });
+  });
+}
+
 export async function startServer() {
+  await build();
   const proc = spawn(
     "npx",
-    ["vite", "--port", String(PORT), "--strictPort", "--host", "127.0.0.1"],
+    ["vite", "preview", "--port", String(PORT), "--strictPort", "--host", "127.0.0.1"],
     { cwd: ROOT, stdio: ["ignore", "pipe", "pipe"] },
   );
   const deadline = Date.now() + 30_000;
@@ -58,7 +88,7 @@ export async function startServer() {
     await new Promise((r) => setTimeout(r, 300));
   }
   proc.kill();
-  throw new Error(`Dev-serveren kom ikke op på ${ORIGIN} inden for 30 s`);
+  throw new Error(`Preview-serveren kom ikke op på ${ORIGIN} inden for 30 s`);
 }
 
 export async function loadRegistry() {
