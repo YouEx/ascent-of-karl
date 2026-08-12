@@ -2,7 +2,7 @@
 goal: Byg titelskærmen så den matcher mockuppen fra 11-08-2026 1:1
 version: 1.0
 date_created: 2026-08-11
-last_updated: 2026-08-11
+last_updated: 2026-08-12
 owner: Martin (YouEx)
 status: 'In progress'
 tags: [design, feature, ui]
@@ -22,6 +22,46 @@ resten af spillet skifter udseende midt i en fase.
 Planen dækker kun titelskærmen. Selve spilfladen ligger i
 `plan/design-visual-target-1.md` fase 2-5.
 
+## Status 12-08-2026
+
+Fase 2-4 er bygget, men ikke landet. Strukturen står: `showTitleScreen()`
+bygger mockuppens ni elementer, `RIBBONS` er væk, titlen er ét semantisk
+`<h1>` med stenfyld, tipkortet roterer, knapperne skifter til
+`Continue`/`New life`. Det der mangler, er ikke kode — det er **lighed**.
+
+Den visuelle dommer (`npm run judge:score`) måler titelskærmen til **0,732
+samlet**, og **otte af ti regioner ligger under deres egen tærskel**:
+
+| Region | Score | Tærskel | Værst på |
+|--------|-------|---------|----------|
+| `scene` | 0,956 | 0,60 | — |
+| `actions` | 0,825 | 0,82 | — |
+| `tagline` | 0,732 | 0,85 | — |
+| `headline` | 0,722 | 0,85 | `ink` 0,572 · `structure` 0,431 |
+| `hint` | 0,692 | 0,85 | — |
+| `ribbon` | 0,690 | 0,85 | `structure` **0,209** — værst i hele skærmen |
+| `tip-card` | 0,657 | 0,82 | — |
+| `chip` | 0,646 | 0,82 | `structure` 0,211 · `tone` 0,266 |
+| `tools` | 0,624 | 0,80 | `tone` 0,249 |
+| `divider` | 0,560 | 0,80 | `ink` **0,113** — værst i hele skærmen |
+
+Tallene peger på tre konkrete huller frem for på "det ser ikke poleret ud":
+
+1. **Båndet har ingen form.** TASK-012's `clip-path` blev aldrig skrevet —
+   der findes ikke ét `clip-path` i nærheden af `.title-sub`. Det forklarer
+   `structure` 0,209 direkte.
+2. **Pladerne er ikke wiret færdigt.** `.title-panel`'s `image-set()` peger
+   på **samme fil** ved 1x og 2x; 520/360-varianterne er bygget men bruges
+   aldrig, og der er ingen `--parchment` bundfarve under. Scenen bruger kun
+   897-varianten og har hverken `image-set()` eller `background-size: cover`.
+3. **Seks hardkodede hex-værdier** står i `.title-stage`'s
+   bredskærmsfallback (`#e7c3bc` … `#4a3b3c`) og bryder REQ-002.
+   `tests/design-tokens.test.ts` fanger dem ikke, fordi den kun tjekker
+   DESIGN.md → tokens.css, aldrig `style.css` for rå hex.
+
+Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
+(TASK-012/013), så tonen (TASK-010/011/016/017/018), og portene til sidst.
+
 ## 1. Requirements & Constraints
 
 - **REQ-001**: Kompositionen er to spalter: pergament ca. 0-42 % af bredden,
@@ -37,6 +77,14 @@ Planen dækker kun titelskærmen. Selve spilfladen ligger i
   mockuppen, ikke tegnede SVG-figurer og ikke billedfiler placeret enkeltvis.
   De leveres i pergamentpladen, hvor de allerede ligger. De bærer ingen
   information og må aldrig ligge bag læsbar tekst.
+  *Efterlevet halvt (12-08-2026): fem ornamenter — `orn-spiral`, `orn-trophy`,
+  `orn-tap`, `orn-divider`, `orn-hunt` — er endt som enkeltvist placerede
+  `background-image`-udsnit, blandet med `mix-blend-mode: multiply` af
+  `tools/art/build_ui.py`. De er stadig Martins egne malede mærker, og
+  teknikken undgår alfa-udklippets fejltilstand, men den er bogstaveligt
+  talt det, kravet forbyder, og den står ikke blandt de fire afviste
+  alternativer i ALT-005. Enten omskrives kravet til at tillade
+  blandede udsnit, eller også skal de fem tilbage i pladen.*
 - **REQ-006**: Titelskærmen skal virke i portræt (telefon) uden vandret scroll.
 - **REQ-007**: Titlens stenfyld laves med `background-clip: text` over en
   gradient, ikke som et billede — teksten skal blive ved med at være tekst.
@@ -100,8 +148,8 @@ Planen dækker kun titelskærmen. Selve spilfladen ligger i
 | TASK-011 | Titlen: `The / Ascent / of / Karl` i `--font-display`, med stenfyld via `background-clip: text` (REQ-007). `of` er lille og kursiv, flankeret af to hårfine streger. Semantisk ét `<h1>`; linjeskiftene er `<span>`, så oplæsning giver "The Ascent of Karl". | | |
 | TASK-012 | Undertitel-båndet: revet pergamentstrimmel med kursiv *"reinvent history, badly"*. Formen laves med `clip-path`, ikke et billede. | | |
 | TASK-013 | Taglinen i to linjer + ornamentdeleren (to hårfine streger om en rombe). | | |
-| TASK-014 | `Begin`-knappen: stor udskåret pergamentflade med facet, spiral-glyf til venstre. Bliver `New life` og mister sin primære vægt, når `Continue` findes (CON-002). | | |
-| TASK-015 | `Fates`-knappen: sekundær pergamentflade, trofæ-ikon, tælleren i `tabular-nums` og `--rust-warm`. | | |
+| TASK-014 | `Begin`-knappen: stor udskåret pergamentflade med facet, spiral-glyf til venstre. Bliver `New life` og mister sin primære vægt, når `Continue` findes (CON-002). | ✅ | 2026-08-12 |
+| TASK-015 | `Fates`-knappen: sekundær pergamentflade, trofæ-ikon, tælleren i `tabular-nums` og `--rust-warm`. Tallet er `content.endings.length`, ikke en konstant. | ✅ | 2026-08-12 |
 | TASK-016 | Hint-linjen: tryk-ikon + tryk-tryk-tekst. **Lukker CON-001.** | | |
 | TASK-017 | Tipkortet nederst: elementflise til venstre, fed titel + kursiv underlinje, tre prikker, jagtscene-ornament i højre side. Tipsene roterer ved hvert besøg, så kortet ikke er dødt inventar. | | |
 | TASK-018 | Trofæ- og indstillingsknapperne øverst til højre oven på scenepladen (CON-004), 44 px berøringsflade. | | |
@@ -156,13 +204,25 @@ Planen dækker kun titelskærmen. Selve spilfladen ligger i
 - **FILE-001**: `src/ui/main.ts` — `showTitleScreen()` bygges om.
 - **FILE-002**: `src/ui/style.css` — al titelskærms-CSS.
 - **FILE-003**: `src/ui/icons.ts` — nye krom-ikoner (`gear`, `tap`).
+  *Leveret, men begge står i dag ubrugte: knappen blev en lydslukker frem
+  for indstillinger (spillet har én indstilling, og det er lyden), og
+  hint-ikonet blev det malede `orn-tap.webp` frem for `icons.tap`. Enten
+  ryddes de to ud, eller også skal FILE-003 skrives om til det, der faktisk
+  skete.*
 - **FILE-008**: `tools/art/build_parchment.py` — bygger pergamentpladen.
   Kasselisten øverst er det eneste, der skal røres, hvis mockuppen udskiftes.
-- **FILE-009**: `public/art/title-parchment-{692,520,360}.webp` — pergamentet
-  med ornamenterne, uden tekst, med alfa i den revne kant.
-- **FILE-004**: `public/art/title-scene-{897,640,448}.webp` — scenepladen.
+- **FILE-009**: `src/assets/art/title-parchment-{692,520,360}.webp` —
+  pergamentet med ornamenterne, uden tekst, med alfa i den revne kant.
+  *Rettet 12-08-2026: planen skrev `public/art/`, men den mappe findes ikke.
+  Al kunst ligger i `src/assets/art/` og hashes af Vite ind i `dist/assets/`
+  — det er projektets faktiske konvention, jf. `src/ui/art.ts`.*
+- **FILE-004**: `src/assets/art/title-scene-{897,640,448}.webp` — scenepladen.
+  Samme rettelse som FILE-009. Kun 897-varianten er i brug i dag.
 - **FILE-005**: `DESIGN.md` — titelskærmen skrives ind som fladen, der bærer
-  målpaletten først.
+  målpaletten først. *Ikke sket: `DESIGN.md` nævner ikke titelskærmen med ét
+  ord og dokumenterer hverken `--title-stone-hi/-lo`, `--ribbon-ink` eller
+  `--btn-ink`. Projektets egen lov om at DESIGN.md er lov er dermed uopfyldt
+  netop her — og uhåndhævet, fordi token-testen kun læser den ene vej.*
 - **FILE-006**: `tests/design-tokens.test.ts` — kontrastkrav for de nye flader.
 - **FILE-007**: `tests/title-screen.test.ts` — ny; pinner CON-001 og CON-002.
 
@@ -178,7 +238,11 @@ Planen dækker kun titelskærmen. Selve spilfladen ligger i
   pergamentflade, den kan lande på (REQ-003).
 - **TEST-005**: `style.css` indeholder ingen hardcodede farver i
   titelskærmens selectors (REQ-002) — håndhæves af den eksisterende
-  token-dækningstest.
+  token-dækningstest. *Falsk (12-08-2026): `tests/design-tokens.test.ts`
+  læser kun DESIGN.md → `tokens.css` og scanner aldrig `style.css` for rå
+  hex. Testen ville derfor ikke fange de seks hardkodede stops, der står i
+  `.title-stage` i dag — og fanger den ikke, håndhæver den ikke. Skal
+  bygges, ikke bare henvises til.*
 - **TEST-006**: Velkomstchippen vises kun uden gemt spil.
 
 ## 7. Risks & Assumptions
