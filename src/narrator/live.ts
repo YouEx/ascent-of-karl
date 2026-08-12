@@ -33,6 +33,12 @@ const CACHE_KEY = "karl.live.v1";
 const TIMEOUT_MS = 8000;
 /** Loft på hvad vi gemmer, så en lang spiller ikke fylder localStorage. */
 const MAX_CACHED = 500;
+/**
+ * Ro-periode hvis workeren svarer 429/503 uden en brugbar Retry-After — bør
+ * ikke ske i praksis (workeren sætter den altid), men laget skal ikke kunne
+ * spamme et endpoint, der lige har bedt om ro, hvis headeren mangler.
+ */
+const DEFAULT_QUIET_MS = 60_000;
 
 export interface LiveRequest {
   a: ElementDef;
@@ -49,6 +55,13 @@ export class LiveNarrator {
   /** Kald i luften, så to hurtige valg af samme par kun spørger én gang. */
   private inFlight = new Map<string, Promise<string | undefined>>();
   private failures = 0;
+  /**
+   * Sat af en 429 (rate limit) eller 503 (dagligt loft) fra workeren —
+   * begge er en grænse sat med vilje, ikke en fejl, så de tæller ikke til
+   * `failures` og slår ikke laget varigt fra. Vi spørger blot ikke igen før
+   * dette tidspunkt, jf. serverens egen `Retry-After`.
+   */
+  private quietUntil = 0;
 
   constructor(private readonly endpoint: string = ENDPOINT) {
     this.load();
@@ -58,7 +71,7 @@ export class LiveNarrator {
   get enabled(): boolean {
     // Tre fejl i træk og vi holder op med at prøve resten af sessionen. Et
     // dødt endpoint skal ikke koste en netværkstur pr. tur i al evighed.
-    return this.endpoint !== "" && this.failures < 3;
+    return this.endpoint !== "" && this.failures < 3 && Date.now() >= this.quietUntil;
   }
 
   private key(a: string, b: string, verdict: string): string {
@@ -152,6 +165,13 @@ export class LiveNarrator {
           summer: req.summer,
         }),
       });
+      if (res.status === 429 || res.status === 503) {
+        // 429 (pr.-IP loft) og 503 (dagens budget) er en grænse sat med
+        // vilje, ikke en fejl i endpointet — tavshed, ikke en tælling til
+        // afbryderen, og ro til den tid serveren selv opgav.
+        this.quietUntil = Date.now() + retryAfterMs(res);
+        return undefined;
+      }
       if (!res.ok) {
         // Kastes frem for at returnere tomt: et endpoint der svarer dårligt
         // er en fejl, og fejl skal tælles, så et dødt endpoint holder op med
@@ -166,9 +186,17 @@ export class LiveNarrator {
   }
 }
 
+/** Hvor længe der skal være ro, hvis serveren ikke opgav en brugbar Retry-After. */
+function retryAfterMs(res: Response): number {
+  const raw = res.headers.get("retry-after");
+  const secs = raw ? Number(raw) : NaN;
+  return Number.isFinite(secs) && secs > 0 ? secs * 1000 : DEFAULT_QUIET_MS;
+}
+
 /** Det modellen får at vide om en ting. Samme felter som skribenterne fik. */
 function describe(e: ElementDef) {
   return {
+    id: e.id,
     name: e.name,
     kind: e.kind,
     stuff: e.stuff,

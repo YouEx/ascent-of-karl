@@ -11,6 +11,11 @@ sarkastisk fortæller kommenterer alle dine valg. Dine dumme beslutninger
 📖 **[PRD.md](PRD.md)** er den styrende reference for al udvikling.
 🛠 **[CLAUDE.md](CLAUDE.md)** har kodestandarder og arkitektur.
 
+Fortælleren kan valgfrit skrive replikker live via en model (se
+`plan/feature-live-narrator-1.md`) — slået fra som default, og komplet uden
+den. Er den nogensinde slået til, er opskriften
+[docs/deployment/live-narrator.md](docs/deployment/live-narrator.md).
+
 ## Kom i gang
 
 ```bash

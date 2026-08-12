@@ -41,6 +41,22 @@ function nyLive(svar: string | undefined, status = 200): LiveNarrator {
   return new LiveNarrator("https://example.invalid/line");
 }
 
+/** Samme, men svaret bærer en Retry-After-header — til 429/503-testene. */
+function nyLiveMedRetryAfter(
+  status: number,
+  retryAfterSeconds: number,
+): { live: LiveNarrator; fetchMock: ReturnType<typeof vi.fn> } {
+  const fetchMock = vi.fn(
+    async () =>
+      new Response("nej", {
+        status,
+        headers: { "retry-after": String(retryAfterSeconds) },
+      }),
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  return { live: new LiveNarrator("https://example.invalid/line"), fetchMock };
+}
+
 describe("live-fortælleren", () => {
   beforeEach(() => {
     vi.unstubAllGlobals();
@@ -116,6 +132,84 @@ describe("live-fortælleren", () => {
     // 500 giver undefined uden at kaste — tælleren skal alligevel løbe.
     for (const v of ["inert", "clash", "absurd"]) await live.prefetch(req(v));
     expect(live.enabled).toBe(false);
+  });
+
+  it("429 er tavshed: intet svar, ingen tælling til afbryderen, og intet nyt forsøg før Retry-After er gået", async () => {
+    vi.useFakeTimers();
+    try {
+      const { live, fetchMock } = nyLiveMedRetryAfter(429, 30);
+      const req = () => ({
+        a: content.elements.find((e) => e.id === A)!,
+        b: content.elements.find((e) => e.id === B)!,
+        verdict: "inert",
+      });
+
+      // Gentag cyklussen fire gange — flere end de tre fejl der ellers ville
+      // slå den PERMANENTE afbryder til. Var 429 fejlagtigt talt med som en
+      // almindelig fejl, ville laget være dødt efter den tredje, og et
+      // forsøg efter det fjerde ro-vindue ville aldrig nå netværket igen.
+      for (let i = 0; i < 4; i++) {
+        const result = await live.prefetch(req());
+        expect(result).toBeUndefined();
+        // Endnu et forsøg STRAKS bagefter er stadig i ro-perioden og må ikke
+        // ramme netværket.
+        const again = await live.prefetch(req());
+        expect(again).toBeUndefined();
+        vi.advanceTimersByTime(31_000);
+      }
+
+      // Fire cyklusser, fire (og kun fire) rigtige netværkskald.
+      expect(fetchMock).toHaveBeenCalledTimes(4);
+      // Ro-perioden er forbi, og laget er stadig villigt til at spørge —
+      // beviset på at 429 aldrig rørte den permanente afbryder.
+      expect(live.enabled).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("503 (dagligt loft) er også tavshed: intet svar, ingen tælling, ro indtil nulstillingen — og fortæller normalt igen bagefter", async () => {
+    vi.useFakeTimers();
+    try {
+      // Første kald rammer det daglige loft; andet (efter nulstillingen) er
+      // en helt almindelig, vellykket samtale — præcis som et rigtigt døgnskifte.
+      let calls = 0;
+      const fetchMock = vi.fn(async () => {
+        calls++;
+        if (calls === 1) {
+          return new Response("nej", { status: 503, headers: { "retry-after": "3600" } });
+        }
+        return new Response(
+          JSON.stringify({ text: "The clay sat there while the berries did nothing at all." }),
+          { status: 200 },
+        );
+      });
+      vi.stubGlobal("fetch", fetchMock);
+      const live = new LiveNarrator("https://example.invalid/line");
+      const req = () => ({
+        a: content.elements.find((e) => e.id === A)!,
+        b: content.elements.find((e) => e.id === B)!,
+        verdict: "inert",
+      });
+
+      const result = await live.prefetch(req());
+      expect(result).toBeUndefined();
+
+      // Intet nyt forsøg før nulstillingen (den UTC-tid workeren opgav) er nået.
+      const again = await live.prefetch(req());
+      expect(again).toBeUndefined();
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(3601 * 1000);
+      const efterNulstilling = await live.prefetch(req());
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      // Beviset på at 503 aldrig rørte den permanente afbryder: laget taler
+      // helt normalt igen, så snart nulstillingen er passeret.
+      expect(efterNulstilling).toContain("clay");
+      expect(live.enabled).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 
