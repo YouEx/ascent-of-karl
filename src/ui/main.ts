@@ -359,7 +359,7 @@ function renderProblems(): void {
 const EMPTY_SLOT =
   '<span class="slot-empty">' +
   '<b>Select an element</b>' +
-  '<i>Drag or choose from below</i>' +
+  '<i>Choose from below</i>' +
   "</span>";
 
 function renderSlots(): void {

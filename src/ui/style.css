@@ -98,6 +98,21 @@ body {
   padding-bottom: calc(var(--dock-h) + var(--safe-b) + 0.5rem);
 }
 
+/* DESIGN.md §4: "Under 768px falder rammen væk og pergamentet går til fuld
+   bredde — et vindue med margin på en telefon er spildt plads." Margin,
+   kant og hjørneradius er alle del af det svævende vindue, så alle tre
+   forsvinder samlet. min-height mister sin "- 8px": de otte pixel var
+   margins egne (4 top + 4 bund), og uden margin skal rammen selv nå
+   præcis 100dvh, ellers står der en unødig stribe tilbage forneden. */
+@media (max-width: 767px) {
+  #app {
+    margin: 0;
+    min-height: 100dvh;
+    border: none;
+    border-radius: 0;
+  }
+}
+
 /* ---------- Header ---------- */
 /* Klæbende flader ligger på et gennemsigtigt papir-slør, ikke på en flad
    farve — ellers skærer de en firkant ud af gradienten når man ruller. */
@@ -1011,7 +1026,7 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   padding: 0.4rem 1rem; cursor: pointer;
   min-height: 0;
 }
-#timeline-toggle strong { font-weight: 600; }
+#timeline-toggle strong { font-weight: 600; font-variant-numeric: tabular-nums; }
 /* Messinguret, skåret ud af referencen. Målt 30x34. */
 .timeline-watch {
   flex: 0 0 auto;
@@ -1682,7 +1697,7 @@ img.card-glyph {
   font-family: var(--font-display); font-size: var(--step-title);
   font-weight: 600; font-variation-settings: "WONK" 1;
 }
-.modal-sub { color: var(--ink-soft); font-size: 0.85rem; margin-top: 0; }
+.modal-sub { color: var(--ink-soft); font-size: 0.85rem; margin-top: 0; font-variant-numeric: tabular-nums; }
 .trophy {
   display: flex; gap: 0.75rem; align-items: center;
   padding: 0.5rem 0; border-bottom: 1px solid var(--rule);
@@ -1698,6 +1713,14 @@ img.card-glyph {
     padding-bottom: 1rem;
     display: flex;
     flex-direction: column;
+    /* Ingen child havde flex-grow, så basisreglens tvungne min-height
+       (100dvh - 8px) stod tilbage som dødt rum under #grid — og fordi
+       app-field.webp er sat til at STRÆKKE (100% 100%, se #app), blev
+       fladen forvrænget over hele det tomme areal i stedet for bare tom.
+       #dock er `static` her (nedenfor), så den tvungne højde løser intet
+       reelt på dette breakpoint — kun på mobil, hvor dokken er `fixed`
+       og rammen skal nå hele vejen ned bag den. */
+    min-height: auto;
   }
   /* Referencens lodrette rytme er IKKE ensartet: 20, 18, 18, 13, 21, 23 px.
      Vi kørte 20 px hele vejen, og de tre for store mellemrum stablede sig
