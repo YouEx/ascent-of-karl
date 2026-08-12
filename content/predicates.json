@@ -1,0 +1,73 @@
+{
+  "_kommentar": "Prædikater der erstatter allowlisterne. Udledt AF de eksisterende løsninger, ikke af fantasi — se docs/design/taxonomy-ground-truth.json og tools/predicate_report.py. Reglen: afviser et prædikat noget på facitlisten, er taggene forkerte, ikke facitlisten.",
+  "_crafted": "crafted: true betyder !base. Grænsen er læst af indholdet: alle 30 nuværende løsninger er fremstillede, og ingen af de 11 base-elementer løser noget — heller ikke bær, larver og fugl, som ellers er spiselige. Reglen er ikke 'spiseligt', men 'spiseligt som Karl selv har lavet'. Uden dette kunne sult løses i tur 1.",
+
+  "sult": {
+    "_navn": "Karl is hungry",
+    "_udledt_af": "stegt kød, ristede larver, fisk, mudderkage, brød, æg, agerngrød, honning, flæsk, østers, bålstegt æg",
+    "crafted": true,
+    "traits": ["edible"]
+  },
+
+  "kulde": {
+    "_navn": "Karl is freezing",
+    "_udledt_af": "ild, skind, hytte, tøj, sengeleje, dunkappe, klyngen, mudderlag",
+    "_note": "Tre veje til varme: lav den (hot), hold på den (insulating), eller gå indenfor (structure). Klyngen — nabo + skind — er den komiske tredje, og prædikatet skal kunne rumme den.",
+    "_hul_lukket": "Den bare structure-gren er fjernet. En hytte holder på varmen, altså er den insulating, og så er grenen overflødig. Var den blevet stående, varmede en sunken by og en fældegrav også.",
+    "crafted": true,
+    "anyOf": [
+      { "traits": ["hot"] },
+      { "traits": ["insulating"] }
+    ]
+  },
+
+  "vaerktoej": {
+    "_navn": "Bare hands",
+    "_udledt_af": "stenøkse, benkniv, gravestok, hammer, håndkile, skraber, slynge, harpun, flint, spydspids, morter",
+    "crafted": true,
+    "kind": ["tool"]
+  },
+
+  "ulve": {
+    "_navn": "Wolves at the treeline",
+    "_udledt_af": "ild, spyd, hund, bue, slynge, stenøkse, fælde, hytte, harpun, kølle",
+    "_note": "Begrebet er 'et våben, en ild, et ly eller en ven med tænder'. Fire veje, fordi listen har fire slags ting på sig.",
+    "_hul_lukket": "Ly kræver nu camp-skala. Uden den lukkede en sunken by i landskabsstørrelse ind som beskyttelse mod ulve — man kan ikke gå indenfor i en ruin på bunden af havet. Kroen slipper stadig igennem, og det er med vilje: at gemme sig for ulve i en kro er et gyldigt og morsomt svar.",
+    "crafted": true,
+    "anyOf": [
+      { "traits": ["weapon"] },
+      { "traits": ["hot"] },
+      { "kind": ["structure"], "scale": ["camp"] },
+      { "kind": ["creature"], "traits": ["tame"] }
+    ]
+  },
+
+  "toerke": {
+    "_navn": "The stream has stopped",
+    "_udledt_af": "keramik, regn, have, tømmerflåde, båd, gravestok, morter, sne, is",
+    "_note": "Enten bærer man vandet, finder det, eller graver efter det.",
+    "_hul_lukket": "stuff=water var for snæver. Sne og is står på menneskets egen liste, og de er tagget som fænomener med traits=[cold, wet] — ikke stuff=water. Vand i enhver form tæller, derfor traits=[wet]. Det retter også regn og haven.",
+    "crafted": true,
+    "anyOf": [
+      { "traits": ["vessel"] },
+      { "stuff": ["water"] },
+      { "traits": ["wet"] },
+      { "traits": ["digs"] },
+      { "traits": ["floats"] }
+    ]
+  },
+
+  "sygdom": {
+    "_navn": "The fever",
+    "_udledt_af": "urtemedicin, shamanen Ugh, ild, tøj, hytte, sengeleje, honning, helligdom, ritual, skinne",
+    "_note": "Tre veje, og de er hele spillets menneskesyn på en linje: helbred det, hold ham varm, eller tro dig ud af det. Ritualet og helligdommen virker ikke medicinsk, men de står på listen, og det skal prædikatet respektere.",
+    "_hul_lukket": "Første kørsel mod rigtige tags accepterede regnskab, kalender, kort, skrift og symbol, fordi troens gren stod som kind=abstract. At kurere feber med bogholderi er ikke tro, det er et hul. Grenen kræver nu traits=[sacred]. Samme øvelse for ly: kind=structure alene lukkede fældegraven ind, så den kræver nu at bygningen faktisk isolerer.",
+    "crafted": true,
+    "anyOf": [
+      { "traits": ["healing"] },
+      { "traits": ["hot"] },
+      { "traits": ["insulating"] },
+      { "traits": ["sacred"] }
+    ]
+  }
+}

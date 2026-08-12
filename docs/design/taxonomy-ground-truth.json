@@ -1,0 +1,209 @@
+{
+  "_kommentar": "Facitliste udledt af håndskrevet indhold — se tools/ground_truth.py. must_accept: prædikatet SKAL acceptere alle. must_reject_all: intet nøde-prædikat må acceptere nogen af disse.",
+  "generated_from": {
+    "combos": 225,
+    "challenges": 3,
+    "elements": 187
+  },
+  "must_reject_all": [
+    "baer",
+    "dyr",
+    "fugl",
+    "graes",
+    "larver",
+    "ler",
+    "nabo",
+    "pind",
+    "stamme",
+    "sten",
+    "vand"
+  ],
+  "must_reject_all_names": [
+    "Berries",
+    "Bird",
+    "Clay",
+    "Dry grass",
+    "Grubs",
+    "Log",
+    "Neighbour",
+    "Stick",
+    "Stone",
+    "Water",
+    "Wild boar"
+  ],
+  "cases": [
+    {
+      "need": "kulde",
+      "type": "problem",
+      "name": "Karl is freezing",
+      "must_accept": [
+        "dunkappe",
+        "hytte",
+        "ild",
+        "klyngen",
+        "mudderlag",
+        "sengeleje",
+        "skind",
+        "toej"
+      ],
+      "must_accept_names": [
+        "Down cloak",
+        "Fire",
+        "Grass bedding",
+        "Hide cloak",
+        "Hut",
+        "Mud coat",
+        "Sewn clothes",
+        "The huddle"
+      ]
+    },
+    {
+      "need": "sult",
+      "type": "problem",
+      "name": "Karl is hungry",
+      "must_accept": [
+        "aeg",
+        "agerngroed",
+        "baalstegt-aeg",
+        "broed",
+        "fisk",
+        "flaesk",
+        "honning",
+        "mudderkage",
+        "oesters",
+        "ristede-larver",
+        "stegt-koed"
+      ],
+      "must_accept_names": [
+        "Acorn mush",
+        "Bread",
+        "Egg",
+        "Fire-baked egg",
+        "Fish",
+        "Honey",
+        "Mud pie",
+        "Roast meat",
+        "Roast pork",
+        "Roasted grubs",
+        "Shellfish"
+      ]
+    },
+    {
+      "need": "vaerktoej",
+      "type": "problem",
+      "name": "Bare hands",
+      "must_accept": [
+        "benkniv",
+        "flint",
+        "gravestok",
+        "haandkile",
+        "hammer",
+        "harpun",
+        "morter",
+        "skraber",
+        "slynge",
+        "spydspids",
+        "stenoekse"
+      ],
+      "must_accept_names": [
+        "Bone knife",
+        "Digging stick",
+        "Hammer",
+        "Hand axe",
+        "Harpoon",
+        "Heat-treated flint",
+        "Hide scraper",
+        "Mortar and pestle",
+        "Sling",
+        "Stone axe",
+        "Stone-tipped spear"
+      ]
+    },
+    {
+      "need": "ulve",
+      "type": "challenge",
+      "name": "Wolves at the treeline",
+      "must_accept": [
+        "bue",
+        "faelde",
+        "harpun",
+        "hund",
+        "hytte",
+        "ild",
+        "koelle",
+        "slynge",
+        "spyd",
+        "stenoekse"
+      ],
+      "must_accept_names": [
+        "Bow",
+        "Club",
+        "Dog",
+        "Fire",
+        "Harpoon",
+        "Hut",
+        "Sling",
+        "Snare",
+        "Spear",
+        "Stone axe"
+      ]
+    },
+    {
+      "need": "toerke",
+      "type": "challenge",
+      "name": "The stream has stopped",
+      "must_accept": [
+        "baad",
+        "gravestok",
+        "have",
+        "is",
+        "keramik",
+        "morter",
+        "regn",
+        "sne",
+        "toemmerflaade"
+      ],
+      "must_accept_names": [
+        "Canoe",
+        "Digging stick",
+        "Garden",
+        "Ice",
+        "Mortar and pestle",
+        "Pottery",
+        "Raft",
+        "Rain",
+        "Snow"
+      ]
+    },
+    {
+      "need": "sygdom",
+      "type": "challenge",
+      "name": "The fever",
+      "must_accept": [
+        "helligsted",
+        "honning",
+        "hytte",
+        "ild",
+        "medicin",
+        "ritual",
+        "sengeleje",
+        "shaman",
+        "splint",
+        "toej"
+      ],
+      "must_accept_names": [
+        "Fire",
+        "Grass bedding",
+        "Herbal remedy",
+        "Honey",
+        "Hut",
+        "Ritual",
+        "Sewn clothes",
+        "Shaman Ugh",
+        "Shrine",
+        "Splint"
+      ]
+    }
+  ],
+  "label_count": 70
+}

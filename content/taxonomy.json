@@ -1,0 +1,59 @@
+{
+  "_kommentar": "Kontrolleret ordforråd for elementtaksonomien. Eneste sandhed for tools/validate.py, tools/tag_elements.py og prædikaterne i acts/challenges. Udvid kun med måling i hånden — hvert nyt trait er en ny måde at gøre et prædikat upræcist på.",
+  "kind": {
+    "_kommentar": "Hvad tingen ER. Præcis én pr. element.",
+    "values": {
+      "material": "Råstof man laver noget AF. Sten, ler, træstamme.",
+      "tool": "Noget Karl bruger til at gøre noget ved verden. Økse, gravestok, morter.",
+      "food": "Noget der kan spises som et måltid. Stegt kød, brød, mudderkage.",
+      "creature": "Et dyr. Vildsvin, fugl, hund.",
+      "person": "Et menneske. Naboen.",
+      "structure": "Noget bygget der står stille og rummer eller beskytter. Hytte, have, stencirkel.",
+      "phenomenon": "Noget der sker frem for noget der findes. Ild, lyn, regn, damp.",
+      "abstract": "En idé, en aftale, en kunst. Kalender, sprog, hulemaleri."
+    }
+  },
+  "stuff": {
+    "_kommentar": "Hvad tingen er lavet af. Præcis én — den dominerende. 'none' for fænomener og abstrakter.",
+    "values": ["stone", "wood", "plant", "flesh", "clay", "metal", "water", "fire", "fibre", "bone", "none"]
+  },
+  "traits": {
+    "_kommentar": "Egenskaber. Mindst én, typisk 2-5. Kun det der er SANDT og BRUGBART — et trait der gælder alt, adskiller intet.",
+    "values": {
+      "hard": "Modstår tryk. Sten, knogle, metal.",
+      "soft": "Giver efter. Skind, mos, dej.",
+      "sharp": "Har en æg der skærer.",
+      "blunt": "Slår frem for at skære.",
+      "hot": "Giver varme af sig selv. Ild, gløder, damp.",
+      "cold": "Trækker varme ud. Is, sne.",
+      "wet": "Vådt eller indeholder væske.",
+      "dry": "Tørt — og dermed brændbart eller holdbart.",
+      "alive": "Lever lige nu.",
+      "dead": "Var levende, er det ikke længere. Kød, knogle, skind.",
+      "edible": "Kan spises af et menneske uden at dø af det.",
+      "heavy": "Kræver kræfter at flytte.",
+      "light": "Kan bæres uden besvær.",
+      "fragile": "Går i stykker hvis man taber det.",
+      "sticky": "Binder ting sammen. Harpiks, mudder, honning.",
+      "insulating": "Holder på kropsvarme. Skind, dun, græsleje, mudderlag.",
+      "tame": "Gør hvad Karl siger. Hund, tamsvin, okse.",
+      "weapon": "Kan bruges til at skade noget på afstand eller med magt. Spyd, bue, slynge, kølle.",
+      "vessel": "Kan indeholde væske eller løst materiale. Keramik, morter, net.",
+      "digs": "Kan flytte jord.",
+      "healing": "Lindrer sygdom eller skade. Urtemedicin, honning, skinne — og den der kan bruge dem.",
+      "sacred": "Har betydning ud over sin nytte. Helligdom, ritual, idol, offerkrukke. Ikke bare abstrakt — et regnskab er abstrakt, men intet helligt.",
+      "floats": "Bærer vægt på vand. Tømmerflåde, båd.",
+      "loud": "Larmer. Tromme, rockband.",
+      "portable": "Kan tages med på vandring — modsat noget der står fast."
+    }
+  },
+  "scale": {
+    "_kommentar": "Hvor stor tingen er i forhold til Karl. Præcis én.",
+    "values": {
+      "hand": "Kan holdes i én hånd.",
+      "body": "På størrelse med Karl eller båret på kroppen.",
+      "camp": "Fylder en lejrplads. Hytte, bål, have.",
+      "landscape": "Større end lejren. Flod, uvejr, stencirkel."
+    }
+  }
+}

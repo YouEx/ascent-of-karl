@@ -1,0 +1,520 @@
+{
+  "elements": [
+    {
+      "id": "lyn",
+      "kind": "phenomenon",
+      "stuff": "none",
+      "traits": [
+        "hot",
+        "loud"
+      ],
+      "scale": "landscape"
+    },
+    {
+      "id": "sne",
+      "kind": "phenomenon",
+      "stuff": "none",
+      "traits": [
+        "cold",
+        "wet"
+      ],
+      "scale": "landscape"
+    },
+    {
+      "id": "is",
+      "kind": "material",
+      "stuff": "water",
+      "traits": [
+        "cold",
+        "hard"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "ski",
+      "kind": "tool",
+      "stuff": "wood",
+      "traits": [
+        "hard",
+        "light",
+        "portable"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "reb",
+      "kind": "material",
+      "stuff": "fibre",
+      "traits": [
+        "light",
+        "portable",
+        "dry"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "net",
+      "kind": "tool",
+      "stuff": "fibre",
+      "traits": [
+        "vessel",
+        "portable",
+        "light"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "fangst",
+      "kind": "food",
+      "stuff": "flesh",
+      "traits": [
+        "edible",
+        "dead",
+        "heavy"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "faelde",
+      "kind": "tool",
+      "stuff": "fibre",
+      "traits": [
+        "weapon",
+        "portable",
+        "light"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "ulv",
+      "kind": "creature",
+      "stuff": "flesh",
+      "traits": [
+        "alive"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "hund",
+      "kind": "creature",
+      "stuff": "flesh",
+      "traits": [
+        "alive",
+        "tame"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "bue",
+      "kind": "tool",
+      "stuff": "wood",
+      "traits": [
+        "weapon",
+        "light",
+        "portable"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "pil",
+      "kind": "tool",
+      "stuff": "wood",
+      "traits": [
+        "sharp",
+        "weapon",
+        "portable"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "romance",
+      "kind": "phenomenon",
+      "stuff": "none",
+      "traits": [
+        "loud"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "familie",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "stammefolk",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "grav",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "dead",
+        "sacred"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "eftermaele",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "sacred"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "gave",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "portable"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "handel",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "portable",
+        "loud"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "skal",
+      "kind": "material",
+      "stuff": "bone",
+      "traits": [
+        "hard",
+        "light",
+        "fragile"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "penge",
+      "kind": "material",
+      "stuff": "bone",
+      "traits": [
+        "hard",
+        "light",
+        "portable"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "marked",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "hoevding",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "lov",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "ritual",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "sacred"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "aand",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "dead",
+        "sacred"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "myte",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud",
+        "sacred"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "solgud",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "sacred"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "maske",
+      "kind": "material",
+      "stuff": "flesh",
+      "traits": [
+        "portable",
+        "light",
+        "sacred"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "dans",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud",
+        "sacred"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "naal",
+      "kind": "tool",
+      "stuff": "bone",
+      "traits": [
+        "sharp",
+        "hard",
+        "light"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "toej",
+      "kind": "material",
+      "stuff": "flesh",
+      "traits": [
+        "insulating",
+        "soft",
+        "dead"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "tatovering",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "portable"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "spejl",
+      "kind": "phenomenon",
+      "stuff": "none",
+      "traits": [
+        "wet"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "haarklip",
+      "kind": "phenomenon",
+      "stuff": "none",
+      "traits": [
+        "dead"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "splint",
+      "kind": "tool",
+      "stuff": "wood",
+      "traits": [
+        "hard",
+        "light",
+        "healing"
+      ],
+      "scale": "body"
+    },
+    {
+      "id": "froe",
+      "kind": "material",
+      "stuff": "plant",
+      "traits": [
+        "edible",
+        "light",
+        "dry"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "have",
+      "kind": "structure",
+      "stuff": "plant",
+      "traits": [
+        "alive",
+        "wet"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "hoest",
+      "kind": "food",
+      "stuff": "plant",
+      "traits": [
+        "edible",
+        "heavy"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "den-lange-vinter",
+      "kind": "phenomenon",
+      "stuff": "none",
+      "traits": [
+        "cold",
+        "wet"
+      ],
+      "scale": "landscape"
+    },
+    {
+      "id": "levende-gud",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud",
+        "sacred"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "jagtfoelge",
+      "kind": "abstract",
+      "stuff": "none",
+      "traits": [
+        "loud"
+      ],
+      "scale": "camp"
+    },
+    {
+      "id": "fossil",
+      "kind": "material",
+      "stuff": "stone",
+      "traits": [
+        "hard",
+        "dead"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "rav",
+      "kind": "material",
+      "stuff": "stone",
+      "traits": [
+        "hard",
+        "light"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "myg-i-rav",
+      "kind": "material",
+      "stuff": "stone",
+      "traits": [
+        "hard",
+        "dead",
+        "light"
+      ],
+      "scale": "hand"
+    },
+    {
+      "id": "monolit",
+      "kind": "structure",
+      "stuff": "stone",
+      "traits": [
+        "hard",
+        "heavy",
+        "sacred"
+      ],
+      "scale": "landscape"
+    },
+    {
+      "id": "besoegende",
+      "kind": "phenomenon",
+      "stuff": "none",
+      "traits": [
+        "loud"
+      ],
+      "scale": "landscape"
+    }
+  ],
+  "usikre": [
+    {
+      "id": "skal",
+      "hvorfor": "Ingen 'shell'-værdi i stuff-ordforrådet. Valgte 'bone' som nærmeste hårde biologiske materiale."
+    },
+    {
+      "id": "penge",
+      "hvorfor": "Samme problem som 'skal' — muslingeskaller mangler egen stuff-værdi, 'bone' er nærmeste approksimation."
+    },
+    {
+      "id": "haarklip",
+      "hvorfor": "Klassificeret som phenomenon (en engangsbegivenhed), men 'dead' beskriver egentlig det afklippede hår snarere end selve begivenheden — usikker kobling."
+    },
+    {
+      "id": "stammefolk",
+      "hvorfor": "'loud' er udledt af at en stor gruppe formentlig larmer mere end en enkelt person — ikke direkte belæg i flavor-teksten, modsat de andre 'loud'-tags i batchen."
+    },
+    {
+      "id": "romance",
+      "hvorfor": "Rettet fra 'hot' (fysisk-metafor-fejl, kunne varme Karl/skræmme ulve i prædikaterne). Ny værdi 'loud' bygger på 'Somebody laughed' — en enkelt latter er et tyndt belæg for 'larmer', men bedre end en fysisk løgn."
+    },
+    {
+      "id": "lov",
+      "hvorfor": "Rettet fra 'hard' (metafor for ufravigelighed, ikke fysisk hårdhed). Ny værdi 'loud' antager at en lov i et før-skriftligt samfund må proklameres højlydt for at gælde — udledt, ikke eksplicit i flavor."
+    },
+    {
+      "id": "gave",
+      "hvorfor": "Rettet fra 'sticky' (metafor for social binding, ikke klæbrighed som defineret). 'portable' er sand men generisk — ingen stærkere adskillende egenskab fandtes til selve gave-begrebet."
+    },
+    {
+      "id": "handel",
+      "hvorfor": "Rettet fra 'sticky' (samme metafor-fejl som gave). 'portable' (varer flyttes) og 'loud' (prutning, jf. 'to potter for en økse') er begge bogstavelige, men den sidste er en fortolkning af scenen, ikke eksplicit nævnt."
+    },
+    {
+      "id": "besoegende",
+      "hvorfor": "Rettet fra 'hot' (rent gæt uden belæg). 'loud' bygger nu direkte på 'Both are shouting'. Fik IKKE 'sacred', selvom shamanen kalder lysene forfædre — flavor holder shamanens religiøse tolkning og Karls skeptiske ('de er bare lys') op mod hinanden uden at afgøre det, så elementet er tagget som det uafklarede fænomen, ikke som en trosbekendelse."
+    },
+    {
+      "id": "sacred-afledning",
+      "hvorfor": "'sacred' er tilføjet til grav, aand, myte, solgud, maske, dans, levende-gud, monolit og eftermaele ud fra combos.json's helligheds-slægtskab (grav kræver helligsted; aand/myte/solgud/eftermaele nedstammer derfra; shaman+skind->maske->dans->levende-gud er den anden gren; monolit fører til aand->besoegende). Kun ritual og splint (healing) står direkte på challenges.json's facitliste — resten er udledt af håndværks-slægtskabet, ikke bekræftet af en løsningsliste. hoevding og lov blev bevidst IKKE tagget sacred: de nedstammer fra samme gren som regnskab/kalender/skrift (sekulær/juridisk), som taxonomien selv undtager ('et regnskab er abstrakt, men intet helligt')."
+    },
+    {
+      "id": "toej-maske-kind",
+      "hvorfor": "toej og maske rettet fra kind=tool til kind=material: begge er BÅRNE genstande uden aktiv virkning på verden (i modsætning til bue/net/faelde/naal/ski, som alle udfører en handling — skyder, fanger, dræber, syr, glider). Følger batch 4's præcedens (dunkappe, sengeleje = material for samme slags passive/isolerende objekter). Samme test ville gælde tromme (batch 1, tagget tool der, ikke rettet her da den ikke er i denne batch): en tromme spilles ceremonielt, den udfører ikke noget på verden. Konsekvens: toej og maske løser ikke længere 'vaerktoej' (Bare hands) — kun kulde/sygdom (toej via insulating, maske via sacred)."
+    }
+  ]
+}
