@@ -26,6 +26,28 @@ npm run validate   # indholdsvalidering (kræver python3)
 npm run build      # typecheck + produktion-build
 ```
 
+## Tilføj et element uden at skrive en replik
+
+Fortælleren har tre lag under de håndskrevne øjeblikke, og det nederste
+brugbare lag er en **grammatik, der taler ud fra taksonomien** frem for ud fra
+elementnavne (`docs/design/fortaelleren.md`, "Trelagsmodellen"). Derfor kan et
+nyt element få kommentarer fra dag ét, uden at nogen skriver en linje tekst til
+det.
+
+1. Tilføj elementet i `content/elements.json` med `kind`, `stuff`, `scale` og
+   mindst ét `trait` — alle fire skal findes i `content/taxonomy.json`. Skriv
+   også `flavor`; validatoren advarer uden den, og grammatikken læser den.
+2. Tilføj mindst én kombination i `content/combos.json`. Er elementet en
+   opdagelse, skal det have en historisk `note`.
+3. `npm run validate` — den fejler på ukendte tags, dinglende id'er og
+   blindgyder, og fortæller hvad der mangler.
+
+Der er ikke noget trin 4. Fejler man med det nye element, siger fortælleren
+noget, der nævner begge ting og passer til motorens dom. Vil man have en
+*bedre* replik til et bestemt par, kan den bages senere med
+`tools/prepare_pairs.ts` → `tools/assemble_pairs.py`, men det er en forbedring,
+ikke en forudsætning.
+
 ## Status
 
 - [x] Step 0 — projektopsætning, stack-beslutning (TypeScript/Vite, se CLAUDE.md), CI

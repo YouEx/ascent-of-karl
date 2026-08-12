@@ -49,11 +49,32 @@
 - Pr. akt: 3-5 **nødvendige** opdagelser, 10+ **valgfrie** med anekdoter og flags
 
 ### 2.4 Fortæller-systemet (spillets hjerte)
-Fortælleren har fire triggertyper, i prioriteret rækkefølge:
-1. **Story-beats** (håndskrevne, højest prioritet): reaktion på nøgleopdagelser og valg
-2. **Adfærd**: sten-spam-tællere (eskalering ved 3/5/8), gentagne identiske kombinationer, lange pauser, hurtige streaks af fiaskoer
-3. **Flags/hukommelse**: refererer tidligere valg ("Larvemanden er tilbage")
-4. **Generiske fiaskoer**: roterende pulje, aldrig samme replik to gange i træk
+Fortælleren vælger sin replik i én prioriteret kæde. De fire øverste trin er
+håndskrevne øjeblikke; de fire nederste er fiaskokæden, der sørger for, at et
+forsøg aldrig mødes med tavshed:
+
+1. **Slutninger og udfordringer**: fortællerens sidste ord i et run, og de
+   frister der presser alt andet i baggrunden
+2. **Story-beats** (håndskrevne): reaktion på nøgleopdagelser og valg. Hans eget
+   råd, der slog fejl, står før adfærd — der findes intet øjeblik med højere
+   signal end at spilleren gjorde præcis, hvad der blev bedt om, og intet skete
+3. **Adfærd**: spam-tællere (eskalering ved 3/5/8), gentagne identiske
+   kombinationer, sweeps, lange pauser, hurtige streaks — og hint-eskaleringen
+4. **Flags/hukommelse**: refererer tidligere valg ("Larvemanden er tilbage")
+5. **Bagt parreplik**: skrevet på forhånd om præcis disse to ting
+6. **Live-replik**: skrevet på stedet om det samme par, hvis den nåede frem
+   mens spilleren valgte (tilvalg, se `plan/feature-live-narrator-1.md`)
+7. **Grammatik**: en replik der nævner begge ting, valgt ud fra motorens dom
+8. **Generiske fiaskoer**: roterende pulje — nødudgangen, der i praksis aldrig nås
+
+**Trelagsmodellen.** Trin 5–8 er tre kilder til den samme replik, rangeret efter
+hvor meget de ved om parret. Det bagte lag er skrevet af et menneske om netop de
+to elementer. Grammatikken kender kun motorens dom og elementernes taksonomi, og
+kan derfor tale om et hvilket som helst par, også ét der blev til i går. Den
+generiske pulje ved intet. Målt over 1200 gennemspilninger falder 72,4 % af
+møderne på det bagte lag, 27,6 % på grammatikken og 0 % på tavshed
+(`docs/design/narration-coverage.md`). Konsekvensen for indholdsarbejdet er, at
+et nyt element ikke kræver en eneste ny replik — se `README.md`.
 
 **Fortællerens karakterbue over spillet:** pompøs dokumentarist → slidt og resigneret → modvilligt imponeret. Skrives som én sammenhængende karakter af én skribent.
 

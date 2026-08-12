@@ -96,6 +96,43 @@ Validatoren håndhæver, at hvert obligatorisk problem har et træk med mindst f
 varianter (det høres hver gang historien rykker), at trods-replikkerne findes,
 og at en akt med træk ikke mangler trods-kortet helt.
 
+## Trelagsmodellen (besluttet 2026-08-12, målt 2026-08-13)
+
+Fortælleren vælger sin replik i én prioriteret kæde (PRD §2.4). De øverste trin
+er håndskrevne øjeblikke. De nederste fire er **fiaskokæden**, og de er tre
+kilder til den samme replik, rangeret efter hvor meget de ved om parret:
+
+| Lag | Ved om parret | Skrevet af | Andel af møder |
+|---|---|---|---:|
+| **Bagt** (`pairs-act-1.json`) | begge navne, begge flavors, karlMood, den målte dominerende dom | et menneske, på forhånd | **72,4 %** |
+| **Live** (`src/narrator/live.ts`) | det samme, men i øjeblikket | en model, mens spilleren vælger | tilvalg, se nedenfor |
+| **Grammatik** (`grammar-act-1.json`) | motorens dom og elementernes taksonomi — ikke navnenes betydning | et menneske, som regler | **27,6 %** |
+| **Generisk** (`genericFailure`) | intet | et menneske, som pulje | **0 %** |
+
+Målt over 1200 gennemspilninger med 1015 forskellige par mødt
+(`docs/design/narration-coverage.md`, genereret af `tools/coverage_report.mjs`).
+Den generiske pulje er dermed blevet en **nødudgang, der i praksis aldrig nås** —
+den findes for at intet forsøg kan mødes med tavshed, ikke for at blive hørt.
+
+**Hvorfor rækkefølgen er sådan.** Det bagte lag står først, fordi en replik en
+skribent har siddet med altid slår en, der blev skrevet på et sekund. Live står
+efter det bagte af samme grund — men før grammatikken, fordi den til gengæld
+ved præcis, hvad de to ting *er*, hvor grammatikken kun kender dommen.
+
+**Prisen for laget.** Bagte replikker koster plads, ikke tid: de lazy-loades pr.
+akt med en dynamisk `import()` og fylder 58,3 KB gzip for Akt I. Budgettet er
+60 KB pr. akt og bevogtes af `tools/validate.py`, ikke af build-loggen.
+Opslags-id'et *udledes* fra parret frem for at blive gemt — den udledning findes
+tre steder (`pairLineId()` i `src/narrator/pairs.ts`, `line_id()` i
+`tools/assemble_pairs.py`, og inline i `validate.py`) og skal holdes i sync.
+Divergerer de, rapporterer validatoren hvert eneste opslag som dinglende. Det er
+en larmende fejl, og det er med vilje.
+
+**Det vigtigste, laget betyder for indholdsarbejdet:** et nyt element kræver ikke
+en eneste ny replik. Grammatikken taler ud fra taksonomien, så den kan tale om
+noget, der blev til i går. Se `README.md`, "Tilføj et element uden at skrive en
+replik".
+
 ## AI-pipeline til varianter (PRD §5)
 
 **Princip: modellen genererer udkast i pipelinen — aldrig runtime.** Spillet
@@ -143,5 +180,17 @@ timing for alle spillere).
 - "Director"-logik: vægt varianter efter flags (Grub Man-varianter af
   generiske replikker) — datamodellen understøtter det allerede via
   `requiresFlags` på replikker.
-- Live-genererede one-liners som eksperimentelt tilvalg bag en indstilling,
-  aldrig som default.
+
+## Live-genererede replikker (bygget 2026-08-12)
+
+Bulletpunktet ovenfor lød tidligere "live-genererede one-liners som
+eksperimentelt tilvalg bag en indstilling, aldrig som default". Det er nu
+bygget: `src/narrator/live.ts` + `worker/` henter en replik om det aktuelle
+par, mens spilleren stadig vælger, og lægger den ind som trin 6 i
+fiaskokæden. Princippet står ved magt — **det er et tilvalg, ikke en default,
+og spillet skal være komplet uden det.** Falder kaldet fra, eller er der intet
+svar endnu, mærker spilleren ingenting: grammatikken står lige nedenunder.
+
+Planen, de tre jernregler og den største åbne risiko (SEC-003: proxyen har
+ingen rate limit — `ALLOWED_ORIGINS` er en CORS-lås, og CORS er en browserregel,
+der ikke stopper `curl`) står i `plan/feature-live-narrator-1.md`.
