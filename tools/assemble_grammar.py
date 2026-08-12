@@ -32,6 +32,16 @@ BY_PREFIX = {
     "g-locked-": "locked",
 }
 
+# Pladsholder som grundled ved klausul-start + udsagnsord der bøjes i tal.
+# "doubling the {a} does not" fanges ikke — dér er grundleddet "doubling".
+SUBJECT_VERB = re.compile(
+    r"(?:^|[.!?;\u2014:]\s+|\band\s+|\bbut\s+|\bthough\s+)(?:[Oo]nly\s+)?"
+    r"[Tt]he \{(?:a|b|right|wrong|partner|result|deadEnd)\}\s+"
+    r"(?:is|was|has|does|doesn.t|isn.t|wasn.t|hasn.t|goes|seems|looks|wants|"
+    r"needs|gets|sits|comes|makes|belongs|carries|provides|refuses|knows|"
+    r"remains|stands)\b"
+)
+
 problems: list[str] = []
 
 
@@ -76,6 +86,20 @@ def main() -> int:
             for ph in re.findall(r"\{([a-zA-Z]+)\}", t):
                 if ph not in PLACEHOLDERS:
                     problems.append(f"{rule['id']}: ukendt pladsholder {{{ph}}}")
+            # 14 elementer har flertalsnavne ("Grubs", "Berries", "Sparks").
+            # Står et af dem som grundled foran et udsagnsord der bøjes i tal,
+            # bliver replikken til "The grubs is". Vælg et ord der lyder ens i
+            # ental og flertal — datid og mådesudsagnsord gør altid det.
+            m = SUBJECT_VERB.search(t)
+            # "One of the {a} and the {b} is guilty" er korrekt — grundleddet er
+            # "One", ikke pladsholderen. Samme for Either/Neither.
+            if m and (g := re.search(r"\b(?:One|Either|Neither) of\b", t)) and g.start() < m.start():
+                m = None
+            if m:
+                problems.append(
+                    f"{rule['id']}: pladsholder som grundled foran et udsagnsord "
+                    f"der bøjes i tal — bliver til \"the grubs is\". Brug datid "
+                    f"(had, did, carried) eller et mådesudsagnsord")
             # Hele ombygningen findes for at afskaffe "Nothing happens".
             # Fortælleren må ikke smugle den ind igen som en vending.
             if re.search(r"\bnothing (happen|came|occurr)", t, re.I):

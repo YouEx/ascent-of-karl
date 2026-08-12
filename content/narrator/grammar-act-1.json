@@ -372,18 +372,18 @@
         "So near. The {right} had the correct instinct. The {wrong} did not.",
         "Half a good idea. The {right} had it. The {wrong} just came along for the walk.",
         "That was closer than it looked. The {right} nearly rewrote history — the {wrong} held it back.",
-        "The {right} was the right call. The {wrong} was not. Somewhere in the {a} and the {b}, that's the whole story.",
+        "The {right} had the right idea. The {wrong} did not. Somewhere in the {a} and the {b}, that's the whole story.",
         "Almost. One correct thought, one wrong companion: the {right} knew, the {wrong} didn't. All for nothing."
       ]
     },
     {
       "id": "g-nm-2",
       "variants": [
-        "I know exactly what the {a} and the {b} were missing. The {right} was fine. The {wrong}, less so. Beyond that, I am under absolutely no obligation to say.",
+        "I know exactly what the {a} and the {b} were missing. The {right} did fine. The {wrong}, less so. Beyond that, I am under absolutely no obligation to say.",
         "Oh, I could tell you what the {right} actually needed. I won't. Watching the {wrong} sit there being wrong is too enjoyable.",
-        "The {a} tried. The {b} tried. Only the {right} has a partner that actually works, and I've met it. The {wrong} doesn't get an introduction today.",
+        "The {a} tried. The {b} tried. Only the {right} found a partner that actually works, and I've met it. The {wrong} will not get an introduction today.",
         "Warmer, from the {a} to the {b}. The {right} runs warmer than the {wrong}, if that helps. It shouldn't help much.",
-        "The {a} and the {b} were one substitution away from working. The {right} was fine as it stood. The {wrong} is the one that needs replacing. Which replacement, though? Sealed lips, I'm afraid.",
+        "The {a} and the {b} were one substitution away from working. The {right} did fine as it stood. The {wrong} needed replacing. Which replacement, though? Sealed lips, I'm afraid.",
         "Close enough, from the {a} to the {b}, that it almost hurt to watch. The {right} came so close. The {wrong} ruined it. Almost close enough that I nearly helped. Nearly."
       ]
     },
@@ -391,11 +391,11 @@
       "id": "g-nm-3",
       "variants": [
         "You were right that it wanted something of {shared}. The {right} carried it — the {wrong} did not.",
-        "The recipe wants: {shared}. The {right} carries it. The {wrong} does not.",
-        "It needed something of {shared}. The {right} provides it — the pairing did not.",
-        "The material was correct: {shared}, through and through. Only the {right} is actually made of it — the {wrong} just resembles it.",
-        "Somewhere in this valley sits a piece of matching material — {shared}, to be precise. The {a} tried. The {b} tried. Only the {right} is made of it; the {wrong} only looks the part.",
-        "{shared}. That much you got right. The {a} and the {b} both reached for it, but only the {right} is made of it — the {wrong} just borrowed the look."
+        "The recipe wanted: {shared}. The {right} carried it. The {wrong} did not.",
+        "It needed something of {shared}. The {right} provided it — the pairing did not.",
+        "The material was correct: {shared}, through and through. Only the {right} qualified — the {wrong} merely resembled it.",
+        "Somewhere in this valley sits a piece of matching material — {shared}, to be precise. The {a} tried. The {b} tried. Only the {right} qualified; the {wrong} only looked the part.",
+        "{shared}. That much you got right. The {a} and the {b} both reached for it, but only the {right} truly qualified — the {wrong} just borrowed the look."
       ]
     },
     {
@@ -415,7 +415,7 @@
         "Partial credit. The {a} and the {b} earn exactly half a discovery, which rounds down to nothing.",
         "The {right} scored full marks, the {wrong} dragged the average down to fifty percent — not a passing grade in this particular valley.",
         "One point for instinct, courtesy of the {right}. Zero for execution, courtesy of the {wrong}. The {a} and the {b}, added together, still total one failure.",
-        "The judges' scores are in: the {right} gets a correct-impulse medal, the {wrong} gets 'wrong specimen' stamped on its file. No discovery either way. Tough crowd. It's me. I'm the crowd.",
+        "The judges' scores are in: the {right} earned a correct-impulse medal, the {wrong} earned 'wrong specimen' stamped on its file. No discovery either way. Tough crowd. It's me. I'm the crowd.",
         "So close on the scoreboard: only the {right} actually earned its place. This particular scoreboard, alas, reads only yes or no.",
         "Half marks for the {a} and the {b}. History, sadly, does not accept half marks."
       ]
@@ -434,23 +434,23 @@
     {
       "id": "g-nm-7",
       "variants": [
-        "You're closer than you think. The {right} is already correct. The {wrong} is what's holding you back. Keep going.",
-        "The {a} tried. The {b} tried. Only the {right} is exactly what belongs in this story. Go find out where.",
+        "You're closer than you think. The {right} already belonged here. The {wrong} held you back. Keep going.",
+        "The {a} tried. The {b} tried. Only the {right} belonged in this story. Go find out where.",
         "Good instinct — the {a}, the {b}, one of each. Try the {right} elsewhere; that elsewhere exists. The {wrong} can stay home this time.",
         "You are one swap away. Keep the {right}. Swap out the {wrong}. That's the {a} and the {b} sorted, in theory.",
-        "Keep the {a}. Keep the {b}. Just not both, not like this — the {right} has better company waiting elsewhere.",
-        "This was not nothing. The {a} and the {b} came close. The {right} was nearly there. Go find what it actually pairs with, and leave the {wrong} out of it."
+        "Keep the {a}. Keep the {b}. Just not both, not like this — the {right} had better company waiting elsewhere.",
+        "This was not nothing. The {a} and the {b} came close. The {right} nearly got there. Go find what it actually pairs with, and leave the {wrong} out of it."
       ]
     },
     {
       "id": "g-nm-generous-1",
       "variants": [
-        "Oh, fine. The {a} met the {b}, and the {right} was never the problem. Try the {partner} instead of the {wrong}.",
-        "I relent. The {a}, the {b} — keep the {right}, and pair it with the {partner}. The {wrong} was never going to work.",
+        "Oh, fine. The {a} met the {b}, and the {right} did nothing wrong. Try the {partner} instead of the {wrong}.",
+        "I relent. The {a}, the {b} — keep the {right}, and pair it with the {partner}. The {wrong} never stood a chance.",
         "Very well: the {partner}. Of the {a} and the {b}, pair it with the {right} — the {wrong} earns no forgiveness today.",
         "You've earned this one. The {a} and the {b} were close, but the {right} needed the {partner}, not the {wrong}.",
         "Enough suspense. Between what the {a} and the {b} offered, swap the {wrong} for the {partner}, and see what history makes of it.",
-        "Fine. The answer is the {partner}. The {a}, the {b}, and now you know: it replaces the {wrong}. The {right} was correct all along."
+        "Fine. The answer is the {partner}. The {a}, the {b}, and now you know: it replaces the {wrong}. The {right} had it right all along."
       ]
     },
     {
