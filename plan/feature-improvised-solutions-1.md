@@ -23,9 +23,18 @@ tags: [feature, architecture, engine, narrator, content, infrastructure]
 > ikke som den planlagte `.mjs` — funktionelt ækvivalent, og krydstjekket mod
 > TypeScript-tvillingen af `tools/parity_fixture.py` + `tests/solves.test.ts`.
 > `npm run predicates` viser **0 falske negativer**. Allowlisten
-> (`challenge.solvedBy` → `alsoSolvedBy`, TASK-006) er nu ren facit, ikke
-> dommer — `tools/validate.py` advarer, når en post dér også fanges af
-> prædikatet. `combo.solves` (TASK-008) er wired som eksplicit override i
+> (`challenge.solvedBy` → `alsoSolvedBy`, TASK-006) er nu en eksplicit
+> override for undtagelser, prædikatet ikke kan udtrykke —
+> `challenge.resolves()` slår op i prædikatet ELLER `alsoSolvedBy`, symmetrisk
+> med hvordan `combo.solves` allerede virkede. Alle 29 tidligere poster viste
+> sig at være dækket af prædikatet allerede (0 reelle undtagelser i dag), så
+> de tre lister er prunet til tomme; `tools/validate.py` advarer, hvis en
+> fremtidig post dér også fanges af prædikatet, og kræver mindst 5 reelle
+> løsninger pr. challenge (prædikat ELLER `alsoSolvedBy`) i stedet for en
+> minimumslængde på selve listen. Det historiske facit — alt der nogensinde
+> er bekræftet som en løsning — bor nu i
+> `docs/design/taxonomy-ground-truth.json`, ikke i `alsoSolvedBy`.
+> `combo.solves` (TASK-008) er wired som eksplicit override i
 > `Engine.resolve`, bevist af en regressionstest der fejler, hvis overriden
 > fjernes.
 >

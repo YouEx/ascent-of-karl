@@ -10,7 +10,7 @@
 | Kan man gå udenom? | ja | nej |
 | Frist | ingen | 4-5 somre |
 | Konsekvens ved fiasko | ingen | runnet slutter |
-| Antal løsninger | mindst 10 | 9-10 oplagte + resten efter sværhedsbånd |
+| Antal løsninger | mindst 10 | mindst 5 reelle (prædikat eller alsoSolvedBy-undtagelse) |
 
 Problemerne er retninger man *kan* forfølge. Challenges er verden der
 kommer efter Karl.
@@ -39,28 +39,32 @@ indhold, ikke fra live-generering.
 `Math.random()`. Ellers kunne man genindlæse sit save indtil ingen
 challenge kom.
 
-**Hvad der løser dem** — et hash over (seed, challenge, element). Samme
-element giver altid samme svar i samme run, så det føles som en egenskab
-ved verden frem for et terningkast. Man kan ikke prøve den samme idé igen
-og håbe på held.
+**Hvad der løser dem** — elementets tags mod prædikatet i
+`content/predicates.json`, plus `alsoSolvedBy` som en håndholdt override for
+de enkeltstående undtagelser, prædikatet ikke kan udtrykke (TASK-006). Intet
+hash, ingen tilfældighed: samme element giver samme svar i alle runs, ikke
+kun i det samme run. Man kan ikke prøve den samme idé igen og håbe på held —
+og man kan heller ikke gætte sig frem, for svaret afhænger ikke af sidetal.
 
-## Sværhedsbånd
+## Løsninger: prædikat plus en kort undtagelsesliste
 
-Andelen af elementer der løser et challenge, efter hvornår det dukkede op:
+Det oprindelige forslag var et sværhedsbånd — andelen af elementer, der
+løser et challenge, skulle vokse jo senere det dukkede op (100 % på side
+1-10, ned til 40 % på side 41-50). Det blev aldrig bygget: intet i
+`startedAtPage` eller `resolves()` skalerer med sidetal i dag. Det, der
+faktisk afgør en løsning, er fladt og page-uafhængigt — elementets tags mod
+prædikatet i `content/predicates.json`.
 
-| Side | Andel der virker |
-|---|---|
-| 1-10 | **100 %** — fortælleren finder på noget uanset hvad |
-| 11-20 | 80 % |
-| 21-30 | 70 % |
-| 31-40 | 60 % |
-| 41-50 | 40 % |
-
-De oplagte svar (`alsoSolvedBy`, mindst 5, håndhævet af validatoren) virker
-**altid**. Ellers ville spillet straffe god ræsonnering. Feltet dømmer ikke
-længere selv — det er facit for `tools/predicate_report.py`, og validatoren
-advarer, hvis en post her allerede fanges af prædikatet i
-`content/predicates.json` (så listen kan krympes i stedet for kun at vokse).
+`alsoSolvedBy` er en håndholdt override ved siden af prædikatet, til
+enkeltstående svar prædikatet (endnu) ikke kan udtrykke. Den dømmer ikke
+alene og er ikke facit — den er en undtagelse, og den skal helst forblive
+tom eller kort. Valideringen kræver mindst 5 reelle løsninger pr. challenge,
+talt som prædikat ELLER alsoSolvedBy (i dag: ulve 30, tørke 33, sygdom 43 ud
+af 187 elementer), og advarer, hvis en alsoSolvedBy-post allerede fanges af
+prædikatet — så listen kan krympes i stedet for kun at vokse. Det historiske
+facit (alt der nogensinde er bekræftet som en løsning, inklusive dem
+prunet ud herfra) bor i `docs/design/taxonomy-ground-truth.json`, som
+`tools/predicate_report.py` regressionstester mod — ikke i `alsoSolvedBy`.
 
 ## Kalibrering: mål mod motoren, ikke mod formlen
 
@@ -96,11 +100,13 @@ sammen med skæbnens eget achievement.
   "line": "challenge-…",           // situationen, 5+ varianter
   "turns": 4,                       // somre til at finde en udvej
   "minPage": 12,                    // tidligst her — giv plads til værktøjet
-  "alsoSolvedBy": ["...", "..."],   // mindst 5 oplagte svar
+  "alsoSolvedBy": [],                // undtagelser prædikatet ikke fanger — typisk tom
   "successLine": "challenge-…-loest",  // bruger {element}
   "failEnding": "..."               // skal findes i endings.json med viaChallenge: true
 }
 ```
 
-Validatoren tjekker alle referencer, at der er mindst 5 oplagte løsninger,
-og at slutningen findes. Husk at køre `tools/generate_audio.py` bagefter.
+Skriv også prædikatet i `content/predicates.json` — det er den, der reelt
+afgør løsningerne. Validatoren tjekker alle referencer, at der er mindst 5
+reelle løsninger (prædikat eller alsoSolvedBy), og at slutningen findes.
+Husk at køre `tools/generate_audio.py` bagefter.

@@ -58,10 +58,12 @@ export type ElementTrait =
 export type ElementScale = "hand" | "body" | "camp" | "landscape";
 
 /**
- * Et prædikat over tags. Erstatter navnelisten challenge.alsoSolvedBy som
- * dommer over hvad der løser hvad. combo.solves lever videre ved siden af —
- * ikke som hovedregel, men som eksplicit override for enkelte opskrifter
- * (TASK-008, se ComboDef.solves og Engine.resolve).
+ * Et prædikat over tags. Hovedreglen for hvad der løser hvad — erstatter de
+ * håndholdte navnelister, allowlisterne engang var. To af dem lever dog
+ * videre ved siden af, som eksplicitte overrides for enkeltstående
+ * undtagelser prædikatet ikke kan udtrykke: `challenge.alsoSolvedBy` for
+ * challenges (TASK-006, se src/core/challenge.ts) og `combo.solves` for
+ * problemer (TASK-008, se ComboDef.solves og Engine.resolve).
  *
  * Inden for ét prædikat er alle felter OG'et; traits kræver at ALLE de nævnte
  * er til stede. Brug anyOf for "en af dem". Se content/predicates.json.
@@ -351,13 +353,15 @@ export interface ChallengeDef {
   /** Antal somre til at finde en udvej */
   turns: number;
   /**
-   * Elementer der ALTID løser den — de oplagte svar, håndskrevet før
-   * prædikaterne fandtes. Dømmer ikke længere om noget løser challenget
-   * (det gør `satisfies` mod content/predicates.json, se src/core/solves.ts)
-   * — feltet lever videre som facit for tools/predicate_report.py og
-   * reachability-tjek i tools/validate.py, som advarer hvis en post her
-   * allerede fanges af prædikatet (plan/feature-improvised-solutions-1.md
-   * TASK-006).
+   * Elementer der ALTID løser den, selvom prædikatet i
+   * content/predicates.json ville afvise dem — en eksplicit override for
+   * undtagelser prædikatet (endnu) ikke kan udtrykke (TASK-006, se
+   * `resolves()` i src/core/challenge.ts). Hovedreglen er stadig prædikatet;
+   * denne liste bør derfor være kort eller tom. tools/validate.py advarer,
+   * hvis en post her allerede fanges af prædikatet — så listen kan krympe
+   * i stedet for kun at vokse. Det historiske facit for
+   * tools/predicate_report.py (alt der nogensinde er bekræftet som en
+   * løsning) bor IKKE her, men i docs/design/taxonomy-ground-truth.json.
    */
   alsoSolvedBy: string[];
   /** Replik når challenget løses (bruger {element}) */

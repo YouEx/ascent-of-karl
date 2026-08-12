@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
 import { freshChallengeState, resolves, spawnChanceForGap } from "../src/core/challenge";
+import { solvesNeed } from "../src/core/solves";
 import { loadContent } from "../src/content";
+import type { ChallengeDef, ElementDef, SolvePredicate } from "../src/core/types";
 
 const content = loadContent();
 const wolves = content.challenges.find((c) => c.id === "ulve")!;
@@ -17,18 +19,6 @@ describe("Challenges: hvornår de dukker op", () => {
 });
 
 describe("Challenges: hvad der løser dem", () => {
-  it("de oplagte svar virker altid, uanset hvor sent det er", () => {
-    // alsoSolvedBy er facit-listen — de mennesker-skrevne svar fra før
-    // taksonomien fandtes. Prædikatet skal acceptere hvert eneste af dem,
-    // ellers er taggene forkerte. Samme krav som porten i
-    // tools/predicate_report.py.
-    for (const id of wolves.alsoSolvedBy) {
-      const el = elementById.get(id);
-      expect(el, id).toBeDefined();
-      expect(resolves(wolves, el!, content.predicates), id).toBe(true);
-    }
-  });
-
   it("dømmer på hvad tingen er, ikke på hvornår den bliver prøvet", () => {
     // Det gamle system gav gratis sejre før side 10 og terningkast bagefter.
     // Nu er svaret det samme uanset side: enten skræmmer tingen ulve, eller
@@ -44,7 +34,7 @@ describe("Challenges: hvad der løser dem", () => {
     const solving = content.elements.filter((e) =>
       resolves(wolves, e, content.predicates),
     );
-    expect(solving.length).toBeGreaterThan(wolves.alsoSolvedBy.length);
+    expect(solving.length).toBeGreaterThan(10);
     expect(solving.length).toBeLessThan(content.elements.length / 2);
   });
 
@@ -52,6 +42,45 @@ describe("Challenges: hvad der løser dem", () => {
     const first = content.elements.map((e) => resolves(wolves, e, content.predicates));
     const again = content.elements.map((e) => resolves(wolves, e, content.predicates));
     expect(again).toEqual(first);
+  });
+});
+
+describe("Challenges: alsoSolvedBy er en eksplicit override for undtagelser (TASK-006)", () => {
+  // Alle 29 tidligere alsoSolvedBy-poster i det rigtige indhold viste sig at
+  // være dækket af prædikatet allerede og er derfor prunet ud (de tre lister
+  // er tomme i dag) — så overriden kan ikke bevises med rigtigt indhold.
+  // Fikstur herunder er derfor syntetisk, med et element der BEVIDST mangler
+  // det trait, prædikatet kræver.
+  const predicates: Record<string, SolvePredicate> = {
+    "test-trussel": { traits: ["weapon"] },
+  };
+  const testChallenge: ChallengeDef = {
+    id: "test-trussel",
+    emoji: "🧪",
+    title: "Test threat",
+    line: "test-line",
+    turns: 3,
+    alsoSolvedBy: ["test-element"],
+    successLine: "test-line-loest",
+    failEnding: "test-ending",
+  };
+  const el: ElementDef = {
+    id: "test-element",
+    name: "Testting",
+    emoji: "🔧",
+    act: 1,
+    kind: "tool",
+    stuff: "wood",
+    traits: [], // mangler bevidst "weapon" — prædikatet skal afvise den
+    scale: "hand",
+  };
+
+  it("prædikatet afviser elementet på egen hånd (præmissen for testen)", () => {
+    expect(solvesNeed(el, testChallenge.id, predicates)).toBe(false);
+  });
+
+  it("men alsoSolvedBy-overriden løser challenget alligevel", () => {
+    expect(resolves(testChallenge, el, predicates)).toBe(true);
   });
 });
 
@@ -71,7 +100,8 @@ describe("Challenges: forløbet i motoren", () => {
 
   it("et oplagt svar løser challenget og fjerner presset", () => {
     const e = engineWith({ id: "ulve", startedAtPage: 20, turnsLeft: 3 });
-    // stenøkse står selv i alsoSolvedBy — ulvene ser våbnet med det samme
+    // stenøkse har traittet "weapon" — prædikatet ser våbnet med det samme,
+    // ingen alsoSolvedBy-override nødvendig
     const out = e.combine("sten", "pind");
     expect(out.challenge?.kind).toBe("solved");
     if (out.challenge?.kind === "solved") {

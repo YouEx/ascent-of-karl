@@ -1,37 +1,49 @@
 {
   "_kommentar": "Facitliste udledt af håndskrevet indhold — se tools/ground_truth.py. must_accept: prædikatet SKAL acceptere alle. must_reject_all: intet nøde-prædikat må acceptere nogen af disse.",
   "generated_from": {
-    "combos": 225,
+    "combos": 362,
     "challenges": 3,
     "elements": 187
   },
   "must_reject_all": [
     "baer",
-    "dyr",
-    "fugl",
     "graes",
-    "larver",
     "ler",
-    "nabo",
     "pind",
-    "stamme",
     "sten",
     "vand"
   ],
   "must_reject_all_names": [
     "Berries",
-    "Bird",
     "Clay",
     "Dry grass",
-    "Grubs",
-    "Log",
-    "Neighbour",
     "Stick",
     "Stone",
-    "Water",
-    "Wild boar"
+    "Water"
   ],
   "cases": [
+    {
+      "need": "ensomhed",
+      "type": "problem",
+      "name": "Karl is alone",
+      "must_accept": [
+        "nabo"
+      ],
+      "must_accept_names": [
+        "Neighbour"
+      ]
+    },
+    {
+      "need": "kedsomhed",
+      "type": "problem",
+      "name": "Karl is bored",
+      "must_accept": [
+        "tromme"
+      ],
+      "must_accept_names": [
+        "Drum"
+      ]
+    },
     {
       "need": "kulde",
       "type": "problem",
@@ -55,6 +67,17 @@
         "Mud coat",
         "Sewn clothes",
         "The huddle"
+      ]
+    },
+    {
+      "need": "mening",
+      "type": "problem",
+      "name": "Karl wonders why",
+      "must_accept": [
+        "bautasten"
+      ],
+      "must_accept_names": [
+        "Standing stone"
       ]
     },
     {
@@ -205,5 +228,5 @@
       ]
     }
   ],
-  "label_count": 70
+  "label_count": 68
 }

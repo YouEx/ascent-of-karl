@@ -22,6 +22,9 @@ import { solvesNeed } from "./solves";
  *     prædikatet i content/predicates.json. Et spyd virker fordi det ER et
  *     våben, ikke fordi det står på en liste og ikke fordi hash'et var i
  *     humør. Samme idé giver altid samme svar, i alle runs.
+ *     `challenge.alsoSolvedBy` er en håndholdt undtagelse ved siden af
+ *     hovedreglen (TASK-006) — for de enkeltstående svar, prædikatet ikke
+ *     kan udtrykke.
  */
 
 /**
@@ -125,20 +128,24 @@ export function rollChallenge(
 /**
  * Løser dette element challenget?
  *
- * Afgøres af prædikatet i content/predicates.json — altså af hvad elementet
- * ER, ikke af hvad det hedder og ikke af et terningkast. Ulvene viger for et
+ * Hovedreglen: prædikatet i content/predicates.json — altså hvad elementet
+ * ER, ikke hvad det hedder og ikke et terningkast. Ulvene viger for et
  * våben, en ild, et ly i lejrstørrelse eller et tamt dyr, uanset om nogen har
  * skrevet netop den ting på en liste.
  *
- * challenge.alsoSolvedBy bruges ikke længere til at dømme. Listen bliver stående
- * i indholdet som facit for tools/predicate_report.py: den er skrevet af
- * mennesker før taksonomien fandtes, og porten kræver at prædikatet accepterer
- * hvert eneste navn på den. Derfor kan de to ikke være uenige.
+ * challenge.alsoSolvedBy er en eksplicit override ved siden af den regel
+ * (TASK-006): står elementet der, vinder det, selv når prædikatet ville
+ * afvise det. Listen er tænkt som undtagelser prædikatet (endnu) ikke kan
+ * udtrykke og bør derfor være kort eller tom — tools/validate.py advarer,
+ * hvis en post her allerede fanges af prædikatet. Det historiske facit for
+ * tools/predicate_report.py bor ikke her, men i
+ * docs/design/taxonomy-ground-truth.json.
  */
 export function resolves(
   challenge: ChallengeDef,
   element: ElementDef,
   predicates: Record<string, SolvePredicate>,
 ): boolean {
-  return solvesNeed(element, challenge.id, predicates);
+  if (solvesNeed(element, challenge.id, predicates)) return true;
+  return challenge.alsoSolvedBy.includes(element.id);
 }

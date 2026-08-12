@@ -22,8 +22,8 @@ CONTENT = ROOT / "content"
 
 # satisfies()/compute_depths() er facit-implementeringen fra
 # tools/predicate_report.py — genbrugt her frem for dupliceret en tredje gang
-# (samme greb som tools/parity_fixture.py), så alsoSolvedBy-advarslen dømmer
-# med nøjagtig samme regel som porten.
+# (samme greb som tools/parity_fixture.py), så alsoSolvedBy-advarslen og
+# løsningstælleren dømmer med nøjagtig samme regel som porten.
 sys.path.insert(0, str(ROOT / "tools"))
 from predicate_report import compute_depths, satisfies  # noqa: E402
 
@@ -493,15 +493,19 @@ def main() -> int:
             err(f"Slutningen '{e['id']}' er markeret viaChallenge, men intet challenge bruger den")
 
     # --- Challenges (docs/design/challenges.md) ---
-    # alsoSolvedBy dømmer ikke længere selv (satisfies() mod predicates.json
-    # gør, se src/core/challenge.ts) — listen lever videre som facit for
-    # tools/predicate_report.py og som reachability-net her.
+    # alsoSolvedBy er IKKE facit længere — det er en håndholdt override for de
+    # undtagelser, prædikatet (endnu) ikke kan udtrykke (TASK-006). Løsningen
+    # afgøres af prædikat ELLER alsoSolvedBy, se resolves() i
+    # src/core/challenge.ts. Det historiske facit (alt der nogensinde er
+    # bekræftet som en løsning) bor i docs/design/taxonomy-ground-truth.json,
+    # som tools/predicate_report.py læser — ikke her.
     predicates_raw = load(CONTENT / "predicates.json") or {}
     predicates = {k: v for k, v in predicates_raw.items() if not k.startswith("_")}
     depths = compute_depths(elements, combos)
     elements_with_depth = {e["id"]: {**e, "depth": depths.get(e["id"], 0)} for e in elements}
 
     ch_ids: set[str] = set()
+    eligible_counts: dict[str, int] = {}
     for c in challenges:
         if c["id"] in ch_ids:
             err(f"Duplikeret challenge-id: {c['id']}")
@@ -509,25 +513,31 @@ def main() -> int:
         for ref in c["alsoSolvedBy"]:
             if ref not in element_ids:
                 err(f"Challenge '{c['id']}': ukendt element i alsoSolvedBy: '{ref}'")
-        # Et challenge man kun kan løse på én måde er en gætteleg, ikke en prøve
-        if len(c["alsoSolvedBy"]) < 5:
-            err(f"Challenge '{c['id']}' har kun {len(c['alsoSolvedBy'])} oplagte "
-                f"løsninger — kræver mindst 5, ellers er det en gætteleg")
-        # Signalet om at listen er ved at blive overflødig (TASK-006): hver
-        # post her, som prædikatet OGSÅ accepterer, er en post der ikke længere
-        # trækker sin vægt. Listen skal kunne krympe, ikke bare vokse.
+
         pred = predicates.get(c["id"])
-        if pred:
-            redundant = sorted(
-                ref for ref in c["alsoSolvedBy"]
-                if ref in elements_with_depth and satisfies(elements_with_depth[ref], pred)
+        matched_by_pred = (
+            {eid for eid, el in elements_with_depth.items() if satisfies(el, pred)}
+            if pred else set()
+        )
+        eligible = matched_by_pred | set(c["alsoSolvedBy"])
+        eligible_counts[c["id"]] = len(eligible)
+        # Et challenge man kun kan løse på én måde er en gætteleg, ikke en
+        # prøve. Tælleren er de REELLE løsninger — prædikat ELLER override —
+        # ikke længden af alsoSolvedBy, som nu typisk er tom.
+        if len(eligible) < 5:
+            err(f"Challenge '{c['id']}' har kun {len(eligible)} reelle løsninger "
+                f"(prædikat ELLER alsoSolvedBy) — kræver mindst 5, ellers er det en gætteleg")
+        # Signalet om at en undtagelse er blevet overflødig (TASK-006): en
+        # alsoSolvedBy-post, som prædikatet OGSÅ accepterer, trækker ikke
+        # længere sin vægt og bør fjernes som undtagelse — ellers vokser
+        # listen bare igen, i stedet for at forblive kort.
+        redundant = sorted(ref for ref in c["alsoSolvedBy"] if ref in matched_by_pred)
+        if redundant:
+            warn(
+                f"Challenge '{c['id']}': {len(redundant)}/{len(c['alsoSolvedBy'])} "
+                f"alsoSolvedBy-elementer matches allerede af prædikatet — bør fjernes som "
+                f"undtagelse: {', '.join(redundant)}"
             )
-            if redundant:
-                warn(
-                    f"Challenge '{c['id']}': {len(redundant)}/{len(c['alsoSolvedBy'])} "
-                    f"alsoSolvedBy-elementer matches allerede af prædikatet — listen kan "
-                    f"formentlig krympes: {', '.join(redundant)}"
-                )
         if c["failEnding"] not in {e["id"] for e in endings}:
             err(f"Challenge '{c['id']}': ukendt failEnding '{c['failEnding']}'")
         if not isinstance(c.get("turns"), int) or c["turns"] < 2:
@@ -544,9 +554,9 @@ def main() -> int:
                 if cnt < 5:
                     err(f"Challenge '{c['id']}': '{ref}' har {cnt} varianter — kræver mindst 5")
     if challenges:
-        info(f"Challenges: {len(challenges)} stk., "
-             f"{sum(len(c['alsoSolvedBy']) for c in challenges) // max(len(challenges), 1)} "
-             f"oplagte løsninger i snit")
+        avg = sum(eligible_counts.values()) // max(len(challenges), 1)
+        info(f"Challenges: {len(challenges)} stk., {avg} reelle løsninger i snit "
+             f"(prædikat ELLER alsoSolvedBy)")
 
     # Sjældenhed (src/core/rarity.ts) udledes af grafen — samme formel her, så
     # fordelingen kan ses og ikke skrider ubemærket når indholdet vokser.

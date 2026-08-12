@@ -9,6 +9,12 @@ fandtes og altså uden mulighed for at være farvet af den.
 Reglen bagefter: et prædikat, der afviser noget på facitlisten, er en FEJL i
 taggene — aldrig en anledning til at rette listen.
 
+challenge.alsoSolvedBy er siden blevet til en ren undtagelsesliste (TASK-006)
+og er typisk tom — den kan derfor ikke længere levere hele facittet alene.
+Facit for challenges er i stedet en UNION af det, scriptet allerede har
+skrevet i forrige udgave af filen, og de nuværende undtagelser: kør scriptet
+igen og igen, og intet historisk svar forsvinder, selvom alsoSolvedBy krymper.
+
   python3 tools/ground_truth.py   →  docs/design/taxonomy-ground-truth.json
 """
 
@@ -46,14 +52,33 @@ def main() -> int:
             "must_accept_names": sorted(by_id[r]["name"] for r in results),
         })
 
-    # Challenges: alsoSolvedBy er listen i sin reneste form.
+    # Challenges: alsoSolvedBy er nu KUN de undtagelser, prædikatet ikke kan
+    # udtrykke (TASK-006) — typisk tom, fordi taksonomien allerede dækker de
+    # gamle svar uden en eneste undtagelse. Regenererede vi facit fra den
+    # liste alene, ville hver oprydning i alsoSolvedBy slette den historiske
+    # facitliste, som predicate_report.py's regressionstest læner sig op ad.
+    # Facit er derfor en UNION af det, der allerede stod i forrige udgave af
+    # filen, og de nuværende undtagelser — kun tilføjelser, aldrig tab.
+    previous_must_accept: dict[str, list[str]] = {}
+    if OUT.exists():
+        prev = json.loads(OUT.read_text(encoding="utf-8"))
+        for case in prev.get("cases", []):
+            if case.get("type") == "challenge":
+                previous_must_accept[case["need"]] = case.get("must_accept", [])
+
     for ch in challenges:
+        historical = set(previous_must_accept.get(ch["id"], [])) | set(ch["alsoSolvedBy"])
+        # Filtrér mod aktuelle elementer: et navn kan være omdøbt eller
+        # fjernet siden det blev frosset ind i historikken, og et facit for
+        # et element, der ikke længere findes, kan hverken bekræftes eller
+        # afkræftes — kun de nuværende id'er er meningsfulde at teste mod.
+        historical = {s for s in historical if s in by_id}
         cases.append({
             "need": ch["id"],
             "type": "challenge",
             "name": ch["title"],
-            "must_accept": sorted(ch["alsoSolvedBy"]),
-            "must_accept_names": sorted(by_id[s]["name"] for s in ch["alsoSolvedBy"] if s in by_id),
+            "must_accept": sorted(historical),
+            "must_accept_names": sorted(by_id[s]["name"] for s in historical),
         })
 
     # Starthånden skal AFVISES af ethvert nøde-prædikat: alle nuværende
