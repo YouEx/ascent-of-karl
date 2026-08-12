@@ -473,9 +473,11 @@ billeder — derfor står den her og ikke i et script.
 
 ### Levering
 
-- **Additivt og valgfrit pr. element.** Findes `public/art/<element-id>.webp`,
-  vises den; ellers vises elementets emoji. **Ingen kodeændring pr. billede.**
-  Spillet skal kunne gå live uden en eneste illustration.
+- **Additivt og valgfrit pr. element.** Findes `src/assets/art/elements/<element-id>.webp`,
+  vises den; ellers vises elementets emoji. **Ingen kodeændring pr. billede** —
+  `src/ui/art.ts` finder filerne selv via `import.meta.glob` og eksponerer dem
+  som `glyphHTML()`/`hasArt()`. Spillet skal kunne gå live uden en eneste
+  illustration.
 - **Format:** WebP, kvadratisk, 256×256 (@2x for 128px-fliser).
 - **Vægt:** ≤ 10 kB pr. element. 187 × 10 kB ≈ 1,9 MB — derfor hentes kun de
   **13 base-elementer** ved start; resten dovent (`loading="lazy"`).

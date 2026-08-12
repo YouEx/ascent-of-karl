@@ -977,6 +977,13 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
 /* Målt: referencens tekstblok begynder 10 px længere ude end vores. */
 .entry { display: flex; gap: 1.52rem; align-items: flex-start; }
 .entry .entry-emoji { font-size: 4.2rem; line-height: 1; }
+/* Samme opskrift som img.card-glyph: kilden er 128 px og skal skaleres til
+   opslagets størrelse, ikke stå i emojiens 4.2rem-fodaftryk. */
+img.entry-glyph {
+  display: block;
+  max-width: 84px; max-height: 84px; width: auto; height: auto;
+  object-fit: contain;
+}
 /* Referencens krønike åbnes af en MALET opslået bog i brunt læder, ikke af
    📖 — en blå-hvid emoji der er det eneste kolde element på hele skærmen.
    Målt 95x74. */
@@ -1013,6 +1020,13 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   font-size: 1.2rem; min-width: 42px; min-height: 42px; cursor: pointer;
 }
 .chip.active { border-color: var(--bronze); box-shadow: 0 0 0 1px var(--bronze); }
+/* Chippen er en 42 px rund knap — billedet skal blive inden i den, ikke
+   presse den i stykker. */
+img.chip-glyph {
+  display: block;
+  max-width: 26px; max-height: 26px; width: auto; height: auto;
+  object-fit: contain;
+}
 
 #timeline-toggle {
   display: flex; align-items: center; gap: 12px;
