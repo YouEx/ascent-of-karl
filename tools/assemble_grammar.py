@@ -6,10 +6,26 @@ tjekker det som en menneskelig redaktør ville tjekke — dubletter, ukendte
 pladsholdere, "a grass"-konstruktioner, sammensatte {shared}-værdier midt i
 en sætning — og skriver content/narrator/grammar-act-1.json.
 
-Køres én gang; filen den skriver er derefter almindeligt indhold.
+Køres normalt uden argumenter og skriver det rigtige indhold, som før.
+
+## Reproducerbarhed (2026-08-13)
+
+Filen den skriver ER indhold — men drafts UNDER content/narrator/drafts/
+er facittet den er udledt af, og skal derfor altid kunne gensamles til
+BYTE-FOR-BYTE samme fil. `--out <sti>` skriver i stedet til en midlertidig
+sti uden at røre det rigtige indhold, så tools/voice/check_grammar_assembly.py
+kan bevise reproducerbarheden uden en destruktiv kørsel i eget bo. Det var
+netop fraværet af denne kontrol der lod content/narrator/grammar-act-1.json
+og dens drafts glide 17 regler ude af trit (g-plaus-9 fandtes slet ikke i
+en draft, og 16 andre regler var rettet i facittet uden at nå tilbage til
+kilden) — se docs/design/narration-voice.md.
+
+    python3 tools/assemble_grammar.py                    # skriver rigtigt indhold
+    python3 tools/assemble_grammar.py --out sti/til/fil   # tør kørsel, rører intet
 """
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -54,7 +70,13 @@ def verdict_of(rule: dict) -> str | None:
     return None
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--out", type=Path, default=OUT,
+                     help="skriv hertil i stedet for det rigtige indhold (til reproducerbarheds-kontrol)")
+    args = ap.parse_args(argv)
+
+    problems.clear()  # main() kan kaldes flere gange i samme proces (--out-kontrollen gør netop det)
     files = sorted(SRC.glob("grammar-*.json"))
     if not files:
         print(f"Ingen grammar-*.json i {SRC} — kørte agenterne færdigt?")
@@ -133,14 +155,14 @@ def main() -> int:
             print(f"  ✗ {p}")
         return 1
 
-    OUT.write_text(
+    args.out.write_text(
         json.dumps(
             {"act": 1, "grammar": pools, "lines": lines}, indent=2, ensure_ascii=False
         )
         + "\n"
     )
     total = sum(len(l["variants"]) for l in lines)
-    print(f"\n✅ {OUT.name}: {len(lines)} grupper, {total} varianter")
+    print(f"\n✅ {args.out.name}: {len(lines)} grupper, {total} varianter")
     for v in VERDICTS:
         print(f"   {v:>10}: {len(pools[v])} grupper")
     return 0

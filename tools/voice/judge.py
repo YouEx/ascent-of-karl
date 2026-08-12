@@ -53,6 +53,7 @@ import argparse
 import json
 import math
 import re
+import statistics
 import sys
 from pathlib import Path
 from typing import Any
@@ -71,15 +72,24 @@ from metrics import (  # noqa: E402
     words_per_line_stats,
 )
 
+sys.path.insert(0, str(ROOT / "tools"))
+import check_pairs  # noqa: E402 — TASK-030's par-kontrakt-komposition, se gate()
+import assemble_pairs  # noqa: E402 — kun for DRAFTS/BATCHES, samme liste som fletningen selv bruger
+
 # --- Faste politik-tal fra planen (TASK-028) — IKKE kalibreret, se docstring ---
 HARD_MAX_SENTENCES = 3
 HARD_MAX_WORDS = 32
 
-# Kun en genbrugt AFSLUTNING på mindst så mange ord tæller som en reel,
-# genkendelig punchline (politikbeslutning 2026-08-12, se docstring). Korte,
-# generiske lukninger ("not today", "it is not", "not that") er sproglige
-# mønstre, ikke specifikke vittigheder, og skal ikke kunne fælde en kandidat.
-PUNCHLINE_MIN_WORDS = 4
+# Genbrugt punchline afvises IKKE hvis den normaliserede afslutning står i
+# `lexicon.json`'s `genericPunchlineExemptions` — en håndklassificeret liste
+# over rent sproglige lukningsmønstre (bar negation/bekræftelse, faste
+# biord-forbindelser, eller det gentagne "THE END"-titelkort) som enhver
+# skribent griber til, og som derfor ikke er en specifik, genkendelig
+# vittighed (politikbeslutning 2026-08-13, erstatter den tidligere blanke
+# "<4 ord"-regel — se lexicon.json's _genericPunchlineExemptionsKommentar for
+# den fulde, replik-for-replik begrundelse). Korte men DISTINKTE punchlines
+# som "grub man"/"we have fire" er bevidst IKKE på listen og afvises stadig.
+GENERIC_PUNCHLINE_EXEMPTIONS = set(LEXICON["genericPunchlineExemptions"])
 
 EPS = 1e-9
 
@@ -175,16 +185,18 @@ def hard_reject(text: str, fingerprint: dict[str, Any], *, source: str = "gramma
         if re.search(pattern, lower):
             reasons.append(f'moderne ordforråd: "{phrase}"')
 
-    # Genbrugt punchline: kun en "meningsfuld" afslutning tæller (politik
-    # 2026-08-12) — se PUNCHLINE_MIN_WORDS. Korte generiske lukninger som
-    # "not today"/"it is not"/"not that" matcher teknisk et korpus-punchline,
-    # men er sprogmønstre alle skribenter griber til, ikke en genbrugt vittighed.
+    # Genbrugt punchline: kun en reel, DISTINKT afslutning tæller (politik
+    # 2026-08-13) — se lexicon.json's genericPunchlineExemptions. En lukning
+    # der matcher et korpus-punchline men selv står i undtagelseslisten
+    # (bar negation/bekræftelse, faste biord-forbindelser, "THE END"-
+    # titelkortet) er et sprogmønster alle skribenter griber til, ikke en
+    # genbrugt vittighed.
     sentences = split_sentences(text)
     if sentences:
         punchline = normalize_punchline(sentences[-1])
         if (
             punchline
-            and len(tokenize_words(punchline)) >= PUNCHLINE_MIN_WORDS
+            and punchline not in GENERIC_PUNCHLINE_EXEMPTIONS
             and punchline in fingerprint["punchlines"]
         ):
             reasons.append(f'genbrugt punchline: "{punchline}"')
@@ -257,7 +269,9 @@ def _novelty_fraction(text: str, corpus_vocab: set[str], domain_vocab: set[str])
 
 
 # ---------------------------------------------------------------------------
-# Kilde-specifikt ordtal-bånd for bagte par (politik 2026-08-12).
+# Kilde-specifikt ordtal-bånd for bagte par (politik 2026-08-12, FROSSET
+# 2026-08-13 — se docs/design/narration-voice.md, "Politik: frosset
+# ordtal-bånd").
 #
 # Bagte par er, ligesom det håndskrevne korpus selv, MÅLT — men de er en
 # strukturelt anderledes indholdstype: hvert par er skrevet specifikt til to
@@ -272,12 +286,46 @@ def _novelty_fraction(text: str, corpus_vocab: set[str], domain_vocab: set[str])
 # hard_reject()'s docstring) — tærsklen ville se ud til at være løst på
 # papiret, men reelt stadig ramme stort set de samme lange, allerede
 # godkendte par. Derfor: bagte par scores på ordtal mod bagte pars EGEN
-# fordeling, selvkalibreret akkurat som alt andet i dette system — aldrig et
-# gættet tal, og stadig en reel straf for et par der er unormalt langt eller
-# kort SELV FOR ET PAR. Ingen anden dimension viste dette mønster (se
-# rapportens "Ordtal-dimensionen — hvorfor bagte par har deres eget bånd").
+# fordeling.
+#
+# ## Hvorfor båndet er FROSSET, ikke levende genberegnet
+#
+# Første udgave genberegnede båndet fra `expand_pairs()` hver gang — men et
+# bånd der altid genberegnes fra netop de kandidater det dømmer, kan
+# definitorisk aldrig opdage at kandidaterne SOM HELHED er skredet: båndet
+# flytter sig med dem og finder dem for evigt "normale", uanset hvor lange de
+# bliver. Det gør fingeraftrykket for det håndskrevne korpus ikke — DET er
+# frosset ved konstruktion (metrics.py læser act-1/act-2.json, ikke
+# kandidatteksten). Bagte pars bånd skal have samme egenskab for at være en
+# reel kontrol og ikke bare et spejl. Løsningen: `pairs_baseline.json` er et
+# øjebliksbillede taget DA de 908 varianter var mennesker-godkendte (TASK-023)
+# og bestod stemmedommeren — en frysning af en allerede godkendt tilstand.
+# Genkalibrering kræver nu en eksplicit, synlig handling
+# (tools/voice/freeze_pairs_baseline.py), aldrig en stiltiende bivirkning af
+# at dømme. Se judge.py's selftest() for et konkret bevis: global oppustning
+# af alle 908 par-varianters ordtal scorer katastrofalt dårligt mod DETTE
+# bånd, men ville scoret næsten perfekt mod et bånd genberegnet fra den
+# samme oppustede mængde — det er præcis den fejl frysningen forhindrer.
 # ---------------------------------------------------------------------------
-def pairs_wordcount_band(pairs: list[tuple[str, str]] | None = None) -> dict[str, float]:
+PAIRS_BASELINE_PATH = Path(__file__).resolve().parent / "pairs_baseline.json"
+
+
+def pairs_wordcount_band() -> dict[str, float]:
+    """Læser DET FROSNE bånd — se tools/voice/pairs_baseline.json og dens egen
+    kommentar. Genberegner ALDRIG fra aktuelt indhold; det er præcis pointen.
+    Til bevidst genkalibrering: python3 tools/voice/freeze_pairs_baseline.py
+    (se recompute_pairs_wordcount_band() for selve genberegningen)."""
+    data = json.loads(PAIRS_BASELINE_PATH.read_text(encoding="utf-8"))
+    return data["wordCount"]
+
+
+def recompute_pairs_wordcount_band(pairs: list[tuple[str, str]] | None = None) -> dict[str, float]:
+    """Genberegner LIVE fra aktuelt (eller angivet) par-indhold. Bruges KUN af
+    tools/voice/freeze_pairs_baseline.py (den eksplicitte genkalibrering) og af
+    calibrate.py (til at RAPPORTERE om det frosne bånd stadig matcher det
+    nuværende indhold — se "Politik: frosset ordtal-bånd" i den genererede
+    rapport). Aldrig kaldt fra score()/gate() — de bruger altid det frosne
+    pairs_wordcount_band() ovenfor."""
     if pairs is None:
         pairs = expand_pairs()
     return words_per_line_stats([text for _, text in pairs])
@@ -454,10 +502,23 @@ def calibrated_threshold(fingerprint: dict[str, Any], percentile: str = "p5") ->
 
 def gate() -> list[str]:
     """TASK-030's importable indgang. Dømmer ALT kandidatindhold der findes
-    som statisk indhold i repoet: grammatikkens ekspanderede linjer og de
-    bagte par. (Live-generering ved runtime har intet statisk indhold at
-    dømme her — se docs/design/narration-voice.md, "Wiring into validate",
-    for hvordan et fremtidigt kald ind i denne funktion kunne bruges derfra.)
+    som statisk indhold i repoet: grammatikkens ekspanderede linjer, de bagte
+    par (stemme + register), OG de bagte pars strukturelle kontrakt (navn,
+    dom, dublet, længde — check_pairs.py, TASK-023). De sidste er en ANDEN
+    slags fejl end stemme-scoren kan se: en replik kan lyde perfekt som
+    fortælleren og stadig nævne det forkerte element, eller være en dublet af
+    en anden replik. At antage et menneske huskede at køre check_pairs.py
+    separat var utilstrækkeligt (kodegennemgang 2026-08-13) — derfor
+    IMPORTERES den rigtige kontrol her og køres mod de 10 UDKAST-batches
+    (samme shape check_pairs.py forstår; DEN ASSEMBLEREDE fil har en anden
+    shape — "pairs" er der en liste af strenge, ikke objekter — se
+    assemble_pairs.py's egen præcedens for at køre check_pairs.py pr. batch,
+    aldrig mod outputtet). Én kommando beviser nu HELE par-kontrakten, ikke
+    kun stemme-halvdelen af den.
+
+    (Live-generering ved runtime har intet statisk indhold at dømme her — se
+    docs/design/narration-voice.md, "Wiring into validate", for hvordan et
+    fremtidigt kald ind i denne funktion kunne bruges derfra.)
 
     Returnerer en liste af menneskelæsbare fejlbeskeder. Tom liste = bestået.
     """
@@ -472,7 +533,7 @@ def gate() -> list[str]:
         ("grammar", expand_grammar()),
         ("pairs", expand_pairs()),
     ]
-    pairs_band = pairs_wordcount_band(sourced[1][1])  # bagte pars eget ordtal-bånd, se score()
+    pairs_band = pairs_wordcount_band()  # frosset facit, se pairs_wordcount_band()'s docstring
 
     failures: list[str] = []
     for source, candidates in sourced:
@@ -486,6 +547,18 @@ def gate() -> list[str]:
                 failures.append(
                     f"{label}: score {result['overall']:.3f} under tærskel {threshold:.3f} — {text!r}"
                 )
+
+    # Par-kontrakten: navn, dom, dublet, længde — se docstringen ovenfor.
+    jobs = check_pairs.load_jobs()
+    names = check_pairs.load_names()
+    for batch in assemble_pairs.BATCHES:
+        path = assemble_pairs.DRAFTS / f"pairs-{batch}.json"
+        if not path.exists():
+            failures.append(f"par-kontrakt: udkast-batch mangler — {path.relative_to(ROOT)}")
+            continue
+        for problem in check_pairs.check_pairs_file(path, jobs=jobs, names=names):
+            failures.append(f"par-kontrakt ({batch}): {problem}")
+
     return failures
 
 
@@ -527,34 +600,33 @@ def selftest() -> int:
     if any("moderne" in x for x in r):
         fails.append(f"hard_reject fangede fejlagtigt 'ok' som delstreng i 'broken': {r}")
 
-    # Punchline-genbrug: kun en afslutning på mindst PUNCHLINE_MIN_WORDS ord
-    # tæller (politik 2026-08-12) — fundet dynamisk i det faktiske korpus,
-    # ikke tastet ind i hånden, så testen aldrig kommer i utakt med indholdet.
-    short_punchlines = [p for p in fp["punchlines"] if len(tokenize_words(p)) < PUNCHLINE_MIN_WORDS]
-    long_punchlines = [p for p in fp["punchlines"] if len(tokenize_words(p)) >= PUNCHLINE_MIN_WORDS]
-
-    if short_punchlines:
-        known_short = short_punchlines[0]
-        r = hard_reject(f"Karl waits. {known_short.capitalize()}.", fp)
+    # Punchline-genbrug (politik 2026-08-13): kun genericPunchlineExemptions
+    # er undtaget — ALT andet korpus-punchline, uanset ordtal, skal afvises.
+    # De fire eksempler brugeren selv navngav som SKAL blive ved med at fælde
+    # en kandidat, testes eksplicit her, ikke bare "det første fundne lange".
+    for generic in GENERIC_PUNCHLINE_EXEMPTIONS:
+        if generic not in fp["punchlines"]:
+            continue  # kun test dem der rent faktisk matcher en korpus-linje
+        r = hard_reject(f"Karl waits. {generic.capitalize()}.", fp)
         if any("punchline" in x for x in r):
             fails.append(
-                f"hard_reject afviste fejlagtigt en kort ({len(tokenize_words(known_short))} "
-                f"ord < {PUNCHLINE_MIN_WORDS}) generisk lukning som genbrugt punchline: "
-                f"'{known_short}' — {r}"
+                f"hard_reject afviste fejlagtigt den generiske, undtagne lukning "
+                f"'{generic}' som genbrugt punchline: {r}"
             )
-    else:
-        fails.append("selftest-fixture mangler: intet punchline under PUNCHLINE_MIN_WORDS ord")
 
-    if long_punchlines:
-        known_long = long_punchlines[0]
-        r = hard_reject(f"Karl waits. {known_long.capitalize()}.", fp)
+    for distinctive in ("grub man", "we have fire", "onward, humanity", "third time, harpoon"):
+        if distinctive not in fp["punchlines"]:
+            fails.append(f"selftest-fixture mangler: forventet korpus-punchline '{distinctive}'")
+            continue
+        if distinctive in GENERIC_PUNCHLINE_EXEMPTIONS:
+            fails.append(f"'{distinctive}' må ALDRIG stå i genericPunchlineExemptions")
+            continue
+        r = hard_reject(f"Karl waits. {distinctive.capitalize()}.", fp)
         if not any("punchline" in x for x in r):
             fails.append(
-                f"hard_reject skulle fange en reel, {len(tokenize_words(known_long))}-ords "
-                f"genbrugt punchline: '{known_long}' — {r}"
+                f"hard_reject skulle fange den distinkte, korte genbrugte punchline "
+                f"'{distinctive}' (bevidst IKKE undtaget): {r}"
             )
-    else:
-        fails.append("selftest-fixture mangler: intet punchline på mindst PUNCHLINE_MIN_WORDS ord")
 
     # range_score: inden for bånd = 1.0, langt udenfor < 1.0, aldrig 0.
     dist = {"p10": 2.0, "p25": 3.0, "p50": 5.0, "p75": 7.0, "p90": 9.0, "p95": 11.0, "max": 20.0}
@@ -576,6 +648,42 @@ def selftest() -> int:
     t = calibrated_threshold(fp)
     if not (0.0 < t < 1.0):
         fails.append(f"calibrated_threshold uden for (0,1): {t}")
+
+    # Frossent ordtal-bånd for par: beviser AT frysningen fanger skred, som et
+    # bånd der altid genberegnes fra netop de kandidater det dømmer ikke kan
+    # (politik 2026-08-13, se pairs_wordcount_band()'s docstring). Tre trin:
+    # (1) rigtige par scorer godt mod det frosne bånd, (2) de SAMME par, kunstigt
+    # oppustet med fyldord, scorer markant dårligere mod DET SAMME frosne bånd,
+    # (3) men ville scoret næsten perfekt mod et bånd genberegnet FRA netop den
+    # oppustede mængde — den selvkalibrerende fælde frysningen findes for at undgå.
+    real_pairs = expand_pairs()
+    frozen_band = pairs_wordcount_band()
+    real_scores = [range_score(float(len(tokenize_words(t))), frozen_band) for _, t in real_pairs]
+    real_mean = statistics.fmean(real_scores) if real_scores else 0.0
+    if real_mean < 0.8:
+        fails.append(f"frosset par-ordtalsbånd: rigtige par burde scorer højt mod egen frysning, fik {real_mean:.3f}")
+
+    inflated_texts = [t + " " + " ".join(["utterly"] * 40) for _, t in real_pairs]
+    inflated_scores_vs_frozen = [range_score(float(len(tokenize_words(t))), frozen_band) for t in inflated_texts]
+    inflated_mean_vs_frozen = statistics.fmean(inflated_scores_vs_frozen) if inflated_scores_vs_frozen else 0.0
+    if inflated_mean_vs_frozen > real_mean - 0.3:
+        fails.append(
+            f"frosset par-ordtalsbånd: oppustede par burde scorer markant dårligere mod det "
+            f"FROSNE bånd end rigtige par ({real_mean:.3f}); fik {inflated_mean_vs_frozen:.3f} — "
+            "frysningen fanger tilsyneladende ikke skred"
+        )
+
+    live_band_on_inflated = words_per_line_stats(inflated_texts)
+    inflated_scores_vs_live = [
+        range_score(float(len(tokenize_words(t))), live_band_on_inflated) for t in inflated_texts
+    ]
+    inflated_mean_vs_live = statistics.fmean(inflated_scores_vs_live) if inflated_scores_vs_live else 0.0
+    if inflated_mean_vs_live < 0.9:
+        fails.append(
+            "frosset par-ordtalsbånd: kontrol-beviset holder ikke — et bånd genberegnet FRA "
+            f"den oppustede mængde selv burde scorer den oppustede mængde højt (viser HVORFOR "
+            f"selvkalibrering ikke opdager skred), fik {inflated_mean_vs_live:.3f}"
+        )
 
     for f in fails:
         print("FEJL:", f)

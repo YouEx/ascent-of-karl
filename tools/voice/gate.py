@@ -8,9 +8,11 @@ fem-linjers snippet der kobler judge.gate() ind i validate.py, når den
 anden agents arbejde er flettet).
 
 Dømmer al statisk kandidattekst i repoet — grammatikkens ekspanderede
-linjer og de bagte par — mod det håndskrevne korpus' fingeraftryk. Udskriver
-hver afvisning menneskelæsbart og afslutter med exit 1 hvis der er mindst
-én. Tom output og exit 0 = alt kandidatindhold lyder som fortælleren.
+linjer og de bagte par, BÅDE mod stemme-fingeraftrykket OG mod par-kontrakten
+(check_pairs.py, importeret og kørt her, ikke bare antaget kørt separat af et
+menneske — se gate()'s docstring). Udskriver hver afvisning menneskelæsbart
+og afslutter med exit 1 hvis der er mindst én. Tom output og exit 0 = alt
+kandidatindhold lyder som fortælleren OG overholder par-kontrakten.
 
     python3 tools/voice/gate.py
 """
@@ -26,7 +28,7 @@ import judge as J  # noqa: E402
 def main() -> int:
     failures = J.gate()
     if not failures:
-        print("✅ stemmedommer: alt kandidatindhold (grammatik + bagte par) består.")
+        print("✅ stemmedommer: alt kandidatindhold (grammatik + bagte par + par-kontrakt) består.")
         return 0
 
     for f in failures:

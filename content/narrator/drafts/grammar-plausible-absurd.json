@@ -21,7 +21,7 @@
         "Someone owes the {a} and the {b} an apology. I suppose that's me.",
         "The fault, if there is one, isn't with the {a} or the {b}. It's with whoever never wrote this down.",
         "I feel I should apologise to the {a} and the {b} directly. This really should have gone somewhere.",
-        "My sympathies to the {a}. My sympathies to the {b}. Both showed up. Neither was met halfway."
+        "My sympathies to the {a} and the {b}. Both showed up. Neither was met halfway."
       ]
     },
     {
@@ -31,7 +31,7 @@
         "Somewhere, an application was filed on behalf of the {a} and the {b}. It's still being processed. It has been centuries.",
         "The {a} and the {b} submitted a perfectly good case. The universe's office is simply slow.",
         "This looked, on paper, like it should clear committee. The {a} and the {b} are still waiting on a signature.",
-        "I checked. There is no rule against the {a} and the {b} working together. There's also no rule for it yet. Someone should fix that.",
+        "I checked. There is no rule against the {a} and the {b} working together. There's also no rule for it yet — someone should fix that.",
         "The world hasn't rejected the {a} and the {b}. It just hasn't replied.",
         "Call it pending, the {a} and the {b}. Not denied. Pending."
       ]
@@ -52,7 +52,7 @@
       "id": "g-plaus-5",
       "verdict": "plausible",
       "variants": [
-        "Karl isn't wrong to try the {a} with the {b}. He's just early. Someone will get credit for this eventually. Possibly not him.",
+        "Karl isn't wrong to try the {a} with the {b}. He's just early. Someone will get credit for this eventually — possibly not him.",
         "This wasn't foolishness. The {a} and the {b} made a fair case, and the case was declined without comment.",
         "I won't hold this against Karl. The {a} and the {b} looked, to any reasonable person, like they belonged together.",
         "No shame in this one. The {a} and the {b} had a decent argument. The argument lost.",
@@ -97,6 +97,18 @@
       ]
     },
     {
+      "id": "g-plaus-9",
+      "verdict": "plausible",
+      "variants": [
+        "There is sense in putting the {a} beside the {b}. Sense, regrettably, is not one of history's binding laws.",
+        "The {a} and the {b} make a respectable argument together. The world has declined to hear it.",
+        "I can follow Karl's reasoning from the {a} to the {b}. History, being history, wandered elsewhere.",
+        "Nothing about the {a} and the {b} promised failure. They delivered it all the same.",
+        "Had the {a} and the {b} worked, no scholar would have raised an eyebrow. Since they did not, I shall raise both.",
+        "The {a} and the {b} meet every ordinary test of a sensible idea. Ordinary tests have failed us."
+      ]
+    },
+    {
       "id": "g-abs-1",
       "verdict": "absurd",
       "variants": [
@@ -115,7 +127,7 @@
         "No relation. None whatsoever. The {a} and the {b} share not one single thing, and I have checked twice.",
         "I looked for a connection between the {a} and the {b}. I found none. I looked again, out of politeness.",
         "The {a} and the {b} have nothing in common: not shape, not substance, not purpose. A clean sweep, in its way.",
-        "Not kin. Not neighbours. Not acquaintances. The {a} and the {b} are, as far as I can tell, complete strangers.",
+        "Not kin. Not neighbours, not acquaintances. The {a} and the {b} are, as far as I can tell, complete strangers.",
         "Zero overlap between the {a} and the {b}. I say that with some confidence; I've had time to think about it.",
         "The {a} and the {b} agree on precisely nothing, which is itself a kind of agreement, I suppose."
       ]

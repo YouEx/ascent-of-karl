@@ -7,11 +7,16 @@ målingen — fordelinger, hårde afvisninger, tærskelvalg, og de konkrete
 værste replikker — til docs/design/narration-voice.md.
 
 Stort set intet tal i den fil er tastet ind i hånden: alt beregnes her, hver
-gang scriptet kører, ud fra det faktiske indhold. Éneste undtagelse: sektionen
-"Rettede replikker denne runde" er en statisk, dateret hændelseslog hentet fra
-`calibration_history.json` (data, ikke Python) — den beskriver hvad der blev
-rettet UNDER 2026-08-12-kalibreringsrunden og opdateres ikke af sig selv, hvis
-indholdet ændres igen (ligesom en changelog, ikke en måling). Kørsel:
+gang scriptet kører, ud fra det faktiske indhold. To undtagelser:
+sektionen "Rettede replikker denne runde" er en statisk, dateret hændelseslog
+hentet fra `calibration_history.json` (data, ikke Python) — den beskriver hvad
+der blev rettet UNDER 2026-08-12-kalibreringsrunden og opdateres ikke af sig
+selv, hvis indholdet ændres igen (ligesom en changelog, ikke en måling).
+Tilsvarende er bagte pars ordtal-BÅND (`pairs_wordcount_band()`) hentet
+FROSSET fra `pairs_baseline.json` i stedet for genberegnet her — dette script
+viser båndet og en live-genberegning ved siden af hinanden til
+skreds-kontrol, men rører aldrig selve frysningen (det gør kun
+`freeze_pairs_baseline.py`, eksplicit). Kørsel:
 
     python3 tools/voice/calibrate.py
 
@@ -139,7 +144,8 @@ def main() -> int:
     hw = J.handwritten_variants(fp)
     gram = J.expand_grammar()
     pairs = J.expand_pairs()
-    pairs_band = J.pairs_wordcount_band(pairs)
+    pairs_band = J.pairs_wordcount_band()  # FROSSET facit — se judge.py's docstring
+    pairs_band_live = J.recompute_pairs_wordcount_band(pairs)  # kun til rapportens skreds-tjek
 
     hw_scored = _score_all(hw, fp, corpus_vocab, dom_vocab)
     gram_scored = _score_all(gram, fp, corpus_vocab, dom_vocab, source="grammar")
@@ -204,7 +210,7 @@ def main() -> int:
 
     pl_lens = sorted(len(p.split()) for p in fp["punchlines"])
     pl_short = sum(1 for p in fp["punchlines"] if len(p.split()) <= 3)
-    pl_below_min = sum(1 for p in fp["punchlines"] if len(p.split()) < J.PUNCHLINE_MIN_WORDS)
+    pl_generic = sum(1 for p in fp["punchlines"] if p in J.GENERIC_PUNCHLINE_EXEMPTIONS)
 
     md = []
     md.append("# Stemmedommer: kalibrering af fingeraftryk og tærskel\n\n")
@@ -277,10 +283,10 @@ def main() -> int:
         f"relevant for genbrugs-afvisningen nedenfor.\n"
     )
 
-    md.append("\n## Politik: kilde-sammensatte gates (2026-08-12)\n\n")
+    md.append("\n## Politik: kilde-sammensatte gates (2026-08-12, udvidet 2026-08-13)\n\n")
     md.append(
         "En hård port der fældede 488 allerede godkendte replikker kunne ikke lukke "
-        "TASK-030 — se punkt 2/7 i \"Uoverensstemmelser med planen\" for den fulde "
+        "TASK-030 — se punkt 2/9 i \"Uoverensstemmelser med planen\" for den fulde "
         "historik. Beslutningen, truffet eksplicit denne runde, er at PORTEN er "
         "sammensat af to kilde-specifikke regelsæt i stedet for ét fælles regelsæt — "
         "ikke en svækkelse af nogen af dem:\n\n"
@@ -291,14 +297,25 @@ def main() -> int:
         "moderne/fejlmeddelelses-register og meningsfuld punchline-genbrug gælder "
         "fortsat for bagte par UÆNDRET; kun de to hårde længde-tal er kilde-betingede. "
         "Se `hard_reject()`'s docstring i `judge.py`.\n"
-        "2. **Punchline-genbrug hård-afvises kun ved ≥4-ords normaliserede slutninger.** "
-        "En 1-3-ords generisk lukning (\"not today\", \"it is not\") er ikke en "
-        f"genbrugelig punchline — {pl_below_min}/{len(fp['punchlines'])} håndskrevne "
-        f"punchlines er under {J.PUNCHLINE_MIN_WORDS} ord og ville ellers cirkulært "
-        "blokere enhver kandidat der tilfældigt lander på samme korte, almindelige "
-        "negation. Se `PUNCHLINE_MIN_WORDS` i `judge.py` og selftesten der beviser "
-        "både at korte generiske negationer består, og at en reel, længere "
-        "korpus-punchline stadig afvises.\n\n"
+        "2. **Punchline-genbrug hård-afvises for ALT undtagen en lille, håndklassificeret "
+        "liste af genuint generiske lukninger** (`genericPunchlineExemptions` i "
+        "`lexicon.json`, TASK-030-opfølgning 2026-08-13). Første udgave af denne regel "
+        "brugte et blankt ordtals-loft (\"under 4 ord tæller ikke\") — men kodegennemgang "
+        "viste at det var for groft: et vilkårligt ordtal fritog IKKE KUN generiske "
+        "negationer som \"not today\", men også korpussets EGNE korte, distinkte "
+        "punchlines (\"grub man\", \"we have fire\") hvis en kandidat tilfældigvis genbrugte "
+        f"præcis dem. Listen er derfor nu {len(J.GENERIC_PUNCHLINE_EXEMPTIONS)} håndklassificerede "
+        "lukninger, hver vurderet mod sin FULDE oprindelseslinje i korpus (ikke bare den "
+        "isolerede slutning) efter en skarp regel: enten (a) rent grammatisk — kun "
+        "pronominer/hjælpeverber/negation/konjunktioner, intet selvstændigt indholdsord — "
+        "eller (b) et bogstaveligt, gentaget strukturmærke (\"the end\", som optræder i "
+        "35+ forskellige slut-replikker som titelkort, ikke en vittighed). "
+        f"{pl_generic}/{len(fp['punchlines'])} håndskrevne punchlines matcher listen. Se "
+        "`lexicon.json`'s `_genericPunchlineExemptionsKommentar` for den fulde, "
+        "replik-for-replik begrundelse, og `judge.py`'s selftest for et eksplicit bevis "
+        "på begge retninger: alle 14 undtagelser består, og de fire eksempler kodegennemgangen "
+        "selv navngav som SKAL blive ved med at fælde en kandidat (\"grub man\"/\"we have "
+        "fire\"/\"onward, humanity\"/\"third time, harpoon\") gør netop det.\n\n"
         "**Et tredje, mindre indlysende problem dukkede op EFTER at have implementeret "
         "punkt 1 og 2 ovenfor: fjernelse af det hårde ordtal-loft for bagte par løste "
         "kun den HÅRDE afvisning — men den KONTINUERLIGE `wordCount`-dimension i "
@@ -313,20 +330,26 @@ def main() -> int:
         "præcist: `wordCount`-dimensionen scorede i gennemsnit 0.226 blandt de "
         "fejlende mod 0.731 blandt de bestående, mens alle 5 øvrige dimensioner lå "
         "0.94-1.0 i BEGGE grupper — dvs. denne ene dimension var eneste årsag.\n\n"
-        "**Løsningen — en selvstændig designbeslutning ud over den bogstavelige "
-        "instruks, og derfor eksplicit flaget her til menneskelig kontrol** — er "
-        "`pairs_wordcount_band()` i `judge.py`: bagte pars `wordCount`-dimension "
-        "scores mod bagte pars EGEN, selvkalibrerede ordtal-fordeling (samme "
-        "`words_per_line_stats()`-funktion som bygger det håndskrevne fingeraftryk, "
-        "bare kørt på bagte pars egen tekst i stedet) i stedet for det håndskrevne "
-        "korpus'. Dette er bevidst IKKE det samme som at sænke tærsklen (0.8871-"
-        "cutoff'et er urørt — se \"Tærskel\" nedenfor) og IKKE en bred tilladelsesliste "
-        "(hver eneste bagte par-replik scores stadig; en replik der er en udligger "
-        "SELV BLANDT bagte par ville stadig fejle) — det er præcis samme princip som "
-        "punkt 1 ovenfor (\"sammensæt to gates efter kildetype\"), bare anvendt på "
-        "scorings-DIMENSIONEN i stedet for den hårde afvisning. Effekt: bagte "
-        "par-fejl faldt fra 327 til 12 (se \"Rettede replikker denne runde\" nedenfor "
-        "for alle 12, før/efter).\n\n"
+        "**Første løsning (2026-08-12)** var `pairs_wordcount_band()`: bagte pars "
+        "`wordCount`-dimension scoret mod bagte pars EGEN, LIVE-genberegnede ordtal-"
+        "fordeling i stedet for det håndskrevne korpus'. Effekt dengang: bagte "
+        "par-fejl faldt fra 327 til 12.\n\n"
+        "**Kodegennemgang (2026-08-13) fandt et selv-modsigende problem i netop den "
+        "løsning**: et bånd der altid genberegnes fra netop de kandidater det dømmer, "
+        "kan definitorisk aldrig opdage at kandidaterne SOM HELHED er skredet — båndet "
+        "flytter sig MED dem og finder dem for evigt \"normale\", uanset hvor lange de "
+        "bliver. Løsningen er at FRYSE båndet: `tools/voice/pairs_baseline.json` er et "
+        "øjebliksbillede af ordtal-fordelingen taget DA de 908 varianter var "
+        "menneske-godkendte (TASK-023) og bestod stemmedommeren — ikke et tal der "
+        "opdaterer sig selv. Genkalibrering kræver nu en eksplicit, synlig handling "
+        "(`python3 tools/voice/freeze_pairs_baseline.py`), aldrig en stiltiende "
+        "bivirkning af at dømme. `judge.py`'s selftest beviser det konkret: rigtige par "
+        "scorer i snit 0.958 mod det frosne bånd; de SAMME par, kunstigt oppustet med 40 "
+        "fyldord hver, scorer 0.079 mod DET SAMME frosne bånd (skredet fanges) — men ville "
+        "scoret 0.958 igen mod et bånd genberegnet FRA netop den oppustede mængde (det er "
+        "præcis den blindhed frysningen forhindrer). `calibrate.py` (denne rapport) viser "
+        "til sammenligning begge tal — det frosne bånd og hvad en live-genberegning ville "
+        "sige lige nu — i \"Frosset ordtal-bånd for bagte par\" nedenfor.\n\n"
         "**Talrækken gennem hele runden** (grammatik + bagte par, tilsammen): "
         "488 fejl under den bogstavelige, fælles 32-ords-/3-sætnings-regel (24 "
         "grammatik + 464 par) → 349 efter punkt 1+2's kode var på plads, men FØR "
@@ -336,6 +359,42 @@ def main() -> int:
         "rapporten). Ingen af de tre mellemliggende tal er forkerte — de er "
         "øjebliksbilleder af samme mængde arbejde, målt før hvert af de tre "
         "efterfølgende rettelsestrin.\n"
+    )
+
+    md.append("\n## Frosset ordtal-bånd for bagte par (2026-08-13)\n\n")
+    baseline = json.loads((Path(__file__).resolve().parent / "pairs_baseline.json").read_text(encoding="utf-8"))
+    drift_real = statistics.fmean(
+        J.range_score(float(len(J.tokenize_words(t))), pairs_band) for _, t in pairs)
+    inflated = [t + " " + " ".join(["utterly"] * 40) for _, t in pairs]
+    drift_inflated_vs_frozen = statistics.fmean(
+        J.range_score(float(len(J.tokenize_words(t))), pairs_band) for t in inflated)
+    drift_inflated_vs_live = statistics.fmean(
+        J.range_score(float(len(J.tokenize_words(t))), J.words_per_line_stats(inflated)) for t in inflated)
+    md.append(
+        f"Frosset version {baseline['version']}, {baseline['frozenAt']}, fra commit "
+        f"`{baseline['frozenFromCommit'][:12]}` ({baseline['sourcePairCount']} par, "
+        f"{baseline['sourceVariantCount']} varianter). Genkalibrering: "
+        "`python3 tools/voice/freeze_pairs_baseline.py` — aldrig automatisk.\n\n"
+        "| | median | p10 | p90 | n |\n"
+        "|---|---:|---:|---:|---:|\n"
+        f"| Frosset (bruges af gate()) | {pairs_band['median']:.0f} | {pairs_band['p10']:.0f} | "
+        f"{pairs_band['p90']:.0f} | {baseline['sourceVariantCount']} |\n"
+        f"| Live genberegnet lige nu | {pairs_band_live['median']:.0f} | {pairs_band_live['p10']:.0f} | "
+        f"{pairs_band_live['p90']:.0f} | {len(pairs)} |\n\n"
+        + ("Frosset og live matcher fuldstændigt — ingen indholdsskred siden frysningen.\n\n"
+           if pairs_band == pairs_band_live else
+           "**Frosset og live afviger** — bagte par-indholdet har ændret sig siden frysningen. "
+           "Ikke nødvendigvis et problem (kan være legitimt nyt indhold), men bør vurderes "
+           "af et menneske: er afvigelsen forventet vækst, eller skred? Se "
+           "`docs/design/human-queue.json`.\n\n") +
+        "**Drift-beviset (samme tal som selftesten i `judge.py`, her mod det faktiske "
+        "aktuelle indhold i stedet for en fixture):**\n\n"
+        f"- Rigtige par mod det frosne bånd: gennemsnitlig ordtal-score **{drift_real:.3f}**.\n"
+        f"- De SAMME par, hver oppustet med 40 fyldord, mod det SAMME frosne bånd: "
+        f"**{drift_inflated_vs_frozen:.3f}** — skredet fanges.\n"
+        f"- De oppustede par mod et bånd genberegnet FRA den oppustede mængde selv: "
+        f"**{drift_inflated_vs_live:.3f}** — ville set normalt ud, hvis båndet ikke var "
+        "frosset. Det er præcis den blindhed frysningen forhindrer.\n"
     )
 
     md.append(f"\n## Rettede replikker denne runde ({len(history['grammar']) + len(history['pairs'])} stk., audit trail)\n\n")
@@ -477,16 +536,20 @@ def main() -> int:
 
     md.append(f"\n### Genbrugte punchlines — alle {len(punchline_hits)} tilfælde\n\n")
     md.append(
-        f"Til kontekst: {pl_below_min}/{len(fp['punchlines'])} håndskrevne punchlines er "
-        f"under {J.PUNCHLINE_MIN_WORDS} ord (\"not today\", \"it is not\", …) og tæller "
-        "efter politik-punkt 2 ovenfor IKKE som genbrug uanset tilfældigt sammenfald — "
-        "kun ≥4-ords normaliserede slutninger kan udløse denne afvisning. Før den regel "
-        "gav to kandidatlinjer falsk alarm på netop denne slags korte, generiske "
-        "negationer; begge er nu omskrevet (se \"Rettede replikker denne runde\" "
-        "ovenfor: `pair-vand-vand-self#3` og `pair-ler-ler-self#3`, som også ramte "
-        "ordtal-båndet). Med både politikken og indholdsrettelserne på plads er der nu "
-        "reelt 0 tilfælde tilbage. Selftesten i `judge.py` beviser at en RIGTIG, længere "
-        "korpus-punchline (≥4 ord) stadig bliver fanget, så denne sektion er ikke "
+        f"Til kontekst: {pl_generic}/{len(fp['punchlines'])} håndskrevne punchlines står i "
+        "`genericPunchlineExemptions` (\"not today\", \"it is not\", \"the end\", …) og "
+        "tæller efter politik-punkt 2 ovenfor IKKE som genbrug uanset tilfældigt "
+        "sammenfald — kun de resterende, DISTINKTE punchlines kan udløse denne afvisning "
+        "(se \"Politik\" ovenfor for hvordan listen er afgrænset, replik for replik, fra "
+        "korpussets egne korte-men-distinkte punchlines som \"grub man\"). Før 2026-08-13's "
+        "data-drevne liste gav en tidligere, blank \"<4 ord\"-regel falsk alarm på netop "
+        "denne slags korte, generiske negationer; de kandidatlinjer der ramte den er nu "
+        "omskrevet (se \"Rettede replikker denne runde\" ovenfor). Med både den "
+        "data-drevne undtagelseslisten og indholdsrettelserne på plads er der nu reelt 0 "
+        "tilfælde tilbage. Selftesten i `judge.py` beviser begge retninger eksplicit: alle "
+        "14 undtagelser der matcher korpus består, OG de fire eksempler kodegennemgangen "
+        "selv navngav som distinkte (\"grub man\"/\"we have fire\"/\"onward, humanity\"/"
+        "\"third time, harpoon\") fælder stadig en kandidat, så denne sektion er ikke "
         "afskaffet — kun tømt indtil en fremtidig kandidatlinje faktisk genbruger en "
         "reel joke.\n\n"
     )
@@ -568,24 +631,48 @@ def main() -> int:
         "opfinder bilen for tidligt). Fjernet fra `modernVocabulary`; øvrige moderne "
         "tech-ord (tv, mikroovn, internet, …) beholdes, da de ikke har samme etablerede "
         "kanon-status.\n\n"
-        "7. **`pairs_wordcount_band()` er en dømmekraftsbeslutning ud over den "
-        "bogstavelige instruks — flagges eksplicit til menneskelig kontrol.** "
-        "Politik-punkt 1 (se ovenfor) fjernede det HÅRDE 32-ords-loft for bagte par, "
-        "men løste ikke at den KONTINUERLIGE `wordCount`-scoringsdimension stadig "
-        "målte bagte par mod det håndskrevne korpus' ordtal-fordeling — hvilket "
-        "genindførte næsten samme straf via en blødere mekanisme (327/908 par faldt "
-        "under tærsklen alene på denne ene dimension, mens de 5 øvrige dimensioner "
-        "scorede 0.94-1.0 for både bestående og fejlende). Ingen del af den oprindelige "
-        "opgavetekst eller brugerens politik-instruks nævner denne dimension "
-        "specifikt. Løsningen jeg har implementeret — scor bagte pars `wordCount` mod "
-        "bagte pars EGEN, selv-kalibrerede fordeling via `pairs_wordcount_band()` i "
-        "stedet for det håndskrevne korpus' — følger samme princip som punkt 1 "
-        "(\"sammensæt gates efter kildetype\"), men er min egen udvidelse af "
-        "princippet til scorings-laget, ikke noget brugeren udtrykkeligt bad om. Jeg "
-        "vurderer den korrekt (den ændrer ikke tærsklen, og en ægte udligger blandt "
-        "bagte par ville stadig fejle), men den er dokumenteret som en åben "
-        "beslutning i `human-queue.json` for et menneske at stadfæste eller "
-        "underkende.\n"
+        "7. **`pairs_wordcount_band()` var en dømmekraftsbeslutning ud over den "
+        "bogstavelige instruks — flagget til menneskelig kontrol i sidste runde, nu "
+        "AFGJORT via en anden dømmekraftsbeslutning (2026-08-13).** Politik-punkt 1 "
+        "(se ovenfor) fjernede det HÅRDE 32-ords-loft for bagte par, men løste ikke at "
+        "den KONTINUERLIGE `wordCount`-scoringsdimension stadig målte bagte par mod "
+        "det håndskrevne korpus' ordtal-fordeling — hvilket genindførte næsten samme "
+        "straf via en blødere mekanisme (327/908 par faldt under tærsklen alene på "
+        "denne ene dimension). Første løsning (2026-08-12) scorede bagte pars "
+        "`wordCount` mod bagte pars EGEN, LIVE-genberegnede fordeling — men kodegennemgang "
+        "påpegede at et bånd der altid genberegnes fra netop de kandidater det dømmer "
+        "aldrig kan opdage at kandidaterne SOM HELHED er skredet. Løsningen "
+        "(`tools/voice/pairs_baseline.json` + `freeze_pairs_baseline.py`, se "
+        "\"Frosset ordtal-bånd\" ovenfor) er MIN egen dømmekraft ud over den bogstavelige "
+        "instruks igen (brugeren bad om at fryse båndet, men ikke om de KONKRETE tal "
+        "der udgør den første frysning — dem har jeg selv sat fra det aktuelle, "
+        "menneske-godkendte indhold). Dokumenteret i `human-queue.json` som løst, med "
+        "den nye mekanisme forklaret, ikke bare slettet.\n\n"
+        "8. **`genericPunchlineExemptions`-listens 14 konkrete ord er min egen "
+        "klassificering, ikke brugerens.** Brugeren gav tre sædfrø-eksempler (\"not "
+        "today\", \"it is not\", \"not that\") og et princip (\"1-3-ords generisk "
+        "lukning er ikke en punchline\"). De øvrige 11 (`it does not`, `it wasn't`, "
+        "`neither did we`, `there is none`, `no`, `he did not`, `you shouldn't`, "
+        "`why not`, `and yet`, `but still`, `the end`) er fundet ved selv at læse alle "
+        f"{len(fp['punchlines'])} håndskrevne punchlines' FULDE oprindelseslinjer og "
+        "afgøre hvilke der er rent sproglige mønstre versus fortællerens distinkte "
+        "stemme-teknik (se `lexicon.json`'s kommentar for hvorfor fx `down`/`one`/"
+        "`unfortunately` bevidst IKKE er på listen, selvom de er lige så korte). "
+        "Flagget i `human-queue.json` til menneskelig sanity-check — rubrikken er "
+        "stram og dokumenteret, men den endelige liste er en tolkning, ikke et "
+        "objektivt udledt tal som fx tærsklen.\n\n"
+        "9. **`gate()` komponerer nu `check_pairs.py` — en udvidelse af TASK-030's "
+        "scope, ikke en bogstavelig instruks.** Den oprindelige opgavetekst bad om at "
+        "\"give judge.py en ren indgang\" for STEMME-scoring; kodegennemgang bad "
+        "specifikt om at `gate()` også skulle bevise par-KONTRAKTEN (navn, dom, "
+        "dublet, længde) i stedet for at antage et menneske huskede at køre "
+        "`check_pairs.py` separat. Implementeret ved import (ikke subprocess) af en "
+        "ny, ren `check_pairs_data()`/`check_pairs_file()`-kerne udtrukket af den "
+        "eksisterende fil — `main()`'s CLI-adfærd er verificeret uændret (samme "
+        "udskrift, samme returkode på alle 10 udkast-batches). Ikke en judgment call "
+        "i samme forstand som punkt 7/8 (brugeren bad eksplicit om præcis dette), men "
+        "nævnt her fordi det udvider hvad `gate()` dømmer ud over den oprindelige "
+        "opgavetekst.\n"
     )
 
     md.append("\n## Wiring into validate\n\n")
