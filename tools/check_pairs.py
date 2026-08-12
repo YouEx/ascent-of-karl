@@ -22,7 +22,8 @@ BANNED = [
     (r"\bno reaction\b", "lyder som en fejlmeddelelse"),
     (r"\bdoes ?n.t work\b", "lyder som en fejlmeddelelse"),
     (r"!", "udråbstegn — fortælleren hæver aldrig stemmen"),
-    (r"\{[a-zA-Z]+\}", "pladsholder — bagte replikker skriver navnene ud"),
+    # {right}/{wrong} er tilladt ved near-miss og håndteres for sig nedenfor.
+    (r"\{(?!right\}|wrong\})[a-zA-Z]+\}", "pladsholder — bagte replikker skriver navnene ud"),
 ]
 
 PLURALS = {
@@ -61,11 +62,23 @@ def main() -> int:
         if len(variants) != job["variants"]:
             problems.append(f"{key}: {len(variants)} varianter, briefen bad om {job['variants']}")
         a_name, b_name = names[job["a"]], names[job["b"]]
+        near = job["verdict"] == "near-miss"
         for v in variants:
             low = v.lower()
             for pattern, why in BANNED:
                 if re.search(pattern, v, re.I):
                     problems.append(f"{key}: {why} — \"{v[:60]}…\"")
+            # Ved near-miss ved motoren hvem af de to der hørte hjemme et andet
+            # sted, og grammatikken kan pege på den. Kan den bagte replik ikke
+            # det, er den en forringelse frem for en forbedring.
+            if near and "{right}" not in v:
+                problems.append(
+                    f"{key}: near-miss uden {{right}} — den skal kunne pege, "
+                    f"ellers er grammatikken bedre — \"{v[:60]}…\"")
+            if not near and ("{right}" in v or "{wrong}" in v):
+                problems.append(
+                    f"{key}: {{right}}/{{wrong}} findes kun ved near-miss — "
+                    f"\"{v[:60]}…\"")
             if a_name not in low:
                 problems.append(f"{key}: nævner ikke '{a_name}' — \"{v[:60]}…\"")
             if b_name not in low:
