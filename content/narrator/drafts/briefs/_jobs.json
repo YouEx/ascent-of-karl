@@ -1,0 +1,2506 @@
+{
+  "topTier": 50,
+  "total": 250,
+  "jobs": [
+    {
+      "key": "graes+pind",
+      "a": "graes",
+      "b": "pind",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 1,
+      "met": 762,
+      "share": 100
+    },
+    {
+      "key": "graes+vand",
+      "a": "graes",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 2,
+      "met": 622,
+      "share": 89
+    },
+    {
+      "key": "pind+vand",
+      "a": "pind",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 3,
+      "met": 592,
+      "share": 86
+    },
+    {
+      "key": "graes+sten",
+      "a": "graes",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 4,
+      "met": 516,
+      "share": 88
+    },
+    {
+      "key": "baer+graes",
+      "a": "baer",
+      "b": "graes",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 5,
+      "met": 489,
+      "share": 100
+    },
+    {
+      "key": "graes+ler",
+      "a": "graes",
+      "b": "ler",
+      "verdict": "clash",
+      "variants": 4,
+      "rank": 6,
+      "met": 487,
+      "share": 87
+    },
+    {
+      "key": "graes+stamme",
+      "a": "graes",
+      "b": "stamme",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 7,
+      "met": 481,
+      "share": 96
+    },
+    {
+      "key": "dyr+graes",
+      "a": "dyr",
+      "b": "graes",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 8,
+      "met": 476,
+      "share": 94
+    },
+    {
+      "key": "graes+larver",
+      "a": "graes",
+      "b": "larver",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 9,
+      "met": 463,
+      "share": 96
+    },
+    {
+      "key": "graes+nabo",
+      "a": "graes",
+      "b": "nabo",
+      "verdict": "absurd",
+      "variants": 4,
+      "rank": 10,
+      "met": 462,
+      "share": 100
+    },
+    {
+      "key": "ler+pind",
+      "a": "ler",
+      "b": "pind",
+      "verdict": "clash",
+      "variants": 4,
+      "rank": 11,
+      "met": 457,
+      "share": 100
+    },
+    {
+      "key": "baer+pind",
+      "a": "baer",
+      "b": "pind",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 12,
+      "met": 453,
+      "share": 94
+    },
+    {
+      "key": "larver+pind",
+      "a": "larver",
+      "b": "pind",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 13,
+      "met": 433,
+      "share": 100
+    },
+    {
+      "key": "dyr+pind",
+      "a": "dyr",
+      "b": "pind",
+      "verdict": "absurd",
+      "variants": 4,
+      "rank": 14,
+      "met": 422,
+      "share": 98
+    },
+    {
+      "key": "dyr+vand",
+      "a": "dyr",
+      "b": "vand",
+      "verdict": "absurd",
+      "variants": 4,
+      "rank": 15,
+      "met": 420,
+      "share": 100
+    },
+    {
+      "key": "fugl+graes",
+      "a": "fugl",
+      "b": "graes",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 16,
+      "met": 414,
+      "share": 100
+    },
+    {
+      "key": "nabo+vand",
+      "a": "nabo",
+      "b": "vand",
+      "verdict": "absurd",
+      "variants": 4,
+      "rank": 17,
+      "met": 411,
+      "share": 100
+    },
+    {
+      "key": "nabo+pind",
+      "a": "nabo",
+      "b": "pind",
+      "verdict": "absurd",
+      "variants": 4,
+      "rank": 18,
+      "met": 385,
+      "share": 85
+    },
+    {
+      "key": "larver+vand",
+      "a": "larver",
+      "b": "vand",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 19,
+      "met": 381,
+      "share": 100
+    },
+    {
+      "key": "fugl+vand",
+      "a": "fugl",
+      "b": "vand",
+      "verdict": "absurd",
+      "variants": 4,
+      "rank": 20,
+      "met": 377,
+      "share": 100
+    },
+    {
+      "key": "fugl+pind",
+      "a": "fugl",
+      "b": "pind",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 21,
+      "met": 369,
+      "share": 89
+    },
+    {
+      "key": "ler+stamme",
+      "a": "ler",
+      "b": "stamme",
+      "verdict": "clash",
+      "variants": 4,
+      "rank": 22,
+      "met": 351,
+      "share": 100
+    },
+    {
+      "key": "larver+sten",
+      "a": "larver",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 23,
+      "met": 294,
+      "share": 88
+    },
+    {
+      "key": "baer+ler",
+      "a": "baer",
+      "b": "ler",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 24,
+      "met": 290,
+      "share": 85
+    },
+    {
+      "key": "ler+sten",
+      "a": "ler",
+      "b": "sten",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 25,
+      "met": 287,
+      "share": 93
+    },
+    {
+      "key": "fugl+sten",
+      "a": "fugl",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 26,
+      "met": 281,
+      "share": 83
+    },
+    {
+      "key": "dyr+sten",
+      "a": "dyr",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 27,
+      "met": 278,
+      "share": 92
+    },
+    {
+      "key": "stamme+sten",
+      "a": "stamme",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 28,
+      "met": 275,
+      "share": 100
+    },
+    {
+      "key": "dyr+ler",
+      "a": "dyr",
+      "b": "ler",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 29,
+      "met": 274,
+      "share": 89
+    },
+    {
+      "key": "vand+vand",
+      "a": "vand",
+      "b": "vand",
+      "verdict": "self",
+      "variants": 4,
+      "rank": 30,
+      "met": 273,
+      "share": 100
+    },
+    {
+      "key": "larver+ler",
+      "a": "larver",
+      "b": "ler",
+      "verdict": "locked",
+      "variants": 4,
+      "rank": 31,
+      "met": 260,
+      "share": 100
+    },
+    {
+      "key": "fugl+ler",
+      "a": "fugl",
+      "b": "ler",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 32,
+      "met": 255,
+      "share": 86
+    },
+    {
+      "key": "baer+nabo",
+      "a": "baer",
+      "b": "nabo",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 33,
+      "met": 240,
+      "share": 99
+    },
+    {
+      "key": "ler+ler",
+      "a": "ler",
+      "b": "ler",
+      "verdict": "self",
+      "variants": 4,
+      "rank": 34,
+      "met": 141,
+      "share": 100
+    },
+    {
+      "key": "graes+tromme",
+      "a": "graes",
+      "b": "tromme",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 35,
+      "met": 91,
+      "share": 100
+    },
+    {
+      "key": "tromme+vand",
+      "a": "tromme",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 36,
+      "met": 78,
+      "share": 95
+    },
+    {
+      "key": "pind+tromme",
+      "a": "pind",
+      "b": "tromme",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 37,
+      "met": 73,
+      "share": 100
+    },
+    {
+      "key": "pind+toemmerflaade",
+      "a": "pind",
+      "b": "toemmerflaade",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 38,
+      "met": 73,
+      "share": 99
+    },
+    {
+      "key": "hulemaleri+vand",
+      "a": "hulemaleri",
+      "b": "vand",
+      "verdict": "absurd",
+      "variants": 4,
+      "rank": 39,
+      "met": 65,
+      "share": 100
+    },
+    {
+      "key": "boomerang+graes",
+      "a": "boomerang",
+      "b": "graes",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 40,
+      "met": 62,
+      "share": 100
+    },
+    {
+      "key": "bautasten+pind",
+      "a": "bautasten",
+      "b": "pind",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 41,
+      "met": 60,
+      "share": 95
+    },
+    {
+      "key": "boomerang+pind",
+      "a": "boomerang",
+      "b": "pind",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 42,
+      "met": 60,
+      "share": 63
+    },
+    {
+      "key": "graes+rullesten",
+      "a": "graes",
+      "b": "rullesten",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 43,
+      "met": 59,
+      "share": 83
+    },
+    {
+      "key": "graes+stenoekse",
+      "a": "graes",
+      "b": "stenoekse",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 44,
+      "met": 58,
+      "share": 100
+    },
+    {
+      "key": "rullesten+vand",
+      "a": "rullesten",
+      "b": "vand",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 45,
+      "met": 58,
+      "share": 100
+    },
+    {
+      "key": "stenoekse+vand",
+      "a": "stenoekse",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 46,
+      "met": 57,
+      "share": 84
+    },
+    {
+      "key": "graes+reb",
+      "a": "graes",
+      "b": "reb",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 47,
+      "met": 57,
+      "share": 100
+    },
+    {
+      "key": "hulemaleri+pind",
+      "a": "hulemaleri",
+      "b": "pind",
+      "verdict": "absurd",
+      "variants": 4,
+      "rank": 48,
+      "met": 56,
+      "share": 100
+    },
+    {
+      "key": "toemmerflaade+vand",
+      "a": "toemmerflaade",
+      "b": "vand",
+      "verdict": "plausible",
+      "variants": 4,
+      "rank": 49,
+      "met": 55,
+      "share": 96
+    },
+    {
+      "key": "bautasten+vand",
+      "a": "bautasten",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 4,
+      "rank": 50,
+      "met": 55,
+      "share": 84
+    },
+    {
+      "key": "boomerang+vand",
+      "a": "boomerang",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 51,
+      "met": 53,
+      "share": 64
+    },
+    {
+      "key": "saft+vand",
+      "a": "saft",
+      "b": "vand",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 52,
+      "met": 50,
+      "share": 100
+    },
+    {
+      "key": "pind+saft",
+      "a": "pind",
+      "b": "saft",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 53,
+      "met": 46,
+      "share": 100
+    },
+    {
+      "key": "graes+saft",
+      "a": "graes",
+      "b": "saft",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 54,
+      "met": 46,
+      "share": 83
+    },
+    {
+      "key": "reb+vand",
+      "a": "reb",
+      "b": "vand",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 55,
+      "met": 46,
+      "share": 100
+    },
+    {
+      "key": "graes+toemmerflaade",
+      "a": "graes",
+      "b": "toemmerflaade",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 56,
+      "met": 46,
+      "share": 100
+    },
+    {
+      "key": "bautasten+graes",
+      "a": "bautasten",
+      "b": "graes",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 57,
+      "met": 43,
+      "share": 100
+    },
+    {
+      "key": "mudder+vand",
+      "a": "mudder",
+      "b": "vand",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 58,
+      "met": 41,
+      "share": 100
+    },
+    {
+      "key": "graes+hulemaleri",
+      "a": "graes",
+      "b": "hulemaleri",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 59,
+      "met": 40,
+      "share": 100
+    },
+    {
+      "key": "mudder+pind",
+      "a": "mudder",
+      "b": "pind",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 60,
+      "met": 37,
+      "share": 100
+    },
+    {
+      "key": "bautasten+sten",
+      "a": "bautasten",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 61,
+      "met": 35,
+      "share": 100
+    },
+    {
+      "key": "sten+tromme",
+      "a": "sten",
+      "b": "tromme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 62,
+      "met": 34,
+      "share": 82
+    },
+    {
+      "key": "saft+sten",
+      "a": "saft",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 63,
+      "met": 32,
+      "share": 91
+    },
+    {
+      "key": "ler+rullesten",
+      "a": "ler",
+      "b": "rullesten",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 64,
+      "met": 31,
+      "share": 100
+    },
+    {
+      "key": "ler+stenoekse",
+      "a": "ler",
+      "b": "stenoekse",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 65,
+      "met": 31,
+      "share": 100
+    },
+    {
+      "key": "ler+toemmerflaade",
+      "a": "ler",
+      "b": "toemmerflaade",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 66,
+      "met": 30,
+      "share": 100
+    },
+    {
+      "key": "boomerang+sten",
+      "a": "boomerang",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 67,
+      "met": 30,
+      "share": 83
+    },
+    {
+      "key": "hulemaleri+ler",
+      "a": "hulemaleri",
+      "b": "ler",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 68,
+      "met": 24,
+      "share": 100
+    },
+    {
+      "key": "ler+mudder",
+      "a": "ler",
+      "b": "mudder",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 69,
+      "met": 24,
+      "share": 92
+    },
+    {
+      "key": "hulemaleri+sten",
+      "a": "hulemaleri",
+      "b": "sten",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 70,
+      "met": 24,
+      "share": 92
+    },
+    {
+      "key": "sten+toemmerflaade",
+      "a": "sten",
+      "b": "toemmerflaade",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 71,
+      "met": 24,
+      "share": 100
+    },
+    {
+      "key": "graes+spyd",
+      "a": "graes",
+      "b": "spyd",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 72,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "pind+spyd",
+      "a": "pind",
+      "b": "spyd",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 73,
+      "met": 18,
+      "share": 100
+    },
+    {
+      "key": "boomerang+ler",
+      "a": "boomerang",
+      "b": "ler",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 74,
+      "met": 14,
+      "share": 100
+    },
+    {
+      "key": "ler+reb",
+      "a": "ler",
+      "b": "reb",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 75,
+      "met": 13,
+      "share": 100
+    },
+    {
+      "key": "hjul+vand",
+      "a": "hjul",
+      "b": "vand",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 76,
+      "met": 11,
+      "share": 100
+    },
+    {
+      "key": "graes+hjul",
+      "a": "graes",
+      "b": "hjul",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 77,
+      "met": 8,
+      "share": 100
+    },
+    {
+      "key": "haandkile+vand",
+      "a": "haandkile",
+      "b": "vand",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 78,
+      "met": 7,
+      "share": 100
+    },
+    {
+      "key": "nabo+stamme",
+      "a": "nabo",
+      "b": "stamme",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 79,
+      "met": 327,
+      "share": 91
+    },
+    {
+      "key": "fugl+stamme",
+      "a": "fugl",
+      "b": "stamme",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 80,
+      "met": 298,
+      "share": 95
+    },
+    {
+      "key": "fugl+larver",
+      "a": "fugl",
+      "b": "larver",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 81,
+      "met": 297,
+      "share": 85
+    },
+    {
+      "key": "dyr+fugl",
+      "a": "dyr",
+      "b": "fugl",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 82,
+      "met": 293,
+      "share": 84
+    },
+    {
+      "key": "dyr+stamme",
+      "a": "dyr",
+      "b": "stamme",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 83,
+      "met": 289,
+      "share": 97
+    },
+    {
+      "key": "dyr+nabo",
+      "a": "dyr",
+      "b": "nabo",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 84,
+      "met": 283,
+      "share": 99
+    },
+    {
+      "key": "dyr+larver",
+      "a": "dyr",
+      "b": "larver",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 85,
+      "met": 255,
+      "share": 100
+    },
+    {
+      "key": "larver+nabo",
+      "a": "larver",
+      "b": "nabo",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 86,
+      "met": 247,
+      "share": 97
+    },
+    {
+      "key": "baer+fugl",
+      "a": "baer",
+      "b": "fugl",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 87,
+      "met": 246,
+      "share": 98
+    },
+    {
+      "key": "larver+stamme",
+      "a": "larver",
+      "b": "stamme",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 88,
+      "met": 230,
+      "share": 100
+    },
+    {
+      "key": "fugl+fugl",
+      "a": "fugl",
+      "b": "fugl",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 89,
+      "met": 139,
+      "share": 100
+    },
+    {
+      "key": "larver+larver",
+      "a": "larver",
+      "b": "larver",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 90,
+      "met": 134,
+      "share": 100
+    },
+    {
+      "key": "dyr+dyr",
+      "a": "dyr",
+      "b": "dyr",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 91,
+      "met": 132,
+      "share": 100
+    },
+    {
+      "key": "stamme+stamme",
+      "a": "stamme",
+      "b": "stamme",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 92,
+      "met": 124,
+      "share": 100
+    },
+    {
+      "key": "fjer+stamme",
+      "a": "fjer",
+      "b": "stamme",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 93,
+      "met": 56,
+      "share": 95
+    },
+    {
+      "key": "fjer+nabo",
+      "a": "fjer",
+      "b": "nabo",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 94,
+      "met": 52,
+      "share": 100
+    },
+    {
+      "key": "fjer+sten",
+      "a": "fjer",
+      "b": "sten",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 95,
+      "met": 51,
+      "share": 88
+    },
+    {
+      "key": "fjer+vand",
+      "a": "fjer",
+      "b": "vand",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 96,
+      "met": 50,
+      "share": 100
+    },
+    {
+      "key": "dyr+fjer",
+      "a": "dyr",
+      "b": "fjer",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 97,
+      "met": 50,
+      "share": 100
+    },
+    {
+      "key": "ler+saft",
+      "a": "ler",
+      "b": "saft",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 98,
+      "met": 48,
+      "share": 100
+    },
+    {
+      "key": "fjer+ler",
+      "a": "fjer",
+      "b": "ler",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 99,
+      "met": 48,
+      "share": 100
+    },
+    {
+      "key": "bautasten+fugl",
+      "a": "bautasten",
+      "b": "fugl",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 100,
+      "met": 48,
+      "share": 100
+    },
+    {
+      "key": "dyr+tamsvin",
+      "a": "dyr",
+      "b": "tamsvin",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 101,
+      "met": 47,
+      "share": 100
+    },
+    {
+      "key": "fjer+fugl",
+      "a": "fjer",
+      "b": "fugl",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 102,
+      "met": 47,
+      "share": 98
+    },
+    {
+      "key": "bautasten+nabo",
+      "a": "bautasten",
+      "b": "nabo",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 103,
+      "met": 45,
+      "share": 100
+    },
+    {
+      "key": "fugl+honning",
+      "a": "fugl",
+      "b": "honning",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 104,
+      "met": 45,
+      "share": 100
+    },
+    {
+      "key": "bautasten+stamme",
+      "a": "bautasten",
+      "b": "stamme",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 105,
+      "met": 45,
+      "share": 91
+    },
+    {
+      "key": "stamme+tamsvin",
+      "a": "stamme",
+      "b": "tamsvin",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 106,
+      "met": 44,
+      "share": 100
+    },
+    {
+      "key": "dyr+lerfigur",
+      "a": "dyr",
+      "b": "lerfigur",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 107,
+      "met": 44,
+      "share": 100
+    },
+    {
+      "key": "lerfigur+sten",
+      "a": "lerfigur",
+      "b": "sten",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 108,
+      "met": 43,
+      "share": 91
+    },
+    {
+      "key": "graes+lerfigur",
+      "a": "graes",
+      "b": "lerfigur",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 109,
+      "met": 43,
+      "share": 91
+    },
+    {
+      "key": "agern+fugl",
+      "a": "agern",
+      "b": "fugl",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 110,
+      "met": 42,
+      "share": 100
+    },
+    {
+      "key": "sten+tamsvin",
+      "a": "sten",
+      "b": "tamsvin",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 111,
+      "met": 42,
+      "share": 83
+    },
+    {
+      "key": "stamme+tromme",
+      "a": "stamme",
+      "b": "tromme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 112,
+      "met": 42,
+      "share": 100
+    },
+    {
+      "key": "dyr+saft",
+      "a": "dyr",
+      "b": "saft",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 113,
+      "met": 42,
+      "share": 83
+    },
+    {
+      "key": "fjer+larver",
+      "a": "fjer",
+      "b": "larver",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 114,
+      "met": 42,
+      "share": 100
+    },
+    {
+      "key": "honning+nabo",
+      "a": "honning",
+      "b": "nabo",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 115,
+      "met": 42,
+      "share": 100
+    },
+    {
+      "key": "lerfigur+nabo",
+      "a": "lerfigur",
+      "b": "nabo",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 116,
+      "met": 41,
+      "share": 100
+    },
+    {
+      "key": "baer+tamsvin",
+      "a": "baer",
+      "b": "tamsvin",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 117,
+      "met": 41,
+      "share": 90
+    },
+    {
+      "key": "baer+honning",
+      "a": "baer",
+      "b": "honning",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 118,
+      "met": 41,
+      "share": 98
+    },
+    {
+      "key": "honning+ler",
+      "a": "honning",
+      "b": "ler",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 119,
+      "met": 40,
+      "share": 100
+    },
+    {
+      "key": "baer+lerfigur",
+      "a": "baer",
+      "b": "lerfigur",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 120,
+      "met": 39,
+      "share": 97
+    },
+    {
+      "key": "saft+stamme",
+      "a": "saft",
+      "b": "stamme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 121,
+      "met": 39,
+      "share": 90
+    },
+    {
+      "key": "ler+tamsvin",
+      "a": "ler",
+      "b": "tamsvin",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 122,
+      "met": 39,
+      "share": 79
+    },
+    {
+      "key": "fjer+pind",
+      "a": "fjer",
+      "b": "pind",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 123,
+      "met": 39,
+      "share": 95
+    },
+    {
+      "key": "lerfigur+stamme",
+      "a": "lerfigur",
+      "b": "stamme",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 124,
+      "met": 39,
+      "share": 100
+    },
+    {
+      "key": "tamsvin+vand",
+      "a": "tamsvin",
+      "b": "vand",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 125,
+      "met": 38,
+      "share": 100
+    },
+    {
+      "key": "ler+lerfigur",
+      "a": "ler",
+      "b": "lerfigur",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 126,
+      "met": 38,
+      "share": 100
+    },
+    {
+      "key": "fugl+tamsvin",
+      "a": "fugl",
+      "b": "tamsvin",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 127,
+      "met": 38,
+      "share": 55
+    },
+    {
+      "key": "nabo+toemmerflaade",
+      "a": "nabo",
+      "b": "toemmerflaade",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 128,
+      "met": 38,
+      "share": 89
+    },
+    {
+      "key": "baer+saft",
+      "a": "baer",
+      "b": "saft",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 129,
+      "met": 37,
+      "share": 86
+    },
+    {
+      "key": "agern+dyr",
+      "a": "agern",
+      "b": "dyr",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 130,
+      "met": 37,
+      "share": 89
+    },
+    {
+      "key": "agern+graes",
+      "a": "agern",
+      "b": "graes",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 131,
+      "met": 37,
+      "share": 100
+    },
+    {
+      "key": "nabo+saft",
+      "a": "nabo",
+      "b": "saft",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 132,
+      "met": 37,
+      "share": 100
+    },
+    {
+      "key": "fugl+tromme",
+      "a": "fugl",
+      "b": "tromme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 133,
+      "met": 37,
+      "share": 92
+    },
+    {
+      "key": "lerfigur+pind",
+      "a": "lerfigur",
+      "b": "pind",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 134,
+      "met": 37,
+      "share": 100
+    },
+    {
+      "key": "fugl+saft",
+      "a": "fugl",
+      "b": "saft",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 135,
+      "met": 37,
+      "share": 100
+    },
+    {
+      "key": "graes+honning",
+      "a": "graes",
+      "b": "honning",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 136,
+      "met": 37,
+      "share": 100
+    },
+    {
+      "key": "larver+lerfigur",
+      "a": "larver",
+      "b": "lerfigur",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 137,
+      "met": 36,
+      "share": 100
+    },
+    {
+      "key": "rullesten+stamme",
+      "a": "rullesten",
+      "b": "stamme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 138,
+      "met": 36,
+      "share": 100
+    },
+    {
+      "key": "dyr+mudder",
+      "a": "dyr",
+      "b": "mudder",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 139,
+      "met": 36,
+      "share": 100
+    },
+    {
+      "key": "bautasten+dyr",
+      "a": "bautasten",
+      "b": "dyr",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 140,
+      "met": 36,
+      "share": 92
+    },
+    {
+      "key": "bautasten+ler",
+      "a": "bautasten",
+      "b": "ler",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 141,
+      "met": 36,
+      "share": 100
+    },
+    {
+      "key": "nabo+tamsvin",
+      "a": "nabo",
+      "b": "tamsvin",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 142,
+      "met": 36,
+      "share": 97
+    },
+    {
+      "key": "baer+bautasten",
+      "a": "baer",
+      "b": "bautasten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 143,
+      "met": 35,
+      "share": 83
+    },
+    {
+      "key": "larver+tamsvin",
+      "a": "larver",
+      "b": "tamsvin",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 144,
+      "met": 35,
+      "share": 100
+    },
+    {
+      "key": "baer+fjer",
+      "a": "baer",
+      "b": "fjer",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 145,
+      "met": 35,
+      "share": 100
+    },
+    {
+      "key": "pind+tamsvin",
+      "a": "pind",
+      "b": "tamsvin",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 146,
+      "met": 34,
+      "share": 100
+    },
+    {
+      "key": "agern+larver",
+      "a": "agern",
+      "b": "larver",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 147,
+      "met": 34,
+      "share": 76
+    },
+    {
+      "key": "lerfigur+vand",
+      "a": "lerfigur",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 148,
+      "met": 34,
+      "share": 97
+    },
+    {
+      "key": "nabo+stenoekse",
+      "a": "nabo",
+      "b": "stenoekse",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 149,
+      "met": 34,
+      "share": 100
+    },
+    {
+      "key": "mudder+stamme",
+      "a": "mudder",
+      "b": "stamme",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 150,
+      "met": 34,
+      "share": 100
+    },
+    {
+      "key": "fjer+graes",
+      "a": "fjer",
+      "b": "graes",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 151,
+      "met": 34,
+      "share": 100
+    },
+    {
+      "key": "honning+stamme",
+      "a": "honning",
+      "b": "stamme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 152,
+      "met": 34,
+      "share": 85
+    },
+    {
+      "key": "fugl+hulemaleri",
+      "a": "fugl",
+      "b": "hulemaleri",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 153,
+      "met": 34,
+      "share": 88
+    },
+    {
+      "key": "larver+tromme",
+      "a": "larver",
+      "b": "tromme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 154,
+      "met": 33,
+      "share": 88
+    },
+    {
+      "key": "fugl+toemmerflaade",
+      "a": "fugl",
+      "b": "toemmerflaade",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 155,
+      "met": 33,
+      "share": 97
+    },
+    {
+      "key": "graes+tamsvin",
+      "a": "graes",
+      "b": "tamsvin",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 156,
+      "met": 32,
+      "share": 100
+    },
+    {
+      "key": "honning+larver",
+      "a": "honning",
+      "b": "larver",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 157,
+      "met": 32,
+      "share": 100
+    },
+    {
+      "key": "larver+saft",
+      "a": "larver",
+      "b": "saft",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 158,
+      "met": 32,
+      "share": 81
+    },
+    {
+      "key": "agern+vand",
+      "a": "agern",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 159,
+      "met": 32,
+      "share": 91
+    },
+    {
+      "key": "hulemaleri+stamme",
+      "a": "hulemaleri",
+      "b": "stamme",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 160,
+      "met": 31,
+      "share": 100
+    },
+    {
+      "key": "brydekamp+larver",
+      "a": "brydekamp",
+      "b": "larver",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 161,
+      "met": 31,
+      "share": 100
+    },
+    {
+      "key": "honning+vand",
+      "a": "honning",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 162,
+      "met": 31,
+      "share": 77
+    },
+    {
+      "key": "fugl+lerfigur",
+      "a": "fugl",
+      "b": "lerfigur",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 163,
+      "met": 31,
+      "share": 100
+    },
+    {
+      "key": "honning+pind",
+      "a": "honning",
+      "b": "pind",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 164,
+      "met": 31,
+      "share": 100
+    },
+    {
+      "key": "dyr+toemmerflaade",
+      "a": "dyr",
+      "b": "toemmerflaade",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 165,
+      "met": 31,
+      "share": 100
+    },
+    {
+      "key": "agern+pind",
+      "a": "agern",
+      "b": "pind",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 166,
+      "met": 30,
+      "share": 100
+    },
+    {
+      "key": "stamme+toemmerflaade",
+      "a": "stamme",
+      "b": "toemmerflaade",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 167,
+      "met": 30,
+      "share": 87
+    },
+    {
+      "key": "agern+baer",
+      "a": "agern",
+      "b": "baer",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 168,
+      "met": 29,
+      "share": 100
+    },
+    {
+      "key": "brydekamp+nabo",
+      "a": "brydekamp",
+      "b": "nabo",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 169,
+      "met": 29,
+      "share": 100
+    },
+    {
+      "key": "mudder+nabo",
+      "a": "mudder",
+      "b": "nabo",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 170,
+      "met": 29,
+      "share": 76
+    },
+    {
+      "key": "agern+nabo",
+      "a": "agern",
+      "b": "nabo",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 171,
+      "met": 28,
+      "share": 100
+    },
+    {
+      "key": "honning+sten",
+      "a": "honning",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 172,
+      "met": 28,
+      "share": 82
+    },
+    {
+      "key": "dyr+tromme",
+      "a": "dyr",
+      "b": "tromme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 173,
+      "met": 28,
+      "share": 89
+    },
+    {
+      "key": "baer+tromme",
+      "a": "baer",
+      "b": "tromme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 174,
+      "met": 28,
+      "share": 93
+    },
+    {
+      "key": "agern+ler",
+      "a": "agern",
+      "b": "ler",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 175,
+      "met": 28,
+      "share": 100
+    },
+    {
+      "key": "hulemaleri+larver",
+      "a": "hulemaleri",
+      "b": "larver",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 176,
+      "met": 28,
+      "share": 96
+    },
+    {
+      "key": "agern+stamme",
+      "a": "agern",
+      "b": "stamme",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 177,
+      "met": 27,
+      "share": 100
+    },
+    {
+      "key": "fugl+mudder",
+      "a": "fugl",
+      "b": "mudder",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 178,
+      "met": 27,
+      "share": 100
+    },
+    {
+      "key": "nabo+rullesten",
+      "a": "nabo",
+      "b": "rullesten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 179,
+      "met": 27,
+      "share": 89
+    },
+    {
+      "key": "brydekamp+stamme",
+      "a": "brydekamp",
+      "b": "stamme",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 180,
+      "met": 26,
+      "share": 85
+    },
+    {
+      "key": "brydekamp+fugl",
+      "a": "brydekamp",
+      "b": "fugl",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 181,
+      "met": 26,
+      "share": 100
+    },
+    {
+      "key": "ler+tromme",
+      "a": "ler",
+      "b": "tromme",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 182,
+      "met": 26,
+      "share": 100
+    },
+    {
+      "key": "fugl+stenoekse",
+      "a": "fugl",
+      "b": "stenoekse",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 183,
+      "met": 25,
+      "share": 88
+    },
+    {
+      "key": "dyr+honning",
+      "a": "dyr",
+      "b": "honning",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 184,
+      "met": 25,
+      "share": 80
+    },
+    {
+      "key": "brydekamp+dyr",
+      "a": "brydekamp",
+      "b": "dyr",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 185,
+      "met": 25,
+      "share": 100
+    },
+    {
+      "key": "bautasten+larver",
+      "a": "bautasten",
+      "b": "larver",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 186,
+      "met": 25,
+      "share": 100
+    },
+    {
+      "key": "honning+honning",
+      "a": "honning",
+      "b": "honning",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 187,
+      "met": 25,
+      "share": 100
+    },
+    {
+      "key": "brydekamp+vand",
+      "a": "brydekamp",
+      "b": "vand",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 188,
+      "met": 25,
+      "share": 100
+    },
+    {
+      "key": "stenoekse+stenoekse",
+      "a": "stenoekse",
+      "b": "stenoekse",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 189,
+      "met": 24,
+      "share": 100
+    },
+    {
+      "key": "baer+hulemaleri",
+      "a": "baer",
+      "b": "hulemaleri",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 190,
+      "met": 23,
+      "share": 100
+    },
+    {
+      "key": "toemmerflaade+toemmerflaade",
+      "a": "toemmerflaade",
+      "b": "toemmerflaade",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 191,
+      "met": 23,
+      "share": 100
+    },
+    {
+      "key": "lerfigur+lerfigur",
+      "a": "lerfigur",
+      "b": "lerfigur",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 192,
+      "met": 23,
+      "share": 100
+    },
+    {
+      "key": "fugl+rullesten",
+      "a": "fugl",
+      "b": "rullesten",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 193,
+      "met": 23,
+      "share": 100
+    },
+    {
+      "key": "dyr+rullesten",
+      "a": "dyr",
+      "b": "rullesten",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 194,
+      "met": 22,
+      "share": 86
+    },
+    {
+      "key": "agern+agern",
+      "a": "agern",
+      "b": "agern",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 195,
+      "met": 21,
+      "share": 100
+    },
+    {
+      "key": "froe+vand",
+      "a": "froe",
+      "b": "vand",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 196,
+      "met": 21,
+      "share": 76
+    },
+    {
+      "key": "dyr+hulemaleri",
+      "a": "dyr",
+      "b": "hulemaleri",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 197,
+      "met": 21,
+      "share": 76
+    },
+    {
+      "key": "tamsvin+tamsvin",
+      "a": "tamsvin",
+      "b": "tamsvin",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 198,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "froe+nabo",
+      "a": "froe",
+      "b": "nabo",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 199,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "gnister+stamme",
+      "a": "gnister",
+      "b": "stamme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 200,
+      "met": 20,
+      "share": 90
+    },
+    {
+      "key": "agern+fjer",
+      "a": "agern",
+      "b": "fjer",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 201,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "boomerang+stamme",
+      "a": "boomerang",
+      "b": "stamme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 202,
+      "met": 20,
+      "share": 85
+    },
+    {
+      "key": "gnister+nabo",
+      "a": "gnister",
+      "b": "nabo",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 203,
+      "met": 19,
+      "share": 100
+    },
+    {
+      "key": "larver+mudder",
+      "a": "larver",
+      "b": "mudder",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 204,
+      "met": 19,
+      "share": 100
+    },
+    {
+      "key": "boomerang+dyr",
+      "a": "boomerang",
+      "b": "dyr",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 205,
+      "met": 19,
+      "share": 74
+    },
+    {
+      "key": "froe+fugl",
+      "a": "froe",
+      "b": "fugl",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 206,
+      "met": 19,
+      "share": 100
+    },
+    {
+      "key": "gnister+larver",
+      "a": "gnister",
+      "b": "larver",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 207,
+      "met": 19,
+      "share": 100
+    },
+    {
+      "key": "brydekamp+ler",
+      "a": "brydekamp",
+      "b": "ler",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 208,
+      "met": 19,
+      "share": 100
+    },
+    {
+      "key": "froe+graes",
+      "a": "froe",
+      "b": "graes",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 209,
+      "met": 18,
+      "share": 94
+    },
+    {
+      "key": "bautasten+fjer",
+      "a": "bautasten",
+      "b": "fjer",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 210,
+      "met": 18,
+      "share": 89
+    },
+    {
+      "key": "larver+toemmerflaade",
+      "a": "larver",
+      "b": "toemmerflaade",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 211,
+      "met": 18,
+      "share": 100
+    },
+    {
+      "key": "brydekamp+sten",
+      "a": "brydekamp",
+      "b": "sten",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 212,
+      "met": 18,
+      "share": 100
+    },
+    {
+      "key": "larver+rullesten",
+      "a": "larver",
+      "b": "rullesten",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 213,
+      "met": 18,
+      "share": 100
+    },
+    {
+      "key": "faelde+vand",
+      "a": "faelde",
+      "b": "vand",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 214,
+      "met": 18,
+      "share": 100
+    },
+    {
+      "key": "baer+toemmerflaade",
+      "a": "baer",
+      "b": "toemmerflaade",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 215,
+      "met": 17,
+      "share": 76
+    },
+    {
+      "key": "baer+boomerang",
+      "a": "baer",
+      "b": "boomerang",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 216,
+      "met": 17,
+      "share": 82
+    },
+    {
+      "key": "larver+stenoekse",
+      "a": "larver",
+      "b": "stenoekse",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 217,
+      "met": 17,
+      "share": 100
+    },
+    {
+      "key": "baer+froe",
+      "a": "baer",
+      "b": "froe",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 218,
+      "met": 17,
+      "share": 100
+    },
+    {
+      "key": "baer+brydekamp",
+      "a": "baer",
+      "b": "brydekamp",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 219,
+      "met": 17,
+      "share": 100
+    },
+    {
+      "key": "dyr+froe",
+      "a": "dyr",
+      "b": "froe",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 220,
+      "met": 16,
+      "share": 100
+    },
+    {
+      "key": "froe+sten",
+      "a": "froe",
+      "b": "sten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 221,
+      "met": 16,
+      "share": 94
+    },
+    {
+      "key": "froe+stamme",
+      "a": "froe",
+      "b": "stamme",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 222,
+      "met": 16,
+      "share": 88
+    },
+    {
+      "key": "froe+ler",
+      "a": "froe",
+      "b": "ler",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 223,
+      "met": 16,
+      "share": 88
+    },
+    {
+      "key": "brydekamp+pind",
+      "a": "brydekamp",
+      "b": "pind",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 224,
+      "met": 16,
+      "share": 81
+    },
+    {
+      "key": "saft+stenoekse",
+      "a": "saft",
+      "b": "stenoekse",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 225,
+      "met": 15,
+      "share": 100
+    },
+    {
+      "key": "boomerang+nabo",
+      "a": "boomerang",
+      "b": "nabo",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 226,
+      "met": 15,
+      "share": 80
+    },
+    {
+      "key": "fugl+gnister",
+      "a": "fugl",
+      "b": "gnister",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 227,
+      "met": 15,
+      "share": 100
+    },
+    {
+      "key": "froe+pind",
+      "a": "froe",
+      "b": "pind",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 228,
+      "met": 14,
+      "share": 100
+    },
+    {
+      "key": "baer+stenoekse",
+      "a": "baer",
+      "b": "stenoekse",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 229,
+      "met": 14,
+      "share": 57
+    },
+    {
+      "key": "brydekamp+graes",
+      "a": "brydekamp",
+      "b": "graes",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 230,
+      "met": 14,
+      "share": 100
+    },
+    {
+      "key": "faelde+pind",
+      "a": "faelde",
+      "b": "pind",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 231,
+      "met": 14,
+      "share": 100
+    },
+    {
+      "key": "boomerang+larver",
+      "a": "boomerang",
+      "b": "larver",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 232,
+      "met": 13,
+      "share": 77
+    },
+    {
+      "key": "hjul+pind",
+      "a": "hjul",
+      "b": "pind",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 233,
+      "met": 13,
+      "share": 85
+    },
+    {
+      "key": "baer+gnister",
+      "a": "baer",
+      "b": "gnister",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 234,
+      "met": 13,
+      "share": 92
+    },
+    {
+      "key": "mursten+pind",
+      "a": "mursten",
+      "b": "pind",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 235,
+      "met": 12,
+      "share": 100
+    },
+    {
+      "key": "gnister+vand",
+      "a": "gnister",
+      "b": "vand",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 236,
+      "met": 12,
+      "share": 100
+    },
+    {
+      "key": "agern+honning",
+      "a": "agern",
+      "b": "honning",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 237,
+      "met": 12,
+      "share": 100
+    },
+    {
+      "key": "faelde+graes",
+      "a": "faelde",
+      "b": "graes",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 238,
+      "met": 12,
+      "share": 100
+    },
+    {
+      "key": "honning+stenoekse",
+      "a": "honning",
+      "b": "stenoekse",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 239,
+      "met": 11,
+      "share": 100
+    },
+    {
+      "key": "baer+reb",
+      "a": "baer",
+      "b": "reb",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 240,
+      "met": 11,
+      "share": 100
+    },
+    {
+      "key": "bautasten+tamsvin",
+      "a": "bautasten",
+      "b": "tamsvin",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 241,
+      "met": 11,
+      "share": 100
+    },
+    {
+      "key": "lerfigur+tromme",
+      "a": "lerfigur",
+      "b": "tromme",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 242,
+      "met": 11,
+      "share": 100
+    },
+    {
+      "key": "fjer+honning",
+      "a": "fjer",
+      "b": "honning",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 243,
+      "met": 11,
+      "share": 100
+    },
+    {
+      "key": "gnister+ler",
+      "a": "gnister",
+      "b": "ler",
+      "verdict": "clash",
+      "variants": 2,
+      "rank": 244,
+      "met": 11,
+      "share": 100
+    },
+    {
+      "key": "lerfigur+tamsvin",
+      "a": "lerfigur",
+      "b": "tamsvin",
+      "verdict": "inert",
+      "variants": 2,
+      "rank": 245,
+      "met": 11,
+      "share": 100
+    },
+    {
+      "key": "gnister+sten",
+      "a": "gnister",
+      "b": "sten",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 246,
+      "met": 10,
+      "share": 100
+    },
+    {
+      "key": "mudder+stenoekse",
+      "a": "mudder",
+      "b": "stenoekse",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 247,
+      "met": 10,
+      "share": 80
+    },
+    {
+      "key": "nabo+reb",
+      "a": "nabo",
+      "b": "reb",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 248,
+      "met": 10,
+      "share": 90
+    },
+    {
+      "key": "froe+larver",
+      "a": "froe",
+      "b": "larver",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 249,
+      "met": 10,
+      "share": 90
+    },
+    {
+      "key": "gnister+gnister",
+      "a": "gnister",
+      "b": "gnister",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 250,
+      "met": 10,
+      "share": 100
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import type { Engine } from "../core/engine";
 import { pairKey } from "../core/engine";
 import { grammarPool, pickGrammarLine, verdictContext } from "./grammar";
+import type { PairContent } from "./pairs";
 import type {
   CombineOutcome,
   NarratorContentDef,
@@ -204,6 +205,15 @@ const DEFIANCE_COMIC_EXEMPT = true;
  */
 export class Narrator {
   private state: NarratorState;
+  /**
+   * De bagte par-replikker, sat på når den lazy-loadede fil lander. Indtil da
+   * er kortet tomt, og hver fiasko besvares af grammatikken. Det er derfor
+   * ingen kode nedenfor spørger om filen er hentet: fraværet ligner bare et
+   * par uden bagt replik, og den vej er allerede den almindelige.
+   */
+  private pairLines: Record<string, string> = {};
+  /** Selve de bagte replikker, holdt uden for det delte indhold (se attachPairs). */
+  private pairDefs: Record<string, NarratorLineDef> = {};
 
   constructor(
     private engine: Engine,
@@ -221,6 +231,23 @@ export class Narrator {
     this.state = { ...freshNarratorState(), ...structuredClone(state) };
   }
 
+  /**
+   * Tag imod de bagte replikker for en akt, når den lazy-loadede fil er hentet.
+   *
+   * Replikkerne holdes for sig selv frem for at blive skubbet ind i aktens
+   * `lines`: den pulje kommer fra et importeret JSON-modul og deles af alle
+   * Narrator-instanser, så en indsprøjtning dér ville sive mellem to spil i
+   * samme proces — og mellem to tests. `line()` kigger her først, hvilket
+   * giver replikkerne varianthukommelse og alt det øvrige alligevel.
+   *
+   * Kaldet er derfor også idempotent i sig selv.
+   */
+  attachPairs(data: PairContent): void {
+    if (this.engine.content.narrator.every((n) => n.act !== data.act)) return;
+    for (const line of data.lines) this.pairDefs[line.id] = line;
+    this.pairLines = { ...this.pairLines, ...data.pairs };
+  }
+
   private content(): NarratorContentDef {
     const act = this.engine.currentAct().act;
     const c = this.engine.content.narrator.find((n) => n.act === act);
@@ -230,6 +257,8 @@ export class Narrator {
 
   /** Replik-opslag på tværs af akter — replik-id'er er globalt unikke (håndhæves af validatoren). */
   line(id: string): NarratorLineDef {
+    const baked = this.pairDefs[id];
+    if (baked) return baked;
     for (const actContent of this.engine.content.narrator) {
       const def = actContent.lines.find((l) => l.id === id);
       if (def) return def;
@@ -578,14 +607,41 @@ export class Narrator {
     const memory = this.flagMemoryLine();
     if (memory) return this.speak(memory, ctx);
 
-    // 4. Grammatikken: en replik der nævner præcis de to ting, valgt ud fra
+    // 4. Bagt replik til netop dette par. Første trin i fiaskokæden, fordi den
+    //    er skrevet om præcis disse to ting og aldrig kunne handle om andre.
+    const baked = this.bakedPairLine(outcome);
+    if (baked) return baked;
+
+    // 5. Grammatikken: en replik der nævner præcis de to ting, valgt ud fra
     //    motorens dom. Står før den generiske pulje, som dermed bliver en
     //    nødudgang der aldrig nås i praksis.
     const grammar = this.grammarLine(outcome);
     if (grammar) return grammar;
 
-    // 5. Generiske fiaskoer (roterende, aldrig samme to gange i træk)
+    // 6. Generiske fiaskoer (roterende, aldrig samme to gange i træk)
     return this.speak(this.genericFailureLine(), ctx);
+  }
+
+  /**
+   * Den bagte replik til dette par, hvis der findes en.
+   *
+   * Opslaget er par + dom, ikke par alene: det samme par kan mødes i
+   * forskellige spiltilstande og få forskellige domme, og en bagt replik der
+   * siger "du var tæt på" må ikke lyde, når sandheden er at det var absurd.
+   * Findes den bagte replik ikke for netop denne dom, taler grammatikken —
+   * som altid regner dommen ud på ny.
+   *
+   * Replikkerne skriver elementnavnene ud i klartekst frem for {a}/{b}, fordi
+   * `pairKey` er sorteret: rækkefølgen af pladsholderne ville være
+   * spillerens, ikke sætningens.
+   */
+  private bakedPairLine(outcome: CombineOutcome): SpokenLine | undefined {
+    if (outcome.kind !== "nofuse") return undefined;
+    const id = this.pairLines[
+      `${pairKey(outcome.a.id, outcome.b.id)}:${outcome.verdict}`
+    ];
+    if (!id) return undefined;
+    return this.speak(id, verdictContext(outcome.a, outcome.b, outcome.evidence));
   }
 
   /**

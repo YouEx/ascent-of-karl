@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Fletter skribenternes par-udkast til én indholdsfil.
+
+Kører den samme kontrol som skribenterne selv kørte (tools/check_pairs.py) —
+tillid er ikke en kontrol — og skriver derefter content/narrator/pairs-act-1.json.
+
+Formatet er valgt så motoren kan slå op i ét hop og ellers behandle replikken
+som enhver anden: `pairs` er et opslag fra "<pairKey>:<dom>" til et replik-id,
+og `lines` er almindelige fortæller-replikker som narrator.line() kan finde.
+
+Nøglen indeholder dommen, fordi målingen viste at 106 af de 250 hyppigste par
+skifter dom mellem gennemspilninger — samme par mødes i forskellige
+spiltilstande. En bagt replik der siger "du var tæt på" ville være løgn de
+gange sandheden er "det var absurd". Bages kun den dominerende dom; resten
+falder igennem til grammatikken, som altid har ret.
+"""
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DRAFTS = ROOT / "content" / "narrator" / "drafts"
+JOBS = DRAFTS / "briefs" / "_jobs.json"
+OUT = ROOT / "content" / "narrator" / "pairs-act-1.json"
+BATCHES = ["top-a", "top-b", "mid-a", "mid-b", "mid-c", "mid-d"]
+
+
+def line_id(key: str, verdict: str) -> str:
+    return "pair-" + key.replace("+", "-") + "-" + verdict
+
+
+def main() -> int:
+    jobs = {j["key"]: j for j in json.loads(JOBS.read_text())["jobs"]}
+    pairs: dict[str, str] = {}
+    lines: list[dict] = []
+    missing: list[str] = []
+    seen: set[str] = set()
+
+    for batch in BATCHES:
+        path = DRAFTS / f"pairs-{batch}.json"
+        if not path.exists():
+            missing.append(batch)
+            continue
+        check = subprocess.run(
+            [sys.executable, str(ROOT / "tools" / "check_pairs.py"), str(path)],
+            capture_output=True, text=True)
+        if check.returncode != 0:
+            print(check.stdout)
+            print(f"❌ {batch} består ikke check_pairs.py — flettes ikke.")
+            return 1
+        for entry in json.loads(path.read_text())["pairs"]:
+            key = entry["key"]
+            if key in seen:
+                print(f"❌ {key} findes i to batches")
+                return 1
+            seen.add(key)
+            lookup = f"{key}:{entry['verdict']}"
+            lid = line_id(key, entry["verdict"])
+            pairs[lookup] = lid
+            lines.append({"id": lid, "variants": entry["variants"]})
+
+    if missing:
+        print(f"⚠️  mangler batches: {', '.join(missing)}")
+    unwritten = [k for k in jobs if k not in seen]
+    if unwritten and not missing:
+        print(f"⚠️  {len(unwritten)} par i _jobs.json har ingen replik: "
+              f"{', '.join(unwritten[:5])}")
+
+    OUT.write_text(json.dumps(
+        {"act": 1, "pairs": pairs, "lines": lines}, ensure_ascii=False, indent=2) + "\n")
+    n = sum(len(l["variants"]) for l in lines)
+    print(f"✅ {OUT.relative_to(ROOT)}: {len(pairs)} opslag, {n} replikker")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

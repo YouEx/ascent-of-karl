@@ -59,10 +59,11 @@ def main() -> int:
     narrator = [
         n
         for p in sorted((CONTENT / "narrator").glob("*.json"))
-        if not p.name.startswith("grammar-") and (n := load(p))
+        if not p.name.startswith(("grammar-", "pairs-")) and (n := load(p))
     ]
-    # Grammatikken flettes ind i sin akt præcis som src/content.ts gør det —
-    # ellers ville validatoren se to konkurrerende udgaver af samme akt.
+    # Grammatikken og de bagte par-replikker flettes ind i deres akt præcis som
+    # src/content.ts og Narrator.attachPairs gør det — ellers ville validatoren
+    # se to konkurrerende udgaver af samme akt.
     for p in sorted((CONTENT / "narrator").glob("grammar-*.json")):
         g = load(p)
         if not g:
@@ -73,6 +74,19 @@ def main() -> int:
             continue
         host["lines"] = [*host["lines"], *g.get("lines", [])]
         host["grammar"] = g.get("grammar", {})
+    for p in sorted((CONTENT / "narrator").glob("pairs-*.json")):
+        b = load(p)
+        if not b:
+            continue
+        host = next((n for n in narrator if n["act"] == b["act"]), None)
+        if host is None:
+            err(f"{p.name}: ingen fortæller-fil for akt {b['act']}")
+            continue
+        host["lines"] = [*host["lines"], *b.get("lines", [])]
+        ids = {line["id"] for line in b.get("lines", [])}
+        for key, line_id in b.get("pairs", {}).items():
+            if line_id not in ids:
+                err(f"{p.name}: opslaget {key} peger på ukendt replik {line_id}")
     endings = load(CONTENT / "endings.json") or []
     config = load(CONTENT / "config.json") or {}
 

@@ -1,6 +1,7 @@
 import { Engine } from "../core/engine";
 import { deserialize, serialize } from "../core/save";
 import { Narrator, freshNarratorState } from "../narrator/narrator";
+import { loadPairs } from "../narrator/pairs";
 import type { NarratorState, SpokenLine } from "../narrator/narrator";
 import { loadContent } from "../content";
 import type { CombineOutcome, ElementDef } from "../core/types";
@@ -40,6 +41,14 @@ const playtest = new PlaytestLog();
 engine.loadState({ ...engine.getState(), seed: bootSeed() });
 // Nyt seed pr. playthrough → nye variantvalg hver gang (docs/design/fortaelleren.md)
 const narrator = new Narrator(engine, freshNarratorState(bootSeed()));
+
+// De bagte par-replikker hentes i deres eget bundt (CON-003), så første
+// indlæsning ikke vokser. Hentningen startes med det samme og venter ikke på
+// noget: lander filen først efter spillerens første forsøg, svarer
+// grammatikken i mellemtiden — den er skrevet netop for at kunne bære alene.
+const pairsReady = loadPairs(engine.currentAct().act).then((data) => {
+  if (data) narrator.attachPairs(data);
+});
 
 // --- Save/load (autosave pr. opdagelse, PRD §4.1) ---
 function save(): void {
@@ -912,6 +921,8 @@ function applyScenario(): void {
     }
   }
   // Flaget sættes altid, også uden scenarie: harnessen skal kunne optage
-  // spillet som det er, uden at kende til scenarier.
-  void markReadyWhenPainted();
+  // spillet som det er, uden at kende til scenarier. De bagte replikker
+  // ventes ind først, så to optagelser af samme scenarie hører det samme —
+  // ellers ville tidspunktet for en netværkshentning kunne ændre teksten.
+  void pairsReady.then(() => markReadyWhenPainted());
 }

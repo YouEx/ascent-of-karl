@@ -21,7 +21,10 @@
     "judge:report": "python3 tools/judge/overlay.py",
     "judge:apply": "node tools/judge/apply.mjs",
     "judge": "npm run judge:capture && npm run judge:score && npm run judge:report",
-    "pairs": "vite-node tools/pair_frequency.ts"
+    "pairs": "vite-node tools/pair_frequency.ts",
+    "pairs:prepare": "vite-node tools/prepare_pairs.ts",
+    "pairs:assemble": "python3 tools/assemble_pairs.py",
+    "coverage": "node tools/coverage_report.mjs"
   },
   "devDependencies": {
     "playwright": "^1.62.1",
