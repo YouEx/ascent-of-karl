@@ -381,10 +381,11 @@
     },
     {
       "id": "tromme",
-      "kind": "tool",
+      "kind": "material",
       "stuff": "wood",
       "traits": [
-        "loud"
+        "loud",
+        "dry"
       ],
       "scale": "hand"
     },
@@ -484,11 +485,23 @@
     },
     {
       "id": "rockband",
-      "hvorfor": "Ingen kind for social/musikalsk gruppe findes; brugt 'abstract' (idé/aftale) som nærmeste værdi."
+      "hvorfor": "Ingen kind for social/musikalsk gruppe findes; brugt 'abstract' som nærmeste værdi. Instrument-afstemning: rockbandet er en gruppe/oplevelse uden fysisk enkeltform (modsat tromme, som er en konkret genstand og derfor kind=material) — handler ikke aktivt på verden, så 'tool' er udelukket."
     },
     {
       "id": "stenalderfest",
-      "hvorfor": "Ingen kind for en begivenhed/fest findes; brugt 'abstract' som nærmeste værdi."
+      "hvorfor": "Ingen kind for en begivenhed/fest findes; brugt 'abstract' som nærmeste værdi. Samme princip som rockband: en fest er en oplevelse/begivenhed, ikke en fysisk ting, og handler ikke aktivt på verden — derfor abstract, ikke tool."
+    },
+    {
+      "id": "tromme",
+      "hvorfor": "Rettet fra tool til material (tværbatch-konsistens): en tromme handler ikke aktivt på verden som en økse/gravestok — den spilles/opleves. Den er et fysisk objekt (hul stamme+pind, eller skind+keramik), så den følger skind-præcedensen (båret/brugt genstand = material), ikke rockband/stenalderfest (som er begivenheder uden fysisk enkeltform = abstract)."
+    },
+    {
+      "id": "mudderbad",
+      "hvorfor": "Overvejet 'healing' pga. 'Karl calls it skincare', men afvist: det er samme sarkastiske 'Karl calls it X'-vending som mudder ('soft dirt') og grottebryg ('juice') — Karl overdriver, det er pleje/comic relief, ikke urtemedicin/lindring af sygdom eller skade. Ingen kilde bekræfter mudderbad som sygdoms-løsning."
+    },
+    {
+      "id": "ven",
+      "hvorfor": "Overvejet 'sacred' pga. taksonomiens 'idol'-eksempel — en navngivet, personificeret krukke er tæt på. Afvist: der er ingen ritual/tilbedelse/offer-ramme, kun en ensomheds-vittighed (Wilson-reference). Modsat hulemaleri/bautasten/stenkreds, som alle har eksplicit rituel/monumental framing, er 'ven' ren komik — forbliver tool/clay/hand/[hard,fragile,vessel]."
     }
   ]
 }
