@@ -5,7 +5,7 @@ import { playAndCollectFailures } from "./helpers";
 const content = loadContent();
 const act1 = content.narrator.find((n) => n.act === 1)!;
 
-const RUNS = 200;
+const RUNS = 2000;
 /** Planens egen grænse (TASK-031): "fejl hvis nogen replik optræder mere end 3 gange pr. run". */
 const MAX_REPEATS_PER_RUN = 3;
 
@@ -17,7 +17,7 @@ interface Regression {
 }
 
 /**
- * Kører de 200 runs én gang og deler resultatet mellem testene nedenfor, så
+ * Kører de 2000 runs én gang og deler resultatet mellem testene nedenfor, så
  * simuleringen ikke køres to gange for to spørgsmål til samme datasæt.
  * `playAndCollectFailures` (tests/helpers.ts) opsamler kun fiaskokædens egne
  * fire led (bagt → live → grammatik → generisk) — adfærd, hint og
@@ -68,7 +68,7 @@ const result = simulate();
  * ~3 s med samme slags blinde simulering; disse 200 kører på under 300 ms
  * (se `npm test`-output), så runtiden er ikke et problem.
  */
-describe("Fortællerens fiaskokæde: 200-run regressionstest (TASK-031, TEST-007)", () => {
+describe("Fortællerens fiaskokæde: 2000-run regressionstest (TASK-031, TEST-007)", () => {
   it("simuleringen rammer nok fiaskoer, og nødudgangen bliver aldrig nået", () => {
     console.log(
       `  ${RUNS} runs · ${result.totalLines} fiaskokæde-replikker (~${(result.totalLines / RUNS).toFixed(1)}/run) · ` +
@@ -84,37 +84,11 @@ describe("Fortællerens fiaskokæde: 200-run regressionstest (TASK-031, TEST-007
     expect(result.genericHits).toBe(0);
   });
 
-  // FUND, IKKE TESTFEJL — rapporteret til Martin i stedet for gemt væk.
-  //
-  // Planens egen grænse (TASK-031/TEST-007) er at INGEN replik i fiaskokæden
-  // må lyde mere end 3 gange i ét run. Den grænse holder ikke i dag: over 200
-  // runs optræder 20 overtrædelser (10 % af runs), alle på ægte
-  // grammatik-id'er — IKKE adfærdsreplikker som failStreak, der allerede er
-  // udelukket af `playAndCollectFailures` (se helperens `isFailureChainLine`).
-  // Værste tilfælde: "g-plaus-1" lyder 5 gange i samme run — det sker i 5 af
-  // de 200 runs (seed 55446, 388044, 720642, 1053240, 1385838), altid sammen
-  // med "g-plaus-8" og "g-plaus-2" 4 gange hver. Mindre overtrædelser rammer
-  // også "g-clash-6" (run 78) og "g-nm-3" (run 119) — så det er ikke kun
-  // "plausible"-puljen, det er mekanikken bag alle puljer.
-  //
-  // Rodårsag: `NarratorState.recentGrammar` (RECENT_GRAMMAR = 6 i
-  // narrator.ts) er ÉT globalt vindue delt af alle 7 domme tilsammen (~51
-  // replikker), ikke ét vindue pr. dom. "plausible" har kun 8 replikker
-  // (g-plaus-1..8); når andre domme blander sig ind mellem to
-  // "plausible"-møder, bliver de fleste af "plausible"s egne 8 id'er aldrig
-  // ekskluderet af vinduet, og et lille pulje-udvalg trukket tilfældigt ~7
-  // gange pr. run rammer i praksis ofte den samme replik 2+ gange. RISK-002 i
-  // planen forudsagde præcis denne risiko og udpegede TASK-018 (vinduet) +
-  // TEST-007 (denne test) som modtræk — testen gør sit arbejde, vinduet gør
-  // det ikke. En rettelse (fx vinduer pr. dom, eller K skaleret til
-  // puljestørrelsen) er en ægte designbeslutning i `grammar.ts`/`narrator.ts`
-  // og er bevidst IKKE lavet her: opgaven var at bygge testen, ikke at omgøre
-  // anti-gentagelsen. Fjern `.fails` og lad denne test håndhæve grænsen for
-  // alvor, den dag vinduet er rettet.
-  it.fails(
-    "ingen fiaskokæde-replik gentages mere end 3 gange i ét run (planens grænse — se fund ovenfor)",
-    () => {
-      expect(result.offenders).toEqual([]);
-    },
-  );
+  // Testen afslørede først 20 overtrædelser med op til 5 gentagelser:
+  // recentGrammar var ét globalt K=6-vindue delt af syv domme. Hver pulje
+  // gennemløbes nu helt før den nulstilles, og den hyppigste dom har ni
+  // replikker — nok til højst tre forekomster over de målte runs.
+  it("ingen fiaskokæde-replik gentages mere end 3 gange i ét run", () => {
+    expect(result.offenders).toEqual([]);
+  });
 });

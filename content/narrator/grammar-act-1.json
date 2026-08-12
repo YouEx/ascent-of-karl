@@ -54,7 +54,8 @@
       "g-plaus-5",
       "g-plaus-6",
       "g-plaus-7",
-      "g-plaus-8"
+      "g-plaus-8",
+      "g-plaus-9"
     ],
     "absurd": [
       "g-abs-1",
@@ -539,6 +540,17 @@
         "I'd have called the {a} and the {b} old friends before I called them strangers. The result says strangers.",
         "There's a family resemblance between the {a} and the {b}. Resemblance, it turns out, isn't relation.",
         "The {a} and the {b} belong in the same sentence, if nothing else. Today, that's all they got."
+      ]
+    },
+    {
+      "id": "g-plaus-9",
+      "variants": [
+        "There is sense in putting the {a} beside the {b}. Sense, regrettably, is not one of history's binding laws.",
+        "The {a} and the {b} make a respectable argument together. The world has declined to hear it.",
+        "I can follow Karl's reasoning from the {a} to the {b}. History, being history, wandered elsewhere.",
+        "Nothing about the {a} and the {b} promised failure. They delivered it all the same.",
+        "Had the {a} and the {b} worked, no scholar would have raised an eyebrow. Since they did not, I shall raise both.",
+        "The {a} and the {b} meet every ordinary test of a sensible idea. Ordinary tests have failed us."
       ]
     },
     {

@@ -93,14 +93,11 @@ export interface NarratorState {
    */
   slowUsed: boolean;
   /**
-   * De sidst sagte grammatik-replikker. Med ~40 fiaskoer pr. gennemspilning er
-   * gentagelse den største trussel mod illusionen om at nogen kigger med.
+   * Grammatik-replikker sagt i den nuværende cyklus for hver pulje.
+   * En pulje nulstilles først, når alle dens replikker har lydt.
    */
   recentGrammar: string[];
 }
-
-/** Hvor mange grammatik-replikker der huskes og udelukkes. */
-const RECENT_GRAMMAR = 6;
 
 export function freshNarratorState(seed = 1): NarratorState {
   return {
@@ -721,12 +718,15 @@ export class Narrator {
       outcome.a,
       outcome.b,
     );
+    const heardFromPool = this.state.recentGrammar.filter((id) => pool.includes(id));
+    if (new Set(heardFromPool).size === pool.length) {
+      this.state.recentGrammar = this.state.recentGrammar.filter(
+        (id) => !pool.includes(id),
+      );
+    }
     const id = pickGrammarLine(pool, this.state.recentGrammar, () => this.rand());
     if (!id) return undefined;
-    this.state.recentGrammar = [id, ...this.state.recentGrammar].slice(
-      0,
-      RECENT_GRAMMAR,
-    );
+    this.state.recentGrammar = [id, ...this.state.recentGrammar];
     const ctx = verdictContext(outcome.a, outcome.b, outcome.evidence);
     const spoken = this.speak(id, ctx);
     // Nævnte replikken den rigtige partner, er det et råd — og et råd skal
