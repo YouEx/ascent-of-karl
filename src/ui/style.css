@@ -599,6 +599,15 @@ img.problem-icon {
                     linear-gradient(to bottom, var(--tile-lit), var(--tile-shade));
   background-blend-mode: overlay, normal;
   border: 1px solid var(--tile-contour);
+  /* Overkanten er den ene undtagelse. Tværsnit gennem tre kort (Stone, Water,
+     Boar) i begge rækker: referencens yderste synlige række måler (222,204,187)
+     — der er INGEN mørk kontur foroven, kun et lyst plateau. Vi havde
+     --tile-contour (195,163,130) hele vejen rundt, og springet fra kant til
+     fyld blev derfor +39 luma mod referencens +20. Kantringen havde 33 % MERE
+     gradientenergi end referencen og alligevel regionens værste SSIM (0,317):
+     energien sad det forkerte sted, og en fasefejl straffes hårdere end for
+     lidt styrke. Bund, venstre og højre matcher tokenet og skal stå. */
+  border-top-color: rgb(222 204 187);
   border-radius: var(--radius);
   /*
    * Referencens kort er UDSKÅRET, ikke klippet ud. Tværsnittet gennem
@@ -662,7 +671,15 @@ img.problem-icon {
   object-fit: contain;
   filter: drop-shadow(0 1px 1px rgb(58 44 30 / 0.16));
 }
-.element .name { font-size: 1.05rem; text-align: center; line-height: 1.15; }
+/* Ottende gang det kolde --ink (22,21,26) stod, hvor referencen er varm.
+   Kernefarven målt som medianen af de mørkeste 6 % pixels i to uafhængige ord:
+   "Stone" (4,1,0) og "Neighbour" (9,4,3) — næsten sort, og R>G>B. Kun farven:
+   glyfløbet er 43 mod 43 px og 80 mod 82 px, så størrelsen er allerede rigtig,
+   og der er ingen font-weight at skrue på. */
+.element .name {
+  font-size: 1.05rem; text-align: center; line-height: 1.15;
+  color: var(--ink-warm);
+}
 /* Ny opdagelse: en okker prik — ikke en emoji i krommet */
 .element.is-new::after {
   content: "";
