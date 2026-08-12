@@ -182,6 +182,16 @@
       "variants": [
         "I saw sparks earlier. Sparks. And something dry. Just mentioning it. No agenda whatsoever.",
         "Sparks are lovely. You know what sparks love? Something dry to land on. Purely an observation."
+      ],
+      "suggests": [
+        [
+          "sten",
+          "sten"
+        ],
+        [
+          "gnister",
+          "graes"
+        ]
       ]
     },
     {
@@ -189,6 +199,16 @@
       "variants": [
         "Strike. The stones. Together. Then introduce the grass to the result. Shall I draw it as a cave painting?",
         "Stone on stone makes sparks. Sparks on dry grass make fire. Fire makes warm. Warm makes narrator stop hinting."
+      ],
+      "suggests": [
+        [
+          "sten",
+          "sten"
+        ],
+        [
+          "gnister",
+          "graes"
+        ]
       ]
     },
     {
@@ -203,6 +223,12 @@
       "variants": [
         "A stone is good. A stick is good. Together? Revolution.",
         "Some of history's finest ideas are just two ordinary things, joined. A stick, say. And a stone."
+      ],
+      "suggests": [
+        [
+          "sten",
+          "pind"
+        ]
       ]
     },
     {
@@ -210,6 +236,12 @@
       "variants": [
         "Put the stone on the stick, Karl. It's called an axe. It will be called that for a very long time.",
         "Stone. Stick. Attach. Axe. Four words, Karl. I believe in you. Three of the words, anyway."
+      ],
+      "suggests": [
+        [
+          "sten",
+          "pind"
+        ]
       ]
     },
     {
@@ -224,6 +256,12 @@
       "variants": [
         "There's a boar right over there. Karl owns something pointy. I'll leave the arithmetic on the table.",
         "Pointy object. Large, edible animal. I trust even Karl can connect these dots. Eventually."
+      ],
+      "suggests": [
+        [
+          "spyd",
+          "dyr"
+        ]
       ]
     },
     {
@@ -231,6 +269,16 @@
       "variants": [
         "Spear. Boar. Fire. Dinner. In that order, Karl.",
         "Throw the spear at the boar. Put the result on the fire. Chew. I cannot simplify this further."
+      ],
+      "suggests": [
+        [
+          "spyd",
+          "dyr"
+        ],
+        [
+          "ild",
+          "koed"
+        ]
       ]
     },
     {
@@ -423,6 +471,18 @@
         "stinker"
       ],
       "once": true
+    },
+    {
+      "id": "obeyed-failure",
+      "variants": [
+        "Ah. Yes. I did say {a} and {b}. I said it with some confidence, too. Let us agree that history is complicated.",
+        "You did exactly as I suggested and the world produced nothing. I want it on record that the world is at fault here.",
+        "{a}. {b}. Nothing. I have reviewed my advice and found it blameless, which tells you something about my review process.",
+        "That was my idea, wasn't it. Karl, I need you to know that being a narrator is harder than it looks.",
+        "Nothing happened. And this time you can't even blame Karl. Awkward for everyone.",
+        "I sent you after {a} and {b}, and {a} and {b} sent you back. We will speak no more of it.",
+        "In my defence, I have never actually done any of this myself. I only describe it. Beautifully, I might add."
+      ]
     },
     {
       "id": "gf-1",
@@ -1515,7 +1575,7 @@
       "variants": [
         "And so Karl needed warmth. If only the world around him contained objects. Objects that could be... applied to one another.",
         "Night is coming, and Karl is cold. Somewhere in this landscape lies the answer to that. Not saying where. Just saying it lies.",
-        "Karl requires heat. The steppe offers stones, grass and indifference. Two of those are useful.",
+        "Karl requires heat. The steppe offers stones, grass and indifference. Two of those will get him there, though not in one step and not in one another's company.",
         "The cold settles in. What Karl wants — what history wants — is something bright and hot. He is standing in a field of raw material and no ideas.",
         "Karl shivers. The natural next step is warmth. I mention this purely as a narrator, with no stake in the outcome whatsoever.",
         "It falls to Karl now to invent warmth. He has hands, a landscape, and my full attention."
@@ -1667,5 +1727,8 @@
   },
   "defianceComic": [
     "defiance-comic"
+  ],
+  "obeyedFailure": [
+    "obeyed-failure"
   ]
 }

@@ -7,6 +7,23 @@ import type {
   ProblemDef,
 } from "../core/types";
 
+/**
+ * Et forslag fortælleren rent faktisk har sagt højt. Gemmes, fordi han ellers
+ * ikke kan kende forskel på "spilleren prøvede noget vildt" og "spilleren
+ * gjorde præcis det, jeg bad om" — og uden den forskel håner han spilleren
+ * for at adlyde sig selv.
+ */
+export interface SuggestionMemory {
+  /** pairKey(a, b) — normaliseret, så rækkefølgen er ligegyldig */
+  key: string;
+  a: string;
+  b: string;
+  /** Replikken forslaget kom fra, så en senere replik kan henvise til den */
+  lineId: string;
+  /** Forsøgsnummer da det lød — gør det muligt at lade råd blive gamle */
+  attempt: number;
+}
+
 /** Serialiserbar fortæller-tilstand (gemmes sammen med GameState). */
 export interface NarratorState {
   /** RNG-tilstand — seedes pr. playthrough, så variantvalg er nyt hvert spil men deterministisk pr. save */
@@ -56,6 +73,12 @@ export interface NarratorState {
   spokenDefianceTiers: number[];
   /** Forsøgsnummer da trods-replikken sidst lød */
   lastDefianceAttempt: number;
+  /**
+   * Fortællerens seneste konkrete forslag, nyeste først. Kun to: et råd, der
+   * er tre forslag gammelt, er ikke længere noget spilleren "lige blev bedt
+   * om", og at undskylde for det ville lyde som en maskine, der leder i en log.
+   */
+  recentSuggestions: SuggestionMemory[];
   /** Forsøgstæller + hvornår slow-puljen sidst fyrede (cooldown) */
   attempts: number;
   lastSlowAttempt: number;
@@ -90,6 +113,7 @@ export function freshNarratorState(seed = 1): NarratorState {
     defianceCount: 0,
     spokenDefianceTiers: [],
     lastDefianceAttempt: -100,
+    recentSuggestions: [],
     attempts: 0,
     lastSlowAttempt: -100,
     slowUsed: false,
@@ -128,6 +152,18 @@ const FAST_MS = 2_000;
  * docerende tre.
  */
 const PULL_COOLDOWN = 6;
+/**
+ * Hvor mange af fortællerens forslag der huskes. To, fordi hans mest konkrete
+ * råd er i to trin (slå stenene sammen, hold så græsset til gnisterne) — med
+ * kun ét ville han glemme første halvdel af sin egen sætning.
+ */
+const SUGGESTION_MEMORY = 2;
+/**
+ * Hvor mange forsøg et råd bliver ved med at være hans ansvar. Ni er højt nok
+ * til at rumme et par afstikkere undervejs og lavt nok til at han ikke
+ * undskylder for noget, spilleren for længst har glemt at han sagde.
+ */
+const SUGGESTION_TTL = 9;
 /** Mindste antal forsøg mellem to trods-replikker */
 const DEFIANCE_COOLDOWN = 3;
 /**
@@ -223,8 +259,49 @@ export class Narrator {
     const def = this.line(id);
     this.state.lastLineId = id;
     if (def.once) this.state.usedOnce.push(id);
+    this.rememberSuggestions(def);
     const variant = this.pickVariant(def);
     return { id, variant, text: this.fill(def.variants[variant]!, ctx) };
+  }
+
+  /**
+   * Bogfør de opskrifter replikken pegede på. Det sker her og kun her, fordi
+   * `speak` er det eneste sted en replik faktisk bliver sagt højt — et forslag,
+   * spilleren aldrig hørte, må ikke kunne blive fortællerens ansvar bagefter.
+   */
+  private rememberSuggestions(def: NarratorLineDef): void {
+    if (!def.suggests?.length) return;
+    for (const [a, b] of def.suggests) {
+      const key = pairKey(a, b);
+      const kept = this.state.recentSuggestions.filter((s) => s.key !== key);
+      kept.unshift({ key, a, b, lineId: def.id, attempt: this.state.attempts });
+      this.state.recentSuggestions = kept.slice(0, SUGGESTION_MEMORY);
+    }
+  }
+
+  /**
+   * Sagde fortælleren selv, at spilleren skulle prøve netop dette par?
+   *
+   * Forslaget fjernes, når det bruges. Uden det ville han undskylde igen og
+   * igen for det samme råd, og spillets egen lektie fra `slowUsed` gælder også
+   * her: sjov én gang, docerende tre. Råd, der er blevet for gamle, tæller
+   * ikke — se SUGGESTION_TTL.
+   */
+  private ownAdviceFailed(a: string, b: string): SuggestionMemory | undefined {
+    const key = pairKey(a, b);
+    const hit = this.state.recentSuggestions.find(
+      (s) => s.key === key && this.state.attempts - s.attempt <= SUGGESTION_TTL,
+    );
+    if (!hit) return undefined;
+    this.state.recentSuggestions = this.state.recentSuggestions.filter(
+      (s) => s.key !== key,
+    );
+    return hit;
+  }
+
+  /** Fortællerens seneste forslag, nyeste først. Læses af UI og tests. */
+  suggestions(): readonly SuggestionMemory[] {
+    return this.state.recentSuggestions;
   }
 
   private updateCounters(
@@ -358,6 +435,20 @@ export class Narrator {
     return id;
   }
 
+  /**
+   * Replikken til "du gjorde, hvad jeg sagde, og der skete ingenting".
+   * Puljen er valgfri i indholdet: findes den ikke, falder øjeblikket tilbage
+   * til den almindelige rækkefølge frem for at stå tavst.
+   */
+  private obeyedFailureLine(): string | undefined {
+    const pool = (this.content().obeyedFailure ?? []).filter((id) => {
+      const def = this.line(id);
+      return this.flagsAllow(def) && id !== this.state.lastLineId;
+    });
+    if (!pool.length) return undefined;
+    return pool[Math.floor(this.rand() * pool.length)]!;
+  }
+
   private genericFailureLine(): string {
     const pool = this.content().genericFailure.filter((id) => {
       const def = this.line(id);
@@ -425,6 +516,17 @@ export class Narrator {
         return this.speak(generic, { ...ctx, element: outcome.element.name });
       }
       return undefined;
+    }
+
+    // 1b. Hans eget råd slog fejl. Den står FØR adfærd, fordi der ikke findes
+    // et øjeblik med højere signal end at spilleren gjorde præcis, hvad der
+    // blev bedt om, og intet skete. At svare med spam-drilleri dér er at
+    // skifte emne væk fra sin egen fejl. Den kan ikke tromle: `ownAdviceFailed`
+    // bruger forslaget op, så hver replik hører til ét råd.
+    if (outcome.kind === "nothing") {
+      const mine = this.ownAdviceFailed(a, b);
+      const owned = mine && this.obeyedFailureLine();
+      if (owned) return this.speak(owned, { ...ctx, a: mine!.a, b: mine!.b });
     }
 
     // 2. Adfærd (pauser, spam, gentagelser, sweeps, streaks, tempo)

@@ -60,6 +60,8 @@ def main() -> int:
     config = load(CONTENT / "config.json") or {}
 
     element_ids = {e["id"] for e in elements}
+    # Opslag for fortællerens `suggests`: rækkefølgen i et par er ligegyldig.
+    combo_pairs = {frozenset(c["pair"]) for c in combos if len(c.get("pair", [])) == 2}
     if len(element_ids) != len(elements):
         seen: set[str] = set()
         for e in elements:
@@ -261,6 +263,38 @@ def main() -> int:
             check_ref(ref, "behavior.slow", 2)
         for ref in n.get("flagMemory", []):
             check_ref(ref, "flagMemory")
+        # Fortællerens forslag skal PEGE PÅ EN OPSKRIFT DER FINDES. Reglen
+        # eksisterer, fordi han engang sendte spilleren efter sten+græs, som
+        # ikke er en kombination — vejen er sten+sten og derefter gnister+græs
+        # — og bagefter hånede spilleren for at adlyde ham. Et forslag, der
+        # ikke kan indfries, er værre end intet forslag.
+        suggesting = []
+        for ln in n["lines"]:
+            for pair in ln.get("suggests") or []:
+                if not (isinstance(pair, list) and len(pair) == 2):
+                    err(f"Akt {act['act']}: replikken '{ln['id']}' har et suggests-par "
+                        f"der ikke er præcis to element-id'er: {pair!r}")
+                    continue
+                for eid in pair:
+                    if eid not in element_ids:
+                        err(f"Akt {act['act']}: replikken '{ln['id']}' foreslår '{eid}', "
+                            f"som ikke er et element")
+                if frozenset(pair) not in combo_pairs:
+                    err(f"Akt {act['act']}: replikken '{ln['id']}' foreslår "
+                        f"{pair[0]}+{pair[1]}, men den kombination findes ikke. "
+                        f"Fortælleren må ikke sende spilleren efter noget, der ikke "
+                        f"kan lade sig gøre")
+            if ln.get("suggests"):
+                suggesting.append(ln["id"])
+
+        obeyed = n.get("obeyedFailure") or []
+        for ref in obeyed:
+            check_ref(ref, "obeyedFailure")
+        if suggesting and not obeyed:
+            err(f"Akt {act['act']}: {len(suggesting)} replikker foreslår konkrete "
+                f"opskrifter, men akten har ingen obeyedFailure-pulje. Så håner "
+                f"fortælleren spilleren for at adlyde ham")
+
         generic = n.get("genericFailure", [])
         for ref in generic:
             check_ref(ref, "genericFailure")

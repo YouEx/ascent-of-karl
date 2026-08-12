@@ -601,3 +601,101 @@ describe("Narrator: det komiske spor må ikke tabes til en timer", () => {
     expect(comic?.id).toBe("defiance-comic");
   });
 });
+
+describe("Narrator: hans eget råd", () => {
+  /**
+   * Hændelsen der udløste mekanikken: fortælleren sendte spilleren efter
+   * sten+græs, som ikke er en opskrift — vejen er sten+sten og derefter
+   * gnister+græs — og svarede så "Nothing. Brought to you by nothing."
+   * Han hånede spilleren for at adlyde ham.
+   */
+  it("hvert forslag peger på en opskrift der findes", () => {
+    const pairs = new Set(content.combos.map((c) => [...c.pair].sort().join("+")));
+    const suggested = content.narrator.flatMap((n) =>
+      n.lines.flatMap((l) =>
+        (l.suggests ?? []).map((p) => ({ line: l.id, key: [...p].sort().join("+") })),
+      ),
+    );
+    expect(suggested.length).toBeGreaterThan(0);
+    expect(suggested.filter((s) => !pairs.has(s.key))).toEqual([]);
+  });
+
+  it("en akt der foreslår noget, har også en undskyldning klar", () => {
+    for (const n of content.narrator) {
+      if (n.lines.some((l) => l.suggests?.length)) {
+        expect(n.obeyedFailure?.length ?? 0).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  /** Kør tomme forsøg til fortælleren begynder at hinte. */
+  function untilAdvice(engine: Engine, narrator: Narrator, max = 40) {
+    const heard: string[] = [];
+    for (let i = 0; i < max && narrator.suggestions().length === 0; i++) {
+      const line = attempt(engine, narrator, "sten", "graes");
+      if (line) heard.push(line.id);
+    }
+    return heard;
+  }
+
+  it("bogfører kun forslag han faktisk har sagt højt", () => {
+    const { engine, narrator } = setup();
+    expect(narrator.suggestions()).toHaveLength(0);
+    const heard = untilAdvice(engine, narrator);
+    expect(narrator.suggestions().length, `hørte: ${heard.join(", ")}`).toBeGreaterThan(0);
+    for (const s of narrator.suggestions()) {
+      expect(content.combos.some((c) => [...c.pair].sort().join("+") === s.key)).toBe(true);
+    }
+  });
+
+  it("husker højst to forslag ad gangen", () => {
+    const { engine, narrator } = setup();
+    untilAdvice(engine, narrator);
+    // Karl dør af alderdom, hvis man bliver ved — hold sig inden for livet.
+    for (let i = 0; i < 30 && !engine.getState().ended; i++) {
+      attempt(engine, narrator, "sten", "graes");
+      expect(narrator.suggestions().length).toBeLessThanOrEqual(2);
+    }
+  });
+
+  /*
+   * Med ærligt indhold KAN et forslag ikke fejle længere — validatoren slår
+   * hvert par op i combos.json. Grenen efterprøves derfor med indsat tilstand:
+   * den er et sikkerhedsnet, ikke en vej spilleren kan gå i dag.
+   */
+  it("tager skylden når spilleren gør præcis det, han bad om", () => {
+    const { engine, narrator } = setup();
+    narrator.loadState({
+      ...narrator.getState(),
+      recentSuggestions: [
+        { key: "graes+sten", a: "sten", b: "graes", lineId: "hint-kulde-2", attempt: 0 },
+      ],
+    });
+    expect(attempt(engine, narrator, "sten", "graes")?.id).toBe("obeyed-failure");
+  });
+
+  it("undskylder højst én gang for det samme råd", () => {
+    const { engine, narrator } = setup();
+    narrator.loadState({
+      ...narrator.getState(),
+      recentSuggestions: [
+        { key: "graes+sten", a: "sten", b: "graes", lineId: "hint-kulde-2", attempt: 0 },
+      ],
+    });
+    expect(attempt(engine, narrator, "sten", "graes")?.id).toBe("obeyed-failure");
+    expect(narrator.suggestions()).toHaveLength(0);
+    expect(attempt(engine, narrator, "sten", "graes")?.id).not.toBe("obeyed-failure");
+  });
+
+  it("gamle råd er ikke længere hans ansvar", () => {
+    const { engine, narrator } = setup();
+    narrator.loadState({
+      ...narrator.getState(),
+      attempts: 50,
+      recentSuggestions: [
+        { key: "graes+sten", a: "sten", b: "graes", lineId: "hint-kulde-2", attempt: 0 },
+      ],
+    });
+    expect(attempt(engine, narrator, "sten", "graes")?.id).not.toBe("obeyed-failure");
+  });
+});

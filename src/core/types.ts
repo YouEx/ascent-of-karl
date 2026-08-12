@@ -132,6 +132,20 @@ export interface NarratorLineDef {
   blockedByFlags?: string[];
   /** Replikken bruges højst én gang pr. gennemspilning (fx flag-hukommelse) */
   once?: boolean;
+  /**
+   * De opskrifter replikken peger på, som par af element-id'er. Feltet findes,
+   * fordi fortælleren engang sendte spilleren efter sten+græs, som ikke er en
+   * opskrift — vejen er sten+sten og derefter gnister+græs. Han hånede
+   * bagefter spilleren for at adlyde ham. Med `suggests` kan validatoren slå
+   * hvert par op i combos.json, så en replik ikke KAN lyve, og fortælleren
+   * kan huske hvad han sagde (se NarratorState.recentSuggestions).
+   *
+   * Reglen er hele replikken, ikke den enkelte variant: peger én variant på en
+   * opskrift, skal de alle gøre det. Ellers ville hukommelsen registrere et
+   * forslag, spilleren aldrig hørte. Det er derfor `pull-kulde` ikke må nævne
+   * to elementer i én variant, når de fem andre er holdt vage.
+   */
+  suggests?: [string, string][];
   audioId?: string;
 }
 
@@ -170,6 +184,16 @@ export interface NarratorContentDef {
   flagMemory: string[];
   /** Roterende pulje af generiske fiasko-replikker (aldrig samme to gange i træk) */
   genericFailure: string[];
+  /**
+   * Fortællerens svar når spilleren gjorde præcis det, HAN foreslog, og der
+   * skete ingenting. Uden den falder øjeblikket igennem til `genericFailure`,
+   * og så håner han spilleren for at adlyde sig selv. Det vender præmissen på
+   * hovedet: han peger på den naturlige retning, så det bliver sjovt at trodse
+   * ham — og der er intet at trodse, hvis han bare er upålidelig.
+   *
+   * Bruger {a} og {b} til det par, han selv sendte spilleren efter.
+   */
+  obeyedFailure?: string[];
   /**
    * Roterende pulje til opdagelser uden håndskrevet replik. En opdagelse må
    * aldrig møde tavshed — det er spillets vigtigste øjeblik.
