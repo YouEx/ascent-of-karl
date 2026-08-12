@@ -1,257 +1,411 @@
 {
   "act": 1,
-  "pairs": {
-    "graes+pind:plausible": "pair-graes-pind-plausible",
-    "graes+vand:near-miss": "pair-graes-vand-near-miss",
-    "pind+vand:near-miss": "pair-pind-vand-near-miss",
-    "graes+sten:near-miss": "pair-graes-sten-near-miss",
-    "baer+graes:near-miss": "pair-baer-graes-near-miss",
-    "graes+ler:clash": "pair-graes-ler-clash",
-    "graes+stamme:near-miss": "pair-graes-stamme-near-miss",
-    "dyr+graes:near-miss": "pair-dyr-graes-near-miss",
-    "graes+larver:near-miss": "pair-graes-larver-near-miss",
-    "graes+nabo:absurd": "pair-graes-nabo-absurd",
-    "ler+pind:clash": "pair-ler-pind-clash",
-    "baer+pind:near-miss": "pair-baer-pind-near-miss",
-    "larver+pind:plausible": "pair-larver-pind-plausible",
-    "dyr+pind:absurd": "pair-dyr-pind-absurd",
-    "dyr+vand:absurd": "pair-dyr-vand-absurd",
-    "fugl+graes:plausible": "pair-fugl-graes-plausible",
-    "nabo+vand:absurd": "pair-nabo-vand-absurd",
-    "nabo+pind:absurd": "pair-nabo-pind-absurd",
-    "larver+vand:plausible": "pair-larver-vand-plausible",
-    "fugl+vand:absurd": "pair-fugl-vand-absurd",
-    "fugl+pind:plausible": "pair-fugl-pind-plausible",
-    "ler+stamme:clash": "pair-ler-stamme-clash",
-    "larver+sten:near-miss": "pair-larver-sten-near-miss",
-    "baer+ler:plausible": "pair-baer-ler-plausible",
-    "ler+sten:plausible": "pair-ler-sten-plausible",
-    "fugl+sten:near-miss": "pair-fugl-sten-near-miss",
-    "dyr+sten:near-miss": "pair-dyr-sten-near-miss",
-    "stamme+sten:near-miss": "pair-stamme-sten-near-miss",
-    "dyr+ler:near-miss": "pair-dyr-ler-near-miss",
-    "fugl+ler:near-miss": "pair-fugl-ler-near-miss",
-    "baer+nabo:near-miss": "pair-baer-nabo-near-miss",
-    "tromme+vand:near-miss": "pair-tromme-vand-near-miss",
-    "pind+tromme:near-miss": "pair-pind-tromme-near-miss",
-    "pind+toemmerflaade:near-miss": "pair-pind-toemmerflaade-near-miss",
-    "bautasten+pind:near-miss": "pair-bautasten-pind-near-miss",
-    "boomerang+pind:near-miss": "pair-boomerang-pind-near-miss",
-    "graes+rullesten:near-miss": "pair-graes-rullesten-near-miss",
-    "stenoekse+vand:near-miss": "pair-stenoekse-vand-near-miss",
-    "bautasten+vand:near-miss": "pair-bautasten-vand-near-miss",
-    "vand+vand:self": "pair-vand-vand-self",
-    "larver+ler:locked": "pair-larver-ler-locked",
-    "ler+ler:self": "pair-ler-ler-self",
-    "graes+tromme:plausible": "pair-graes-tromme-plausible",
-    "hulemaleri+vand:absurd": "pair-hulemaleri-vand-absurd",
-    "boomerang+graes:plausible": "pair-boomerang-graes-plausible",
-    "graes+stenoekse:plausible": "pair-graes-stenoekse-plausible",
-    "rullesten+vand:plausible": "pair-rullesten-vand-plausible",
-    "graes+reb:plausible": "pair-graes-reb-plausible",
-    "hulemaleri+pind:absurd": "pair-hulemaleri-pind-absurd",
-    "toemmerflaade+vand:plausible": "pair-toemmerflaade-vand-plausible",
-    "boomerang+vand:near-miss": "pair-boomerang-vand-near-miss",
-    "saft+vand:plausible": "pair-saft-vand-plausible",
-    "pind+saft:clash": "pair-pind-saft-clash",
-    "graes+saft:near-miss": "pair-graes-saft-near-miss",
-    "reb+vand:clash": "pair-reb-vand-clash",
-    "graes+toemmerflaade:plausible": "pair-graes-toemmerflaade-plausible",
-    "bautasten+graes:absurd": "pair-bautasten-graes-absurd",
-    "mudder+vand:plausible": "pair-mudder-vand-plausible",
-    "graes+hulemaleri:absurd": "pair-graes-hulemaleri-absurd",
-    "mudder+pind:clash": "pair-mudder-pind-clash",
-    "bautasten+sten:near-miss": "pair-bautasten-sten-near-miss",
-    "sten+tromme:near-miss": "pair-sten-tromme-near-miss",
-    "saft+sten:near-miss": "pair-saft-sten-near-miss",
-    "ler+rullesten:plausible": "pair-ler-rullesten-plausible",
-    "ler+stenoekse:clash": "pair-ler-stenoekse-clash",
-    "ler+toemmerflaade:plausible": "pair-ler-toemmerflaade-plausible",
-    "boomerang+sten:near-miss": "pair-boomerang-sten-near-miss",
-    "hulemaleri+ler:absurd": "pair-hulemaleri-ler-absurd",
-    "ler+mudder:near-miss": "pair-ler-mudder-near-miss",
-    "hulemaleri+sten:absurd": "pair-hulemaleri-sten-absurd",
-    "sten+toemmerflaade:near-miss": "pair-sten-toemmerflaade-near-miss",
-    "graes+spyd:plausible": "pair-graes-spyd-plausible",
-    "pind+spyd:near-miss": "pair-pind-spyd-near-miss",
-    "boomerang+ler:plausible": "pair-boomerang-ler-plausible",
-    "ler+reb:clash": "pair-ler-reb-clash",
-    "hjul+vand:plausible": "pair-hjul-vand-plausible",
-    "graes+hjul:plausible": "pair-graes-hjul-plausible",
-    "haandkile+vand:inert": "pair-haandkile-vand-inert",
-    "nabo+stamme:absurd": "pair-nabo-stamme-absurd",
-    "fugl+stamme:absurd": "pair-fugl-stamme-absurd",
-    "fugl+larver:near-miss": "pair-fugl-larver-near-miss",
-    "dyr+fugl:near-miss": "pair-dyr-fugl-near-miss",
-    "dyr+stamme:plausible": "pair-dyr-stamme-plausible",
-    "dyr+nabo:near-miss": "pair-dyr-nabo-near-miss",
-    "dyr+larver:plausible": "pair-dyr-larver-plausible",
-    "larver+nabo:near-miss": "pair-larver-nabo-near-miss",
-    "baer+fugl:near-miss": "pair-baer-fugl-near-miss",
-    "larver+stamme:plausible": "pair-larver-stamme-plausible",
-    "fugl+fugl:self": "pair-fugl-fugl-self",
-    "larver+larver:self": "pair-larver-larver-self",
-    "dyr+dyr:self": "pair-dyr-dyr-self",
-    "stamme+stamme:self": "pair-stamme-stamme-self",
-    "fjer+stamme:plausible": "pair-fjer-stamme-plausible",
-    "fjer+nabo:clash": "pair-fjer-nabo-clash",
-    "fjer+sten:plausible": "pair-fjer-sten-plausible",
-    "fjer+vand:plausible": "pair-fjer-vand-plausible",
-    "dyr+fjer:clash": "pair-dyr-fjer-clash",
-    "ler+saft:plausible": "pair-ler-saft-plausible",
-    "fjer+ler:plausible": "pair-fjer-ler-plausible",
-    "bautasten+fugl:absurd": "pair-bautasten-fugl-absurd",
-    "dyr+tamsvin:plausible": "pair-dyr-tamsvin-plausible",
-    "fjer+fugl:clash": "pair-fjer-fugl-clash",
-    "bautasten+nabo:absurd": "pair-bautasten-nabo-absurd",
-    "fugl+honning:inert": "pair-fugl-honning-inert",
-    "bautasten+stamme:plausible": "pair-bautasten-stamme-plausible",
-    "stamme+tamsvin:plausible": "pair-stamme-tamsvin-plausible",
-    "dyr+lerfigur:inert": "pair-dyr-lerfigur-inert",
-    "lerfigur+sten:inert": "pair-lerfigur-sten-inert",
-    "graes+lerfigur:inert": "pair-graes-lerfigur-inert",
-    "agern+fugl:plausible": "pair-agern-fugl-plausible",
-    "sten+tamsvin:near-miss": "pair-sten-tamsvin-near-miss",
-    "stamme+tromme:near-miss": "pair-stamme-tromme-near-miss",
-    "dyr+saft:near-miss": "pair-dyr-saft-near-miss",
-    "fjer+larver:clash": "pair-fjer-larver-clash",
-    "honning+nabo:inert": "pair-honning-nabo-inert",
-    "lerfigur+nabo:inert": "pair-lerfigur-nabo-inert",
-    "baer+tamsvin:near-miss": "pair-baer-tamsvin-near-miss",
-    "baer+honning:near-miss": "pair-baer-honning-near-miss",
-    "honning+ler:inert": "pair-honning-ler-inert",
-    "baer+lerfigur:inert": "pair-baer-lerfigur-inert",
-    "saft+stamme:near-miss": "pair-saft-stamme-near-miss",
-    "ler+tamsvin:near-miss": "pair-ler-tamsvin-near-miss",
-    "fjer+pind:plausible": "pair-fjer-pind-plausible",
-    "lerfigur+stamme:inert": "pair-lerfigur-stamme-inert",
-    "tamsvin+vand:absurd": "pair-tamsvin-vand-absurd",
-    "ler+lerfigur:inert": "pair-ler-lerfigur-inert",
-    "fugl+tamsvin:near-miss": "pair-fugl-tamsvin-near-miss",
-    "nabo+toemmerflaade:absurd": "pair-nabo-toemmerflaade-absurd",
-    "baer+saft:near-miss": "pair-baer-saft-near-miss",
-    "agern+dyr:near-miss": "pair-agern-dyr-near-miss",
-    "agern+graes:near-miss": "pair-agern-graes-near-miss",
-    "nabo+saft:absurd": "pair-nabo-saft-absurd",
-    "fugl+tromme:near-miss": "pair-fugl-tromme-near-miss",
-    "lerfigur+pind:inert": "pair-lerfigur-pind-inert",
-    "fugl+saft:absurd": "pair-fugl-saft-absurd",
-    "graes+honning:near-miss": "pair-graes-honning-near-miss",
-    "larver+lerfigur:inert": "pair-larver-lerfigur-inert",
-    "rullesten+stamme:near-miss": "pair-rullesten-stamme-near-miss",
-    "dyr+mudder:absurd": "pair-dyr-mudder-absurd",
-    "bautasten+dyr:plausible": "pair-bautasten-dyr-plausible",
-    "bautasten+ler:absurd": "pair-bautasten-ler-absurd",
-    "nabo+tamsvin:near-miss": "pair-nabo-tamsvin-near-miss",
-    "baer+bautasten:near-miss": "pair-baer-bautasten-near-miss",
-    "larver+tamsvin:plausible": "pair-larver-tamsvin-plausible",
-    "baer+fjer:plausible": "pair-baer-fjer-plausible",
-    "pind+tamsvin:absurd": "pair-pind-tamsvin-absurd",
-    "agern+larver:near-miss": "pair-agern-larver-near-miss",
-    "lerfigur+vand:near-miss": "pair-lerfigur-vand-near-miss",
-    "nabo+stenoekse:near-miss": "pair-nabo-stenoekse-near-miss",
-    "mudder+stamme:clash": "pair-mudder-stamme-clash",
-    "fjer+graes:plausible": "pair-fjer-graes-plausible",
-    "honning+stamme:near-miss": "pair-honning-stamme-near-miss",
-    "fugl+hulemaleri:near-miss": "pair-fugl-hulemaleri-near-miss",
-    "larver+tromme:near-miss": "pair-larver-tromme-near-miss",
-    "fugl+toemmerflaade:absurd": "pair-fugl-toemmerflaade-absurd",
-    "graes+tamsvin:absurd": "pair-graes-tamsvin-absurd",
-    "honning+larver:inert": "pair-honning-larver-inert",
-    "larver+saft:near-miss": "pair-larver-saft-near-miss",
-    "agern+vand:near-miss": "pair-agern-vand-near-miss",
-    "hulemaleri+stamme:absurd": "pair-hulemaleri-stamme-absurd",
-    "brydekamp+larver:absurd": "pair-brydekamp-larver-absurd",
-    "honning+vand:near-miss": "pair-honning-vand-near-miss",
-    "fugl+lerfigur:inert": "pair-fugl-lerfigur-inert",
-    "honning+pind:inert": "pair-honning-pind-inert",
-    "dyr+toemmerflaade:plausible": "pair-dyr-toemmerflaade-plausible",
-    "agern+pind:plausible": "pair-agern-pind-plausible",
-    "stamme+toemmerflaade:near-miss": "pair-stamme-toemmerflaade-near-miss",
-    "agern+baer:near-miss": "pair-agern-baer-near-miss",
-    "brydekamp+nabo:absurd": "pair-brydekamp-nabo-absurd",
-    "mudder+nabo:near-miss": "pair-mudder-nabo-near-miss",
-    "agern+nabo:absurd": "pair-agern-nabo-absurd",
-    "honning+sten:near-miss": "pair-honning-sten-near-miss",
-    "dyr+tromme:near-miss": "pair-dyr-tromme-near-miss",
-    "baer+tromme:near-miss": "pair-baer-tromme-near-miss",
-    "agern+ler:plausible": "pair-agern-ler-plausible",
-    "hulemaleri+larver:near-miss": "pair-hulemaleri-larver-near-miss",
-    "agern+stamme:plausible": "pair-agern-stamme-plausible",
-    "fugl+mudder:absurd": "pair-fugl-mudder-absurd",
-    "nabo+rullesten:near-miss": "pair-nabo-rullesten-near-miss",
-    "brydekamp+stamme:absurd": "pair-brydekamp-stamme-absurd",
-    "brydekamp+fugl:absurd": "pair-brydekamp-fugl-absurd",
-    "ler+tromme:clash": "pair-ler-tromme-clash",
-    "fugl+stenoekse:near-miss": "pair-fugl-stenoekse-near-miss",
-    "dyr+honning:near-miss": "pair-dyr-honning-near-miss",
-    "brydekamp+dyr:absurd": "pair-brydekamp-dyr-absurd",
-    "bautasten+larver:absurd": "pair-bautasten-larver-absurd",
-    "honning+honning:self": "pair-honning-honning-self",
-    "brydekamp+vand:absurd": "pair-brydekamp-vand-absurd",
-    "stenoekse+stenoekse:self": "pair-stenoekse-stenoekse-self",
-    "baer+hulemaleri:absurd": "pair-baer-hulemaleri-absurd",
-    "toemmerflaade+toemmerflaade:self": "pair-toemmerflaade-toemmerflaade-self",
-    "lerfigur+lerfigur:self": "pair-lerfigur-lerfigur-self",
-    "fugl+rullesten:absurd": "pair-fugl-rullesten-absurd",
-    "dyr+rullesten:absurd": "pair-dyr-rullesten-absurd",
-    "agern+agern:self": "pair-agern-agern-self",
-    "froe+vand:near-miss": "pair-froe-vand-near-miss",
-    "dyr+hulemaleri:near-miss": "pair-dyr-hulemaleri-near-miss",
-    "tamsvin+tamsvin:self": "pair-tamsvin-tamsvin-self",
-    "froe+nabo:absurd": "pair-froe-nabo-absurd",
-    "gnister+stamme:near-miss": "pair-gnister-stamme-near-miss",
-    "agern+fjer:plausible": "pair-agern-fjer-plausible",
-    "boomerang+stamme:near-miss": "pair-boomerang-stamme-near-miss",
-    "gnister+nabo:absurd": "pair-gnister-nabo-absurd",
-    "larver+mudder:plausible": "pair-larver-mudder-plausible",
-    "boomerang+dyr:near-miss": "pair-boomerang-dyr-near-miss",
-    "froe+fugl:plausible": "pair-froe-fugl-plausible",
-    "gnister+larver:plausible": "pair-gnister-larver-plausible",
-    "brydekamp+ler:absurd": "pair-brydekamp-ler-absurd",
-    "froe+graes:near-miss": "pair-froe-graes-near-miss",
-    "bautasten+fjer:absurd": "pair-bautasten-fjer-absurd",
-    "larver+toemmerflaade:plausible": "pair-larver-toemmerflaade-plausible",
-    "brydekamp+sten:absurd": "pair-brydekamp-sten-absurd",
-    "larver+rullesten:plausible": "pair-larver-rullesten-plausible",
-    "faelde+vand:plausible": "pair-faelde-vand-plausible",
-    "baer+toemmerflaade:near-miss": "pair-baer-toemmerflaade-near-miss",
-    "baer+boomerang:near-miss": "pair-baer-boomerang-near-miss",
-    "larver+stenoekse:near-miss": "pair-larver-stenoekse-near-miss",
-    "baer+froe:plausible": "pair-baer-froe-plausible",
-    "baer+brydekamp:absurd": "pair-baer-brydekamp-absurd",
-    "dyr+froe:near-miss": "pair-dyr-froe-near-miss",
-    "froe+sten:near-miss": "pair-froe-sten-near-miss",
-    "froe+stamme:near-miss": "pair-froe-stamme-near-miss",
-    "froe+ler:clash": "pair-froe-ler-clash",
-    "brydekamp+pind:absurd": "pair-brydekamp-pind-absurd",
-    "saft+stenoekse:absurd": "pair-saft-stenoekse-absurd",
-    "boomerang+nabo:near-miss": "pair-boomerang-nabo-near-miss",
-    "fugl+gnister:absurd": "pair-fugl-gnister-absurd",
-    "froe+pind:plausible": "pair-froe-pind-plausible",
-    "baer+stenoekse:near-miss": "pair-baer-stenoekse-near-miss",
-    "brydekamp+graes:absurd": "pair-brydekamp-graes-absurd",
-    "faelde+pind:plausible": "pair-faelde-pind-plausible",
-    "boomerang+larver:near-miss": "pair-boomerang-larver-near-miss",
-    "hjul+pind:near-miss": "pair-hjul-pind-near-miss",
-    "baer+gnister:near-miss": "pair-baer-gnister-near-miss",
-    "mursten+pind:plausible": "pair-mursten-pind-plausible",
-    "gnister+vand:clash": "pair-gnister-vand-clash",
-    "agern+honning:inert": "pair-agern-honning-inert",
-    "faelde+graes:plausible": "pair-faelde-graes-plausible",
-    "honning+stenoekse:inert": "pair-honning-stenoekse-inert",
-    "baer+reb:plausible": "pair-baer-reb-plausible",
-    "bautasten+tamsvin:plausible": "pair-bautasten-tamsvin-plausible",
-    "lerfigur+tromme:inert": "pair-lerfigur-tromme-inert",
-    "fjer+honning:inert": "pair-fjer-honning-inert",
-    "gnister+ler:clash": "pair-gnister-ler-clash",
-    "lerfigur+tamsvin:inert": "pair-lerfigur-tamsvin-inert",
-    "gnister+sten:absurd": "pair-gnister-sten-absurd",
-    "mudder+stenoekse:near-miss": "pair-mudder-stenoekse-near-miss",
-    "nabo+reb:near-miss": "pair-nabo-reb-near-miss",
-    "froe+larver:near-miss": "pair-froe-larver-near-miss",
-    "gnister+gnister:self": "pair-gnister-gnister-self"
-  },
+  "pairs": [
+    "graes+pind:plausible",
+    "graes+vand:near-miss",
+    "pind+vand:near-miss",
+    "graes+sten:near-miss",
+    "baer+graes:near-miss",
+    "graes+ler:clash",
+    "graes+stamme:near-miss",
+    "dyr+graes:near-miss",
+    "graes+larver:near-miss",
+    "graes+nabo:absurd",
+    "ler+pind:clash",
+    "baer+pind:near-miss",
+    "larver+pind:plausible",
+    "dyr+pind:absurd",
+    "dyr+vand:absurd",
+    "fugl+graes:plausible",
+    "nabo+vand:absurd",
+    "nabo+pind:absurd",
+    "larver+vand:plausible",
+    "fugl+vand:absurd",
+    "fugl+pind:plausible",
+    "ler+stamme:clash",
+    "larver+sten:near-miss",
+    "baer+ler:plausible",
+    "ler+sten:plausible",
+    "fugl+sten:near-miss",
+    "dyr+sten:near-miss",
+    "stamme+sten:near-miss",
+    "dyr+ler:near-miss",
+    "fugl+ler:near-miss",
+    "baer+nabo:near-miss",
+    "tromme+vand:near-miss",
+    "pind+tromme:near-miss",
+    "pind+toemmerflaade:near-miss",
+    "bautasten+pind:near-miss",
+    "boomerang+pind:near-miss",
+    "graes+rullesten:near-miss",
+    "stenoekse+vand:near-miss",
+    "bautasten+vand:near-miss",
+    "vand+vand:self",
+    "larver+ler:locked",
+    "ler+ler:self",
+    "graes+tromme:plausible",
+    "hulemaleri+vand:absurd",
+    "boomerang+graes:plausible",
+    "graes+stenoekse:plausible",
+    "rullesten+vand:plausible",
+    "graes+reb:plausible",
+    "hulemaleri+pind:absurd",
+    "toemmerflaade+vand:plausible",
+    "boomerang+vand:near-miss",
+    "saft+vand:plausible",
+    "pind+saft:clash",
+    "graes+saft:near-miss",
+    "reb+vand:clash",
+    "graes+toemmerflaade:plausible",
+    "bautasten+graes:absurd",
+    "mudder+vand:plausible",
+    "graes+hulemaleri:absurd",
+    "mudder+pind:clash",
+    "bautasten+sten:near-miss",
+    "sten+tromme:near-miss",
+    "saft+sten:near-miss",
+    "ler+rullesten:plausible",
+    "ler+stenoekse:clash",
+    "ler+toemmerflaade:plausible",
+    "boomerang+sten:near-miss",
+    "hulemaleri+ler:absurd",
+    "ler+mudder:near-miss",
+    "hulemaleri+sten:absurd",
+    "sten+toemmerflaade:near-miss",
+    "graes+spyd:plausible",
+    "pind+spyd:near-miss",
+    "boomerang+ler:plausible",
+    "ler+reb:clash",
+    "hjul+vand:plausible",
+    "graes+hjul:plausible",
+    "haandkile+vand:inert",
+    "nabo+stamme:absurd",
+    "fugl+stamme:absurd",
+    "fugl+larver:near-miss",
+    "dyr+fugl:near-miss",
+    "dyr+stamme:plausible",
+    "dyr+nabo:near-miss",
+    "dyr+larver:plausible",
+    "larver+nabo:near-miss",
+    "baer+fugl:near-miss",
+    "larver+stamme:plausible",
+    "fugl+fugl:self",
+    "larver+larver:self",
+    "dyr+dyr:self",
+    "stamme+stamme:self",
+    "fjer+stamme:plausible",
+    "fjer+nabo:clash",
+    "fjer+sten:plausible",
+    "fjer+vand:plausible",
+    "dyr+fjer:clash",
+    "ler+saft:plausible",
+    "fjer+ler:plausible",
+    "bautasten+fugl:absurd",
+    "dyr+tamsvin:plausible",
+    "fjer+fugl:clash",
+    "bautasten+nabo:absurd",
+    "fugl+honning:inert",
+    "bautasten+stamme:plausible",
+    "stamme+tamsvin:plausible",
+    "dyr+lerfigur:inert",
+    "lerfigur+sten:inert",
+    "graes+lerfigur:inert",
+    "agern+fugl:plausible",
+    "sten+tamsvin:near-miss",
+    "stamme+tromme:near-miss",
+    "dyr+saft:near-miss",
+    "fjer+larver:clash",
+    "honning+nabo:inert",
+    "lerfigur+nabo:inert",
+    "baer+tamsvin:near-miss",
+    "baer+honning:near-miss",
+    "honning+ler:inert",
+    "baer+lerfigur:inert",
+    "saft+stamme:near-miss",
+    "ler+tamsvin:near-miss",
+    "fjer+pind:plausible",
+    "lerfigur+stamme:inert",
+    "tamsvin+vand:absurd",
+    "ler+lerfigur:inert",
+    "fugl+tamsvin:near-miss",
+    "nabo+toemmerflaade:absurd",
+    "baer+saft:near-miss",
+    "agern+dyr:near-miss",
+    "agern+graes:near-miss",
+    "nabo+saft:absurd",
+    "fugl+tromme:near-miss",
+    "lerfigur+pind:inert",
+    "fugl+saft:absurd",
+    "graes+honning:near-miss",
+    "larver+lerfigur:inert",
+    "rullesten+stamme:near-miss",
+    "dyr+mudder:absurd",
+    "bautasten+dyr:plausible",
+    "bautasten+ler:absurd",
+    "nabo+tamsvin:near-miss",
+    "baer+bautasten:near-miss",
+    "larver+tamsvin:plausible",
+    "baer+fjer:plausible",
+    "pind+tamsvin:absurd",
+    "agern+larver:near-miss",
+    "lerfigur+vand:near-miss",
+    "nabo+stenoekse:near-miss",
+    "mudder+stamme:clash",
+    "fjer+graes:plausible",
+    "honning+stamme:near-miss",
+    "fugl+hulemaleri:near-miss",
+    "larver+tromme:near-miss",
+    "fugl+toemmerflaade:absurd",
+    "graes+tamsvin:absurd",
+    "honning+larver:inert",
+    "larver+saft:near-miss",
+    "agern+vand:near-miss",
+    "hulemaleri+stamme:absurd",
+    "brydekamp+larver:absurd",
+    "honning+vand:near-miss",
+    "fugl+lerfigur:inert",
+    "honning+pind:inert",
+    "dyr+toemmerflaade:plausible",
+    "agern+pind:plausible",
+    "stamme+toemmerflaade:near-miss",
+    "agern+baer:near-miss",
+    "brydekamp+nabo:absurd",
+    "mudder+nabo:near-miss",
+    "agern+nabo:absurd",
+    "honning+sten:near-miss",
+    "dyr+tromme:near-miss",
+    "baer+tromme:near-miss",
+    "agern+ler:plausible",
+    "hulemaleri+larver:near-miss",
+    "agern+stamme:plausible",
+    "fugl+mudder:absurd",
+    "nabo+rullesten:near-miss",
+    "brydekamp+stamme:absurd",
+    "brydekamp+fugl:absurd",
+    "ler+tromme:clash",
+    "fugl+stenoekse:near-miss",
+    "dyr+honning:near-miss",
+    "brydekamp+dyr:absurd",
+    "bautasten+larver:absurd",
+    "honning+honning:self",
+    "brydekamp+vand:absurd",
+    "stenoekse+stenoekse:self",
+    "baer+hulemaleri:absurd",
+    "toemmerflaade+toemmerflaade:self",
+    "lerfigur+lerfigur:self",
+    "fugl+rullesten:absurd",
+    "dyr+rullesten:absurd",
+    "agern+agern:self",
+    "froe+vand:near-miss",
+    "dyr+hulemaleri:near-miss",
+    "tamsvin+tamsvin:self",
+    "froe+nabo:absurd",
+    "gnister+stamme:near-miss",
+    "agern+fjer:plausible",
+    "boomerang+stamme:near-miss",
+    "gnister+nabo:absurd",
+    "larver+mudder:plausible",
+    "boomerang+dyr:near-miss",
+    "froe+fugl:plausible",
+    "gnister+larver:plausible",
+    "brydekamp+ler:absurd",
+    "froe+graes:near-miss",
+    "bautasten+fjer:absurd",
+    "larver+toemmerflaade:plausible",
+    "brydekamp+sten:absurd",
+    "larver+rullesten:plausible",
+    "faelde+vand:plausible",
+    "baer+toemmerflaade:near-miss",
+    "baer+boomerang:near-miss",
+    "larver+stenoekse:near-miss",
+    "baer+froe:plausible",
+    "baer+brydekamp:absurd",
+    "dyr+froe:near-miss",
+    "froe+sten:near-miss",
+    "froe+stamme:near-miss",
+    "froe+ler:clash",
+    "brydekamp+pind:absurd",
+    "saft+stenoekse:absurd",
+    "boomerang+nabo:near-miss",
+    "fugl+gnister:absurd",
+    "froe+pind:plausible",
+    "baer+stenoekse:near-miss",
+    "brydekamp+graes:absurd",
+    "faelde+pind:plausible",
+    "boomerang+larver:near-miss",
+    "hjul+pind:near-miss",
+    "baer+gnister:near-miss",
+    "mursten+pind:plausible",
+    "gnister+vand:clash",
+    "agern+honning:inert",
+    "faelde+graes:plausible",
+    "honning+stenoekse:inert",
+    "baer+reb:plausible",
+    "bautasten+tamsvin:plausible",
+    "lerfigur+tromme:inert",
+    "fjer+honning:inert",
+    "gnister+ler:clash",
+    "lerfigur+tamsvin:inert",
+    "gnister+sten:absurd",
+    "mudder+stenoekse:near-miss",
+    "nabo+reb:near-miss",
+    "froe+larver:near-miss",
+    "gnister+gnister:self",
+    "saft+saft:self",
+    "rullesten+saft:absurd",
+    "ler+mursten:near-miss",
+    "mudder+saft:near-miss",
+    "mursten+vand:clash",
+    "graes+mursten:plausible",
+    "ler+spyd:clash",
+    "ler+mudderkage:plausible",
+    "baer+mudderkage:plausible",
+    "baer+mursten:near-miss",
+    "faelde+ler:plausible",
+    "baer+spyd:plausible",
+    "mudder+rullesten:near-miss",
+    "froe+saft:near-miss",
+    "hjul+ler:plausible",
+    "mudderkage+vand:plausible",
+    "reb+saft:clash",
+    "boomerang+saft:absurd",
+    "hulemaleri+stenoekse:absurd",
+    "baer+hjul:near-miss",
+    "boomerang+mudder:plausible",
+    "hjul+rullesten:near-miss",
+    "bautasten+mudder:absurd",
+    "graes+haandkile:inert",
+    "boomerang+boomerang:self",
+    "boomerang+rullesten:near-miss",
+    "baer+faelde:plausible",
+    "hulemaleri+reb:absurd",
+    "spyd+stenoekse:near-miss",
+    "baer+malm:near-miss",
+    "mudder+reb:clash",
+    "malm+stenoekse:plausible",
+    "haandkile+sten:near-miss",
+    "graes+malm:plausible",
+    "mudder+mursten:near-miss",
+    "hjul+sten:near-miss",
+    "froe+rullesten:near-miss",
+    "malm+vand:near-miss",
+    "haandkile+rullesten:near-miss",
+    "graes+mudderkage:near-miss",
+    "boomerang+stenoekse:near-miss",
+    "baer+haandkile:near-miss",
+    "boomerang+hulemaleri:absurd",
+    "haandkile+ler:inert",
+    "ler+malm:plausible",
+    "malm+pind:near-miss",
+    "boomerang+reb:near-miss",
+    "haandkile+pind:near-miss",
+    "faelde+reb:near-miss",
+    "boomerang+froe:plausible",
+    "fisk+vand:plausible",
+    "hjul+stenoekse:near-miss",
+    "hammer+sten:near-miss",
+    "baer+hammer:near-miss",
+    "fisk+ler:plausible",
+    "hammer+pind:near-miss",
+    "hammer+ler:inert",
+    "hammer+vand:inert",
+    "hammer+reb:near-miss",
+    "froe+reb:plausible",
+    "graes+hammer:inert",
+    "ler+stenspil:inert",
+    "baer+stenspil:inert",
+    "baer+fisk:plausible",
+    "mudderkage+stenoekse:absurd",
+    "mudderkage+saft:plausible",
+    "boomerang+mursten:plausible",
+    "fisk+graes:plausible",
+    "mursten+stenoekse:plausible",
+    "boomerang+mudderkage:absurd",
+    "faelde+sten:near-miss",
+    "boomerang+haandkile:inert",
+    "baer+bue:plausible",
+    "graes+spydspids:inert",
+    "larver+reb:plausible",
+    "fisk+pind:plausible",
+    "pind+spydspids:inert",
+    "spydspids+vand:near-miss",
+    "haandkile+reb:near-miss",
+    "fisk+stenoekse:plausible",
+    "boomerang+hjul:plausible",
+    "fisk+sten:plausible",
+    "ler+slynge:inert",
+    "faelde+stenoekse:near-miss",
+    "mudderkage+reb:clash",
+    "faelde+rullesten:near-miss",
+    "reb+slynge:near-miss",
+    "ler+spydspids:inert",
+    "baer+spydspids:near-miss",
+    "boomerang+faelde:plausible",
+    "spydspids+stenoekse:near-miss",
+    "bue+reb:near-miss",
+    "baer+slynge:inert",
+    "hulemaleri+saft:absurd",
+    "hulemaleri+mudder:absurd",
+    "hulemaleri+rullesten:absurd",
+    "froe+froe:self",
+    "gnister+saft:near-miss",
+    "mudder+mudderkage:near-miss",
+    "hjul+saft:absurd",
+    "froe+hulemaleri:absurd",
+    "mudderkage+pind:clash",
+    "malm+sten:near-miss",
+    "baer+galleri:inert",
+    "mursten+sten:near-miss",
+    "gnister+ild:absurd",
+    "baer+mudderbad:near-miss",
+    "gnister+rullesten:absurd",
+    "mudderkage+sten:near-miss",
+    "gnister+stenoekse:absurd",
+    "haandkile+saft:inert",
+    "gnister+mudder:clash",
+    "baer+ild:near-miss",
+    "galleri+vand:near-miss",
+    "spyd+spyd:self",
+    "galleri+hulemaleri:inert",
+    "ler+mudderbad:inert",
+    "gnister+reb:absurd",
+    "galleri+ler:inert",
+    "mudder+mudderbad:inert",
+    "galleri+sten:near-miss",
+    "bautasten+stenoekse:near-miss",
+    "sten+stenspil:inert",
+    "haandkile+haandkile:self",
+    "rullesten+stenspil:inert",
+    "malm+malm:self",
+    "hulemaleri+mudderkage:absurd",
+    "mursten+saft:clash",
+    "mudderbad+vand:inert",
+    "graes+mudderbad:near-miss",
+    "gnister+hulemaleri:absurd",
+    "mudderbad+pind:inert",
+    "galleri+graes:inert",
+    "saft+spyd:absurd",
+    "boomerang+gnister:near-miss",
+    "haandkile+mudder:near-miss",
+    "mudderbad+saft:inert",
+    "galleri+pind:near-miss",
+    "mudderbad+sten:near-miss",
+    "mudderkage+rullesten:absurd",
+    "malm+mudder:near-miss",
+    "graes+stenspil:inert",
+    "mudderkage+mudderkage:self",
+    "mudder+spyd:clash",
+    "hulemaleri+mursten:absurd",
+    "bautasten+saft:absurd",
+    "haandkile+hulemaleri:inert",
+    "galleri+galleri:self",
+    "froe+gnister:near-miss",
+    "galleri+saft:inert",
+    "net+reb:plausible",
+    "malm+rullesten:near-miss",
+    "mudderbad+mudderbad:self",
+    "hjul+hulemaleri:absurd"
+  ],
   "lines": [
     {
       "id": "pair-graes-pind-plausible",
@@ -2101,6 +2255,1084 @@
       "variants": [
         "Two showers of sparks instead of one. Not a fire. An inventory of light that Karl applauded twice as hard for.",
         "Karl struck the sparks against the sparks, or as close as one can manage, and got exactly double the half-second and none of the warmth. I applauded anyway. Force of habit."
+      ]
+    },
+    {
+      "id": "pair-saft-saft-self",
+      "variants": [
+        "Karl added one dribble of berry juice to another dribble of berry juice, the same shade meeting itself in the same purple-stained palm.",
+        "Berry juice met more berry juice on fingers already drinking it, wearing it, and painting with it. A fourth use never arrived, just more of the first three."
+      ]
+    },
+    {
+      "id": "pair-rullesten-saft-absurd",
+      "variants": [
+        "The round stone gets called 'the good rock' and guarded like treasure; the berry juice gets called dinner and is gone in a mouthful. Karl held the two together regardless.",
+        "I checked what the round stone and the berry juice might have in common. The stone gets guarded like treasure. The juice gets drunk before it can object. Guarding and drinking have never once overlapped."
+      ]
+    },
+    {
+      "id": "pair-ler-mursten-near-miss",
+      "variants": [
+        "Karl pressed the soft clay against the dried mud brick, hoping one lesson in hardness might simply rub off through contact alone. The {right} had somewhere else to be today.",
+        "The mud brick already knows how to become Karl's architecture. The clay is still working on becoming a good idea. Only the {right} was ever going to matter here."
+      ]
+    },
+    {
+      "id": "pair-mudder-saft-near-miss",
+      "variants": [
+        "Karl swirled the mud into the berry juice, hoping for a colour with a better name than 'soft dirt.' The {right} had somewhere else to be this afternoon.",
+        "Karl held the mud in one hand and the berry juice in the other, weighing which deserved his attention first. Neither did. The {right} was owed something better today."
+      ]
+    },
+    {
+      "id": "pair-mursten-vand-clash",
+      "variants": [
+        "The mud brick spent real effort becoming hard and dry. The water undid a corner of that effort in about four seconds, and Karl watched his architecture soften at the edges.",
+        "Karl poured the water over the mud brick to see what would happen. What happened was a mud brick remembering, one damp patch at a time, that it used to be mud."
+      ]
+    },
+    {
+      "id": "pair-graes-mursten-plausible",
+      "variants": [
+        "The dry grass insulates against the cold; the mud brick stacks into what Karl calls architecture. Between insulation and architecture there was meant to be a roof. There is, instead, a pillow lying next to a wall, unintroduced.",
+        "Somewhere, an application for turning a pillow and a brick into a proper roof has been sitting in triplicate for centuries. The dry grass and the mud brick are still waiting on the reply."
+      ]
+    },
+    {
+      "id": "pair-ler-spyd-clash",
+      "variants": [
+        "Karl pressed the clay onto the tip of the spear, hoping for some kind of guard. The point went straight through, the way sharp always goes through soft, and came out the other side unchanged.",
+        "Soft loses to sharp before the contest even starts, and the clay proved it against the spear by arriving in one lump and leaving in two, neither half useful."
+      ]
+    },
+    {
+      "id": "pair-ler-mudderkage-plausible",
+      "variants": [
+        "The clay is, technically, raw mud pie that hasn't been through the oven of Karl's ambition yet. He pressed it against the finished one hoping for a bigger cake. He got a bigger lump, and I got nothing new to complain about, for once.",
+        "One mud pie already exists, berry and all, proof it can be done. A second lump of clay watched it happen from a foot away and remained, stubbornly, a lump."
+      ]
+    },
+    {
+      "id": "pair-baer-mudderkage-plausible",
+      "variants": [
+        "The mud pie already wears one lonely berry as decoration. A whole handful of berries pressed in beside it looked, for a moment, like the start of a proper dessert. It ended as a mud pie with more fruit stuck to the outside, nothing more.",
+        "Berries are, per Karl's own bird test, possibly food. The mud pie is, per my own count, at least two bites too many. Together they stayed exactly as questionable as they started, only in greater volume."
+      ]
+    },
+    {
+      "id": "pair-baer-mursten-near-miss",
+      "variants": [
+        "Karl pressed the berries into the mud brick, hoping for decoration, or perhaps reinforcement. The {right} had somewhere else to be this afternoon.",
+        "Between the berries and the mud brick, the {right} still had something left to finish elsewhere today. The other simply happened to be nearby."
+      ]
+    },
+    {
+      "id": "pair-faelde-ler-plausible",
+      "variants": [
+        "The snare hunts all night without any help from Karl at all. The clay, given the same quiet independence, produced nothing but a slightly flatter version of itself by morning.",
+        "The snare, Karl's finest employee, catches dinner while he sleeps. His clay, left alone for the same number of hours, caught nothing, taught itself nothing, and remained precisely as ambitious as a wet lump can be."
+      ]
+    },
+    {
+      "id": "pair-baer-spyd-plausible",
+      "variants": [
+        "Karl skewered the berries on the tip of the spear he once held backwards, hoping competence might show up twice in the same week. It showed up neither time.",
+        "Somewhere, a sharp spear and a handful of berries add up to a clever bit of hunting-gathering economy. Here, Karl held the spear the right way round for once and still walked away with nothing but skewered fruit."
+      ]
+    },
+    {
+      "id": "pair-mudder-rullesten-near-miss",
+      "variants": [
+        "Karl pressed the round stone into the mud, hoping for a mould of some kind. The mud held the shape for a second, then forgot it entirely. The {right} was needed for something else today.",
+        "Karl weighed the mud against the round stone, one soft, one solid, both equally unmoved by his attention. The {right} was owed a bit more ceremony elsewhere."
+      ]
+    },
+    {
+      "id": "pair-froe-saft-near-miss",
+      "variants": [
+        "Karl stirred the seeds into the berry juice, the very bits he once spat out now floating in the same fruit's liquid he already drinks. The {right} had somewhere else to be this afternoon.",
+        "Between the seeds and the berry juice, I know exactly what each one was hoping for today. Not saying which got closer. The {right} keeps that particular secret regardless."
+      ]
+    },
+    {
+      "id": "pair-hjul-ler-plausible",
+      "variants": [
+        "The wheel rolls, unstoppably, twice-chased-across-the-valley rolls. The clay only needed it to spin in place for once, slowly, with something being shaped on top. Rolling away was all it knew how to do.",
+        "Somewhere in the future, a wheel holds still and spins clay into something round and useful. Karl's wheel, true to form, simply rolled off across the valley a third time, clay and all."
+      ]
+    },
+    {
+      "id": "pair-mudderkage-vand-plausible",
+      "variants": [
+        "The mud pie is, generously, edible. The water is, by Karl's own taste test, very wet. Thinned together the two might have made a proper soup; instead, the mud pie just got soggier, and I filed a second complaint.",
+        "Karl dunked the mud pie in the water hoping to rinse off the taste of the last bite. The water stayed very wet, exactly as advertised. The mud pie stayed a mud pie, un-improved and un-eaten by anyone with better judgement."
+      ]
+    },
+    {
+      "id": "pair-reb-saft-clash",
+      "variants": [
+        "The rope is dry by design, twisted grass built to hold a knot. Karl dunked it in the berry juice anyway, and dry lost to wet exactly as fast as it always does, one darkened coil at a time.",
+        "Dry does not survive contact with wet for long, and the rope proved it against the berry juice by going in taut and coming out limp, one shade darker and considerably less useful for tying to anything, including Karl."
+      ]
+    },
+    {
+      "id": "pair-boomerang-saft-absurd",
+      "variants": [
+        "The boomerang's entire purpose is returning to Karl's hand. The berry juice's entire purpose is being consumed and gone. Return and disappearance do not share a single afternoon.",
+        "I looked for a reason the boomerang and the berry juice might belong in the same story. One always comes back. The other never does, being, by this point, mostly inside Karl. I stopped looking."
+      ]
+    },
+    {
+      "id": "pair-hulemaleri-stenoekse-absurd",
+      "variants": [
+        "The cave painting is sacred and entirely finished, whatever it depicts. The stone axe is humanity's first subscription to cutting things. Subscriptions do not renew on sacred, finished art, and Karl's attempt today didn't change that.",
+        "I searched for what the cave painting and the stone axe might have to say to each other. One refuses explanation by design. The other only knows how to cut things. Neither had anything for the other."
+      ]
+    },
+    {
+      "id": "pair-baer-hjul-near-miss",
+      "variants": [
+        "Karl balanced the berries on top of the wheel, hoping momentum might do some of the eating for him. The wheel rolled off across the valley without them. The {right} still has an appointment elsewhere.",
+        "Between the berries and the wheel, the {right} had a whole valley left to cross this afternoon. The other was merely present, nothing more."
+      ]
+    },
+    {
+      "id": "pair-boomerang-mudder-plausible",
+      "variants": [
+        "A professional at losing things ought to have found real use for something as sticky as mud — at minimum, something might have finally stayed lost on purpose. The boomerang, true to its one talent, came straight back anyway, mud and all.",
+        "Karl coated the boomerang in mud, hoping stickiness might finally break its one habit. It came back anyway, a little heavier, a little browner, exactly as returned as ever."
+      ]
+    },
+    {
+      "id": "pair-hjul-rullesten-near-miss",
+      "variants": [
+        "Karl set the wheel beside the round stone, waiting for one to teach the other something about rolling. Both stayed exactly where gravity left them. The {right} had a different roll to make today.",
+        "Between the wheel and the round stone, the {right} still owes the valley one proper roll. Not saying which. The other stays exactly as still as it is now."
+      ]
+    },
+    {
+      "id": "pair-bautasten-mudder-absurd",
+      "variants": [
+        "The standing stone exists for reasons Karl cannot explain and would not survive explaining. The mud exists to be soft dirt underfoot. Sacred and underfoot do not, as a rule, meet.",
+        "I looked for what the standing stone and the mud could possibly owe each other. The stone gets bones thrown at it for reasons nobody understands. The mud just gets stepped in. Neither habit needed the other today."
+      ]
+    },
+    {
+      "id": "pair-graes-haandkile-inert",
+      "variants": [
+        "The hand axe was finished the day it was knapped on both faces, a tool with nowhere left to improve. Karl held the dry grass against it anyway, and the grass simply lay there, adding nothing to something that never asked for more.",
+        "Karl has introduced the hand axe to nearly everything within reach, the dry grass included, and nearly everything has said the same quiet no. Some tools are already exactly what they are ever going to be."
+      ]
+    },
+    {
+      "id": "pair-boomerang-boomerang-self",
+      "variants": [
+        "Karl threw one boomerang at the other, hoping for some sort of mid-air treaty. Both came back, unaltered, unbothered, and equally confused about what treaty he meant.",
+        "Two boomerangs now return to the same hand instead of one, which solves no problem Karl actually has and doubles a problem he never needed solved."
+      ]
+    },
+    {
+      "id": "pair-boomerang-rullesten-near-miss",
+      "variants": [
+        "Karl strapped the round stone to the boomerang, hoping weight might finally end its one habit of returning. It came back anyway, heavier and more dangerous than before. The {right} wanted an entirely different kind of trip today.",
+        "Between the boomerang and the round stone, the {right} still has some travelling left to do elsewhere. The other simply happened to be along for the ride."
+      ]
+    },
+    {
+      "id": "pair-baer-faelde-plausible",
+      "variants": [
+        "Berries as bait, a snare set to wait: by any sensible design, Karl's finest employee should have come home with something extra tonight. It came home with exactly what it always catches, and the berries, untouched, still only possibly edible.",
+        "An employee that hunts unsupervised ought to know what to do with a handful of bait. Karl left the berries by the snare anyway. Morning found both exactly where he'd left them, uneaten and untriggered."
+      ]
+    },
+    {
+      "id": "pair-hulemaleri-reb-absurd",
+      "variants": [
+        "The cave painting hangs sacred and unexplained on stone that isn't going anywhere. The rope ties itself around everything Karl owns, including Karl. Tying has never once been something you do to a wall.",
+        "I searched for a use the rope might have for the cave painting, or the painting for the rope. One is permanent and unexplained. The other gets knotted around whatever's nearby, which, today, was not this."
+      ]
+    },
+    {
+      "id": "pair-spyd-stenoekse-near-miss",
+      "variants": [
+        "Karl held the spear against the stone axe, hoping two sharp things might agree on one better shape between them. They stayed two separate weapons, sharp in entirely different directions. The {right} had its own edge to prove elsewhere.",
+        "Between the spear and the stone axe, the {right} still owes somebody else an entirely different cut today. The other stayed exactly as sharp as it arrived."
+      ]
+    },
+    {
+      "id": "pair-baer-malm-near-miss",
+      "variants": [
+        "Karl set the berries down on top of the ore and waited for one to make the other more interesting. Neither budged. The {right} had somewhere else to be this afternoon.",
+        "Between the berries and the ore, I know exactly what each one was quietly waiting to become. Not saying which. The {right} keeps that particular secret regardless."
+      ]
+    },
+    {
+      "id": "pair-mudder-reb-clash",
+      "variants": [
+        "Wet and sticky met dry and taut, and dry gave up its shape almost immediately. Karl pulled the rope out of the mud looking less like rope and more like a suggestion of rope.",
+        "The rope was twisted grass, dry and strong, right up until it met the mud. It came out heavier, looser, and no longer anything Karl would trust around his own waist."
+      ]
+    },
+    {
+      "id": "pair-malm-stenoekse-plausible",
+      "variants": [
+        "The ore is, by Karl's own admission, mere decoration. The stone axe is, by definition, a tool with opinions about what counts as useful. Today it looked right past the future sitting next to it.",
+        "Somewhere down the line, ore becomes the reason axes stop being made of stone at all. Today, the stone axe sat beside the ore and neither of them had read that far ahead."
+      ]
+    },
+    {
+      "id": "pair-haandkile-sten-near-miss",
+      "variants": [
+        "Karl struck the hand axe against the stone the way its own edge was first struck into being, hoping for a second miracle from the same gesture. The {right} still has some shaping left to do elsewhere.",
+        "Between the hand axe and the stone, the {right} still owes somebody a proper knapping today. The other simply sat there, already exactly what it was going to be."
+      ]
+    },
+    {
+      "id": "pair-graes-malm-plausible",
+      "variants": [
+        "The dry grass burns. The ore glitters, uselessly, by Karl's own assessment. Between burning and glittering there was, in theory, a spark — in practice, neither one so much as warmed.",
+        "Fuel waiting for a flame, and the future glittering right next to it: the dry grass and the ore looked, for a moment, like the start of something. They were, today, just two things sitting near each other."
+      ]
+    },
+    {
+      "id": "pair-mudder-mursten-near-miss",
+      "variants": [
+        "Karl worked the mud into the shape of the mud brick standing right beside it, hoping to skip the drying entirely. The mud held the shape for a moment, then slumped back into itself. The {right} had somewhere else to be today.",
+        "Between the mud and the mud brick, the {right} was owed a bit more patience elsewhere. The other stayed exactly as it already was, nothing more."
+      ]
+    },
+    {
+      "id": "pair-hjul-sten-near-miss",
+      "variants": [
+        "Karl set the wheel down beside the stone, his best friend and most frequent conversation partner, and waited for either one to say something new. Neither did. The {right} had a different conversation to have elsewhere.",
+        "Between the wheel and the stone, the {right} still had somewhere else to be today. The other simply sat there, heavy, grey, and unbothered."
+      ]
+    },
+    {
+      "id": "pair-froe-rullesten-near-miss",
+      "variants": [
+        "Karl pressed the seeds into the round stone, hoping the good rock might finally grow something. It didn't. The {right} had somewhere else to be this afternoon.",
+        "Between the seeds and the round stone, the {right} was owed a bit more patience today. The other simply stayed exactly what it already was."
+      ]
+    },
+    {
+      "id": "pair-malm-vand-near-miss",
+      "variants": [
+        "Karl poured the water over the ore, hoping the future Karl keeps insisting is in there might rinse itself into view. It stayed grey and glittering and entirely unmoved. The {right} had a different reaction waiting elsewhere.",
+        "Between the ore and the water, the {right} still had somewhere else to be put to use today. The other simply stayed exactly what it already was, wet or glittering as the case may be."
+      ]
+    },
+    {
+      "id": "pair-haandkile-rullesten-near-miss",
+      "variants": [
+        "Karl knapped at the round stone with the hand axe, hoping to make a second tool as good as the first. The good rock lost a chip and gained nothing. The {right} had somewhere else to be today.",
+        "Between the hand axe and the round stone, the {right} still owes somebody a proper shaping elsewhere. The other simply stayed exactly what it already was."
+      ]
+    },
+    {
+      "id": "pair-graes-mudderkage-near-miss",
+      "variants": [
+        "Karl crumbled the dry grass across the top of the mud pie, the way a proper cake gets its decoration, and pressed it down. It stuck for exactly one second before sliding into the dirt. The {right} still has an appointment somewhere else entirely.",
+        "Karl tucked the dry grass beneath the mud pie, hoping today was finally the day something caught fire under one of Karl's meals. The mud stayed cold and wet, the grass stayed bone-dry and unlit, and neither improved the other. The {right} was owed a rather different kind of attention today."
+      ]
+    },
+    {
+      "id": "pair-boomerang-stenoekse-near-miss",
+      "variants": [
+        "Karl lashed the stone axe to the boomerang's curve, hoping for a weapon that returns to his hand after every throw. It threw once, dropped straight down, and stayed there. The {right} already does its one trick perfectly well without any help.",
+        "One of these already knows how to come back on its own; the other, Karl always fetches himself. Bound together, the boomerang and the stone axe forgot both tricks at once. The {right} works better alone."
+      ]
+    },
+    {
+      "id": "pair-baer-haandkile-near-miss",
+      "variants": [
+        "Karl pressed the hand axe flat against the berries, testing whether Palaeolithic engineering had an opinion on lunch. They went to pulp instantly, offering no more resistance than the hand axe usually reserves for actual wood. The {right} had tougher business waiting elsewhere.",
+        "The berries have already passed the bird test this week, which is more scrutiny than most food gets. The hand axe, knapped on both faces for a purpose, has never once been asked to weigh in on fruit before today. The {right} still had other business waiting."
+      ]
+    },
+    {
+      "id": "pair-boomerang-hulemaleri-absurd",
+      "variants": [
+        "The boomerang belongs to the part of Karl's life that keeps coming back to him; the cave painting belongs to the part that never moves at all. He waved the one in front of the other anyway, and got nothing but silence from the wall.",
+        "I looked for what the boomerang could possibly say to the cave painting, a bent stick and a wall of berry-juice art having approximately nothing in common. It said nothing. The wall, as ever, is not taking questions, and neither, today, is Karl."
+      ]
+    },
+    {
+      "id": "pair-haandkile-ler-inert",
+      "variants": [
+        "Karl pressed the hand axe flat into the clay, curious whether a tool he trusts with everything could also teach the clay to hold a shape on its own. The clay took the impression and forgot it within the minute. The hand axe went back into his hand exactly as it was.",
+        "Karl introduced the hand axe to the clay as though sharp and soft might inspire each other. The clay stayed soft, and the hand axe, already finished the day it was knapped, saw nothing here worth becoming next."
+      ]
+    },
+    {
+      "id": "pair-ler-malm-plausible",
+      "variants": [
+        "Karl pressed a piece of ore into the wet clay, the way you'd press a jewel into something you wanted to keep. The clay held its shape. The ore just sat there, glittering, waiting for a use history hadn't invented yet.",
+        "The clay is soft enough to hold anything. The ore is bright enough to deserve holding. Between the two of them sat the one missing idea Karl won't have for several thousand years."
+      ]
+    },
+    {
+      "id": "pair-malm-pind-near-miss",
+      "variants": [
+        "Karl balanced the ore on the end of the stick, hoping height might explain what proximity to Karl never has. It rolled straight back off into the dirt. The {right} had a use waiting that had nothing to do with balance.",
+        "The stick has carried worse ideas than this and come out fine every time. The ore has never once needed a stick's help, and didn't start needing it today. The {right} still had somewhere else to be."
+      ]
+    },
+    {
+      "id": "pair-boomerang-reb-near-miss",
+      "variants": [
+        "Karl tied the rope to the boomerang's tip, on the theory that a thing which already comes back could be persuaded to come back faster. It came back the same speed as always, dragging a length of rope behind it like an afterthought. The {right} had a knot to be part of somewhere else.",
+        "One of these already returns on its own; the other, Karl ties around absolutely everything he owns, himself included. Tied to each other, the boomerang and the rope achieved neither trick any better than usual. The {right} was needed for a knot that had nothing to do with this one."
+      ]
+    },
+    {
+      "id": "pair-haandkile-pind-near-miss",
+      "variants": [
+        "Karl held the hand axe against the stick, half-expecting contact alone to spark some third, better tool into existence. He was still holding exactly two separate objects a full minute later. The {right} was waiting on a different combination entirely.",
+        "The hand axe returned from this meeting exactly as sharp as it arrived; the stick returned exactly as straight. Between them, they conjured nothing sharper than mild disappointment. The {right} had a truer match somewhere else."
+      ]
+    },
+    {
+      "id": "pair-faelde-reb-near-miss",
+      "variants": [
+        "Karl looped a second length of rope around the snare, hoping doubling up might somehow double the number of employees. The snare caught nothing extra; it just looked, if possible, slightly more tied up than before. The {right} had a job waiting that had nothing to do with hunting.",
+        "The snare already used to be rope, before Karl gave it a purpose and a job title. Handing it more rope today taught it nothing it didn't already know. The {right} still had somewhere else to be."
+      ]
+    },
+    {
+      "id": "pair-boomerang-froe-plausible",
+      "variants": [
+        "Karl flung the boomerang over a patch of scattered seeds, hoping the two might agree on some shared idea about distance. The boomerang came back. The seeds, light and dry and clearly meant for a bigger idea than this, stayed exactly where they landed.",
+        "The seeds were always going to be important eventually, by Karl's own grudging admission. The boomerang was always going to come back, no matter what. Between two things this certain about their own futures, this exact afternoon just never got written."
+      ]
+    },
+    {
+      "id": "pair-fisk-vand-plausible",
+      "variants": [
+        "Karl dangled the fish back over the water it came from, half-convinced that returning a thing to its home might count as a second achievement. It only dripped, then hung there, exactly as dead as when he first speared it.",
+        "The fish gave everything it had the moment Karl speared it from the river. The water gave what water always gives, which is simply itself. Between the two of them sat all the makings of a very good idea, with no instructions for finishing it."
+      ]
+    },
+    {
+      "id": "pair-hjul-stenoekse-near-miss",
+      "variants": [
+        "Karl wedged the stone axe's blade against the wheel, hoping to give it something to roll toward. It rolled off in an entirely different direction, the same way it always does, and Karl chased it across the valley for a third time. The {right} had a job that had nothing to do with rolling.",
+        "The wheel has one trick, and performs it constantly, usually downhill and away from Karl. The stone axe has one trick too, performed standing perfectly still, and neither trick transferred when Karl introduced them. The {right} still had its own trick to finish elsewhere."
+      ]
+    },
+    {
+      "id": "pair-hammer-sten-near-miss",
+      "variants": [
+        "Karl tapped the hammer against the stone, the way you'd knock on a door you already know is home. The stone made the same flat sound it always makes, and offered no more conversation than usual. The {right} had somewhere else to be struck, carried, or used today.",
+        "The stone is, by Karl's own account, his best friend and most frequent conversation partner. The hammer, by design, is made partly of that very same stone, and introducing the two today changed nothing about either relationship. The {right} was needed for a task this reunion couldn't provide."
+      ]
+    },
+    {
+      "id": "pair-baer-hammer-near-miss",
+      "variants": [
+        "Karl brought the hammer down on the berries with the same delight he brings to everything the hammer touches. What was left afterward was not lunch, and barely resembled berries at all. The {right} had sturdier business waiting elsewhere.",
+        "The berries have survived the bird test more than once this month alone. They did not survive the hammer even slightly. The {right} still had other business today."
+      ]
+    },
+    {
+      "id": "pair-fisk-ler-plausible",
+      "variants": [
+        "Karl wrapped the fish in a sheet of clay, certain there was a version of this that ended in a proper meal instead of a fish-shaped lump of mud. The clay held the shape obediently. Whatever turns raw fish and wet clay into dinner, Karl doesn't have it yet.",
+        "The fish arrived fresh from the river, ready for something. The clay arrived soft, ready for anything. Between the two of them sat exactly the good idea Karl always has, one step ahead of the part where he'd actually finish it."
+      ]
+    },
+    {
+      "id": "pair-hammer-pind-near-miss",
+      "variants": [
+        "Karl held the stick up next to the hammer, as if the hammer might recognise a distant cousin in it and grant it a matching handle of its own. The hammer stayed exactly as assembled as it arrived. The {right} had a shape waiting for it that wasn't a handle.",
+        "The hammer is already a stick with a stone attached, by construction. Offering it a second, unattached stick taught it nothing new about itself. The {right} still had somewhere else to be today."
+      ]
+    },
+    {
+      "id": "pair-hammer-ler-inert",
+      "variants": [
+        "Karl pressed the hammer's head into the clay and lifted it away to admire the shape it left. The clay held the impression for a moment, then slumped back to formless, the way clay always eventually does. The hammer, unchanged, unmarked, and unmoved, went back to Karl's belt.",
+        "Between a tool that already knows exactly what it's for and a lump that hasn't decided anything yet, Karl introduced the hammer to the clay hoping for a spark. The clay stayed soft. The hammer stayed finished, the way it has been since the day it was tied together."
+      ]
+    },
+    {
+      "id": "pair-hammer-vand-inert",
+      "variants": [
+        "Karl held the hammer under the water, half-expecting the stone half to soften the way clay does, or the wood half to swell the way branches do after rain. It came out exactly as dry, and exactly as finished, as it went in.",
+        "Water has its way with plenty of things Karl owns, the dry grass included, given time. It had no way at all with the hammer, stone and handle from end to end, entirely unmoved by the attempt."
+      ]
+    },
+    {
+      "id": "pair-hammer-reb-near-miss",
+      "variants": [
+        "Karl wound the rope around the hammer's handle for extra grip, on a tool that already had a perfectly good handle to begin with. The rope only added weight. The {right} had somewhere sturdier to be tied today.",
+        "The hammer is a stone lashed to a handle, and something did that lashing long before today. Handing it more rope now didn't loosen the old knot or add a new one; it just made the handle a little bulkier. The {right} still had a knot waiting elsewhere."
+      ]
+    },
+    {
+      "id": "pair-froe-reb-plausible",
+      "variants": [
+        "Karl tied the rope around a handful of seeds, the way you'd bundle something worth keeping safe for later. The knot held perfectly. What the seeds actually needed from this arrangement, the rope alone could never quite provide.",
+        "The seeds were always going to matter, eventually, once Karl stopped spitting them out on principle. The rope was always strong enough for nearly anything. Between the two of them sat one very good agricultural idea, several thousand years ahead of Karl's schedule."
+      ]
+    },
+    {
+      "id": "pair-graes-hammer-inert",
+      "variants": [
+        "Karl tucked a fistful of dry grass under the hammer's head, on the off chance a soft landing might change what a hammer is for. The hammer struck exactly as hard as ever. The grass, flattened but otherwise fine, went straight back to being Karl's pillow.",
+        "A hammer already knows exactly what it's for, which is hitting things, precisely and repeatedly. Dry grass has never once been something a hammer needed in order to do that. Introduced anyway, the two of them simply waited for Karl to notice and move on."
+      ]
+    },
+    {
+      "id": "pair-ler-stenspil-inert",
+      "variants": [
+        "Karl pressed a lump of clay into a rough sphere and set it down beside the boules, hoping the game might not notice the difference. It noticed immediately. Ugh rolled his actual stone past it without slowing down.",
+        "The boules exist entirely to be rolled, argued over, and lost with dignity, or in Karl's case, without any. Clay has never once settled an argument between two men and a stick on the ground. Today's introduction changed neither fact."
+      ]
+    },
+    {
+      "id": "pair-baer-stenspil-inert",
+      "variants": [
+        "Karl rolled one of the berries to the exact spot he was aiming for and called it a winning throw. Ugh disagreed, on the grounds that berries are not, and have never been, boules stones. The game continued without them.",
+        "There is exactly one rule to boules that Karl consistently loses by, and it has nothing to do with fruit. He rolled a handful of the berries into the circle anyway, hoping the game might quietly change its terms. Ugh has never once looked more personally offended on the game's behalf than at that exact moment."
+      ]
+    },
+    {
+      "id": "pair-baer-fisk-plausible",
+      "variants": [
+        "Karl arranged the berries beside the fish on a flat stone, the closest thing he owns to a table, and stood back to admire what looked, for one honest moment, like an actual meal. The moment held. Whatever finishes a meal like this one, it never showed up.",
+        "The fish is speared, raw, and already halfway to a good idea, by Karl's own optimistic standards. The berries are probably edible, having passed the bird test again just this morning. Between the two of them, they had everything except whatever turns proximity into a proper dinner."
+      ]
+    },
+    {
+      "id": "pair-mudderkage-stenoekse-absurd",
+      "variants": [
+        "The stone axe exists for splitting things that resist being split. The mud pie exists for Karl's own private amusement and absolutely nothing else. Karl held them side by side anyway, and the axe, dignified as ever, declined to comment on the pie's structural integrity.",
+        "I searched for what the stone axe, humanity's first subscription to tools, could possibly owe to the mud pie, a cake made of mud and one decorative berry. I found nothing owed, in either direction, by anyone, ever."
+      ]
+    },
+    {
+      "id": "pair-mudderkage-saft-plausible",
+      "variants": [
+        "Karl poured the berry juice over the mud pie, finishing it the way any proper baker finishes a proper cake. The mud pie soaked it up and turned a shade darker, which is further than most of Karl's meals ever get. Whatever separates a glazed mud pie from an actual dessert, Karl has not yet found it.",
+        "The mud pie already survives being eaten, repeatedly, and by all accounts enthusiastically. The berry juice survives being drunk, worn, and painted with, often at once. Between two things this compatible with Karl's mouth, dessert should have been the easy part."
+      ]
+    },
+    {
+      "id": "pair-boomerang-mursten-plausible",
+      "variants": [
+        "Karl balanced the boomerang on top of the mud brick, the way a proper roof begins with a proper beam. The mud brick held it without complaint. The boomerang, being a boomerang, was gone again within the minute, roof or no roof.",
+        "The mud brick is, by Karl's own architectural standards, a finished building material. The boomerang is, by design, never in one place long enough to be part of any building at all. Between an architect and a thing that refuses to stay put, the blueprint never had a chance."
+      ]
+    },
+    {
+      "id": "pair-fisk-graes-plausible",
+      "variants": [
+        "Karl laid the fish down on a bed of dry grass, arranging it the way he imagines a proper meal gets presented somewhere, by someone, eventually. The grass stayed dry and the fish stayed raw, and presentation alone carried the meal exactly nowhere.",
+        "The fish arrived from the river already speared, already raw, and already declared 'sushi' ten thousand years ahead of schedule. The dry grass arrived bone-dry and bored, waiting for a job it has always been suited for. Between the two of them, only the small matter of actual cooking went unresolved."
+      ]
+    },
+    {
+      "id": "pair-mursten-stenoekse-plausible",
+      "variants": [
+        "Karl set the stone axe against the mud brick and gave it one confident, architectural-sounding tap. The brick held its shape, hard and dry exactly as advertised, and the axe, exactly as sharp as ever, achieved a light scuff and nothing more permanent.",
+        "The mud brick is dried hard enough to be called a building material, by Karl's own generous self-assessment. The stone axe is humanity's first subscription to tools, also by Karl's own generous self-assessment. Between two things this convinced of their own importance, something should have come of it."
+      ]
+    },
+    {
+      "id": "pair-boomerang-mudderkage-absurd",
+      "variants": [
+        "Karl threw the boomerang directly at the mud pie, on no theory whatsoever, purely to see what would happen between a weapon and a dessert. The boomerang came back. The mud pie, for what it's worth, was completely unharmed and still, somehow, someone's lunch.",
+        "A boomerang belongs to the part of Karl's life spent chasing things that come straight back to him. A mud pie belongs to the part spent eating things he probably shouldn't. Neither part has ever needed the other, and today didn't change that arrangement."
+      ]
+    },
+    {
+      "id": "pair-faelde-sten-near-miss",
+      "variants": [
+        "Karl weighed the snare down with the stone, hoping the added heft might help his finest employee land something bigger by morning. The catch by morning was the same as every other morning: none. The {right} was needed for a job that had nothing to do with weight.",
+        "The stone is Karl's best friend and most frequent conversation partner, and has never once needed to be tied to anything to prove its worth. The snare already catches things perfectly well on its own, rope and patience being the entire method. The {right} still had a rather different job waiting."
+      ]
+    },
+    {
+      "id": "pair-boomerang-haandkile-inert",
+      "variants": [
+        "Karl held the hand axe against the boomerang's curve, testing whether the valley's most versatile tool might reshape the valley's least reliable one. The boomerang kept its exact shape, curve and all, and flew off exactly as unpredictably the next time Karl threw it.",
+        "One of these is famously good at nearly everything it touches; the other is famously good at exactly one trick, and only that trick. Introduced to each other, the hand axe and the boomerang picked up nothing from one another, and went back to being exactly what they already were."
+      ]
+    },
+    {
+      "id": "pair-baer-bue-plausible",
+      "variants": [
+        "Karl notched a berry against the bow's string, aimed with real conviction, and let go. It did not fly so much as fall, immediately, straight down, in a way no arrow ever has. The berries remain, for now, considerably better suited to being found than fired.",
+        "The bow exists to put real weight behind a throw — an arrow, chiefly. The berries have never carried that kind of weight, and didn't start today. Between a weapon with a grudge and a fruit with none, nothing here was ever going to fly."
+      ]
+    },
+    {
+      "id": "pair-graes-spydspids-inert",
+      "variants": [
+        "Karl wrapped a length of dry grass around the stone-tipped spear's shaft, hoping for a softer grip or maybe just a warmer one. It slid loose within a few steps, and the spear went right on being exactly as sharp and exactly as opinionated as before.",
+        "A stone-tipped spear already has an opinion about everything it's introduced to, and its opinion on dry grass was silence. Karl wrapped the two together anyway, achieved neither warmth nor a better grip, and unwrapped them again a short while later."
+      ]
+    },
+    {
+      "id": "pair-larver-reb-plausible",
+      "variants": [
+        "Karl coiled the rope loosely and dropped the grubs inside, hoping a nest of sorts might convince them to become dinner faster. The grubs wriggled out through the gaps within a minute, entirely unbothered by the arrangement.",
+        "The grubs are alive, soft, and watched by Karl a little too fondly to be simple food. The rope is strong enough to hold nearly anything Karl has ever tied it around. Between the two of them sat a very good trap, minus the one idea that would have closed it."
+      ]
+    },
+    {
+      "id": "pair-fisk-pind-plausible",
+      "variants": [
+        "Karl threaded the fish onto the stick, sure that skewering was a universal idea that worked regardless of what came next. The stick held it up perfectly. What was supposed to happen to a skewered fish next, Karl has not yet worked out.",
+        "The stick has held plenty of things up in its time, and holds this fish up just as well as anything else. The fish, freshly speared and entirely raw, waited on the one remaining step between a stick with dinner on it and dinner itself."
+      ]
+    },
+    {
+      "id": "pair-pind-spydspids-inert",
+      "variants": [
+        "Karl held the stick up next to the stone-tipped spear, as if proximity alone might transfer a little of the spear's obvious competence. It stayed a stick, plain and exceptional and entirely undecorated. The spear did not seem to notice the comparison.",
+        "A stone-tipped spear was a stick once, before Karl gave it a point and opinions to match. This new stick watched the whole transformation happen again, from a safe distance, and came away with neither."
+      ]
+    },
+    {
+      "id": "pair-spydspids-vand-near-miss",
+      "variants": [
+        "Karl dipped the stone-tipped spear into the water and swirled it, half-hoping the point might learn something new from the experience. It came out exactly as sharp, exactly as opinionated, and exactly as dry within a minute. The {right} had a use for water that had nothing to do with dipping spears in it.",
+        "The stone-tipped spear carries an opinion about nearly everything Karl introduces it to, and its opinion of the water was indifference. The {right} was hoping for rather more than indifference today."
+      ]
+    },
+    {
+      "id": "pair-haandkile-reb-near-miss",
+      "variants": [
+        "Karl wound the rope round the hand axe's middle, the way one fits a haft to a proper axe, and only then remembered his finest blade was knapped to live in a bare palm. The {right} was needed in a proper grip elsewhere this afternoon.",
+        "The hand axe stayed exactly as multipurpose as ever. The rope stayed knotted around Karl himself, same as usual. Between the two of them, only the {right} had actually been spoken for today."
+      ]
+    },
+    {
+      "id": "pair-fisk-stenoekse-plausible",
+      "variants": [
+        "Karl brought the stone axe down on the fish with real conviction, expecting something like dinner. He got two ragged halves of fish and a blade that needed rinsing. It should have been a meal. History simply skipped that step.",
+        "The fish, speared fresh and already declared sushi ten thousand years too early, met the stone axe, humanity's first subscription to tools. By any sensible measure that should have produced a proper dinner. Sensible measures, once again, overpromised."
+      ]
+    },
+    {
+      "id": "pair-boomerang-hjul-plausible",
+      "variants": [
+        "Karl threw the boomerang at the wheel, hoping the one thing that reliably returns might finally teach the one thing that reliably rolls away some manners. The wheel rolled on regardless. The boomerang, faithful as ever, came straight back to Karl instead.",
+        "Between them, the boomerang and the wheel cover every direction Karl has ever chased something across this valley. Today the two truths never met in the middle, and Karl went home having caught neither."
+      ]
+    },
+    {
+      "id": "pair-fisk-sten-plausible",
+      "variants": [
+        "Karl laid the fish on the stone, his most reliable listener, as if a good flat surface alone might finish the cooking. The stone offered its usual silence. The fish stayed exactly as raw as when Karl first called it sushi.",
+        "By rights, a fish and a good flat stone ought to add up to dinner eventually. Karl's stone, being mostly a conversation partner these days, wasn't in a cooking mood. Neither, in the end, was the fish."
+      ]
+    },
+    {
+      "id": "pair-ler-slynge-inert",
+      "variants": [
+        "Karl pressed the clay around the sling's cord, hoping to improve on a weapon built from little more than a stone and unearned confidence. It only made the sling heavier and much harder to swing.",
+        "The sling already had its stone, its cord, and Karl's usual unearned confidence. The clay, soft and noncommittal as ever, brought nothing further to the arrangement."
+      ]
+    },
+    {
+      "id": "pair-faelde-stenoekse-near-miss",
+      "variants": [
+        "Karl looped the snare around the stone axe's haft, as though his finest employee might teach his oldest subscription a new trick. Neither budged from its usual job. The {right} still had business elsewhere today.",
+        "I know exactly which of the snare and the stone axe still had an appointment elsewhere today. Not saying which. The {right} kept its own schedule regardless of what Karl proposed instead."
+      ]
+    },
+    {
+      "id": "pair-mudderkage-reb-clash",
+      "variants": [
+        "Karl tried to knot the rope around the mud pie the way he knots it around everything else he owns, and watched dry, twisted grass slide straight through wet clay that was never going to hold a knot in the first place.",
+        "Dry wants nothing to do with wet, and the rope proved it the moment it touched the mud pie: no grip, no knot, just twisted grass smeared brown and a cake with a rope-shaped dent."
+      ]
+    },
+    {
+      "id": "pair-faelde-rullesten-near-miss",
+      "variants": [
+        "Karl tied the snare around the round stone, the good rock he guards so jealously, hoping his finest employee might finally haul something worth the effort home. It hauled nothing. The {right} had other business today, and this wasn't it.",
+        "Between the snare and the round stone — the good rock, guarded jealously — I know precisely which one still had unfinished business today. Not telling which. The {right} would simply have to finish it another day."
+      ]
+    },
+    {
+      "id": "pair-reb-slynge-near-miss",
+      "variants": [
+        "Karl tied the rope around the sling the way he ties rope around everything he owns, and produced a sling so thoroughly wrapped in twisted grass that the stone inside it had nowhere left to go. The {right} was due elsewhere today regardless, and no amount of knotting changed that.",
+        "I know exactly what the rope and the sling were each actually good for today. Not which is which. The {right} mattered either way today; the {wrong} merely sat there."
+      ]
+    },
+    {
+      "id": "pair-ler-spydspids-inert",
+      "variants": [
+        "Karl wrapped the clay around the stone-tipped spear's point, softening the one tool in his collection that already has firm opinions about everything. The opinions won. The clay slid off in a single grey clump.",
+        "The stone-tipped spear was finished the day someone gave the spear an opinion at the end. The clay, soft, mouldable, and famously noncommittal, had no opinion to add and nowhere to put one."
+      ]
+    },
+    {
+      "id": "pair-baer-spydspids-near-miss",
+      "variants": [
+        "Karl pressed the berries onto the tip of the stone-tipped spear, hoping the spear's usual opinions might extend to fruit. They did not extend that far. The {right} wanted a very different kind of point that day.",
+        "I know exactly what the berries and the stone-tipped spear were each actually built to meet today. Neither was the other. The {right} kept its own appointment; nothing Karl tried today changed that."
+      ]
+    },
+    {
+      "id": "pair-boomerang-faelde-plausible",
+      "variants": [
+        "Karl set the boomerang beside the snare, his one employee that hunts without him and his one tool that returns without him, hoping the two work ethics might combine into something. They admired each other's reliability and produced nothing else worth mentioning.",
+        "The snare works while Karl sleeps. The boomerang works by refusing to leave his hand for long. Between two such devoted tools, today's project should have gone somewhere. It went back to Karl, same as always."
+      ]
+    },
+    {
+      "id": "pair-spydspids-stenoekse-near-miss",
+      "variants": [
+        "Karl held the stone-tipped spear beside the stone axe, two blades each carrying its own kind of sharp, and found no third thing for either of them to cut that day. The {right} had a much more specific job waiting elsewhere.",
+        "I know precisely which of the stone-tipped spear and the stone axe still owed someone a proper edge today. Both were sharp. Only the {right} still had somewhere to prove it."
+      ]
+    },
+    {
+      "id": "pair-bue-reb-near-miss",
+      "variants": [
+        "Karl strung the rope along the bow's usual grudge, hoping the one thing that ties around everything might finally give the bow something worth firing. The {right} had a very specific afternoon planned, and this wasn't it.",
+        "There was a second, stringing the rope onto the bow, where Karl looked entirely convinced. The second passed, quietly, right around when the {right} remembered it had other plans entirely."
+      ]
+    },
+    {
+      "id": "pair-baer-slynge-inert",
+      "variants": [
+        "Karl loaded the berries into the sling instead of a proper stone, curious whether unearned confidence works just as well on something that squashes. It launched approximately nowhere and squashed entirely on the way.",
+        "The sling was built for a stone, a cord, and confidence Karl hasn't earned yet. The berries, still only possibly edible by the bird test, never fit that particular job description."
+      ]
+    },
+    {
+      "id": "pair-hulemaleri-saft-absurd",
+      "variants": [
+        "Karl held the berry juice up to the cave painting it made possible in the first place, as if introducing a mother to her own finished portrait. The painting had nothing further to say to it. Neither, this time, did Karl.",
+        "Somewhere on that cave painting is a boar, or a sunset, or Ugh — Karl still won't confirm which. What is certain: the berry juice already did its one job, and a finished painting doesn't take a second coat just because the juice came calling."
+      ]
+    },
+    {
+      "id": "pair-hulemaleri-mudder-absurd",
+      "variants": [
+        "Karl pressed the mud against the cave painting, hoping wet clay might refresh whatever's depicted there — a boar, a sunset, Ugh, he still won't say. Mud has never once been the medium; that's berry juice's job, and it never showed up to relieve it.",
+        "The cave painting belongs to the wall and to whatever story Karl refuses to explain. The mud belongs to Karl's hands and nowhere in particular. Introducing the two did not make either belong anywhere else."
+      ]
+    },
+    {
+      "id": "pair-hulemaleri-rullesten-absurd",
+      "variants": [
+        "Karl held the good rock up next to the cave painting, as if his most jealously guarded possession might improve on a wall he doesn't even own. The round stone stayed exactly as smooth, round, and unrelated as before.",
+        "The cave painting is a story Karl refuses to explain, hanging on stone he didn't choose. The round stone is a stone he chose personally and guards like treasure. They have never needed each other to keep existing."
+      ]
+    },
+    {
+      "id": "pair-froe-froe-self",
+      "variants": [
+        "Two handfuls of seeds instead of one. Not a garden. Just twice the confusion Karl already felt about bits he used to spit out on principle.",
+        "Karl poured the seeds over the seeds, doubling the one part of the berry he spent years discarding, and looked, if anything, more bewildered than when he had half as many."
+      ]
+    },
+    {
+      "id": "pair-gnister-saft-near-miss",
+      "variants": [
+        "Karl struck the sparks directly over a bowl of berry juice, hoping for applause and getting one unimpressed ripple instead. The {right} still had somewhere else to be that afternoon, sparks or juice notwithstanding.",
+        "I know exactly what would have delighted Karl more than the sparks and the berry juice did today. Not saying what. The {right} kept waiting for its proper audience, sparks or juice aside."
+      ]
+    },
+    {
+      "id": "pair-mudder-mudderkage-near-miss",
+      "variants": [
+        "Karl pressed a fresh handful of mud onto the mud pie, as if plain soft dirt could improve on a cake that already had its berry. It only made for a heavier, muddier version of the same disappointment. The {right} had somewhere else to become that day.",
+        "I know exactly which of the mud and the mud pie still had somewhere finer to become today. Not which. The {right} kept that particular future to itself."
+      ]
+    },
+    {
+      "id": "pair-hjul-saft-absurd",
+      "variants": [
+        "Karl poured the berry juice over the wheel, hoping perhaps a slicker wheel might roll even better than the one he's already chased across the valley twice. It rolled exactly the same, now with a faint purple streak.",
+        "The wheel exists to roll away from Karl at every opportunity. The berry juice exists to be drunk, worn, or painted with, often at once. Neither habit has ever needed the other's help."
+      ]
+    },
+    {
+      "id": "pair-froe-hulemaleri-absurd",
+      "variants": [
+        "Karl pressed the seeds into the cave painting one at a time, as if the bits he used to spit out might finally amount to something decorative. They stayed exactly as spat-out and unplanted as ever, stuck to a wall depicting, per Karl, absolutely nothing he'll discuss.",
+        "The seeds were destined for the ground, whenever Karl works that out. The cave painting was finished the moment Karl stopped explaining it. A wall of berry-juice art was never going to need a handful of unplanted seeds."
+      ]
+    },
+    {
+      "id": "pair-mudderkage-pind-clash",
+      "variants": [
+        "Karl planted the exceptional stick upright in the mud pie like a tiny flag, and watched the one dry, reliable thing he owns slowly darken and soften at the tip, claimed by a cake that claims everything wet touches it.",
+        "The stick is dry by design and proud of it. The mud pie is wet by design and rather less proud, though Karl remains proud on its behalf. Dry did not survive contact with wet, and the stick came out with a damp, sorry little tip to prove it."
+      ]
+    },
+    {
+      "id": "pair-malm-sten-near-miss",
+      "variants": [
+        "Karl set the ore down beside the stone, hoping his best listener might recognise a cousin in all that glitter. It recognised only a rock that, by Karl's own account, is purely decorative. The {right} had a bigger future waiting somewhere else.",
+        "I know exactly which of the ore and the stone still had a future worth waiting for. Not saying which. The {right} kept that secret, no matter what Karl piled next to it."
+      ]
+    },
+    {
+      "id": "pair-baer-galleri-inert",
+      "variants": [
+        "Karl set the berries down in the cave gallery's careful arrangement, as if fruit might round out the exhibit. The gallery's precise, finger-width symmetry did not so much as shift to make room.",
+        "The cave gallery exists for paintings nudged exactly into place, nothing more, nothing edible. The berries, possibly a meal by the bird's own testimony, never once qualified for wall space."
+      ]
+    },
+    {
+      "id": "pair-mursten-sten-near-miss",
+      "variants": [
+        "Karl stacked the mud brick on the stone the way he stacks bricks on bricks when he's feeling architectural, and got one brick, one stone, and no wall. The {right} had a rather different structure waiting for it that day.",
+        "I know exactly which of the mud brick and the stone still waited to be part of something larger. Not saying which. The {right} had that architecture ahead of it regardless of today's stack of two."
+      ]
+    },
+    {
+      "id": "pair-gnister-ild-absurd",
+      "variants": [
+        "The fire has been burning steadily for an hour and doesn't need help getting started twice. Karl introduced the sparks to it anyway, the way he introduces most new things to things that already work fine.",
+        "Sparks last half a second and get applauded for the whole half. Fire lasts for hours and, as Karl discovered personally, does not enjoy being poked at to see if it appreciates the comparison. Neither habit has ever needed the other one nearby."
+      ]
+    },
+    {
+      "id": "pair-baer-mudderbad-near-miss",
+      "variants": [
+        "Karl dropped the berries into the mud bath, hoping skincare and lunch might share a bowl that day. The boar, watching from its usual approving distance, did not approve of this part. The {right} had booked a rather different afternoon than this one.",
+        "I know exactly what the berries and the mud bath each hoped to meet today. Neither found it in the other. The {right} stayed out there, waiting for its actual match."
+      ]
+    },
+    {
+      "id": "pair-gnister-rullesten-absurd",
+      "variants": [
+        "The round stone, the good rock, has survived an entire river's worth of polishing to become Karl's most jealously guarded possession. A shower of sparks lasting half a second couldn't add to that reputation and didn't try particularly hard.",
+        "Karl held the round stone up to catch the falling sparks, the way a man catches rain in a cup, and ended up with a stone exactly as round and exactly as unlit as when he started."
+      ]
+    },
+    {
+      "id": "pair-mudderkage-sten-near-miss",
+      "variants": [
+        "Karl set the mud pie on the stone like a plate, and the stone, ever the reliable surface, held it without comment while the afternoon went nowhere in particular. The {right} had somewhere else to be that day, regardless of what Karl was serving.",
+        "Between the mud pie and the stone, I know exactly which one still owed somebody a proper meal today. Not telling which. The {right} kept that debt regardless of what Karl served it on."
+      ]
+    },
+    {
+      "id": "pair-gnister-stenoekse-absurd",
+      "variants": [
+        "The stone axe has one job, and has had it since humanity's first subscription to tools began: cutting things, reliably, without applause. The sparks have the opposite arrangement entirely, existing briefly and loudly and to great acclaim. Karl held both at once and satisfied neither arrangement.",
+        "Every strike of the stone axe throws off a few sparks anyway, free of charge, which is presumably why Karl thought adding more on purpose might matter. It didn't: the axe stayed exactly as sharp, and the extra light show got the usual applause and nothing else."
+      ]
+    },
+    {
+      "id": "pair-haandkile-saft-inert",
+      "variants": [
+        "Karl dipped the hand axe into the berry juice, hoping his one truly multipurpose tool might add painting to its long list of talents. The blade came out stained and exactly as single-purpose as every other day.",
+        "Berry juice gets drunk, worn, and painted with, frequently all three within the same minute. The hand axe, for all its Swiss-army-knife pretensions, has never once been any of those things, and today did not change that."
+      ]
+    },
+    {
+      "id": "pair-gnister-mudder-clash",
+      "variants": [
+        "The sparks landed in the mud the way anything hot lands in anything wet: with a single hiss, a small dark crater, and nothing left to applaud.",
+        "Mud swallows everything Karl presses into it, without argument and without exception, and the sparks went the same way as everything else: a brief flare, a soft dark patch, and no warmth left behind to show for it."
+      ]
+    },
+    {
+      "id": "pair-baer-ild-near-miss",
+      "variants": [
+        "Karl held the berries close to the fire that once taught him personally not to be touched, and got warm berries for his trouble, nothing more. The {right} wanted a rather different kind of closeness that day.",
+        "I know exactly what these two each waited for today. Neither found it in the other. The {right} kept waiting, just not on this fire and not on these berries."
+      ]
+    },
+    {
+      "id": "pair-galleri-vand-near-miss",
+      "variants": [
+        "Karl flicked the water at the cave gallery's careful arrangement, hoping for some kind of gloss. He got two slightly damper paintings and a gallery marginally less perfect than before. The {right} was after a rather different kind of finish that day.",
+        "I know exactly what the cave gallery and the water each missed today. Not saying which is which. The {right} kept that particular finish for itself; Karl's attempt never factored in."
+      ]
+    },
+    {
+      "id": "pair-spyd-spyd-self",
+      "variants": [
+        "Two spears now, and Karl still manages to grab the blunt end of one of them first, out of some kind of loyalty to his original mistake.",
+        "One spear taught Karl which end not to hold. The second spear taught him nothing new, and he still, briefly, checked."
+      ]
+    },
+    {
+      "id": "pair-galleri-hulemaleri-inert",
+      "variants": [
+        "The cave gallery already holds its two paintings, nudged exactly into place, finger-width by finger-width, until Karl called it perfect. Handing over a third cave painting didn't earn it a place on the wall; the gallery was already exactly as perfect as it was ever going to be.",
+        "Karl held the new cave painting up beside the cave gallery, hoping perfect might mean room for one more. Perfect, it turns out, meant exactly two, nudged into place, and not a single painting more."
+      ]
+    },
+    {
+      "id": "pair-ler-mudderbad-inert",
+      "variants": [
+        "Karl offered the clay to the mud bath as reinforcement, as if a lump of the same soft, wet material might improve on a bath the boar already endorses without complaint. It sank in without a trace and without improving anything.",
+        "The mud bath already has Karl's full endorsement and the boar's approving nod, both earned the same way: total commitment, no improvements needed. The clay, soft, mouldable, and structurally identical to the bath itself, had nothing left to add."
+      ]
+    },
+    {
+      "id": "pair-gnister-reb-absurd",
+      "variants": [
+        "Karl looped the rope loosely around a shower of sparks, the same way he ties down everything else he owns. The sparks were gone before the knot pulled tight, and the rope closed around nothing at all.",
+        "The rope holds two things together for as long as Karl needs them held. The sparks do not last long enough to need holding, and were gone, applauded, and forgotten before an argument could even start."
+      ]
+    },
+    {
+      "id": "pair-galleri-ler-inert",
+      "variants": [
+        "Karl pressed a lump of clay against the cave gallery's wall, hoping it might pass for a third painting. It slid straight down, and the gallery's careful two stayed exactly as perfect, and exactly two, as they were a moment before.",
+        "Clay is famously as far from a finished idea as Karl gets. The cave gallery is the one place in camp where every idea already arrived finished, framed, and exactly two paintings wide. The lump he brought never had a chance."
+      ]
+    },
+    {
+      "id": "pair-mudder-mudderbad-inert",
+      "variants": [
+        "Karl scooped a fresh handful of mud from the riverbank and stirred it into the mud bath, reasoning that more of the same ingredient might improve on itself. The boar, watching from the edge, kept its earlier verdict exactly as it was.",
+        "The mud bath is mud, generously applied, thoroughly rolled in, already approved by a boar with real standards on the matter. Offering it more mud only returns a finished thing to its own raw beginning."
+      ]
+    },
+    {
+      "id": "pair-galleri-sten-near-miss",
+      "variants": [
+        "Karl set his stone, the nearest thing he has to a best friend, beside the two paintings in the cave gallery, hoping the count might simply expand to three. It ruined the symmetry, and got nudged back outside the wall within the minute. The {right} always mattered more than a spare rock did.",
+        "I know exactly what the cave gallery's careful two paintings were hoping to gain today, and a plain grey stone was not it. The {right} kept its own appointment; the other merely kept the wall from looking empty."
+      ]
+    },
+    {
+      "id": "pair-bautasten-stenoekse-near-miss",
+      "variants": [
+        "Karl raised the stone axe toward the standing stone the way he raises it at any rock in need of an edge. Halfway through the swing, something made him stop, and the axe came down against nothing but air. The {right} earned that hesitation; a monument, it turns out, earns something else entirely.",
+        "I know exactly what the stone axe was made to cut today. It was not a monument nobody remembers the reason for. The {right} kept its edge for somewhere better; the standing stone kept its silence, same as always."
+      ]
+    },
+    {
+      "id": "pair-sten-stenspil-inert",
+      "variants": [
+        "Karl brought his best friend, the stone, out to the boules pitch, hoping conversation might count as a throw. The game continued without consulting either of them, the same way it always does, eleven losses deep and heading for a twelfth.",
+        "Boules keeps score, keeps rules, and keeps absolutely no room for a stone that just wants to sit quietly and be talked to. Karl's stone showed up anyway, listened to the whole match, and was never once thrown."
+      ]
+    },
+    {
+      "id": "pair-haandkile-haandkile-self",
+      "variants": [
+        "Two hand axes now, knapped identically on both faces, and Karl holds one in each hand feeling briefly unstoppable. Two Swiss army knives of the Palaeolithic still cut exactly one thing at a time.",
+        "Karl held the hand axe up next to the hand axe, as if comparing might reveal some secret upgrade. It revealed only that quiet competence, doubled, is still just quiet competence."
+      ]
+    },
+    {
+      "id": "pair-rullesten-stenspil-inert",
+      "variants": [
+        "Karl carried 'the good rock' to boules practice, certain his most polished round stone was destined for something better than being thrown at a target. He guarded it through the entire match instead of risking it once, and the score stayed exactly as embarrassing as before.",
+        "The rules of boules already come with their own worn stone, chosen by nobody and risked by everybody. Karl's round stone stays guarded jealously in his pocket, thrown at nothing, and nowhere near that kind of risk."
+      ]
+    },
+    {
+      "id": "pair-malm-malm-self",
+      "variants": [
+        "Two piles of ore now glitter by the fire instead of one, and Karl still calls it decoration. Whatever future was hiding in that rock face is, apparently, in no hurry to be discovered twice as fast.",
+        "Karl held one piece of glittering ore up beside a second, hoping the extra shine might finally explain what ore is actually for. Decoration times two is still just decoration, as far as he's concerned — the future keeps its secret regardless."
+      ]
+    },
+    {
+      "id": "pair-hulemaleri-mudderkage-absurd",
+      "variants": [
+        "The cave painting exists to be looked at and never explained. The mud pie exists to be eaten, immediately, and with visible enthusiasm. Karl held the two up together, and only one of them made it anywhere near his stomach.",
+        "Karl set a mud pie beside his own cave painting, as if the two might swap places for the afternoon. The painting stayed exactly as sacred and inedible as always, and the pie, predictably, did not survive long enough to hang on any wall."
+      ]
+    },
+    {
+      "id": "pair-mursten-saft-clash",
+      "variants": [
+        "Karl poured berry juice over a finished mud brick, hoping to decorate it the way he decorates everything else. The brick, baked hard and bone dry, drank in none of it, and wore a slowly dripping purple stain instead.",
+        "Dry and wet settled their usual argument fast: the mud brick stayed dry, hard, and entirely itself, while the berry juice pooled uselessly on top and went looking for something more absorbent."
+      ]
+    },
+    {
+      "id": "pair-mudderbad-vand-inert",
+      "variants": [
+        "Karl poured water into the mud bath he was already sitting in, on the theory that wetter must mean better. The bath absorbed it without changing a single one of its opinions, and Karl came out exactly as muddy as he went in.",
+        "Water alone just gets a person clean, which was never the ambition here. A boar-approved mud bath runs on being thoroughly, deliberately dirty, and a bit more water only waters down the one quality it was ever prized for."
+      ]
+    },
+    {
+      "id": "pair-graes-mudderbad-near-miss",
+      "variants": [
+        "Karl tossed his pillow of dry grass into the mud bath, hoping the two might combine into something new. It just got wet, heavy, and considerably less pillow-like than before. The {right} had a use waiting that had nothing to do with bathing.",
+        "I know exactly what this dry grass still has ahead of it, and it was never going to happen in a mud bath. The {right} keeps that appointment; the grass, soaked through, keeps being a ruined pillow."
+      ]
+    },
+    {
+      "id": "pair-gnister-hulemaleri-absurd",
+      "variants": [
+        "Karl struck a shower of sparks over his own cave painting, hoping for a spotlight. The sparks lit the boar, the sunset, or Ugh — whichever it actually is — for exactly half a second, then left him painting in the dark again.",
+        "Sparks last half a second. The cave painting has already lasted since Karl finished it and refuses to explain further. Neither timeline had room to borrow from the other."
+      ]
+    },
+    {
+      "id": "pair-mudderbad-pind-inert",
+      "variants": [
+        "Karl held his exceptional stick over the mud bath like a whisk, hoping to stir something useful into being. The mud bath stayed exactly as thick and skincare-adjacent as before, entirely unstirred by the gesture.",
+        "A mud bath wants nothing stirred, whisked, or improved by tools — just Karl, rolling, and a boar's nod of approval. However exceptional, a stick was never on that particular guest list."
+      ]
+    },
+    {
+      "id": "pair-galleri-graes-inert",
+      "variants": [
+        "Karl tucked a handful of dry grass beneath one of the two paintings, as insulation, or perhaps just out of habit. The cave gallery remained exactly as curated as before, now with a slightly less tidy corner.",
+        "Dry grass has one job so far, and it is being a pillow. The cave gallery has one job so far too, and it is staying exactly two paintings wide. Pillow duty and gallery curation never had any reason to meet, and didn't."
+      ]
+    },
+    {
+      "id": "pair-saft-spyd-absurd",
+      "variants": [
+        "The spear exists to be pointy at Karl, or occasionally at dinner. Berry juice exists to be drunk, worn, and painted with, often within the same minute. Karl held the two together anyway, and neither one noticed the other.",
+        "I searched for what the spear and a cup of berry juice could possibly have in common. One is sharp at one end, held backwards at least once. The other leaves a purple mark on whatever it meets. I have stopped looking for the overlap."
+      ]
+    },
+    {
+      "id": "pair-boomerang-gnister-near-miss",
+      "variants": [
+        "Karl threw the boomerang straight through a shower of sparks, hoping the trick might catch something extra on the way back. It came back exactly as empty as it left, the sparks having vanished before the halfway point. The {right} was worth chasing; this particular loop was not.",
+        "I know precisely what the boomerang was actually meant to bring back today, and it was not a fistful of sparks that die before anything returns. The {right} makes the trip worthwhile; the sparks just glittered once and were gone."
+      ]
+    },
+    {
+      "id": "pair-haandkile-mudder-near-miss",
+      "variants": [
+        "Karl pressed the hand axe into a fresh handful of mud, testing whether an edge could shape something that offers no resistance at all. It slid through without a mark, quietly competent at cutting nothing in particular. The {right} was waiting for an edge like that; the mud never needed one.",
+        "I know exactly what this hand axe was built to shape today, and soft, wet mud was never it. The {right} gets that edge eventually; the mud just gets squeezed back into shape by Karl's own fingers."
+      ]
+    },
+    {
+      "id": "pair-mudderbad-saft-inert",
+      "variants": [
+        "Karl poured berry juice into the mud bath as a finishing touch, the way he finishes everything, by adding berries. The bath absorbed the colour and none of the point, and came out looking, if anything, slightly more purple.",
+        "Berry juice is for drinking, wearing, or painting with, roughly in that order of frequency. None of Karl's usual three verbs involve a mud bath, and today's attempt didn't invent a fourth."
+      ]
+    },
+    {
+      "id": "pair-galleri-pind-near-miss",
+      "variants": [
+        "Karl propped his exceptional stick up between the two paintings, hoping it might read as a third exhibit, or at least a frame. The cave gallery's arrangement absorbed it exactly as well as it absorbs everything that isn't paint: not at all. The {right} had an actual frame waiting somewhere else.",
+        "I know exactly what this stick was actually meant to prop up today, and it was not the cave gallery's careful symmetry. The {right} gets propped properly; the stick ended up leaning outside, forgotten by the entrance."
+      ]
+    },
+    {
+      "id": "pair-mudderbad-sten-near-miss",
+      "variants": [
+        "Karl carried the stone to the edge of the mud bath, half expecting his usual conversation partner to climb in with him. It sank a little, said nothing, the way stones do, and stayed exactly as dry as it started. The {right} was hoping to get wet today; the stone was never going to be it.",
+        "I know exactly what this mud bath was actually missing today, and a dry, silent stone was not going to fix it. The {right} would have gone in without complaint; the stone just watched from the edge, unbothered."
+      ]
+    },
+    {
+      "id": "pair-mudderkage-rullesten-absurd",
+      "variants": [
+        "Karl offered a bite of mud pie to 'the good rock,' his most jealously guarded round stone, as if companionship might improve the flavour. The round stone, being a stone, declined, and Karl finished the whole thing himself, again.",
+        "A mud pie's whole purpose is getting eaten, enthusiastically, against the narrator's better judgement. A round stone's whole purpose is getting polished, guarded, and never, under any circumstances, offered a bite of anything. Karl tried anyway."
+      ]
+    },
+    {
+      "id": "pair-malm-mudder-near-miss",
+      "variants": [
+        "Karl pressed a glittering piece of ore into a handful of mud, hoping the shine might rub off and improve the mud's prospects. The mud stayed exactly as plain and sticky as before, decoration or not. The {right} has a future waiting for it; the mud has, at best, an afternoon.",
+        "I know exactly what this ore was actually glittering for today, and it was not to decorate a handful of mud. The {right} is the future, patiently; the mud just got a bit of grit stuck in it."
+      ]
+    },
+    {
+      "id": "pair-graes-stenspil-inert",
+      "variants": [
+        "Karl scattered a handful of dry grass across the boules pitch for cushioning, in case a throw ever went badly. It only blew about in the wind, and Ugh eventually stepped in it and complained.",
+        "The rules of boules ask for a flat court and one very particular stone. Dry grass offers neither, being light, dry, and prone to blowing away mid-game. The court stayed exactly as bare as those rules require."
+      ]
+    },
+    {
+      "id": "pair-mudderkage-mudderkage-self",
+      "variants": [
+        "Two mud pies now, and Karl has already finished the first and started on the second before the narrator can even file a complaint about the first.",
+        "Karl held one mud pie up next to another, as if quality might improve through comparison shopping. Both were equally edible, equally muddy, and gone within the same disappointing minute."
+      ]
+    },
+    {
+      "id": "pair-mudder-spyd-clash",
+      "variants": [
+        "Karl jabbed the spear into a patch of mud, testing the edge the way he tests everything sharp. Sharp needs resistance to mean anything, and the mud, soft and sticky and entirely without opinions, gave none at all.",
+        "Sharp and pointed met soft and sticky, and sharp lost immediately: the spear went in, came out coated, and proved nothing except that mud swallows an edge whole."
+      ]
+    },
+    {
+      "id": "pair-hulemaleri-mursten-absurd",
+      "variants": [
+        "The cave painting is berry juice, dried onto stone years ago, and finished being whatever it is. Karl stacked a mud brick up beside it anyway, hoping architecture and art might strike up a conversation. They did not.",
+        "Two mud bricks make Karl an architect, by his own generous assessment. Zero mud bricks make a cave painting, which was built from crushed berries and patience instead. The two crafts never once needed each other's materials."
+      ]
+    },
+    {
+      "id": "pair-bautasten-saft-absurd",
+      "variants": [
+        "The standing stone has meant something, probably, for longer than Karl has been alive to wonder about it. Berry juice means dinner, or a stain, or occasionally both. Karl poured one over the base of the other, and history recorded no further ceremony.",
+        "I checked for a connection between the standing stone and a cup of berry juice. I found a monument that predates memory, and a drink that stains everything within an arm's reach. Nothing carried over from one to the other."
+      ]
+    },
+    {
+      "id": "pair-haandkile-hulemaleri-inert",
+      "variants": [
+        "Karl weighed the hand axe in his palm, wondering if a blade might improve on berry juice as a medium. It could not — the cave painting was already finished, sacred, and entirely uninterested in further editing.",
+        "The cave painting finished being made the moment Karl stepped back and refused to explain it. The hand axe, quietly competent as ever, had nothing left to cut there, and nothing left to prove either."
+      ]
+    },
+    {
+      "id": "pair-galleri-galleri-self",
+      "variants": [
+        "Now there are two of the same cave gallery standing in camp, each with its own careful pair of paintings, and Karl paces between them, unsure which deserves the finger-width adjustment first.",
+        "Karl set one cave gallery beside the other cave gallery, hoping for a verdict on which curation was superior. Both were, by his own exacting standard, perfect. Neither was more perfect than the other."
+      ]
+    },
+    {
+      "id": "pair-froe-gnister-near-miss",
+      "variants": [
+        "Karl scattered a handful of seeds across a shower of sparks, hoping heat might finally explain what they were for. The sparks died before the seeds even warmed through, and the mystery stayed exactly as unsolved as before. The {right} was going to answer that question eventually; this was not the afternoon.",
+        "I know exactly what these seeds are actually waiting for, and it is not a shower of sparks that vanish before the question even finishes. The {right} gives them the actual time they need; the sparks lasted one bright moment and left the seeds exactly as they were."
+      ]
+    },
+    {
+      "id": "pair-galleri-saft-inert",
+      "variants": [
+        "Karl offered the cave gallery a fresh cup of berry juice, in case the two paintings wanted retouching. They were dry, sacred, and finished years before this particular cup existed, and it only dripped down the wall instead.",
+        "Berry juice, once dried, becomes exactly this: pigment fixed to stone, permanent, no longer liquid. What Karl carried into the cave gallery was still very much a drink. Permanent things and a drink don't have much use for each other."
+      ]
+    },
+    {
+      "id": "pair-net-reb-plausible",
+      "variants": [
+        "By rights, a net and enough rope should very nearly build each other — one is, after all, just the other with holes tied in correctly. Karl twisted the rope around itself for a good while and produced only a very committed knot.",
+        "I apologise to the rope, and I apologise to the net, which is, by its own description, just rope with the holes done properly. Today the doing-properly part stayed stubbornly out of reach, and neither material was to blame."
+      ]
+    },
+    {
+      "id": "pair-malm-rullesten-near-miss",
+      "variants": [
+        "Karl held his glittering ore up beside 'the good rock,' half expecting one treasure to recognise the other. The round stone stayed exactly as guarded and ordinary as ever, unmoved by a rival with a better future ahead of it. The {right} was worth guarding; the other never entered this contest.",
+        "I know exactly which of these Karl will still be digging up in a few centuries, and it isn't the round stone he already polished smooth and started guarding jealously. The {right} of the ore and the round stone is patient about being valuable; the other one already peaked."
+      ]
+    },
+    {
+      "id": "pair-mudderbad-mudderbad-self",
+      "variants": [
+        "Two mud baths now, side by side, and Karl can only be in one of them at a time. The boar approves of both equally, which is not the same as either one being more useful.",
+        "Karl rolled from one mud bath into the identical one beside it, hoping for a change of scenery. Both were the same mud, the same wet, the same boar nodding the same approval."
+      ]
+    },
+    {
+      "id": "pair-hjul-hulemaleri-absurd",
+      "variants": [
+        "The cave painting stays exactly where Karl left it, sacred and unmoving, forever. The wheel has already escaped down the valley twice today and shows no intention of holding still for a portrait.",
+        "Karl chased the wheel back from the valley a third time and set it down in front of the cave painting, hoping stillness might be contagious. The wheel rolled off again before the lesson could take."
       ]
     }
   ]

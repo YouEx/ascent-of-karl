@@ -5,8 +5,11 @@ Kører den samme kontrol som skribenterne selv kørte (tools/check_pairs.py) —
 tillid er ikke en kontrol — og skriver derefter content/narrator/pairs-act-1.json.
 
 Formatet er valgt så motoren kan slå op i ét hop og ellers behandle replikken
-som enhver anden: `pairs` er et opslag fra "<pairKey>:<dom>" til et replik-id,
-og `lines` er almindelige fortæller-replikker som narrator.line() kan finde.
+som enhver anden: `pairs` er listen af nøgler "<pairKey>:<dom>" der har en bagt
+replik, og `lines` er almindelige fortæller-replikker som narrator.line() kan
+finde. Replik-id'et står kun ét sted (på replikken) og udledes af nøglen — se
+`pairLineId()` i src/narrator/pairs.ts. Skrev vi det ud ved siden af hver nøgle
+også, kostede de 400 gentagelser mere gzip end CON-003 tillader.
 
 Nøglen indeholder dommen, fordi målingen viste at 106 af de 250 hyppigste par
 skifter dom mellem gennemspilninger — samme par mødes i forskellige
@@ -25,7 +28,10 @@ ROOT = Path(__file__).resolve().parent.parent
 DRAFTS = ROOT / "content" / "narrator" / "drafts"
 JOBS = DRAFTS / "briefs" / "_jobs.json"
 OUT = ROOT / "content" / "narrator" / "pairs-act-1.json"
-BATCHES = ["top-a", "top-b", "mid-a", "mid-b", "mid-c", "mid-d"]
+BATCHES = [
+    "top-a", "top-b", "mid-a", "mid-b", "mid-c", "mid-d",
+    "runde2-a", "runde2-b", "runde2-c", "runde2-d",
+]
 
 
 def line_id(key: str, verdict: str) -> str:
@@ -34,7 +40,7 @@ def line_id(key: str, verdict: str) -> str:
 
 def main() -> int:
     jobs = {j["key"]: j for j in json.loads(JOBS.read_text())["jobs"]}
-    pairs: dict[str, str] = {}
+    pairs: list[str] = []
     lines: list[dict] = []
     missing: list[str] = []
     seen: set[str] = set()
@@ -59,7 +65,7 @@ def main() -> int:
             seen.add(key)
             lookup = f"{key}:{entry['verdict']}"
             lid = line_id(key, entry["verdict"])
-            pairs[lookup] = lid
+            pairs.append(lookup)
             lines.append({"id": lid, "variants": entry["variants"]})
 
     if missing:

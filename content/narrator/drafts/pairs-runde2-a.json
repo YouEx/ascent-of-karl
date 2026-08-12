@@ -1,0 +1,316 @@
+{
+  "pairs": [
+    {
+      "key": "saft+saft",
+      "verdict": "self",
+      "variants": [
+        "Karl added one dribble of berry juice to another dribble of berry juice, the same shade meeting itself in the same purple-stained palm.",
+        "Berry juice met more berry juice on fingers already drinking it, wearing it, and painting with it. A fourth use never arrived, just more of the first three."
+      ]
+    },
+    {
+      "key": "rullesten+saft",
+      "verdict": "absurd",
+      "variants": [
+        "The round stone gets called 'the good rock' and guarded like treasure; the berry juice gets called dinner and is gone in a mouthful. Karl held the two together regardless.",
+        "I checked what the round stone and the berry juice might have in common. The stone gets guarded like treasure. The juice gets drunk before it can object. Guarding and drinking have never once overlapped."
+      ]
+    },
+    {
+      "key": "ler+mursten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl pressed the soft clay against the dried mud brick, hoping one lesson in hardness might simply rub off through contact alone. The {right} had somewhere else to be today.",
+        "The mud brick already knows how to become Karl's architecture. The clay is still working on becoming a good idea. Only the {right} was ever going to matter here."
+      ]
+    },
+    {
+      "key": "mudder+saft",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl swirled the mud into the berry juice, hoping for a colour with a better name than 'soft dirt.' The {right} had somewhere else to be this afternoon.",
+        "Karl held the mud in one hand and the berry juice in the other, weighing which deserved his attention first. Neither did. The {right} was owed something better today."
+      ]
+    },
+    {
+      "key": "mursten+vand",
+      "verdict": "clash",
+      "variants": [
+        "The mud brick spent real effort becoming hard and dry. The water undid a corner of that effort in about four seconds, and Karl watched his architecture soften at the edges.",
+        "Karl poured the water over the mud brick to see what would happen. What happened was a mud brick remembering, one damp patch at a time, that it used to be mud."
+      ]
+    },
+    {
+      "key": "graes+mursten",
+      "verdict": "plausible",
+      "variants": [
+        "The dry grass insulates against the cold; the mud brick stacks into what Karl calls architecture. Between insulation and architecture there was meant to be a roof. There is, instead, a pillow lying next to a wall, unintroduced.",
+        "Somewhere, an application for turning a pillow and a brick into a proper roof has been sitting in triplicate for centuries. The dry grass and the mud brick are still waiting on the reply."
+      ]
+    },
+    {
+      "key": "ler+spyd",
+      "verdict": "clash",
+      "variants": [
+        "Karl pressed the clay onto the tip of the spear, hoping for some kind of guard. The point went straight through, the way sharp always goes through soft, and came out the other side unchanged.",
+        "Soft loses to sharp before the contest even starts, and the clay proved it against the spear by arriving in one lump and leaving in two, neither half useful."
+      ]
+    },
+    {
+      "key": "ler+mudderkage",
+      "verdict": "plausible",
+      "variants": [
+        "The clay is, technically, raw mud pie that hasn't been through the oven of Karl's ambition yet. He pressed it against the finished one hoping for a bigger cake. He got a bigger lump, and I got nothing new to complain about, for once.",
+        "One mud pie already exists, berry and all, proof it can be done. A second lump of clay watched it happen from a foot away and remained, stubbornly, a lump."
+      ]
+    },
+    {
+      "key": "baer+mudderkage",
+      "verdict": "plausible",
+      "variants": [
+        "The mud pie already wears one lonely berry as decoration. A whole handful of berries pressed in beside it looked, for a moment, like the start of a proper dessert. It ended as a mud pie with more fruit stuck to the outside, nothing more.",
+        "Berries are, per Karl's own bird test, possibly food. The mud pie is, per my own count, at least two bites too many. Together they stayed exactly as questionable as they started, only in greater volume."
+      ]
+    },
+    {
+      "key": "baer+mursten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl pressed the berries into the mud brick, hoping for decoration, or perhaps reinforcement. The {right} had somewhere else to be this afternoon.",
+        "Between the berries and the mud brick, the {right} still had something left to finish elsewhere today. The other simply happened to be nearby."
+      ]
+    },
+    {
+      "key": "faelde+ler",
+      "verdict": "plausible",
+      "variants": [
+        "The snare hunts all night without any help from Karl at all. The clay, given the same quiet independence, produced nothing but a slightly flatter version of itself by morning.",
+        "The snare, Karl's finest employee, catches dinner while he sleeps. His clay, left alone for the same number of hours, caught nothing, taught itself nothing, and remained precisely as ambitious as a wet lump can be."
+      ]
+    },
+    {
+      "key": "baer+spyd",
+      "verdict": "plausible",
+      "variants": [
+        "Karl skewered the berries on the tip of the spear he once held backwards, hoping competence might show up twice in the same week. It showed up neither time.",
+        "Somewhere, a sharp spear and a handful of berries add up to a clever bit of hunting-gathering economy. Here, Karl held the spear the right way round for once and still walked away with nothing but skewered fruit."
+      ]
+    },
+    {
+      "key": "mudder+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl pressed the round stone into the mud, hoping for a mould of some kind. The mud held the shape for a second, then forgot it entirely. The {right} was needed for something else today.",
+        "Karl weighed the mud against the round stone, one soft, one solid, both equally unmoved by his attention. The {right} was owed a bit more ceremony elsewhere."
+      ]
+    },
+    {
+      "key": "froe+saft",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl stirred the seeds into the berry juice, the very bits he once spat out now floating in the same fruit's liquid he already drinks. The {right} had somewhere else to be this afternoon.",
+        "Between the seeds and the berry juice, I know exactly what each one was hoping for today. Not saying which got closer. The {right} keeps that particular secret regardless."
+      ]
+    },
+    {
+      "key": "hjul+ler",
+      "verdict": "plausible",
+      "variants": [
+        "The wheel rolls, unstoppably, twice-chased-across-the-valley rolls. The clay only needed it to spin in place for once, slowly, with something being shaped on top. Rolling away was all it knew how to do.",
+        "Somewhere in the future, a wheel holds still and spins clay into something round and useful. Karl's wheel, true to form, simply rolled off across the valley a third time, clay and all."
+      ]
+    },
+    {
+      "key": "mudderkage+vand",
+      "verdict": "plausible",
+      "variants": [
+        "The mud pie is, generously, edible. The water is, by Karl's own taste test, very wet. Thinned together the two might have made a proper soup; instead, the mud pie just got soggier, and I filed a second complaint.",
+        "Karl dunked the mud pie in the water hoping to rinse off the taste of the last bite. The water stayed very wet, exactly as advertised. The mud pie stayed a mud pie, un-improved and un-eaten by anyone with better judgement."
+      ]
+    },
+    {
+      "key": "reb+saft",
+      "verdict": "clash",
+      "variants": [
+        "The rope is dry by design, twisted grass built to hold a knot. Karl dunked it in the berry juice anyway, and dry lost to wet exactly as fast as it always does, one darkened coil at a time.",
+        "Dry does not survive contact with wet for long, and the rope proved it against the berry juice by going in taut and coming out limp, one shade darker and considerably less useful for tying to anything, including Karl."
+      ]
+    },
+    {
+      "key": "boomerang+saft",
+      "verdict": "absurd",
+      "variants": [
+        "The boomerang's entire purpose is returning to Karl's hand. The berry juice's entire purpose is being consumed and gone. Return and disappearance do not share a single afternoon.",
+        "I looked for a reason the boomerang and the berry juice might belong in the same story. One always comes back. The other never does, being, by this point, mostly inside Karl. I stopped looking."
+      ]
+    },
+    {
+      "key": "hulemaleri+stenoekse",
+      "verdict": "absurd",
+      "variants": [
+        "The cave painting is sacred and entirely finished, whatever it depicts. The stone axe is humanity's first subscription to cutting things. Subscriptions do not renew on sacred, finished art, and Karl's attempt today didn't change that.",
+        "I searched for what the cave painting and the stone axe might have to say to each other. One refuses explanation by design. The other only knows how to cut things. Neither had anything for the other."
+      ]
+    },
+    {
+      "key": "baer+hjul",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl balanced the berries on top of the wheel, hoping momentum might do some of the eating for him. The wheel rolled off across the valley without them. The {right} still has an appointment elsewhere.",
+        "Between the berries and the wheel, the {right} had a whole valley left to cross this afternoon. The other was merely present, nothing more."
+      ]
+    },
+    {
+      "key": "boomerang+mudder",
+      "verdict": "plausible",
+      "variants": [
+        "A professional at losing things ought to have found real use for something as sticky as mud — at minimum, something might have finally stayed lost on purpose. The boomerang, true to its one talent, came straight back anyway, mud and all.",
+        "Karl coated the boomerang in mud, hoping stickiness might finally break its one habit. It came back anyway, a little heavier, a little browner, exactly as returned as ever."
+      ]
+    },
+    {
+      "key": "hjul+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl set the wheel beside the round stone, waiting for one to teach the other something about rolling. Both stayed exactly where gravity left them. The {right} had a different roll to make today.",
+        "Between the wheel and the round stone, the {right} still owes the valley one proper roll. Not saying which. The other stays exactly as still as it is now."
+      ]
+    },
+    {
+      "key": "bautasten+mudder",
+      "verdict": "absurd",
+      "variants": [
+        "The standing stone exists for reasons Karl cannot explain and would not survive explaining. The mud exists to be soft dirt underfoot. Sacred and underfoot do not, as a rule, meet.",
+        "I looked for what the standing stone and the mud could possibly owe each other. The stone gets bones thrown at it for reasons nobody understands. The mud just gets stepped in. Neither habit needed the other today."
+      ]
+    },
+    {
+      "key": "graes+haandkile",
+      "verdict": "inert",
+      "variants": [
+        "The hand axe was finished the day it was knapped on both faces, a tool with nowhere left to improve. Karl held the dry grass against it anyway, and the grass simply lay there, adding nothing to something that never asked for more.",
+        "Karl has introduced the hand axe to nearly everything within reach, the dry grass included, and nearly everything has said the same quiet no. Some tools are already exactly what they are ever going to be."
+      ]
+    },
+    {
+      "key": "boomerang+boomerang",
+      "verdict": "self",
+      "variants": [
+        "Karl threw one boomerang at the other, hoping for some sort of mid-air treaty. Both came back, unaltered, unbothered, and equally confused about what treaty he meant.",
+        "Two boomerangs now return to the same hand instead of one, which solves no problem Karl actually has and doubles a problem he never needed solved."
+      ]
+    },
+    {
+      "key": "boomerang+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl strapped the round stone to the boomerang, hoping weight might finally end its one habit of returning. It came back anyway, heavier and more dangerous than before. The {right} wanted an entirely different kind of trip today.",
+        "Between the boomerang and the round stone, the {right} still has some travelling left to do elsewhere. The other simply happened to be along for the ride."
+      ]
+    },
+    {
+      "key": "baer+faelde",
+      "verdict": "plausible",
+      "variants": [
+        "Berries as bait, a snare set to wait: by any sensible design, Karl's finest employee should have come home with something extra tonight. It came home with exactly what it always catches, and the berries, untouched, still only possibly edible.",
+        "An employee that hunts unsupervised ought to know what to do with a handful of bait. Karl left the berries by the snare anyway. Morning found both exactly where he'd left them, uneaten and untriggered."
+      ]
+    },
+    {
+      "key": "hulemaleri+reb",
+      "verdict": "absurd",
+      "variants": [
+        "The cave painting hangs sacred and unexplained on stone that isn't going anywhere. The rope ties itself around everything Karl owns, including Karl. Tying has never once been something you do to a wall.",
+        "I searched for a use the rope might have for the cave painting, or the painting for the rope. One is permanent and unexplained. The other gets knotted around whatever's nearby, which, today, was not this."
+      ]
+    },
+    {
+      "key": "spyd+stenoekse",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl held the spear against the stone axe, hoping two sharp things might agree on one better shape between them. They stayed two separate weapons, sharp in entirely different directions. The {right} had its own edge to prove elsewhere.",
+        "Between the spear and the stone axe, the {right} still owes somebody else an entirely different cut today. The other stayed exactly as sharp as it arrived."
+      ]
+    },
+    {
+      "key": "baer+malm",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl set the berries down on top of the ore and waited for one to make the other more interesting. Neither budged. The {right} had somewhere else to be this afternoon.",
+        "Between the berries and the ore, I know exactly what each one was quietly waiting to become. Not saying which. The {right} keeps that particular secret regardless."
+      ]
+    },
+    {
+      "key": "mudder+reb",
+      "verdict": "clash",
+      "variants": [
+        "Wet and sticky met dry and taut, and dry gave up its shape almost immediately. Karl pulled the rope out of the mud looking less like rope and more like a suggestion of rope.",
+        "The rope was twisted grass, dry and strong, right up until it met the mud. It came out heavier, looser, and no longer anything Karl would trust around his own waist."
+      ]
+    },
+    {
+      "key": "malm+stenoekse",
+      "verdict": "plausible",
+      "variants": [
+        "The ore is, by Karl's own admission, mere decoration. The stone axe is, by definition, a tool with opinions about what counts as useful. Today it looked right past the future sitting next to it.",
+        "Somewhere down the line, ore becomes the reason axes stop being made of stone at all. Today, the stone axe sat beside the ore and neither of them had read that far ahead."
+      ]
+    },
+    {
+      "key": "haandkile+sten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl struck the hand axe against the stone the way its own edge was first struck into being, hoping for a second miracle from the same gesture. The {right} still has some shaping left to do elsewhere.",
+        "Between the hand axe and the stone, the {right} still owes somebody a proper knapping today. The other simply sat there, already exactly what it was going to be."
+      ]
+    },
+    {
+      "key": "graes+malm",
+      "verdict": "plausible",
+      "variants": [
+        "The dry grass burns. The ore glitters, uselessly, by Karl's own assessment. Between burning and glittering there was, in theory, a spark — in practice, neither one so much as warmed.",
+        "Fuel waiting for a flame, and the future glittering right next to it: the dry grass and the ore looked, for a moment, like the start of something. They were, today, just two things sitting near each other."
+      ]
+    },
+    {
+      "key": "mudder+mursten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl worked the mud into the shape of the mud brick standing right beside it, hoping to skip the drying entirely. The mud held the shape for a moment, then slumped back into itself. The {right} had somewhere else to be today.",
+        "Between the mud and the mud brick, the {right} was owed a bit more patience elsewhere. The other stayed exactly as it already was, nothing more."
+      ]
+    },
+    {
+      "key": "hjul+sten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl set the wheel down beside the stone, his best friend and most frequent conversation partner, and waited for either one to say something new. Neither did. The {right} had a different conversation to have elsewhere.",
+        "Between the wheel and the stone, the {right} still had somewhere else to be today. The other simply sat there, heavy, grey, and unbothered."
+      ]
+    },
+    {
+      "key": "froe+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl pressed the seeds into the round stone, hoping the good rock might finally grow something. It didn't. The {right} had somewhere else to be this afternoon.",
+        "Between the seeds and the round stone, the {right} was owed a bit more patience today. The other simply stayed exactly what it already was."
+      ]
+    },
+    {
+      "key": "malm+vand",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl poured the water over the ore, hoping the future Karl keeps insisting is in there might rinse itself into view. It stayed grey and glittering and entirely unmoved. The {right} had a different reaction waiting elsewhere.",
+        "Between the ore and the water, the {right} still had somewhere else to be put to use today. The other simply stayed exactly what it already was, wet or glittering as the case may be."
+      ]
+    },
+    {
+      "key": "haandkile+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl knapped at the round stone with the hand axe, hoping to make a second tool as good as the first. The good rock lost a chip and gained nothing. The {right} had somewhere else to be today.",
+        "Between the hand axe and the round stone, the {right} still owes somebody a proper shaping elsewhere. The other simply stayed exactly what it already was."
+      ]
+    }
+  ]
+}

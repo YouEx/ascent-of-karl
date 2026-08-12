@@ -2,29 +2,27 @@ import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
 import { Narrator, freshNarratorState } from "../src/narrator/narrator";
 import { loadContent } from "../src/content";
-import { loadPairs } from "../src/narrator/pairs";
+import { loadPairs, pairLineId } from "../src/narrator/pairs";
 import { judgePair } from "../src/core/verdict";
 import baked from "../content/narrator/pairs-act-1.json";
 import jobs from "../content/narrator/drafts/briefs/_jobs.json";
 
-const pairs = baked as { act: number; pairs: Record<string, string>; lines: { id: string; variants: string[] }[] };
+const pairs = baked as { act: number; pairs: string[]; lines: { id: string; variants: string[] }[] };
 
 describe("Bagte par-replikker: formen", () => {
   it("hvert opslag peger på en replik der findes", () => {
     const ids = new Set(pairs.lines.map((l) => l.id));
-    const dangling = Object.entries(pairs.pairs)
-      .filter(([, id]) => !ids.has(id))
-      .map(([key]) => key);
+    const dangling = pairs.pairs.filter((key) => !ids.has(pairLineId(key)));
     expect(dangling).toEqual([]);
   });
 
   it("ingen replik ligger uden et opslag der kan nå den", () => {
-    const used = new Set(Object.values(pairs.pairs));
+    const used = new Set(pairs.pairs.map(pairLineId));
     expect(pairs.lines.filter((l) => !used.has(l.id)).map((l) => l.id)).toEqual([]);
   });
 
   it("nøglen er sorteret som pairKey, så rækkefølgen er ligegyldig", () => {
-    const wrong = Object.keys(pairs.pairs).filter((k) => {
+    const wrong = pairs.pairs.filter((k) => {
       const [pair] = k.split(":");
       const [a, b] = pair!.split("+");
       return [a, b].sort().join("+") !== pair;
@@ -42,7 +40,7 @@ describe("Bagte par-replikker: formen", () => {
       (jobs as { jobs: { key: string; a: string; b: string; verdict: string }[] }).jobs.map((j) => [j.key, j]),
     );
     const impossible: string[] = [];
-    for (const key of Object.keys(pairs.pairs)) {
+    for (const key of pairs.pairs) {
       const [pair, verdict] = key.split(":");
       const job = byKey.get(pair!);
       if (!job) continue;
@@ -56,8 +54,8 @@ describe("Bagte par-replikker: formen", () => {
 describe("Bagte par-replikker: motoren", () => {
   it("slår igennem foran grammatikken når parret er bagt", async () => {
     const data = await loadPairs(1);
-    if (!data || Object.keys(data.pairs).length === 0) return; // endnu ikke bagt
-    const key = Object.keys(data.pairs)[0]!;
+    if (!data || data.pairs.length === 0) return; // endnu ikke bagt
+    const key = data.pairs[0]!;
     const [pair, verdict] = key.split(":");
     const [a, b] = pair!.split("+");
 
@@ -67,7 +65,7 @@ describe("Bagte par-replikker: motoren", () => {
     const outcome = engine.combine(a!, b!);
     if (outcome.kind !== "nofuse" || outcome.verdict !== verdict) return;
     const spoken = narrator.react(a!, b!, outcome, 4000);
-    expect(spoken?.id).toBe(data.pairs[key]);
+    expect(spoken?.id).toBe(pairLineId(key));
   });
 
   it("uden de bagte replikker svarer grammatikken stadig — aldrig tavshed", async () => {

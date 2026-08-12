@@ -1,0 +1,300 @@
+{
+  "pairs": [
+    {
+      "key": "gnister+reb",
+      "verdict": "absurd",
+      "variants": [
+        "Karl looped the rope loosely around a shower of sparks, the same way he ties down everything else he owns. The sparks were gone before the knot pulled tight, and the rope closed around nothing at all.",
+        "The rope holds two things together for as long as Karl needs them held. The sparks do not last long enough to need holding, and were gone, applauded, and forgotten before an argument could even start."
+      ]
+    },
+    {
+      "key": "galleri+ler",
+      "verdict": "inert",
+      "variants": [
+        "Karl pressed a lump of clay against the cave gallery's wall, hoping it might pass for a third painting. It slid straight down, and the gallery's careful two stayed exactly as perfect, and exactly two, as they were a moment before.",
+        "Clay is famously as far from a finished idea as Karl gets. The cave gallery is the one place in camp where every idea already arrived finished, framed, and exactly two paintings wide. The lump he brought never had a chance."
+      ]
+    },
+    {
+      "key": "mudder+mudderbad",
+      "verdict": "inert",
+      "variants": [
+        "Karl scooped a fresh handful of mud from the riverbank and stirred it into the mud bath, reasoning that more of the same ingredient might improve on itself. The boar, watching from the edge, kept its earlier verdict exactly as it was.",
+        "The mud bath is mud, generously applied, thoroughly rolled in, already approved by a boar with real standards on the matter. Offering it more mud only returns a finished thing to its own raw beginning."
+      ]
+    },
+    {
+      "key": "galleri+sten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl set his stone, the nearest thing he has to a best friend, beside the two paintings in the cave gallery, hoping the count might simply expand to three. It ruined the symmetry, and got nudged back outside the wall within the minute. The {right} always mattered more than a spare rock did.",
+        "I know exactly what the cave gallery's careful two paintings were hoping to gain today, and a plain grey stone was not it. The {right} kept its own appointment; the other merely kept the wall from looking empty."
+      ]
+    },
+    {
+      "key": "bautasten+stenoekse",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl raised the stone axe toward the standing stone the way he raises it at any rock in need of an edge. Halfway through the swing, something made him stop, and the axe came down against nothing but air. The {right} earned that hesitation; a monument, it turns out, earns something else entirely.",
+        "I know exactly what the stone axe was made to cut today. It was not a monument nobody remembers the reason for. The {right} kept its edge for somewhere better; the standing stone kept its silence, same as always."
+      ]
+    },
+    {
+      "key": "sten+stenspil",
+      "verdict": "inert",
+      "variants": [
+        "Karl brought his best friend, the stone, out to the boules pitch, hoping conversation might count as a throw. The game continued without consulting either of them, the same way it always does, eleven losses deep and heading for a twelfth.",
+        "Boules keeps score, keeps rules, and keeps absolutely no room for a stone that just wants to sit quietly and be talked to. Karl's stone showed up anyway, listened to the whole match, and was never once thrown."
+      ]
+    },
+    {
+      "key": "haandkile+haandkile",
+      "verdict": "self",
+      "variants": [
+        "Two hand axes now, knapped identically on both faces, and Karl holds one in each hand feeling briefly unstoppable. Two Swiss army knives of the Palaeolithic still cut exactly one thing at a time.",
+        "Karl held the hand axe up next to the hand axe, as if comparing might reveal some secret upgrade. It revealed only that quiet competence, doubled, is still just quiet competence."
+      ]
+    },
+    {
+      "key": "rullesten+stenspil",
+      "verdict": "inert",
+      "variants": [
+        "Karl carried 'the good rock' to boules practice, certain his most polished round stone was destined for something better than being thrown at a target. He guarded it through the entire match instead of risking it once, and the score stayed exactly as embarrassing as before.",
+        "The rules of boules already come with their own worn stone, chosen by nobody and risked by everybody. Karl's round stone stays guarded jealously in his pocket, thrown at nothing, and nowhere near that kind of risk."
+      ]
+    },
+    {
+      "key": "malm+malm",
+      "verdict": "self",
+      "variants": [
+        "Two piles of ore now glitter by the fire instead of one, and Karl still calls it decoration. Whatever future was hiding in that rock face is, apparently, in no hurry to be discovered twice as fast.",
+        "Karl held one piece of glittering ore up beside a second, hoping the extra shine might finally explain what ore is actually for. Decoration times two is still just decoration, as far as he's concerned — the future keeps its secret regardless."
+      ]
+    },
+    {
+      "key": "hulemaleri+mudderkage",
+      "verdict": "absurd",
+      "variants": [
+        "The cave painting exists to be looked at and never explained. The mud pie exists to be eaten, immediately, and with visible enthusiasm. Karl held the two up together, and only one of them made it anywhere near his stomach.",
+        "Karl set a mud pie beside his own cave painting, as if the two might swap places for the afternoon. The painting stayed exactly as sacred and inedible as always, and the pie, predictably, did not survive long enough to hang on any wall."
+      ]
+    },
+    {
+      "key": "mursten+saft",
+      "verdict": "clash",
+      "variants": [
+        "Karl poured berry juice over a finished mud brick, hoping to decorate it the way he decorates everything else. The brick, baked hard and bone dry, drank in none of it, and wore a slowly dripping purple stain instead.",
+        "Dry and wet settled their usual argument fast: the mud brick stayed dry, hard, and entirely itself, while the berry juice pooled uselessly on top and went looking for something more absorbent."
+      ]
+    },
+    {
+      "key": "mudderbad+vand",
+      "verdict": "inert",
+      "variants": [
+        "Karl poured water into the mud bath he was already sitting in, on the theory that wetter must mean better. The bath absorbed it without changing a single one of its opinions, and Karl came out exactly as muddy as he went in.",
+        "Water alone just gets a person clean, which was never the ambition here. A boar-approved mud bath runs on being thoroughly, deliberately dirty, and a bit more water only waters down the one quality it was ever prized for."
+      ]
+    },
+    {
+      "key": "graes+mudderbad",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl tossed his pillow of dry grass into the mud bath, hoping the two might combine into something new. It just got wet, heavy, and considerably less pillow-like than before. The {right} had a use waiting that had nothing to do with bathing.",
+        "I know exactly what this dry grass still has ahead of it, and it was never going to happen in a mud bath. The {right} keeps that appointment; the grass, soaked through, keeps being a ruined pillow."
+      ]
+    },
+    {
+      "key": "gnister+hulemaleri",
+      "verdict": "absurd",
+      "variants": [
+        "Karl struck a shower of sparks over his own cave painting, hoping for a spotlight. The sparks lit the boar, the sunset, or Ugh — whichever it actually is — for exactly half a second, then left him painting in the dark again.",
+        "Sparks last half a second. The cave painting has already lasted since Karl finished it and refuses to explain further. Neither timeline had room to borrow from the other."
+      ]
+    },
+    {
+      "key": "mudderbad+pind",
+      "verdict": "inert",
+      "variants": [
+        "Karl held his exceptional stick over the mud bath like a whisk, hoping to stir something useful into being. The mud bath stayed exactly as thick and skincare-adjacent as before, entirely unstirred by the gesture.",
+        "A mud bath wants nothing stirred, whisked, or improved by tools — just Karl, rolling, and a boar's nod of approval. However exceptional, a stick was never on that particular guest list."
+      ]
+    },
+    {
+      "key": "galleri+graes",
+      "verdict": "inert",
+      "variants": [
+        "Karl tucked a handful of dry grass beneath one of the two paintings, as insulation, or perhaps just out of habit. The cave gallery remained exactly as curated as before, now with a slightly less tidy corner.",
+        "Dry grass has one job so far, and it is being a pillow. The cave gallery has one job so far too, and it is staying exactly two paintings wide. Pillow duty and gallery curation never had any reason to meet, and didn't."
+      ]
+    },
+    {
+      "key": "saft+spyd",
+      "verdict": "absurd",
+      "variants": [
+        "The spear exists to be pointy at Karl, or occasionally at dinner. Berry juice exists to be drunk, worn, and painted with, often within the same minute. Karl held the two together anyway, and neither one noticed the other.",
+        "I searched for what the spear and a cup of berry juice could possibly have in common. One is sharp at one end, held backwards at least once. The other leaves a purple mark on whatever it meets. I have stopped looking for the overlap."
+      ]
+    },
+    {
+      "key": "boomerang+gnister",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl threw the boomerang straight through a shower of sparks, hoping the trick might catch something extra on the way back. It came back exactly as empty as it left, the sparks having vanished before the halfway point. The {right} was worth chasing; this particular loop was not.",
+        "I know precisely what the boomerang was actually meant to bring back today, and it was not a fistful of sparks that die before anything returns. The {right} makes the trip worthwhile; the sparks just glittered once and were gone."
+      ]
+    },
+    {
+      "key": "haandkile+mudder",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl pressed the hand axe into a fresh handful of mud, testing whether an edge could shape something that offers no resistance at all. It slid through without a mark, quietly competent at cutting nothing in particular. The {right} was waiting for an edge like that; the mud never needed one.",
+        "I know exactly what this hand axe was built to shape today, and soft, wet mud was never it. The {right} gets that edge eventually; the mud just gets squeezed back into shape by Karl's own fingers."
+      ]
+    },
+    {
+      "key": "mudderbad+saft",
+      "verdict": "inert",
+      "variants": [
+        "Karl poured berry juice into the mud bath as a finishing touch, the way he finishes everything, by adding berries. The bath absorbed the colour and none of the point, and came out looking, if anything, slightly more purple.",
+        "Berry juice is for drinking, wearing, or painting with, roughly in that order of frequency. None of Karl's usual three verbs involve a mud bath, and today's attempt didn't invent a fourth."
+      ]
+    },
+    {
+      "key": "galleri+pind",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl propped his exceptional stick up between the two paintings, hoping it might read as a third exhibit, or at least a frame. The cave gallery's arrangement absorbed it exactly as well as it absorbs everything that isn't paint: not at all. The {right} had an actual frame waiting somewhere else.",
+        "I know exactly what this stick was actually meant to prop up today, and it was not the cave gallery's careful symmetry. The {right} gets propped properly; the stick ended up leaning outside, forgotten by the entrance."
+      ]
+    },
+    {
+      "key": "mudderbad+sten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl carried the stone to the edge of the mud bath, half expecting his usual conversation partner to climb in with him. It sank a little, said nothing, the way stones do, and stayed exactly as dry as it started. The {right} was hoping to get wet today; the stone was never going to be it.",
+        "I know exactly what this mud bath was actually missing today, and a dry, silent stone was not going to fix it. The {right} would have gone in without complaint; the stone just watched from the edge, unbothered."
+      ]
+    },
+    {
+      "key": "mudderkage+rullesten",
+      "verdict": "absurd",
+      "variants": [
+        "Karl offered a bite of mud pie to 'the good rock,' his most jealously guarded round stone, as if companionship might improve the flavour. The round stone, being a stone, declined, and Karl finished the whole thing himself, again.",
+        "A mud pie's whole purpose is getting eaten, enthusiastically, against the narrator's better judgement. A round stone's whole purpose is getting polished, guarded, and never, under any circumstances, offered a bite of anything. Karl tried anyway."
+      ]
+    },
+    {
+      "key": "malm+mudder",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl pressed a glittering piece of ore into a handful of mud, hoping the shine might rub off and improve the mud's prospects. The mud stayed exactly as plain and sticky as before, decoration or not. The {right} has a future waiting for it; the mud has, at best, an afternoon.",
+        "I know exactly what this ore was actually glittering for today, and it was not to decorate a handful of mud. The {right} is the future, patiently; the mud just got a bit of grit stuck in it."
+      ]
+    },
+    {
+      "key": "graes+stenspil",
+      "verdict": "inert",
+      "variants": [
+        "Karl scattered a handful of dry grass across the boules pitch for cushioning, in case a throw ever went badly. It only blew about in the wind, and Ugh eventually stepped in it and complained.",
+        "The rules of boules ask for a flat court and one very particular stone. Dry grass offers neither, being light, dry, and prone to blowing away mid-game. The court stayed exactly as bare as those rules require."
+      ]
+    },
+    {
+      "key": "mudderkage+mudderkage",
+      "verdict": "self",
+      "variants": [
+        "Two mud pies now, and Karl has already finished the first and started on the second before the narrator can even file a complaint about the first.",
+        "Karl held one mud pie up next to another, as if quality might improve through comparison shopping. Both were equally edible, equally muddy, and gone within the same disappointing minute."
+      ]
+    },
+    {
+      "key": "mudder+spyd",
+      "verdict": "clash",
+      "variants": [
+        "Karl jabbed the spear into a patch of mud, testing the edge the way he tests everything sharp. Sharp needs resistance to mean anything, and the mud, soft and sticky and entirely without opinions, gave none at all.",
+        "Sharp and pointed met soft and sticky, and sharp lost immediately: the spear went in, came out coated, and proved nothing except that mud swallows an edge whole."
+      ]
+    },
+    {
+      "key": "hulemaleri+mursten",
+      "verdict": "absurd",
+      "variants": [
+        "The cave painting is berry juice, dried onto stone years ago, and finished being whatever it is. Karl stacked a mud brick up beside it anyway, hoping architecture and art might strike up a conversation. They did not.",
+        "Two mud bricks make Karl an architect, by his own generous assessment. Zero mud bricks make a cave painting, which was built from crushed berries and patience instead. The two crafts never once needed each other's materials."
+      ]
+    },
+    {
+      "key": "bautasten+saft",
+      "verdict": "absurd",
+      "variants": [
+        "The standing stone has meant something, probably, for longer than Karl has been alive to wonder about it. Berry juice means dinner, or a stain, or occasionally both. Karl poured one over the base of the other, and history recorded no further ceremony.",
+        "I checked for a connection between the standing stone and a cup of berry juice. I found a monument that predates memory, and a drink that stains everything within an arm's reach. Nothing carried over from one to the other."
+      ]
+    },
+    {
+      "key": "haandkile+hulemaleri",
+      "verdict": "inert",
+      "variants": [
+        "Karl weighed the hand axe in his palm, wondering if a blade might improve on berry juice as a medium. It could not — the cave painting was already finished, sacred, and entirely uninterested in further editing.",
+        "The cave painting finished being made the moment Karl stepped back and refused to explain it. The hand axe, quietly competent as ever, had nothing left to cut there, and nothing left to prove either."
+      ]
+    },
+    {
+      "key": "galleri+galleri",
+      "verdict": "self",
+      "variants": [
+        "Now there are two of the same cave gallery standing in camp, each with its own careful pair of paintings, and Karl paces between them, unsure which deserves the finger-width adjustment first.",
+        "Karl set one cave gallery beside the other cave gallery, hoping for a verdict on which curation was superior. Both were, by his own exacting standard, perfect. Neither was more perfect than the other."
+      ]
+    },
+    {
+      "key": "froe+gnister",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl scattered a handful of seeds across a shower of sparks, hoping heat might finally explain what they were for. The sparks died before the seeds even warmed through, and the mystery stayed exactly as unsolved as before. The {right} was going to answer that question eventually; this was not the afternoon.",
+        "I know exactly what these seeds are actually waiting for, and it is not a shower of sparks that vanish before the question even finishes. The {right} gives them the actual time they need; the sparks lasted one bright moment and left the seeds exactly as they were."
+      ]
+    },
+    {
+      "key": "galleri+saft",
+      "verdict": "inert",
+      "variants": [
+        "Karl offered the cave gallery a fresh cup of berry juice, in case the two paintings wanted retouching. They were dry, sacred, and finished years before this particular cup existed, and it only dripped down the wall instead.",
+        "Berry juice, once dried, becomes exactly this: pigment fixed to stone, permanent, no longer liquid. What Karl carried into the cave gallery was still very much a drink. Permanent things and a drink don't have much use for each other."
+      ]
+    },
+    {
+      "key": "net+reb",
+      "verdict": "plausible",
+      "variants": [
+        "By rights, a net and enough rope should very nearly build each other — one is, after all, just the other with holes tied in correctly. Karl twisted the rope around itself for a good while and produced only a very committed knot.",
+        "I apologise to the rope, and I apologise to the net, which is, by its own description, just rope with the holes done properly. Today the doing-properly part stayed stubbornly out of reach, and neither material was to blame."
+      ]
+    },
+    {
+      "key": "malm+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl held his glittering ore up beside 'the good rock,' half expecting one treasure to recognise the other. The round stone stayed exactly as guarded and ordinary as ever, unmoved by a rival with a better future ahead of it. The {right} was worth guarding; the other never entered this contest.",
+        "I know exactly which of these Karl will still be digging up in a few centuries, and it isn't the round stone he already polished smooth and started guarding jealously. The {right} of the ore and the round stone is patient about being valuable; the other one already peaked."
+      ]
+    },
+    {
+      "key": "mudderbad+mudderbad",
+      "verdict": "self",
+      "variants": [
+        "Two mud baths now, side by side, and Karl can only be in one of them at a time. The boar approves of both equally, which is not the same as either one being more useful.",
+        "Karl rolled from one mud bath into the identical one beside it, hoping for a change of scenery. Both were the same mud, the same wet, the same boar nodding the same approval."
+      ]
+    },
+    {
+      "key": "hjul+hulemaleri",
+      "verdict": "absurd",
+      "variants": [
+        "The cave painting stays exactly where Karl left it, sacred and unmoving, forever. The wheel has already escaped down the valley twice today and shows no intention of holding still for a portrait.",
+        "Karl chased the wheel back from the valley a third time and set it down in front of the cave painting, hoping stillness might be contagious. The wheel rolled off again before the lesson could take."
+      ]
+    }
+  ]
+}

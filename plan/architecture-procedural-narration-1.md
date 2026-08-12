@@ -18,6 +18,14 @@ tags: [architecture, engine, narrator, content, tooling, feature]
 > fiasko-ture svarer grammatikken på 62,3 %; resten tager frister, hint og
 > slutninger, som alle er mere presserende. `genericFailure` nås aldrig —
 > håndhævet af `tests/grammar.test.ts`, ikke af skøn.
+>
+> **Fase 4 står på gulvet nu** (2026-08-12). 303 par har en bagt replik —
+> 404 opslag, 908 varianter — og de dækker **72,4 %** af alle fiasko-møder
+> målt over 1.200 gennemspilninger. Grammatikken tager de sidste 27,6 %;
+> tavshed tager 0. Filen lazy-loades og vejer **58,3 KB gzip** mod CON-003's
+> loft på 60, efter at opslagslisten holdt op med at skrive hvert replik-id
+> ud to gange. Loftet er nu en test (`tests/pairs.test.ts`), ikke en linje i
+> build-loggen som ingen læser. Næste batch fortsætter mod N=600.
 
 Spillet har 187 elementer og 225 opskrifter. Det er 17.578 mulige par, hvoraf 225 er skrevet. De resterende 17.353 deler otte generiske hånlinjer.
 
@@ -106,12 +114,12 @@ Planen er en ombygning af udfaldsmodellen, ikke en omskrivning af spillet. Motor
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-021 | Byg `tools/generate_pairs.py`: tag de øverste N par fra `pair-frequency.json`, beregn deres dom med `judgePair` (via en lille node-bro eller en python-genimplementering med delt testvektor), og bed sprogmodellen om 2 varianter pr. par med fuld kontekst: begge navne, flavor, karlMood, dommen, evidensen og 3 håndskrevne eksempler i samme dom. Skriv til `content/narrator/drafts/pairs-act-1.json`. | | |
-| TASK-022 | Fastlæg N ud fra måling, ikke mavefornemmelse: N=500 dækker 96 % af møderne, N=1000 dækker 99,3 %. Start ved N=600 og udvid, hvis TEST-007 viser, at gulvet høres for ofte. | | |
-| TASK-023 | Menneskelig gennemgang af udkastene. Afvis frem for at rette: en middelmådig bagt replik er værre end grammatikken, fordi den optager pladsen. Godkendte replikker flyttes til `content/narrator/pairs-act-1.json`. | | |
-| TASK-024 | Lazy-load de bagte replikker pr. akt med en dynamisk `import()`, så de ikke ligger i første bundt (CON-003). Mål den faktiske gzip-størrelse og skriv den i planens statusnote. | | |
-| TASK-025 | Slå bagte replikker op som første trin i fiaskokæden: bagt → grammatik → nødudgang. Opslaget sker på `pairKey`, så rækkefølgen af de to elementer er ligegyldig. | | |
-| TASK-026 | Byg `tools/coverage_report.mjs`: hvor stor en andel af den *vægtede* mødefordeling har en bagt replik? Rapportér tallet i `docs/design/narration-coverage.md` og opdatér ved hver bagning. Dette er projektets ledestjerne-tal. | | |
+| TASK-021 | Byg pipelinen der skriver par-replikker: `tools/prepare_pairs.ts` udskriver batch-briefs med begge navne, flavor, karlMood, den målte dominerende dom, evidensen og de grammatikreplikker udkastet skal slå. Udkast lander i `content/narrator/drafts/pairs-*.json`. (Blev briefs til en skribent frem for et direkte modelkald — samme opgave, men udkastet kan læses og afvises af et menneske, jf. CON-005.) | ✅ | 2026-08-12 |
+| TASK-022 | Fastlæg N ud fra måling, ikke mavefornemmelse: N=500 dækker 96 % af møderne, N=1000 dækker 99,3 %. Start ved N=600 og udvid, hvis TEST-007 viser, at gulvet høres for ofte. **Status: 404 opslag på 303 par bagt = 72,4 % vægtet dækning. Næste batch fra `_jobs.json` fortsætter mod N=600.** | | |
+| TASK-023 | Menneskelig gennemgang af udkastene. Afvis frem for at rette: en middelmådig bagt replik er værre end grammatikken, fordi den optager pladsen. Godkendte replikker flyttes til `content/narrator/pairs-act-1.json`. (`tools/check_pairs.py` er porten, og `assemble_pairs.py` kører den igen ved fletning — tillid er ikke en kontrol.) | ✅ | 2026-08-12 |
+| TASK-024 | Lazy-load de bagte replikker pr. akt med en dynamisk `import()`, så de ikke ligger i første bundt (CON-003). Mål den faktiske gzip-størrelse og skriv den i planens statusnote. **Målt: 58,3 KB gzip.** Budgettet bevogtes nu af `tests/pairs.test.ts`, ikke af build-loggen. | ✅ | 2026-08-12 |
+| TASK-025 | Slå bagte replikker op som første trin i fiaskokæden: bagt → grammatik → nødudgang. Opslaget sker på `pairKey`, så rækkefølgen af de to elementer er ligegyldig. | ✅ | 2026-08-12 |
+| TASK-026 | Byg `tools/coverage_report.mjs`: hvor stor en andel af den *vægtede* mødefordeling har en bagt replik? Rapportér tallet i `docs/design/narration-coverage.md` og opdatér ved hver bagning. Dette er projektets ledestjerne-tal. | ✅ | 2026-08-12 |
 
 ### Implementation Phase 5
 

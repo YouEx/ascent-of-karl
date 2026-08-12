@@ -22,9 +22,20 @@ import type { NarratorLineDef } from "../core/types";
 
 export interface PairContent {
   act: number;
-  /** "<pairKey>:<dom>" → replik-id */
-  pairs: Record<string, string>;
+  /** Nøglerne "<pairKey>:<dom>" der har en bagt replik. */
+  pairs: string[];
   lines: NarratorLineDef[];
+}
+
+/**
+ * Replik-id'et for et opslag. Udledt frem for gemt: id'et var før skrevet ud
+ * ved siden af hver eneste nøgle, og de 404 gentagelser kostede mere gzip end
+ * CON-003 har råd til. Reglen skal holdes i sync med `line_id()` i
+ * `tools/assemble_pairs.py` — `tests/pairs.test.ts` tjekker at den gør.
+ */
+export function pairLineId(lookup: string): string {
+  const at = lookup.lastIndexOf(":");
+  return "pair-" + lookup.slice(0, at).replace("+", "-") + "-" + lookup.slice(at + 1);
 }
 
 /**

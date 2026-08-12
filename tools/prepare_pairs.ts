@@ -19,9 +19,22 @@ const content = loadContent();
 const act1 = content.narrator.find((n) => n.act === 1)!;
 const freq = JSON.parse(readFileSync("docs/design/pair-frequency.json", "utf8"));
 
-const TOP_TIER = 50;
+
 const TOTAL = 250;
+/** Møde-tal der udløser fire varianter i stedet for to — de hyppigste høres oftest. */
+const TOP_MET = 700;
 const OUT = "content/narrator/drafts/briefs";
+
+/** Par der allerede er bagt. Nøglen i den samlede fil er "par:dom". */
+const bakedKeys = new Set<string>();
+try {
+  const baked = JSON.parse(
+    readFileSync("content/narrator/pairs-act-1.json", "utf8"),
+  );
+  for (const k of Object.keys(baked.pairs ?? {})) bakedKeys.add(k.split(":")[0]!);
+} catch {
+  // Første runde: der findes endnu ingen samlet fil, og så skal alt skrives.
+}
 
 const el = (id: string): ElementDef => content.elements.find((x) => x.id === id)!;
 const lineById = new Map(act1.lines.map((l) => [l.id, l]));
@@ -56,27 +69,32 @@ interface Job {
   share: number;
 }
 
-const jobs: Job[] = freq.pairs.slice(0, TOTAL).map((p: any, i: number) => ({
-  key: p.key,
-  a: p.a,
-  b: p.b,
-  verdict: p.verdict,
-  variants: i < TOP_TIER ? 4 : 2,
-  rank: i + 1,
-  met: p.met,
-  share: p.verdictShare,
-}));
+const jobs: Job[] = freq.pairs
+  .slice(0, TOTAL)
+  // Par der allerede har fået ord, skal ikke skrives igen. Runde to henter
+  // derfor kun de par den nye åbning har skubbet op i toppen.
+  .filter((p: any) => !bakedKeys.has(p.key))
+  .map((p: any, i: number) => ({
+    key: p.key,
+    a: p.a,
+    b: p.b,
+    verdict: p.verdict,
+    variants: p.met >= TOP_MET ? 4 : 2,
+    rank: i + 1,
+    met: p.met,
+    share: p.verdictShare,
+  }));
 
 mkdirSync(OUT, { recursive: true });
 
-const BATCHES = [
-  { name: "top-a", from: 0, to: 25 },
-  { name: "top-b", from: 25, to: 50 },
-  { name: "mid-a", from: 50, to: 100 },
-  { name: "mid-b", from: 100, to: 150 },
-  { name: "mid-c", from: 150, to: 200 },
-  { name: "mid-d", from: 200, to: 250 },
-];
+/** Fire lige store bunker, så fire skribenter kan arbejde samtidig. */
+const BATCH_COUNT = 4;
+const per = Math.ceil(jobs.length / BATCH_COUNT);
+const BATCHES = Array.from({ length: BATCH_COUNT }, (_, i) => ({
+  name: `runde2-${"abcd"[i]}`,
+  from: i * per,
+  to: Math.min((i + 1) * per, jobs.length),
+})).filter((b) => b.from < b.to);
 
 for (const b of BATCHES) {
   const slice = jobs.slice(b.from, b.to);
@@ -106,6 +124,6 @@ for (const b of BATCHES) {
 
 writeFileSync(
   `${OUT}/_jobs.json`,
-  JSON.stringify({ topTier: TOP_TIER, total: TOTAL, jobs }, null, 2) + "\n",
+  JSON.stringify({ topMet: TOP_MET, total: TOTAL, jobs }, null, 2) + "\n",
 );
 console.log(`\n✅ ${jobs.reduce((s, j) => s + j.variants, 0)} replikker fordelt på ${BATCHES.length} batches`);

@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import gzip
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -84,9 +85,24 @@ def main() -> int:
             continue
         host["lines"] = [*host["lines"], *b.get("lines", [])]
         ids = {line["id"] for line in b.get("lines", [])}
-        for key, line_id in b.get("pairs", {}).items():
-            if line_id not in ids:
-                err(f"{p.name}: opslaget {key} peger på ukendt replik {line_id}")
+        # Opslaget er kun nøglen "<par>:<dom>"; replikkens id udledes af den.
+        # Samme udledning som line_id() i assemble_pairs.py og pairLineId() i
+        # src/narrator/pairs.ts — de tre skal følges ad.
+        for lookup in b.get("pairs", []):
+            key, _, verdict = lookup.rpartition(":")
+            derived = "pair-" + key.replace("+", "-") + "-" + verdict
+            if derived not in ids:
+                err(f"{p.name}: opslaget {lookup} peger på ukendt replik {derived}")
+        # CON-003: den dovent hentede bagte tekst må fylde 60 KB gzip pr. akt.
+        # Grænsen bevogtes her frem for i build-loggen, fordi den kun brydes
+        # når nogen bager en ny batch — og det er præcis dér, ingen kigger på
+        # chunk-størrelser. Kilden er ~1 KB tungere end den byggede chunk
+        # (indrykket JSON vs. Vites modulform), så gaten er en anelse striks.
+        # Rammer den: bag færre par, eller find redundans at fjerne som ved
+        # opslagslisten — hæv den ikke uden at opdatere CON-003 i planen.
+        gz = len(gzip.compress(p.read_bytes(), 9))
+        if gz > 60 * 1024:
+            err(f"{p.name}: {gz / 1024:.1f} KB gzip — over bundtbudgettet på 60 KB (CON-003)")
     endings = load(CONTENT / "endings.json") or []
     config = load(CONTENT / "config.json") or {}
 

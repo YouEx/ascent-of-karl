@@ -2,6 +2,7 @@ import type { Engine } from "../core/engine";
 import { pairKey } from "../core/engine";
 import { grammarPool, pickGrammarLine, verdictContext } from "./grammar";
 import type { PairContent } from "./pairs";
+import { pairLineId } from "./pairs";
 import type {
   CombineOutcome,
   NarratorContentDef,
@@ -211,7 +212,7 @@ export class Narrator {
    * ingen kode nedenfor spørger om filen er hentet: fraværet ligner bare et
    * par uden bagt replik, og den vej er allerede den almindelige.
    */
-  private pairLines: Record<string, string> = {};
+  private pairLines = new Set<string>();
   /** Selve de bagte replikker, holdt uden for det delte indhold (se attachPairs). */
   private pairDefs: Record<string, NarratorLineDef> = {};
 
@@ -245,7 +246,7 @@ export class Narrator {
   attachPairs(data: PairContent): void {
     if (this.engine.content.narrator.every((n) => n.act !== data.act)) return;
     for (const line of data.lines) this.pairDefs[line.id] = line;
-    this.pairLines = { ...this.pairLines, ...data.pairs };
+    for (const key of data.pairs) this.pairLines.add(key);
   }
 
   private content(): NarratorContentDef {
@@ -657,11 +658,9 @@ export class Narrator {
    */
   private bakedPairLine(outcome: CombineOutcome): SpokenLine | undefined {
     if (outcome.kind !== "nofuse") return undefined;
-    const id = this.pairLines[
-      `${pairKey(outcome.a.id, outcome.b.id)}:${outcome.verdict}`
-    ];
-    if (!id) return undefined;
-    return this.speak(id, verdictContext(outcome.a, outcome.b, outcome.evidence));
+    const lookup = `${pairKey(outcome.a.id, outcome.b.id)}:${outcome.verdict}`;
+    if (!this.pairLines.has(lookup)) return undefined;
+    return this.speak(pairLineId(lookup), verdictContext(outcome.a, outcome.b, outcome.evidence));
   }
 
   /**

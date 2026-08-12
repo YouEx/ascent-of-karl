@@ -1,0 +1,316 @@
+{
+  "pairs": [
+    {
+      "key": "graes+mudderkage",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl crumbled the dry grass across the top of the mud pie, the way a proper cake gets its decoration, and pressed it down. It stuck for exactly one second before sliding into the dirt. The {right} still has an appointment somewhere else entirely.",
+        "Karl tucked the dry grass beneath the mud pie, hoping today was finally the day something caught fire under one of Karl's meals. The mud stayed cold and wet, the grass stayed bone-dry and unlit, and neither improved the other. The {right} was owed a rather different kind of attention today."
+      ]
+    },
+    {
+      "key": "boomerang+stenoekse",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl lashed the stone axe to the boomerang's curve, hoping for a weapon that returns to his hand after every throw. It threw once, dropped straight down, and stayed there. The {right} already does its one trick perfectly well without any help.",
+        "One of these already knows how to come back on its own; the other, Karl always fetches himself. Bound together, the boomerang and the stone axe forgot both tricks at once. The {right} works better alone."
+      ]
+    },
+    {
+      "key": "baer+haandkile",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl pressed the hand axe flat against the berries, testing whether Palaeolithic engineering had an opinion on lunch. They went to pulp instantly, offering no more resistance than the hand axe usually reserves for actual wood. The {right} had tougher business waiting elsewhere.",
+        "The berries have already passed the bird test this week, which is more scrutiny than most food gets. The hand axe, knapped on both faces for a purpose, has never once been asked to weigh in on fruit before today. The {right} still had other business waiting."
+      ]
+    },
+    {
+      "key": "boomerang+hulemaleri",
+      "verdict": "absurd",
+      "variants": [
+        "The boomerang belongs to the part of Karl's life that keeps coming back to him; the cave painting belongs to the part that never moves at all. He waved the one in front of the other anyway, and got nothing but silence from the wall.",
+        "I looked for what the boomerang could possibly say to the cave painting, a bent stick and a wall of berry-juice art having approximately nothing in common. It said nothing. The wall, as ever, is not taking questions, and neither, today, is Karl."
+      ]
+    },
+    {
+      "key": "haandkile+ler",
+      "verdict": "inert",
+      "variants": [
+        "Karl pressed the hand axe flat into the clay, curious whether a tool he trusts with everything could also teach the clay to hold a shape on its own. The clay took the impression and forgot it within the minute. The hand axe went back into his hand exactly as it was.",
+        "Karl introduced the hand axe to the clay as though sharp and soft might inspire each other. The clay stayed soft, and the hand axe, already finished the day it was knapped, saw nothing here worth becoming next."
+      ]
+    },
+    {
+      "key": "ler+malm",
+      "verdict": "plausible",
+      "variants": [
+        "Karl pressed a piece of ore into the wet clay, the way you'd press a jewel into something you wanted to keep. The clay held its shape. The ore just sat there, glittering, waiting for a use history hadn't invented yet.",
+        "The clay is soft enough to hold anything. The ore is bright enough to deserve holding. Between the two of them sat the one missing idea Karl won't have for several thousand years."
+      ]
+    },
+    {
+      "key": "malm+pind",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl balanced the ore on the end of the stick, hoping height might explain what proximity to Karl never has. It rolled straight back off into the dirt. The {right} had a use waiting that had nothing to do with balance.",
+        "The stick has carried worse ideas than this and come out fine every time. The ore has never once needed a stick's help, and didn't start needing it today. The {right} still had somewhere else to be."
+      ]
+    },
+    {
+      "key": "boomerang+reb",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl tied the rope to the boomerang's tip, on the theory that a thing which already comes back could be persuaded to come back faster. It came back the same speed as always, dragging a length of rope behind it like an afterthought. The {right} had a knot to be part of somewhere else.",
+        "One of these already returns on its own; the other, Karl ties around absolutely everything he owns, himself included. Tied to each other, the boomerang and the rope achieved neither trick any better than usual. The {right} was needed for a knot that had nothing to do with this one."
+      ]
+    },
+    {
+      "key": "haandkile+pind",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl held the hand axe against the stick, half-expecting contact alone to spark some third, better tool into existence. He was still holding exactly two separate objects a full minute later. The {right} was waiting on a different combination entirely.",
+        "The hand axe returned from this meeting exactly as sharp as it arrived; the stick returned exactly as straight. Between them, they conjured nothing sharper than mild disappointment. The {right} had a truer match somewhere else."
+      ]
+    },
+    {
+      "key": "faelde+reb",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl looped a second length of rope around the snare, hoping doubling up might somehow double the number of employees. The snare caught nothing extra; it just looked, if possible, slightly more tied up than before. The {right} had a job waiting that had nothing to do with hunting.",
+        "The snare already used to be rope, before Karl gave it a purpose and a job title. Handing it more rope today taught it nothing it didn't already know. The {right} still had somewhere else to be."
+      ]
+    },
+    {
+      "key": "boomerang+froe",
+      "verdict": "plausible",
+      "variants": [
+        "Karl flung the boomerang over a patch of scattered seeds, hoping the two might agree on some shared idea about distance. The boomerang came back. The seeds, light and dry and clearly meant for a bigger idea than this, stayed exactly where they landed.",
+        "The seeds were always going to be important eventually, by Karl's own grudging admission. The boomerang was always going to come back, no matter what. Between two things this certain about their own futures, this exact afternoon just never got written."
+      ]
+    },
+    {
+      "key": "fisk+vand",
+      "verdict": "plausible",
+      "variants": [
+        "Karl dangled the fish back over the water it came from, half-convinced that returning a thing to its home might count as a second achievement. It only dripped, then hung there, exactly as dead as when he first speared it.",
+        "The fish gave everything it had the moment Karl speared it from the river. The water gave what water always gives, which is simply itself. Between the two of them sat all the makings of a very good idea, with no instructions for finishing it."
+      ]
+    },
+    {
+      "key": "hjul+stenoekse",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl wedged the stone axe's blade against the wheel, hoping to give it something to roll toward. It rolled off in an entirely different direction, the same way it always does, and Karl chased it across the valley for a third time. The {right} had a job that had nothing to do with rolling.",
+        "The wheel has one trick, and performs it constantly, usually downhill and away from Karl. The stone axe has one trick too, performed standing perfectly still, and neither trick transferred when Karl introduced them. The {right} still had its own trick to finish elsewhere."
+      ]
+    },
+    {
+      "key": "hammer+sten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl tapped the hammer against the stone, the way you'd knock on a door you already know is home. The stone made the same flat sound it always makes, and offered no more conversation than usual. The {right} had somewhere else to be struck, carried, or used today.",
+        "The stone is, by Karl's own account, his best friend and most frequent conversation partner. The hammer, by design, is made partly of that very same stone, and introducing the two today changed nothing about either relationship. The {right} was needed for a task this reunion couldn't provide."
+      ]
+    },
+    {
+      "key": "baer+hammer",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl brought the hammer down on the berries with the same delight he brings to everything the hammer touches. What was left afterward was not lunch, and barely resembled berries at all. The {right} had sturdier business waiting elsewhere.",
+        "The berries have survived the bird test more than once this month alone. They did not survive the hammer even slightly. The {right} still had other business today."
+      ]
+    },
+    {
+      "key": "fisk+ler",
+      "verdict": "plausible",
+      "variants": [
+        "Karl wrapped the fish in a sheet of clay, certain there was a version of this that ended in a proper meal instead of a fish-shaped lump of mud. The clay held the shape obediently. Whatever turns raw fish and wet clay into dinner, Karl doesn't have it yet.",
+        "The fish arrived fresh from the river, ready for something. The clay arrived soft, ready for anything. Between the two of them sat exactly the good idea Karl always has, one step ahead of the part where he'd actually finish it."
+      ]
+    },
+    {
+      "key": "hammer+pind",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl held the stick up next to the hammer, as if the hammer might recognise a distant cousin in it and grant it a matching handle of its own. The hammer stayed exactly as assembled as it arrived. The {right} had a shape waiting for it that wasn't a handle.",
+        "The hammer is already a stick with a stone attached, by construction. Offering it a second, unattached stick taught it nothing new about itself. The {right} still had somewhere else to be today."
+      ]
+    },
+    {
+      "key": "hammer+ler",
+      "verdict": "inert",
+      "variants": [
+        "Karl pressed the hammer's head into the clay and lifted it away to admire the shape it left. The clay held the impression for a moment, then slumped back to formless, the way clay always eventually does. The hammer, unchanged, unmarked, and unmoved, went back to Karl's belt.",
+        "Between a tool that already knows exactly what it's for and a lump that hasn't decided anything yet, Karl introduced the hammer to the clay hoping for a spark. The clay stayed soft. The hammer stayed finished, the way it has been since the day it was tied together."
+      ]
+    },
+    {
+      "key": "hammer+vand",
+      "verdict": "inert",
+      "variants": [
+        "Karl held the hammer under the water, half-expecting the stone half to soften the way clay does, or the wood half to swell the way branches do after rain. It came out exactly as dry, and exactly as finished, as it went in.",
+        "Water has its way with plenty of things Karl owns, the dry grass included, given time. It had no way at all with the hammer, stone and handle from end to end, entirely unmoved by the attempt."
+      ]
+    },
+    {
+      "key": "hammer+reb",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl wound the rope around the hammer's handle for extra grip, on a tool that already had a perfectly good handle to begin with. The rope only added weight. The {right} had somewhere sturdier to be tied today.",
+        "The hammer is a stone lashed to a handle, and something did that lashing long before today. Handing it more rope now didn't loosen the old knot or add a new one; it just made the handle a little bulkier. The {right} still had a knot waiting elsewhere."
+      ]
+    },
+    {
+      "key": "froe+reb",
+      "verdict": "plausible",
+      "variants": [
+        "Karl tied the rope around a handful of seeds, the way you'd bundle something worth keeping safe for later. The knot held perfectly. What the seeds actually needed from this arrangement, the rope alone could never quite provide.",
+        "The seeds were always going to matter, eventually, once Karl stopped spitting them out on principle. The rope was always strong enough for nearly anything. Between the two of them sat one very good agricultural idea, several thousand years ahead of Karl's schedule."
+      ]
+    },
+    {
+      "key": "graes+hammer",
+      "verdict": "inert",
+      "variants": [
+        "Karl tucked a fistful of dry grass under the hammer's head, on the off chance a soft landing might change what a hammer is for. The hammer struck exactly as hard as ever. The grass, flattened but otherwise fine, went straight back to being Karl's pillow.",
+        "A hammer already knows exactly what it's for, which is hitting things, precisely and repeatedly. Dry grass has never once been something a hammer needed in order to do that. Introduced anyway, the two of them simply waited for Karl to notice and move on."
+      ]
+    },
+    {
+      "key": "ler+stenspil",
+      "verdict": "inert",
+      "variants": [
+        "Karl pressed a lump of clay into a rough sphere and set it down beside the boules, hoping the game might not notice the difference. It noticed immediately. Ugh rolled his actual stone past it without slowing down.",
+        "The boules exist entirely to be rolled, argued over, and lost with dignity, or in Karl's case, without any. Clay has never once settled an argument between two men and a stick on the ground. Today's introduction changed neither fact."
+      ]
+    },
+    {
+      "key": "baer+stenspil",
+      "verdict": "inert",
+      "variants": [
+        "Karl rolled one of the berries to the exact spot he was aiming for and called it a winning throw. Ugh disagreed, on the grounds that berries are not, and have never been, boules stones. The game continued without them.",
+        "There is exactly one rule to boules that Karl consistently loses by, and it has nothing to do with fruit. He rolled a handful of the berries into the circle anyway, hoping the game might quietly change its terms. Ugh has never once looked more personally offended on the game's behalf than at that exact moment."
+      ]
+    },
+    {
+      "key": "baer+fisk",
+      "verdict": "plausible",
+      "variants": [
+        "Karl arranged the berries beside the fish on a flat stone, the closest thing he owns to a table, and stood back to admire what looked, for one honest moment, like an actual meal. The moment held. Whatever finishes a meal like this one, it never showed up.",
+        "The fish is speared, raw, and already halfway to a good idea, by Karl's own optimistic standards. The berries are probably edible, having passed the bird test again just this morning. Between the two of them, they had everything except whatever turns proximity into a proper dinner."
+      ]
+    },
+    {
+      "key": "mudderkage+stenoekse",
+      "verdict": "absurd",
+      "variants": [
+        "The stone axe exists for splitting things that resist being split. The mud pie exists for Karl's own private amusement and absolutely nothing else. Karl held them side by side anyway, and the axe, dignified as ever, declined to comment on the pie's structural integrity.",
+        "I searched for what the stone axe, humanity's first subscription to tools, could possibly owe to the mud pie, a cake made of mud and one decorative berry. I found nothing owed, in either direction, by anyone, ever."
+      ]
+    },
+    {
+      "key": "mudderkage+saft",
+      "verdict": "plausible",
+      "variants": [
+        "Karl poured the berry juice over the mud pie, finishing it the way any proper baker finishes a proper cake. The mud pie soaked it up and turned a shade darker, which is further than most of Karl's meals ever get. Whatever separates a glazed mud pie from an actual dessert, Karl has not yet found it.",
+        "The mud pie already survives being eaten, repeatedly, and by all accounts enthusiastically. The berry juice survives being drunk, worn, and painted with, often at once. Between two things this compatible with Karl's mouth, dessert should have been the easy part."
+      ]
+    },
+    {
+      "key": "boomerang+mursten",
+      "verdict": "plausible",
+      "variants": [
+        "Karl balanced the boomerang on top of the mud brick, the way a proper roof begins with a proper beam. The mud brick held it without complaint. The boomerang, being a boomerang, was gone again within the minute, roof or no roof.",
+        "The mud brick is, by Karl's own architectural standards, a finished building material. The boomerang is, by design, never in one place long enough to be part of any building at all. Between an architect and a thing that refuses to stay put, the blueprint never had a chance."
+      ]
+    },
+    {
+      "key": "fisk+graes",
+      "verdict": "plausible",
+      "variants": [
+        "Karl laid the fish down on a bed of dry grass, arranging it the way he imagines a proper meal gets presented somewhere, by someone, eventually. The grass stayed dry and the fish stayed raw, and presentation alone carried the meal exactly nowhere.",
+        "The fish arrived from the river already speared, already raw, and already declared 'sushi' ten thousand years ahead of schedule. The dry grass arrived bone-dry and bored, waiting for a job it has always been suited for. Between the two of them, only the small matter of actual cooking went unresolved."
+      ]
+    },
+    {
+      "key": "mursten+stenoekse",
+      "verdict": "plausible",
+      "variants": [
+        "Karl set the stone axe against the mud brick and gave it one confident, architectural-sounding tap. The brick held its shape, hard and dry exactly as advertised, and the axe, exactly as sharp as ever, achieved a light scuff and nothing more permanent.",
+        "The mud brick is dried hard enough to be called a building material, by Karl's own generous self-assessment. The stone axe is humanity's first subscription to tools, also by Karl's own generous self-assessment. Between two things this convinced of their own importance, something should have come of it."
+      ]
+    },
+    {
+      "key": "boomerang+mudderkage",
+      "verdict": "absurd",
+      "variants": [
+        "Karl threw the boomerang directly at the mud pie, on no theory whatsoever, purely to see what would happen between a weapon and a dessert. The boomerang came back. The mud pie, for what it's worth, was completely unharmed and still, somehow, someone's lunch.",
+        "A boomerang belongs to the part of Karl's life spent chasing things that come straight back to him. A mud pie belongs to the part spent eating things he probably shouldn't. Neither part has ever needed the other, and today didn't change that arrangement."
+      ]
+    },
+    {
+      "key": "faelde+sten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl weighed the snare down with the stone, hoping the added heft might help his finest employee land something bigger by morning. The catch by morning was the same as every other morning: none. The {right} was needed for a job that had nothing to do with weight.",
+        "The stone is Karl's best friend and most frequent conversation partner, and has never once needed to be tied to anything to prove its worth. The snare already catches things perfectly well on its own, rope and patience being the entire method. The {right} still had a rather different job waiting."
+      ]
+    },
+    {
+      "key": "boomerang+haandkile",
+      "verdict": "inert",
+      "variants": [
+        "Karl held the hand axe against the boomerang's curve, testing whether the valley's most versatile tool might reshape the valley's least reliable one. The boomerang kept its exact shape, curve and all, and flew off exactly as unpredictably the next time Karl threw it.",
+        "One of these is famously good at nearly everything it touches; the other is famously good at exactly one trick, and only that trick. Introduced to each other, the hand axe and the boomerang picked up nothing from one another, and went back to being exactly what they already were."
+      ]
+    },
+    {
+      "key": "baer+bue",
+      "verdict": "plausible",
+      "variants": [
+        "Karl notched a berry against the bow's string, aimed with real conviction, and let go. It did not fly so much as fall, immediately, straight down, in a way no arrow ever has. The berries remain, for now, considerably better suited to being found than fired.",
+        "The bow exists to put real weight behind a throw — an arrow, chiefly. The berries have never carried that kind of weight, and didn't start today. Between a weapon with a grudge and a fruit with none, nothing here was ever going to fly."
+      ]
+    },
+    {
+      "key": "graes+spydspids",
+      "verdict": "inert",
+      "variants": [
+        "Karl wrapped a length of dry grass around the stone-tipped spear's shaft, hoping for a softer grip or maybe just a warmer one. It slid loose within a few steps, and the spear went right on being exactly as sharp and exactly as opinionated as before.",
+        "A stone-tipped spear already has an opinion about everything it's introduced to, and its opinion on dry grass was silence. Karl wrapped the two together anyway, achieved neither warmth nor a better grip, and unwrapped them again a short while later."
+      ]
+    },
+    {
+      "key": "larver+reb",
+      "verdict": "plausible",
+      "variants": [
+        "Karl coiled the rope loosely and dropped the grubs inside, hoping a nest of sorts might convince them to become dinner faster. The grubs wriggled out through the gaps within a minute, entirely unbothered by the arrangement.",
+        "The grubs are alive, soft, and watched by Karl a little too fondly to be simple food. The rope is strong enough to hold nearly anything Karl has ever tied it around. Between the two of them sat a very good trap, minus the one idea that would have closed it."
+      ]
+    },
+    {
+      "key": "fisk+pind",
+      "verdict": "plausible",
+      "variants": [
+        "Karl threaded the fish onto the stick, sure that skewering was a universal idea that worked regardless of what came next. The stick held it up perfectly. What was supposed to happen to a skewered fish next, Karl has not yet worked out.",
+        "The stick has held plenty of things up in its time, and holds this fish up just as well as anything else. The fish, freshly speared and entirely raw, waited on the one remaining step between a stick with dinner on it and dinner itself."
+      ]
+    },
+    {
+      "key": "pind+spydspids",
+      "verdict": "inert",
+      "variants": [
+        "Karl held the stick up next to the stone-tipped spear, as if proximity alone might transfer a little of the spear's obvious competence. It stayed a stick, plain and exceptional and entirely undecorated. The spear did not seem to notice the comparison.",
+        "A stone-tipped spear was a stick once, before Karl gave it a point and opinions to match. This new stick watched the whole transformation happen again, from a safe distance, and came away with neither."
+      ]
+    },
+    {
+      "key": "spydspids+vand",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl dipped the stone-tipped spear into the water and swirled it, half-hoping the point might learn something new from the experience. It came out exactly as sharp, exactly as opinionated, and exactly as dry within a minute. The {right} had a use for water that had nothing to do with dipping spears in it.",
+        "The stone-tipped spear carries an opinion about nearly everything Karl introduces it to, and its opinion of the water was indifference. The {right} was hoping for rather more than indifference today."
+      ]
+    }
+  ]
+}
