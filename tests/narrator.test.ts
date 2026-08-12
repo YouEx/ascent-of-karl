@@ -159,6 +159,49 @@ describe("Narrator: hint-eskalering", () => {
     const line = attempt(engine, narrator, "dyr", "pind");
     expect(line?.id).not.toBe("hint-kulde-1");
   });
+
+  // Martin løste alle tre nøder og spillede derefter tredive somre uden ét
+  // vink: hint-systemet kiggede kun på de påkrævede problemer, så det lukkede
+  // ned præcis dér, hvor inventaret var stort nok til at fare vild i.
+  it("bliver ved med at pege, når de tre nøder er løst", () => {
+    const { engine, narrator } = setup();
+    const state = engine.getState();
+    state.solvedProblems.push("kulde", "vaerktoej", "sult");
+    engine.loadState(state);
+    expect(engine.unsolvedRequiredProblems()).toHaveLength(0);
+
+    const seen: string[] = [];
+    for (const [a, b] of [
+      ["baer", "ler"], ["baer", "pind"], ["baer", "graes"], ["vand", "graes"],
+      ["ler", "pind"], ["graes", "ler"], ["vand", "pind"], ["baer", "ler"],
+      ["baer", "pind"], ["graes", "ler"],
+    ] as const) {
+      const line = attempt(engine, narrator, a, b);
+      if (line) seen.push(line.id);
+    }
+    expect(seen).toContain("hint-kedsomhed-1");
+    expect(seen).toContain("hint-kedsomhed-2");
+  });
+
+  // Sidste trin navngiver parret. Siges det igen og igen, er fortælleren en
+  // papegøje frem for en hjælp — så han tier, når han har sagt alt om den nød.
+  it("gentager ikke det sidste vink i det uendelige", () => {
+    const { engine, narrator } = setup();
+    const seen: string[] = [];
+    const pairs = [
+      ["baer", "ler"], ["baer", "pind"], ["baer", "graes"], ["vand", "graes"],
+      ["ler", "pind"], ["graes", "ler"], ["vand", "pind"],
+    ] as const;
+    for (let i = 0; i < 40 && !engine.activeEnding(); i++) {
+      const [a, b] = pairs[i % pairs.length]!;
+      const line = attempt(engine, narrator, a, b);
+      if (line?.id.startsWith("hint-")) seen.push(line.id);
+    }
+    const tal = new Map<string, number>();
+    for (const id of seen) tal.set(id, (tal.get(id) ?? 0) + 1);
+    expect(tal.size, "der blev slet ikke hintet").toBeGreaterThan(0);
+    for (const [id, n] of tal) expect(n, `${id} blev sagt ${n} gange`).toBe(1);
+  });
 });
 
 describe("Narrator: flag-hukommelse", () => {

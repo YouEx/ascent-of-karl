@@ -460,16 +460,36 @@ export class Narrator {
     return undefined;
   }
 
-  /** Hint-eskalering: fortælleren rykker selv til stadig tydeligere vink (PRD §2.4). */
+  /**
+   * Hint-eskalering: fortælleren rykker selv til stadig tydeligere vink (PRD §2.4).
+   *
+   * Vinket følger det samme træk som `currentPull()`, og af samme grund: så
+   * længe der kun blev peget på de påkrævede nøder, holdt hjælpen op i samme
+   * sekund den tredje var løst. Martin spillede halvtreds somre, løste alle
+   * tre, og fik derefter ikke ét vink resten af spillet. Et hint-system, der
+   * lukker ned præcis når inventaret er stort nok til at man farer vild, er
+   * vendt på hovedet — tætheden af brugbare par falder fra 43 % i åbningen
+   * til under 2 %, så behovet for retning VOKSER gennem spillet.
+   */
   private hintLine(): string | undefined {
     if (this.state.failsSinceDiscovery < HINT_START) return undefined;
-    const problem = this.engine.unsolvedRequiredProblems()[0];
+    const problem =
+      this.engine.unsolvedRequiredProblems().find((p) => p.hints?.length) ??
+      this.engine
+        .currentActProblems()
+        .find(
+          (p) => !p.required && p.hints?.length && !this.engine.isSolved(p.id),
+        );
     if (!problem?.hints?.length) return undefined;
 
     const level = this.state.hintLevel[problem.id] ?? 0;
     const due = HINT_START + level * HINT_STEP;
     if (this.state.failsSinceDiscovery < due) return undefined;
-    const hint = problem.hints[Math.min(level, problem.hints.length - 1)];
+    // Sidste trin er det mest konkrete, der findes — det navngiver parret. At
+    // sige det igen og igen gør fortælleren til en papegøje frem for en hjælp,
+    // så vinket stopper, når han har sagt alt, hvad han ved om den nød.
+    if (level >= problem.hints.length) return undefined;
+    const hint = problem.hints[level];
     this.state.hintLevel[problem.id] = level + 1;
     return hint;
   }
