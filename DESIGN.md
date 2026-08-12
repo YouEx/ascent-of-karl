@@ -434,8 +434,6 @@ slags fejl med en anden farve.
   eksplicit. Ikonerne har ikke samme mål (23×24, 27×30, 28×29) — en fælles `max-height`
   ville flade den forskel ud. Emoji i `content/*.json` overlever kun som **fallback**
   når et motiv endnu ikke er skåret.
-  **Kendt brud pr. 11-08-2026:** `⏳` i titellinjens sommertæller
-  (`src/ui/main.ts`, `renderAge()`) er krom og skal erstattes af et rigtigt ikon.
 
 ---
 
