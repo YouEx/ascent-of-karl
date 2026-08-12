@@ -56,8 +56,11 @@ Andelen af elementer der løser et challenge, efter hvornår det dukkede op:
 | 31-40 | 60 % |
 | 41-50 | 40 % |
 
-De oplagte svar (`solvedBy`, mindst 5, håndhævet af validatoren) virker
-**altid**. Ellers ville spillet straffe god ræsonnering.
+De oplagte svar (`alsoSolvedBy`, mindst 5, håndhævet af validatoren) virker
+**altid**. Ellers ville spillet straffe god ræsonnering. Feltet dømmer ikke
+længere selv — det er facit for `tools/predicate_report.py`, og validatoren
+advarer, hvis en post her allerede fanges af prædikatet i
+`content/predicates.json` (så listen kan krympes i stedet for kun at vokse).
 
 ## Kalibrering: mål mod motoren, ikke mod formlen
 
@@ -93,7 +96,7 @@ sammen med skæbnens eget achievement.
   "line": "challenge-…",           // situationen, 5+ varianter
   "turns": 4,                       // somre til at finde en udvej
   "minPage": 12,                    // tidligst her — giv plads til værktøjet
-  "solvedBy": ["...", "..."],       // mindst 5 oplagte svar
+  "alsoSolvedBy": ["...", "..."],   // mindst 5 oplagte svar
   "successLine": "challenge-…-loest",  // bruger {element}
   "failEnding": "..."               // skal findes i endings.json med viaChallenge: true
 }

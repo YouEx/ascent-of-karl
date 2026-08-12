@@ -4,13 +4,36 @@ version: 1.0
 date_created: 2026-08-12
 last_updated: 2026-08-12
 owner: Martin (YouEx)
-status: 'Planned'
+status: 'In progress'
 tags: [feature, architecture, engine, narrator, content, infrastructure]
 ---
 
 # Introduction
 
-![Status: Planned](https://img.shields.io/badge/status-Planned-blue)
+![Status: In progress](https://img.shields.io/badge/status-In%20progress-yellow)
+
+> **Fase 1 er leveret** (2026-08-12). Alle otte opgaver er i drift. Løsning for
+> både problemer og challenges afgøres nu af `SolvePredicate`
+> (`src/core/types.ts`, med et ekstra `minDepth`-felt ud over specifikationen)
+> via `satisfies`/`solvesNeed` (`src/core/solves.ts`) i både `Engine.resolve`
+> og `challenge.resolves` — ikke af allowlister. `content/predicates.json`
+> dækker alle tre problemer, alle tre challenges og desuden de tre
+> akt-1-problemer denne plan aldrig nævnte (kedsomhed, ensomhed, mening).
+> Facittjekket (TASK-005) er leveret som `tools/predicate_report.py` i Python,
+> ikke som den planlagte `.mjs` — funktionelt ækvivalent, og krydstjekket mod
+> TypeScript-tvillingen af `tools/parity_fixture.py` + `tests/solves.test.ts`.
+> `npm run predicates` viser **0 falske negativer**. Allowlisten
+> (`challenge.solvedBy` → `alsoSolvedBy`, TASK-006) er nu ren facit, ikke
+> dommer — `tools/validate.py` advarer, når en post dér også fanges af
+> prædikatet. `combo.solves` (TASK-008) er wired som eksplicit override i
+> `Engine.resolve`, bevist af en regressionstest der fejler, hvis overriden
+> fjernes.
+>
+> **Fase 2-5 er slet ikke bygget.** Improviserede elementer, LLM-proxyen,
+> fortællerens dom over dem og balanceringen (TASK-009 til TASK-031) mangler
+> alle. Kun `TASK-026` i fase 4 afhænger af narrationsplanens fase 5/6
+> (stemmedommer, turøkonomi, se DEP-004) — resten af fase 1-4 her gør ikke,
+> og skal ikke vente på dem.
 
 Spillets sjoveste indhold findes allerede: **mudderkage** (mudder + bær) mætter Karl, og **klyngen** (nabo + skind) holder ham varm. Begge er mærket `spor: "komisk"`. Ideen om at løse en alvorlig nød på en latterlig måde er ikke ny — den er spillets bedste greb. Den er bare begrænset til de absurditeter, forfatteren nåede at forestille sig på forhånd.
 
@@ -63,14 +86,14 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-001 | Definér `SolvePredicate` i `src/core/types.ts`: `{ kind?: ElementKind[]; stuff?: Stuff[]; traits?: Trait[]; anyOf?: SolvePredicate[]; allOf?: SolvePredicate[]; not?: SolvePredicate; crafted?: boolean; minScale?: Scale }`. Rent data, ingen kode i indholdet. | | |
-| TASK-002 | Skriv `src/core/solves.ts` med `satisfies(el: ElementDef, p: SolvePredicate, ctx): boolean`. Ren funktion. `crafted: true` betyder `!el.base` — det er præcis den grænse, indholdet allerede trækker. | | |
-| TASK-003 | Udled prædikaterne for de tre problemer **af de eksisterende løsninger**, ikke af fantasi. `sult`: `{ traits: ["edible"], crafted: true }` — skal acceptere alle elleve nuværende løsninger inkl. mudderkage og afvise bær og larver. `kulde`: `{ anyOf: [{traits:["hot"]}, {traits:["insulating"]}, {kind:["structure"]}], crafted: true }`. `vaerktoej`: `{ kind: ["tool"], crafted: true }`. | | |
-| TASK-004 | Udled prædikaterne for de tre challenges. `ulve`: `{ anyOf: [{kind:["tool"], traits:["sharp"]}, {traits:["hot"]}, {kind:["structure"]}, {kind:["creature"], traits:["tame"]}], crafted: true }` — skal acceptere alle ti i den nuværende `solvedBy`. `toerke` og det tredje challenge på samme måde. | | |
-| TASK-005 | Byg `tools/predicate_report.mjs`: for hvert problem og challenge, list hvilke af de 187 elementer prædikatet accepterer, og diff mod den nuværende allowlist. **Falske negativer (et element på listen som prædikatet afviser) er en fejl. Falske positiver skal læses én for én** — de fleste er gevinsten (elementer der *burde* have været på listen), men nogle er huller i taksonomien. | | |
-| TASK-006 | Behold `solvedBy`-listen som `alsoSolvedBy` for undtagelser, prædikatet ikke kan udtrykke. Validatoren advarer, hvis en post dér også fanges af prædikatet — så listen ikke stille bliver ved med at vokse. | | |
-| TASK-007 | Skift `Engine` til at afgøre løsning gennem `satisfies` for både `problem` og `challenge`. Ved opdagelse tjekkes det nye element mod alle uløste nøder — ikke kun mod `combo.solves`. | | |
-| TASK-008 | Fjern `combo.solves` som eneste kilde. Feltet bevares som eksplicit *override*, når en bestemt opskrift skal løse en bestemt nød uanset tags (fx en akt-kritisk beat). | | |
+| TASK-001 | Definér `SolvePredicate` i `src/core/types.ts`: `{ kind?: ElementKind[]; stuff?: Stuff[]; traits?: Trait[]; anyOf?: SolvePredicate[]; allOf?: SolvePredicate[]; not?: SolvePredicate; crafted?: boolean; minScale?: Scale }`. Rent data, ingen kode i indholdet. **Leveret med et ekstra felt `minDepth?: number` ud over specifikationen** — `crafted` alene holder kun nøden væk fra tur 0, ikke fra tur 1; bærsaft og østers bærer samme tags, kun opskrift-dybden skiller dem. | ✅ | 2026-08-12 |
+| TASK-002 | Skriv `src/core/solves.ts` med `satisfies(el: ElementDef, p: SolvePredicate, ctx): boolean`. Ren funktion. `crafted: true` betyder `!el.base` — det er præcis den grænse, indholdet allerede trækker. | ✅ | 2026-08-12 |
+| TASK-003 | Udled prædikaterne for de tre problemer **af de eksisterende løsninger**, ikke af fantasi. `sult`: `{ traits: ["edible"], crafted: true }` — skal acceptere alle elleve nuværende løsninger inkl. mudderkage og afvise bær og larver. `kulde`: `{ anyOf: [{traits:["hot"]}, {traits:["insulating"]}, {kind:["structure"]}], crafted: true }`. `vaerktoej`: `{ kind: ["tool"], crafted: true }`. **`content/predicates.json` dækker desuden de tre resterende akt-1-problemer, som denne opgave ikke nævnte** (kedsomhed, ensomhed, mening). | ✅ | 2026-08-12 |
+| TASK-004 | Udled prædikaterne for de tre challenges. `ulve`: `{ anyOf: [{kind:["tool"], traits:["sharp"]}, {traits:["hot"]}, {kind:["structure"]}, {kind:["creature"], traits:["tame"]}], crafted: true }` — skal acceptere alle ti i den nuværende `solvedBy`. `toerke` og det tredje challenge på samme måde. | ✅ | 2026-08-12 |
+| TASK-005 | Byg `tools/predicate_report.mjs`: for hvert problem og challenge, list hvilke af de 187 elementer prædikatet accepterer, og diff mod den nuværende allowlist. **Falske negativer (et element på listen som prædikatet afviser) er en fejl. Falske positiver skal læses én for én** — de fleste er gevinsten (elementer der *burde* have været på listen), men nogle er huller i taksonomien. **Leveret som `tools/predicate_report.py` (Python), ikke som den specificerede `.mjs`** — funktionelt ækvivalent; `npm run predicates` kører den, og `tools/parity_fixture.py` + `tests/solves.test.ts` holder den i sync med TypeScript-tvillingen i `src/core/solves.ts`. | ✅ | 2026-08-12 |
+| TASK-006 | Behold `solvedBy`-listen som `alsoSolvedBy` for undtagelser, prædikatet ikke kan udtrykke. Validatoren advarer, hvis en post dér også fanges af prædikatet — så listen ikke stille bliver ved med at vokse. | ✅ | 2026-08-12 |
+| TASK-007 | Skift `Engine` til at afgøre løsning gennem `satisfies` for både `problem` og `challenge`. Ved opdagelse tjekkes det nye element mod alle uløste nøder — ikke kun mod `combo.solves`. | ✅ | 2026-08-12 |
+| TASK-008 | Fjern `combo.solves` som eneste kilde. Feltet bevares som eksplicit *override*, når en bestemt opskrift skal løse en bestemt nød uanset tags (fx en akt-kritisk beat). | ✅ | 2026-08-12 |
 
 ### Implementation Phase 2
 
@@ -136,7 +159,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **DEP-001**: `plan/architecture-procedural-narration-1.md` fase 1 (taksonomien) og fase 2 (verdikt-motoren). Denne plan er ikke mulig uden dem og bør planlægges umiddelbart efter.
 - **DEP-002**: Cloudflare Workers free tier + KV. Alternativt enhver funktion, der kan holde en nøgle og en cache.
 - **DEP-003**: Groq free tier eller tilsvarende, som allerede brugt i `tools/generate_lines.py`.
-- **DEP-004**: Stemmedommeren fra narrationsplanens fase 5 — gælder også genereret elementtekst.
+- **DEP-004**: Stemmedommeren fra narrationsplanens fase 5 — gælder **kun** `TASK-026` (kør de nye dom-replikker gennem dommeren). Fase 1-4 her (`TASK-001` til `TASK-025`) afhænger ikke af narrationsplanens fase 5/6 (stemmedommer, turøkonomi) og skal ikke afvente dem — kun den ene opgave gør.
 
 ## 5. Files
 

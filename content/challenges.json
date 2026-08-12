@@ -6,7 +6,7 @@
     "line": "challenge-ulve",
     "turns": 4,
     "minPage": 6,
-    "solvedBy": [
+    "alsoSolvedBy": [
       "ild",
       "spyd",
       "hund",
@@ -30,7 +30,7 @@
     "line": "challenge-toerke",
     "turns": 5,
     "minPage": 12,
-    "solvedBy": [
+    "alsoSolvedBy": [
       "keramik",
       "regn",
       "have",
@@ -53,7 +53,7 @@
     "line": "challenge-sygdom",
     "turns": 4,
     "minPage": 18,
-    "solvedBy": [
+    "alsoSolvedBy": [
       "medicin",
       "shaman",
       "ild",

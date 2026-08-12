@@ -58,8 +58,10 @@ export type ElementTrait =
 export type ElementScale = "hand" | "body" | "camp" | "landscape";
 
 /**
- * Et prædikat over tags. Erstatter navnelisterne (challenge.solvedBy og
- * combo.solves) som eneste dommer over hvad der løser hvad.
+ * Et prædikat over tags. Erstatter navnelisten challenge.alsoSolvedBy som
+ * dommer over hvad der løser hvad. combo.solves lever videre ved siden af —
+ * ikke som hovedregel, men som eksplicit override for enkelte opskrifter
+ * (TASK-008, se ComboDef.solves og Engine.resolve).
  *
  * Inden for ét prædikat er alle felter OG'et; traits kræver at ALLE de nævnte
  * er til stede. Brug anyOf for "en af dem". Se content/predicates.json.
@@ -144,7 +146,13 @@ export interface ComboDef {
   requiresFlags?: string[];
   /** Kombinationen er kun gyldig hvis ingen af disse flags er sat */
   blockedByFlags?: string[];
-  /** Problem-id som denne opdagelse løser (PRD §2.1) */
+  /**
+   * Problem-id som denne opdagelse løser (PRD §2.1). Eksplicit override:
+   * vinder i Engine.resolve, selvom prædikatet ikke ville have godkendt
+   * elementet (TASK-008) — for opskrifter hvor tags aldrig ville fange
+   * nuancen. Ikke hovedreglen; de fleste problemer løses stadig via tags
+   * mod content/predicates.json (src/core/solves.ts).
+   */
   solves?: string;
   /** Udløser epokeskift når aktens obligatoriske problemer er løst (PRD §2.3) */
   ageUp?: boolean;
@@ -342,8 +350,16 @@ export interface ChallengeDef {
   line: string;
   /** Antal somre til at finde en udvej */
   turns: number;
-  /** Elementer der ALTID løser den — de oplagte svar */
-  solvedBy: string[];
+  /**
+   * Elementer der ALTID løser den — de oplagte svar, håndskrevet før
+   * prædikaterne fandtes. Dømmer ikke længere om noget løser challenget
+   * (det gør `satisfies` mod content/predicates.json, se src/core/solves.ts)
+   * — feltet lever videre som facit for tools/predicate_report.py og
+   * reachability-tjek i tools/validate.py, som advarer hvis en post her
+   * allerede fanges af prædikatet (plan/feature-improvised-solutions-1.md
+   * TASK-006).
+   */
+  alsoSolvedBy: string[];
   /** Replik når challenget løses (bruger {element}) */
   successLine: string;
   /** Slutningen hvis fristen løber ud */

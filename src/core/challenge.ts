@@ -130,8 +130,8 @@ export function rollChallenge(
  * våben, en ild, et ly i lejrstørrelse eller et tamt dyr, uanset om nogen har
  * skrevet netop den ting på en liste.
  *
- * challenge.solvedBy bruges ikke længere til at dømme. Listen bliver stående i
- * indholdet som facit for tools/predicate_report.py: den er skrevet af
+ * challenge.alsoSolvedBy bruges ikke længere til at dømme. Listen bliver stående
+ * i indholdet som facit for tools/predicate_report.py: den er skrevet af
  * mennesker før taksonomien fandtes, og porten kræver at prædikatet accepterer
  * hvert eneste navn på den. Derfor kan de to ikke være uenige.
  */

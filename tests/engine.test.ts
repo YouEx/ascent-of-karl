@@ -2,8 +2,17 @@ import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
 import { freshChallengeState } from "../src/core/challenge";
 import { deserialize, serialize } from "../src/core/save";
+import { solvesNeed } from "../src/core/solves";
 import { loadContent } from "../src/content";
 import { earn } from "./helpers";
+import type {
+  ActDef,
+  ComboDef,
+  ContentBundle,
+  ElementDef,
+  ProblemDef,
+  SolvePredicate,
+} from "../src/core/types";
 
 const content = loadContent();
 
@@ -122,6 +131,82 @@ describe("Engine: problemer og flere gyldige løsninger", () => {
     const outcome = e.combine("larver", "ild");
     expect(outcome.kind).toBe("discovery");
     if (outcome.kind === "discovery") expect(outcome.solved).toBeUndefined();
+  });
+});
+
+describe("Engine: combo.solves er en eksplicit override (TASK-008)", () => {
+  // Syntetisk minimalt indhold — ikke det rigtige spils, netop for at kunne
+  // bevise overriden isoleret: resultatet MANGLER det trait prædikatet
+  // kræver, så hvis nogen fjerner overriden, falder testen om.
+  const predicates: Record<string, SolvePredicate> = {
+    "test-behov": { traits: ["sharp"] },
+  };
+  const a: ElementDef = {
+    id: "test-a",
+    name: "Test A",
+    emoji: "🪨",
+    act: 1,
+    base: true,
+    kind: "material",
+    stuff: "stone",
+    traits: [],
+    scale: "hand",
+  };
+  const b: ElementDef = {
+    id: "test-b",
+    name: "Test B",
+    emoji: "🌿",
+    act: 1,
+    base: true,
+    kind: "material",
+    stuff: "plant",
+    traits: [],
+    scale: "hand",
+  };
+  // Bevidst uden "sharp" — prædikatet skal afvise den; kun overriden kan redde den.
+  const resultat: ElementDef = {
+    id: "test-resultat",
+    name: "Test-resultat",
+    emoji: "🔧",
+    act: 1,
+    kind: "tool",
+    stuff: "stone",
+    traits: [],
+    scale: "hand",
+  };
+  const problem: ProblemDef = {
+    id: "test-behov",
+    name: "Testbehov",
+    description: "Karl har et testbehov",
+    required: false,
+  };
+  const act: ActDef = { act: 1, name: "Testakt", problems: [problem] };
+  const combo: ComboDef = {
+    pair: ["test-a", "test-b"],
+    result: "test-resultat",
+    solves: "test-behov",
+  };
+  const testContent: ContentBundle = {
+    elements: [a, b, resultat],
+    combos: [combo],
+    acts: [act],
+    narrator: [],
+    endings: [],
+    challenges: [],
+    decisions: [],
+    predicates,
+    config: { turnLimit: 99, endingsUnlockAt: 99 },
+  };
+
+  it("løser behovet via overriden, selvom prædikatet ville have afvist resultatet", () => {
+    // Præmis: uden overriden ville dette IKKE løse behovet — testen er ikke tom.
+    expect(solvesNeed(resultat, "test-behov", predicates)).toBe(false);
+
+    const e = new Engine(testContent);
+    const outcome = e.combine("test-a", "test-b");
+    expect(outcome.kind).toBe("discovery");
+    if (outcome.kind === "discovery") expect(outcome.solved?.id).toBe("test-behov");
+    expect(e.isSolved("test-behov")).toBe(true);
   });
 });
 

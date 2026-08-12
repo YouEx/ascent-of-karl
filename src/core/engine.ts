@@ -362,25 +362,39 @@ export class Engine {
     if (combo.cost && combo.cost > 1) this.state.attempts += combo.cost - 1;
     const endingDeflected = this.applyEnding(combo);
 
-    // Hvilket problem løser opdagelsen? Afgøres af hvad tingen ER — altså af
-    // elementets tags mod prædikatet — ikke af om nogen har husket at skrive
-    // "solves" på netop denne opskrift. Mel og dej mætter Karl lige så godt
-    // som brød, selvom kun brødet stod i opskriftsbogen.
+    // Hvilket problem løser opdagelsen? Som hovedregel afgøres det af hvad
+    // tingen ER — altså af elementets tags mod prædikatet — ikke af om nogen
+    // har husket at skrive "solves" på netop denne opskrift. Mel og dej
+    // mætter Karl lige så godt som brød, selvom kun brødet stod i
+    // opskriftsbogen.
     //
-    // combo.solves bliver stående i indholdet som facit for porten
-    // (tools/predicate_report.py), der kræver at prædikatet accepterer hver
-    // eneste af dem. De to kan derfor ikke være uenige.
+    // combo.solves er en eksplicit override af den hovedregel (TASK-008):
+    // står feltet der og peger på et uløst problem, vinder det, uanset hvad
+    // prædikatet ville have sagt om elementets tags. Det er undvigelsen for
+    // opskrifter hvor tags aldrig ville kunne fange nuancen. Facittjekket i
+    // tools/predicate_report.py kræver stadig at prædikatet accepterer hver
+    // eneste af de nuværende forekomster, så overriden ændrer ingen kendt
+    // adfærd i dag — den ligger klar til det indhold der har brug for den.
     let solved: ProblemDef | undefined;
     const result = this.elementById.get(combo.result);
     if (result) {
-      for (const problem of this.currentAct().problems) {
-        if (this.isSolved(problem.id)) continue;
-        if (!solvesNeed(result, problem.id, this.predicates)) continue;
-        this.state.solvedProblems.push(problem.id);
-        // Kun ét problem løses pr. tur — ellers ville ét element kunne rydde
-        // hele akten, og fortælleren ville have flere ting at sige på én gang.
-        solved = problem;
-        break;
+      const overridden = combo.solves
+        ? act.problems.find((p) => p.id === combo.solves && !this.isSolved(p.id))
+        : undefined;
+      if (overridden) {
+        this.state.solvedProblems.push(overridden.id);
+        solved = overridden;
+      } else {
+        for (const problem of this.currentAct().problems) {
+          if (this.isSolved(problem.id)) continue;
+          if (!solvesNeed(result, problem.id, this.predicates)) continue;
+          this.state.solvedProblems.push(problem.id);
+          // Kun ét problem løses pr. tur — ellers ville ét element kunne
+          // rydde hele akten, og fortælleren ville have flere ting at sige
+          // på én gang.
+          solved = problem;
+          break;
+        }
       }
     }
 

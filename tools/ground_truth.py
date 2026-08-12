@@ -46,14 +46,14 @@ def main() -> int:
             "must_accept_names": sorted(by_id[r]["name"] for r in results),
         })
 
-    # Challenges: solvedBy er listen i sin reneste form.
+    # Challenges: alsoSolvedBy er listen i sin reneste form.
     for ch in challenges:
         cases.append({
             "need": ch["id"],
             "type": "challenge",
             "name": ch["title"],
-            "must_accept": sorted(ch["solvedBy"]),
-            "must_accept_names": sorted(by_id[s]["name"] for s in ch["solvedBy"] if s in by_id),
+            "must_accept": sorted(ch["alsoSolvedBy"]),
+            "must_accept_names": sorted(by_id[s]["name"] for s in ch["alsoSolvedBy"] if s in by_id),
         })
 
     # Starthånden skal AFVISES af ethvert nøde-prædikat: alle nuværende

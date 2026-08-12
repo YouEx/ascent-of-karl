@@ -18,10 +18,11 @@ describe("Challenges: hvornår de dukker op", () => {
 
 describe("Challenges: hvad der løser dem", () => {
   it("de oplagte svar virker altid, uanset hvor sent det er", () => {
-    // solvedBy er facit-listen — de mennesker-skrevne svar fra før taksonomien
-    // fandtes. Prædikatet skal acceptere hvert eneste af dem, ellers er
-    // taggene forkerte. Samme krav som porten i tools/predicate_report.py.
-    for (const id of wolves.solvedBy) {
+    // alsoSolvedBy er facit-listen — de mennesker-skrevne svar fra før
+    // taksonomien fandtes. Prædikatet skal acceptere hvert eneste af dem,
+    // ellers er taggene forkerte. Samme krav som porten i
+    // tools/predicate_report.py.
+    for (const id of wolves.alsoSolvedBy) {
       const el = elementById.get(id);
       expect(el, id).toBeDefined();
       expect(resolves(wolves, el!, content.predicates), id).toBe(true);
@@ -43,7 +44,7 @@ describe("Challenges: hvad der løser dem", () => {
     const solving = content.elements.filter((e) =>
       resolves(wolves, e, content.predicates),
     );
-    expect(solving.length).toBeGreaterThan(wolves.solvedBy.length);
+    expect(solving.length).toBeGreaterThan(wolves.alsoSolvedBy.length);
     expect(solving.length).toBeLessThan(content.elements.length / 2);
   });
 
@@ -70,7 +71,7 @@ describe("Challenges: forløbet i motoren", () => {
 
   it("et oplagt svar løser challenget og fjerner presset", () => {
     const e = engineWith({ id: "ulve", startedAtPage: 20, turnsLeft: 3 });
-    // stenøkse står selv i solvedBy — ulvene ser våbnet med det samme
+    // stenøkse står selv i alsoSolvedBy — ulvene ser våbnet med det samme
     const out = e.combine("sten", "pind");
     expect(out.challenge?.kind).toBe("solved");
     if (out.challenge?.kind === "solved") {
