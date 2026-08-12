@@ -19,6 +19,8 @@ jobs:
           python-version: "3.12"
       - name: Validér indhold
         run: python3 tools/validate.py
+      - name: Prøv prædikaterne mod facit
+        run: python3 tools/predicate_report.py
 
   test-and-build:
     runs-on: ubuntu-latest

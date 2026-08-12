@@ -311,6 +311,42 @@ def main() -> int:
                 continue  # age-up-banneret har sin egen replik
             warn(f"Nøglekombination {c['pair'][0]}+{c['pair'][1]} har ingen fortæller-replik")
 
+    # --- Klassifikation (content/taxonomy.json) ---
+    # Prædikaterne dømmer på tags. Et element uden tags kan ikke løse noget,
+    # og et element med en stavefejl i en trait holder tavst op med at kunne
+    # det. Begge dele skal være hårde fejl, ikke advarsler.
+    taxonomy_path = CONTENT / "taxonomy.json"
+    if not taxonomy_path.exists():
+        err("content/taxonomy.json mangler — tags kan ikke valideres")
+    else:
+        vocab = load(taxonomy_path)
+        for e in elements:
+            for key in ("kind", "stuff", "scale"):
+                value = e.get(key)
+                if value is None:
+                    err(f"Element '{e['id']}' mangler {key}")
+                elif value not in vocab[key]["values"]:
+                    err(f"Element '{e['id']}': {key}='{value}' er uden for ordforrådet")
+            traits = e.get("traits")
+            if not traits:
+                err(f"Element '{e['id']}' har ingen traits")
+                continue
+            if len(set(traits)) != len(traits):
+                err(f"Element '{e['id']}' har gentagne traits")
+            for trait in traits:
+                if trait not in vocab["traits"]["values"]:
+                    err(f"Element '{e['id']}': trait '{trait}' er uden for ordforrådet")
+            # Et begreb kan ikke veje noget. Fejlen lukkede engang et regnskab
+            # ind som noget der kunne kurere feber.
+            if e.get("kind") in ("abstract", "phenomenon"):
+                if e.get("stuff") != "none":
+                    err(f"Element '{e['id']}' er {e['kind']} men har stuff='{e.get('stuff')}'")
+                physical = {"hard", "soft", "sharp", "blunt", "heavy", "fragile", "sticky"}
+                bad = sorted(physical & set(traits))
+                if bad:
+                    warn(f"Element '{e['id']}' er {e['kind']} men har fysiske traits: "
+                         f"{', '.join(bad)} — beskriver de tingen eller billedet på den?")
+
     # --- Flavor, historiske noter og kildekrav (PRD §3.2 + §5) ---
     for e in elements:
         if not e.get("flavor"):

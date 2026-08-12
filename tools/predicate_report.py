@@ -68,7 +68,9 @@ def load_tags(patterns: list[str]) -> dict[str, dict]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--tags", nargs="*", default=[str(CONTENT / "drafts" / "element-tags-*.json")])
+    # Tags ligger i elements.json efter sammenfletningen. --tags peger på nye
+    # udkast i drafts/ når en runde til skal prøves af, før den flyttes ind.
+    parser.add_argument("--tags", nargs="*", default=[])
     parser.add_argument("--predicates", default=str(CONTENT / "predicates.json"))
     args = parser.parse_args()
 
@@ -80,8 +82,9 @@ def main() -> int:
     for el in elements:
         merged[el["id"]] = {**el, **tags.get(el["id"], {})}
 
-    missing = [e["id"] for e in elements if e["id"] not in tags]
-    print(f"Tags: {len(tags)}/{len(elements)} elementer klassificeret")
+    tagged = [e["id"] for e in elements if "kind" in merged[e["id"]]]
+    missing = [e["id"] for e in elements if "kind" not in merged[e["id"]]]
+    print(f"Tags: {len(tagged)}/{len(elements)} elementer klassificeret")
     if missing:
         print(f"  MANGLER ({len(missing)}): {', '.join(missing[:12])}{' …' if len(missing) > 12 else ''}")
 

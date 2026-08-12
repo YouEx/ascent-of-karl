@@ -1,5 +1,62 @@
 /** Datamodel for alt indhold. ALT indhold ligger i JSON — aldrig hardcodet (PRD §4.1). */
 
+/**
+ * Det kontrollerede ordforråd fra content/taxonomy.json. Unions frem for
+ * string, så en stavefejl ikke kompilerer — et element med trait "healng"
+ * ville ellers bare holde op med at kunne kurere feberen, tavst.
+ */
+export type ElementKind =
+  | "material"
+  | "tool"
+  | "food"
+  | "creature"
+  | "person"
+  | "structure"
+  | "phenomenon"
+  | "abstract";
+
+export type ElementStuff =
+  | "stone"
+  | "wood"
+  | "plant"
+  | "flesh"
+  | "clay"
+  | "metal"
+  | "water"
+  | "fire"
+  | "fibre"
+  | "bone"
+  | "none";
+
+export type ElementTrait =
+  | "hard"
+  | "soft"
+  | "sharp"
+  | "blunt"
+  | "hot"
+  | "cold"
+  | "wet"
+  | "dry"
+  | "alive"
+  | "dead"
+  | "edible"
+  | "heavy"
+  | "light"
+  | "fragile"
+  | "sticky"
+  | "insulating"
+  | "tame"
+  | "weapon"
+  | "vessel"
+  | "digs"
+  | "healing"
+  | "sacred"
+  | "floats"
+  | "loud"
+  | "portable";
+
+export type ElementScale = "hand" | "body" | "camp" | "landscape";
+
 export interface ElementDef {
   id: string;
   /** Visningsnavn på dansk */
@@ -10,6 +67,15 @@ export interface ElementDef {
   act: number;
   /** Base-elementer er tilgængelige fra aktens start */
   base?: boolean;
+  /**
+   * Klassifikation (content/taxonomy.json). Prædikaterne i
+   * content/predicates.json dømmer på disse fire felter i stedet for på
+   * navnelister, så alt der ligner en løsning også tæller som en.
+   */
+  kind: ElementKind;
+  stuff: ElementStuff;
+  traits: ElementTrait[];
+  scale: ElementScale;
   /** Komisk flavor-tekst, 1-2 sætninger (PRD §3.2) */
   flavor?: string;
   /** Faktuel historisk note, 1 sætning (PRD §3.2) */

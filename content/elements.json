@@ -5,6 +5,14 @@
     "emoji": "🪨",
     "act": 1,
     "base": true,
+    "kind": "material",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "heavy",
+      "blunt"
+    ],
+    "scale": "hand",
     "flavor": "Grey. Heavy. Karl's best friend and most frequent conversation partner."
   },
   {
@@ -13,6 +21,13 @@
     "emoji": "🥢",
     "act": 1,
     "base": true,
+    "kind": "material",
+    "stuff": "wood",
+    "traits": [
+      "dry",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A stick of exceptional quality. So says Karl, and he has seen many sticks."
   },
   {
@@ -21,6 +36,14 @@
     "emoji": "🍂",
     "act": 1,
     "base": true,
+    "kind": "material",
+    "stuff": "plant",
+    "traits": [
+      "dry",
+      "light",
+      "insulating"
+    ],
+    "scale": "hand",
     "flavor": "Bone-dry and highly flammable. For now, Karl uses it as a pillow."
   },
   {
@@ -29,6 +52,12 @@
     "emoji": "💧",
     "act": 1,
     "base": true,
+    "kind": "material",
+    "stuff": "water",
+    "traits": [
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "Wet. Karl has tasted it and can confirm: very wet."
   },
   {
@@ -37,6 +66,13 @@
     "emoji": "🟤",
     "act": 1,
     "base": true,
+    "kind": "material",
+    "stuff": "clay",
+    "traits": [
+      "soft",
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "Soft and mouldable. Much like Karl's relationship with good ideas."
   },
   {
@@ -45,6 +81,13 @@
     "emoji": "🫐",
     "act": 1,
     "base": true,
+    "kind": "material",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "Possibly edible. Karl uses the bird test: if the bird survives, it's lunch."
   },
   {
@@ -53,6 +96,14 @@
     "emoji": "🐛",
     "act": 1,
     "base": true,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "edible",
+      "soft"
+    ],
+    "scale": "hand",
     "flavor": "They wriggle. Karl watches them a little too long and a little too fondly."
   },
   {
@@ -61,6 +112,13 @@
     "emoji": "🐗",
     "act": 1,
     "base": true,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "heavy"
+    ],
+    "scale": "body",
     "flavor": "A boar that has observed Karl for three days and remains unimpressed."
   },
   {
@@ -68,6 +126,12 @@
     "name": "Sparks",
     "emoji": "✨",
     "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "hot"
+    ],
+    "scale": "hand",
     "flavor": "Tiny stars that live for half a second. Karl applauds every time.",
     "note": "Stone Age fire-starting struck flint against pyrite — two ordinary stones really can make sparks.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Fire_making",
@@ -78,6 +142,12 @@
     "name": "Fire",
     "emoji": "🔥",
     "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "hot"
+    ],
+    "scale": "camp",
     "flavor": "Warm, glowing, and not at all fond of being touched. Karl discovered that part personally.",
     "note": "Humans have controlled fire for at least 400,000 years — traces from Wonderwerk Cave suggest up to a million.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Control_of_fire_by_early_humans",
@@ -88,6 +158,14 @@
     "name": "Stone axe",
     "emoji": "🪓",
     "act": 1,
+    "kind": "tool",
+    "stuff": "stone",
+    "traits": [
+      "sharp",
+      "hard",
+      "weapon"
+    ],
+    "scale": "hand",
     "flavor": "A rock on a stick. Humanity's first subscription to tools.",
     "note": "The oldest stone tools are over 2.5 million years old — older than modern humans themselves.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Oldowan",
@@ -98,6 +176,13 @@
     "name": "Spear",
     "emoji": "🔱",
     "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "sharp",
+      "weapon"
+    ],
+    "scale": "hand",
     "flavor": "Pointy at one end. Karl held the wrong one first.",
     "note": "The Schöningen spears from Germany are about 300,000 years old — the world's oldest preserved hunting weapons.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sch%C3%B6ningen_spears",
@@ -108,6 +193,13 @@
     "name": "Meat",
     "emoji": "🥩",
     "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "dead",
+      "edible"
+    ],
+    "scale": "hand",
     "flavor": "Fresh from a boar that underestimated Karl. A mistake nobody saw coming.",
     "note": "Eating meat accelerated human brain evolution — more energy per bite than any plant.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Expensive_tissue_hypothesis",
@@ -118,6 +210,13 @@
     "name": "Roast meat",
     "emoji": "🍖",
     "act": 1,
+    "kind": "food",
+    "stuff": "flesh",
+    "traits": [
+      "edible",
+      "dead"
+    ],
+    "scale": "hand",
     "flavor": "Crispy outside, juicy inside. Karl has invented gastronomy and is never going back.",
     "note": "Cooked food gave humans more calories for less chewing — a possible key to our big brains.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cooking_hypothesis",
@@ -128,6 +227,13 @@
     "name": "Roasted grubs",
     "emoji": "🍢",
     "act": 1,
+    "kind": "food",
+    "stuff": "flesh",
+    "traits": [
+      "edible",
+      "dead"
+    ],
+    "scale": "hand",
     "flavor": "Crispy. Nutty. Karl says 'mmm'. The narrator says nothing, very loudly.",
     "note": "Around two billion people eat insects today — grubs are rich in protein and climate-friendly.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Entomophagy",
@@ -138,6 +244,14 @@
     "name": "Mud",
     "emoji": "🟫",
     "act": 1,
+    "kind": "material",
+    "stuff": "clay",
+    "traits": [
+      "soft",
+      "wet",
+      "sticky"
+    ],
+    "scale": "hand",
     "flavor": "Clay plus water. Karl calls it 'soft dirt' and is very proud of the name.",
     "note": "Mud and clay were humanity's first building materials — sun-dried bricks are over 9,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mudbrick",
@@ -148,6 +262,14 @@
     "name": "Mud bath",
     "emoji": "🛁",
     "act": 1,
+    "kind": "material",
+    "stuff": "clay",
+    "traits": [
+      "soft",
+      "wet",
+      "sticky"
+    ],
+    "scale": "body",
     "flavor": "Karl rolls thoroughly. He calls it skincare. The boar nods in approval.",
     "note": "Pigs really do use mud baths as sunscreen and insect protection — early humans possibly did too.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Wallowing_in_animals",
@@ -158,6 +280,14 @@
     "name": "Pottery",
     "emoji": "🏺",
     "act": 1,
+    "kind": "tool",
+    "stuff": "clay",
+    "traits": [
+      "hard",
+      "fragile",
+      "vessel"
+    ],
+    "scale": "hand",
     "flavor": "Baked clay that holds water. Karl's first pot is crooked, and he loves it.",
     "note": "The world's oldest pottery is about 20,000 years old, found in Xianrendong Cave in China.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Xianren_Cave",
@@ -168,6 +298,13 @@
     "name": "Steam",
     "emoji": "💨",
     "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "hot",
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "The water hisses and vanishes into the air. Karl is deeply offended on the water's behalf.",
     "note": "Steam power was demonstrated in antiquity with Heron's aeolipile — but only changed the world in the 1700s.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Aeolipile",
@@ -178,6 +315,13 @@
     "name": "Ore",
     "emoji": "⛏️",
     "act": 1,
+    "kind": "material",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "heavy"
+    ],
+    "scale": "hand",
     "flavor": "Glittering stones from the rock face. Karl thinks it's decoration. It's the future.",
     "note": "The oldest known mines are over 40,000 years old — long before anyone knew what metal was.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ngwenya_Mine",
@@ -188,6 +332,13 @@
     "name": "Copper",
     "emoji": "🟠",
     "act": 1,
+    "kind": "material",
+    "stuff": "metal",
+    "traits": [
+      "soft",
+      "heavy"
+    ],
+    "scale": "hand",
     "flavor": "Shiny, reddish, and bendable. Karl has tried biting it. Twice.",
     "note": "Humans have worked copper for almost 10,000 years — the oldest finds come from Anatolia.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Copper#History",
@@ -198,6 +349,13 @@
     "name": "Bronze",
     "emoji": "🥉",
     "act": 1,
+    "kind": "material",
+    "stuff": "metal",
+    "traits": [
+      "hard",
+      "heavy"
+    ],
+    "scale": "hand",
     "flavor": "Harder than copper, fancier than stone. Karl made a lump and shows it to everyone.",
     "note": "Bronze — copper alloyed with tin — emerged around 3300 BC and gave its name to an entire era.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Bronze_Age",
@@ -208,6 +366,13 @@
     "name": "Grub farm",
     "emoji": "🧺",
     "act": 1,
+    "kind": "structure",
+    "stuff": "clay",
+    "traits": [
+      "vessel",
+      "alive"
+    ],
+    "scale": "camp",
     "flavor": "A clay bowl of well-groomed grubs. Karl has named them all. Every one is called Bent.",
     "note": "Insect farming is a growing industry today — grubs turn food waste into protein better than any livestock.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Insect_farming",
@@ -219,6 +384,13 @@
     "emoji": "🪵",
     "act": 1,
     "base": true,
+    "kind": "material",
+    "stuff": "wood",
+    "traits": [
+      "heavy",
+      "dry"
+    ],
+    "scale": "body",
     "flavor": "A fallen tree trunk. Karl has claimed it by sitting on it."
   },
   {
@@ -227,6 +399,12 @@
     "emoji": "🧔",
     "act": 1,
     "base": true,
+    "kind": "person",
+    "stuff": "flesh",
+    "traits": [
+      "alive"
+    ],
+    "scale": "body",
     "flavor": "Another caveman. His name is Ugh. He communicates mostly through disappointed grunts."
   },
   {
@@ -234,6 +412,14 @@
     "name": "Round stone",
     "emoji": "⚪",
     "act": 1,
+    "kind": "material",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "heavy",
+      "blunt"
+    ],
+    "scale": "hand",
     "flavor": "Polished perfectly round by the river. Karl calls it 'the good rock' and guards it jealously.",
     "note": "River pebbles really are rounded by erosion — tumbling water does in centuries what a stonemason does in days.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Pebble",
@@ -244,6 +430,14 @@
     "name": "Wheel",
     "emoji": "🛞",
     "act": 1,
+    "kind": "material",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "heavy",
+      "blunt"
+    ],
+    "scale": "hand",
     "flavor": "It rolls. It ROLLS. Karl has chased it across the valley twice already.",
     "note": "The wheel arrived surprisingly late — around 3500 BC in Mesopotamia, long after farming and pottery.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Wheel",
@@ -254,6 +448,13 @@
     "name": "Planks",
     "emoji": "🟧",
     "act": 1,
+    "kind": "material",
+    "stuff": "wood",
+    "traits": [
+      "dry",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "Flat wood. Karl split a log and is now the valley's leading carpenter, by default.",
     "note": "The oldest known woodworking, including split planks, predates modern humans — Neanderthals built with wood 400,000 years ago.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Woodworking",
@@ -264,6 +465,13 @@
     "name": "Crafting table",
     "emoji": "🧰",
     "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "dry",
+      "heavy"
+    ],
+    "scale": "camp",
     "flavor": "Four planks arranged in a square. Karl feels a strange urge to punch a tree.",
     "note": "A certain block game with crafting tables became the best-selling video game of all time — over 300 million copies.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Minecraft",
@@ -274,6 +482,14 @@
     "name": "Cart",
     "emoji": "🛒",
     "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "vessel",
+      "heavy",
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "Wheels plus planks. It carries things so Karl doesn't have to. Civilization's true purpose, achieved.",
     "note": "The earliest wagons appear around 3400 BC — and spread across Europe and Mesopotamia within a few centuries.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Wagon",
@@ -284,6 +500,13 @@
     "name": "Footmobile",
     "emoji": "🚗",
     "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "heavy",
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "A foot-powered stone-age car. Ugh rides shotgun. Karl makes engine noises with his mouth. Yabba dabba... something.",
     "note": "The Flintstones (1960) was the first animated series in TV primetime — and its foot-powered car became an icon.",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_Flintstones",
@@ -294,6 +517,14 @@
     "name": "Standing stone",
     "emoji": "🗿",
     "act": 1,
+    "kind": "structure",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "heavy",
+      "sacred"
+    ],
+    "scale": "body",
     "flavor": "A tall stone, raised on end for no practical reason. Karl touches it carefully, then throws a bone in the air. He doesn't know why.",
     "note": "Thousands of menhirs — raised standing stones — dot Europe, some over 6,000 years old. Their purpose is still debated.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Menhir",
@@ -304,6 +535,14 @@
     "name": "Stone circle",
     "emoji": "🌀",
     "act": 1,
+    "kind": "structure",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "heavy",
+      "sacred"
+    ],
+    "scale": "landscape",
     "flavor": "A circle of standing stones. Karl aligned them with the sunrise by accident and takes full credit.",
     "note": "Stonehenge was built in stages from about 3000 BC — with stones hauled up to 200 kilometres.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Stonehenge",
@@ -314,6 +553,14 @@
     "name": "Pet boar",
     "emoji": "🐖",
     "act": 1,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "tame",
+      "heavy"
+    ],
+    "scale": "body",
     "flavor": "The boar, bribed with berries into friendship. Karl has named him Dino. He answers to nothing.",
     "note": "Pigs were domesticated around 8,500 BC — among the first animals after dogs.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Domestic_pig",
@@ -324,6 +571,13 @@
     "name": "Fish",
     "emoji": "🐟",
     "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "dead",
+      "edible"
+    ],
+    "scale": "hand",
     "flavor": "Speared straight from the river. Karl eats it raw and declares it 'sushi', ten thousand years too early.",
     "note": "Humans have fished for over 40,000 years — bone analysis of early modern humans shows regular freshwater fish dinners.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_fishing",
@@ -334,6 +588,14 @@
     "name": "Hide cloak",
     "emoji": "🧥",
     "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "insulating",
+      "dead",
+      "soft"
+    ],
+    "scale": "body",
     "flavor": "A warm boar hide. Karl wears it like a cape and practices dramatic turns.",
     "note": "Genetics dates clothing to at least 100,000 years ago — scientists worked it out by studying when clothing lice evolved.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_clothing_and_textiles",
@@ -344,6 +606,12 @@
     "name": "Cave painting",
     "emoji": "🎨",
     "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "sacred"
+    ],
+    "scale": "hand",
     "flavor": "Berry juice on stone. It's either a boar, a sunset, or Ugh. Karl refuses to explain his art.",
     "note": "The oldest known cave paintings are over 45,000 years old — found in Sulawesi, Indonesia.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cave_painting",
@@ -354,6 +622,13 @@
     "name": "Drum",
     "emoji": "🥁",
     "act": 1,
+    "kind": "material",
+    "stuff": "wood",
+    "traits": [
+      "loud",
+      "dry"
+    ],
+    "scale": "hand",
     "flavor": "A hollow log plus a stick. Karl has rhythm. The valley disagrees.",
     "note": "Drums are among humanity's oldest instruments — alligator-skin drums from China date to 5500 BC.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Drum",
@@ -364,6 +639,12 @@
     "name": "Rock band",
     "emoji": "🎸",
     "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Karl on drums, Ugh on backing grunts. They play rocks. They are, literally, a rock band.",
     "note": "The Rolling Stones formed in 1962 — and are still rolling. Some stones gather no moss.",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_Rolling_Stones",
@@ -374,6 +655,13 @@
     "name": "Cave brew",
     "emoji": "🍺",
     "act": 1,
+    "kind": "food",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "Berries, left in a pot slightly too long. Karl calls it juice. The juice disagrees.",
     "note": "The world's oldest known beer residue is 13,000 years old, found in Raqefet Cave in Israel — possibly older than bread.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_beer",
@@ -384,6 +672,12 @@
     "name": "Stone age party",
     "emoji": "🎉",
     "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Two guests, one brew, infinite confidence. The boar is the bouncer.",
     "note": "Archaeologists have found evidence of large prehistoric feasts — including a 12,000-year-old burial banquet with 71 tortoises.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Feast",
@@ -394,6 +688,14 @@
     "name": "Pot friend",
     "emoji": "🫙",
     "act": 1,
+    "kind": "tool",
+    "stuff": "clay",
+    "traits": [
+      "hard",
+      "fragile",
+      "vessel"
+    ],
+    "scale": "hand",
     "flavor": "A pot with a face painted on it. Karl tells it everything. Its name is Wilson.",
     "note": "In Cast Away (2000), Tom Hanks' best co-star was a volleyball named Wilson — proof that loneliness is a great animator.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cast_Away",
@@ -404,6 +706,13 @@
     "name": "Boomerang",
     "emoji": "🪃",
     "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "weapon",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A bent stick that comes back. Karl has invented losing things professionally.",
     "note": "The oldest known boomerang is 23,000 years old, carved from mammoth tusk — found in a cave in Poland.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Boomerang",
@@ -414,6 +723,12 @@
     "name": "Grub stand",
     "emoji": "🏪",
     "act": 1,
+    "kind": "structure",
+    "stuff": "wood",
+    "traits": [
+      "vessel"
+    ],
+    "scale": "camp",
     "flavor": "The valley's first restaurant. One item on the menu. Two stars, scratched on the rock outside.",
     "note": "Ready-to-eat street food is ancient — Pompeii alone had around 80 thermopolia, the Roman world's snack bars.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Thermopolium",
@@ -423,915 +738,1547 @@
     "id": "mursten",
     "name": "Mud brick",
     "emoji": "🧱",
+    "act": 1,
+    "kind": "material",
+    "stuff": "clay",
+    "traits": [
+      "hard",
+      "dry"
+    ],
+    "scale": "hand",
     "flavor": "Mud and straw, dried hard. Karl stacks two and calls himself an architect.",
     "note": "Real mud bricks were tempered with straw — the fibres stop them cracking, a trick over 9,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mudbrick",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "hytte",
     "name": "Hut",
     "emoji": "🛖",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "clay",
+    "traits": [
+      "hard",
+      "insulating"
+    ],
+    "scale": "camp",
     "flavor": "Four walls, one doorway, zero right angles. Karl calls it home. The draft calls it a suggestion.",
     "note": "The oldest known shelters, like those at Terra Amata in France, are around 400,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Terra_Amata_(archaeological_site)",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "landsby",
     "name": "Village",
     "emoji": "🏘️",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "clay",
+    "traits": [
+      "hard",
+      "insulating"
+    ],
+    "scale": "landscape",
     "flavor": "Two huts and a shared complaint about the weather. Civilization, technically.",
     "note": "Çatalhöyük in Turkey, one of the world's first large villages, housed thousands of people 9,000 years ago — with no streets, people walked on the roofs.",
     "sourceUrl": "https://en.wikipedia.org/wiki/%C3%87atalh%C3%B6y%C3%BCk",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "nedbraendt-hytte",
     "name": "Burnt-down hut",
     "emoji": "🏚️",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "wood",
+    "traits": [
+      "dry",
+      "fragile"
+    ],
+    "scale": "camp",
     "flavor": "Karl brought the fire inside to keep the hut warm. The hut is now extremely warm. Karl sits in the ashes insisting this is fine.",
     "note": "The 'This is fine' dog, sipping coffee in a burning room, comes from KC Green's 2013 comic Gunshow.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Gunshow_(webcomic)",
-    "karlMood": "flov",
-    "act": 1
+    "karlMood": "flov"
   },
   {
     "id": "toemmerflaade",
     "name": "Raft",
     "emoji": "🏄",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "floats",
+      "heavy"
+    ],
+    "scale": "body",
     "flavor": "A log that floats with Karl on top, mostly in that order.",
     "note": "Humans reached Australia over 50,000 years ago — a sea crossing that must have required some kind of watercraft.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Prehistory_of_Australia",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "baad",
     "name": "Canoe",
     "emoji": "🛶",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "floats",
+      "light"
+    ],
+    "scale": "body",
     "flavor": "A hollowed-out log. Karl paddles in circles, but with tremendous dignity.",
     "note": "The Pesse canoe from the Netherlands is the world's oldest known boat — about 10,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Pesse_canoe",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "roeg",
     "name": "Smoke",
     "emoji": "🌫️",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "hot"
+    ],
+    "scale": "camp",
     "flavor": "Fire's grey ghost. It follows Karl around the campfire no matter where he sits.",
     "note": "Campfire smoke really does seem to follow you — you sit in the low-pressure wake your own body creates.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Campfire",
-    "karlMood": "fornaermet",
-    "act": 1
+    "karlMood": "fornaermet"
   },
   {
     "id": "roegsignaler",
     "name": "Smoke signals",
     "emoji": "📶",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "light"
+    ],
+    "scale": "landscape",
     "flavor": "Karl sends Ugh a message in smoke. Ugh, forty metres away, shouts back. Technology has its critics.",
     "note": "Smoke signals are among the oldest long-distance communication — used from ancient China to North America.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Smoke_signal",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "helligsted",
     "name": "Shrine",
     "emoji": "⛩️",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "stone",
+    "traits": [
+      "heavy",
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "A painted stone in a special place. Karl lowers his voice near it. Even the boar walks around it.",
     "note": "Göbekli Tepe in Turkey — a monumental sanctuary 11,500 years old — was built before farming, upending what we thought came first.",
     "sourceUrl": "https://en.wikipedia.org/wiki/G%C3%B6bekli_Tepe",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "shaman",
     "name": "Shaman Ugh",
     "emoji": "🧙",
+    "act": 1,
+    "kind": "person",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "healing"
+    ],
+    "scale": "body",
     "flavor": "Ugh has put on a feathered hat and now speaks exclusively in meaningful pauses.",
     "note": "A 12,000-year-old grave at Hilazon Tachtit in Israel held a woman buried with 50 tortoise shells — likely one of the earliest known shamans.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Hilazon_Tachtit",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "syner",
     "name": "Visions",
     "emoji": "🍄",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "light"
+    ],
+    "scale": "body",
     "flavor": "Shaman Ugh drinks the brew and describes colours that don't exist. Karl takes notes on a rock.",
     "note": "One theory holds that some cave art depicts shamanic trance visions — the debate keeps archaeologists happily furious.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cave_painting",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "kul",
     "name": "Charcoal",
     "emoji": "⚫",
+    "act": 1,
+    "kind": "material",
+    "stuff": "wood",
+    "traits": [
+      "dry",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "Burnt wood, black and crumbly. Karl's hands, face and personality are now smudged.",
     "note": "Charcoal was prehistoric art's favourite pencil — the great beasts of Chauvet Cave were drawn with it 36,000 years ago.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Chauvet_Cave",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "roeget-koed",
     "name": "Smoked meat",
     "emoji": "🥓",
+    "act": 1,
+    "kind": "food",
+    "stuff": "flesh",
+    "traits": [
+      "dead",
+      "edible",
+      "dry"
+    ],
+    "scale": "hand",
     "flavor": "Meat that met smoke and came out better. Karl has invented the delicatessen counter.",
     "note": "Smoking is one of humanity's oldest preservation methods — smoke dries the meat and its compounds slow spoilage.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Smoking_(cooking)",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "saft",
     "name": "Berry juice",
     "emoji": "🧃",
+    "act": 1,
+    "kind": "food",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "Crushed berries. Karl drinks it, wears it, and paints with it — often in the same motion.",
     "note": "Fruit pressing predates writing by millennia — the residue of crushed berries turns up on Stone Age grinding stones.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Fruit_press",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "mudderkage",
     "name": "Mud pie",
     "emoji": "🥧",
+    "act": 1,
+    "kind": "food",
+    "stuff": "clay",
+    "traits": [
+      "edible",
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "Mud, moulded into a cake, decorated with a berry. Karl takes a bite. Karl takes another bite. Narrator files a complaint.",
     "note": "Eating earth — geophagy — is a real practice worldwide, sometimes for minerals, sometimes against toxins. Rarely for taste.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Geophagia",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "surf-n-turf",
     "name": "Surf 'n' turf",
     "emoji": "🍽️",
+    "act": 1,
+    "kind": "food",
+    "stuff": "flesh",
+    "traits": [
+      "dead",
+      "edible",
+      "hot"
+    ],
+    "scale": "hand",
     "flavor": "Fish AND meat on the same flat stone. Karl has invented fine dining, pending the invention of prices.",
     "note": "'Surf and turf' hit American menus in the 1960s — the name for lobster-plus-steak spread from coastal restaurants.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Surf_and_turf",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "knogle",
     "name": "Bone",
     "emoji": "🦴",
+    "act": 1,
+    "kind": "material",
+    "stuff": "bone",
+    "traits": [
+      "hard",
+      "dead",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "Sturdy, useful, and slightly judgmental to hold. Karl waves it around for emphasis.",
     "note": "Bone tools go back at least 1.5 million years — early humans were recycling their dinners into equipment.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Bone_tool",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "koelle",
     "name": "Club",
     "emoji": "🏏",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "bone",
+    "traits": [
+      "hard",
+      "blunt",
+      "weapon",
+      "dead"
+    ],
+    "scale": "hand",
     "flavor": "A bone lashed to a stick. The classic. Karl immediately rests it on his shoulder and feels ancient and mighty.",
     "note": "The club is likely humanity's oldest weapon — so old that no first example survives, only its image in every cartoon caveman since.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Club_(weapon)",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "slagsmaal",
     "name": "First argument",
     "emoji": "💢",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "body",
     "flavor": "Karl and Ugh disagree about a club, loudly, with gestures. They make up minutes later. The club is shared custody now.",
     "note": "Prehistoric people argued too — skeletal finds show conflicts, but also healed wounds, meaning someone cared for the losers.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Prehistoric_warfare",
-    "karlMood": "flov",
-    "act": 1
+    "karlMood": "flov"
   },
   {
     "id": "knoglekast",
     "name": "Bone toss",
     "emoji": "🌌",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "body",
     "flavor": "Karl throws the bone triumphantly into the air. For one slow, majestic moment, it seems to mean something enormous. Then it lands on Ugh.",
     "note": "The bone-to-spaceship match cut in 2001: A Space Odyssey (1968) spans four million years in one frame — often called the greatest cut in film.",
     "sourceUrl": "https://en.wikipedia.org/wiki/2001:_A_Space_Odyssey",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "fugl",
     "name": "Bird",
     "emoji": "🐦",
+    "act": 1,
     "base": true,
-    "flavor": "Small, loud, and airborne — three things Karl will never be. It mocks him from a branch.",
-    "act": 1
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "light"
+    ],
+    "scale": "hand",
+    "flavor": "Small, loud, and airborne — three things Karl will never be. It mocks him from a branch."
   },
   {
     "id": "foenix",
     "name": "Phoenix?",
     "emoji": "🐦‍🔥",
+    "act": 1,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "The bird flew through the campfire smoke and emerged dramatic and slightly singed. Karl is convinced it's immortal now. The bird milks it.",
     "note": "The phoenix legend goes back at least to ancient Egypt and Herodotus — a bird reborn from its own ashes.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Phoenix_(mythology)",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "fjer",
     "name": "Feather",
     "emoji": "🪶",
+    "act": 1,
+    "kind": "material",
+    "stuff": "fibre",
+    "traits": [
+      "light",
+      "soft",
+      "dead"
+    ],
+    "scale": "hand",
     "flavor": "Soft, elegant, aerodynamic. Karl sticks it behind his ear and becomes 40% more distinguished.",
     "note": "Feathers were prized long before writing — Neanderthals harvested raptor feathers, apparently just for decoration.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Feather",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "floejte",
     "name": "Bone flute",
     "emoji": "🪈",
+    "act": 1,
+    "kind": "material",
+    "stuff": "bone",
+    "traits": [
+      "hard",
+      "dead",
+      "loud"
+    ],
+    "scale": "hand",
     "flavor": "A bird bone with holes. Karl plays three notes: high, low, and regrettable.",
     "note": "The world's oldest instruments are bird-bone flutes from Hohle Fels in Germany — over 40,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Hohle_Fels",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "farvet-skind",
     "name": "Dyed hide",
     "emoji": "🧣",
+    "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "soft",
+      "dead",
+      "insulating"
+    ],
+    "scale": "body",
     "flavor": "The cloak, now berry-red. Karl twirls. The berries did not die in vain.",
     "note": "Ochre-dyed materials go back over 100,000 years — colour was fashionable before almost anything else.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ochre",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "festdragt",
     "name": "Feather cloak",
     "emoji": "🦚",
+    "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "insulating",
+      "soft",
+      "dead"
+    ],
+    "scale": "body",
     "flavor": "Hide and feathers, worn with unbearable confidence. Karl no longer walks. He arrives.",
     "note": "Feather cloaks were royal treasures in Hawaii — the ʻahuʻula of King Kamehameha used hundreds of thousands of feathers.",
     "sourceUrl": "https://en.wikipedia.org/wiki/%CA%BBAh%CA%BB_ula",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "modeshow",
     "name": "Fashion show",
     "emoji": "💃",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Karl walks the length of the log, turns, and walks back. Ugh holds up a leaf with a number scratched on it. It's a 4.",
     "note": "The modern fashion show emerged in Paris couture salons around 1900 — the log runway came considerably earlier.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Fashion_show",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "lerfigur",
     "name": "Clay figurine",
     "emoji": "🪆",
+    "act": 1,
+    "kind": "material",
+    "stuff": "clay",
+    "traits": [
+      "fragile",
+      "sacred"
+    ],
+    "scale": "hand",
     "flavor": "A small clay person. It looks like Ugh, if Ugh were rounder and calmer. Ugh is flattered anyway.",
     "note": "The Venus of Dolní Věstonice, a 29,000-year-old fired clay figurine, is among the oldest ceramic art on Earth.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Venus_of_Doln%C3%AD_V%C4%9Bstonice",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "haandaftryk",
     "name": "Handprint wall",
     "emoji": "🖐️",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "sacred"
+    ],
+    "scale": "hand",
     "flavor": "Karl and Ugh press painted hands against the rock. It says 'we were here' in the oldest language there is.",
     "note": "Hand stencils are among the most common cave art motifs worldwide — some in Indonesia are almost 40,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cave_of_the_Hands",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "stenkoncert",
     "name": "Stonehenge gig",
     "emoji": "🤘",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "landscape",
     "flavor": "The band plays inside the stone circle. Attendance: three. Volume: prehistoric. A tiny model of the venue would have been cheaper.",
     "note": "In This Is Spinal Tap (1984), a mix-up delivers an 18-inch Stonehenge prop instead of 18 feet — comedy's greatest unit-conversion error.",
     "sourceUrl": "https://en.wikipedia.org/wiki/This_Is_Spinal_Tap",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "trommesolo",
     "name": "Drum solo",
     "emoji": "🎶",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Karl plays both drums at once. Time loses meaning. The boar leaves the venue.",
     "note": "The marathon drum solo became rock legend with Led Zeppelin's 'Moby Dick' — live versions ran past twenty minutes.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Moby_Dick_(instrumental)",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "galleri",
     "name": "Cave gallery",
     "emoji": "🖼️",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "stone",
+    "traits": [
+      "fragile",
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "Two paintings side by side. Karl stands back, squints, and moves one a finger-width to the left. Perfect.",
     "note": "Lascaux's painted halls are nicknamed 'the Sistine Chapel of prehistory' — nearly 600 animals across its walls.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Lascaux",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "garage",
     "name": "Garage",
     "emoji": "🅿️",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "wood",
+    "traits": [
+      "heavy"
+    ],
+    "scale": "camp",
     "flavor": "A hut for the footmobile. The footmobile now lives better than Karl.",
     "note": "As cars spread around 1900, houses grew garages — often converted from carriage houses and stables.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Garage_(residential)",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "drive-in",
     "name": "Drive-in",
     "emoji": "🎬",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "portable"
+    ],
+    "scale": "camp",
     "flavor": "Karl and Ugh park the footmobile in front of the cave paintings and watch them in silence. Ugh shushes the boar.",
     "note": "The first drive-in theatre opened in New Jersey in 1933 — the screen was nailed to trees.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Drive-in_theater",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "trafikprop",
     "name": "Traffic jam",
     "emoji": "🚦",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "landscape",
     "flavor": "Both footmobiles meet on the valley's only path. Neither will reverse. History's first traffic jam is now entering its third hour.",
     "note": "Traffic congestion predates the car — ancient Rome banned daytime carts because of it.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Traffic_congestion",
-    "karlMood": "fornaermet",
-    "act": 1
+    "karlMood": "fornaermet"
   },
   {
     "id": "stenspil",
     "name": "Boules",
     "emoji": "🎳",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Roll the round stone closest to the stick. Karl loses to Ugh eleven times and demands a twelfth.",
     "note": "Throwing-stone games are ancient — the French pétanque descends from games the Romans already played.",
     "sourceUrl": "https://en.wikipedia.org/wiki/P%C3%A9tanque",
-    "karlMood": "fornaermet",
-    "act": 1
+    "karlMood": "fornaermet"
   },
   {
     "id": "brydekamp",
     "name": "Wrestling match",
     "emoji": "🤼",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Karl versus Ugh, best of three falls. The boar referees, poorly.",
     "note": "Wrestling may be the world's oldest sport — 15,000-year-old cave paintings in France appear to show wrestlers.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Wrestling",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "kaelk",
     "name": "Sledge",
     "emoji": "🛷",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "heavy",
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "Planks that slide. Karl hauls it uphill for an hour for six seconds of pure joy. Worth it.",
     "note": "Sledges are older than wheels — heavy loads were dragged on runners millennia before anyone thought to roll them.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sled",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "toemmermaend",
     "name": "Hangover",
     "emoji": "🤕",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "dry"
+    ],
+    "scale": "body",
     "flavor": "Karl and Ugh drank the whole pot. The sun is too loud. The grass is too loud. Ugh's breathing is DEFINITELY too loud.",
     "note": "Hangover cures are as old as brewing — ancient remedies included raw eel and, in Mesopotamia, beer for breakfast.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Hangover",
-    "karlMood": "flov",
-    "act": 1
+    "karlMood": "flov"
   },
   {
     "id": "vinger",
     "name": "Wings",
     "emoji": "🪽",
+    "act": 1,
+    "kind": "material",
+    "stuff": "fibre",
+    "traits": [
+      "light",
+      "dead"
+    ],
+    "scale": "body",
     "flavor": "Feathers lashed to Karl's arms. He flaps experimentally. The bird watches with grave professional concern.",
     "note": "'Tower jumping' with homemade wings goes back over a thousand years — brave, well-documented, and rarely successful.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Early_flying_machines",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "medicin",
     "name": "Herbal remedy",
     "emoji": "🌿",
+    "act": 1,
+    "kind": "food",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "wet",
+      "healing"
+    ],
+    "scale": "hand",
     "flavor": "Bone-mashed herbs in berry juice. It tastes like punishment, which is how Karl knows it works.",
     "note": "Neanderthal dental plaque shows they chewed yarrow and chamomile — bitter, non-nutritious, and medicinal.",
     "sourceUrl": "https://en.wikipedia.org/wiki/El_Sidr%C3%B3n_Cave",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "kroning",
     "name": "Coronation",
     "emoji": "👑",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "The village gathers. The fanciest man in the valley kneels on a log and rises as king. Population under his rule: two, plus a boar.",
     "note": "The world's oldest known crown, from the Nahal Mishmar hoard, is over 6,000 years old — copper, and surprisingly heavy-looking.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Nahal_Mishmar",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "legende",
     "name": "The Legend",
     "emoji": "🌟",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "landscape",
     "flavor": "The band that never stops. Every night, a new cave. Every cave, the same song. It's perfect.",
     "note": "Bob Dylan's 'Never Ending Tour' has run since 1988 — thousands of shows and counting.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Never_Ending_Tour",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "ind-i-maleriet",
     "name": "Into the painting",
     "emoji": "🖌️",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "sacred",
+      "light"
+    ],
+    "scale": "body",
     "flavor": "Karl stares at the painted boars until the painted boars stare back. Then he steps closer. Then closer still.",
     "note": "Stendhal syndrome is a reported condition where overwhelming art causes dizziness and confusion — named after the author it floored in Florence.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Stendhal_syndrome",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "flyveforsoeg",
     "name": "The Flight",
     "emoji": "🪂",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "light"
+    ],
+    "scale": "body",
     "flavor": "From the top of the standing stone, wings wide, Karl leaps. For one glorious heartbeat, he flies.",
     "note": "In the Greek myth, Icarus flew too close to the sun on wings of wax and feathers — history's most beautiful safety briefing.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Icarus",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "krig",
     "name": "The War",
     "emoji": "⚔️",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "landscape",
     "flavor": "It started over a club. It ended over everything. Nobody remembers who swung first, and it no longer matters.",
     "note": "Ötzi the Iceman, who died in the Alps 5,300 years ago, was killed by an arrow — one of prehistory's oldest cold cases.",
     "sourceUrl": "https://en.wikipedia.org/wiki/%C3%96tzi",
-    "karlMood": "ked",
-    "act": 1
+    "karlMood": "ked"
   },
   {
     "id": "helbredelse",
     "name": "The Healing",
     "emoji": "🩹",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "healing"
+    ],
+    "scale": "body",
     "flavor": "Ugh had a headache. Karl had herbs, confidence, and no licence. Ugh survived — and that makes it medicine.",
     "note": "Stone Age skulls show healed trepanation — patients actually survived having holes bored in their heads with stone tools.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Trepanning",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "sidste-maaltid",
     "name": "The Last Supper",
     "emoji": "🍲",
+    "act": 1,
+    "kind": "food",
+    "stuff": "clay",
+    "traits": [
+      "edible",
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "Mud pie, washed down with cave brew. A bold pairing. Too bold. Historians will ask why. The menu will answer.",
     "note": "Tollund Man's last meal, 2,400 years ago, was a porridge of barley and seeds — we know prehistoric people by their dinners.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Tollund_Man",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "sky",
     "name": "Cloud",
     "emoji": "☁️",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "wet"
+    ],
+    "scale": "landscape",
     "flavor": "Steam that got ambitious and left. Karl waves at it. It does not wave back.",
     "note": "Clouds form when rising air cools and water vapour condenses onto dust — every drop needs a speck to cling to.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cloud",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "regn",
     "name": "Rain",
     "emoji": "🌧️",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "wet",
+      "cold"
+    ],
+    "scale": "landscape",
     "flavor": "The sky is leaking. Karl stands in it, arms out, deeply moved. He will regret this tonight.",
     "note": "A single raindrop falls at around 30 km/h — and takes minutes to reach the ground from a tall cloud.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Rain",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "lyn",
     "name": "Lightning",
     "emoji": "⚡",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "hot",
+      "loud"
+    ],
+    "scale": "landscape",
     "flavor": "The storm hits the standing stone with a crack that rearranges Karl's opinions about everything.",
     "note": "A lightning bolt heats the air around it to about 30,000 °C — five times hotter than the surface of the sun.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Lightning",
-    "karlMood": "fornaermet",
-    "act": 1
+    "karlMood": "fornaermet"
   },
   {
     "id": "sne",
     "name": "Snow",
     "emoji": "❄️",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "cold",
+      "wet"
+    ],
+    "scale": "landscape",
     "flavor": "White feathers falling from the sky. Karl assumes a very large bird has had an accident.",
     "note": "Snowflakes are almost always six-sided — a consequence of how water molecules lock together as they freeze.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Snowflake",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "is",
     "name": "Ice",
     "emoji": "🧊",
+    "act": 1,
+    "kind": "material",
+    "stuff": "water",
+    "traits": [
+      "cold",
+      "hard"
+    ],
+    "scale": "hand",
     "flavor": "Water that has given up. Karl licks it. Karl regrets licking it.",
     "note": "Ice floats because water is one of the rare substances that expands as it freezes — which is why lakes freeze from the top.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ice",
-    "karlMood": "flov",
-    "act": 1
+    "karlMood": "flov"
   },
   {
     "id": "ski",
     "name": "Skis",
     "emoji": "🎿",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "hard",
+      "light",
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "Two planks and a downhill. Karl has invented going fast without meaning to.",
     "note": "Preserved wooden skis from Scandinavia and Russia are over 5,000 years old — skis are about as old as the wheel.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_skiing",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "reb",
     "name": "Rope",
     "emoji": "🪢",
+    "act": 1,
+    "kind": "material",
+    "stuff": "fibre",
+    "traits": [
+      "light",
+      "portable",
+      "dry"
+    ],
+    "scale": "hand",
     "flavor": "Twisted grass, surprisingly strong. Karl ties it around everything he owns, including himself.",
     "note": "Twisted plant-fibre cord goes back at least 40,000 years — even Neanderthals made rope.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Rope",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "net",
     "name": "Net",
     "emoji": "🕸️",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "fibre",
+    "traits": [
+      "vessel",
+      "portable",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A hole surrounded by rope. Karl is not sure how it works, but the fish agree that it does.",
     "note": "A 10,000-year-old fishing net woven from willow was found preserved in a Finnish bog.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Antrea_Net",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "fangst",
     "name": "Great catch",
     "emoji": "🎣",
+    "act": 1,
+    "kind": "food",
+    "stuff": "flesh",
+    "traits": [
+      "edible",
+      "dead",
+      "heavy"
+    ],
+    "scale": "camp",
     "flavor": "More fish than Karl can carry, count, or name. He is attempting all three.",
     "note": "Net fishing feeds far more people than a spear ever could — it may have supported the first permanent settlements.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_fishing",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "faelde",
     "name": "Snare",
     "emoji": "🪤",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "fibre",
+    "traits": [
+      "weapon",
+      "portable",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A loop of rope that hunts while Karl sleeps. His finest employee.",
     "note": "Traps let one person out-hunt an entire party — they work all night and never argue.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Trapping",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "ulv",
     "name": "Wolf",
     "emoji": "🐺",
+    "act": 1,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive"
+    ],
+    "scale": "body",
     "flavor": "Drawn by the smell of meat. It watches Karl. Karl watches back. Neither blinks. Something is beginning.",
     "note": "Wolves likely domesticated themselves — the boldest ones edged closer to human camps for scraps.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Wolf",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "hund",
     "name": "Dog",
     "emoji": "🐕",
+    "act": 1,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "tame"
+    ],
+    "scale": "body",
     "flavor": "The wolf stayed. It has a name now. It sleeps by the fire and considers Karl its slightly disappointing pet.",
     "note": "Dogs were the first animal we domesticated — at least 15,000 years ago, long before any farm animal.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Origin_of_the_domestic_dog",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "bue",
     "name": "Bow",
     "emoji": "🏹",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "weapon",
+      "light",
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "A bent stick with a grudge. Karl fires it once and spends an hour looking for the arrow.",
     "note": "The world's oldest complete bows come from Holmegård in Denmark and are about 10,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Holmegaard_bow",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "pil",
     "name": "Arrow",
     "emoji": "🎯",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "sharp",
+      "weapon",
+      "portable"
+    ],
+    "scale": "hand",
     "flavor": "Straight, feathered, and gone. Always gone. Karl has now lost eleven.",
     "note": "Stone points from South Africa suggest people were hunting with bows and arrows 64,000 years ago.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Arrow",
-    "karlMood": "flov",
-    "act": 1
+    "karlMood": "flov"
   },
   {
     "id": "romance",
     "name": "Romance",
     "emoji": "💘",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "body",
     "flavor": "Somebody laughed at Karl's joke. On purpose. He has not been the same since.",
     "note": "The 'Lovers of Valdaro' — two skeletons buried face to face, arms entwined — have lain together for 6,000 years.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Lovers_of_Valdaro",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "familie",
     "name": "Family",
     "emoji": "👨‍👩‍👦",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "A hut, two adults, and a small loud person who has already eaten a rock. Genetics is a circle.",
     "note": "A 4,600-year-old grave at Eulau in Germany holds the earliest genetically proven nuclear family — buried facing one another.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Corded_Ware_culture",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "stammefolk",
     "name": "Tribe",
     "emoji": "🏕️",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Enough people that Karl no longer knows everyone's business. He finds this outrageous.",
     "note": "Hunter-gatherers lived in bands of roughly 25 — small enough that everyone knew everyone, and nobody was in charge.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Band_society",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "grav",
     "name": "Burial",
     "emoji": "⚰️",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "dead",
+      "sacred"
+    ],
+    "scale": "body",
     "flavor": "Karl covers his friend in red ochre and sits with him a long time. Even the boar is quiet.",
     "note": "The Red Lady of Paviland — actually a young man — was buried in Wales with red ochre 33,000 years ago.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Red_Lady_of_Paviland",
-    "karlMood": "ked",
-    "act": 1
+    "karlMood": "ked"
   },
   {
     "id": "eftermaele",
     "name": "Legacy",
     "emoji": "🕊️",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "The story of Karl, painted on the wall so it outlasts him. It is mostly accurate. Mostly.",
     "note": "The urge to be remembered may be humanity's oldest art project — burial goods and grave paintings both say 'this one mattered'.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Funerary_art",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "gave",
     "name": "Gift",
     "emoji": "🎁",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "Karl hands Ugh a pot for no reason. Ugh is deeply suspicious and deeply pleased.",
     "note": "Gift-giving builds obligation — anthropologists argue it, not barter, was the true origin of exchange.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Gift_economy",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "handel",
     "name": "Trade",
     "emoji": "🤝",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "portable",
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Two pots for one axe. Both men walk away convinced they won. That's trade.",
     "note": "Stone Age obsidian travelled hundreds of kilometres from the nearest volcano — the first long-distance supply chains.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Obsidian",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "skal",
     "name": "Shell",
     "emoji": "🐚",
+    "act": 1,
+    "kind": "material",
+    "stuff": "bone",
+    "traits": [
+      "hard",
+      "light",
+      "fragile"
+    ],
+    "scale": "hand",
     "flavor": "Pretty, useless, and therefore extremely valuable. Karl has grasped economics without meaning to.",
     "note": "Perforated shell beads from Morocco are 142,000 years old — the oldest known jewellery.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Shell_money",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "penge",
     "name": "Shell money",
     "emoji": "💰",
+    "act": 1,
+    "kind": "material",
+    "stuff": "bone",
+    "traits": [
+      "hard",
+      "light",
+      "portable"
+    ],
+    "scale": "hand",
     "flavor": "Shells you can swap for anything. Karl now owns forty and refuses to explain why he needs them.",
     "note": "Cowrie shells served as currency across Africa, Asia and the Pacific for thousands of years.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cowrie_shell_money",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "marked",
     "name": "Market",
     "emoji": "🎪",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Three people, six opinions, and one very loud pot salesman. Karl is the salesman.",
     "note": "Marketplaces predate money — people gathered to swap goods, gossip and marriage partners in one trip.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Marketplace",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "hoevding",
     "name": "Chief",
     "emoji": "🫅",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Somebody has to decide where the fire goes. Ugh volunteered. Loudly. Karl is reconsidering democracy.",
     "note": "Early leaders were 'big men' — influence came from generosity and persuasion, not the right to command.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Big_man_(anthropology)",
-    "karlMood": "fornaermet",
-    "act": 1
+    "karlMood": "fornaermet"
   },
   {
     "id": "lov",
     "name": "The first law",
     "emoji": "📜",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Carved into the standing stone: DO NOT TAKE KARL'S GOOD ROCK. History's first legislation is deeply personal.",
     "note": "The oldest written laws, the Code of Ur-Nammu, are 4,000 years old — but unwritten custom governed people long before.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Code_of_Ur-Nammu",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "ritual",
     "name": "Ritual",
     "emoji": "🔮",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "Nobody remembers why they do it. Everybody agrees it would be bad to stop.",
     "note": "Ritual may be older than religion — repeated, meaningful acts bind groups together whatever the belief behind them.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ritual",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "aand",
     "name": "Ancestor spirit",
     "emoji": "👻",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "dead",
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "Karl is certain his grandfather is in that stone. His grandfather is, in fairness, under it.",
     "note": "Ancestor veneration is one of the most widespread beliefs on Earth — the dead stay part of the family.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Veneration_of_the_dead",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "myte",
     "name": "Myth",
     "emoji": "📖",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud",
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "The story of how Karl fought the boar and won. It grows by one boar every telling.",
     "note": "Some myths may be genuinely ancient — folklorists trace certain tale types back thousands of years.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Comparative_mythology",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "solgud",
     "name": "Sun god",
     "emoji": "☀️",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "The stone circle catches the sunrise, and Karl decides the sun did that on purpose, for him.",
     "note": "Sun worship appears almost everywhere — Denmark's 3,400-year-old Trundholm sun chariot hauls the sun across the sky.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Trundholm_sun_chariot",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "maske",
     "name": "Mask",
     "emoji": "🎭",
+    "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "portable",
+      "light",
+      "sacred"
+    ],
+    "scale": "body",
     "flavor": "Behind the mask, Karl is not Karl. He is Something Else. The boar is genuinely unsettled.",
     "note": "The oldest known masks are 9,000-year-old carved stone faces from the Judean desert.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mask",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "dans",
     "name": "Ritual dance",
     "emoji": "🕺",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud",
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "Drums, masks, firelight, and two men moving in ways the human body was not built for.",
     "note": "Dance may be older than speech — 9,000-year-old rock paintings at Bhimbetka in India show rows of dancers.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Bhimbetka_rock_shelters",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "naal",
     "name": "Bone needle",
     "emoji": "🪡",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "bone",
+    "traits": [
+      "sharp",
+      "hard",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A splinter of bone with a hole in it. It took Karl four days. He has aged visibly.",
     "note": "The oldest known sewing needle — bird bone, 50,000 years old — came from Denisova Cave in Siberia.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sewing_needle",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "toej",
     "name": "Sewn clothes",
     "emoji": "👕",
+    "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "insulating",
+      "soft",
+      "dead"
+    ],
+    "scale": "body",
     "flavor": "Hide that fits. Karl turns slowly, admiring himself, and walks into the standing stone.",
     "note": "Sewn, fitted clothing is what let humans survive ice-age winters and spread across the far north.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sewing",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "tatovering",
     "name": "Tattoo",
     "emoji": "🖋️",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "Charcoal rubbed into small cuts. It says something profound. Ugh says it says 'BENT'.",
     "note": "Ötzi the Iceman carries 61 tattoos — charcoal rubbed into fine incisions, mostly over aching joints.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_tattooing",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "spejl",
     "name": "Reflection",
     "emoji": "🪞",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "Still water in a dark pot, and in it — a man. Karl stares. Karl has thoughts. Karl needs a moment.",
     "note": "The oldest manufactured mirrors are 8,000-year-old polished obsidian discs from Çatalhöyük.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mirror",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "haarklip",
     "name": "Haircut",
     "emoji": "💇",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "dead"
+    ],
+    "scale": "body",
     "flavor": "Karl has seen himself and taken action. The result is uneven, dramatic, and entirely his own fault.",
     "note": "Ötzi's hair was trimmed to about 9 cm and his beard was cut — Stone Age people groomed themselves carefully.",
     "sourceUrl": "https://en.wikipedia.org/wiki/%C3%96tzi",
-    "karlMood": "flov",
-    "act": 1
+    "karlMood": "flov"
   },
   {
     "id": "splint",
     "name": "Splint",
     "emoji": "🩼",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "hard",
+      "light",
+      "healing"
+    ],
+    "scale": "body",
     "flavor": "Ugh fell off the standing stone. Karl has bound his leg to a stick. Ugh will walk again, at a cost to his dignity.",
     "note": "Stone Age skeletons show healed fractures — someone set the bone and cared for the patient for weeks.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Splint_(medicine)",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "froe",
     "name": "Seeds",
     "emoji": "🌱",
+    "act": 1,
+    "kind": "material",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "light",
+      "dry"
+    ],
+    "scale": "hand",
     "flavor": "The bits of the berry Karl always spat out. It turns out they were the important bits.",
     "note": "Seeds can wait decades for the right conditions — a 2,000-year-old date palm seed from Masada was successfully sprouted.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Judean_date_palm",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "have",
     "name": "Garden",
     "emoji": "🌻",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "plant",
+    "traits": [
+      "alive",
+      "wet"
+    ],
+    "scale": "camp",
     "flavor": "Karl put seeds in mud on purpose and now stares at the spot daily, willing it to do something.",
     "note": "Before farming came tending — encouraging useful wild plants where they already grew.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Forest_gardening",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "hoest",
     "name": "Harvest",
     "emoji": "🌽",
+    "act": 1,
+    "kind": "food",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "heavy"
+    ],
+    "scale": "camp",
     "flavor": "Food that stayed where he put it and grew while he slept. Karl suspects witchcraft. Karl is delighted.",
     "note": "The first harvests changed everything — surplus food meant storage, settlement, and eventually cities.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Neolithic_Revolution",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "den-lange-vinter",
     "name": "The Long Winter",
     "emoji": "🏔️",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "cold",
+      "wet"
+    ],
+    "scale": "landscape",
     "flavor": "The snow does not stop. The fire does not hold. Karl pulls the hide tighter and watches the white come.",
     "note": "The last glacial maximum, around 20,000 years ago, buried northern Europe under ice a kilometre thick.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Last_Glacial_Maximum",
-    "karlMood": "ked",
-    "act": 1
+    "karlMood": "ked"
   },
   {
     "id": "levende-gud",
     "name": "The Living God",
     "emoji": "🌞",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud",
+      "sacred"
+    ],
+    "scale": "camp",
     "flavor": "Masked, drumming, lit from below — Karl stops being a man in the eyes of the tribe. Nobody corrects them. Least of all Karl.",
     "note": "Divine kingship — rulers treated as gods on earth — appears independently in Egypt, Mesoamerica and Polynesia.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Divine_king",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "jagtfoelge",
     "name": "Hunting party",
     "emoji": "🫂",
     "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Two men and a dog with a plan. The plan is 'shout, and see what happens'. It works.",
     "note": "Cooperative hunting with dogs may be why humans out-competed other predators — and other humans.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Hunting_dog",
@@ -1341,287 +2288,491 @@
     "id": "fossil",
     "name": "Fossil",
     "emoji": "🦕",
+    "act": 1,
+    "kind": "material",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "dead"
+    ],
+    "scale": "hand",
     "flavor": "A bone in the rock, from something enormous and long gone. Karl decides it was a very big boar.",
     "note": "Fossils shaped myths for millennia — Greek griffins may be based on Protoceratops skulls found in Central Asia.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Fossil_legends",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "rav",
     "name": "Amber",
     "emoji": "🟡",
+    "act": 1,
+    "kind": "material",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "Frozen honey that isn't honey. Karl has tried to eat it twice and wear it once. The wearing went better.",
     "note": "Baltic amber is 40-million-year-old tree resin — and it was traded across Europe along the ancient Amber Road.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Amber_Road",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "myg-i-rav",
     "name": "Insect in amber",
     "emoji": "🦟",
+    "act": 1,
+    "kind": "material",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "dead",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A grub, trapped in golden stone, perfectly preserved. Karl shows it to the shaman. The shaman has ideas. Terrible, wonderful ideas.",
     "note": "DNA does not survive in amber — the famous mosquito-in-amber premise is, sadly for everyone, fiction.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Jurassic_Park_(film)",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "monolit",
     "name": "The Monolith",
     "emoji": "⬛",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "heavy",
+      "sacred"
+    ],
+    "scale": "landscape",
     "flavor": "A tall black stone, perfectly smooth, that absolutely nobody in this valley made. Karl touches it. Something in his head clicks.",
     "note": "The monolith in 2001: A Space Odyssey was originally going to be a tetrahedron — Kubrick chose the slab for its clean, unreadable geometry.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Monolith_(Space_Odyssey)",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "besoegende",
     "name": "The Visitors",
     "emoji": "🛸",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "landscape",
     "flavor": "Lights in the sky that the shaman insists are ancestors. Karl insists they are lights. Both are shouting.",
     "note": "'Ancient astronaut' claims are firmly rejected by archaeologists — the evidence says the pyramids were built by well-fed, well-organised humans.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ancient_astronauts",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "agern",
     "name": "Acorn",
     "emoji": "🌰",
+    "act": 1,
+    "kind": "material",
+    "stuff": "plant",
+    "traits": [
+      "light",
+      "edible"
+    ],
+    "scale": "hand",
     "flavor": "One acorn. Karl guards it with a devotion that is frankly disproportionate.",
     "note": "Acorns fed people for millennia — leached of their bitterness, they were a staple across Europe, Asia and California.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Acorn",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "mammut",
     "name": "Mammoth",
     "emoji": "🦣",
+    "act": 1,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "heavy"
+    ],
+    "scale": "camp",
     "flavor": "Like the boar, but the size of a hut, and considerably less impressed by Karl.",
     "note": "Woolly mammoths survived on Wrangel Island until about 4,000 years ago — they were still alive when the pyramids were built.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Woolly_mammoth",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "mammuthus",
     "name": "Mammoth-bone hut",
     "emoji": "🏛️",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "bone",
+    "traits": [
+      "insulating",
+      "dry",
+      "heavy"
+    ],
+    "scale": "camp",
     "flavor": "A house built from the ribs of something enormous. It is warm, it is dry, and it stares at you slightly.",
     "note": "Real mammoth-bone dwellings survive in Ukraine — one used the bones of at least 60 animals, 25,000 years ago.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mammoth_bone_dwelling",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "mel",
     "name": "Flour",
     "emoji": "🍚",
+    "act": 1,
+    "kind": "material",
+    "stuff": "plant",
+    "traits": [
+      "dry",
+      "light",
+      "edible"
+    ],
+    "scale": "hand",
     "flavor": "Grain, crushed between two stones for an hour. Karl's arms hurt and he has produced one handful of dust.",
     "note": "Grinding stones with flour residue have been found from 30,000 years ago — bread-making predates farming.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Quern-stone",
-    "karlMood": "flov",
-    "act": 1
+    "karlMood": "flov"
   },
   {
     "id": "dej",
     "name": "Dough",
     "emoji": "🥟",
+    "act": 1,
+    "kind": "material",
+    "stuff": "plant",
+    "traits": [
+      "soft",
+      "sticky",
+      "wet",
+      "edible"
+    ],
+    "scale": "hand",
     "flavor": "Flour and water, kneaded into something alive-ish. Karl is unsettled by how much it resembles Ugh.",
     "note": "Wild yeast is everywhere — leave flour and water out long enough and dough will start rising on its own.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sourdough",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "broed",
     "name": "Bread",
     "emoji": "🍞",
+    "act": 1,
+    "kind": "food",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "Warm, crusty and gone in ninety seconds. Karl immediately begins making more. This is now his personality.",
     "note": "The oldest known bread — 14,400-year-old charred flatbread from Jordan — was baked 4,000 years before farming began.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_bread",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "kro",
     "name": "The Tavern",
     "emoji": "🍻",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "stone",
+    "traits": [
+      "heavy",
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Bread, brew and a flat stone to sit on. Ugh has started telling the boar story again. Nobody stops him.",
     "note": "Beer and bread grew up together — some archaeologists argue we settled down to brew, not to bake.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_beer",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "oversvoemmelse",
     "name": "The Flood",
     "emoji": "🌊",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "wet",
+      "cold"
+    ],
+    "scale": "landscape",
     "flavor": "The rain did not stop. The river came for the village. Karl saved a pot, the dog, and none of the huts.",
     "note": "Flood myths appear worldwide — many may echo real events, like the rapid sea-level rise at the end of the ice age.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Flood_myth",
-    "karlMood": "ked",
-    "act": 1
+    "karlMood": "ked"
   },
   {
     "id": "sunkne-by",
     "name": "The Sunken Village",
     "emoji": "🏝️",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "wood",
+    "traits": [
+      "wet",
+      "heavy"
+    ],
+    "scale": "landscape",
     "flavor": "Under the water lies a village that Karl swears was glorious. It had two huts. It is getting bigger every time he tells it.",
     "note": "Doggerland — a real inhabited plain between Britain and Denmark — was swallowed by the North Sea around 6000 BC.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Doggerland",
-    "karlMood": "ked",
-    "act": 1
+    "karlMood": "ked"
   },
   {
     "id": "soeuhyre",
     "name": "Lake monster",
     "emoji": "🐉",
+    "act": 1,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "wet"
+    ],
+    "scale": "body",
     "flavor": "Something moved in the water. Probably a log. Karl has decided it was not a log, and the story is already improving.",
     "note": "Lake monster legends span the globe — most sightings turn out to be otters, logs, or wishful thinking.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Lake_monster",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "skovmand",
     "name": "The Hairy One",
     "emoji": "🦧",
+    "act": 1,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "heavy"
+    ],
+    "scale": "body",
     "flavor": "Big. Hairy. Seen only at dusk, only by Karl, and only after brew. The tribe is politely sceptical.",
     "note": "Wild-man legends — from Bigfoot to the Yeti to Europe's medieval woodwose — turn up in almost every forested culture.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Wild_man",
-    "karlMood": "forvirret",
-    "act": 1
+    "karlMood": "forvirret"
   },
   {
     "id": "traening",
     "name": "Training montage",
     "emoji": "🥊",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Karl runs up the hill. Karl punches the log. Karl runs up the hill again. The drums are relentless and so is he.",
     "note": "Athletic training as spectacle is ancient — Greek gymnasia trained citizens for war and games alike.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Gymnasium_(ancient_Greece)",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "mester",
     "name": "The Champion",
     "emoji": "🏅",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "loud"
+    ],
+    "scale": "camp",
     "flavor": "Karl stands atop the standing stone with his arms up. Ugh, defeated, is being a very good sport about it. Mostly.",
     "note": "Winners at the ancient Olympics got an olive wreath — and free meals for life back home.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ancient_Olympic_Games",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "idol",
     "name": "Golden idol",
     "emoji": "🧿",
+    "act": 1,
+    "kind": "material",
+    "stuff": "metal",
+    "traits": [
+      "heavy",
+      "hard",
+      "sacred"
+    ],
+    "scale": "hand",
     "flavor": "A small heavy figure that everyone wants and nobody should have. Karl swaps it for a bag of sand out of pure instinct.",
     "note": "Cult figurines are among the oldest art we have — the Löwenmensch lion-man is 40,000 years old.",
     "sourceUrl": "https://en.wikipedia.org/wiki/L%C3%B6wenmensch_figurine",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "faeldegrav",
     "name": "Booby trap",
     "emoji": "💥",
+    "act": 1,
+    "kind": "structure",
+    "stuff": "stone",
+    "traits": [
+      "weapon",
+      "heavy"
+    ],
+    "scale": "camp",
     "flavor": "Karl protects the shrine with a snare, a boulder and unearned confidence. He triggers it himself within the hour.",
     "note": "Ancient tombs really were trapped — though the famous 'curse of the pharaohs' killed rather fewer people than the newspapers claimed.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Curse_of_the_pharaohs",
-    "karlMood": "flov",
-    "act": 1
+    "karlMood": "flov"
   },
   {
     "id": "helligkrukke",
     "name": "The Sacred Pot",
     "emoji": "🏆",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "clay",
+    "traits": [
+      "vessel",
+      "fragile",
+      "hard",
+      "sacred"
+    ],
+    "scale": "hand",
     "flavor": "The most beautiful pot ever made, kept in the shrine, touched by no one. Ugh has been questing for it for three days. It is eight metres away.",
     "note": "Grail legends grew from medieval romance — the quest matters more than the cup, which is arguably the whole point.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Holy_Grail",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "taellekaep",
     "name": "Tally stick",
     "emoji": "🧮",
+    "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "light",
+      "dry"
+    ],
+    "scale": "hand",
     "flavor": "One notch per pot traded. Karl has invented bookkeeping and immediately regrets the paperwork.",
     "note": "The Ishango bone from Congo, carved with tally marks 20,000 years ago, may be humanity's oldest mathematics.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ishango_bone",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "regnskab",
     "name": "Accounts",
     "emoji": "📊",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "portable"
+    ],
+    "scale": "hand",
     "flavor": "Ugh owes Karl four pots. Karl owes Ugh nothing. Karl keeps the records. Ugh has begun asking questions.",
     "note": "Writing began as accounting — the earliest cuneiform tablets are receipts for grain and beer, not poetry.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cuneiform",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "symbol",
     "name": "Symbol",
     "emoji": "🔣",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "portable"
+    ],
+    "scale": "hand",
     "flavor": "A mark that means something other than itself. Karl has just done the hardest thing a mind can do, and he's not even sweating.",
     "note": "Abstract signs recur in cave art across Europe — the same 32 symbols, used for 30,000 years.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cave_painting",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "skrift",
     "name": "Writing",
     "emoji": "✍️",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "portable"
+    ],
+    "scale": "hand",
     "flavor": "Symbols in rows that hold a thought after the thinker has gone. Karl's first sentence is about his rock. Of course it is.",
     "note": "Writing was invented independently at least three times — in Mesopotamia, China and Mesoamerica.",
     "sourceUrl": "https://en.wikipedia.org/wiki/History_of_writing",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "kort",
     "name": "Map",
     "emoji": "🗺️",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "portable"
+    ],
+    "scale": "hand",
     "flavor": "The valley, scratched on hide. It is not to scale. The boar is drawn much too large, for accuracy of feeling.",
     "note": "A 14,000-year-old stone slab from Spain, the Abauntz map, may be the oldest known map — showing rivers, mountains and herds.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Abauntz_Lamizulo",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "kalender",
     "name": "Calendar",
     "emoji": "📅",
+    "act": 1,
+    "kind": "abstract",
+    "stuff": "none",
+    "traits": [
+      "sacred"
+    ],
+    "scale": "landscape",
     "flavor": "The stones tell Karl when the sun will return. He has never been more powerful or more insufferable.",
     "note": "A 10,000-year-old row of pits in Scotland tracks lunar months — possibly the world's oldest calendar.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Warren_Field",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "havrejsen",
     "name": "The Voyage",
     "emoji": "⛵",
+    "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "wet"
+    ],
+    "scale": "landscape",
     "flavor": "Karl pushes off with the pot-faced friend lashed to the prow, and paddles towards a horizon nobody has ever come back from.",
     "note": "Humans crossed to Australia over 50,000 years ago — one of history's boldest journeys, made in boats we've never found.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Prehistory_of_Australia",
-    "karlMood": "stolt",
-    "act": 1
+    "karlMood": "stolt"
   },
   {
     "id": "smykke",
     "name": "Necklace",
     "emoji": "📿",
     "act": 1,
+    "kind": "material",
+    "stuff": "bone",
+    "traits": [
+      "light",
+      "fragile",
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "Shells on a cord. Karl made it for someone specific and is being extremely casual about the whole thing.",
     "note": "Shell beads from Morocco are 142,000 years old — the oldest known jewellery, and proof we've always wanted to be looked at.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Bead",
@@ -1633,6 +2784,14 @@
     "emoji": "🌾",
     "act": 2,
     "base": true,
+    "kind": "material",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "light",
+      "dry"
+    ],
+    "scale": "hand",
     "flavor": "Tiny seeds on stalks. A woman from the next valley claims you can eat them. Karl is skeptical."
   },
   {
@@ -1641,13 +2800,29 @@
     "emoji": "🐂",
     "act": 2,
     "base": true,
+    "kind": "creature",
+    "stuff": "flesh",
+    "traits": [
+      "alive",
+      "heavy",
+      "tame"
+    ],
+    "scale": "body",
     "flavor": "Big, strong, and surprisingly willing to cooperate. More than can be said for Karl."
   },
   {
     "id": "benkniv",
-    "emoji": "🔪",
     "name": "Bone knife",
+    "emoji": "🔪",
     "act": 1,
+    "kind": "tool",
+    "stuff": "bone",
+    "traits": [
+      "sharp",
+      "hard",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A splinter of bone, worked to an edge. Karl cuts himself learning this.",
     "note": "Bone tools hold an edge poorly but sharpen easily — early humans used them for hides and sinew, not butchery.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Bone_tool",
@@ -1655,9 +2830,17 @@
   },
   {
     "id": "gravestok",
-    "emoji": "🦯",
     "name": "Digging stick",
+    "emoji": "🦯",
     "act": 1,
+    "kind": "tool",
+    "stuff": "wood",
+    "traits": [
+      "digs",
+      "hard",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A stick, hardened in fire. The simplest tool that ever changed a diet.",
     "note": "Fire-hardening a wooden point drives out moisture and roughly doubles its durability — the technique predates stone hafting.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Digging_stick",
@@ -1665,9 +2848,17 @@
   },
   {
     "id": "hammer",
-    "emoji": "🔨",
     "name": "Hammer",
+    "emoji": "🔨",
     "act": 1,
+    "kind": "tool",
+    "stuff": "stone",
+    "traits": [
+      "blunt",
+      "hard",
+      "heavy"
+    ],
+    "scale": "hand",
     "flavor": "A stone lashed to a handle. Karl's arm has been upgraded.",
     "note": "Hafting — binding a stone head to a handle — multiplies force and is one of the great cognitive leaps of the Stone Age.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Hafting",
@@ -1675,9 +2866,17 @@
   },
   {
     "id": "haandkile",
-    "emoji": "⚒️",
     "name": "Hand axe",
+    "emoji": "⚒️",
     "act": 1,
+    "kind": "tool",
+    "stuff": "stone",
+    "traits": [
+      "sharp",
+      "hard",
+      "weapon"
+    ],
+    "scale": "hand",
     "flavor": "Knapped on both faces. The Swiss army knife of the Palaeolithic.",
     "note": "The Acheulean hand axe stayed in use, almost unchanged, for over a million years — the longest-running design in human history.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Hand_axe",
@@ -1685,9 +2884,16 @@
   },
   {
     "id": "skraber",
-    "emoji": "🗡️",
     "name": "Hide scraper",
+    "emoji": "🗡️",
     "act": 1,
+    "kind": "tool",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "blunt"
+    ],
+    "scale": "hand",
     "flavor": "For getting the parts of the animal off the other parts of the animal.",
     "note": "Scrapers are the most common tool in Palaeolithic sites — hide processing was constant, unglamorous work.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Scraper_(archaeology)",
@@ -1695,9 +2901,16 @@
   },
   {
     "id": "slynge",
-    "emoji": "🎽",
     "name": "Sling",
+    "emoji": "🎽",
     "act": 1,
+    "kind": "tool",
+    "stuff": "fibre",
+    "traits": [
+      "weapon",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "A stone, a cord, and a great deal of unearned confidence.",
     "note": "A sling stone can exceed 100 km/h. Roman writers rated slingers above archers at short range.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sling_(weapon)",
@@ -1705,9 +2918,17 @@
   },
   {
     "id": "harpun",
-    "emoji": "🪝",
     "name": "Harpoon",
+    "emoji": "🪝",
     "act": 1,
+    "kind": "tool",
+    "stuff": "bone",
+    "traits": [
+      "sharp",
+      "weapon",
+      "hard"
+    ],
+    "scale": "body",
     "flavor": "Barbed, so the fish keeps the point and Karl keeps the fish.",
     "note": "Barbed bone harpoons from Katanda, Congo, are around 90,000 years old — far older than anyone expected when they were found.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Harpoon",
@@ -1715,9 +2936,18 @@
   },
   {
     "id": "flint",
-    "emoji": "🪚",
     "name": "Heat-treated flint",
+    "emoji": "🪚",
     "act": 1,
+    "kind": "tool",
+    "stuff": "stone",
+    "traits": [
+      "hard",
+      "fragile",
+      "dry",
+      "sharp"
+    ],
+    "scale": "hand",
     "flavor": "Baked in the embers until it flakes like glass. Karl has no idea why this works.",
     "note": "Heating silcrete and flint to ~250 °C changes its structure and makes it far easier to knap — evidence for this goes back 70,000 years.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Heat_treating",
@@ -1725,9 +2955,17 @@
   },
   {
     "id": "spydspids",
-    "emoji": "📌",
     "name": "Stone-tipped spear",
+    "emoji": "📌",
     "act": 1,
+    "kind": "tool",
+    "stuff": "stone",
+    "traits": [
+      "sharp",
+      "weapon",
+      "hard"
+    ],
+    "scale": "body",
     "flavor": "The spear, but with opinions at the end.",
     "note": "Stone-tipped spears appear around 500,000 years ago — before our own species did.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Spear",
@@ -1735,9 +2973,17 @@
   },
   {
     "id": "morter",
-    "emoji": "🪣",
     "name": "Mortar and pestle",
+    "emoji": "🪣",
     "act": 1,
+    "kind": "tool",
+    "stuff": "stone",
+    "traits": [
+      "vessel",
+      "hard",
+      "heavy"
+    ],
+    "scale": "hand",
     "flavor": "A hollow stone and a smaller stone. Karl grinds things. Karl grinds everything.",
     "note": "Grinding stones let people eat seeds and roots that are inedible whole — the technology that made grain worth farming.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mortar_and_pestle",
@@ -1745,9 +2991,17 @@
   },
   {
     "id": "aeg",
-    "emoji": "🥚",
     "name": "Egg",
+    "emoji": "🥚",
     "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "edible",
+      "fragile",
+      "light"
+    ],
+    "scale": "hand",
     "flavor": "Taken from a nest by a man with no sense of consequence.",
     "note": "Ostrich eggshell water flasks from the Kalahari are over 60,000 years old — the egg was container and meal both.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Bird_egg",
@@ -1755,9 +3009,16 @@
   },
   {
     "id": "agerngroed",
-    "emoji": "🥣",
     "name": "Acorn mush",
+    "emoji": "🥣",
     "act": 1,
+    "kind": "food",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "soft"
+    ],
+    "scale": "hand",
     "flavor": "Bitter, grey, filling. Two out of three is enough when you're hungry.",
     "note": "Acorns need leaching to remove tannins — the process was known independently across four continents.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Acorn#Human_consumption",
@@ -1765,9 +3026,17 @@
   },
   {
     "id": "honning",
-    "emoji": "🍯",
     "name": "Honey",
+    "emoji": "🍯",
     "act": 1,
+    "kind": "food",
+    "stuff": "plant",
+    "traits": [
+      "edible",
+      "sticky",
+      "healing"
+    ],
+    "scale": "hand",
     "flavor": "Karl has been stung eleven times. Karl considers this a fair trade.",
     "note": "An 8,000-year-old rock painting in Spain shows a person on ropes raiding a wild bees' nest — honey-hunting is older than farming.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Honey_hunting",
@@ -1775,9 +3044,16 @@
   },
   {
     "id": "flaesk",
-    "emoji": "🍗",
     "name": "Roast pork",
+    "emoji": "🍗",
     "act": 1,
+    "kind": "food",
+    "stuff": "flesh",
+    "traits": [
+      "edible",
+      "dead"
+    ],
+    "scale": "hand",
     "flavor": "Dino was a good pig. Dino was also, ultimately, a pig.",
     "note": "Pigs were domesticated at least 9,000 years ago in Anatolia, independently of their domestication in China.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Domestic_pig",
@@ -1785,9 +3061,16 @@
   },
   {
     "id": "oesters",
-    "emoji": "🦪",
     "name": "Shellfish",
+    "emoji": "🦪",
     "act": 1,
+    "kind": "food",
+    "stuff": "flesh",
+    "traits": [
+      "edible",
+      "wet"
+    ],
+    "scale": "hand",
     "flavor": "Prised off a rock and eaten on the spot. Karl's face suggests regret and triumph in equal measure.",
     "note": "Shell middens along ancient coastlines are among the richest archaeological sites we have — coastal foraging may have fed the first migrations out of Africa.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Midden",
@@ -1795,9 +3078,16 @@
   },
   {
     "id": "baalstegt-aeg",
-    "emoji": "🍳",
     "name": "Fire-baked egg",
+    "emoji": "🍳",
     "act": 1,
+    "kind": "food",
+    "stuff": "flesh",
+    "traits": [
+      "edible",
+      "fragile"
+    ],
+    "scale": "hand",
     "flavor": "Cooked in its own shell in the ashes. Karl burns his fingers and does it again.",
     "note": "Cooking makes protein far easier to digest — a leading theory holds that fire, not hunting, is what let our brains grow.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cooking_hypothesis",
@@ -1805,9 +3095,17 @@
   },
   {
     "id": "sengeleje",
-    "emoji": "🛏️",
     "name": "Grass bedding",
+    "emoji": "🛏️",
     "act": 1,
+    "kind": "material",
+    "stuff": "plant",
+    "traits": [
+      "insulating",
+      "soft",
+      "dry"
+    ],
+    "scale": "body",
     "flavor": "A heap of dry grass. Karl sleeps in it like a very large, very pleased dog.",
     "note": "Sibudu Cave in South Africa preserves 77,000-year-old plant bedding — layered with insect-repelling leaves.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sibudu_Cave",
@@ -1815,9 +3113,18 @@
   },
   {
     "id": "dunkappe",
-    "emoji": "🧤",
     "name": "Down cloak",
+    "emoji": "🧤",
     "act": 1,
+    "kind": "material",
+    "stuff": "flesh",
+    "traits": [
+      "insulating",
+      "dead",
+      "soft",
+      "portable"
+    ],
+    "scale": "body",
     "flavor": "Feathers stuffed between two hides. Karl looks absurd and is deeply, gloriously warm.",
     "note": "Trapped air, not the feathers themselves, does the insulating — the same principle as every winter coat since.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Thermal_insulation",
@@ -1825,9 +3132,15 @@
   },
   {
     "id": "klyngen",
-    "emoji": "🤗",
     "name": "The huddle",
+    "emoji": "🤗",
     "act": 1,
+    "kind": "phenomenon",
+    "stuff": "none",
+    "traits": [
+      "insulating"
+    ],
+    "scale": "body",
     "flavor": "Karl and the neighbour, back to back, saying nothing. It is the warmest either of them has been.",
     "note": "Huddling is the oldest thermoregulation strategy there is — shared body heat cuts individual heat loss dramatically.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Huddling",
@@ -1835,9 +3148,17 @@
   },
   {
     "id": "mudderlag",
-    "emoji": "🫧",
     "name": "Mud coat",
+    "emoji": "🫧",
     "act": 1,
+    "kind": "material",
+    "stuff": "clay",
+    "traits": [
+      "insulating",
+      "wet",
+      "sticky"
+    ],
+    "scale": "body",
     "flavor": "Smeared head to toe. It keeps the cold out and everyone else at a distance.",
     "note": "Mud coating is used by elephants and pigs against sun and parasites; it insulates as it dries.",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mud_bath",
