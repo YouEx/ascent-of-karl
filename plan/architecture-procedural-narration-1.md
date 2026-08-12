@@ -4,13 +4,20 @@ version: 1.0
 date_created: 2026-08-12
 last_updated: 2026-08-12
 owner: Martin (YouEx)
-status: 'Planned'
+status: 'In progress'
 tags: [architecture, engine, narrator, content, tooling, feature]
 ---
 
 # Introduction
 
-![Status: Planned](https://img.shields.io/badge/status-Planned-blue)
+![Status: In progress](https://img.shields.io/badge/status-In%20progress-yellow)
+
+> **Fase 1-3 er leveret og udrullet** (2026-08-12). Motoren dømmer på tags,
+> hver dom bærer bevismateriale, og 306 varianter fordelt på 51 grupper giver
+> hvert par et svar der nævner begge elementer ved navn. Målt på 2.933
+> fiasko-ture svarer grammatikken på 62,3 %; resten tager frister, hint og
+> slutninger, som alle er mere presserende. `genericFailure` nås aldrig —
+> håndhævet af `tests/grammar.test.ts`, ikke af skøn.
 
 Spillet har 187 elementer og 225 opskrifter. Det er 17.578 mulige par, hvoraf 225 er skrevet. De resterende 17.353 deler otte generiske hånlinjer.
 
@@ -58,12 +65,12 @@ Planen er en ombygning af udfaldsmodellen, ikke en omskrivning af spillet. Motor
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-001 | Byg `tools/sim.mjs`: kør N gennemspilninger på den rigtige `Engine` og udskriv mødefordelingen af par. To politikker: `random` (baseline, allerede målt: 1.657 par, 80,6 % fiasko) og `greedy` (foretrækker par der deler `stuff`-tag eller har givet fund før — en proxy for en rigtig spiller). Skriv resultatet til `docs/design/pair-frequency.json` som rangeret liste `[{pair, count, share, cumShare}]`. Commit output. | | |
-| TASK-002 | Udvid `ElementDef` i `src/core/types.ts` med taksonomi: `kind` (material \| tool \| food \| creature \| person \| structure \| phenomenon \| abstract), `stuff` (stone \| wood \| plant \| flesh \| clay \| metal \| water \| fire \| fibre \| bone \| none), `traits` (streng-array fra fast liste: hard, soft, sharp, blunt, hot, cold, wet, dry, alive, dead, edible, heavy, light, fragile, sticky), `scale` (hand \| body \| camp \| landscape). Alle felter valgfrie i typen, obligatoriske i validatoren, så migrationen kan ske i to skridt. | | |
-| TASK-003 | Skriv `tools/tag_elements.py` efter mønstret i `tools/generate_lines.py`: send hvert element (id, navn, flavor, karlMood) til Groq/Ollama og bed om taksonomi som JSON. Skriv til `content/drafts/element-tags.json`. **Rører aldrig `content/elements.json`** (CON-005). | | |
-| TASK-004 | Gennemgå de 187 udkast i hånden og flet dem ind i `content/elements.json`. Prioritér de 40 elementer der optræder oftest i `pair-frequency.json` — deres tags er dem spilleren møder. | | |
-| TASK-005 | Tilføj validatorregler i `tools/validate.py`: hvert element skal have `kind`, `stuff`, `scale` og mindst ét `traits`-element; alle værdier skal være i de tilladte mængder; ukendt trait er en fejl, ikke en advarsel. | | |
-| TASK-006 | Rapportér i `docs/design/pair-frequency.json`-noten hvor mange af de 63 elementer, der ikke indgår i nogen opskrift, ligger i toppen af mødefordelingen. Disse er spillets blindgyder og får deres egen dom (`inert`) i fase 2. | | |
+| TASK-001 | Byg `tools/sim.mjs`: kør N gennemspilninger på den rigtige `Engine` og udskriv mødefordelingen af par. To politikker: `random` (baseline, allerede målt: 1.657 par, 80,6 % fiasko) og `greedy` (foretrækker par der deler `stuff`-tag eller har givet fund før — en proxy for en rigtig spiller). Skriv resultatet til `docs/design/pair-frequency.json` som rangeret liste `[{pair, count, share, cumShare}]`. Commit output. | ✅ | 2026-08-11 |
+| TASK-002 | Udvid `ElementDef` i `src/core/types.ts` med taksonomi: `kind` (material \| tool \| food \| creature \| person \| structure \| phenomenon \| abstract), `stuff` (stone \| wood \| plant \| flesh \| clay \| metal \| water \| fire \| fibre \| bone \| none), `traits` (streng-array fra fast liste: hard, soft, sharp, blunt, hot, cold, wet, dry, alive, dead, edible, heavy, light, fragile, sticky), `scale` (hand \| body \| camp \| landscape). Alle felter valgfrie i typen, obligatoriske i validatoren, så migrationen kan ske i to skridt. | ✅ | 2026-08-11 |
+| TASK-003 | Skriv `tools/tag_elements.py` efter mønstret i `tools/generate_lines.py`: send hvert element (id, navn, flavor, karlMood) til Groq/Ollama og bed om taksonomi som JSON. Skriv til `content/drafts/element-tags.json`. **Rører aldrig `content/elements.json`** (CON-005). | ✅ | 2026-08-11 |
+| TASK-004 | Gennemgå de 187 udkast i hånden og flet dem ind i `content/elements.json`. Prioritér de 40 elementer der optræder oftest i `pair-frequency.json` — deres tags er dem spilleren møder. | ✅ | 2026-08-11 |
+| TASK-005 | Tilføj validatorregler i `tools/validate.py`: hvert element skal have `kind`, `stuff`, `scale` og mindst ét `traits`-element; alle værdier skal være i de tilladte mængder; ukendt trait er en fejl, ikke en advarsel. | ✅ | 2026-08-11 |
+| TASK-006 | Rapportér i `docs/design/pair-frequency.json`-noten hvor mange af de 63 elementer, der ikke indgår i nogen opskrift, ligger i toppen af mødefordelingen. Disse er spillets blindgyder og får deres egen dom (`inert`) i fase 2. | ✅ | 2026-08-11 |
 
 ### Implementation Phase 2
 
@@ -71,14 +78,14 @@ Planen er en ombygning af udfaldsmodellen, ikke en omskrivning af spillet. Motor
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-007 | Erstat `{ kind: "nothing" }` i `src/core/types.ts` med `{ kind: "nofuse"; a: ElementDef; b: ElementDef; verdict: Verdict; evidence: VerdictEvidence }`. Behold `"nothing"` som deprecated alias i én release, så saves og tests kan migrere. | | |
-| TASK-008 | Opret `src/core/verdict.ts` med den rene klassifikator `judgePair(engine, a, b): { verdict, evidence }`. Ingen tilfældighed, ingen tekst, ingen afhængighed af fortælleren. Rækkefølgen er prioriteret og første match vinder. | | |
-| TASK-009 | Implementér dom `locked`: der findes en `ComboDef` for parret, men `flagsAllow` eller akt spærrer den. Evidens: de manglende flag. **Retter REQ-004.** Kræver at `Engine.matchCombo` udstiller de frafiltrerede kandidater i stedet for at kaste dem væk. | | |
-| TASK-010 | Implementér dom `near-miss`: ét af de to elementer indgår i en rigtig opskrift sammen med et element spilleren allerede har opdaget. Evidens: den rigtige partner og resultatet. Dette er den mest værdifulde dom — den er både komisk ("halvt rigtigt") og den eneste ærlige kilde til et hint. | | |
-| TASK-011 | Implementér de resterende domme: `self` (a+a uden selvopskrift), `inert` (mindst ét element indgår i ingen opskrift overhovedet), `clash` (tags udelukker hinanden, fx hot+wet, alive+edible-uden-værktøj, fragile+heavy), `plausible` (deler `stuff` eller er tool+material / fire+food — et rigtig godt indfald der bare ikke er skrevet), `absurd` (afstand i `kind` og `scale` er stor). `plausible` og `absurd` er default-parret: alt der ikke faldt i en tidligere dom er ét af de to. | | |
-| TASK-012 | Skriv fordelingsrapporten `tools/verdict_report.mjs`: kør `judgePair` på alle 17.578 par og på `pair-frequency.json`-hovedet, og udskriv fordelingen pr. dom. Mål: ingen dom under 3 % og ingen over 45 % i den vægtede fordeling — ellers er taksonomien for grov, og TASK-011's tærskler skal justeres. | | |
-| TASK-013 | Opdatér alle forbrugere af `CombineOutcome`: `src/ui/main.ts`, `src/narrator/narrator.ts`, `src/core/challenge.ts`, `src/ui/playtest.ts`. Compileren udpeger dem, når `"nothing"` fjernes fra unionen. | | |
-| TASK-014 | Kobl dommen til `suggests`-hukommelsen: når fortælleren hinter ud fra en `near-miss`- eller `locked`-dom, registreres parret via den eksisterende `rememberSuggestions`-vej. Et hint udledt af en dom kan ikke lyve (REQ-005). | | |
+| TASK-007 | Erstat `{ kind: "nothing" }` i `src/core/types.ts` med `{ kind: "nofuse"; a: ElementDef; b: ElementDef; verdict: Verdict; evidence: VerdictEvidence }`. Behold `"nothing"` som deprecated alias i én release, så saves og tests kan migrere. | ✅ | 2026-08-12 |
+| TASK-008 | Opret `src/core/verdict.ts` med den rene klassifikator `judgePair(engine, a, b): { verdict, evidence }`. Ingen tilfældighed, ingen tekst, ingen afhængighed af fortælleren. Rækkefølgen er prioriteret og første match vinder. | ✅ | 2026-08-12 |
+| TASK-009 | Implementér dom `locked`: der findes en `ComboDef` for parret, men `flagsAllow` eller akt spærrer den. Evidens: de manglende flag. **Retter REQ-004.** Kræver at `Engine.matchCombo` udstiller de frafiltrerede kandidater i stedet for at kaste dem væk. | ✅ | 2026-08-12 |
+| TASK-010 | Implementér dom `near-miss`: ét af de to elementer indgår i en rigtig opskrift sammen med et element spilleren allerede har opdaget. Evidens: den rigtige partner og resultatet. Dette er den mest værdifulde dom — den er både komisk ("halvt rigtigt") og den eneste ærlige kilde til et hint. | ✅ | 2026-08-12 |
+| TASK-011 | Implementér de resterende domme: `self` (a+a uden selvopskrift), `inert` (mindst ét element indgår i ingen opskrift overhovedet), `clash` (tags udelukker hinanden, fx hot+wet, alive+edible-uden-værktøj, fragile+heavy), `plausible` (deler `stuff` eller er tool+material / fire+food — et rigtig godt indfald der bare ikke er skrevet), `absurd` (afstand i `kind` og `scale` er stor). `plausible` og `absurd` er default-parret: alt der ikke faldt i en tidligere dom er ét af de to. | ✅ | 2026-08-12 |
+| TASK-012 | Skriv fordelingsrapporten `tools/verdict_report.mjs`: kør `judgePair` på alle 17.578 par og på `pair-frequency.json`-hovedet, og udskriv fordelingen pr. dom. Mål: ingen dom under 3 % og ingen over 45 % i den vægtede fordeling — ellers er taksonomien for grov, og TASK-011's tærskler skal justeres. | ✅ | 2026-08-12 |
+| TASK-013 | Opdatér alle forbrugere af `CombineOutcome`: `src/ui/main.ts`, `src/narrator/narrator.ts`, `src/core/challenge.ts`, `src/ui/playtest.ts`. Compileren udpeger dem, når `"nothing"` fjernes fra unionen. | ✅ | 2026-08-12 |
+| TASK-014 | Kobl dommen til `suggests`-hukommelsen: når fortælleren hinter ud fra en `near-miss`- eller `locked`-dom, registreres parret via den eksisterende `rememberSuggestions`-vej. Et hint udledt af en dom kan ikke lyve (REQ-005). | ✅ | 2026-08-12 |
 
 ### Implementation Phase 3
 
@@ -86,12 +93,12 @@ Planen er en ombygning af udfaldsmodellen, ikke en omskrivning af spillet. Motor
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-015 | Dekonstruér de eksisterende håndskrevne replikker: gennemgå de 71 `narratorLine`-replikker og de otte generiske og udtræk deres byggedele (optakt, vending, punchline-form). Grammatikkens dele skal være forfatterens egne ord, ellers falder stemmen fra hinanden mellem lagene. Skriv resultatet til `content/narrator/grammar-act-1.json`. | | |
-| TASK-016 | Definér grammatikformatet: regler nøglet på `verdict` og valgfri tag-signatur, fx `plausible:stone+wood`, med fald tilbage til `plausible:*`. Hver regel har varianter og kan bruge `{a}`, `{b}`, `{trait}`, `{mood}`, `{partner}` (fra evidensen). Genbrug `NarratorLineDef`-formen, så validator, lyd-opslag og varianthukommelse virker uændret. | | |
-| TASK-017 | Byg `src/narrator/grammar.ts`: `renderVerdict(state, outcome): SpokenLine`. Vælger regel på mest specifikke tag-signatur, vælger variant gennem den eksisterende `rand()`/`pickVariant`-mekanik, udfylder pladsholdere gennem den eksisterende `fill`. Ingen ny RNG (CON-002). | | |
-| TASK-018 | Tilføj anti-gentagelse på tværs af domme: gem de sidste K (start K=6) afgivne grammatikreplik-id'er i `NarratorState` og udeluk dem. Med ~40 fiaskoer pr. run er gentagelse den største trussel mod illusionen. | | |
-| TASK-019 | Indsæt grammatikken i `reactTo` som nyt trin lige før `genericFailureLine`. Den generiske pulje bliver dermed uopnåelig i praksis og bevares kun som nødudgang, hvis grammatikken mangler en regel — hvilket TEST-004 forbyder. | | |
-| TASK-020 | Skriv mindst 6 varianter pr. dom for de otte domme (≈ 48 regler) og tag-specialiseringer for de 12 hyppigste `stuff`-par fra TASK-001. | | |
+| TASK-015 | Dekonstruér de eksisterende håndskrevne replikker: gennemgå de 71 `narratorLine`-replikker og de otte generiske og udtræk deres byggedele (optakt, vending, punchline-form). Grammatikkens dele skal være forfatterens egne ord, ellers falder stemmen fra hinanden mellem lagene. Skriv resultatet til `content/narrator/grammar-act-1.json`. | ✅ | 2026-08-12 |
+| TASK-016 | Definér grammatikformatet: regler nøglet på `verdict` og valgfri tag-signatur, fx `plausible:stone+wood`, med fald tilbage til `plausible:*`. Hver regel har varianter og kan bruge `{a}`, `{b}`, `{trait}`, `{mood}`, `{partner}` (fra evidensen). Genbrug `NarratorLineDef`-formen, så validator, lyd-opslag og varianthukommelse virker uændret. | ✅ | 2026-08-12 |
+| TASK-017 | Byg `src/narrator/grammar.ts`: `renderVerdict(state, outcome): SpokenLine`. Vælger regel på mest specifikke tag-signatur, vælger variant gennem den eksisterende `rand()`/`pickVariant`-mekanik, udfylder pladsholdere gennem den eksisterende `fill`. Ingen ny RNG (CON-002). | ✅ | 2026-08-12 |
+| TASK-018 | Tilføj anti-gentagelse på tværs af domme: gem de sidste K (start K=6) afgivne grammatikreplik-id'er i `NarratorState` og udeluk dem. Med ~40 fiaskoer pr. run er gentagelse den største trussel mod illusionen. | ✅ | 2026-08-12 |
+| TASK-019 | Indsæt grammatikken i `reactTo` som nyt trin lige før `genericFailureLine`. Den generiske pulje bliver dermed uopnåelig i praksis og bevares kun som nødudgang, hvis grammatikken mangler en regel — hvilket TEST-004 forbyder. | ✅ | 2026-08-12 |
+| TASK-020 | Skriv mindst 6 varianter pr. dom for de otte domme (≈ 48 regler) og tag-specialiseringer for de 12 hyppigste `stuff`-par fra TASK-001. | ✅ | 2026-08-12 |
 
 ### Implementation Phase 4
 
