@@ -54,6 +54,8 @@ export interface ActiveChallenge {
   startedAtPage: number;
   /** Somre tilbage til at finde en udvej */
   turnsLeft: number;
+  /** Har denne trussel været her før? Så er den en genkomst, ikke en prøve. */
+  repeat?: boolean;
 }
 
 export interface ChallengeState {
@@ -62,12 +64,14 @@ export interface ChallengeState {
   gap: number;
   /** Challenges der allerede har været — gentages ikke i samme run */
   seen: string[];
+  /** Side, hvor hver trussel sidst blev udløst. Styrer afkølingen. */
+  lastSeenAt?: Record<string, number>;
   /** Har dette run mødt overhovedet ét? Driver "Carl the Lucky". */
   everSpawned: boolean;
 }
 
 export function freshChallengeState(): ChallengeState {
-  return { active: null, gap: 0, seen: [], everSpawned: false };
+  return { active: null, gap: 0, seen: [], lastSeenAt: {}, everSpawned: false };
 }
 
 /** Deterministisk hash → [0,1). Samme input giver altid samme tal. */
@@ -99,9 +103,19 @@ export function rollChallenge(
   seed: number,
 ): ChallengeDef | null {
   if (state.active) return null;
-  const pool = content.challenges.filter(
-    (c) => !state.seen.includes(c.id) && page >= (c.minPage ?? 1),
-  );
+  // En trussel er ude af puljen, indtil dens afkøling er gået — og for altid,
+  // hvis den ikke er repeatable. Uden afkølingen kunne ulvene komme igen to
+  // somre efter, de gik.
+  const pool = content.challenges.filter((c) => {
+    if (page < (c.minPage ?? 1)) return false;
+    if (!state.seen.includes(c.id)) return true;
+    if (!c.repeatable) return false;
+    // `seen` afgør OM truslen har været her, `lastSeenAt` kun HVORNÅR. Et gammelt
+    // save har det første og ikke det sidste; dér falder afkølingen tilbage til
+    // nuet, så en gammel spiller aldrig får ulvene i hovedet ved indlæsning.
+    const sidst = state.lastSeenAt?.[c.id] ?? page;
+    return page - sidst >= (c.cooldown ?? 12);
+  });
   if (pool.length === 0) return null;
   if (hash01(seed, "spawn", page) >= spawnChanceForGap(state.gap)) return null;
   const pick = Math.floor(hash01(seed, "pick", page) * pool.length);

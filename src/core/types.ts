@@ -344,6 +344,14 @@ export interface ChallengeDef {
   failEnding: string;
   /** Dukker tidligst op på denne side — giver plads til at nå værktøjet */
   minPage?: number;
+  /**
+   * Må truslen komme igen? Uden dette tørrer puljen ud efter tre challenges,
+   * og resten af livet er uden indsats. Ulve holder ikke op med at findes,
+   * fordi man har set dem én gang.
+   */
+  repeatable?: boolean;
+  /** Somre der skal gå, før den samme trussel kan vende tilbage. */
+  cooldown?: number;
 }
 
 /**

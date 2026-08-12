@@ -189,7 +189,9 @@
       "sten",
       "mudder"
     ],
-    "result": "bautasten"
+    "result": "bautasten",
+    "solves": "mening",
+    "narratorLine": "story-bautasten"
   },
   {
     "pair": [
@@ -245,7 +247,9 @@
       "stamme",
       "pind"
     ],
-    "result": "tromme"
+    "result": "tromme",
+    "solves": "kedsomhed",
+    "narratorLine": "story-tromme"
   },
   {
     "pair": [
@@ -1845,7 +1849,9 @@
       "roeg",
       "tromme"
     ],
-    "result": "nabo"
+    "result": "nabo",
+    "solves": "ensomhed",
+    "narratorLine": "story-nabo"
   },
   {
     "pair": [

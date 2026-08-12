@@ -46,6 +46,48 @@
         "hint-sult-2",
         "hint-sult-3"
       ]
+    },
+    {
+      "id": "kedsomhed",
+      "name": "Karl is bored",
+      "icon": "🥁",
+      "tint": "warm",
+      "description": "Karl has survived the day. The day, it turns out, is very long.",
+      "required": false,
+      "pull": "pull-kedsomhed",
+      "hints": [
+        "hint-kedsomhed-1",
+        "hint-kedsomhed-2",
+        "hint-kedsomhed-3"
+      ]
+    },
+    {
+      "id": "ensomhed",
+      "name": "Karl is alone",
+      "icon": "👥",
+      "tint": "cold",
+      "description": "Karl has invented several things and has nobody to show them to.",
+      "required": false,
+      "pull": "pull-ensomhed",
+      "hints": [
+        "hint-ensomhed-1",
+        "hint-ensomhed-2",
+        "hint-ensomhed-3"
+      ]
+    },
+    {
+      "id": "mening",
+      "name": "Karl wonders why",
+      "icon": "🌀",
+      "tint": "cold",
+      "description": "Warm, fed, accompanied. And still awake at night, thinking.",
+      "required": false,
+      "pull": "pull-mening",
+      "hints": [
+        "hint-mening-1",
+        "hint-mening-2",
+        "hint-mening-3"
+      ]
     }
   ]
 }

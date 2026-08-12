@@ -1642,6 +1642,150 @@
         "Somewhere, the natural course of civilisation waits patiently. Karl is doing this instead.",
         "That belongs in a different kind of book. It is going in this one."
       ]
+    },
+    {
+      "id": "pull-kedsomhed",
+      "variants": [
+        "Karl is warm, fed and equipped. He now discovers the next great problem of civilisation: the evening.",
+        "Survival handled. Karl sits down. Nothing happens. Nothing continues to happen. This, historically, is when culture gets invented.",
+        "Karl has time on his hands for the first time in his life, and no idea what it is for.",
+        "The needs are met. What remains is a very long day and a man with nothing to do in it.",
+        "Karl stares at the fire. The fire, being a fire, does not stare back. He would like something that answers.",
+        "History's next demand is entertainment. Karl has no concept of it yet, which has never stopped him before."
+      ]
+    },
+    {
+      "id": "hint-kedsomhed-1",
+      "variants": [
+        "There is a silence out here that Karl is starting to take personally. Something loud would help.",
+        "Karl needs noise. Any noise. Ideally noise he made on purpose."
+      ]
+    },
+    {
+      "id": "hint-kedsomhed-2",
+      "variants": [
+        "Hollow things make sound when struck. Karl has struck a great many things by now, but never for the sound of it.",
+        "A log is not a chair. A log is a thing you hit. That distinction is the whole of music."
+      ]
+    },
+    {
+      "id": "hint-kedsomhed-3",
+      "variants": [
+        "Take the log. Take the stick. Hit the first with the second. Repeat until someone tells you to stop — that someone will be me.",
+        "Log and stick. Not to build with. To beat. Rhythm is what happens when a man runs out of other ideas."
+      ],
+      "suggests": [
+        [
+          "stamme",
+          "pind"
+        ]
+      ]
+    },
+    {
+      "id": "pull-ensomhed",
+      "variants": [
+        "Karl has invented fire, tools and a drum. He has performed to an audience of grass.",
+        "Everything Karl makes, he makes alone, and then turns around to a landscape that has no opinion about it.",
+        "There is a hole in Karl's evening that is not shaped like food or warmth. It is shaped like somebody else.",
+        "Karl talks to himself now. He is, in fairness, an excellent listener.",
+        "The next thing Karl needs cannot be struck, cooked or sharpened. It has to agree to turn up.",
+        "History would like Karl to meet someone. Karl would like that too, and has no idea how one goes about it."
+      ]
+    },
+    {
+      "id": "hint-ensomhed-1",
+      "variants": [
+        "Somewhere out there is someone else. They will not find themselves.",
+        "Karl needs company — a person, or at the very least an animal that has decided to stay."
+      ]
+    },
+    {
+      "id": "hint-ensomhed-2",
+      "variants": [
+        "Sound travels further than a man does. So does smoke. Karl has made both and used neither to say here I am.",
+        "A wolf is company that has not yet been asked properly. Feeding it is the asking."
+      ]
+    },
+    {
+      "id": "hint-ensomhed-3",
+      "variants": [
+        "Smoke and a drum. One says where, the other says when. Ugh will do the rest, as Ugh always does.",
+        "Beat the drum. Send up smoke. Somebody will come and complain about the noise, and that somebody is the point."
+      ],
+      "suggests": [
+        [
+          "roeg",
+          "tromme"
+        ]
+      ]
+    },
+    {
+      "id": "pull-mening",
+      "variants": [
+        "Warm, fed, and no longer alone. Karl lies awake anyway. This is new, and it is not going away.",
+        "Karl has solved every problem he can point at. What is left is the one he cannot.",
+        "Somewhere between the drum and the neighbour, Karl started wondering what any of it was for. I have no notes to offer here.",
+        "The last hunger is not in the stomach. Karl has nothing to hit with it, which is upsetting him.",
+        "Karl would like the world to mean something. The world, so far, has been noncommittal.",
+        "Everything Karl has made so far had a use. The next thing will not, and that is exactly why it matters."
+      ]
+    },
+    {
+      "id": "hint-mening-1",
+      "variants": [
+        "Karl needs to make something that is good for nothing at all. That is harder than it sounds.",
+        "Not a tool. Not a meal. Something that just stands there and means."
+      ]
+    },
+    {
+      "id": "hint-mening-2",
+      "variants": [
+        "Stones outlast men. Karl has noticed. Karl is taking it badly and may be about to do something about it.",
+        "A stone lying down is geology. A stone standing up is a statement."
+      ]
+    },
+    {
+      "id": "hint-mening-3",
+      "variants": [
+        "Stone and mud. Raise it. Let it stand there being useless for four thousand years — that is the whole idea.",
+        "Set the stone upright in the mud. It will do nothing, forever, on purpose. Karl will find this deeply satisfying."
+      ],
+      "suggests": [
+        [
+          "sten",
+          "mudder"
+        ]
+      ]
+    },
+    {
+      "id": "story-tromme",
+      "variants": [
+        "Karl hits the log with the stick. Then again. Then in a pattern. Ladies and gentlemen: the first time a human being made a noise on purpose for no reason at all.",
+        "Stick meets log. Log answers. Karl freezes, then does it again to check it wasn't an accident. It wasn't. Music exists now, and it is his fault.",
+        "A hollow log, a stick, and a man with an evening to fill. The rhythm he finds will outlive him by several thousand years and improve very slowly.",
+        "Thump. Thump. Thump-thump. Karl has discovered that time can be divided into pieces, and that the pieces can be enjoyed. Nobody has slept properly since.",
+        "He beats the log. The valley beats it back a half-second later. Karl has invented both percussion and the echo, and takes credit for neither."
+      ]
+    },
+    {
+      "id": "story-nabo",
+      "variants": [
+        "Smoke goes up. The drum goes on. And over the ridge, drawn by noise and the smell of someone else's fire, comes Ugh — a man with opinions, a limp, and nowhere better to be.",
+        "Somebody heard. Ugh arrives at the edge of the firelight, looks at the drum, looks at Karl, and sits down without being asked. This is how every friendship since has started.",
+        "The drumming carries further than Karl thought. So does the smoke. Ugh follows both, arrives unannounced, and immediately has notes on the fire.",
+        "Karl made a noise and the world sent someone to investigate. Ugh is not much — but Ugh is not nobody, and Karl has been talking to grass for weeks.",
+        "Out of the dusk walks Ugh, uninvited, unimpressed, and entirely willing to stay for dinner. Karl has never been happier to be interrupted."
+      ]
+    },
+    {
+      "id": "story-bautasten",
+      "variants": [
+        "Karl hauls the stone upright and packs mud around its foot. It does nothing. It will do nothing for four thousand years. He looks at it for a long time and feels, obscurely, better.",
+        "Up goes the stone. It is not a tool, not a shelter, not food. It is a stone that stands, because Karl decided it should. Archaeologists will write entire careers about this afternoon.",
+        "He plants the stone in mud and steps back. No warmth, no dinner, no advantage of any kind — just a mark that says someone was here and meant it.",
+        "The stone stands. Karl stands next to it. Two vertical things on an empty plain, one of which will still be there long after the other is forgotten, and both of them know it.",
+        "Karl raises a stone for no reason he can explain. It is the first useless thing he has ever built, and therefore the first thing that was truly his."
+      ]
     }
   ],
   "behavior": {

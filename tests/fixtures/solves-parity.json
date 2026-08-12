@@ -1,7 +1,10 @@
 {
   "_kommentar": "Genereret af tools/parity_fixture.py ud fra tools/predicate_report.py's satisfies(). Facit for tvillingen i src/core/solves.ts. Regenerer med: npm run predicates:fixture",
   "needs": [
+    "ensomhed",
+    "kedsomhed",
     "kulde",
+    "mening",
     "sult",
     "sygdom",
     "toerke",
@@ -66,7 +69,9 @@
       "toerke"
     ],
     "stamme": [],
-    "nabo": [],
+    "nabo": [
+      "ensomhed"
+    ],
     "rullesten": [],
     "hjul": [],
     "planker": [],
@@ -81,13 +86,16 @@
       "vaerktoej"
     ],
     "bautasten": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "stenkreds": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "tamsvin": [
-      "ulve"
+      "ulve",
+      "ensomhed"
     ],
     "fisk": [
       "sult"
@@ -99,13 +107,19 @@
     "hulemaleri": [
       "sygdom"
     ],
-    "tromme": [],
-    "rockband": [],
+    "tromme": [
+      "kedsomhed"
+    ],
+    "rockband": [
+      "kedsomhed"
+    ],
     "grottebryg": [
       "sult",
       "toerke"
     ],
-    "stenalderfest": [],
+    "stenalderfest": [
+      "kedsomhed"
+    ],
     "ven": [
       "vaerktoej",
       "toerke"
@@ -147,10 +161,12 @@
     "roegsignaler": [],
     "helligsted": [
       "ulve",
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "shaman": [
-      "sygdom"
+      "sygdom",
+      "ensomhed"
     ],
     "syner": [],
     "kul": [],
@@ -174,12 +190,18 @@
       "vaerktoej",
       "ulve"
     ],
-    "slagsmaal": [],
-    "knoglekast": [],
+    "slagsmaal": [
+      "kedsomhed"
+    ],
+    "knoglekast": [
+      "kedsomhed"
+    ],
     "fugl": [],
     "foenix": [],
     "fjer": [],
-    "floejte": [],
+    "floejte": [
+      "kedsomhed"
+    ],
     "farvet-skind": [
       "kulde",
       "sygdom"
@@ -188,26 +210,41 @@
       "kulde",
       "sygdom"
     ],
-    "modeshow": [],
+    "modeshow": [
+      "kedsomhed"
+    ],
     "lerfigur": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "haandaftryk": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
-    "stenkoncert": [],
-    "trommesolo": [],
+    "stenkoncert": [
+      "kedsomhed"
+    ],
+    "trommesolo": [
+      "kedsomhed"
+    ],
     "galleri": [
       "ulve",
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "garage": [
       "ulve"
     ],
     "drive-in": [],
-    "trafikprop": [],
-    "stenspil": [],
-    "brydekamp": [],
+    "trafikprop": [
+      "kedsomhed"
+    ],
+    "stenspil": [
+      "kedsomhed"
+    ],
+    "brydekamp": [
+      "kedsomhed"
+    ],
     "kaelk": [
       "vaerktoej"
     ],
@@ -218,13 +255,20 @@
       "toerke",
       "sygdom"
     ],
-    "kroning": [],
-    "legende": [],
+    "kroning": [
+      "kedsomhed"
+    ],
+    "legende": [
+      "kedsomhed"
+    ],
     "ind-i-maleriet": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "flyveforsoeg": [],
-    "krig": [],
+    "krig": [
+      "kedsomhed"
+    ],
     "helbredelse": [
       "sygdom"
     ],
@@ -241,7 +285,8 @@
     "lyn": [
       "kulde",
       "ulve",
-      "sygdom"
+      "sygdom",
+      "kedsomhed"
     ],
     "sne": [
       "toerke"
@@ -266,7 +311,8 @@
     ],
     "ulv": [],
     "hund": [
-      "ulve"
+      "ulve",
+      "ensomhed"
     ],
     "bue": [
       "vaerktoej",
@@ -276,39 +322,63 @@
       "vaerktoej",
       "ulve"
     ],
-    "romance": [],
-    "familie": [],
-    "stammefolk": [],
+    "romance": [
+      "kedsomhed"
+    ],
+    "familie": [
+      "kedsomhed"
+    ],
+    "stammefolk": [
+      "kedsomhed"
+    ],
     "grav": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "eftermaele": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "gave": [],
-    "handel": [],
+    "handel": [
+      "kedsomhed"
+    ],
     "skal": [],
     "penge": [],
-    "marked": [],
-    "hoevding": [],
-    "lov": [],
+    "marked": [
+      "kedsomhed"
+    ],
+    "hoevding": [
+      "kedsomhed"
+    ],
+    "lov": [
+      "kedsomhed"
+    ],
     "ritual": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "aand": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "myte": [
-      "sygdom"
+      "sygdom",
+      "kedsomhed",
+      "mening"
     ],
     "solgud": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "maske": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "dans": [
-      "sygdom"
+      "sygdom",
+      "kedsomhed",
+      "mening"
     ],
     "naal": [
       "vaerktoej"
@@ -338,16 +408,23 @@
       "toerke"
     ],
     "levende-gud": [
-      "sygdom"
+      "sygdom",
+      "kedsomhed",
+      "mening"
     ],
-    "jagtfoelge": [],
+    "jagtfoelge": [
+      "kedsomhed"
+    ],
     "fossil": [],
     "rav": [],
     "myg-i-rav": [],
     "monolit": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
-    "besoegende": [],
+    "besoegende": [
+      "kedsomhed"
+    ],
     "agern": [
       "sult"
     ],
@@ -368,7 +445,8 @@
       "sult"
     ],
     "kro": [
-      "ulve"
+      "ulve",
+      "kedsomhed"
     ],
     "oversvoemmelse": [
       "toerke"
@@ -380,10 +458,15 @@
       "toerke"
     ],
     "skovmand": [],
-    "traening": [],
-    "mester": [],
+    "traening": [
+      "kedsomhed"
+    ],
+    "mester": [
+      "kedsomhed"
+    ],
     "idol": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "faeldegrav": [
       "ulve"
@@ -391,7 +474,8 @@
     "helligkrukke": [
       "vaerktoej",
       "toerke",
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "taellekaep": [
       "vaerktoej"
@@ -401,7 +485,8 @@
     "skrift": [],
     "kort": [],
     "kalender": [
-      "sygdom"
+      "sygdom",
+      "mening"
     ],
     "havrejsen": [
       "toerke"

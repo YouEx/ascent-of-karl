@@ -79,8 +79,40 @@ describe("Challenges: forløbet i motoren", () => {
     expect(e.activeChallenge()).toBeNull();
   });
 
+  /**
+   * En Karl uden svar. Fristen kan kun måles på ham: har han ild eller
+   * gnister i hånden, viger ulvene med det samme — og det er meningen.
+   */
+  function engineUdenSvar(active: { id: string; startedAtPage: number; turnsLeft: number }) {
+    const e = new Engine(content);
+    const s = e.getState();
+    e.loadState({
+      ...s,
+      attempts: 20,
+      seed: 5,
+      challenges: { ...freshChallengeState(), active, everSpawned: true, seen: [active.id] },
+    });
+    return e;
+  }
+
+  it("et svar, Karl allerede har, får truslen til at vige", () => {
+    // Reglen var før, at kun et NYT fund talte. Den straffede omhu: den
+    // metodiske spiller havde brugt de lette svar, før ulvene kom.
+    const e = engineWith({ id: "ulve", startedAtPage: 20, turnsLeft: 3 });
+    const out = e.combine("baer", "ler"); // ingen opdagelse — ilden står der bare
+    expect(out.challenge?.kind).toBe("solved");
+    expect(e.activeChallenge()).toBeNull();
+  });
+
+  it("men den dræber stadig den, der intet har", () => {
+    const e = engineUdenSvar({ id: "ulve", startedAtPage: 20, turnsLeft: 1 });
+    const out = e.combine("baer", "ler");
+    expect(out.challenge?.kind).toBe("failed");
+    expect(e.activeEnding()?.id).toBe("aedt");
+  });
+
   it("fristen tæller ned og slutter runnet når den er brugt op", () => {
-    const e = engineWith({ id: "ulve", startedAtPage: 20, turnsLeft: 2 });
+    const e = engineUdenSvar({ id: "ulve", startedAtPage: 20, turnsLeft: 2 });
     e.combine("baer", "ler"); // ingenting — koster en sommer
     expect(e.activeChallenge()?.active.turnsLeft).toBe(1);
     const out = e.combine("baer", "ler");
@@ -90,7 +122,7 @@ describe("Challenges: forløbet i motoren", () => {
   });
 
   it("challenge-tilstand overlever save/load", () => {
-    const e = engineWith({ id: "ulve", startedAtPage: 20, turnsLeft: 3 });
+    const e = engineUdenSvar({ id: "ulve", startedAtPage: 20, turnsLeft: 3 });
     e.combine("baer", "ler");
     const saved = JSON.parse(JSON.stringify(e.getState()));
     const e2 = new Engine(content);

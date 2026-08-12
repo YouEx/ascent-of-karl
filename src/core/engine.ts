@@ -140,6 +140,11 @@ export class Engine {
     return this.state.solvedProblems.includes(problemId);
   }
 
+  /** Aktens problemer, både de påkrævede og de valgfri. */
+  currentActProblems(): ProblemDef[] {
+    return this.currentAct().problems;
+  }
+
   unsolvedRequiredProblems(): ProblemDef[] {
     return this.currentAct().problems.filter(
       (p) => p.required && !this.isSolved(p.id),
@@ -280,6 +285,24 @@ export class Engine {
           return { kind: "solved", def, by: outcome.element };
         }
       }
+      // Har Karl allerede svaret i hånden, viger truslen for det. Det lyder
+      // som en lempelse; det er en rettelse. Reglen var før, at KUN et nyt
+      // fund kunne redde ham — og den straffede godt spil: den metodiske
+      // spiller havde brugt de lette svar, før ulvene kom, og stod uden.
+      // Målt over 600 gennemspilninger døde 99,5 % af de metodiske runs, mod
+      // 79 % af dem, der mikser i blinde. Et spil, hvor omhu er farligere end
+      // tilfældighed, er gået i stykker et sted.
+      //
+      // Truslen forsvinder ikke af det. Den kommer, den bliver fortalt, og
+      // den går igen — men den dræber kun den, der intet har.
+      const parat = this.availableElements().find((el) =>
+        resolves(def, el, this.predicates),
+      );
+      if (parat) {
+        cs.active = null;
+        cs.gap = 0;
+        return { kind: "solved", def, by: parat };
+      }
       cs.active.turnsLeft--;
       if (cs.active.turnsLeft <= 0) {
         cs.active = null;
@@ -292,8 +315,14 @@ export class Engine {
     cs.gap++;
     const spawned = rollChallenge(this.content, cs, page, this.state.seed);
     if (!spawned) return undefined;
-    cs.active = { id: spawned.id, startedAtPage: page, turnsLeft: spawned.turns };
+    cs.active = {
+      id: spawned.id,
+      startedAtPage: page,
+      turnsLeft: spawned.turns,
+      repeat: cs.seen.includes(spawned.id),
+    };
     cs.seen.push(spawned.id);
+    cs.lastSeenAt = { ...(cs.lastSeenAt ?? {}), [spawned.id]: page };
     cs.everSpawned = true;
     cs.gap = 0;
     return { kind: "spawned", def: spawned };

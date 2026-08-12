@@ -19,7 +19,9 @@
       "koelle"
     ],
     "successLine": "challenge-ulve-loest",
-    "failEnding": "aedt"
+    "failEnding": "aedt",
+    "repeatable": true,
+    "cooldown": 14
   },
   {
     "id": "toerke",
@@ -40,7 +42,9 @@
       "is"
     ],
     "successLine": "challenge-toerke-loest",
-    "failEnding": "toerstet"
+    "failEnding": "toerstet",
+    "repeatable": true,
+    "cooldown": 14
   },
   {
     "id": "sygdom",
@@ -62,6 +66,8 @@
       "splint"
     ],
     "successLine": "challenge-sygdom-loest",
-    "failEnding": "feberen"
+    "failEnding": "feberen",
+    "repeatable": true,
+    "cooldown": 14
   }
 ]

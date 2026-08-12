@@ -1,0 +1,404 @@
+{
+  "pairs": [
+    {
+      "key": "fjer+graes",
+      "verdict": "plausible",
+      "variants": [
+        "By rights, the feather belonged inside the dry grass, not behind Karl's ear. A stuffed pillow was sitting right there, in two separate pieces, for weeks.",
+        "Karl wears the feather. Karl sleeps on the dry grass. The two have shared a resting spot every night without once sharing a body — I don't know how to explain that to future pillows."
+      ]
+    },
+    {
+      "key": "honning+stamme",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl drizzled the honey along the log and watched it soak into the bark and do nothing else. The {right} still had somewhere better to be.",
+        "Karl sat on the log and ate the honey off his fingers, which is as close as the two have ever come to collaborating. Elsewhere, the {right} was already expected."
+      ]
+    },
+    {
+      "key": "fugl+hulemaleri",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl held the bird up beside the cave painting, hunting for a resemblance. The {right} has better company waiting somewhere that isn't a cave wall.",
+        "The cave painting never moves from its wall. The bird never stays anywhere long. Only the {right} of the two was headed somewhere in particular."
+      ]
+    },
+    {
+      "key": "larver+tromme",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl set the grubs down on the drum's skin and watched them do nothing percussive whatsoever. The {right} had somewhere else entirely to be.",
+        "The drum answers to a fist, loud and hollow. The grubs answer to nothing at all, wriggling on regardless. The {right} had a different recipe waiting all along."
+      ]
+    },
+    {
+      "key": "fugl+toemmerflaade",
+      "verdict": "absurd",
+      "variants": [
+        "The bird belongs to the sky, and the raft belongs to the water, and Karl introduced them on dry land, where neither wanted to be.",
+        "The bird mocks Karl from a branch, safely clear of the water. The raft has never once been up a tree. Karl persists regardless."
+      ]
+    },
+    {
+      "key": "graes+tamsvin",
+      "verdict": "absurd",
+      "variants": [
+        "The pet boar, called Dino and answering to nothing, was offered the dry grass as a peace gesture. He remained exactly as uninterested as before, which is his usual state.",
+        "The dry grass is Karl's pillow, guarded for exactly that reason. The pet boar, tame and heavy and utterly uninterested, has never once asked to borrow it."
+      ]
+    },
+    {
+      "key": "honning+larver",
+      "verdict": "inert",
+      "variants": [
+        "Karl watches the grubs wriggle a little too long and a little too fondly, the same look he once gave the honey on arrival. Only one of the two still has somewhere left to wriggle to.",
+        "The grubs have a whole ranch of futures ahead of them yet. The honey arrived, got eaten, and stopped there — it was never travelling further than Karl's fingers."
+      ]
+    },
+    {
+      "key": "larver+saft",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl dipped the grubs in the berry juice, admired the colour, then ate the evidence. The {right} still owed a different recipe its share.",
+        "The berry juice stains everything it touches. The grubs came away purple and no more useful than before. The {right} of the pair had already been spoken for elsewhere."
+      ]
+    },
+    {
+      "key": "agern+vand",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl would not let the acorn near the water long enough to find out what either wanted. The {right} was reaching for somewhere else the whole time.",
+        "The water would have carried the acorn wherever water carries things — away, mostly. Karl snatched it back before the {right} could get there."
+      ]
+    },
+    {
+      "key": "hulemaleri+stamme",
+      "verdict": "absurd",
+      "variants": [
+        "The cave painting wants a wall that holds still. The log, claimed as a seat, has never held still for anything — least of all art.",
+        "Cave painting is berry juice and nothing else, applied to stone. It has never once been tried on the log's rounded bark, and looking at that bark, I understand why."
+      ]
+    },
+    {
+      "key": "brydekamp+larver",
+      "verdict": "absurd",
+      "variants": [
+        "Karl briefly considered the grubs for an undercard bout before the wrestling match. Even the boar, who referees poorly, declined to dignify it.",
+        "The grubs are too soft and too small for a wrestling match, a fact that has never once stopped Karl from trying anything twice."
+      ]
+    },
+    {
+      "key": "honning+vand",
+      "verdict": "near-miss",
+      "variants": [
+        "The honey dissolved into the water on contact, same as it always does, and both vanished into something neither of them meant to become. The {right} of the two wanted a very different ending.",
+        "The honey is sticky, sweet, and, Karl insists, medicinal. The water took it in and offered nothing back. Somewhere, the {right} was owed rather more than that."
+      ]
+    },
+    {
+      "key": "fugl+lerfigur",
+      "verdict": "inert",
+      "variants": [
+        "The clay figurine is finished the moment it's shaped — it has nowhere left to go. The bird still has a whole sky left to be annoying in.",
+        "The clay figurine sits still, forever, and asks nothing of anyone. The bird will not sit still for anything, least of all its own portrait."
+      ]
+    },
+    {
+      "key": "honning+pind",
+      "verdict": "inert",
+      "variants": [
+        "Karl has seen many sticks, and rates this stick exceptional. He has eaten just as much honey, and none of it has ever earned a rating — it gets eaten, and that is the end of its story.",
+        "A stick this good still has building left to do. The honey finished all its building the moment Karl licked his fingers clean."
+      ]
+    },
+    {
+      "key": "dyr+toemmerflaade",
+      "verdict": "plausible",
+      "variants": [
+        "By rights, the wild boar should be towing the raft, not eyeing it suspiciously from the mud. Nobody has explained the arrangement to the wild boar, and it shows.",
+        "The raft floats, and the wild boar is heavy enough to test that properly. Three days of watching Karl, and it has never once volunteered."
+      ]
+    },
+    {
+      "key": "agern+pind",
+      "verdict": "plausible",
+      "variants": [
+        "By rights, the acorn and the stick should have become something together weeks ago — the world had every chance and did nothing with either of them.",
+        "The stick has sat within arm's reach of the acorn this entire time. Karl's devotion runs in one direction only, and it has never once pointed at the stick."
+      ]
+    },
+    {
+      "key": "stamme+toemmerflaade",
+      "verdict": "near-miss",
+      "variants": [
+        "The raft is, by its own account, a log that learned to float. This log has had every chance to follow and never once got wet on purpose. The {right} was always going to end up on the water; it just hadn't yet.",
+        "The log Karl sits on has never once shown any interest in water, and the raft, which is also just a log, apparently couldn't stop thinking about it. The {right} was simply the one still waiting its turn."
+      ]
+    },
+    {
+      "key": "agern+baer",
+      "verdict": "near-miss",
+      "variants": [
+        "The acorn is one, guarded jealously. The berries are many and disposable, gone before Karl finishes counting them. The {right} never stood a chance of being settled by counting alone.",
+        "Karl held the acorn in a closed fist and the berries in an open palm, testing both against something neither could confirm. The {right} of the pair had somewhere better to empty into."
+      ]
+    },
+    {
+      "key": "brydekamp+nabo",
+      "verdict": "absurd",
+      "variants": [
+        "The neighbour is already inside the wrestling match — grappled by Karl, refereed, badly, by the boar. Introducing him to it twice changed nothing anyone could measure.",
+        "The neighbour does not need an invitation to the wrestling match. He has been one half of it since the wrestling match was invented."
+      ]
+    },
+    {
+      "key": "mudder+nabo",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl showed the neighbour the mud, the way he shows him everything. The neighbour answered with a grunt, which is not an answer. The {right} of the two was owed a better one, elsewhere.",
+        "The mud holds a shape as long as nobody touches it. The neighbour cannot resist touching things. Only the {right} of them was ever going to matter to a different recipe."
+      ]
+    },
+    {
+      "key": "agern+nabo",
+      "verdict": "absurd",
+      "variants": [
+        "The acorn is guarded, singular, and not up for negotiation. The neighbour has asked, in his way. The neighbour will keep asking.",
+        "Karl's devotion to the one acorn does not extend to sharing it with the neighbour, who exists in an entirely different category of things Karl loves less."
+      ]
+    },
+    {
+      "key": "honning+sten",
+      "verdict": "near-miss",
+      "variants": [
+        "The stone has heard every plan Karl ever brought it, this one about the honey included, and gave its usual answer, which is silence. The {right} of the two was owed a louder one.",
+        "The honey is sticky. The stone is Karl's best friend and, on reflection, not in need of a coating. The {right} wanted attention it did not get here."
+      ]
+    },
+    {
+      "key": "dyr+tromme",
+      "verdict": "near-miss",
+      "variants": [
+        "The valley has opinions about the drum, loudly. The wild boar, for once, keeps its opinions to itself. The {right} of the two was saving its reaction for somewhere else.",
+        "Three days of watching Karl, and the wild boar has never once covered its ears at the drum. The {right} simply wasn't listening for the reason Karl hoped."
+      ]
+    },
+    {
+      "key": "baer+tromme",
+      "verdict": "near-miss",
+      "variants": [
+        "The berries are for eating quietly, one at a time. The drum has never once been quiet. The {right} had a far noisier recipe waiting than this one.",
+        "Karl tests the berries by watching a bird eat them first. The drum has already scared every bird within a mile, which may be why the test keeps taking so long. The {right} needed a bird still within reach, before the valley emptied of them."
+      ]
+    },
+    {
+      "key": "agern+ler",
+      "verdict": "plausible",
+      "variants": [
+        "By rights, the acorn should have left its print in the clay and been done with it. The clay held still. Karl was the one who moved on too soon.",
+        "The clay is soft enough to remember anything pressed into it. The acorn, guarded so closely it rarely touches anything, has never once been offered the chance."
+      ]
+    },
+    {
+      "key": "hulemaleri+larver",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl held the grubs over the cave painting for a long moment, weighing them as pigment, then set them back down to their evident relief. The {right} had a very different use waiting, elsewhere entirely.",
+        "The cave painting is berry juice and nothing else, dried onto stone. The grubs, wriggling and entirely uninvolved, were never going to change that recipe. The {right} still had a recipe of its own, waiting elsewhere."
+      ]
+    },
+    {
+      "key": "agern+stamme",
+      "verdict": "plausible",
+      "variants": [
+        "The acorn came from a tree very like this log, once. Neither remembers the other, and Karl has never made the connection either.",
+        "By rights, the acorn and the log share an entire family tree. The world never wrote that down where Karl could read it."
+      ]
+    },
+    {
+      "key": "fugl+mudder",
+      "verdict": "absurd",
+      "variants": [
+        "The bird is built for branches and sky. The mud is built to swallow anything that lands in it. Karl introduced them anyway, from a safe distance.",
+        "Mud does not fly, and the bird has never once landed in anything that might swallow its feet. The two avoid each other by pure instinct."
+      ]
+    },
+    {
+      "key": "nabo+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "The neighbour eyed the round stone the same way Karl does — like it was already spoken for. It was, in fact, the {right} — just not by anyone in this valley.",
+        "The neighbour asked to hold the round stone, once. Karl said no. The {right} of the two wanted something from that moment that neither of them said out loud."
+      ]
+    },
+    {
+      "key": "brydekamp+stamme",
+      "verdict": "absurd",
+      "variants": [
+        "The log makes an excellent ringside bench for a wrestling match it will never be entered into. It has sat through every round without once standing up.",
+        "The wrestling match requires two living opponents and one poor referee. The log is heavy, dry, and has never volunteered for any of those roles."
+      ]
+    },
+    {
+      "key": "brydekamp+fugl",
+      "verdict": "absurd",
+      "variants": [
+        "The bird already heckles Karl from a branch during absolutely everything he does, the wrestling match included. Making it official changed nothing about the commentary.",
+        "Every match needs a crowd. The bird has been providing one, unpaid and unkind, from the same branch since long before the wrestling match had a name."
+      ]
+    },
+    {
+      "key": "ler+tromme",
+      "verdict": "clash",
+      "variants": [
+        "The clay is wet and yielding. The drum is dry and resonant. Karl pressed one against the other and muffled the only instrument in the valley.",
+        "Wet does not make dry, hollow things holler louder. It mostly makes them stop. The clay smothered the drum, and Karl learned this the hard way, with his ears."
+      ]
+    },
+    {
+      "key": "fugl+stenoekse",
+      "verdict": "near-miss",
+      "variants": [
+        "The stone axe is sharp, and the bird is quick, and quick has won every time Karl has closed the gap. The {right} of the two was aimed at something else the whole time.",
+        "Karl has swung the stone axe at plenty that deserved it. The bird has never once been on that list, mocking him from just out of reach regardless. The {right} of them has better cause elsewhere."
+      ]
+    },
+    {
+      "key": "dyr+honning",
+      "verdict": "near-miss",
+      "variants": [
+        "The wild boar watched Karl get stung eleven times over the honey and did not so much as flinch. The {right} of the two knows exactly what stinging is worth, and it isn't this.",
+        "Wild boars have their own history with bees, most of it involving running. This wild boar has shown no urge to run from the honey, which tells Karl nothing he can use. The {right} was never going to be won over by persistence alone."
+      ]
+    },
+    {
+      "key": "brydekamp+dyr",
+      "verdict": "absurd",
+      "variants": [
+        "Best of three falls in the wrestling match has never once impressed the wild boar, and Karl has since tried best of five. The wild boar remains a very hard sell.",
+        "The wild boar has watched Karl attempt the wrestling match for three days running, unimpressed each time. Introducing them formally has not changed the wild boar's review."
+      ]
+    },
+    {
+      "key": "bautasten+larver",
+      "verdict": "absurd",
+      "variants": [
+        "The standing stone exists for reasons Karl cannot name and would not explain if he could. The grubs, at least, know exactly what they are for. Neither fact helps the other.",
+        "Karl raised the grubs toward the standing stone as though ceremony were the missing ingredient. The standing stone, being a stone, kept its own counsel, same as always."
+      ]
+    },
+    {
+      "key": "honning+honning",
+      "verdict": "self",
+      "variants": [
+        "Two portions of honey do not add up to a third idea. They add up to a stickier problem, which Karl, predictably, welcomes.",
+        "Karl now holds twice the honey and has been stung, by his own count, twenty-two times. He still calls it a fair trade."
+      ]
+    },
+    {
+      "key": "brydekamp+vand",
+      "verdict": "absurd",
+      "variants": [
+        "You cannot pin water. Karl has tried. The result was wetter than it was decisive, and the wrestling match gained no new champion.",
+        "Water has no weight class, no grip, and no interest in the wrestling match's best of three falls. Karl found this out by getting a face full of the stuff."
+      ]
+    },
+    {
+      "key": "stenoekse+stenoekse",
+      "verdict": "self",
+      "variants": [
+        "Two stone axes make a matched set, not a better one. Karl now owns twice the subscription and precisely the same amount of humanity.",
+        "Karl holds a stone axe in each hand and feels, briefly, unstoppable. Two of the same tool cut exactly one thing at a time, same as before."
+      ]
+    },
+    {
+      "key": "baer+hulemaleri",
+      "verdict": "absurd",
+      "variants": [
+        "The cave painting is already crushed berries, dried onto stone. Introducing whole ones now is like introducing a river to the sea it already reached.",
+        "Karl once turned berries into the cave painting. He is now holding more berries up to the finished cave painting, as if it might ask for a sequel. It does not ask."
+      ]
+    },
+    {
+      "key": "toemmerflaade+toemmerflaade",
+      "verdict": "self",
+      "variants": [
+        "Two rafts do not make a bigger boat. They make a very specific problem: which one Karl stands on, and which one drifts off without him.",
+        "Karl now has two rafts, each a log that floats with him on top, mostly in that order, and exactly one body to distribute between them."
+      ]
+    },
+    {
+      "key": "lerfigur+lerfigur",
+      "verdict": "self",
+      "variants": [
+        "Two clay figurines, both shaped like a rounder, calmer Ugh. The real Ugh is now outnumbered by his own likeness, and mildly delighted about it.",
+        "Karl now owns a small crowd of one — two identical clay figurines, both patient, both silent, neither any closer to being useful than the first was alone."
+      ]
+    },
+    {
+      "key": "fugl+rullesten",
+      "verdict": "absurd",
+      "variants": [
+        "Karl has considered throwing the round stone at the bird more than once. He has never once done it — the round stone is, after all, the good rock.",
+        "The bird moves under its own power and mocks accordingly. The round stone moves only when thrown, and Karl guards it too jealously to find out what throwing it at the bird would prove."
+      ]
+    },
+    {
+      "key": "dyr+rullesten",
+      "verdict": "absurd",
+      "variants": [
+        "Karl has tried to teach the wild boar to fetch the round stone. The wild boar has taught Karl, in exchange, to stop trying.",
+        "The round stone rolls when thrown. The wild boar does not fetch, has never fetched, and observed the whole experiment with its usual unimpressed silence."
+      ]
+    },
+    {
+      "key": "agern+agern",
+      "verdict": "self",
+      "variants": [
+        "Two acorns should mean twice the fortune. Instead it means twice the devotion, and Karl now guards two disproportionately precious things instead of one.",
+        "Karl holds one acorn in each hand and has become, if anything, more anxious than when he had a single one to protect."
+      ]
+    },
+    {
+      "key": "froe+vand",
+      "verdict": "near-miss",
+      "variants": [
+        "The seeds are dry, small, and particular about what they need. Pouring the water over them missed the point entirely. The {right} wanted something this exchange was never going to provide.",
+        "Karl soaked the seeds in the water and waited, the way he waits for everything. The {right} kept waiting on a different partner entirely."
+      ]
+    },
+    {
+      "key": "dyr+hulemaleri",
+      "verdict": "near-miss",
+      "variants": [
+        "The cave painting might show the wild boar, a sunset, or Ugh — even Karl isn't certain which. The {right} of the two has better use for its likeness elsewhere.",
+        "Karl painted a boar, a sunset, or Ugh onto the wall; he still won't say which. The wild boar has seen the cave painting and shown no sign of recognising itself. The {right} was headed somewhere this wall was never going to be."
+      ]
+    },
+    {
+      "key": "tamsvin+tamsvin",
+      "verdict": "self",
+      "variants": [
+        "Two pet boars, both named Dino, both bribed with the same berries, both loyal to nothing. Karl's household has doubled its population of animals that ignore him.",
+        "Karl now owns two pet boars and one name between them. Dino, whichever Dino is currently listening, remains unbothered."
+      ]
+    },
+    {
+      "key": "froe+nabo",
+      "verdict": "absurd",
+      "variants": [
+        "The seeds are smaller than anything Karl has ever bothered showing the neighbour. Showing him anyway changed nothing about their size or his interest.",
+        "The neighbour communicates in disappointed grunts. The seeds communicate in nothing at all, being seeds, and Karl introduced them anyway, hoping for a translator."
+      ]
+    },
+    {
+      "key": "gnister+stamme",
+      "verdict": "near-miss",
+      "variants": [
+        "The sparks and the log share exactly one trait between them, and it was never going to be enough on its own. The {right} needed far more than a half-second of shared warmth.",
+        "Karl cheers the sparks on, same as always, and watches them die against the log's bark without catching. The {right} needed tinder drier than this to catch at all."
+      ]
+    }
+  ]
+}

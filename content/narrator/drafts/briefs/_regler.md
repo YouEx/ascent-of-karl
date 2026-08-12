@@ -50,12 +50,35 @@ kan være bedre end grammatikken.
   "doesn't work", og enhver formulering der lyder som en fejlmeddelelse.
   Fortælleren er krønikeskriver, ikke en manual.
 - **Udråbstegn er forbudt.** Han hæver aldrig stemmen. Tørheden er pointen.
-- **Ingen pladsholdere overhovedet** — heller ikke `{partner}` eller
-  `{shared}`. De findes kun i grammatikken.
+- **Ingen pladsholdere** — med én undtagelse, som gælder `near-miss` og kun
+  `near-miss`: se afsnittet nedenfor. `{a}`, `{b}`, `{partner}` og `{shared}`
+  er forbudt overalt.
 - **Længde:** 1-3 sætninger. De bedste af de eksisterende replikker er korte
   og lander på et enkelt billede.
 - **Varianter skal være forskellige vinkler**, ikke omskrivninger af hinanden.
   Fire varianter på samme vits er én variant.
+
+## near-miss: den ene pladsholder du SKAL bruge
+
+Ved `near-miss` ved motoren hvilken af de to der faktisk hører hjemme i en
+opskrift. Grammatikken kan pege på den med `{right}` — "the {right} did fine,
+the {wrong} did not" — og det er dens stærkeste træk. En bagt replik der ikke
+kan pege, ville derfor være en forringelse, ikke en forbedring.
+
+Derfor: **hver `near-miss`-variant skal indeholde `{right}` mindst én gang.**
+`{wrong}` er valgfri. De to erstattes ved runtime med det rigtige navn i småt,
+og de er altid korrekte — også når det samme par møder en anden opskrift i en
+anden spiltilstand. Skriv dem aldrig med stort og aldrig i flertal.
+
+Briefen fortæller dig IKKE hvem af de to der er den rigtige. Det er med
+vilje: du kan ikke vide det, og det skal du heller ikke — derfor findes
+pladsholderen. Skriv sætningen så den holder uanset hvem af dem det er.
+
+Begge navne skal stadig stå udskrevet i varianten. Pladsholderen er en
+pegende bisætning oven på den konkrete scene, ikke en erstatning for den:
+
+> Karl swung the stone axe at the mud, which gave way without giving anything
+> back. The {right} was the half of this with somewhere else to be.
 
 ## Leverance
 

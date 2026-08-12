@@ -142,5 +142,38 @@
         ]
       }
     ]
+  },
+  "kedsomhed": {
+    "_navn": "Karl is bored",
+    "_udledt_af": "tromme, benfløjte, dans, stenspil, brydekamp, trommesolo. Kedsomhed fordriver man med larm og leg, ikke med mad eller ly. Derfor loud og ikke andet — og mindst to trin, for et par sten, man slår sammen, er ikke underholdning endnu.",
+    "minDepth": 2,
+    "traits": [
+      "loud"
+    ]
+  },
+  "ensomhed": {
+    "_navn": "Karl is alone",
+    "_udledt_af": "naboen, shamanen Ugh, hunden, tamsvinet. Selskab er nogen, der svarer igen — et menneske eller et dyr, der har valgt at blive. Mindst ét trin: oksen i akt 2 er tam fra fødslen, og selskab, man får forærende, er ikke selskab, man har vundet.",
+    "minDepth": 1,
+    "anyOf": [
+      {
+        "kind": [
+          "person"
+        ]
+      },
+      {
+        "traits": [
+          "tame"
+        ]
+      }
+    ]
+  },
+  "mening": {
+    "_navn": "Karl wonders why",
+    "_udledt_af": "bautasten, stenkreds, helligsted, galleri, begravelse, myte, ånd, eftermæle. Det hellige er den eneste kategori, hvor Karl laver noget, der ikke skal bruges til noget — og det er præcis dét, spørgsmålet handler om.",
+    "minDepth": 2,
+    "traits": [
+      "sacred"
+    ]
   }
 }

@@ -51,10 +51,14 @@ interface Run {
   /** Længste stribe af turer i træk uden et eneste fund. */
   longestDrought: number;
   ended: string | null;
+  /** Hvor mange trusler nåede at dukke op i løbet af livet. */
+  challenges: number;
 }
 
 const runs: Run[] = [];
-const required = content.acts[0]!.problems?.map((p: { id: string }) => p.id) ?? [];
+const alle = (content.acts[0]!.problems ?? []) as { id: string; required?: boolean }[];
+const required = alle.filter((p) => p.required).map((p) => p.id);
+const valgfri = alle.filter((p) => !p.required).map((p) => p.id);
 
 for (const style of STYLES) {
   for (let run = 0; run < RUNS_PER_STYLE; run++) {
@@ -63,7 +67,7 @@ for (const style of STYLES) {
     const rand = rng(run * 7919 + STYLES.indexOf(style) * 104729 + 17);
     const r: Run = {
       style, attempts: 0, failures: 0, discoveries: 0,
-      solvedAt: {}, longestDrought: 0, ended: null,
+      solvedAt: {}, longestDrought: 0, ended: null, challenges: 0,
     };
     let sinceDiscovery = 0;
     for (let page = 1; page <= 400; page++) {
@@ -74,6 +78,7 @@ for (const style of STYLES) {
       const out = e.combine(a, b);
       n.react(a, b, out, 4000);
       r.attempts++;
+      if (out.challenge?.kind === "spawned") r.challenges++;
       if (e.getState().discovered.length > before) {
         r.discoveries++;
         sinceDiscovery = 0;
@@ -109,22 +114,27 @@ console.log(`fund pr. run:      median ${med(runs.map((r) => r.discoveries))}`);
 console.log(`længste tørke:     median ${med(runs.map((r) => r.longestDrought))} turer i træk uden fund, værste ${Math.max(...runs.map((r) => r.longestDrought))}`);
 
 console.log(`\nde obligatoriske nøder:`);
-for (const id of required) {
+for (const id of [...required, ...valgfri]) {
   const solved = runs.filter((r) => r.solvedAt[id] !== undefined);
   const turns = solved.map((r) => r.solvedAt[id]!);
   console.log(`  ${id.padEnd(10)} løst i ${pct(solved.length, runs.length).padStart(5)} % af runs, median tur ${String(med(turns)).padStart(3)}`);
 }
 const done = runs.filter((r) => r.allSolvedAt !== undefined);
-console.log(`  ALLE TRE   løst i ${pct(done.length, runs.length)} % af runs, median tur ${med(done.map((r) => r.allSolvedAt!))}`);
+console.log(`  ALLE PÅKRÆVEDE løst i ${pct(done.length, runs.length)} % af runs, median tur ${med(done.map((r) => r.allSolvedAt!))}`);
 
 // Det Martin faktisk mærkede: hvor stor en del af livet der lå EFTER at alt
 // var løst, uden noget nyt at stræbe efter.
 const after = done.map((r) => r.attempts - r.allSolvedAt!);
 console.log(`\ntomgang efter sidste nød: median ${med(after)} turer af ${content.config.turnLimit} — ${pct(med(after), content.config.turnLimit)} % af livet`);
 
-const endings = new Map<string, number>();
-for (const r of runs) endings.set(r.ended ?? "(ingen)", (endings.get(r.ended ?? "(ingen)") ?? 0) + 1);
-console.log(`\nslutninger:`);
-for (const [id, c] of [...endings].sort((a, b) => b[1] - a[1]).slice(0, 6)) {
-  console.log(`  ${id.padEnd(18)} ${pct(c, runs.length).padStart(5)} %`);
+console.log(`\ntrusler pr. run:   median ${med(runs.map((r) => r.challenges))}, højeste ${Math.max(...runs.map((r) => r.challenges))}`);
+
+console.log(`\nslutninger pr. spillestil:`);
+for (const style of STYLES) {
+  const rs = runs.filter((r) => r.style === style);
+  const e = new Map<string, number>();
+  for (const r of rs) e.set(r.ended ?? "(ingen)", (e.get(r.ended ?? "(ingen)") ?? 0) + 1);
+  const top = [...e].sort((a, b) => b[1] - a[1]).map(([id, c]) => `${id} ${pct(c, rs.length)} %`);
+  console.log(`  ${style.padEnd(10)} ${top.join("   ")}`);
+  console.log(`  ${"".padEnd(10)} fund median ${med(rs.map((r) => r.discoveries))}, levede ${med(rs.map((r) => r.attempts))} somre`);
 }

@@ -686,7 +686,15 @@ export class Narrator {
    * at blive sagt igen og igen.
    */
   currentPull(): ProblemDef | undefined {
-    return this.engine.unsolvedRequiredProblems().find((p) => p.pull);
+    const paakraevet = this.engine.unsolvedRequiredProblems().find((p) => p.pull);
+    if (paakraevet) return paakraevet;
+    // Når de tre nødvendige er løst, holder trækket ikke op — det skifter
+    // karakter. Martin spillede halvtreds somre og fik ingen retning efter
+    // den tredje nød, fordi der ikke stod flere problemer at pege på. De
+    // valgfri er ikke krav (age-up ser dem ikke), men fortælleren gør.
+    return this.engine
+      .currentActProblems()
+      .find((p) => p.pull && !p.required && !this.engine.isSolved(p.id));
   }
 
   /**
