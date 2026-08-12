@@ -425,7 +425,7 @@ describe("Narrator: trækket mod næste skridt", () => {
     const { engine, narrator } = setup();
     narrator.openingPull();
     const outcome = engine.combine("sten", "graes"); // blindgyde
-    expect(outcome.kind).toBe("nothing");
+    expect(outcome.kind).toBe("nofuse");
     expect(narrator.followUp(outcome)).toBeUndefined();
   });
 });

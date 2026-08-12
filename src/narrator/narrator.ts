@@ -352,7 +352,7 @@ export class Narrator {
     if (elapsedMs !== undefined && elapsedMs <= FAST_MS) this.state.fastStreak++;
     else this.state.fastStreak = 0;
 
-    if (outcome.kind === "nothing") {
+    if (outcome.kind === "nofuse") {
       this.state.failStreak++;
       this.state.failsSinceDiscovery++;
     } else if (outcome.kind === "discovery") {
@@ -523,7 +523,7 @@ export class Narrator {
     // blev bedt om, og intet skete. At svare med spam-drilleri dér er at
     // skifte emne væk fra sin egen fejl. Den kan ikke tromle: `ownAdviceFailed`
     // bruger forslaget op, så hver replik hører til ét råd.
-    if (outcome.kind === "nothing") {
+    if (outcome.kind === "nofuse") {
       const mine = this.ownAdviceFailed(a, b);
       const owned = mine && this.obeyedFailureLine();
       if (owned) return this.speak(owned, { ...ctx, a: mine!.a, b: mine!.b });
@@ -533,7 +533,7 @@ export class Narrator {
     const behavior = this.behaviorLine(elapsedMs);
     if (behavior) return this.speak(behavior, ctx);
 
-    if (outcome.kind !== "nothing") return undefined;
+    if (outcome.kind !== "nofuse") return undefined;
 
     // Hint-eskalering er fortællerens indbyggede hint-system
     const hint = this.hintLine();

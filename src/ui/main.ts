@@ -610,7 +610,7 @@ function performCombine(a: string, b: string): void {
   const followUp = ending ? undefined : narrator.followUp(outcome);
 
   // Blindgyden er det eneste datapunkt der ikke kan rekonstrueres bagefter
-  if (outcome.kind === "nothing") playtest.miss(a, b, engine.getState().attempts);
+  if (outcome.kind === "nofuse") playtest.miss(a, b, engine.getState().attempts);
 
   if (outcome.kind === "discovery") {
     freshFinds.add(outcome.element.id);

@@ -66,9 +66,16 @@ describe("Engine: grundregler", () => {
     if (outcome.kind === "discovery") expect(outcome.element.id).toBe("ild");
   });
 
-  it("ugyldige kombinationer giver ingenting", () => {
+  it("ugyldige kombinationer smelter ikke — men motoren siger hvorfor", () => {
     const e = freshEngine();
-    expect(e.combine("baer", "ler").kind).toBe("nothing");
+    const out = e.combine("baer", "ler");
+    expect(out.kind).toBe("nofuse");
+    if (out.kind === "nofuse") {
+      // Dommen bærer begge elementer med sig, så fortælleren kan nævne dem.
+      expect(out.a.id).toBe("baer");
+      expect(out.b.id).toBe("ler");
+      expect(out.verdict).toBeTruthy();
+    }
   });
 
   it("kendte kombinationer giver 'known', ikke en ny opdagelse", () => {
@@ -116,7 +123,15 @@ describe("Engine: problemer og flere gyldige løsninger", () => {
 describe("Engine: flags åbner kombinationer", () => {
   it("larvefarm kræver larver-flaget", () => {
     const e = freshEngine();
-    expect(e.combine("larver", "ler").kind).toBe("nothing");
+    // Før svarede spillet det samme her som til rent vrøvl, og spilleren fik
+    // "der sker ingenting" på et greb der faktisk er rigtigt — bare ikke åbnet
+    // endnu. Nu er dommen `locked` og bærer hvilket flag der mangler (REQ-004).
+    const before = e.combine("larver", "ler");
+    expect(before.kind).toBe("nofuse");
+    if (before.kind === "nofuse") {
+      expect(before.verdict).toBe("locked");
+      expect(before.evidence.missingFlags).toContain("larver");
+    }
     e.combine("sten", "sten");
     e.combine("gnister", "graes");
     e.combine("larver", "ild"); // sætter flag

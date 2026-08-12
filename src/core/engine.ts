@@ -5,6 +5,7 @@ import {
 } from "./challenge";
 import type { ActiveChallenge, ChallengeState } from "./challenge";
 import { solvesNeed } from "./solves";
+import { judgePair } from "./verdict";
 import type {
   ActDef,
   ChallengeDef,
@@ -47,6 +48,7 @@ export class Engine {
   private state: GameState;
   private elementById = new Map<string, ElementDef>();
   private combosByPair = new Map<string, ComboDef[]>();
+  private combosByElement = new Map<string, ComboDef[]>();
   private actByNumber = new Map<number, ActDef>();
   /** Prædikaterne der afgør hvad der løser hvad (content/predicates.json). */
   private predicates: Record<string, SolvePredicate>;
@@ -62,6 +64,15 @@ export class Engine {
       this.combosByPair.set(key, list);
     }
     for (const act of content.acts) this.actByNumber.set(act.act, act);
+    // Hvilke opskrifter indgår hvert element i? Bruges af dommen til at skelne
+    // en blindgyde fra et element der bare manglede den rigtige partner.
+    for (const combo of content.combos) {
+      for (const id of new Set(combo.pair)) {
+        const list = this.combosByElement.get(id) ?? [];
+        list.push(combo);
+        this.combosByElement.set(id, list);
+      }
+    }
     this.state = state ?? this.freshState();
   }
 
@@ -191,6 +202,31 @@ export class Engine {
   }
 
   /**
+   * Alle opskrifter for et par — også dem flaggene spærrer.
+   *
+   * matchCombo smider de spærrede væk, og så svarede spillet det samme til et
+   * rigtigt greb der bare ikke var åbnet endnu som til rent vrøvl. Dommen
+   * `locked` findes for at skelne (REQ-004), og den skal kunne se dem.
+   */
+  allCombosFor(a: string, b: string): ComboDef[] {
+    return this.combosByPair.get(pairKey(a, b)) ?? [];
+  }
+
+  /** Hvilke opskrifter indgår elementet i overhovedet? Tom = blindgyde. */
+  combosWith(id: string): ComboDef[] {
+    return this.combosByElement.get(id) ?? [];
+  }
+
+  /** Hvilke flag mangler, og hvilke spærrer? Tomme lister = opskriften er åben. */
+  flagObstacles(combo: ComboDef): { missing: string[]; blocking: string[] } {
+    const has = (f: string) => this.state.flags.includes(f);
+    return {
+      missing: (combo.requiresFlags ?? []).filter((f) => !has(f)),
+      blocking: (combo.blockedByFlags ?? []).filter((f) => has(f)),
+    };
+  }
+
+  /**
    * Kernen i loopet (PRD §2.1): kombinér to elementer.
    * Muterer state ved opdagelser; "known"/"nothing"/"gated" ændrer kun attempts-tælleren.
    */
@@ -266,7 +302,14 @@ export class Engine {
   private resolve(a: string, b: string): CombineOutcome {
 
     const combo = this.matchCombo(a, b);
-    if (!combo) return { kind: "nothing" };
+    if (!combo) {
+      // Ikke "der skete ingenting" — men hvorfor. Dommen bærer begge
+      // elementer og bevismaterialet med sig ud til fortælleren.
+      const ea = this.element(a);
+      const eb = this.element(b);
+      const { verdict, evidence } = judgePair(this, ea, eb);
+      return { kind: "nofuse", a: ea, b: eb, verdict, evidence };
+    }
 
     const element = this.element(combo.result);
     const act = this.currentAct();

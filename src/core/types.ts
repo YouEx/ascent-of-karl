@@ -411,4 +411,54 @@ export type CombineOutcome = {
       endingDeflected?: boolean;
     }
   | { kind: "gated"; combo: ComboDef; unsolved: ProblemDef[] }
-  | { kind: "nothing" });
+  | {
+      /**
+       * De to ting smeltede ikke sammen — men motoren ved hvorfor, og siger det.
+       * Erstatter det gamle { kind: "nothing" }, der ikke engang bar hvilke to
+       * elementer spilleren havde prøvet. En fortæller kan ikke fortælle om
+       * noget, han ikke får at vide (plan/architecture-procedural-narration-1.md).
+       */
+      kind: "nofuse";
+      a: ElementDef;
+      b: ElementDef;
+      verdict: Verdict;
+      evidence: VerdictEvidence;
+    });
+
+/**
+ * Hvorfor et par ikke gav noget. Prioriteret rækkefølge — første match vinder,
+ * se src/core/verdict.ts.
+ */
+export type Verdict =
+  /** Opskriften findes, men er spærret af flag eller akt. Spilleren var på sporet. */
+  | "locked"
+  /** Ét af elementerne indgår i en rigtig opskrift med noget spilleren allerede har. */
+  | "near-miss"
+  /** a + a, uden at der findes en selvopskrift. */
+  | "self"
+  /** Mindst ét element indgår i ingen opskrift overhovedet — en blindgyde. */
+  | "inert"
+  /** Taggene udelukker hinanden: varmt + vådt, levende + spiseligt uden værktøj. */
+  | "clash"
+  /** Et rigtig godt indfald der bare ikke er skrevet: fælles stuff, værktøj + materiale. */
+  | "plausible"
+  /** Langt fra hinanden i kind og scale. Karl prøvede at kombinere en sten med en tanke. */
+  | "absurd";
+
+/** Bevismaterialet bag dommen. Alt hvad fortælleren skal bruge for at lave vitsen. */
+export interface VerdictEvidence {
+  /** locked: de flag opskriften mangler. */
+  missingFlags?: string[];
+  /** locked: flag der spærrer opskriften fordi spilleren HAR dem. */
+  blockingFlags?: string[];
+  /** near-miss: hvilket af de to der var rigtigt, og hvem det skulle have været. */
+  rightOne?: string;
+  partner?: string;
+  partnerResult?: string;
+  /** clash: de to træk der bider hinanden, fx ["hot", "wet"]. */
+  clashing?: [string, string];
+  /** plausible: hvad de har til fælles, fx "stone" eller "tool+material". */
+  shared?: string;
+  /** inert: hvilke(t) element der ikke indgår i nogen opskrift. */
+  deadEnds?: string[];
+}
