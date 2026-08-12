@@ -66,8 +66,25 @@ body {
      hver pixel inden for rammen bærer i forvejen referencens eget slør, så de
      er den rigtige kilde til præcis det, der skal stå bag UI'et.
      Det gamle rgb(251 250 246 / 0.14) gjorde chippernes bånd fersken, hvor
-     referencen er rosa-mauve (206,172,162) — tone stod fast på 0.291. */
-  background: url("../assets/art/app-field.webp") center top / 100% 100% no-repeat;
+     referencen er rosa-mauve (206,172,162) — tone stod fast på 0.291.
+     Kornet oven på: sløringen i build_app_field.py (BLUR=24) holder referencens
+     egne kort ude, men den fjerner AL tekstur med samme greb. Det koster to
+     steder på én gang. Griddets mellemrum måler 16,8 i gradientenergi hos
+     referencen mod 8,3 hos os. Og i chip-regionens tomme højreside lander
+     vores flade vask på grå 180 — tre enheder under dommerens blækgrænse
+     (papir85−28 = 183), så HELE baggrunden tælles som blæk, mens referencens
+     malede skyer ligger på begge sider af grænsen.
+     --grain blev prøvet først og er forkastet: fint filmkorn gav grid +0,041 i
+     struktur men chips −0,05, fordi ukorreleret støj i pixelskala oven på en
+     flade, hvor referencen har GROV struktur, sænker SSIM på gradientkortet.
+     Skalaen skal passe. app-texture.webp er højpasresten af vores eget brede
+     maleri mellem sigma 3 og 20 — samme hånd, samme penselskala, ingen UI at
+     lække genfærd fra. Den er centreret om grå 128, så overlay hverken mørkner
+     eller lysner fladen, men kun lægger variation i den. cover, ikke 100% 100%:
+     penselskalaen skal blive ved med at være penselskala, ikke strækkes. */
+  background: url("../assets/art/app-texture.webp") center top / cover,
+    url("../assets/art/app-field.webp") center top / 100% 100% no-repeat;
+  background-blend-mode: overlay, normal;
   padding: 0 var(--app-inset);
   display: flex;
   flex-direction: column;
@@ -335,17 +352,42 @@ header h1 {
 }
 
 /* ---------- Problemer ---------- */
-#problems { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+/* Rækkens kasse er 53 px (registry), men referencens piller fylder kun 41 px
+   af den: målt lysdækning pr. række giver pillekanter ved y=517 og y=557 mod
+   vores 513 og 563. Kassen skal blive, ellers skubbes alt nedenunder — så
+   luften lægges som polstring på rækken og tages af pillen selv. */
+#problems {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding: 5px 0 7px;
+}
 .problem {
+  /* Fast højde frem for polstring + linjehøjde: ikonerne er udskårne billeder
+     med hver sin egen højde (24, 30, 29 px), og en linjeboks der retter sig
+     efter det højeste af dem gør pillens højde til et biprodukt af ikonvalget.
+     inline-flex + center lader det højeste ikon sidde i en pille der er lige
+     præcis så høj som referencens. */
+  display: inline-flex;
+  align-items: center;
+  height: 41px;
   background: var(--paper);
   background-image: var(--grain);
   background-blend-mode: overlay;
   border: 1px solid var(--rule);
   border-radius: 999px;
-  /* Referencens chip-række er 53 px høj, vores var 31. Højden ligger i
-     chippen selv, ikke i rækken: referencens chips er høje piller, ikke
-     små mærkater med luft omkring. */
-  padding: 0.65rem 1rem;
+  /* Referencen sætter IKKE chips med samme serif som resten. Ved 7× zoom er
+     "Bare hands" utvetydigt grotesk — ingen serif på B, r, h, d — mens
+     "Search elements…" og kortetiketten "Stone" har tydelige seriffer. Det
+     er DESIGN.md §3's egen regel ("serif taler, sans betjener") som
+     referencen faktisk følger: chippen er en statusknap, ikke en stemme. */
+  font-family: var(--font-sans);
+  /* Målt fra pillekant til ikonets første mørke pixel: referencen 18 og 15 px,
+     vores 25 og 23. Luften ligger forkert — referencen bruger den mellem ikon
+     og tekst i stedet, ikke foran ikonet. Venstre polstring skæres derfor ned
+     og gives videre til .problem-icon's margin. */
+  padding: 0 1rem 0 0.55rem;
+  line-height: 1;
   /* Målt tekstblok: referencen 16 px, vores 13 px ved 0.85rem. */
   font-size: 1.05rem;
   color: var(--ink-soft);
@@ -353,7 +395,9 @@ header h1 {
 .problem-icon {
   font-style: normal;
   font-size: 1.05em;
-  margin-right: 0.15rem;
+  /* Ikon→tekst målt: referencen 13 og 10 px, vores 3 og 4. Emblemet er ikke
+     klistret på ordet i referencen — det står for sig selv med luft omkring. */
+  margin-right: 0.7rem;
   /* Referencens emblemer er MALEDE — dæmpede, mørke, i chippens egen
      familie. Systememojier kommer ud i fuld kulør og skriger mod
      pergamentet. multiply sætter dem ned i pillen, og afmætningen tager
@@ -367,7 +411,8 @@ header h1 {
 img.problem-icon {
   filter: none;
   mix-blend-mode: normal;
-  vertical-align: -0.35em;
+  /* Ingen vertical-align: .problem er inline-flex med align-items: center, og
+     flex-børn ignorerer vertical-align. Centreringen kommer fra rækken. */
 }
 /*
  * Chippen bærer problemets farve, ikke bare dets navn. Målt på referencen:

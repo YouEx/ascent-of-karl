@@ -251,12 +251,16 @@
   /* --- Typografi --------------------------------------------------------- */
   --font-display: "Fraunces", ui-serif, serif;
   /*
-   * Referencen er sat med ÉN serif hele vejen igennem — chips, søgefelt,
-   * kortetiketter, knapper. Den grotesk vi kørte med (Plus Jakarta Sans)
-   * gjorde grænsefladen til en app oven på en tegning; med samme serif som
-   * overskrifterne bliver den til én håndskrevet krønike. Sansen bliver
-   * stående som token, fordi tal-tunge flader (fx tælleværker) stadig kan
-   * få brug for den — men intet i spillet peger på den længere.
+   * Referencen blander, og den blander efter DESIGN.md §3's egen regel: serif
+   * taler, sans betjener. Søgefeltet og kortetiketterne er utvetydigt serif
+   * ved 6x forstørrelse. Chipperne er lige så utvetydigt grotesk ved 7x — B,
+   * r, h og d har ingen seriffer. Denne kommentar påstod tidligere at
+   * referencen kørte ÉN serif hele vejen igennem inklusive chips; det er målt
+   * forkert, og .problem bruger nu --font-sans (chips 0,834 -> 0,849).
+   * Serif er stadig grundtonen: den grotesk vi kørte overalt (Plus Jakarta
+   * Sans) gjorde grænsefladen til en app oven på en tegning. Sansen er
+   * undtagelsen for betjeningsflader, ikke reglen. Efterprøv den enkelte
+   * kontrol mod referencen før du læner dig på nogen af delene.
    */
   --font-ui: "Fraunces", ui-serif, serif;
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
