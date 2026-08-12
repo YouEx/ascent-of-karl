@@ -72,6 +72,13 @@ export interface SolvePredicate {
   scale?: ElementScale[];
   /** Kræver at elementet ikke er et base-element (Karl skal have lavet det). */
   crafted?: boolean;
+  /**
+   * Mindste antal opskrift-trin fra starthånden. `crafted` var et groft mål
+   * for det samme — "ikke noget han fik forærende" — men det holder kun nøden
+   * væk fra tur 0, ikke fra tur 1. Bærsaft og oesters bærer nøjagtig samme
+   * tags; det eneste der skiller dem, er hvor meget arbejde de kostede.
+   */
+  minDepth?: number;
   anyOf?: SolvePredicate[];
   allOf?: SolvePredicate[];
   not?: SolvePredicate;
@@ -87,6 +94,11 @@ export interface ElementDef {
   act: number;
   /** Base-elementer er tilgængelige fra aktens start */
   base?: boolean;
+  /**
+   * Korteste opskriftsafstand fra starthånden. Udledes i loadContent() — står
+   * ikke i elements.json, netop for ikke at kunne blive forældet.
+   */
+  depth?: number;
   /**
    * Klassifikation (content/taxonomy.json). Prædikaterne i
    * content/predicates.json dømmer på disse fire felter i stedet for på

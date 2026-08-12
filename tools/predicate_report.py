@@ -43,6 +43,8 @@ def satisfies(el: dict, pred: dict) -> bool:
         return False
     if pred.get("crafted") and el.get("base"):
         return False
+    if "minDepth" in pred and el.get("depth", 0) < pred["minDepth"]:
+        return False
     if "kind" in pred and el.get("kind") not in pred["kind"]:
         return False
     if "stuff" in pred and el.get("stuff") not in pred["stuff"]:
@@ -54,6 +56,24 @@ def satisfies(el: dict, pred: dict) -> bool:
     if "scale" in pred and el.get("scale") not in pred["scale"]:
         return False
     return True
+
+
+def compute_depths(elements: list[dict], combos: list[dict]) -> dict[str, int]:
+    """Korteste opskriftsafstand fra base-elementerne. Spejler computeDepths()
+    i src/core/timeline.ts — de to skal ændres sammen."""
+    depths = {el["id"]: 0 for el in elements if el.get("base")}
+    changed = True
+    while changed:
+        changed = False
+        for combo in combos:
+            a, b = combo["pair"]
+            if a not in depths or b not in depths:
+                continue
+            candidate = 1 + max(depths[a], depths[b])
+            if combo["result"] not in depths or candidate < depths[combo["result"]]:
+                depths[combo["result"]] = candidate
+                changed = True
+    return depths
 
 
 def load_tags(patterns: list[str]) -> dict[str, dict]:
@@ -78,9 +98,12 @@ def main() -> int:
     truth = json.loads(GROUND_TRUTH.read_text(encoding="utf-8"))
     tags = load_tags(args.tags)
 
+    combos = json.loads((CONTENT / "combos.json").read_text(encoding="utf-8"))
+    depths = compute_depths(elements, combos)
+
     merged: dict[str, dict] = {}
     for el in elements:
-        merged[el["id"]] = {**el, **tags.get(el["id"], {})}
+        merged[el["id"]] = {**el, **tags.get(el["id"], {}), "depth": depths.get(el["id"], 0)}
 
     tagged = [e["id"] for e in elements if "kind" in merged[e["id"]]]
     missing = [e["id"] for e in elements if "kind" not in merged[e["id"]]]

@@ -95,7 +95,6 @@
     "name": "Grubs",
     "emoji": "🐛",
     "act": 1,
-    "base": true,
     "kind": "material",
     "stuff": "flesh",
     "traits": [
@@ -104,14 +103,15 @@
       "soft"
     ],
     "scale": "hand",
-    "flavor": "They wriggle. Karl watches them a little too long and a little too fondly."
+    "flavor": "They wriggle. Karl watches them a little too long and a little too fondly.",
+    "note": "Insect larvae are eaten by around 2 billion people worldwide, and gram for gram they beat beef on protein.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Entomophagy"
   },
   {
     "id": "dyr",
     "name": "Wild boar",
     "emoji": "🐗",
     "act": 1,
-    "base": true,
     "kind": "creature",
     "stuff": "flesh",
     "traits": [
@@ -119,7 +119,9 @@
       "heavy"
     ],
     "scale": "body",
-    "flavor": "A boar that has observed Karl for three days and remains unimpressed."
+    "flavor": "A boar that has observed Karl for three days and remains unimpressed.",
+    "note": "Wild boar root through mud for grubs and roots, which is exactly how the species first came within reach of people.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Wild_boar"
   },
   {
     "id": "gnister",
@@ -383,7 +385,6 @@
     "name": "Log",
     "emoji": "🪵",
     "act": 1,
-    "base": true,
     "kind": "material",
     "stuff": "wood",
     "traits": [
@@ -391,21 +392,24 @@
       "dry"
     ],
     "scale": "body",
-    "flavor": "A fallen tree trunk. Karl has claimed it by sitting on it."
+    "flavor": "A fallen tree trunk. Karl has claimed it by sitting on it.",
+    "note": "Worked wooden logs at Kalambo Falls in Zambia have been dated to roughly 476,000 years ago — the oldest known wooden structure.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Kalambo_Falls"
   },
   {
     "id": "nabo",
     "name": "Neighbour",
     "emoji": "🧔",
     "act": 1,
-    "base": true,
     "kind": "person",
     "stuff": "flesh",
     "traits": [
       "alive"
     ],
     "scale": "body",
-    "flavor": "Another caveman. His name is Ugh. He communicates mostly through disappointed grunts."
+    "flavor": "Another caveman. His name is Ugh. He communicates mostly through disappointed grunts.",
+    "note": "Smoke signals are among the oldest forms of long-distance communication, carrying news further than anyone could walk in a day.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Smoke_signal"
   },
   {
     "id": "rullesten",
@@ -1079,7 +1083,6 @@
     "name": "Bird",
     "emoji": "🐦",
     "act": 1,
-    "base": true,
     "kind": "creature",
     "stuff": "flesh",
     "traits": [
@@ -1087,7 +1090,9 @@
       "light"
     ],
     "scale": "hand",
-    "flavor": "Small, loud, and airborne — three things Karl will never be. It mocks him from a branch."
+    "flavor": "Small, loud, and airborne — three things Karl will never be. It mocks him from a branch.",
+    "note": "Birds followed human settlements for spilled seed long before anyone thought to keep them — the same commensal path the dog took.",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Commensalism"
   },
   {
     "id": "foenix",

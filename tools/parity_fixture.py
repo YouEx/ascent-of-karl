@@ -21,15 +21,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
-from predicate_report import satisfies  # noqa: E402
+from predicate_report import compute_depths, satisfies  # noqa: E402
 
 FIXTURE = ROOT / "tests" / "fixtures" / "solves-parity.json"
 
 
 def main() -> int:
     elements = json.loads((ROOT / "content" / "elements.json").read_text(encoding="utf-8"))
+    combos = json.loads((ROOT / "content" / "combos.json").read_text(encoding="utf-8"))
     raw = json.loads((ROOT / "content" / "predicates.json").read_text(encoding="utf-8"))
     predicates = {k: v for k, v in raw.items() if not k.startswith("_")}
+
+    # Dybden er udledt, ikke skrevet. Spillet regner den i loadContent(); porten
+    # regner den i predicate_report. Regnede fiksturen den ikke med, ville alle
+    # tre være enige om et forkert facit — og minDepth ville aldrig virke.
+    depths = compute_depths(elements, combos)
+    elements = [{**el, "depth": depths.get(el["id"], 0)} for el in elements]
 
     solves = {
         el["id"]: [nid for nid, pred in predicates.items() if satisfies(el, pred)]

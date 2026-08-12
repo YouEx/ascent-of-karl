@@ -11,6 +11,7 @@ import decisions from "../content/decisions.json";
 import predicates from "../content/predicates.json";
 import config from "../content/config.json";
 import type { ContentBundle, SolvePredicate } from "./core/types";
+import { computeDepths } from "./core/timeline";
 
 /**
  * Samler alle content-filer til ét bundle. Nye akter tilføjes her —
@@ -39,10 +40,19 @@ export function loadContent(): ContentBundle {
     ),
   ) as Record<string, SolvePredicate>;
 
+  // Dybden udledes her, én gang, så prædikater kan spørge om den (minDepth).
+  // Den er en ren funktion af elements+combos, så alle kaldere får samme tal;
+  // vi bygger alligevel nye objekter frem for at mutere JSON-modulets egne.
+  const depths = computeDepths({ elements, combos } as unknown as ContentBundle);
+  const elementsWithDepth = (elements as { id: string }[]).map((el) => ({
+    ...el,
+    depth: depths.get(el.id) ?? 0,
+  }));
+
   // JSON-import kan ikke udtrykke tuple-typen for `pair`; formen håndhæves af
   // tools/validate.py og unit tests i stedet.
   return {
-    elements,
+    elements: elementsWithDepth,
     combos,
     acts: [act1, act2],
     narrator: [mergeGrammar(narrator1, grammar1), narrator2],

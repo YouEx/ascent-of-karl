@@ -1825,5 +1825,40 @@
     "result": "mudderlag",
     "solves": "kulde",
     "narratorLine": "story-mudderlag"
+  },
+  {
+    "pair": [
+      "froe",
+      "graes"
+    ],
+    "result": "fugl"
+  },
+  {
+    "pair": [
+      "larver",
+      "mudder"
+    ],
+    "result": "dyr"
+  },
+  {
+    "pair": [
+      "roeg",
+      "tromme"
+    ],
+    "result": "nabo"
+  },
+  {
+    "pair": [
+      "graes",
+      "saft"
+    ],
+    "result": "larver"
+  },
+  {
+    "pair": [
+      "froe",
+      "stenoekse"
+    ],
+    "result": "stamme"
   }
 ]

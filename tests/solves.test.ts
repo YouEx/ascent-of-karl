@@ -11,13 +11,16 @@
  */
 
 import { describe, expect, it } from "vitest";
-import elements from "../content/elements.json";
 import predicatesRaw from "../content/predicates.json";
 import fixture from "./fixtures/solves-parity.json";
+import { loadContent } from "../src/content";
 import { satisfies, solvedNeeds, solvesNeed } from "../src/core/solves";
 import type { ElementDef, SolvePredicate } from "../src/core/types";
 
-const els = elements as unknown as ElementDef[];
+// Elementerne hentes gennem loadContent() og ikke direkte fra JSON, fordi
+// dybden udledes der. Læste testen rå JSON, ville den dømme hvert element som
+// dybde 0 — og minDepth-reglen ville se ud til at virke, mens den ikke gjorde.
+const els = loadContent().elements as unknown as ElementDef[];
 
 /** Kommentarnøgler (_kommentar, _udledt_af …) er dokumentation, ikke prædikater. */
 const predicates = Object.fromEntries(

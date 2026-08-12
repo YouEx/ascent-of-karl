@@ -22,6 +22,7 @@ export function satisfies(el: ElementDef, pred: SolvePredicate): boolean {
   // fremstillede, og ingen af base-elementerne løste noget — heller ikke bær
   // og larver, som ellers er spiselige.
   if (pred.crafted && el.base) return false;
+  if (pred.minDepth !== undefined && (el.depth ?? 0) < pred.minDepth) return false;
   if (pred.kind && !pred.kind.includes(el.kind)) return false;
   if (pred.stuff && !pred.stuff.includes(el.stuff)) return false;
   if (pred.traits && !pred.traits.every((t) => el.traits.includes(t))) return false;

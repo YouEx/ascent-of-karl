@@ -3,6 +3,7 @@ import { Engine } from "../src/core/engine";
 import { freshChallengeState } from "../src/core/challenge";
 import { deserialize, serialize } from "../src/core/save";
 import { loadContent } from "../src/content";
+import { earn } from "./helpers";
 
 const content = loadContent();
 
@@ -31,6 +32,7 @@ function withInventions(discovered: string[]): string[] {
 }
 
 function playMainTrack(e: Engine): void {
+  earn(e, "dyr"); // vildsvinet skal fremkaldes nu, ikke uddeles
   e.combine("sten", "sten"); // gnister
   e.combine("gnister", "graes"); // ild → løser kulde
   e.combine("sten", "pind"); // stenøkse → løser værktøj
@@ -46,7 +48,8 @@ describe("Engine: grundregler", () => {
     const e = freshEngine();
     const ids = e.availableElements().map((el) => el.id);
     expect(ids).toContain("sten");
-    expect(ids).toContain("larver");
+    // Larverne er ikke længere givet — de skal fremkaldes (baer+vand, graes+saft)
+    expect(ids).not.toContain("larver");
     expect(ids).not.toContain("ild");
     expect(ids).not.toContain("korn"); // akt 2-element er låst
   });
@@ -103,6 +106,7 @@ describe("Engine: problemer og flere gyldige løsninger", () => {
 
   it("sult kan løses ad det komiske spor (ristede larver) og sætter flag", () => {
     const e = freshEngine();
+    earn(e, "larver");
     e.combine("sten", "sten");
     e.combine("gnister", "graes");
     const outcome = e.combine("larver", "ild");
@@ -114,6 +118,7 @@ describe("Engine: problemer og flere gyldige løsninger", () => {
   it("et allerede løst problem løses ikke igen af den anden gren", () => {
     const e = freshEngine();
     playMainTrack(e); // sult løst med stegt kød
+    earn(e, "larver");
     const outcome = e.combine("larver", "ild");
     expect(outcome.kind).toBe("discovery");
     if (outcome.kind === "discovery") expect(outcome.solved).toBeUndefined();
@@ -123,6 +128,7 @@ describe("Engine: problemer og flere gyldige løsninger", () => {
 describe("Engine: flags åbner kombinationer", () => {
   it("larvefarm kræver larver-flaget", () => {
     const e = freshEngine();
+    earn(e, "larver");
     // Før svarede spillet det samme her som til rent vrøvl, og spilleren fik
     // "der sker ingenting" på et greb der faktisk er rigtigt — bare ikke åbnet
     // endnu. Nu er dommen `locked` og bærer hvilket flag der mangler (REQ-004).
@@ -241,6 +247,7 @@ describe("Save/load", () => {
 describe("Engine: skæbner er gated på antal opfindelser", () => {
   /** Korteste vej til Ikaros-slutningen: fire kombinationer. */
   function flyToTheSun(e: Engine): void {
+    earn(e, "fugl", "nabo"); // begge skal fremkaldes nu
     e.combine("fugl", "nabo"); // fjer
     e.combine("fjer", "fjer"); // vinger
     e.combine("sten", "nabo"); // bautasten
@@ -265,6 +272,7 @@ describe("Engine: skæbner er gated på antal opfindelser", () => {
 
   it("melder afværgningen tilbage, så fortælleren kan reagere", () => {
     const e = freshEngine();
+    earn(e, "fugl", "nabo");
     e.combine("fugl", "nabo");
     e.combine("fjer", "fjer");
     e.combine("sten", "nabo");

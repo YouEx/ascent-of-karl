@@ -11,8 +11,8 @@ describe("Timeline: dybder", () => {
     expect(depths.get("gnister")).toBe(1); // sten + sten
     expect(depths.get("ild")).toBe(2); // gnister + græs
     expect(depths.get("stenoekse")).toBe(1); // sten + pind
-    expect(depths.get("koed")).toBe(3); // spyd(2) + dyr(0)
-    expect(depths.get("stegt-koed")).toBe(4);
+    expect(depths.get("koed")).toBe(4); // spyd(2) + dyr(3) — dyret skal fanges nu, ikke fås
+    expect(depths.get("stegt-koed")).toBe(5);
   });
 
   it("alle akt 1-elementer har en dybde (ingen huller i grafen)", () => {

@@ -3,11 +3,16 @@
   "_crafted": "crafted: true betyder !base. Grænsen er læst af indholdet: alle 30 nuværende løsninger er fremstillede, og ingen af de 11 base-elementer løser noget — heller ikke bær, larver og fugl, som ellers er spiselige. Reglen er ikke 'spiseligt', men 'spiseligt som Karl selv har lavet'. Uden dette kunne sult løses i tur 1.",
   "sult": {
     "_navn": "Karl is hungry",
-    "_udledt_af": "stegt kød, ristede larver, fisk, mudderkage, brød, æg, agerngrød, honning, flæsk, østers, bålstegt æg",
-    "crafted": true,
+    "_udledt_af": "stegt kød, ristede larver, fisk, mudderkage, brød, æg, agerngrød, honning, flæsk, østers, bålstegt æg. To ting skiller dem fra bærsaft og frø, som ellers bærer samme tags: de har kostet mindst to trin arbejde, og de vrider sig ikke længere. Rå larver er mad Karl har fanget, ikke mad han har lavet.",
+    "minDepth": 2,
     "traits": [
       "edible"
-    ]
+    ],
+    "not": {
+      "traits": [
+        "alive"
+      ]
+    }
   },
   "kulde": {
     "_navn": "Karl is freezing",

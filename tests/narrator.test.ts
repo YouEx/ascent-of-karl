@@ -3,6 +3,7 @@ import { Engine } from "../src/core/engine";
 import { freshChallengeState } from "../src/core/challenge";
 import { Narrator, freshNarratorState } from "../src/narrator/narrator";
 import { loadContent } from "../src/content";
+import { earn } from "./helpers";
 
 const content = loadContent();
 
@@ -26,8 +27,16 @@ function withInventions(discovered: string[]): string[] {
 }
 
 
-function setup() {
+/**
+ * Fortæller-tests handler om fortællerens adfærd, ikke om åbningens økonomi.
+ * De bruger larver, dyr, nabo og stamme som almindeligt fiasko-foder — og
+ * siden de fem ikke længere ligger i starthånden, spiller `earn` den korteste
+ * kæde frem til dem først. Engine.combine kaldes uden fortælleren, så hans
+ * tællere står urørt, når selve testen begynder.
+ */
+function setup(...earnThese: string[]) {
   const engine = new Engine(content);
+  if (earnThese.length) earn(engine, ...earnThese);
   const narrator = new Narrator(engine);
   return { engine, narrator };
 }
@@ -63,7 +72,7 @@ describe("Narrator: prioritering", () => {
   });
 
   it("age-up-replikken afspilles ved epokeskift", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("dyr");
     for (const [a, b] of [
       ["sten", "sten"], ["gnister", "graes"], ["sten", "pind"],
       ["stenoekse", "pind"], ["spyd", "dyr"], ["ild", "koed"],
@@ -99,7 +108,7 @@ describe("Narrator: adfærd", () => {
   });
 
   it("ingen replik gentages to gange i træk over en lang fiasko-række", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("larver", "dyr");
     const pairs: Array<[string, string]> = [
       ["baer", "ler"], ["baer", "pind"], ["baer", "graes"], ["baer", "larver"],
       ["dyr", "pind"], ["baer", "pind"], ["larver", "vand"], ["larver", "graes"],
@@ -119,7 +128,7 @@ describe("Narrator: adfærd", () => {
 
 describe("Narrator: hint-eskalering", () => {
   it("eskalerer til stadig tydeligere vink for første uløste problem", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("larver", "dyr");
     const seen: string[] = [];
     const pairs: Array<[string, string]> = [
       ["baer", "ler"], ["baer", "pind"], ["baer", "graes"], ["baer", "larver"],
@@ -140,7 +149,7 @@ describe("Narrator: hint-eskalering", () => {
   });
 
   it("en opdagelse nulstiller hint-tælleren", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("larver", "dyr");
     for (const [a, b] of [
       ["baer", "ler"], ["baer", "pind"], ["baer", "graes"], ["baer", "larver"],
     ] as const) {
@@ -154,7 +163,7 @@ describe("Narrator: hint-eskalering", () => {
 
 describe("Narrator: flag-hukommelse", () => {
   it("refererer larve-valget senere — og kun én gang", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("larver");
     attempt(engine, narrator, "sten", "sten");
     attempt(engine, narrator, "gnister", "graes");
     attempt(engine, narrator, "larver", "ild"); // sætter flag "larver"
@@ -208,7 +217,7 @@ describe("Narrator: varianter og playthrough-seed", () => {
 
 describe("Narrator: nye adfærds-triggere", () => {
   it("samme element mod alt muligt udløser sweep med elementnavnet indsat", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("fugl");
     attempt(engine, narrator, "baer", "ler");
     attempt(engine, narrator, "baer", "pind");
     attempt(engine, narrator, "baer", "graes");
@@ -218,7 +227,7 @@ describe("Narrator: nye adfærds-triggere", () => {
   });
 
   it("meget hurtige forsøg i træk udløser fast-replikken", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("larver", "dyr");
     const pairs: Array<[string, string]> = [
       ["baer", "ler"], ["vand", "graes"], ["larver", "dyr"],
       ["baer", "graes"], ["ler", "pind"], ["dyr", "pind"],
@@ -237,12 +246,12 @@ describe("Narrator: nye adfærds-triggere", () => {
 
   it("slow fyrer HØJST ÉN gang pr. run, uanset hvor mange pauser der er", () => {
     // Målt til 2,8 gange pr. run før: sjov én gang, docerende tre.
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("dyr", "fugl", "stamme");
     const first = attempt(engine, narrator, "baer", "ler", 60_000);
     expect(first?.id).toBe("slow-1");
     for (const [a, b] of [
       ["baer", "pind"], ["ler", "pind"], ["dyr", "pind"], ["fugl", "pind"],
-      ["stamme", "pind"], ["graes", "pind"], ["vand", "pind"],
+      ["graes", "ler"], ["graes", "pind"], ["vand", "pind"],
     ] as const) {
       expect(attempt(engine, narrator, a, b, 60_000)?.id).not.toBe("slow-1");
     }
@@ -319,7 +328,7 @@ describe("Narrator: save/load", () => {
 
 describe("Narrator: en opdagelse møder aldrig tavshed", () => {
   it("kommenterer også kombinationer uden håndskrevet replik", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("nabo", "fugl");
     // nabo + fugl -> fjer har ingen narratorLine; før faldt den lydløst igennem
     const combo = content.combos.find(
       (c) => c.result === "fjer" && !c.narratorLine,
@@ -343,7 +352,7 @@ describe("Narrator: en opdagelse møder aldrig tavshed", () => {
   });
 
   it("gentager ikke samme opdagelses-replik to gange i træk", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("nabo", "fugl");
     const ids: string[] = [];
     for (const [a, b] of [
       ["nabo", "fugl"], ["sten", "vand"], ["ler", "vand"], ["pind", "pind"],
@@ -357,7 +366,7 @@ describe("Narrator: en opdagelse møder aldrig tavshed", () => {
 
 describe("Narrator: spam-tælleren nulstilles", () => {
   it("nævner ikke stenen når spilleren er gået videre til noget andet", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("larver");
     // Tre mislykkede forsøg med sten bringer tælleren til spam-tærsklen
     attempt(engine, narrator, "sten", "graes");
     attempt(engine, narrator, "sten", "ler");
@@ -370,7 +379,7 @@ describe("Narrator: spam-tælleren nulstilles", () => {
   });
 
   it("fyrer stadig når stenen faktisk bruges tre gange i træk", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("larver");
     attempt(engine, narrator, "sten", "graes");
     attempt(engine, narrator, "sten", "ler");
     const line = attempt(engine, narrator, "sten", "larver");
@@ -439,7 +448,7 @@ describe("Narrator: trods", () => {
   });
 
   it("giver det komiske spor sit eget svar — det er dét, man trodser med", () => {
-    const { engine, narrator } = setup();
+    const { engine, narrator } = setup("nabo");
     narrator.openingPull();
     const line = followUp(engine, narrator, "nabo", "nabo"); // brydekamp, spor: komisk
     expect(line?.id).toBe("defiance-comic");
@@ -477,7 +486,7 @@ describe("Narrator: trods", () => {
       ["sten", "vand"],
       ["pind", "pind"],
       ["graes", "graes"],
-      ["stamme", "vand"],
+      ["baer", "ler"],
       ["baer", "vand"],
     ] as const) {
       const line = followUp(engine, narrator, a, b);
@@ -511,7 +520,7 @@ describe("Narrator: trods", () => {
     for (const [a, b] of [
       ["sten", "vand"],
       ["mudder", "graes"],
-      ["stamme", "pind"],
+      ["graes", "ler"],
       ["pind", "pind"],
     ] as const) {
       const line = followUp(engine, narrator, a, b);
@@ -529,9 +538,9 @@ describe("Narrator: trods", () => {
       ["ler", "vand"],
       ["sten", "vand"],
       ["mudder", "graes"],
-      ["stamme", "pind"],
+      ["graes", "ler"],
       ["pind", "pind"],
-      ["stamme", "vand"],
+      ["baer", "ler"],
       ["baer", "sten"],
       ["sten", "mudder"],
       ["bautasten", "bautasten"],
@@ -594,10 +603,14 @@ describe("Narrator: genoptagelse må ikke gentage trækket", () => {
 describe("Narrator: det komiske spor må ikke tabes til en timer", () => {
   it("kommenterer den komiske omvej selv kort efter en tør bemærkning", () => {
     const { engine, narrator } = setup();
+    // Mudder lægges ud uden fortælleren, så mudderkagen er ét træk væk. Den er
+    // den billigste komiske omvej i akten — brydekampen koster otte trin, og
+    // de trin ville spise selve trodsen, testen måler.
+    engine.combine("ler", "vand");
     narrator.openingPull();
     expect(followUp(engine, narrator, "sten", "pind")?.id).toBe("defiance-1");
     // Kun ét forsøg senere: den normale afkøling ville have tiet her
-    const comic = followUp(engine, narrator, "nabo", "nabo");
+    const comic = followUp(engine, narrator, "mudder", "baer");
     expect(comic?.id).toBe("defiance-comic");
   });
 });
