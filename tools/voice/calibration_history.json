@@ -1,0 +1,212 @@
+{
+  "_comment": "Statisk, dateret haendelseslog over de 34 replikker (22 grammatik + 12 bagte par) der blev omskrevet under 2026-08-12-kalibreringsrunden, da politikken skiftede til kilde-sammensatte gates (se judge.py hard_reject()/score() docstrings). Dette er en engangs-changelog, ikke et beregnet tal — modsat resten af narration-voice.md genereres dette IKKE automatisk fra det aktuelle indhold (hvis indholdet aendres igen, forbliver denne fil et snapshot af DENNE rundes rettelser). before/after-teksten er hentet praecist fra git HEAD vs. arbejdstraeet paa rettelsestidspunktet, ikke fra hukommelse.",
+  "date": "2026-08-12",
+  "grammar": [
+    {
+      "label": "g-locked-3#4",
+      "reason": "33 ord (grænse: 3 sætninger / 32 ord)",
+      "before": "Some ideas wait for the right version of their inventor. Karl isn't that version yet, not for the {a} and the {b}. He's working on it, slowly, the way Karl works on everything.",
+      "after": "Some ideas wait for the right version of their inventor. Karl isn't that version yet, not for the {a} and the {b}. He's working on it, slowly, the way Karl always does."
+    },
+    {
+      "label": "g-nm-2#0",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "I know exactly what the {a} and the {b} were missing. The {right} did fine. The {wrong}, less so. Beyond that, I am under absolutely no obligation to say.",
+      "after": "I know exactly what the {a} and the {b} were missing. The {right} did fine, the {wrong} less so. Beyond that, I am under absolutely no obligation to say."
+    },
+    {
+      "label": "g-nm-2#2",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "The {a} tried. The {b} tried. Only the {right} found a partner that actually works, and I've met it. The {wrong} will not get an introduction today.",
+      "after": "The {a} and the {b} both tried. Only the {right} found a partner that actually works, and I've met it. The {wrong} will not get an introduction today."
+    },
+    {
+      "label": "g-nm-2#4",
+      "reason": "5 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "The {a} and the {b} were one substitution away from working. The {right} did fine as it stood. The {wrong} needed replacing. Which replacement, though? Sealed lips, I'm afraid.",
+      "after": "The {a} and the {b} were one substitution away from working. The {right} did fine as it stood; the {wrong} needed replacing. Which replacement, though — sealed lips, I'm afraid."
+    },
+    {
+      "label": "g-nm-2#5",
+      "reason": "5 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "Close enough, from the {a} to the {b}, that it almost hurt to watch. The {right} came so close. The {wrong} ruined it. Almost close enough that I nearly helped. Nearly.",
+      "after": "Close enough, from the {a} to the {b}, that it almost hurt to watch. The {right} came so close, and the {wrong} ruined it. Almost close enough that I nearly helped — nearly."
+    },
+    {
+      "label": "g-nm-3#4",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "Somewhere in this valley sits a piece of matching material — {shared}, to be precise. The {a} tried. The {b} tried. Only the {right} qualified; the {wrong} only looked the part.",
+      "after": "Somewhere in this valley sits a piece of matching material — {shared}, to be precise. The {a} and the {b} both tried. Only the {right} qualified; the {wrong} only looked the part."
+    },
+    {
+      "label": "g-nm-5#3",
+      "reason": "5 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "The judges' scores are in: the {right} earned a correct-impulse medal, the {wrong} earned 'wrong specimen' stamped on its file. No discovery either way. Tough crowd. It's me. I'm the crowd.",
+      "after": "The {right} earned full marks, the {wrong} earned none. No discovery either way. Tough crowd — it's me, I'm the crowd."
+    },
+    {
+      "label": "g-nm-7#0",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "You're closer than you think. The {right} already belonged here. The {wrong} held you back. Keep going.",
+      "after": "You're closer than you think. The {right} already belonged here. The {wrong} held you back — keep going."
+    },
+    {
+      "label": "g-nm-7#1",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "The {a} tried. The {b} tried. Only the {right} belonged in this story. Go find out where.",
+      "after": "The {a} and the {b} both tried. Only the {right} belonged in this story. Go find out where."
+    },
+    {
+      "label": "g-nm-7#3",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "You are one swap away. Keep the {right}. Swap out the {wrong}. That's the {a} and the {b} sorted, in theory.",
+      "after": "You are one swap away. Keep the {right}, swap out the {wrong}. That's the {a} and the {b} sorted, in theory."
+    },
+    {
+      "label": "g-nm-7#5",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "This was not nothing. The {a} and the {b} came close. The {right} nearly got there. Go find what it actually pairs with, and leave the {wrong} out of it.",
+      "after": "This was not nothing — the {a} and the {b} came close. The {right} nearly got there. Go find what it actually pairs with, and leave the {wrong} out of it."
+    },
+    {
+      "label": "g-nm-generous-1#5",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "Fine. The answer is the {partner}. The {a}, the {b}, and now you know: it replaces the {wrong}. The {right} had it right all along.",
+      "after": "Fine — the answer is the {partner}. The {a}, the {b}, and now you know: it replaces the {wrong}. The {right} had it right all along."
+    },
+    {
+      "label": "g-self-3#3",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "He turned the {a} over, considered it, and tried again with a second one. Same {a}. Same result. Same Karl.",
+      "after": "He turned the {a} over, considered it, and tried again with a second one. Same {a}. Same result, same Karl."
+    },
+    {
+      "label": "g-self-4#3",
+      "reason": "33 ord (grænse: 3 sætninger / 32 ord)",
+      "before": "I have seen empires rise on stranger ideas than this. I have not seen one rise on the {a} meeting the {a}. That idea remains untested, and after today, untested for a reason.",
+      "after": "I have seen empires rise on stranger ideas than this. I have not seen one rise on the {a} meeting the {a}. That idea remains untested, and after today, still is."
+    },
+    {
+      "label": "g-inert-2#3",
+      "reason": "33 ord (grænse: 3 sætninger / 32 ord)",
+      "before": "Somewhere, the world winced on behalf of the {deadEnd}. Karl did not notice — he was too busy holding the {a} in one hand and the {b} in the other, waiting for a sign.",
+      "after": "Somewhere, the world winced on behalf of the {deadEnd}. Karl did not notice — too busy holding the {a} in one hand and the {b} in the other, waiting for a sign."
+    },
+    {
+      "label": "g-inert-6#3",
+      "reason": "33 ord (grænse: 3 sætninger / 32 ord)",
+      "before": "Nothing in this valley has ever found a use for the {deadEnd}, and nothing, apparently, plans to start — not with the {a}, not with the {b}, not with anything else Karl has tried.",
+      "after": "Nothing in this valley has ever found a use for the {deadEnd}, and nothing plans to start — not with the {a}, not with the {b}, not with anything Karl has tried."
+    },
+    {
+      "label": "g-inert-7#5",
+      "reason": "36 ord (grænse: 3 sætninger / 32 ord)",
+      "before": "One learns, after enough ages, which objects are going somewhere and which are furniture. The {deadEnd} settled into the furniture category early, and today's attempt — the {a} and the {b} — did nothing to move things along.",
+      "after": "One learns, after enough ages, which objects are going somewhere and which are furniture. The {deadEnd} settled into that category early; today's attempt, the {a} and the {b}, changed nothing."
+    },
+    {
+      "label": "g-clash-2#2",
+      "reason": "35 ord (grænse: 3 sætninger / 32 ord)",
+      "before": "He held the {a} and the {b} together a beat too long, as though {trait} might quietly become {trait2} if nobody looked directly at it. Nobody looked away either. Both stayed exactly what they were.",
+      "after": "He held the {a} and the {b} together a beat too long, as though {trait} might quietly become {trait2} if nobody looked. Both stayed exactly what they were."
+    },
+    {
+      "label": "g-plaus-2#5",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "My sympathies to the {a}. My sympathies to the {b}. Both showed up. Neither was met halfway.",
+      "after": "My sympathies to the {a} and the {b}. Both showed up. Neither was met halfway."
+    },
+    {
+      "label": "g-plaus-3#3",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "I checked. There is no rule against the {a} and the {b} working together. There's also no rule for it yet. Someone should fix that.",
+      "after": "I checked. There is no rule against the {a} and the {b} working together. There's also no rule for it yet — someone should fix that."
+    },
+    {
+      "label": "g-plaus-5#0",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "Karl isn't wrong to try the {a} with the {b}. He's just early. Someone will get credit for this eventually. Possibly not him.",
+      "after": "Karl isn't wrong to try the {a} with the {b}. He's just early. Someone will get credit for this eventually — possibly not him."
+    },
+    {
+      "label": "g-abs-2#3",
+      "reason": "4 sætninger (grænse: 3 sætninger / 32 ord)",
+      "before": "Not kin. Not neighbours. Not acquaintances. The {a} and the {b} are, as far as I can tell, complete strangers.",
+      "after": "Not kin. Not neighbours, not acquaintances. The {a} and the {b} are, as far as I can tell, complete strangers."
+    }
+  ],
+  "pairs": [
+    {
+      "label": "pair-dyr-pind-absurd#0",
+      "reason": "score 0.840 (tærskel 0.8871), 21 ord",
+      "before": "The wild boar and the stick belong to entirely different orders of existence, and neither seemed especially bothered by the introduction.",
+      "after": "The wild boar looked at the stick for exactly as long as courtesy demanded, which was not long. Nothing about the introduction changed either one of them."
+    },
+    {
+      "label": "pair-vand-vand-self#3",
+      "reason": "score 0.851 (tærskel 0.8871), 12 ord",
+      "before": "Water meeting water. Not a discovery — a puddle, mildly larger than before.",
+      "after": "Water meeting water, introduced by Karl with the gravity of a real discovery. It was not one — only a puddle, mildly larger than before."
+    },
+    {
+      "label": "pair-ler-ler-self#3",
+      "reason": "score 0.885 (tærskel 0.8871), 16 ord",
+      "before": "Clay against clay, wet meeting wet. What began as two is now, technically, one indistinct blob.",
+      "after": "Clay against clay, wet meeting wet, exactly as unsurprising as it sounds. What began as two separate lumps is now, technically, one larger and equally indistinct blob."
+    },
+    {
+      "label": "pair-honning-ler-inert#1",
+      "reason": "score 0.851 (tærskel 0.8871), 24 ord",
+      "before": "Honey heals, clay shapes: two proud little talents that, put together, cancel each other out and produce only a faintly sweet, faintly muddy silence.",
+      "after": "Honey is good at healing. Clay is good at shaping. Put together, neither wins — only a quiet, sweet, muddy nothing."
+    },
+    {
+      "label": "pair-boomerang-reb-near-miss#0",
+      "reason": "score 0.886 (tærskel 0.8871), 54 ord",
+      "before": "Karl tied the rope to the boomerang's tip, on the theory that a thing which already comes back could be persuaded to come back faster. It came back the same speed as always, dragging a length of rope behind it like an afterthought. The {right} had a knot to be part of somewhere else.",
+      "after": "Karl tied the rope to the boomerang's tip, hoping a thing that already comes back might come back faster. It came back at the same old speed, dragging the rope behind it like an afterthought. The {right} had a knot to be part of somewhere else."
+    },
+    {
+      "label": "pair-hjul-stenoekse-near-miss#0",
+      "reason": "score 0.886 (tærskel 0.8871), 54 ord",
+      "before": "Karl wedged the stone axe's blade against the wheel, hoping to give it something to roll toward. It rolled off in an entirely different direction, the same way it always does, and Karl chased it across the valley for a third time. The {right} had a job that had nothing to do with rolling.",
+      "after": "Karl wedged the stone axe's blade against the wheel, hoping to give it something to roll toward. It rolled off in its usual direction instead, and Karl chased it across the valley for a third time. The {right} had a job that had nothing to do with rolling."
+    },
+    {
+      "label": "pair-baer-stenspil-inert#1",
+      "reason": "score 0.875 (tærskel 0.8871), 56 ord",
+      "before": "There is exactly one rule to boules that Karl consistently loses by, and it has nothing to do with fruit. He rolled a handful of the berries into the circle anyway, hoping the game might quietly change its terms. Ugh has never once looked more personally offended on the game's behalf than at that exact moment.",
+      "after": "There is exactly one rule to boules that Karl consistently loses by, and it has nothing to do with fruit. He rolled a handful of berries into the circle anyway, hoping the game might quietly change its terms. Ugh has never looked more personally offended on the game's behalf."
+    },
+    {
+      "label": "pair-mudderkage-saft-plausible#0",
+      "reason": "score 0.870 (tærskel 0.8871), 57 ord",
+      "before": "Karl poured the berry juice over the mud pie, finishing it the way any proper baker finishes a proper cake. The mud pie soaked it up and turned a shade darker, which is further than most of Karl's meals ever get. Whatever separates a glazed mud pie from an actual dessert, Karl has not yet found it.",
+      "after": "Karl poured the berry juice over the mud pie, finishing it the way a baker finishes a cake. The mud pie soaked it up and turned a shade darker, further than most of Karl's meals get. Whatever separates a glazed mud pie from a dessert, Karl has not found it."
+    },
+    {
+      "label": "pair-spydspids-vand-near-miss#0",
+      "reason": "score 0.866 (tærskel 0.8871), 58 ord",
+      "before": "Karl dipped the stone-tipped spear into the water and swirled it, half-hoping the point might learn something new from the experience. It came out exactly as sharp, exactly as opinionated, and exactly as dry within a minute. The {right} had a use for water that had nothing to do with dipping spears in it.",
+      "after": "Karl dipped the stone-tipped spear into the water and swirled it, half-hoping it might learn something new. It came out just as sharp, just as opinionated, and just as dry within a minute. The {right} had a use for water that had nothing to do with this."
+    },
+    {
+      "label": "pair-galleri-sten-near-miss#0",
+      "reason": "score 0.886 (tærskel 0.8871), 54 ord",
+      "before": "Karl set his stone, the nearest thing he has to a best friend, beside the two paintings in the cave gallery, hoping the count might simply expand to three. It ruined the symmetry, and got nudged back outside the wall within the minute. The {right} always mattered more than a spare rock did.",
+      "after": "Karl set his stone, the nearest thing he has to a best friend, beside the two paintings in the cave gallery, hoping the count might reach three. It ruined the symmetry, and got nudged back outside within the minute. The {right} always mattered more than a spare rock did."
+    },
+    {
+      "label": "pair-bautasten-stenoekse-near-miss#0",
+      "reason": "score 0.876 (tærskel 0.8871), 54 ord",
+      "before": "Karl raised the stone axe toward the standing stone the way he raises it at any rock in need of an edge. Halfway through the swing, something made him stop, and the axe came down against nothing but air. The {right} earned that hesitation; a monument, it turns out, earns something else entirely.",
+      "after": "Karl raised the stone axe toward the standing stone, the way he raises it at any rock needing an edge. Halfway through the swing, he stopped, and the axe came down against nothing but air. The {right} earned that hesitation; a monument earns something else."
+    },
+    {
+      "label": "pair-mudderbad-sten-near-miss#0",
+      "reason": "score 0.861 (tærskel 0.8871), 57 ord",
+      "before": "Karl carried the stone to the edge of the mud bath, half expecting his usual conversation partner to climb in with him. It sank a little, said nothing, the way stones do, and stayed exactly as dry as it started. The {right} was hoping to get wet today; the stone was never going to be it.",
+      "after": "Karl carried the stone to the edge of the mud bath, half expecting his usual partner to climb in with him. It sank a little, said nothing, the way stones do, and stayed dry. The {right} was hoping to get wet today; the stone was never it."
+    }
+  ]
+}

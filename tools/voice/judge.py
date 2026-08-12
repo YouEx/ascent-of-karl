@@ -68,11 +68,18 @@ from metrics import (  # noqa: E402
     normalize_punchline,
     split_sentences,
     tokenize_words,
+    words_per_line_stats,
 )
 
 # --- Faste politik-tal fra planen (TASK-028) — IKKE kalibreret, se docstring ---
 HARD_MAX_SENTENCES = 3
 HARD_MAX_WORDS = 32
+
+# Kun en genbrugt AFSLUTNING på mindst så mange ord tæller som en reel,
+# genkendelig punchline (politikbeslutning 2026-08-12, se docstring). Korte,
+# generiske lukninger ("not today", "it is not", "not that") er sproglige
+# mønstre, ikke specifikke vittigheder, og skal ikke kunne fælde en kandidat.
+PUNCHLINE_MIN_WORDS = 4
 
 EPS = 1e-9
 
@@ -123,18 +130,38 @@ def domain_vocabulary() -> set[str]:
 # ---------------------------------------------------------------------------
 # Hårde afvisninger — binære, gælder kandidattekst (se docstring for hvorfor
 # sætningsgrænsen aldrig anvendes på det håndskrevne korpus selv i gate()).
+#
+# ## Kilde-specifik politik for sætnings-/ordloftet (besluttet 2026-08-12)
+#
+# `HARD_MAX_SENTENCES`/`HARD_MAX_WORDS` er generator-sikkerhedsgrænser: de
+# findes for at stoppe grammatikkens (og en fremtidig live-generators)
+# skabelon-udfyldning i at løbe løbsk, IKKE for at dømme allerede
+# menneske-skrevne, menneske-godkendte replikker. Bagte par har deres eget,
+# etablerede kontraktloft — `tools/check_pairs.py`'s 320 tegn (se
+# docs/design/narration-voice.md, "Uoverensstemmelser med planen" #2, for det
+# fulde regnestykke: 320 tegn engelsk prosa ≈ 45-50 ord, og alle 908 bagte
+# varianter overholder DET loft allerede, skribent-godkendt under TASK-023).
+#
+# Derfor gælder sætnings-/ordloftet KUN når `source="grammar"` (default —
+# dækker også en fremtidig live-generator, som ligesom grammatikken aldrig er
+# blevet læst af et menneske før den vises). `source="pairs"` slår dem fra.
+# Det er ikke en svækkelse af par-porten: par-replikker dømmes stadig af BÅDE
+# `check_pairs.py` (længde, dubletter) OG denne funktion (fejlmeddelelse-
+# register, moderne ordforråd, genbrugt punchline) — to porte, hver med sit
+# ansvar, sammensat efter kildetype, ikke én port med en undtagelse indbygget.
 # ---------------------------------------------------------------------------
-def hard_reject(text: str, fingerprint: dict[str, Any]) -> list[str]:
+def hard_reject(text: str, fingerprint: dict[str, Any], *, source: str = "grammar") -> list[str]:
     reasons: list[str] = []
     lower = text.lower()
 
-    n_sent = len(split_sentences(text))
-    if n_sent > HARD_MAX_SENTENCES:
-        reasons.append(f"{n_sent} sætninger (grænse {HARD_MAX_SENTENCES})")
+    if source != "pairs":
+        n_sent = len(split_sentences(text))
+        if n_sent > HARD_MAX_SENTENCES:
+            reasons.append(f"{n_sent} sætninger (grænse {HARD_MAX_SENTENCES})")
 
-    n_words = len(tokenize_words(text))
-    if n_words > HARD_MAX_WORDS:
-        reasons.append(f"{n_words} ord (grænse {HARD_MAX_WORDS})")
+        n_words = len(tokenize_words(text))
+        if n_words > HARD_MAX_WORDS:
+            reasons.append(f"{n_words} ord (grænse {HARD_MAX_WORDS})")
 
     for phrase in LEXICON["forbiddenConstructions"]:
         if phrase.lower() in lower:
@@ -148,10 +175,18 @@ def hard_reject(text: str, fingerprint: dict[str, Any]) -> list[str]:
         if re.search(pattern, lower):
             reasons.append(f'moderne ordforråd: "{phrase}"')
 
+    # Genbrugt punchline: kun en "meningsfuld" afslutning tæller (politik
+    # 2026-08-12) — se PUNCHLINE_MIN_WORDS. Korte generiske lukninger som
+    # "not today"/"it is not"/"not that" matcher teknisk et korpus-punchline,
+    # men er sprogmønstre alle skribenter griber til, ikke en genbrugt vittighed.
     sentences = split_sentences(text)
     if sentences:
         punchline = normalize_punchline(sentences[-1])
-        if punchline and punchline in fingerprint["punchlines"]:
+        if (
+            punchline
+            and len(tokenize_words(punchline)) >= PUNCHLINE_MIN_WORDS
+            and punchline in fingerprint["punchlines"]
+        ):
             reasons.append(f'genbrugt punchline: "{punchline}"')
 
     return reasons
@@ -221,8 +256,36 @@ def _novelty_fraction(text: str, corpus_vocab: set[str], domain_vocab: set[str])
     return novel / len(tokens)
 
 
+# ---------------------------------------------------------------------------
+# Kilde-specifikt ordtal-bånd for bagte par (politik 2026-08-12).
+#
+# Bagte par er, ligesom det håndskrevne korpus selv, MÅLT — men de er en
+# strukturelt anderledes indholdstype: hvert par er skrevet specifikt til to
+# navngivne ting og godkendt under sit eget, længere kontraktloft (320 tegn,
+# tools/check_pairs.py, TASK-023) i stedet for grammatikkens korte,
+# kombinatoriske skabelonlinjer. Målt: bagte par har median 32 ord (p90 43),
+# mod det håndskrevne korpus' median 17 (p90 26) — se
+# docs/design/narration-voice.md. At score deres ordtal-DIMENSION mod DEN
+# HÅNDSKREVNE fordeling ville lade det bløde 26-ords-p90-loft genindføre
+# næsten samme straf som det hårde 32-ords-loft, lige efter at det hårde loft
+# blev fjernet for netop denne kildetype (samme politikbeslutning, se
+# hard_reject()'s docstring) — tærsklen ville se ud til at være løst på
+# papiret, men reelt stadig ramme stort set de samme lange, allerede
+# godkendte par. Derfor: bagte par scores på ordtal mod bagte pars EGEN
+# fordeling, selvkalibreret akkurat som alt andet i dette system — aldrig et
+# gættet tal, og stadig en reel straf for et par der er unormalt langt eller
+# kort SELV FOR ET PAR. Ingen anden dimension viste dette mønster (se
+# rapportens "Ordtal-dimensionen — hvorfor bagte par har deres eget bånd").
+# ---------------------------------------------------------------------------
+def pairs_wordcount_band(pairs: list[tuple[str, str]] | None = None) -> dict[str, float]:
+    if pairs is None:
+        pairs = expand_pairs()
+    return words_per_line_stats([text for _, text in pairs])
+
+
 def score(text: str, fingerprint: dict[str, Any], corpus_vocab: set[str] | None = None,
-          dom_vocab: set[str] | None = None) -> dict[str, Any]:
+          dom_vocab: set[str] | None = None, *, source: str = "grammar",
+          pairs_band: dict[str, float] | None = None) -> dict[str, Any]:
     """Per-dimension 0-1 score plus `overall` (uvægtet gennemsnit — samme
     aggregering som `overall` i tools/judge/metrics.py: score_region())."""
     if corpus_vocab is None:
@@ -244,7 +307,10 @@ def score(text: str, fingerprint: dict[str, Any], corpus_vocab: set[str] | None 
     dims: dict[str, float] = {
         "wordLength": range_score(mean_word_len, fingerprint["wordLength"]["perLineMean"]),
         "sentenceCount": range_score(float(n_sent), fingerprint["sentencesPerLine"]),
-        "wordCount": range_score(float(n_words), fingerprint["wordsPerLine"]),
+        "wordCount": range_score(
+            float(n_words),
+            (pairs_band or pairs_wordcount_band()) if source == "pairs" else fingerprint["wordsPerLine"],
+        ),
         "vocabulary": novelty_score(
             _novelty_fraction(text, corpus_vocab, dom_vocab),
             fingerprint["vocabulary"]["leaveOneOutNovelty"],
@@ -267,14 +333,18 @@ def score(text: str, fingerprint: dict[str, Any], corpus_vocab: set[str] | None 
     return {"dimensions": dims, "overall": round(overall, 4), "presentShareDecidable": present_share is not None}
 
 
-def judge(text: str, fingerprint: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Fuld dom over én kandidat: hårde afvisninger + kontinuerlig score."""
+def judge(text: str, fingerprint: dict[str, Any] | None = None, *, source: str = "grammar") -> dict[str, Any]:
+    """Fuld dom over én kandidat: hårde afvisninger + kontinuerlig score.
+    `source` videregives til både hard_reject() (kun "grammar" håndhæver
+    sætnings-/ordloftet — "pairs" lader check_pairs.py om det) og score()
+    (ordtal-DIMENSIONEN måles for "pairs" mod bagte pars eget bånd, se
+    pairs_wordcount_band())."""
     if fingerprint is None:
         fingerprint = build_fingerprint()
     return {
         "text": text,
-        "hardRejects": hard_reject(text, fingerprint),
-        **score(text, fingerprint),
+        "hardRejects": hard_reject(text, fingerprint, source=source),
+        **score(text, fingerprint, source=source),
     }
 
 
@@ -396,17 +466,26 @@ def gate() -> list[str]:
     corpus_vocab = set(fingerprint["vocabulary"]["frequency"])
     dom_vocab = domain_vocabulary()
 
+    # Kildemærket, så hard_reject() ved om sætnings-/ordloftet gælder (kun
+    # grammatik — se hard_reject()'s docstring for den fulde begrundelse).
+    sourced: list[tuple[str, list[tuple[str, str]]]] = [
+        ("grammar", expand_grammar()),
+        ("pairs", expand_pairs()),
+    ]
+    pairs_band = pairs_wordcount_band(sourced[1][1])  # bagte pars eget ordtal-bånd, se score()
+
     failures: list[str] = []
-    for label, text in [*expand_grammar(), *expand_pairs()]:
-        rejects = hard_reject(text, fingerprint)
-        if rejects:
-            failures.append(f"{label}: hård afvisning — {'; '.join(rejects)} — {text!r}")
-            continue
-        result = score(text, fingerprint, corpus_vocab, dom_vocab)
-        if result["overall"] < threshold:
-            failures.append(
-                f"{label}: score {result['overall']:.3f} under tærskel {threshold:.3f} — {text!r}"
-            )
+    for source, candidates in sourced:
+        for label, text in candidates:
+            rejects = hard_reject(text, fingerprint, source=source)
+            if rejects:
+                failures.append(f"{label}: hård afvisning — {'; '.join(rejects)} — {text!r}")
+                continue
+            result = score(text, fingerprint, corpus_vocab, dom_vocab, source=source, pairs_band=pairs_band)
+            if result["overall"] < threshold:
+                failures.append(
+                    f"{label}: score {result['overall']:.3f} under tærskel {threshold:.3f} — {text!r}"
+                )
     return failures
 
 
@@ -426,6 +505,17 @@ def selftest() -> int:
     if not any("ord" in x for x in r):
         fails.append(f"hard_reject skulle fange >32 ord: {r}")
 
+    # Politik 2026-08-12: sætnings-/ordloftet er en generator-sikkerhedsgrænse
+    # og gælder derfor IKKE bagte par (source="pairs") — de har deres eget
+    # 320-tegns-loft i tools/check_pairs.py. Samme to fixtures som ovenfor,
+    # men nu skal INGEN af dem ramme sætnings-/ordtal-afvisning.
+    r = hard_reject(over_sentence, fp, source="pairs")
+    if any("sætninger" in x for x in r):
+        fails.append(f"hard_reject må IKKE håndhæve sætningsloft for source='pairs': {r}")
+    r = hard_reject(over_words, fp, source="pairs")
+    if any(" ord (" in x for x in r):
+        fails.append(f"hard_reject må IKKE håndhæve ordloft for source='pairs': {r}")
+
     r = hard_reject("This cannot be undone. Please try again.", fp)
     if not any("fejlmeddelelse" in x for x in r):
         fails.append(f"hard_reject skulle fange fejlmeddelelse-register: {r}")
@@ -437,11 +527,34 @@ def selftest() -> int:
     if any("moderne" in x for x in r):
         fails.append(f"hard_reject fangede fejlagtigt 'ok' som delstreng i 'broken': {r}")
 
-    if fp["punchlines"]:
-        known = fp["punchlines"][0]
-        r = hard_reject(f"Karl waits. {known.capitalize()}.", fp)
+    # Punchline-genbrug: kun en afslutning på mindst PUNCHLINE_MIN_WORDS ord
+    # tæller (politik 2026-08-12) — fundet dynamisk i det faktiske korpus,
+    # ikke tastet ind i hånden, så testen aldrig kommer i utakt med indholdet.
+    short_punchlines = [p for p in fp["punchlines"] if len(tokenize_words(p)) < PUNCHLINE_MIN_WORDS]
+    long_punchlines = [p for p in fp["punchlines"] if len(tokenize_words(p)) >= PUNCHLINE_MIN_WORDS]
+
+    if short_punchlines:
+        known_short = short_punchlines[0]
+        r = hard_reject(f"Karl waits. {known_short.capitalize()}.", fp)
+        if any("punchline" in x for x in r):
+            fails.append(
+                f"hard_reject afviste fejlagtigt en kort ({len(tokenize_words(known_short))} "
+                f"ord < {PUNCHLINE_MIN_WORDS}) generisk lukning som genbrugt punchline: "
+                f"'{known_short}' — {r}"
+            )
+    else:
+        fails.append("selftest-fixture mangler: intet punchline under PUNCHLINE_MIN_WORDS ord")
+
+    if long_punchlines:
+        known_long = long_punchlines[0]
+        r = hard_reject(f"Karl waits. {known_long.capitalize()}.", fp)
         if not any("punchline" in x for x in r):
-            fails.append(f"hard_reject skulle fange genbrugt punchline '{known}': {r}")
+            fails.append(
+                f"hard_reject skulle fange en reel, {len(tokenize_words(known_long))}-ords "
+                f"genbrugt punchline: '{known_long}' — {r}"
+            )
+    else:
+        fails.append("selftest-fixture mangler: intet punchline på mindst PUNCHLINE_MIN_WORDS ord")
 
     # range_score: inden for bånd = 1.0, langt udenfor < 1.0, aldrig 0.
     dist = {"p10": 2.0, "p25": 3.0, "p50": 5.0, "p75": 7.0, "p90": 9.0, "p95": 11.0, "max": 20.0}
@@ -474,6 +587,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--text", help="døm en enkelt tekststreng og udskriv resultatet")
+    ap.add_argument("--source", choices=["grammar", "pairs"], default="grammar",
+                     help="kilde for --text: styrer om sætnings-/ordloftet håndhæves (kun grammar)")
     args = ap.parse_args()
 
     if args.selftest:
@@ -481,7 +596,7 @@ def main() -> int:
 
     fp = build_fingerprint()
     if args.text:
-        result = judge(args.text, fp)
+        result = judge(args.text, fp, source=args.source)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
 
