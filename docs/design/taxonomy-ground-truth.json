@@ -1,7 +1,7 @@
 {
   "_kommentar": "Facitliste udledt af håndskrevet indhold — se tools/ground_truth.py. must_accept: prædikatet SKAL acceptere alle. must_reject_all: intet nøde-prædikat må acceptere nogen af disse.",
   "generated_from": {
-    "combos": 362,
+    "combos": 409,
     "challenges": 3,
     "elements": 187
   },
