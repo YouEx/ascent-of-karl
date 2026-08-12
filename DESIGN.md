@@ -415,9 +415,18 @@ slags fejl med en anden farve.
 - ❌ **Tekstfarve valgt mod den lyseste flade.** Den skal holde mod den mørkeste
   papirflade den kan lande på (`Slot` `#DEC6B0`) — se etiketfælden i §2
 - ❌ **Emoji i UI-krom** — ingen emoji i knaptekster, faner eller etiketter.
-  _Undtagelse:_ emoji som **indhold** (elementernes og skæbnernes ikoner fra
-  `content/*.json`) er spillets illustrationssprog og er tilladt. Skellet er:
-  kommer tegnet fra indholdet, er det kunst; skriver vi det i en knap, er det slop.
+  **Emoji er heller ikke længere spillets illustrationssprog.** Reglen lød tidligere
+  at ikoner fra `content/*.json` var kunst og derfor tilladt; det er nu modbevist ved
+  måling fire gange (elementfliserne, kombinationsknappen, dokkens felter, de tre
+  problemknapper). Systemets emoji er blege og flade mod pergament, og CSS'en endte
+  med at kompensere med `saturate()` og `mix-blend-mode` — altså male hen over et
+  forkert billede. Én af dem var direkte forkert: vi tegnede en kølle hvor referencen
+  viser en mave.
+  **Ikoner skæres ud af referencen.** `tools/art/build_*.py` klipper motivet ud,
+  emitterer `sizes.json` med referencens egne mål, og markup'en sætter `width`/`height`
+  eksplicit. Ikonerne har ikke samme mål (23×24, 27×30, 28×29) — en fælles `max-height`
+  ville flade den forskel ud. Emoji i `content/*.json` overlever kun som **fallback**
+  når et motiv endnu ikke er skåret.
   **Kendt brud pr. 11-08-2026:** `⏳` i titellinjens sommertæller
   (`src/ui/main.ts`, `renderAge()`) er krom og skal erstattes af et rigtigt ikon.
 
@@ -475,5 +484,6 @@ billeder — derfor står den her og ikke i et script.
 
 | Dato       | Ændring                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 12-08-2026 | §8: emoji er ikke længere illustrationssproget. Ikoner skæres ud af referencen (`tools/art/build_*.py` + `sizes.json` + eksplicit `width`/`height`); emoji er kun fallback. Metoden bag: når en flades struktur, blæk og materialitet alle er lave, skæres HELE fladen ud af referencen og CSS'ens `border`, `--grain` og `box-shadow` slettes — ellers påføres krommet to gange. Brugt på krøniken, fortælleren, dokkens felter og elementfliserne. |
 | 11-08-2026 | Målbilledet flyttet til `target-2026-08-11.webp`: malet landskab som lærred, tan pergament, varmt blæk, navy akt-badge, hulemaleri-ornamenter, elementkunst (§9). Typografireglen omskrevet til "serif taler, sans betjener". Rettet to kontrastfejl i referencen (etiketbrun 3,21:1 og Combine-knap 2,18:1). |
 | 10-08-2026 | Første version afledt af pastelreferencen. Ophævede den midlertidige mørke hulemaleri-æstetik.                                                                                                                                                                                                                |
