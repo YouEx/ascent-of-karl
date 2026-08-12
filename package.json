@@ -6,7 +6,7 @@
   "description": "Story-drevet alchemy-spil med en sarkastisk fortæller",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node tools/bundle_budget.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -24,7 +24,8 @@
     "pairs": "vite-node tools/pair_frequency.ts",
     "pairs:prepare": "vite-node tools/prepare_pairs.ts",
     "pairs:assemble": "python3 tools/assemble_pairs.py",
-    "coverage": "node tools/coverage_report.mjs"
+    "coverage": "node tools/coverage_report.mjs",
+    "bundle-budget": "node tools/bundle_budget.mjs"
   },
   "devDependencies": {
     "playwright": "^1.62.1",

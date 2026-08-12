@@ -4,6 +4,7 @@ import { Narrator } from "../src/narrator/narrator";
 import { loadContent } from "../src/content";
 import { judgePair } from "../src/core/verdict";
 import { grammarPool } from "../src/narrator/grammar";
+import { playAndCollectFailures } from "./helpers";
 import type { Verdict } from "../src/core/types";
 
 const content = loadContent();
@@ -51,14 +52,43 @@ describe("Grammatikken: dækningen (TEST-004)", () => {
     }
   });
 
-  it("hver replik har mindst fire varianter", () => {
+  it("hver replik har mindst seks varianter (TEST-009)", () => {
+    // Planens egen bar (TASK-020: "≈ 48 regler, mindst 6 varianter pr. dom").
+    // Stod før på ≥4, som er under det grammatikken faktisk leverer i dag (6)
+    // — en fremtidig redigering kunne stille og roligt skrabe ned til 4 uden
+    // at nogen test bed mærke.
     const e = new Engine(content);
     const n = new Narrator(e);
     for (const ids of Object.values(act1.grammar ?? {})) {
       for (const id of ids) {
-        expect(n.line(id).variants.length, id).toBeGreaterThanOrEqual(4);
+        expect(n.line(id).variants.length, id).toBeGreaterThanOrEqual(6);
       }
     }
+  });
+
+  it("ingen variant lyder ens under to forskellige domme (TEST-009)", () => {
+    // En replik der læses op for både "near-miss" og "absurd" fortæller
+    // spilleren ingenting — den ene dom er "du var tæt på", den anden er
+    // "det var vildt ude i skoven", og teksten skal bære den forskel. Samme
+    // variant to gange UNDER SAMME dom er ikke testens problem her.
+    const e = new Engine(content);
+    const n = new Narrator(e);
+    const verdictOf = (key: string): Verdict => key.split(":")[0]! as Verdict;
+    const verdictsByVariant = new Map<string, Set<Verdict>>();
+    for (const [key, ids] of Object.entries(act1.grammar ?? {})) {
+      const verdict = verdictOf(key);
+      for (const id of ids) {
+        for (const variant of n.line(id).variants) {
+          const seen = verdictsByVariant.get(variant) ?? new Set<Verdict>();
+          seen.add(verdict);
+          verdictsByVariant.set(variant, seen);
+        }
+      }
+    }
+    const crossVerdict = [...verdictsByVariant.entries()]
+      .filter(([, verdicts]) => verdicts.size > 1)
+      .map(([variant, verdicts]) => `"${variant}" → ${[...verdicts].join(" vs. ")}`);
+    expect(crossVerdict).toEqual([]);
   });
 
   it("næsten hver variant nævner mindst ét af de to elementer", () => {
@@ -82,41 +112,15 @@ describe("Grammatikken: dækningen (TEST-004)", () => {
 });
 
 describe("Grammatikken: i den rigtige motor", () => {
-  /** Spiller blindt og fanger hver eneste replik fortælleren siger ved en fiasko. */
-  function playAndCollect(seed: number) {
-    const e = new Engine(content);
-    const n = new Narrator(e);
-    const said: { id: string; text: string }[] = [];
-    for (let page = 1; page <= 200; page++) {
-      if (e.getState().ended) break;
-      const pool = e.getState().discovered;
-      const a = pool[(page * 7 + seed) % pool.length]!;
-      const b = pool[(page * 13 + seed * 3) % pool.length]!;
-      const out = e.combine(a, b);
-      const line = n.react(a, b, out, 4000);
-      if (out.kind === "nofuse" && line) said.push({ id: line.id, text: line.text });
-    }
-    return said;
-  }
-
-  it("den generiske pulje bliver aldrig nået", () => {
-    // Grammatikken står før den; hvis en generisk replik alligevel lyder, er
-    // der et hul i dækningen. Nødudgangen skal forblive ubrugt.
-    const generic = new Set(act1.genericFailure);
-    let hits = 0;
-    let total = 0;
-    for (let r = 0; r < 60; r++) {
-      for (const line of playAndCollect(r * 7919 + 13)) {
-        total++;
-        if (generic.has(line.id)) hits++;
-      }
-    }
-    expect(total).toBeGreaterThan(500);
-    expect(hits).toBe(0);
-  });
+  // TEST-007 (den generiske pulje bliver aldrig nået, over mange runs) er
+  // foldet ind i den stærkere 200-run-regressionstest i
+  // tests/narrator-regression.test.ts (TASK-031): samme 0-krav på generic-
+  // pulje-hits, men på 200 runs i stedet for 60, og med gentagelsesloftet
+  // planen faktisk beder om. Denne fil beholder kun det, den regressionstest
+  // ikke dækker: pladsholder-udfyldning og konsekutiv gentagelse.
 
   it("replikkerne nævner faktisk elementerne, efter udfyldning", () => {
-    const said = playAndCollect(31337);
+    const said = playAndCollectFailures(content, 31337);
     const withNames = said.filter((l) => /[a-z]/.test(l.text) && l.text.length > 10);
     expect(withNames.length).toBe(said.length);
     // Ingen tom pladsholder må slippe igennem til spilleren.
@@ -132,7 +136,7 @@ describe("Grammatikken: i den rigtige motor", () => {
     // mod en frist, og en tavs frist er ingen frist.
     const grammarIds = new Set(Object.values(act1.grammar ?? {}).flat());
     for (const seed of [4242, 99, 7, 31337]) {
-      const said = playAndCollect(seed).filter((l) => grammarIds.has(l.id));
+      const said = playAndCollectFailures(content, seed).filter((l) => grammarIds.has(l.id));
       let repeats = 0;
       for (let i = 1; i < said.length; i++) {
         if (said[i]!.id === said[i - 1]!.id) repeats++;
@@ -141,3 +145,4 @@ describe("Grammatikken: i den rigtige motor", () => {
     }
   });
 });
+
