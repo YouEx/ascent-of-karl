@@ -687,6 +687,42 @@ img.problem-icon {
   width: 6px; height: 6px; border-radius: 50%;
   background: var(--ochre);
 }
+/*
+ * Færdig: tingen indgår ikke i nogen opskrift.
+ *
+ * Den må IKKE se deaktiveret ud. En tredjedel af alt spilleren finder er
+ * færdigt, og det er ofte de bedste fund — trommen, bautastenen, hulemaleriet.
+ * At gøre dem grå ville gøre spillets belønninger til fejl. Mærket er derfor
+ * en indhugget streg forneden, som en afsluttet tælling: kortet er stadig
+ * fuldt oplyst, det er bare mejslet færdigt.
+ *
+ * Stregen er sat i --tile-groove, samme farve som kortets egen indre rille, så
+ * den læses som en del af udskæringen og ikke som et pålagt ikon.
+ *
+ * Den bruger ::before, ikke ::after: ::after er den nye-prik, og en ting kan
+ * sagtens være både nyfundet og færdig i samme sekund. To mærker på ét
+ * pseudoelement ville tegne ét rod i stedet for to signaler.
+ */
+.element.is-done::before {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: 7px;
+  transform: translateX(-50%);
+  width: 22px; height: 2px;
+  border-radius: 1px;
+  background: var(--tile-groove);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.45);
+}
+/* ×2 vinder over den færdige streg, mens tingen står i begge slots: dér er
+   antallet det, spilleren skal kunne se. Den er transient; stregen kommer igen. */
+.element.is-done.is-selected-twice::before {
+  content: "×2";
+  top: 4px; bottom: auto; left: 6px;
+  transform: none;
+  width: auto; height: auto;
+  background: none; box-shadow: none;
+}
+.element.is-done .name { color: var(--ink-soft); }
 #grid-empty {
   color: var(--ink-soft); text-align: center;
   font-family: var(--font-display); font-style: italic;

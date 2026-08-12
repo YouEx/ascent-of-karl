@@ -129,6 +129,7 @@ app.innerHTML = `
   <div id="tools">
     <input id="search" type="search" placeholder="Search elements…" aria-label="Search elements" autocomplete="off">
     <button id="filter-new" class="chip-btn" aria-pressed="false">New finds</button>
+    <button id="filter-done" class="chip-btn" aria-pressed="false" title="Hide the things that lead nowhere further">Hide finished</button>
   </div>
 
   <section id="grid" aria-label="Elements"></section>
@@ -162,6 +163,7 @@ const el = {
   muteBtn: document.getElementById("mute") as HTMLButtonElement,
   search: document.getElementById("search") as HTMLInputElement,
   filterNew: document.getElementById("filter-new") as HTMLButtonElement,
+  filterDone: document.getElementById("filter-done") as HTMLButtonElement,
   grid: document.getElementById("grid")!,
   gridEmpty: document.getElementById("grid-empty")!,
   slotA: document.getElementById("slot-a")!,
@@ -193,6 +195,17 @@ let lastAttemptAt: number | null = null;
 let runStartedAt = performance.now();
 let query = "";
 let onlyNew = false;
+/**
+ * Skjul de ting, der ikke indgår i nogen opskrift.
+ *
+ * De er ikke fejl — de er enden på en vej, og et af spillets bedste øjeblikke.
+ * Men de bliver liggende i hånden, og spilleren vælger to ting ad gangen, så
+ * hver færdig ting gør alle senere valg ringere. Med dem lagt til side falder
+ * søgerummet fra 17.205 par til 3.403, og andelen af par der giver noget
+ * stiger fra 1,3 % til 6,8 %. Det er spillerens valg, ikke vores: knappen er
+ * slået fra som udgangspunkt.
+ */
+let hideDone = false;
 /** Opdaget i denne session — får en okker prik, så de er til at finde i et stort grid */
 const freshFinds = new Set<string>();
 
@@ -379,14 +392,20 @@ function renderGrid(): void {
   const q = query.trim().toLowerCase();
   const visible = engine.availableElements().filter((d) => {
     if (onlyNew && !freshFinds.has(d.id)) return false;
+    // En nyfunden ting bliver stående, selv hvis den er færdig — ellers ville
+    // belønningen forsvinde i samme sekund den blev givet.
+    if (hideDone && d.terminal && !freshFinds.has(d.id)) return false;
     return !q || d.name.toLowerCase().includes(q);
   });
 
   el.grid.innerHTML = "";
   for (const def of visible) {
     const btn = document.createElement("button");
-    btn.className = `element ${freshFinds.has(def.id) ? "is-new" : ""}`;
+    btn.className = `element ${freshFinds.has(def.id) ? "is-new" : ""} ${
+      def.terminal ? "is-done" : ""
+    }`;
     btn.dataset.id = def.id;
+    if (def.terminal) btn.title = `${def.name} — finished. Nothing combines with it.`;
     btn.innerHTML = `${glyphHTML(def.id, def.emoji)}<span class="name">${def.name}</span>`;
     attachSelect(btn, def);
     el.grid.appendChild(btn);
@@ -411,6 +430,13 @@ el.filterNew.addEventListener("click", () => {
   onlyNew = !onlyNew;
   el.filterNew.setAttribute("aria-pressed", String(onlyNew));
   el.filterNew.classList.toggle("active", onlyNew);
+  renderGrid();
+});
+
+el.filterDone.addEventListener("click", () => {
+  hideDone = !hideDone;
+  el.filterDone.setAttribute("aria-pressed", String(hideDone));
+  el.filterDone.classList.toggle("active", hideDone);
   renderGrid();
 });
 
