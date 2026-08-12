@@ -1,5 +1,6 @@
 import type { Engine } from "../core/engine";
 import { pairKey } from "../core/engine";
+import { grammarPool, pickGrammarLine, verdictContext } from "./grammar";
 import type {
   CombineOutcome,
   NarratorContentDef,
@@ -88,11 +89,20 @@ export interface NarratorState {
    * — sjov én gang, docerende tre. Nu højst én gang pr. liv.
    */
   slowUsed: boolean;
+  /**
+   * De sidst sagte grammatik-replikker. Med ~40 fiaskoer pr. gennemspilning er
+   * gentagelse den største trussel mod illusionen om at nogen kigger med.
+   */
+  recentGrammar: string[];
 }
+
+/** Hvor mange grammatik-replikker der huskes og udelukkes. */
+const RECENT_GRAMMAR = 6;
 
 export function freshNarratorState(seed = 1): NarratorState {
   return {
     rngState: seed | 0 || 1,
+    recentGrammar: [],
     spamCount: 0,
     lastPair: null,
     lastPairElements: null,
@@ -129,6 +139,17 @@ interface LineContext {
   a?: string;
   b?: string;
   element?: string;
+  /** Dommens bevismateriale — grammatikkens pladsholdere. */
+  partner?: string;
+  result?: string;
+  shared?: string;
+  trait?: string;
+  trait2?: string;
+  deadEnd?: string;
+  right?: string;
+  wrong?: string;
+  /** near-miss: hvilket af de to der faktisk var rigtigt. */
+  rightOne?: string;
 }
 
 /** En afspillet replik: id, valgt variant-index (til lydfil-opslag) og udfyldt tekst. */
@@ -248,9 +269,20 @@ export class Narrator {
     // {element} peger normalt på det element spilleren fejer med; ved en
     // opdagelse er det i stedet det netop opfundne, som ctx leverer direkte.
     const element = ctx?.element?.toLowerCase() ?? name(this.state.sweepElement);
+    // {shared} og {trait} er ikke elementer men ord fra taksonomien ("plant",
+    // "hot"). De skrives som de er — grammatikken skal kunne sige "both of
+    // them grow" uden at slå noget op.
     return text
       .replaceAll("{a}", name(ctx?.a))
       .replaceAll("{b}", name(ctx?.b))
+      .replaceAll("{partner}", name(ctx?.partner))
+      .replaceAll("{result}", name(ctx?.result))
+      .replaceAll("{deadEnd}", name(ctx?.deadEnd))
+      .replaceAll("{right}", name(ctx?.right))
+      .replaceAll("{wrong}", name(ctx?.wrong))
+      .replaceAll("{shared}", ctx?.shared ?? "")
+      .replaceAll("{trait}", ctx?.trait ?? "")
+      .replaceAll("{trait2}", ctx?.trait2 ?? "")
       .replaceAll("{element}", element);
   }
 
@@ -271,12 +303,15 @@ export class Narrator {
    */
   private rememberSuggestions(def: NarratorLineDef): void {
     if (!def.suggests?.length) return;
-    for (const [a, b] of def.suggests) {
-      const key = pairKey(a, b);
-      const kept = this.state.recentSuggestions.filter((s) => s.key !== key);
-      kept.unshift({ key, a, b, lineId: def.id, attempt: this.state.attempts });
-      this.state.recentSuggestions = kept.slice(0, SUGGESTION_MEMORY);
-    }
+    for (const [a, b] of def.suggests) this.rememberPair(a, b, def.id);
+  }
+
+  /** Bogfør ét forslag. Delt af de håndskrevne replikker og af grammatikken. */
+  private rememberPair(a: string, b: string, lineId: string): void {
+    const key = pairKey(a, b);
+    const kept = this.state.recentSuggestions.filter((s) => s.key !== key);
+    kept.unshift({ key, a, b, lineId, attempt: this.state.attempts });
+    this.state.recentSuggestions = kept.slice(0, SUGGESTION_MEMORY);
   }
 
   /**
@@ -543,8 +578,46 @@ export class Narrator {
     const memory = this.flagMemoryLine();
     if (memory) return this.speak(memory, ctx);
 
-    // 4. Generiske fiaskoer (roterende, aldrig samme to gange i træk)
+    // 4. Grammatikken: en replik der nævner præcis de to ting, valgt ud fra
+    //    motorens dom. Står før den generiske pulje, som dermed bliver en
+    //    nødudgang der aldrig nås i praksis.
+    const grammar = this.grammarLine(outcome);
+    if (grammar) return grammar;
+
+    // 5. Generiske fiaskoer (roterende, aldrig samme to gange i træk)
     return this.speak(this.genericFailureLine(), ctx);
+  }
+
+  /**
+   * Fortæl om dommen. Returnerer undefined hvis grammatikken ikke har en regel
+   * — så falder vi igennem til den generiske pulje, hvilket er en fejl vi
+   * hellere vil se i en test end høre i spillet (TEST-004).
+   */
+  private grammarLine(outcome: CombineOutcome): SpokenLine | undefined {
+    if (outcome.kind !== "nofuse") return undefined;
+    const pool = grammarPool(
+      this.content().grammar,
+      outcome.verdict,
+      outcome.a,
+      outcome.b,
+    );
+    const id = pickGrammarLine(pool, this.state.recentGrammar, () => this.rand());
+    if (!id) return undefined;
+    this.state.recentGrammar = [id, ...this.state.recentGrammar].slice(
+      0,
+      RECENT_GRAMMAR,
+    );
+    const ctx = verdictContext(outcome.a, outcome.b, outcome.evidence);
+    const spoken = this.speak(id, ctx);
+    // Nævnte replikken den rigtige partner, er det et råd — og et råd skal
+    // kunne komme tilbage og bide ham (REQ-005). Parret registreres derfor i
+    // den samme hukommelse som de håndskrevne forslag.
+    if (ctx.partner && ctx.rightOne && spoken.text.includes(
+      this.engine.element(ctx.partner).name.toLowerCase(),
+    )) {
+      this.rememberPair(ctx.rightOne, ctx.partner, id);
+    }
+    return spoken;
   }
 
   /**

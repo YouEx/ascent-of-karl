@@ -12,6 +12,7 @@ Kørsel: python3 tools/validate.py  (exit 0 = grøn, 1 = fejl)
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -55,7 +56,23 @@ def main() -> int:
     elements = load(CONTENT / "elements.json") or []
     combos = load(CONTENT / "combos.json") or []
     acts = [a for p in sorted((CONTENT / "acts").glob("*.json")) if (a := load(p))]
-    narrator = [n for p in sorted((CONTENT / "narrator").glob("*.json")) if (n := load(p))]
+    narrator = [
+        n
+        for p in sorted((CONTENT / "narrator").glob("*.json"))
+        if not p.name.startswith("grammar-") and (n := load(p))
+    ]
+    # Grammatikken flettes ind i sin akt præcis som src/content.ts gør det —
+    # ellers ville validatoren se to konkurrerende udgaver af samme akt.
+    for p in sorted((CONTENT / "narrator").glob("grammar-*.json")):
+        g = load(p)
+        if not g:
+            continue
+        host = next((n for n in narrator if n["act"] == g["act"]), None)
+        if host is None:
+            err(f"{p.name}: ingen fortæller-fil for akt {g['act']}")
+            continue
+        host["lines"] = [*host["lines"], *g.get("lines", [])]
+        host["grammar"] = g.get("grammar", {})
     endings = load(CONTENT / "endings.json") or []
     config = load(CONTENT / "config.json") or {}
 
@@ -294,6 +311,50 @@ def main() -> int:
             err(f"Akt {act['act']}: {len(suggesting)} replikker foreslår konkrete "
                 f"opskrifter, men akten har ingen obeyedFailure-pulje. Så håner "
                 f"fortælleren spilleren for at adlyde ham")
+
+        # --- Grammatikken: fortællerens svar på hvorfor to ting ikke smeltede ---
+        grammar = n.get("grammar") or {}
+        if grammar:
+            VERDICTS = ["locked", "near-miss", "self", "inert", "clash",
+                        "plausible", "absurd"]
+            PLACEHOLDERS = {"a", "b", "partner", "result", "shared", "trait",
+                            "trait2", "deadEnd", "right", "wrong",
+                            "element", "act"}
+            for v in VERDICTS:
+                pool = grammar.get(v) or []
+                if not pool:
+                    err(f"Akt {act['act']}: dommen '{v}' har ingen replikker. "
+                        f"Så falder det par igennem til genericFailure, og hele "
+                        f"pointen med grammatikken forsvinder")
+                for ref in pool:
+                    check_ref(ref, f"grammar[{v}]")
+            for key, pool in grammar.items():
+                base = key.split(":")[0]
+                if base not in VERDICTS:
+                    err(f"Akt {act['act']}: grammatik-nøglen '{key}' begynder ikke "
+                        f"med en kendt dom")
+                if len(pool) < 2:
+                    err(f"Akt {act['act']}: grammatik-nøglen '{key}' har kun "
+                        f"{len(pool)} regel — no-repeat-reglen kræver mindst 2")
+            grammar_ids = {ref for pool in grammar.values() for ref in pool}
+            for ln in n["lines"]:
+                if ln["id"] not in grammar_ids:
+                    continue
+                if len(ln.get("variants", [])) < 4:
+                    err(f"{ln['id']}: grammatik-replikker skal have mindst 4 "
+                        f"varianter — de vises langt oftere end de skrevne")
+                for text in ln.get("variants", []):
+                    for ph in re.findall(r"\{([a-zA-Z]+)\}", text):
+                        if ph not in PLACEHOLDERS:
+                            err(f"{ln['id']}: ukendt pladsholder {{{ph}}} — den "
+                                f"bliver aldrig udfyldt og lander råt hos spilleren")
+                    if re.search(r"\ba \{(a|b|partner|result|deadEnd)\}", text):
+                        warn(f"{ln['id']}: 'a {{...}}' bliver til 'a grass' hvis "
+                             f"elementet er utælleligt — brug 'the' eller intet")
+                    if "{shared}" in text and "+" not in text:
+                        pass
+                    if text != text.strip() or "  " in text:
+                        err(f"{ln['id']}: variant har løs whitespace")
 
         generic = n.get("genericFailure", [])
         for ref in generic:

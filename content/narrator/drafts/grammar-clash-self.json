@@ -1,0 +1,172 @@
+{
+  "rules": [
+    {
+      "id": "g-clash-1",
+      "verdict": "clash",
+      "variants": [
+        "The {a}: {trait}. The {b}: {trait2}. No form exists for reconciling the two, and Karl did not invent one today.",
+        "Somewhere there is a rulebook that says {trait} does not mix with {trait2}. The {a} and the {b} just followed it perfectly.",
+        "Karl introduced the {a} to the {b} formally, as though {trait} and {trait2} might shake hands anyway. They did not.",
+        "Every civilization eventually learns that {trait} and {trait2} have never got along. The {a} and the {b} have just taught Karl the same lesson, free of charge.",
+        "One of these was always going to lose: the {a}, being {trait}, or the {b}, being {trait2}. In the end, they both did.",
+        "The {a} showed up {trait}. The {b} showed up {trait2}. Nobody had told either of them the other would be here."
+      ]
+    },
+    {
+      "id": "g-clash-2",
+      "verdict": "clash",
+      "variants": [
+        "Karl pressed the {a} to the {b} and waited for chemistry. What he got instead was {trait} refusing to negotiate with {trait2}.",
+        "Something in the {a} recoiled the moment it touched the {b}. I'll spare you the technical explanation: {trait} and {trait2} simply do not shake hands.",
+        "He held the {a} and the {b} together a beat too long, as though {trait} might quietly become {trait2} if nobody looked directly at it. Nobody looked away either. Both stayed exactly what they were.",
+        "The {a} and the {b} met, briefly and audibly, and parted on the same terms {trait} always parts from {trait2}: badly.",
+        "Karl's theory was that {trait} and {trait2} just needed an introduction. The {a} and the {b} disagreed, immediately and at volume.",
+        "A short, unhappy sound came from between the {a} and the {b}. That is what {trait} sounds like, meeting {trait2}."
+      ]
+    },
+    {
+      "id": "g-clash-3",
+      "verdict": "clash",
+      "variants": [
+        "Nature keeps a short list of complaints. Today's entry: the {a} tried to be {trait2}-compatible with the {b}, filed under {trait} versus {trait2}.",
+        "I have narrated this exact disagreement before, under different names. {trait} does not compromise with {trait2}, whether it arrives as the {a} or as the {b}.",
+        "Nature received the application — the {a} paired with the {b} — read the part where one was {trait} and the other {trait2}, and stamped it, politely, DENIED.",
+        "In my long career narrating civilizations, I have never once seen {trait} make peace with {trait2}. The {a} and the {b} did not change my streak.",
+        "Somewhere, a committee that governs {trait} and {trait2} convened, considered the {a} and the {b}, and ruled against the motion.",
+        "The universe has opinions about {trait} mixing with {trait2}, and it delivered one, calmly, the moment the {a} met the {b}."
+      ]
+    },
+    {
+      "id": "g-clash-4",
+      "verdict": "clash",
+      "variants": [
+        "That's a no from both the {a} and the {b} — a polite one, since {trait} and {trait2} always are, but a no.",
+        "The {a} and the {b} shook on it, metaphorically, and then remembered that {trait} and {trait2} had never agreed to anything in their lives.",
+        "Karl gave the {trait} one and the {trait2} one every chance to get along. The {a} and the {b} used none of them.",
+        "It turns out {trait} has strong feelings about {trait2}, and the {a} and the {b} were unlucky enough to carry them today.",
+        "History records no instance of {trait} tolerating {trait2}. The {a} and the {b} were never going to be the first.",
+        "Karl asked the {a} to get along with the {b}. Somewhere between {trait} and {trait2}, the request got lost."
+      ]
+    },
+    {
+      "id": "g-clash-5",
+      "verdict": "clash",
+      "variants": [
+        "The {a} and the {b} touched. Something hissed. Nobody asked what, exactly.",
+        "Karl held the {a} against the {b} and got a small, unhappy noise for his trouble. That was the entire result.",
+        "Something about the {a} did not survive contact with the {b}. Karl seems to think that's a phase.",
+        "The {a} met the {b}, briefly and badly. Whatever happened next, it happened fast and it happened once.",
+        "Karl pressed on regardless. The {a} and the {b} pressed back, in their own way, by simply refusing.",
+        "A faint crackle, a small collapse, or possibly both — the {a} and the {b} object to each other on principle, and made sure Karl heard it."
+      ]
+    },
+    {
+      "id": "g-clash-6",
+      "verdict": "clash",
+      "variants": [
+        "I have narrated many civilizations, and in every one of them, the {a} and the {b} have refused to get along. Today is not the exception.",
+        "In all my time narrating this man, I have never once seen the {a} make peace with the {b}. I have stopped expecting it.",
+        "I could explain, at length, why the {a} and the {b} will never agree. I won't. Some things a chronicler simply notes and moves past.",
+        "Call it professional experience: the {a} and the {b} were never going to work, and I knew it before Karl tried.",
+        "I've watched this exact standoff before, under different names, with the {a} and the {b} playing their usual parts. It ends the same way every time.",
+        "History has a long memory, and mine is longer. It remembers no occasion on which the {a} and the {b} cooperated."
+      ]
+    },
+    {
+      "id": "g-clash-7",
+      "verdict": "clash",
+      "variants": [
+        "That's a no, from both the {a} and the {b}. A polite no. But a no.",
+        "The {a} and the {b} considered it, briefly, and declined — courteously, but completely.",
+        "Both parties were asked nicely. The {a} said no. The {b} agreed with the {a}, which is the only thing they've agreed on all day.",
+        "Karl proposed the {a} and the {b} become something together. The proposal was declined, gently, by everyone involved, including the valley.",
+        "No is no, however it's phrased, and the {a} and the {b} phrased it very politely indeed.",
+        "Regrets arrive from the {a}. More regrets arrive from the {b}. Neither elaborates."
+      ]
+    },
+    {
+      "id": "g-clash-8",
+      "verdict": "clash",
+      "variants": [
+        "He shook the {a} and the {b} together. Shaking is not a technique. It has never once been a technique.",
+        "He rubbed the {a} against the {b}, hopefully. Friction was not, on this occasion, a shortcut.",
+        "Karl held the {a} and the {b} together and waited, with the patience of a man who has confused hoping for doing. Nothing obliged him.",
+        "He turned the {a} around and tried again with the {b}, from a different angle, which is the same angle. The result did not update.",
+        "Karl gave it a moment, then gave it another moment. The {a} and the {b} used both moments to remain exactly as they were.",
+        "He held the {a} to the {b} a little longer, in case the world was slow today. The world was not slow. The world was simply finished."
+      ]
+    },
+    {
+      "id": "g-self-1",
+      "verdict": "self",
+      "variants": [
+        "Two of the {a}. Not a recipe. An inventory.",
+        "The {a} met the {a}. Karl seems to believe that quantity is a substitute for chemistry. It is not.",
+        "The {a}. Then, unmistakably, the {a} again. Nothing about that improves with repetition.",
+        "Doubling the {a} did not multiply anything except Karl's confidence, which needed it least.",
+        "Karl appears to be under the impression that {a} plus {a} equals something new. It equals more {a}.",
+        "Karl looked genuinely surprised that two of the {a} still added up to the {a}. I did not share his surprise."
+      ]
+    },
+    {
+      "id": "g-self-2",
+      "verdict": "self",
+      "variants": [
+        "The {a} met itself and mistook the encounter for progress.",
+        "Karl introduced the {a} to the {a}. They had, of course, already met — being, in every sense, the same thing.",
+        "This was the {a}, meeting the {a}, which is to say: nothing met nothing new.",
+        "Karl seems to think the {a} needed a partner. It already had one: itself. That was never going to be enough.",
+        "The {a} and the {a} stared at each other for a while. Neither blinked. Neither had anything to add.",
+        "Introducing: the {a}, and also the {a}. I'll let you guess how that went."
+      ]
+    },
+    {
+      "id": "g-self-3",
+      "verdict": "self",
+      "variants": [
+        "Karl rubbed the {a} against the {a} and waited. I waited with him. Neither of us got anywhere.",
+        "He held the {a} up to the {a}, as though the second one might know something the first one didn't. It did not.",
+        "Karl pressed the {a} to the {a}, patiently, on the theory that pressure alone might invent a recipe. It does not work that way.",
+        "He turned the {a} over, considered it, and tried again with a second one. Same {a}. Same result. Same Karl.",
+        "Karl gave it real effort: the {a}, against the {a}, held firmly, for longer than dignity really allows.",
+        "He tapped the {a} against the {a} a few times, the way one checks if something is hollow. It was just the {a}. It stayed just the {a}."
+      ]
+    },
+    {
+      "id": "g-self-4",
+      "verdict": "self",
+      "variants": [
+        "I have narrated many civilizations, and none of them thought to combine the {a} with the {a}. There may be a reason for that.",
+        "In all my ages of narrating, I have never had to explain why doubling the {a} does not create anything new. Today, apparently, is that day.",
+        "Let the record show: Karl held the {a} against the {a}, expecting a result. The record shows nothing else happened.",
+        "I have seen empires rise on stranger ideas than this. I have not seen one rise on the {a} meeting the {a}. That idea remains untested, and after today, untested for a reason.",
+        "The {a} and the {a} have been tried before, by someone, somewhere, in some other narrator's story. It went exactly this well there too.",
+        "For the record — and I do keep one — combining the {a} with the {a} is not a strategy. It is closer to a hobby."
+      ]
+    },
+    {
+      "id": "g-self-5",
+      "verdict": "self",
+      "variants": [
+        "There is no recipe for the {a} plus the {a}. There never was. Karl has just spent real time confirming it.",
+        "Some pairs make something new. The {a} and the {a} are not one of them — they're just an inventory count.",
+        "Not every combination is waiting to happen. The {a} and the {a}, it turns out, were never going to be one of the ones that do.",
+        "Karl checked whether the {a} secretly wanted to become something else, given more {a} for company. It did not.",
+        "The recipe book has an entry for almost everything. It does not have one for the {a} and the {a}, because that isn't a recipe — it's just having two.",
+        "If there were a shortcut hidden in the {a} meeting the {a}, someone would have found it by now. Nobody has. Karl just tried again anyway."
+      ]
+    },
+    {
+      "id": "g-self-6",
+      "verdict": "self",
+      "variants": [
+        "Doubling the {a} does not change the {a}. That's not a discovery. That's counting.",
+        "Two of the {a} are not a discovery. They're a collection.",
+        "The {a} remained the {a} throughout. Even under pressure. Even in duplicate.",
+        "Add the {a} to the {a} and, remarkably, you get: the {a}. Consistency, if nothing else.",
+        "Whatever Karl expected from the {a} meeting the {a}, the universe delivered the {a}. Exactly the {a}. Nothing more.",
+        "Karl looked at the {a}, then at the {a} again, then back, as if a third glance might change the chemistry involved. It did not."
+      ]
+    }
+  ]
+}

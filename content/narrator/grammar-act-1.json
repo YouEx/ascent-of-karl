@@ -1,0 +1,633 @@
+{
+  "act": 1,
+  "grammar": {
+    "locked": [
+      "g-locked-1",
+      "g-locked-2",
+      "g-locked-3",
+      "g-locked-4",
+      "g-locked-5",
+      "g-locked-6"
+    ],
+    "near-miss": [
+      "g-nm-1",
+      "g-nm-2",
+      "g-nm-3",
+      "g-nm-4",
+      "g-nm-5",
+      "g-nm-6",
+      "g-nm-7",
+      "g-nm-generous-1"
+    ],
+    "self": [
+      "g-self-1",
+      "g-self-2",
+      "g-self-3",
+      "g-self-4",
+      "g-self-5",
+      "g-self-6"
+    ],
+    "inert": [
+      "g-inert-1",
+      "g-inert-2",
+      "g-inert-3",
+      "g-inert-4",
+      "g-inert-5",
+      "g-inert-6",
+      "g-inert-7"
+    ],
+    "clash": [
+      "g-clash-1",
+      "g-clash-2",
+      "g-clash-3",
+      "g-clash-4",
+      "g-clash-5",
+      "g-clash-6",
+      "g-clash-7",
+      "g-clash-8"
+    ],
+    "plausible": [
+      "g-plaus-1",
+      "g-plaus-2",
+      "g-plaus-3",
+      "g-plaus-4",
+      "g-plaus-5",
+      "g-plaus-6",
+      "g-plaus-7",
+      "g-plaus-8"
+    ],
+    "absurd": [
+      "g-abs-1",
+      "g-abs-2",
+      "g-abs-3",
+      "g-abs-4",
+      "g-abs-5",
+      "g-abs-6",
+      "g-abs-7",
+      "g-abs-8"
+    ]
+  },
+  "lines": [
+    {
+      "id": "g-clash-1",
+      "variants": [
+        "The {a}: {trait}. The {b}: {trait2}. No form exists for reconciling the two, and Karl did not invent one today.",
+        "Somewhere there is a rulebook that says {trait} does not mix with {trait2}. The {a} and the {b} just followed it perfectly.",
+        "Karl introduced the {a} to the {b} formally, as though {trait} and {trait2} might shake hands anyway. They did not.",
+        "Every civilization eventually learns that {trait} and {trait2} have never got along. The {a} and the {b} have just taught Karl the same lesson, free of charge.",
+        "One of these was always going to lose: the {a}, being {trait}, or the {b}, being {trait2}. In the end, they both did.",
+        "The {a} showed up {trait}. The {b} showed up {trait2}. Nobody had told either of them the other would be here."
+      ]
+    },
+    {
+      "id": "g-clash-2",
+      "variants": [
+        "Karl pressed the {a} to the {b} and waited for chemistry. What he got instead was {trait} refusing to negotiate with {trait2}.",
+        "Something in the {a} recoiled the moment it touched the {b}. I'll spare you the technical explanation: {trait} and {trait2} simply do not shake hands.",
+        "He held the {a} and the {b} together a beat too long, as though {trait} might quietly become {trait2} if nobody looked directly at it. Nobody looked away either. Both stayed exactly what they were.",
+        "The {a} and the {b} met, briefly and audibly, and parted on the same terms {trait} always parts from {trait2}: badly.",
+        "Karl's theory was that {trait} and {trait2} just needed an introduction. The {a} and the {b} disagreed, immediately and at volume.",
+        "A short, unhappy sound came from between the {a} and the {b}. That is what {trait} sounds like, meeting {trait2}."
+      ]
+    },
+    {
+      "id": "g-clash-3",
+      "variants": [
+        "Nature keeps a short list of complaints. Today's entry: the {a} tried to be {trait2}-compatible with the {b}, filed under {trait} versus {trait2}.",
+        "I have narrated this exact disagreement before, under different names. {trait} does not compromise with {trait2}, whether it arrives as the {a} or as the {b}.",
+        "Nature received the application — the {a} paired with the {b} — read the part where one was {trait} and the other {trait2}, and stamped it, politely, DENIED.",
+        "In my long career narrating civilizations, I have never once seen {trait} make peace with {trait2}. The {a} and the {b} did not change my streak.",
+        "Somewhere, a committee that governs {trait} and {trait2} convened, considered the {a} and the {b}, and ruled against the motion.",
+        "The universe has opinions about {trait} mixing with {trait2}, and it delivered one, calmly, the moment the {a} met the {b}."
+      ]
+    },
+    {
+      "id": "g-clash-4",
+      "variants": [
+        "That's a no from both the {a} and the {b} — a polite one, since {trait} and {trait2} always are, but a no.",
+        "The {a} and the {b} shook on it, metaphorically, and then remembered that {trait} and {trait2} had never agreed to anything in their lives.",
+        "Karl gave the {trait} one and the {trait2} one every chance to get along. The {a} and the {b} used none of them.",
+        "It turns out {trait} has strong feelings about {trait2}, and the {a} and the {b} were unlucky enough to carry them today.",
+        "History records no instance of {trait} tolerating {trait2}. The {a} and the {b} were never going to be the first.",
+        "Karl asked the {a} to get along with the {b}. Somewhere between {trait} and {trait2}, the request got lost."
+      ]
+    },
+    {
+      "id": "g-clash-5",
+      "variants": [
+        "The {a} and the {b} touched. Something hissed. Nobody asked what, exactly.",
+        "Karl held the {a} against the {b} and got a small, unhappy noise for his trouble. That was the entire result.",
+        "Something about the {a} did not survive contact with the {b}. Karl seems to think that's a phase.",
+        "The {a} met the {b}, briefly and badly. Whatever happened next, it happened fast and it happened once.",
+        "Karl pressed on regardless. The {a} and the {b} pressed back, in their own way, by simply refusing.",
+        "A faint crackle, a small collapse, or possibly both — the {a} and the {b} object to each other on principle, and made sure Karl heard it."
+      ]
+    },
+    {
+      "id": "g-clash-6",
+      "variants": [
+        "I have narrated many civilizations, and in every one of them, the {a} and the {b} have refused to get along. Today is not the exception.",
+        "In all my time narrating this man, I have never once seen the {a} make peace with the {b}. I have stopped expecting it.",
+        "I could explain, at length, why the {a} and the {b} will never agree. I won't. Some things a chronicler simply notes and moves past.",
+        "Call it professional experience: the {a} and the {b} were never going to work, and I knew it before Karl tried.",
+        "I've watched this exact standoff before, under different names, with the {a} and the {b} playing their usual parts. It ends the same way every time.",
+        "History has a long memory, and mine is longer. It remembers no occasion on which the {a} and the {b} cooperated."
+      ]
+    },
+    {
+      "id": "g-clash-7",
+      "variants": [
+        "That's a no, from both the {a} and the {b}. A polite no. But a no.",
+        "The {a} and the {b} considered it, briefly, and declined — courteously, but completely.",
+        "Both parties were asked nicely. The {a} said no. The {b} agreed with the {a}, which is the only thing they've agreed on all day.",
+        "Karl proposed the {a} and the {b} become something together. The proposal was declined, gently, by everyone involved, including the valley.",
+        "No is no, however it's phrased, and the {a} and the {b} phrased it very politely indeed.",
+        "Regrets arrive from the {a}. More regrets arrive from the {b}. Neither elaborates."
+      ]
+    },
+    {
+      "id": "g-clash-8",
+      "variants": [
+        "He shook the {a} and the {b} together. Shaking is not a technique. It has never once been a technique.",
+        "He rubbed the {a} against the {b}, hopefully. Friction was not, on this occasion, a shortcut.",
+        "Karl held the {a} and the {b} together and waited, with the patience of a man who has confused hoping for doing. Nothing obliged him.",
+        "He turned the {a} around and tried again with the {b}, from a different angle, which is the same angle. The result did not update.",
+        "Karl gave it a moment, then gave it another moment. The {a} and the {b} used both moments to remain exactly as they were.",
+        "He held the {a} to the {b} a little longer, in case the world was slow today. The world was not slow. The world was simply finished."
+      ]
+    },
+    {
+      "id": "g-self-1",
+      "variants": [
+        "Two of the {a}. Not a recipe. An inventory.",
+        "The {a} met the {a}. Karl seems to believe that quantity is a substitute for chemistry. It is not.",
+        "The {a}. Then, unmistakably, the {a} again. Nothing about that improves with repetition.",
+        "Doubling the {a} did not multiply anything except Karl's confidence, which needed it least.",
+        "Karl appears to be under the impression that {a} plus {a} equals something new. It equals more {a}.",
+        "Karl looked genuinely surprised that two of the {a} still added up to the {a}. I did not share his surprise."
+      ]
+    },
+    {
+      "id": "g-self-2",
+      "variants": [
+        "The {a} met itself and mistook the encounter for progress.",
+        "Karl introduced the {a} to the {a}. They had, of course, already met — being, in every sense, the same thing.",
+        "This was the {a}, meeting the {a}, which is to say: nothing met nothing new.",
+        "Karl seems to think the {a} needed a partner. It already had one: itself. That was never going to be enough.",
+        "The {a} and the {a} stared at each other for a while. Neither blinked. Neither had anything to add.",
+        "Introducing: the {a}, and also the {a}. I'll let you guess how that went."
+      ]
+    },
+    {
+      "id": "g-self-3",
+      "variants": [
+        "Karl rubbed the {a} against the {a} and waited. I waited with him. Neither of us got anywhere.",
+        "He held the {a} up to the {a}, as though the second one might know something the first one didn't. It did not.",
+        "Karl pressed the {a} to the {a}, patiently, on the theory that pressure alone might invent a recipe. It does not work that way.",
+        "He turned the {a} over, considered it, and tried again with a second one. Same {a}. Same result. Same Karl.",
+        "Karl gave it real effort: the {a}, against the {a}, held firmly, for longer than dignity really allows.",
+        "He tapped the {a} against the {a} a few times, the way one checks if something is hollow. It was just the {a}. It stayed just the {a}."
+      ]
+    },
+    {
+      "id": "g-self-4",
+      "variants": [
+        "I have narrated many civilizations, and none of them thought to combine the {a} with the {a}. There may be a reason for that.",
+        "In all my ages of narrating, I have never had to explain why doubling the {a} does not create anything new. Today, apparently, is that day.",
+        "Let the record show: Karl held the {a} against the {a}, expecting a result. The record shows nothing else happened.",
+        "I have seen empires rise on stranger ideas than this. I have not seen one rise on the {a} meeting the {a}. That idea remains untested, and after today, untested for a reason.",
+        "The {a} and the {a} have been tried before, by someone, somewhere, in some other narrator's story. It went exactly this well there too.",
+        "For the record — and I do keep one — combining the {a} with the {a} is not a strategy. It is closer to a hobby."
+      ]
+    },
+    {
+      "id": "g-self-5",
+      "variants": [
+        "There is no recipe for the {a} plus the {a}. There never was. Karl has just spent real time confirming it.",
+        "Some pairs make something new. The {a} and the {a} are not one of them — they're just an inventory count.",
+        "Not every combination is waiting to happen. The {a} and the {a}, it turns out, were never going to be one of the ones that do.",
+        "Karl checked whether the {a} secretly wanted to become something else, given more {a} for company. It did not.",
+        "The recipe book has an entry for almost everything. It does not have one for the {a} and the {a}, because that isn't a recipe — it's just having two.",
+        "If there were a shortcut hidden in the {a} meeting the {a}, someone would have found it by now. Nobody has. Karl just tried again anyway."
+      ]
+    },
+    {
+      "id": "g-self-6",
+      "variants": [
+        "Doubling the {a} does not change the {a}. That's not a discovery. That's counting.",
+        "Two of the {a} are not a discovery. They're a collection.",
+        "The {a} remained the {a} throughout. Even under pressure. Even in duplicate.",
+        "Add the {a} to the {a} and, remarkably, you get: the {a}. Consistency, if nothing else.",
+        "Whatever Karl expected from the {a} meeting the {a}, the universe delivered the {a}. Exactly the {a}. Nothing more.",
+        "Karl looked at the {a}, then at the {a} again, then back, as if a third glance might change the chemistry involved. It did not."
+      ]
+    },
+    {
+      "id": "g-inert-1",
+      "variants": [
+        "By now, Karl has introduced the {deadEnd} to nearly everything he owns, the {a} and the {b} included. Nearly everything has said no.",
+        "The {a} and the {b} are not the first pairing Karl has tried for the {deadEnd}, and they will not be the last.",
+        "The {a} met the {b}. One of them, it turns out, has a future. The other does not, and we now know which.",
+        "The {a} met the {b}. Another introduction, another polite refusal. The {deadEnd} collected another one just now, same as always.",
+        "Karl has shown the {deadEnd} to the whole valley by now, most recently alongside the {a} and the {b}. The valley has seen enough.",
+        "The {a} and the {b} are acquainted, briefly, for the first and last time. History declines to record the introduction, and I support that decision."
+      ]
+    },
+    {
+      "id": "g-inert-2",
+      "variants": [
+        "The {a} and the {b} part ways. Even the valley looked embarrassed for the {deadEnd}, and the valley rarely looks embarrassed for anything.",
+        "The {a} and the {b} part unchanged, and honestly, the {deadEnd} should be a little embarrassed by now — I know I am, on its behalf.",
+        "That was a quiet failure. It suits the {deadEnd} rather well, if I'm honest — and I try to be.",
+        "Somewhere, the world winced on behalf of the {deadEnd}. Karl did not notice — he was too busy holding the {a} in one hand and the {b} in the other, waiting for a sign.",
+        "I have narrated many disappointments. The {a} and the {b} declining to become anything barely registers, and that, somehow, is the saddest part.",
+        "Not every meeting needs to matter. The {a} and the {b} still, somehow, needed to matter less than they did — and the {deadEnd} will be why, every time."
+      ]
+    },
+    {
+      "id": "g-inert-3",
+      "variants": [
+        "Every object gets a purpose eventually, or so the theory goes. Karl has been waiting on the {deadEnd} to prove the theory wrong ever since the {a} first met the {b}.",
+        "Somewhere there is a version of the {deadEnd} with a purpose. This is not that version, and the {a} and {b} have just confirmed it again.",
+        "Karl keeps finding new company for the {deadEnd}. Today, that meant the {a} and the {b}. Same result, different faces.",
+        "The {a} tried. The {b} tried. The {deadEnd}, characteristically, did not.",
+        "History remembers effort more kindly than results, which is the only reason the {deadEnd} got invited to this round with the {a} and the {b} at all.",
+        "One day, perhaps, the {deadEnd} will find a calling. It did not happen today, with the {a} or the {b} or anything else, and I suspect it did not happen yesterday either."
+      ]
+    },
+    {
+      "id": "g-inert-4",
+      "variants": [
+        "The {deadEnd} will never amount to anything. I have checked. Twice.",
+        "Let the record show: the {a} and the {b} were tried, and the {deadEnd} carried the blame, as usual.",
+        "Filed under: attempted — {a}, {b}, and the usual outcome. The {deadEnd}, again. The drawer is getting full.",
+        "For the record — and I do keep one — the {deadEnd} failed, again, to become anything, this time alongside the {a} and the {b}.",
+        "Case notes: {a} plus {b}. Result: nothing. Precedent: extensive, and entirely thanks to the {deadEnd}.",
+        "Stamped, dated, and dismissed: the {a} and the {b} join a long file marked '{deadEnd} — no results, ever.'"
+      ]
+    },
+    {
+      "id": "g-inert-5",
+      "variants": [
+        "Karl will try the {a} and the {b} again tomorrow. The {deadEnd} will still be the {deadEnd}.",
+        "Give him credit: Karl has not yet run out of things to try against the {deadEnd} — today it was the {a} and the {b}. He is, however, running out of things.",
+        "Optimism is Karl's one renewable resource. He just spent some more of it on the {a} and the {b}, and the {deadEnd}, predictably, absorbed it without giving anything back.",
+        "He holds the {a} against the {b} and waits for the {deadEnd} to surprise him. Nothing yet. Nothing today either.",
+        "Hope is doing all the work here. The {deadEnd}, notably, did none.",
+        "Some things are late bloomers. After this many attempts — the {a}, the {b}, and everything before them — the {deadEnd} looked less like a late bloomer and more like a control group."
+      ]
+    },
+    {
+      "id": "g-inert-6",
+      "variants": [
+        "The valley has opinions about the {a} and the {b}. About the {deadEnd} specifically, its opinion has not changed in some time.",
+        "Nature took one look at the {a} and the {b} and reserved most of its judgement for the {deadEnd}, which it has judged before.",
+        "Even the boar, who reacts to almost nothing, looked up when Karl brought out the {a} and the {b}. Only the {deadEnd} earned a second glance, and even that glance was unimpressed.",
+        "Nothing in this valley has ever found a use for the {deadEnd}, and nothing, apparently, plans to start — not with the {a}, not with the {b}, not with anything else Karl has tried.",
+        "History has a place for almost everything. The {a} and the {b} found that out today. The {deadEnd} did not.",
+        "Somewhere out there, everything has a role to play. Word about a role for the {deadEnd} has apparently not arrived yet, despite the {a} and the {b} checking the post daily."
+      ]
+    },
+    {
+      "id": "g-inert-7",
+      "variants": [
+        "I have narrated many civilizations. The moment Karl reached for the {deadEnd}, I knew roughly how the {a} and the {b} would end — and here we are.",
+        "Some pairings teach Karl something. The {a} and the {b} did not. I could have told him that about the {deadEnd} before he started, and several times since.",
+        "In all my ages of narrating, I have developed a sense for these things. The {deadEnd} showed the signs early — long before the {a} met the {b}.",
+        "Every chronicle needs its quiet failures as much as its triumphs. Today the {a} and the {b} volunteered, and the {deadEnd} did the honours, same as always.",
+        "I try not to have favourites among Karl's belongings. I am, however, developing a firm opinion about the {deadEnd}, and the {a} and {b} have only strengthened it.",
+        "One learns, after enough ages, which objects are going somewhere and which are furniture. The {deadEnd} settled into the furniture category early, and today's attempt — the {a} and the {b} — did nothing to move things along."
+      ]
+    },
+    {
+      "id": "g-locked-1",
+      "variants": [
+        "There is a version of history where the {a} and the {b} become something rather important. This is not that version. Not yet.",
+        "I have seen how the {a} and the {b} end up, eventually. It ends well. Eventually is doing a great deal of work in that sentence.",
+        "Some combinations arrive early to their own story. The {a} and the {b} are simply early. Come back when the story has caught up.",
+        "The {a} and the {b} will matter later. I don't get to say when — only that I've seen the chapter, and it isn't this one.",
+        "Every story has scenes that come too early for the audience. Consider this one of those. The {a} and the {b} will get their moment.",
+        "Karl has just previewed a chapter that has not been written yet. The {a} and the {b} know their part. The world does not know its cue."
+      ]
+    },
+    {
+      "id": "g-locked-2",
+      "variants": [
+        "Not nothing. Not yet. Try the {a} and the {b} again sometime — I have a feeling about this one.",
+        "This is the closest thing to good news I hand out: come back to the {a} and the {b} later. I mean that.",
+        "File this one under 'ask me again.' The {a} and the {b} deserve another attempt, just not today's.",
+        "Keep the {a}. Keep the {b}. Keep trying, eventually — just not this afternoon.",
+        "That's a hold, not a no. The {a} and the {b} are worth revisiting, on Karl's own schedule, which is admittedly erratic.",
+        "Remember this pairing. The {a} and the {b} are going on the list marked 'later, and I mean it this time.'"
+      ]
+    },
+    {
+      "id": "g-locked-3",
+      "variants": [
+        "Karl isn't ready for what the {a} and the {b} become. He will be. Not today.",
+        "There's a version of Karl who pulls this off without blinking. He hasn't arrived yet. The {a} and the {b} will have to wait for him.",
+        "Karl tried. Karl will try again. One day the {a} and the {b} will meet a Karl who has finally caught up.",
+        "Give Karl time. He is, technically, still becoming the man who can make the {a} and the {b} work.",
+        "Some ideas wait for the right version of their inventor. Karl isn't that version yet, not for the {a} and the {b}. He's working on it, slowly, the way Karl works on everything.",
+        "Not every idea finds its Karl on the first try. This one hasn't, not yet — the {a} and the {b} will simply have to be patient with him."
+      ]
+    },
+    {
+      "id": "g-locked-4",
+      "variants": [
+        "I know something about the {a} and the {b} that Karl doesn't. I'm not telling him. It's more fun this way.",
+        "There is a reason the {a} and the {b} don't work yet, and I know it, and I am savouring that fact more than I probably should.",
+        "Ask me why the {a} and the {b} don't work today and I'll simply smile. I know exactly why. That's rather the point of being the narrator.",
+        "I could explain. I won't. Some satisfactions are private, and this is currently one of mine, courtesy of the {a} and the {b}.",
+        "The {a} and the {b} are one clue away from something. I know the clue. Karl will have to find it himself — that's the arrangement.",
+        "There's a particular pleasure in knowing more than the man whose story I'm telling. The {a} and the {b} are today's reminder of that pleasure."
+      ]
+    },
+    {
+      "id": "g-locked-5",
+      "variants": [
+        "Right idea. Wrong moment. The {a} and the {b} will get there — just not this afternoon.",
+        "That was the correct instinct, applied to the wrong day. Keep it. The {a} and the {b} will be worth revisiting.",
+        "Karl is onto something with the {a} and the {b}. Onto it, not yet through it. There's a difference, and it's entirely a matter of time.",
+        "Good thinking. Poor timing. Those are not the same failure, and the {a} and the {b} deserve to know the difference.",
+        "This is the rare wrong answer that's actually a right answer, early. The {a} and the {b} — hold that thought.",
+        "Some doors aren't locked so much as not built yet. The {a} and the {b} are standing at exactly the right one."
+      ]
+    },
+    {
+      "id": "g-locked-6",
+      "variants": [
+        "Not this year. Possibly not this season. But the {a} and the {b} are on the calendar somewhere, and I do keep a calendar.",
+        "Every idea has a season. This is not the season for the {a} and the {b}. There will be another one.",
+        "Ask again next year. I mean that with unusual sincerity, which should tell you something about the {a} and the {b}.",
+        "The calendar has not caught up with the {a} and the {b}. Calendars rarely do. Give it time.",
+        "Some things ripen. The {a} and the {b} are still green, in the sense that matters, and the season for that particular ripeness hasn't arrived.",
+        "Not today. Not this month, probably. But I wouldn't rule out the {a} and the {b} before the year is out."
+      ]
+    },
+    {
+      "id": "g-nm-1",
+      "variants": [
+        "Close. The {a} and the {b} don't belong together, though the {right} very nearly belongs somewhere on its own.",
+        "So near. The {right} had the correct instinct. The {wrong} did not.",
+        "Half a good idea. The {right} had it. The {wrong} just came along for the walk.",
+        "That was closer than it looked. The {right} nearly rewrote history — the {wrong} held it back.",
+        "The {right} was the right call. The {wrong} was not. Somewhere in the {a} and the {b}, that's the whole story.",
+        "Almost. One correct thought, one wrong companion: the {right} knew, the {wrong} didn't. All for nothing."
+      ]
+    },
+    {
+      "id": "g-nm-2",
+      "variants": [
+        "I know exactly what the {a} and the {b} were missing. The {right} was fine. The {wrong}, less so. Beyond that, I am under absolutely no obligation to say.",
+        "Oh, I could tell you what the {right} actually needed. I won't. Watching the {wrong} sit there being wrong is too enjoyable.",
+        "The {a} tried. The {b} tried. Only the {right} has a partner that actually works, and I've met it. The {wrong} doesn't get an introduction today.",
+        "Warmer, from the {a} to the {b}. The {right} runs warmer than the {wrong}, if that helps. It shouldn't help much.",
+        "The {a} and the {b} were one substitution away from working. The {right} was fine as it stood. The {wrong} is the one that needs replacing. Which replacement, though? Sealed lips, I'm afraid.",
+        "Close enough, from the {a} to the {b}, that it almost hurt to watch. The {right} came so close. The {wrong} ruined it. Almost close enough that I nearly helped. Nearly."
+      ]
+    },
+    {
+      "id": "g-nm-3",
+      "variants": [
+        "You were right that it wanted something of {shared}. The {right} carried it — the {wrong} did not.",
+        "The recipe wants: {shared}. The {right} carries it. The {wrong} does not.",
+        "It needed something of {shared}. The {right} provides it — the pairing did not.",
+        "The material was correct: {shared}, through and through. Only the {right} is actually made of it — the {wrong} just resembles it.",
+        "Somewhere in this valley sits a piece of matching material — {shared}, to be precise. The {a} tried. The {b} tried. Only the {right} is made of it; the {wrong} only looks the part.",
+        "{shared}. That much you got right. The {a} and the {b} both reached for it, but only the {right} is made of it — the {wrong} just borrowed the look."
+      ]
+    },
+    {
+      "id": "g-nm-4",
+      "variants": [
+        "Karl holds the {a} next to the {b} and almost believes it. Almost is not a discovery.",
+        "He can feel he's close. He can always feel he's close. This time, holding the {a} and the {b}, he might even be half right.",
+        "Karl frowns at the {a} and the {b}, as though one of them personally let him down. In a sense, it did.",
+        "Deep down, Karl already understood half of this. I admire his confidence with the {a} and the {b}. I do not admire his aim.",
+        "He turns the {a} and the {b} over in his hands, certain he's onto something. He is. It's just standing next to the wrong thing.",
+        "Karl pauses over the {a} and the {b}. For a moment, just a moment, you can see him nearly get it. Then the moment passes."
+      ]
+    },
+    {
+      "id": "g-nm-5",
+      "variants": [
+        "Partial credit. The {a} and the {b} earn exactly half a discovery, which rounds down to nothing.",
+        "The {right} scored full marks, the {wrong} dragged the average down to fifty percent — not a passing grade in this particular valley.",
+        "One point for instinct, courtesy of the {right}. Zero for execution, courtesy of the {wrong}. The {a} and the {b}, added together, still total one failure.",
+        "The judges' scores are in: the {right} gets a correct-impulse medal, the {wrong} gets 'wrong specimen' stamped on its file. No discovery either way. Tough crowd. It's me. I'm the crowd.",
+        "So close on the scoreboard: only the {right} actually earned its place. This particular scoreboard, alas, reads only yes or no.",
+        "Half marks for the {a} and the {b}. History, sadly, does not accept half marks."
+      ]
+    },
+    {
+      "id": "g-nm-6",
+      "variants": [
+        "Right idea. Wrong specimen. The {a} and the {b}, in some order, prove it.",
+        "Good instinct. Bad choice of partner. One of the {a} and the {b} is guilty; the other is innocent.",
+        "The {a} and the {b}: one correct thought, one incorrect object, no way to tell which from here.",
+        "Correct thought. Incorrect pairing. The {a} and the {b} disagree about which of them is which.",
+        "Nearly, with the {a} and the {b}. The kind of nearly that stings a little.",
+        "Half right. The {a} and the {b} together. History remembers wholes, not halves."
+      ]
+    },
+    {
+      "id": "g-nm-7",
+      "variants": [
+        "You're closer than you think. The {right} is already correct. The {wrong} is what's holding you back. Keep going.",
+        "The {a} tried. The {b} tried. Only the {right} is exactly what belongs in this story. Go find out where.",
+        "Good instinct — the {a}, the {b}, one of each. Try the {right} elsewhere; that elsewhere exists. The {wrong} can stay home this time.",
+        "You are one swap away. Keep the {right}. Swap out the {wrong}. That's the {a} and the {b} sorted, in theory.",
+        "Keep the {a}. Keep the {b}. Just not both, not like this — the {right} has better company waiting elsewhere.",
+        "This was not nothing. The {a} and the {b} came close. The {right} was nearly there. Go find what it actually pairs with, and leave the {wrong} out of it."
+      ]
+    },
+    {
+      "id": "g-nm-generous-1",
+      "variants": [
+        "Oh, fine. The {a} met the {b}, and the {right} was never the problem. Try the {partner} instead of the {wrong}.",
+        "I relent. The {a}, the {b} — keep the {right}, and pair it with the {partner}. The {wrong} was never going to work.",
+        "Very well: the {partner}. Of the {a} and the {b}, pair it with the {right} — the {wrong} earns no forgiveness today.",
+        "You've earned this one. The {a} and the {b} were close, but the {right} needed the {partner}, not the {wrong}.",
+        "Enough suspense. Between what the {a} and the {b} offered, swap the {wrong} for the {partner}, and see what history makes of it.",
+        "Fine. The answer is the {partner}. The {a}, the {b}, and now you know: it replaces the {wrong}. The {right} was correct all along."
+      ]
+    },
+    {
+      "id": "g-plaus-1",
+      "variants": [
+        "By rights, the {a} and the {b} should have made something of themselves. The world simply never wrote it down.",
+        "They came apart again, and frankly, I don't see why. The {a} and the {b} had every excuse to succeed.",
+        "A fair theory, the {a} and the {b}. History just never got around to approving it.",
+        "I can't fault the thinking here. The {a} and the {b} deserved better than nothing.",
+        "That was a reasonable guess. The {a} and the {b} simply arrived a few centuries before anyone wrote the recipe.",
+        "Karl was right to try it. The {a} and the {b} just never got their paperwork stamped."
+      ]
+    },
+    {
+      "id": "g-plaus-2",
+      "variants": [
+        "I apologise to the {a}, and I apologise to the {b}. Neither of you did anything wrong.",
+        "On behalf of the valley, I'm sorry, {a}. I'm sorry, {b}. You both had a point.",
+        "Someone owes the {a} and the {b} an apology. I suppose that's me.",
+        "The fault, if there is one, isn't with the {a} or the {b}. It's with whoever never wrote this down.",
+        "I feel I should apologise to the {a} and the {b} directly. This really should have gone somewhere.",
+        "My sympathies to the {a}. My sympathies to the {b}. Both showed up. Neither was met halfway."
+      ]
+    },
+    {
+      "id": "g-plaus-3",
+      "variants": [
+        "Somewhere, an application was filed on behalf of the {a} and the {b}. It's still being processed. It has been centuries.",
+        "The {a} and the {b} submitted a perfectly good case. The universe's office is simply slow.",
+        "This looked, on paper, like it should clear committee. The {a} and the {b} are still waiting on a signature.",
+        "I checked. There is no rule against the {a} and the {b} working together. There's also no rule for it yet. Someone should fix that.",
+        "The world hasn't rejected the {a} and the {b}. It just hasn't replied.",
+        "Call it pending, the {a} and the {b}. Not denied. Pending."
+      ]
+    },
+    {
+      "id": "g-plaus-4",
+      "variants": [
+        "Both of {shared}, the {a} and the {b}. I'd have put money on this one.",
+        "The {a} and the {b} share their very substance: {shared}. That should have counted for something.",
+        "Two things of {shared} — the {a}, the {b} — and still nothing. I don't have a good explanation for that.",
+        "Kin, in a manner of speaking: {shared}, both of them. Kinship wasn't enough, apparently.",
+        "The {a} and the {b} are practically cut from the same {shared}. That wasn't enough, in the end.",
+        "I'd call the {a} and the {b} close relations — {shared}, the pair of them. The valley disagreed."
+      ]
+    },
+    {
+      "id": "g-plaus-5",
+      "variants": [
+        "Karl isn't wrong to try the {a} with the {b}. He's just early. Someone will get credit for this eventually. Possibly not him.",
+        "This wasn't foolishness. The {a} and the {b} made a fair case, and the case was declined without comment.",
+        "I won't hold this against Karl. The {a} and the {b} looked, to any reasonable person, like they belonged together.",
+        "No shame in this one. The {a} and the {b} had a decent argument. The argument lost.",
+        "Karl's instinct was sound. The {a} and the {b} simply weren't the ones history had in mind. Close, though.",
+        "I've seen worse ideas succeed. The {a} and the {b} deserved at least a hearing."
+      ]
+    },
+    {
+      "id": "g-plaus-6",
+      "variants": [
+        "Somebody should write the {a} and the {b} into the record as a good try. I'll do it myself: a good try.",
+        "If I kept a book of ideas that deserved to work, the {a} and the {b} would be in it.",
+        "This is the kind of failure that makes me sad, a little. The {a} and the {b} really ought to have amounted to something.",
+        "I've narrated worse combinations succeeding. The {a} and the {b} just weren't lucky today.",
+        "Put the {a} and the {b} in the file marked \"nearly reasonable\". It's a short file. They belong in it.",
+        "A shame, this one. The {a} and the {b} had the makings of a decent idea, and decent ideas don't always get to be true."
+      ]
+    },
+    {
+      "id": "g-plaus-7",
+      "variants": [
+        "Trying the {a} against the {b} isn't a foolish notion. It just isn't this one.",
+        "Call it what it is: {shared}. The {a} and the {b} had every reason to click.",
+        "Using the {a} on the {b} is roughly the shape of a real idea. Close isn't correct, though.",
+        "The pairing even has a name: {shared}. The {a} and the {b} fit it exactly. Fitting the name isn't the same as making the leap.",
+        "Heat and hunger, the {a} and the {b} — a reasonable pairing, historically. Not today's, apparently.",
+        "Something here wants to happen: the {a} against the {b}, exactly as intended. It isn't happening yet."
+      ]
+    },
+    {
+      "id": "g-plaus-8",
+      "variants": [
+        "The {a} and the {b} are near enough kin that I assumed this would work. I assumed wrong, or the world did.",
+        "Close cousins, by any reasonable measure — the {a} and the {b}. Reasonable measures don't always win.",
+        "If the {a} and the {b} aren't related, they ought to be. The results suggest otherwise.",
+        "I'd have called the {a} and the {b} old friends before I called them strangers. The result says strangers.",
+        "There's a family resemblance between the {a} and the {b}. Resemblance, it turns out, isn't relation.",
+        "The {a} and the {b} belong in the same sentence, if nothing else. Today, that's all they got."
+      ]
+    },
+    {
+      "id": "g-abs-1",
+      "variants": [
+        "The {a} and the {b} belong to different orders of existence entirely. Karl introduced them anyway.",
+        "I have catalogued a great many things in my time. The {a} and the {b} do not belong in the same catalogue.",
+        "There is a distance between the {a} and the {b} that no amount of enthusiasm closes. Karl brought plenty of enthusiasm regardless.",
+        "The {a} and the {b} do not occupy the same universe, strictly speaking. Karl treated it as a formality.",
+        "Some things sit near each other on a shelf, figuratively speaking. The {a} and the {b} were never on the same shelf.",
+        "The {a} sat on one side of existence. The {b} sat on the other. Karl closed the gap by hand, as though that were the missing step."
+      ]
+    },
+    {
+      "id": "g-abs-2",
+      "variants": [
+        "No relation. None whatsoever. The {a} and the {b} share not one single thing, and I have checked twice.",
+        "I looked for a connection between the {a} and the {b}. I found none. I looked again, out of politeness.",
+        "The {a} and the {b} have nothing in common: not shape, not substance, not purpose. A clean sweep, in its way.",
+        "Not kin. Not neighbours. Not acquaintances. The {a} and the {b} are, as far as I can tell, complete strangers.",
+        "Zero overlap between the {a} and the {b}. I say that with some confidence; I've had time to think about it.",
+        "The {a} and the {b} agree on precisely nothing, which is itself a kind of agreement, I suppose."
+      ]
+    },
+    {
+      "id": "g-abs-3",
+      "variants": [
+        "I searched for the logic connecting the {a} to the {b}. I did not find it. I have stopped looking.",
+        "There is, somewhere, a reason Karl reached for the {b} right after the {a}. I have not been able to locate it.",
+        "I tried, in good faith, to explain why Karl combined the {a} with the {b}. I have run out of good faith.",
+        "I have turned this over for longer than it deserves. The {a} and the {b}: no thread, no theory, no explanation I can offer.",
+        "A chronicler is supposed to find the connective tissue in events. Between the {a} and the {b}, I find none.",
+        "I have narrated many decisions I understood poorly. This — the {a}, the {b}, together — is not one I claim to follow."
+      ]
+    },
+    {
+      "id": "g-abs-4",
+      "variants": [
+        "This is a bit like asking a pebble to explain a kingdom. The {a} and the {b}, respectively, decline to elaborate.",
+        "One of these could sit in Karl's palm. The other could not fit inside an ordinary imagination. And yet: the {a}, meet the {b}.",
+        "Somewhere in the distance between an ant and a village lies the actual gap between the {a} and the {b}. Karl closed it by hand.",
+        "Comparing the {a} to the {b} is a little like comparing a whisper to a mountain. Both exist. That is the extent of the similarity.",
+        "One of these is a small, ordinary thing. The other belongs to an entirely different scale of existence. Karl, holding the {a} and the {b}, saw no issue with this.",
+        "Call it the gap between a moment and a lifetime. The {a} and the {b} sit on opposite sides of it, unmoved."
+      ]
+    },
+    {
+      "id": "g-abs-5",
+      "variants": [
+        "I don't know what Karl was thinking, holding the {a} up against the {b}. I don't think Karl knows either.",
+        "I have tried to reconstruct Karl's reasoning here. Between the {a} and the {b}, I cannot find any.",
+        "Whatever thought led Karl from the {a} to the {b}, I did not witness it forming, and I was watching closely.",
+        "Karl looked at the {a}. Karl looked at the {b}. Then, somehow, Karl looked at them together and saw a plan.",
+        "I do not ask Karl to explain himself, as a rule. Faced with the {a} and the {b} side by side, I nearly made an exception.",
+        "There is a thought process behind this, I assume, in the same way there is a reason for weather. The {a} met the {b}, and I remain, respectfully, mystified."
+      ]
+    },
+    {
+      "id": "g-abs-6",
+      "variants": [
+        "I have chronicled a great many unions in my time. The {a} and the {b} do not make the list, and I say that with confidence.",
+        "History records certain pairings as inevitable. The {a} and the {b} will not be among them, on current evidence.",
+        "In all my ages of narrating, the {a} and the {b} have never once been mentioned in the same sentence. Until now, apparently.",
+        "Future scholars, should they exist, will not group the {a} with the {b} under any heading I can imagine.",
+        "I have narrated the rise and fall of entire peoples. The {a}, the {b} — neither fits anywhere in that record.",
+        "This chronicle has covered fire, flood, and famine. The {a} and the {b}, together, are a new kind of entry."
+      ]
+    },
+    {
+      "id": "g-abs-7",
+      "variants": [
+        "The {a} and the {b} are filed in different departments entirely. I don't know who put them on the same desk.",
+        "There is no form for this. The {a} and the {b} would each need a completely different form, filed with a completely different office.",
+        "Somewhere there is a department for the {a}, and an entirely separate department for the {b}. They have never once shared a meeting.",
+        "I checked the records. The {a} and the {b} have no shared file, no shared history, and, as of today, no shared outcome either.",
+        "No committee, however generous, would approve pairing the {a} with the {b}. Karl did not consult a committee.",
+        "This union was never on any register. The {a} and the {b} have, as far as the records show, no business being in the same sentence."
+      ]
+    },
+    {
+      "id": "g-abs-8",
+      "variants": [
+        "Some things are simply never going to be compared. The {a} and the {b}, it turns out, are two of them.",
+        "Not everything has an opposite number somewhere in the world. The {a}, it seems, found nothing of itself in the {b}. Nor did the {b}, in the {a}.",
+        "Some pairs were simply never meant to share a page. The {a} and the {b} take their place among them, quietly.",
+        "I have made peace with the fact that some things do not go together. The {a} and the {b} join a long, distinguished list of things that don't.",
+        "There is no bridge between the {a} and the {b}, and I have stopped looking for the timber to build one.",
+        "Not every pairing gets to be history. The {a} and the {b} will simply have to settle for being an anecdote."
+      ]
+    }
+  ]
+}

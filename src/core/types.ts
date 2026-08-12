@@ -271,6 +271,16 @@ export interface NarratorContentDef {
   /** Roterende pulje af generiske fiasko-replikker (aldrig samme to gange i træk) */
   genericFailure: string[];
   /**
+   * Grammatikken: replikker pr. dom, så hver fiasko kan nævne præcis de to ting
+   * spilleren lagde sammen. Nøglen er dommen ("clash") eller dommen plus en
+   * tag-signatur ("clash:stone+plant"), og den mest specifikke vinder.
+   *
+   * Det er gulvet, ikke loftet: håndskrevne replikker til bestemte par slår
+   * altid grammatikken, og grammatikken slår altid genericFailure — som
+   * dermed bliver en nødudgang der aldrig nås i praksis.
+   */
+  grammar?: Record<string, string[]>;
+  /**
    * Fortællerens svar når spilleren gjorde præcis det, HAN foreslog, og der
    * skete ingenting. Uden den falder øjeblikket igennem til `genericFailure`,
    * og så håner han spilleren for at adlyde sig selv. Det vender præmissen på

@@ -1,0 +1,160 @@
+{
+  "rules": [
+    {
+      "id": "g-inert-1",
+      "verdict": "inert",
+      "variants": [
+        "By now, Karl has introduced the {deadEnd} to nearly everything he owns, the {a} and the {b} included. Nearly everything has said no.",
+        "The {a} and the {b} are not the first pairing Karl has tried for the {deadEnd}, and they will not be the last.",
+        "The {a} met the {b}. One of them, it turns out, has a future. The other does not, and we now know which.",
+        "The {a} met the {b}. Another introduction, another polite refusal. The {deadEnd} collected another one just now, same as always.",
+        "Karl has shown the {deadEnd} to the whole valley by now, most recently alongside the {a} and the {b}. The valley has seen enough.",
+        "The {a} and the {b} are acquainted, briefly, for the first and last time. History declines to record the introduction, and I support that decision."
+      ]
+    },
+    {
+      "id": "g-inert-2",
+      "verdict": "inert",
+      "variants": [
+        "The {a} and the {b} part ways. Even the valley looked embarrassed for the {deadEnd}, and the valley rarely looks embarrassed for anything.",
+        "The {a} and the {b} part unchanged, and honestly, the {deadEnd} should be a little embarrassed by now — I know I am, on its behalf.",
+        "That was a quiet failure. It suits the {deadEnd} rather well, if I'm honest — and I try to be.",
+        "Somewhere, the world winced on behalf of the {deadEnd}. Karl did not notice — he was too busy holding the {a} in one hand and the {b} in the other, waiting for a sign.",
+        "I have narrated many disappointments. The {a} and the {b} declining to become anything barely registers, and that, somehow, is the saddest part.",
+        "Not every meeting needs to matter. The {a} and the {b} still, somehow, needed to matter less than they did — and the {deadEnd} will be why, every time."
+      ]
+    },
+    {
+      "id": "g-inert-3",
+      "verdict": "inert",
+      "variants": [
+        "Every object gets a purpose eventually, or so the theory goes. Karl has been waiting on the {deadEnd} to prove the theory wrong ever since the {a} first met the {b}.",
+        "Somewhere there is a version of the {deadEnd} with a purpose. This is not that version, and the {a} and {b} have just confirmed it again.",
+        "Karl keeps finding new company for the {deadEnd}. Today, that meant the {a} and the {b}. Same result, different faces.",
+        "The {a} tried. The {b} tried. The {deadEnd}, characteristically, did not.",
+        "History remembers effort more kindly than results, which is the only reason the {deadEnd} got invited to this round with the {a} and the {b} at all.",
+        "One day, perhaps, the {deadEnd} will find a calling. It did not happen today, with the {a} or the {b} or anything else, and I suspect it did not happen yesterday either."
+      ]
+    },
+    {
+      "id": "g-inert-4",
+      "verdict": "inert",
+      "variants": [
+        "The {deadEnd} will never amount to anything. I have checked. Twice.",
+        "Let the record show: the {a} and the {b} were tried, and the {deadEnd} carried the blame, as usual.",
+        "Filed under: attempted — {a}, {b}, and the usual outcome. The {deadEnd}, again. The drawer is getting full.",
+        "For the record — and I do keep one — the {deadEnd} failed, again, to become anything, this time alongside the {a} and the {b}.",
+        "Case notes: {a} plus {b}. Result: nothing. Precedent: extensive, and entirely thanks to the {deadEnd}.",
+        "Stamped, dated, and dismissed: the {a} and the {b} join a long file marked '{deadEnd} — no results, ever.'"
+      ]
+    },
+    {
+      "id": "g-inert-5",
+      "verdict": "inert",
+      "variants": [
+        "Karl will try the {a} and the {b} again tomorrow. The {deadEnd} will still be the {deadEnd}.",
+        "Give him credit: Karl has not yet run out of things to try against the {deadEnd} — today it was the {a} and the {b}. He is, however, running out of things.",
+        "Optimism is Karl's one renewable resource. He just spent some more of it on the {a} and the {b}, and the {deadEnd}, predictably, absorbed it without giving anything back.",
+        "He holds the {a} against the {b} and waits for the {deadEnd} to surprise him. Nothing yet. Nothing today either.",
+        "Hope is doing all the work here. The {deadEnd}, notably, did none.",
+        "Some things are late bloomers. After this many attempts — the {a}, the {b}, and everything before them — the {deadEnd} looked less like a late bloomer and more like a control group."
+      ]
+    },
+    {
+      "id": "g-inert-6",
+      "verdict": "inert",
+      "variants": [
+        "The valley has opinions about the {a} and the {b}. About the {deadEnd} specifically, its opinion has not changed in some time.",
+        "Nature took one look at the {a} and the {b} and reserved most of its judgement for the {deadEnd}, which it has judged before.",
+        "Even the boar, who reacts to almost nothing, looked up when Karl brought out the {a} and the {b}. Only the {deadEnd} earned a second glance, and even that glance was unimpressed.",
+        "Nothing in this valley has ever found a use for the {deadEnd}, and nothing, apparently, plans to start — not with the {a}, not with the {b}, not with anything else Karl has tried.",
+        "History has a place for almost everything. The {a} and the {b} found that out today. The {deadEnd} did not.",
+        "Somewhere out there, everything has a role to play. Word about a role for the {deadEnd} has apparently not arrived yet, despite the {a} and the {b} checking the post daily."
+      ]
+    },
+    {
+      "id": "g-inert-7",
+      "verdict": "inert",
+      "variants": [
+        "I have narrated many civilizations. The moment Karl reached for the {deadEnd}, I knew roughly how the {a} and the {b} would end — and here we are.",
+        "Some pairings teach Karl something. The {a} and the {b} did not. I could have told him that about the {deadEnd} before he started, and several times since.",
+        "In all my ages of narrating, I have developed a sense for these things. The {deadEnd} showed the signs early — long before the {a} met the {b}.",
+        "Every chronicle needs its quiet failures as much as its triumphs. Today the {a} and the {b} volunteered, and the {deadEnd} did the honours, same as always.",
+        "I try not to have favourites among Karl's belongings. I am, however, developing a firm opinion about the {deadEnd}, and the {a} and {b} have only strengthened it.",
+        "One learns, after enough ages, which objects are going somewhere and which are furniture. The {deadEnd} settled into the furniture category early, and today's attempt — the {a} and the {b} — did nothing to move things along."
+      ]
+    },
+    {
+      "id": "g-locked-1",
+      "verdict": "locked",
+      "variants": [
+        "There is a version of history where the {a} and the {b} become something rather important. This is not that version. Not yet.",
+        "I have seen how the {a} and the {b} end up, eventually. It ends well. Eventually is doing a great deal of work in that sentence.",
+        "Some combinations arrive early to their own story. The {a} and the {b} are simply early. Come back when the story has caught up.",
+        "The {a} and the {b} will matter later. I don't get to say when — only that I've seen the chapter, and it isn't this one.",
+        "Every story has scenes that come too early for the audience. Consider this one of those. The {a} and the {b} will get their moment.",
+        "Karl has just previewed a chapter that has not been written yet. The {a} and the {b} know their part. The world does not know its cue."
+      ]
+    },
+    {
+      "id": "g-locked-2",
+      "verdict": "locked",
+      "variants": [
+        "Not nothing. Not yet. Try the {a} and the {b} again sometime — I have a feeling about this one.",
+        "This is the closest thing to good news I hand out: come back to the {a} and the {b} later. I mean that.",
+        "File this one under 'ask me again.' The {a} and the {b} deserve another attempt, just not today's.",
+        "Keep the {a}. Keep the {b}. Keep trying, eventually — just not this afternoon.",
+        "That's a hold, not a no. The {a} and the {b} are worth revisiting, on Karl's own schedule, which is admittedly erratic.",
+        "Remember this pairing. The {a} and the {b} are going on the list marked 'later, and I mean it this time.'"
+      ]
+    },
+    {
+      "id": "g-locked-3",
+      "verdict": "locked",
+      "variants": [
+        "Karl isn't ready for what the {a} and the {b} become. He will be. Not today.",
+        "There's a version of Karl who pulls this off without blinking. He hasn't arrived yet. The {a} and the {b} will have to wait for him.",
+        "Karl tried. Karl will try again. One day the {a} and the {b} will meet a Karl who has finally caught up.",
+        "Give Karl time. He is, technically, still becoming the man who can make the {a} and the {b} work.",
+        "Some ideas wait for the right version of their inventor. Karl isn't that version yet, not for the {a} and the {b}. He's working on it, slowly, the way Karl works on everything.",
+        "Not every idea finds its Karl on the first try. This one hasn't, not yet — the {a} and the {b} will simply have to be patient with him."
+      ]
+    },
+    {
+      "id": "g-locked-4",
+      "verdict": "locked",
+      "variants": [
+        "I know something about the {a} and the {b} that Karl doesn't. I'm not telling him. It's more fun this way.",
+        "There is a reason the {a} and the {b} don't work yet, and I know it, and I am savouring that fact more than I probably should.",
+        "Ask me why the {a} and the {b} don't work today and I'll simply smile. I know exactly why. That's rather the point of being the narrator.",
+        "I could explain. I won't. Some satisfactions are private, and this is currently one of mine, courtesy of the {a} and the {b}.",
+        "The {a} and the {b} are one clue away from something. I know the clue. Karl will have to find it himself — that's the arrangement.",
+        "There's a particular pleasure in knowing more than the man whose story I'm telling. The {a} and the {b} are today's reminder of that pleasure."
+      ]
+    },
+    {
+      "id": "g-locked-5",
+      "verdict": "locked",
+      "variants": [
+        "Right idea. Wrong moment. The {a} and the {b} will get there — just not this afternoon.",
+        "That was the correct instinct, applied to the wrong day. Keep it. The {a} and the {b} will be worth revisiting.",
+        "Karl is onto something with the {a} and the {b}. Onto it, not yet through it. There's a difference, and it's entirely a matter of time.",
+        "Good thinking. Poor timing. Those are not the same failure, and the {a} and the {b} deserve to know the difference.",
+        "This is the rare wrong answer that's actually a right answer, early. The {a} and the {b} — hold that thought.",
+        "Some doors aren't locked so much as not built yet. The {a} and the {b} are standing at exactly the right one."
+      ]
+    },
+    {
+      "id": "g-locked-6",
+      "verdict": "locked",
+      "variants": [
+        "Not this year. Possibly not this season. But the {a} and the {b} are on the calendar somewhere, and I do keep a calendar.",
+        "Every idea has a season. This is not the season for the {a} and the {b}. There will be another one.",
+        "Ask again next year. I mean that with unusual sincerity, which should tell you something about the {a} and the {b}.",
+        "The calendar has not caught up with the {a} and the {b}. Calendars rarely do. Give it time.",
+        "Some things ripen. The {a} and the {b} are still green, in the sense that matters, and the season for that particular ripeness hasn't arrived.",
+        "Not today. Not this month, probably. But I wouldn't rule out the {a} and the {b} before the year is out."
+      ]
+    }
+  ]
+}
