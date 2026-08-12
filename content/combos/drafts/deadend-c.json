@@ -1,0 +1,333 @@
+{
+  "combos": [
+    {
+      "pair": [
+        "splint",
+        "hund"
+      ],
+      "result": "traening"
+    },
+    {
+      "pair": [
+        "splint",
+        "grottebryg"
+      ],
+      "result": "helbredelse"
+    },
+    {
+      "pair": [
+        "splint",
+        "fjer"
+      ],
+      "result": "modeshow"
+    },
+    {
+      "pair": [
+        "den-lange-vinter",
+        "nabo"
+      ],
+      "result": "familie"
+    },
+    {
+      "pair": [
+        "den-lange-vinter",
+        "grottebryg"
+      ],
+      "result": "toemmermaend"
+    },
+    {
+      "pair": [
+        "den-lange-vinter",
+        "hulemaleri"
+      ],
+      "result": "myte"
+    },
+    {
+      "pair": [
+        "levende-gud",
+        "bautasten"
+      ],
+      "result": "helligsted"
+    },
+    {
+      "pair": [
+        "levende-gud",
+        "nabo"
+      ],
+      "result": "hoevding"
+    },
+    {
+      "pair": [
+        "levende-gud",
+        "tromme"
+      ],
+      "result": "ritual"
+    },
+    {
+      "pair": [
+        "myg-i-rav",
+        "reb"
+      ],
+      "result": "smykke"
+    },
+    {
+      "pair": [
+        "myg-i-rav",
+        "nabo"
+      ],
+      "result": "gave"
+    },
+    {
+      "pair": [
+        "myg-i-rav",
+        "skind"
+      ],
+      "result": "maske"
+    },
+    {
+      "pair": [
+        "mammuthus",
+        "ild"
+      ],
+      "result": "nedbraendt-hytte"
+    },
+    {
+      "pair": [
+        "mammuthus",
+        "nabo"
+      ],
+      "result": "landsby"
+    },
+    {
+      "pair": [
+        "mammuthus",
+        "sne"
+      ],
+      "result": "klyngen"
+    },
+    {
+      "pair": [
+        "sunkne-by",
+        "nabo"
+      ],
+      "result": "myte"
+    },
+    {
+      "pair": [
+        "sunkne-by",
+        "vand"
+      ],
+      "result": "havrejsen"
+    },
+    {
+      "pair": [
+        "sunkne-by",
+        "hulemaleri"
+      ],
+      "result": "eftermaele"
+    },
+    {
+      "pair": [
+        "soeuhyre",
+        "nabo"
+      ],
+      "result": "jagtfoelge"
+    },
+    {
+      "pair": [
+        "soeuhyre",
+        "ild"
+      ],
+      "result": "legende"
+    },
+    {
+      "pair": [
+        "soeuhyre",
+        "skovmand"
+      ],
+      "result": "myte"
+    },
+    {
+      "pair": [
+        "skovmand",
+        "grottebryg"
+      ],
+      "result": "syner"
+    },
+    {
+      "pair": [
+        "skovmand",
+        "hulemaleri"
+      ],
+      "result": "eftermaele"
+    },
+    {
+      "pair": [
+        "faeldegrav",
+        "nabo"
+      ],
+      "result": "slagsmaal"
+    },
+    {
+      "pair": [
+        "faeldegrav",
+        "dyr"
+      ],
+      "result": "fangst"
+    },
+    {
+      "pair": [
+        "faeldegrav",
+        "bautasten"
+      ],
+      "result": "helligsted"
+    },
+    {
+      "pair": [
+        "regnskab",
+        "nabo"
+      ],
+      "result": "slagsmaal"
+    },
+    {
+      "pair": [
+        "regnskab",
+        "bautasten"
+      ],
+      "result": "lov"
+    },
+    {
+      "pair": [
+        "regnskab",
+        "sten"
+      ],
+      "result": "kalender"
+    },
+    {
+      "pair": [
+        "havrejsen",
+        "nabo"
+      ],
+      "result": "legende"
+    },
+    {
+      "pair": [
+        "havrejsen",
+        "grottebryg"
+      ],
+      "result": "toemmermaend"
+    },
+    {
+      "pair": [
+        "havrejsen",
+        "fugl"
+      ],
+      "result": "kort"
+    },
+    {
+      "pair": [
+        "benkniv",
+        "dyr"
+      ],
+      "result": "koed"
+    },
+    {
+      "pair": [
+        "benkniv",
+        "knogle"
+      ],
+      "result": "naal"
+    },
+    {
+      "pair": [
+        "benkniv",
+        "fugl"
+      ],
+      "result": "floejte"
+    },
+    {
+      "pair": [
+        "gravestok",
+        "nabo"
+      ],
+      "result": "grav"
+    },
+    {
+      "pair": [
+        "gravestok",
+        "graes"
+      ],
+      "result": "larver"
+    },
+    {
+      "pair": [
+        "gravestok",
+        "stamme"
+      ],
+      "result": "agern"
+    },
+    {
+      "pair": [
+        "hammer",
+        "sten"
+      ],
+      "result": "stenoekse"
+    },
+    {
+      "pair": [
+        "hammer",
+        "rullesten"
+      ],
+      "result": "haandkile"
+    },
+    {
+      "pair": [
+        "hammer",
+        "stamme"
+      ],
+      "result": "planker"
+    },
+    {
+      "pair": [
+        "haandkile",
+        "dyr"
+      ],
+      "result": "koed"
+    },
+    {
+      "pair": [
+        "haandkile",
+        "pind"
+      ],
+      "result": "spyd"
+    },
+    {
+      "pair": [
+        "haandkile",
+        "bautasten"
+      ],
+      "result": "hulemaleri"
+    },
+    {
+      "pair": [
+        "skraber",
+        "dyr"
+      ],
+      "result": "skind"
+    },
+    {
+      "pair": [
+        "skraber",
+        "fugl"
+      ],
+      "result": "fjer"
+    },
+    {
+      "pair": [
+        "skraber",
+        "baer"
+      ],
+      "result": "saft"
+    }
+  ]
+}
