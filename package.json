@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Story-drevet alchemy-spil med en sarkastisk fort\u00e6ller",
+  "description": "Story-drevet alchemy-spil med en sarkastisk fortæller",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
@@ -20,7 +20,8 @@
     "judge:score": "python3 tools/judge/metrics.py",
     "judge:report": "python3 tools/judge/overlay.py",
     "judge:apply": "node tools/judge/apply.mjs",
-    "judge": "npm run judge:capture && npm run judge:score && npm run judge:report"
+    "judge": "npm run judge:capture && npm run judge:score && npm run judge:report",
+    "pairs": "vite-node tools/pair_frequency.ts"
   },
   "devDependencies": {
     "playwright": "^1.62.1",
