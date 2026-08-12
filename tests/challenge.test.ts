@@ -1,25 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
-import { freshChallengeState, resolves, spawnChanceForGap, successRateForPage } from "../src/core/challenge";
+import { freshChallengeState, resolves, spawnChanceForGap } from "../src/core/challenge";
 import { loadContent } from "../src/content";
 
 const content = loadContent();
 const wolves = content.challenges.find((c) => c.id === "ulve")!;
+const elementById = new Map(content.elements.map((e) => [e.id, e]));
 
-describe("Challenges: sværhedsbånd", () => {
-  it("de første ti sider lader alt lykkes", () => {
-    expect(successRateForPage(1)).toBe(1);
-    expect(successRateForPage(10)).toBe(1);
-  });
-
-  it("bliver gradvist hårdere", () => {
-    const rates = [15, 25, 35, 45].map(successRateForPage);
-    expect(rates).toEqual([0.8, 0.7, 0.6, 0.4]);
-    for (let i = 1; i < rates.length; i++) {
-      expect(rates[i]!).toBeLessThan(rates[i - 1]!);
-    }
-  });
-
+describe("Challenges: hvornår de dukker op", () => {
   it("spawn-chancen stiger jo længere der går uden challenge", () => {
     const chances = [0, 10, 20, 30, 40].map(spawnChanceForGap);
     for (let i = 1; i < chances.length; i++) {
@@ -30,32 +18,39 @@ describe("Challenges: sværhedsbånd", () => {
 
 describe("Challenges: hvad der løser dem", () => {
   it("de oplagte svar virker altid, uanset hvor sent det er", () => {
-    const late = { id: "ulve", startedAtPage: 50, turnsLeft: 4 };
+    // solvedBy er facit-listen — de mennesker-skrevne svar fra før taksonomien
+    // fandtes. Prædikatet skal acceptere hvert eneste af dem, ellers er
+    // taggene forkerte. Samme krav som porten i tools/predicate_report.py.
     for (const id of wolves.solvedBy) {
-      expect(resolves(wolves, late, id, 12345), id).toBe(true);
+      const el = elementById.get(id);
+      expect(el, id).toBeDefined();
+      expect(resolves(wolves, el!, content.predicates), id).toBe(true);
     }
   });
 
-  it("tidligt i spillet løser ALT — fortælleren finder på noget", () => {
-    const early = { id: "ulve", startedAtPage: 3, turnsLeft: 4 };
-    const sample = content.elements.slice(0, 40).map((e) => e.id);
-    expect(sample.every((id) => resolves(wolves, early, id, 999))).toBe(true);
+  it("dømmer på hvad tingen er, ikke på hvornår den bliver prøvet", () => {
+    // Det gamle system gav gratis sejre før side 10 og terningkast bagefter.
+    // Nu er svaret det samme uanset side: enten skræmmer tingen ulve, eller
+    // også gør den ikke.
+    const spear = elementById.get("spyd")!;
+    const berry = elementById.get("baer")!;
+    expect(resolves(wolves, spear, content.predicates)).toBe(true);
+    expect(resolves(wolves, berry, content.predicates)).toBe(false);
   });
 
-  it("er deterministisk — samme element kan ikke prøves igen for held", () => {
-    const active = { id: "ulve", startedAtPage: 45, turnsLeft: 3 };
-    const first = content.elements.map((e) => resolves(wolves, active, e.id, 777));
-    const again = content.elements.map((e) => resolves(wolves, active, e.id, 777));
+  it("lader ikke hvad som helst redde Karl", () => {
+    // Generøs, men ikke gratis: hvis alt løste alt, var der intet valg.
+    const solving = content.elements.filter((e) =>
+      resolves(wolves, e, content.predicates),
+    );
+    expect(solving.length).toBeGreaterThan(wolves.solvedBy.length);
+    expect(solving.length).toBeLessThan(content.elements.length / 2);
+  });
+
+  it("er deterministisk — samme element giver samme svar hver gang", () => {
+    const first = content.elements.map((e) => resolves(wolves, e, content.predicates));
+    const again = content.elements.map((e) => resolves(wolves, e, content.predicates));
     expect(again).toEqual(first);
-  });
-
-  it("rammer omtrent det lovede sværhedsbånd", () => {
-    const active = { id: "ulve", startedAtPage: 45, turnsLeft: 3 }; // 40 %
-    const others = content.elements.filter((e) => !wolves.solvedBy.includes(e.id));
-    const ok = others.filter((e) => resolves(wolves, active, e.id, 4242)).length;
-    const rate = ok / others.length;
-    expect(rate).toBeGreaterThan(0.3);
-    expect(rate).toBeLessThan(0.5);
   });
 });
 

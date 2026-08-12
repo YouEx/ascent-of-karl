@@ -1,4 +1,10 @@
-import type { ChallengeDef, ContentBundle } from "./types";
+import type {
+  ChallengeDef,
+  ContentBundle,
+  ElementDef,
+  SolvePredicate,
+} from "./types";
+import { solvesNeed } from "./solves";
 
 /**
  * Challenges (docs/design/challenges.md).
@@ -12,20 +18,11 @@ import type { ChallengeDef, ContentBundle } from "./types";
  *  1. **Hvornår de dukker op** — udledt af run-seed og sidetal, ikke af
  *     Math.random(). Ellers kunne man genindlæse sit save indtil ingen
  *     challenge kom.
- *  2. **Hvad der tæller som en løsning** — afgøres af et hash over
- *     (seed, challenge, element). Samme element giver altid samme svar i
- *     samme run, så det føles som en egenskab ved verden frem for et
- *     terningkast. Man kan ikke prøve igen med samme idé og håbe på held.
+ *  2. **Hvad der tæller som en løsning** — afgøres af elementets tags mod
+ *     prædikatet i content/predicates.json. Et spyd virker fordi det ER et
+ *     våben, ikke fordi det står på en liste og ikke fordi hash'et var i
+ *     humør. Samme idé giver altid samme svar, i alle runs.
  */
-
-/** Andel af elementer der løser et challenge, efter hvornår det dukker op. */
-const DIFFICULTY_BANDS: ReadonlyArray<{ upToPage: number; successRate: number }> = [
-  { upToPage: 10, successRate: 1.0 }, // fortælleren finder på noget uanset hvad
-  { upToPage: 20, successRate: 0.8 },
-  { upToPage: 30, successRate: 0.7 },
-  { upToPage: 40, successRate: 0.6 },
-  { upToPage: Infinity, successRate: 0.4 },
-];
 
 /**
  * Spawn-chance pr. side, efter hvor længe der ikke har været et challenge.
@@ -87,10 +84,6 @@ function hash01(...parts: (string | number)[]): number {
   return (h >>> 0) / 4294967296;
 }
 
-export function successRateForPage(page: number): number {
-  return DIFFICULTY_BANDS.find((b) => page <= b.upToPage)!.successRate;
-}
-
 export function spawnChanceForGap(gap: number): number {
   return SPAWN_RATES.find((r) => gap >= r.afterGap)!.chance;
 }
@@ -118,18 +111,20 @@ export function rollChallenge(
 /**
  * Løser dette element challenget?
  *
- * De oplagte svar virker altid — ellers ville spillet straffe god
- * ræsonnering. Alt andet afgøres af hash'et mod sværhedsbåndet: tidligt i
- * spillet finder fortælleren på en måde uanset hvad, senere skal man være
- * heldig eller kreativ.
+ * Afgøres af prædikatet i content/predicates.json — altså af hvad elementet
+ * ER, ikke af hvad det hedder og ikke af et terningkast. Ulvene viger for et
+ * våben, en ild, et ly i lejrstørrelse eller et tamt dyr, uanset om nogen har
+ * skrevet netop den ting på en liste.
+ *
+ * challenge.solvedBy bruges ikke længere til at dømme. Listen bliver stående i
+ * indholdet som facit for tools/predicate_report.py: den er skrevet af
+ * mennesker før taksonomien fandtes, og porten kræver at prædikatet accepterer
+ * hvert eneste navn på den. Derfor kan de to ikke være uenige.
  */
 export function resolves(
   challenge: ChallengeDef,
-  active: ActiveChallenge,
-  elementId: string,
-  seed: number,
+  element: ElementDef,
+  predicates: Record<string, SolvePredicate>,
 ): boolean {
-  if (challenge.solvedBy.includes(elementId)) return true;
-  const rate = successRateForPage(active.startedAtPage);
-  return hash01(seed, challenge.id, elementId) < rate;
+  return solvesNeed(element, challenge.id, predicates);
 }

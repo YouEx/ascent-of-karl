@@ -57,6 +57,26 @@ export type ElementTrait =
 
 export type ElementScale = "hand" | "body" | "camp" | "landscape";
 
+/**
+ * Et prædikat over tags. Erstatter navnelisterne (challenge.solvedBy og
+ * combo.solves) som eneste dommer over hvad der løser hvad.
+ *
+ * Inden for ét prædikat er alle felter OG'et; traits kræver at ALLE de nævnte
+ * er til stede. Brug anyOf for "en af dem". Se content/predicates.json.
+ */
+export interface SolvePredicate {
+  kind?: ElementKind[];
+  stuff?: ElementStuff[];
+  /** Alle nævnte traits skal være til stede. */
+  traits?: ElementTrait[];
+  scale?: ElementScale[];
+  /** Kræver at elementet ikke er et base-element (Karl skal have lavet det). */
+  crafted?: boolean;
+  anyOf?: SolvePredicate[];
+  allOf?: SolvePredicate[];
+  not?: SolvePredicate;
+}
+
 export interface ElementDef {
   id: string;
   /** Visningsnavn på dansk */
@@ -343,6 +363,12 @@ export interface ContentBundle {
   endings: EndingDef[];
   challenges: ChallengeDef[];
   decisions: DecisionDef[];
+  /**
+   * Prædikater pr. nød-id (content/predicates.json). Nøglen er problemets
+   * eller challengets id. Kommentarnøgler med _-præfiks filtreres fra ved
+   * indlæsning i src/content.ts.
+   */
+  predicates: Record<string, SolvePredicate>;
   config: {
     /** Max antal kombinationsforsøg (somre) pr. run — derefter alderdoms-slutning */
     turnLimit: number;

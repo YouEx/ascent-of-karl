@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "validate": "python3 tools/validate.py",
     "predicates": "python3 tools/predicate_report.py",
+    "predicates:fixture": "python3 tools/parity_fixture.py",
     "ux": "node tools/ux_audit.mjs",
     "social": "node tools/social/render.mjs",
     "judge:capture": "node tools/judge/capture.mjs",

@@ -39,11 +39,15 @@ describe("Challenges: raterne holder i den rigtige motor", () => {
     );
     // Kalibreret mod MOTOREN, ikke mod en formel — se src/core/challenge.ts.
     //
-    // Bemærk at denne simulering kombinerer i blinde og derfor stort set
-    // aldrig løser et challenge; runs dør tidligt (~30 sider). En rigtig
-    // spiller overlever længere og møder derfor FLERE end tallet her.
-    // Grænserne er sat på det pessimistiske estimat.
-    expect(total / RUNS).toBeGreaterThan(1.2);
+    // Bemærk at denne simulering kombinerer i blinde. Da challenges nu dømmes
+    // på elementets tags i stedet for et terningkast, findes der ikke længere
+    // et gratis pas før side 10, og en blind spiller løser kun 16 % af sine
+    // challenges (mod 38 % før). Den dør derfor tidligere — ~25 sider mod ~30
+    // — og når at møde færre challenges.
+    //
+    // En spiller der leder efter et svar er upåvirket: 97 % løst og ~50 sider,
+    // nøjagtig som før. Målt med en søgende simulering, 2026-08-11.
+    expect(total / RUNS).toBeGreaterThan(1.0);
     expect(total / RUNS).toBeLessThan(2.6);
     expect(luckyPct).toBeGreaterThan(0.5); // ellers er bedriften uopnåelig
     expect(luckyPct).toBeLessThan(10);

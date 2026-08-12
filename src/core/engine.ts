@@ -4,6 +4,7 @@ import {
   rollChallenge,
 } from "./challenge";
 import type { ActiveChallenge, ChallengeState } from "./challenge";
+import { solvesNeed } from "./solves";
 import type {
   ActDef,
   ChallengeDef,
@@ -14,6 +15,7 @@ import type {
   ElementDef,
   EndingDef,
   ProblemDef,
+  SolvePredicate,
 } from "./types";
 
 /** Serialiserbar spiltilstand — hele save-formatet (PRD §4.1: save pr. opdagelse). */
@@ -46,9 +48,12 @@ export class Engine {
   private elementById = new Map<string, ElementDef>();
   private combosByPair = new Map<string, ComboDef[]>();
   private actByNumber = new Map<number, ActDef>();
+  /** Prædikaterne der afgør hvad der løser hvad (content/predicates.json). */
+  private predicates: Record<string, SolvePredicate>;
 
   constructor(content: ContentBundle, state?: GameState) {
     this.content = content;
+    this.predicates = content.predicates;
     for (const el of content.elements) this.elementById.set(el.id, el);
     for (const combo of content.combos) {
       const key = pairKey(combo.pair[0], combo.pair[1]);
@@ -233,7 +238,7 @@ export class Engine {
       // Kun rigtige opdagelser kan løse et challenge — man slipper ikke
       // udenom ved at kombinere de samme to ting igen og igen.
       if (outcome.kind === "discovery") {
-        if (resolves(def, cs.active, outcome.element.id, this.state.seed)) {
+        if (resolves(def, outcome.element, this.predicates)) {
           cs.active = null;
           cs.gap = 0;
           return { kind: "solved", def, by: outcome.element };
@@ -285,10 +290,26 @@ export class Engine {
     if (combo.cost && combo.cost > 1) this.state.attempts += combo.cost - 1;
     const endingDeflected = this.applyEnding(combo);
 
+    // Hvilket problem løser opdagelsen? Afgøres af hvad tingen ER — altså af
+    // elementets tags mod prædikatet — ikke af om nogen har husket at skrive
+    // "solves" på netop denne opskrift. Mel og dej mætter Karl lige så godt
+    // som brød, selvom kun brødet stod i opskriftsbogen.
+    //
+    // combo.solves bliver stående i indholdet som facit for porten
+    // (tools/predicate_report.py), der kræver at prædikatet accepterer hver
+    // eneste af dem. De to kan derfor ikke være uenige.
     let solved: ProblemDef | undefined;
-    if (combo.solves && !this.isSolved(combo.solves)) {
-      solved = this.currentAct().problems.find((p) => p.id === combo.solves);
-      if (solved) this.state.solvedProblems.push(combo.solves);
+    const result = this.elementById.get(combo.result);
+    if (result) {
+      for (const problem of this.currentAct().problems) {
+        if (this.isSolved(problem.id)) continue;
+        if (!solvesNeed(result, problem.id, this.predicates)) continue;
+        this.state.solvedProblems.push(problem.id);
+        // Kun ét problem løses pr. tur — ellers ville ét element kunne rydde
+        // hele akten, og fortælleren ville have flere ting at sige på én gang.
+        solved = problem;
+        break;
+      }
     }
 
     if (combo.ageUp) {

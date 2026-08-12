@@ -1,0 +1,489 @@
+{
+  "_kommentar": "Genereret af tools/parity_fixture.py ud fra tools/predicate_report.py's satisfies(). Facit for tvillingen i src/core/solves.ts. Regenerer med: npm run predicates:fixture",
+  "needs": [
+    "kulde",
+    "sult",
+    "sygdom",
+    "toerke",
+    "ulve",
+    "vaerktoej"
+  ],
+  "solves": {
+    "sten": [],
+    "pind": [],
+    "graes": [],
+    "vand": [],
+    "ler": [],
+    "baer": [],
+    "larver": [],
+    "dyr": [],
+    "gnister": [
+      "ulve",
+      "sygdom"
+    ],
+    "ild": [
+      "kulde",
+      "ulve",
+      "sygdom"
+    ],
+    "stenoekse": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "spyd": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "koed": [
+      "sult"
+    ],
+    "stegt-koed": [
+      "sult"
+    ],
+    "ristede-larver": [
+      "sult"
+    ],
+    "mudder": [
+      "toerke"
+    ],
+    "mudderbad": [
+      "toerke"
+    ],
+    "keramik": [
+      "vaerktoej",
+      "toerke"
+    ],
+    "damp": [
+      "ulve",
+      "toerke",
+      "sygdom"
+    ],
+    "malm": [],
+    "kobber": [],
+    "bronze": [],
+    "larvefarm": [
+      "ulve",
+      "toerke"
+    ],
+    "stamme": [],
+    "nabo": [],
+    "rullesten": [],
+    "hjul": [],
+    "planker": [],
+    "arbejdsbord": [
+      "vaerktoej"
+    ],
+    "vogn": [
+      "vaerktoej",
+      "toerke"
+    ],
+    "flintmobil": [
+      "vaerktoej"
+    ],
+    "bautasten": [
+      "sygdom"
+    ],
+    "stenkreds": [
+      "sygdom"
+    ],
+    "tamsvin": [
+      "ulve"
+    ],
+    "fisk": [
+      "sult"
+    ],
+    "skind": [
+      "kulde",
+      "sygdom"
+    ],
+    "hulemaleri": [
+      "sygdom"
+    ],
+    "tromme": [],
+    "rockband": [],
+    "grottebryg": [
+      "sult",
+      "toerke"
+    ],
+    "stenalderfest": [],
+    "ven": [
+      "vaerktoej",
+      "toerke"
+    ],
+    "boomerang": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "larvebod": [
+      "ulve",
+      "toerke"
+    ],
+    "mursten": [],
+    "hytte": [
+      "kulde",
+      "ulve",
+      "sygdom"
+    ],
+    "landsby": [
+      "kulde",
+      "sygdom"
+    ],
+    "nedbraendt-hytte": [
+      "ulve"
+    ],
+    "toemmerflaade": [
+      "vaerktoej",
+      "toerke"
+    ],
+    "baad": [
+      "vaerktoej",
+      "toerke"
+    ],
+    "roeg": [
+      "kulde",
+      "ulve",
+      "sygdom"
+    ],
+    "roegsignaler": [],
+    "helligsted": [
+      "ulve",
+      "sygdom"
+    ],
+    "shaman": [
+      "sygdom"
+    ],
+    "syner": [],
+    "kul": [],
+    "roeget-koed": [
+      "sult"
+    ],
+    "saft": [
+      "sult",
+      "toerke"
+    ],
+    "mudderkage": [
+      "sult",
+      "toerke"
+    ],
+    "surf-n-turf": [
+      "sult",
+      "ulve",
+      "sygdom"
+    ],
+    "knogle": [],
+    "koelle": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "slagsmaal": [],
+    "knoglekast": [],
+    "fugl": [],
+    "foenix": [],
+    "fjer": [],
+    "floejte": [],
+    "farvet-skind": [
+      "kulde",
+      "sygdom"
+    ],
+    "festdragt": [
+      "kulde",
+      "sygdom"
+    ],
+    "modeshow": [],
+    "lerfigur": [
+      "sygdom"
+    ],
+    "haandaftryk": [
+      "sygdom"
+    ],
+    "stenkoncert": [],
+    "trommesolo": [],
+    "galleri": [
+      "ulve",
+      "sygdom"
+    ],
+    "garage": [
+      "ulve"
+    ],
+    "drive-in": [],
+    "trafikprop": [],
+    "stenspil": [],
+    "brydekamp": [],
+    "kaelk": [
+      "vaerktoej"
+    ],
+    "toemmermaend": [],
+    "vinger": [],
+    "medicin": [
+      "sult",
+      "toerke",
+      "sygdom"
+    ],
+    "kroning": [],
+    "legende": [],
+    "ind-i-maleriet": [
+      "sygdom"
+    ],
+    "flyveforsoeg": [],
+    "krig": [],
+    "helbredelse": [
+      "sygdom"
+    ],
+    "sidste-maaltid": [
+      "sult",
+      "toerke"
+    ],
+    "sky": [
+      "toerke"
+    ],
+    "regn": [
+      "toerke"
+    ],
+    "lyn": [
+      "kulde",
+      "ulve",
+      "sygdom"
+    ],
+    "sne": [
+      "toerke"
+    ],
+    "is": [
+      "toerke"
+    ],
+    "ski": [
+      "vaerktoej"
+    ],
+    "reb": [],
+    "net": [
+      "vaerktoej",
+      "toerke"
+    ],
+    "fangst": [
+      "sult"
+    ],
+    "faelde": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "ulv": [],
+    "hund": [
+      "ulve"
+    ],
+    "bue": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "pil": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "romance": [],
+    "familie": [],
+    "stammefolk": [],
+    "grav": [
+      "sygdom"
+    ],
+    "eftermaele": [
+      "sygdom"
+    ],
+    "gave": [],
+    "handel": [],
+    "skal": [],
+    "penge": [],
+    "marked": [],
+    "hoevding": [],
+    "lov": [],
+    "ritual": [
+      "sygdom"
+    ],
+    "aand": [
+      "sygdom"
+    ],
+    "myte": [
+      "sygdom"
+    ],
+    "solgud": [
+      "sygdom"
+    ],
+    "maske": [
+      "sygdom"
+    ],
+    "dans": [
+      "sygdom"
+    ],
+    "naal": [
+      "vaerktoej"
+    ],
+    "toej": [
+      "kulde",
+      "sygdom"
+    ],
+    "tatovering": [],
+    "spejl": [
+      "toerke"
+    ],
+    "haarklip": [],
+    "splint": [
+      "vaerktoej",
+      "sygdom"
+    ],
+    "froe": [
+      "sult"
+    ],
+    "have": [
+      "ulve",
+      "toerke"
+    ],
+    "hoest": [
+      "sult"
+    ],
+    "den-lange-vinter": [
+      "toerke"
+    ],
+    "levende-gud": [
+      "sygdom"
+    ],
+    "jagtfoelge": [],
+    "fossil": [],
+    "rav": [],
+    "myg-i-rav": [],
+    "monolit": [
+      "sygdom"
+    ],
+    "besoegende": [],
+    "agern": [
+      "sult"
+    ],
+    "mammut": [],
+    "mammuthus": [
+      "kulde",
+      "ulve",
+      "sygdom"
+    ],
+    "mel": [
+      "sult"
+    ],
+    "dej": [
+      "sult",
+      "toerke"
+    ],
+    "broed": [
+      "sult"
+    ],
+    "kro": [
+      "ulve"
+    ],
+    "oversvoemmelse": [
+      "toerke"
+    ],
+    "sunkne-by": [
+      "toerke"
+    ],
+    "soeuhyre": [
+      "toerke"
+    ],
+    "skovmand": [],
+    "traening": [],
+    "mester": [],
+    "idol": [
+      "sygdom"
+    ],
+    "faeldegrav": [
+      "ulve"
+    ],
+    "helligkrukke": [
+      "vaerktoej",
+      "toerke",
+      "sygdom"
+    ],
+    "taellekaep": [
+      "vaerktoej"
+    ],
+    "regnskab": [],
+    "symbol": [],
+    "skrift": [],
+    "kort": [],
+    "kalender": [
+      "sygdom"
+    ],
+    "havrejsen": [
+      "toerke"
+    ],
+    "smykke": [],
+    "korn": [],
+    "okse": [],
+    "benkniv": [
+      "vaerktoej"
+    ],
+    "gravestok": [
+      "vaerktoej",
+      "toerke"
+    ],
+    "hammer": [
+      "vaerktoej"
+    ],
+    "haandkile": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "skraber": [
+      "vaerktoej"
+    ],
+    "slynge": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "harpun": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "flint": [
+      "vaerktoej"
+    ],
+    "spydspids": [
+      "vaerktoej",
+      "ulve"
+    ],
+    "morter": [
+      "vaerktoej",
+      "toerke"
+    ],
+    "aeg": [
+      "sult"
+    ],
+    "agerngroed": [
+      "sult"
+    ],
+    "honning": [
+      "sult",
+      "sygdom"
+    ],
+    "flaesk": [
+      "sult"
+    ],
+    "oesters": [
+      "sult",
+      "toerke"
+    ],
+    "baalstegt-aeg": [
+      "sult"
+    ],
+    "sengeleje": [
+      "kulde",
+      "sygdom"
+    ],
+    "dunkappe": [
+      "kulde",
+      "sygdom"
+    ],
+    "klyngen": [
+      "kulde",
+      "sygdom"
+    ],
+    "mudderlag": [
+      "kulde",
+      "toerke",
+      "sygdom"
+    ]
+  }
+}
