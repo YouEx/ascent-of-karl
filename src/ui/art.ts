@@ -78,6 +78,20 @@ export function artUrl(id: string): string | undefined {
  */
 export function glyphHTML(id: string, emoji: string, cls = "emoji"): string {
   const url = art.get(id);
-  if (!url) return `<span class="${cls}">${emoji}</span>`;
+  if (!url) return `<span class="${cls}">${escapeHTML(emoji)}</span>`;
   return `<img class="${cls} ${cls}-art" src="${url}" alt="" aria-hidden="true" draggable="false">`;
+}
+
+function escapeHTML(value: string): string {
+  return value.replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
+      })[character]!,
+  );
 }

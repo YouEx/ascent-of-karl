@@ -105,7 +105,27 @@ export class PlaytestLog {
       // Et halvskrevet eller ældre format må aldrig kunne stoppe et run.
       // Instrumentet er mindre vigtigt end spillet det måler.
       if (parsed?.version !== 1 || !Array.isArray(parsed.runs)) return empty();
-      return { ...empty(), ...parsed };
+      return {
+        version: 1,
+        runs: parsed.runs.map((run) => ({
+          ending: run.ending,
+          summers: run.summers,
+          discoveries: run.discoveries,
+          minutes: run.minutes,
+          solved: Array.isArray(run.solved) ? run.solved : [],
+          flags: Array.isArray(run.flags) ? run.flags : [],
+          misses: Array.isArray(run.misses) ? run.misses : [],
+        })),
+        misses:
+          typeof parsed.misses === "object" && parsed.misses !== null
+            ? parsed.misses
+            : {},
+        current: Array.isArray(parsed.current)
+          ? parsed.current.filter(
+              (entry): entry is string => typeof entry === "string",
+            )
+          : [],
+      };
     } catch {
       return empty();
     }

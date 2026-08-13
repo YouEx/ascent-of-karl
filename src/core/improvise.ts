@@ -8,6 +8,77 @@ import type {
 
 export const MAX_IMPROVISED_DEPTH = 3;
 
+/** Den eneste del et valgfrit copy-lag må ændre. */
+export interface ImproviseCopy {
+  name: string;
+  flavor: string;
+}
+
+export const IMPROVISE_COPY_LIMITS = {
+  nameChars: 48,
+  nameWords: 3,
+  flavorChars: 240,
+} as const;
+
+const CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/;
+const MARKUP_CHARS = /[<>]/;
+const QUOTES = /["'`“”‘’«»]/;
+const URL =
+  /(?:https?:\/\/|www\.|\b[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.[a-z]{2,}(?:\/\S*)?)/i;
+const PUNCTUATION_WILDERNESS = /[!?.,;:—–-]{3,}/;
+const UNSAFE_PUNCTUATION = /[{}\[\]<>\\|@#$%^*_+=~\/]/;
+const SAFE_NAME = /^[\p{L}\p{N}]+(?:[ -][\p{L}\p{N}]+)*$/u;
+const SAFE_FLAVOR = /^[\p{L}\p{N}\p{Zs}.,!?;:()—–-]+$/u;
+const SAVED_COPY_LIMITS = {
+  name: 160,
+  emoji: 32,
+  flavor: 1000,
+} as const;
+
+function safeCommon(value: string): boolean {
+  return (
+    value === value.trim() &&
+    !CONTROL_CHARS.test(value) &&
+    !QUOTES.test(value) &&
+    !URL.test(value) &&
+    !PUNCTUATION_WILDERNESS.test(value) &&
+    !UNSAFE_PUNCTUATION.test(value)
+  );
+}
+
+/** Samme eksakte copy-kontrakt som browseren accepterer fra Workeren. */
+export function validateImproviseCopy(
+  raw: unknown,
+): ImproviseCopy | undefined {
+  if (!isRecord(raw) || Array.isArray(raw)) return undefined;
+  const keys = Object.keys(raw).sort();
+  if (keys.length !== 2 || keys[0] !== "flavor" || keys[1] !== "name") {
+    return undefined;
+  }
+  if (typeof raw.name !== "string" || typeof raw.flavor !== "string") {
+    return undefined;
+  }
+  const { name, flavor } = raw;
+  if (
+    name.length === 0 ||
+    name.length > IMPROVISE_COPY_LIMITS.nameChars ||
+    name.split(/\s+/).length > IMPROVISE_COPY_LIMITS.nameWords ||
+    !SAFE_NAME.test(name) ||
+    !safeCommon(name)
+  ) {
+    return undefined;
+  }
+  if (
+    flavor.length === 0 ||
+    flavor.length > IMPROVISE_COPY_LIMITS.flavorChars ||
+    !SAFE_FLAVOR.test(flavor) ||
+    !safeCommon(flavor)
+  ) {
+    return undefined;
+  }
+  return { name, flavor };
+}
+
 const TRAIT_ORDER: readonly ElementTrait[] = [
   "hard",
   "soft",
@@ -147,6 +218,20 @@ function isAllowed<T extends string>(
   return typeof value === "string" && allowed.includes(value as T);
 }
 
+function isSafeSavedText(
+  value: unknown,
+  maxLength: number,
+  allowEmpty = false,
+): value is string {
+  return (
+    typeof value === "string" &&
+    (allowEmpty || value.length > 0) &&
+    value.length <= maxLength &&
+    !CONTROL_CHARS.test(value) &&
+    !MARKUP_CHARS.test(value)
+  );
+}
+
 /**
  * Untrusted save-data bliver kun til et runtime-element, hvis hele den
  * deterministiske kontrakt holder. Content-afhængige parent/depth-kontroller
@@ -156,8 +241,8 @@ export function sanitizeImprovisedElement(value: unknown): ElementDef | null {
   if (!isRecord(value) || value.origin !== "improvised") return null;
   if (
     typeof value.id !== "string" ||
-    typeof value.name !== "string" ||
-    typeof value.emoji !== "string" ||
+    !isSafeSavedText(value.name, SAVED_COPY_LIMITS.name) ||
+    !isSafeSavedText(value.emoji, SAVED_COPY_LIMITS.emoji, true) ||
     !Number.isInteger(value.act) ||
     (value.act as number) < 1 ||
     !Number.isInteger(value.depth) ||
@@ -192,7 +277,8 @@ export function sanitizeImprovisedElement(value: unknown): ElementDef | null {
     !Array.isArray(value.traits) ||
     value.traits.length === 0 ||
     !value.traits.every((trait) => isAllowed(trait, TRAIT_ORDER)) ||
-    (value.flavor !== undefined && typeof value.flavor !== "string")
+    (value.flavor !== undefined &&
+      !isSafeSavedText(value.flavor, SAVED_COPY_LIMITS.flavor))
   ) {
     return null;
   }
@@ -348,5 +434,17 @@ export function buildFallbackElement(
     terminal: depth === MAX_IMPROVISED_DEPTH,
     ...deriveTags(a, b),
     flavor,
+  };
+}
+
+/** Copy-override uden adgang til id, taxonomy, progression eller rettigheder. */
+export function withImprovisedCopy(
+  element: ElementDef,
+  copy: ImproviseCopy,
+): ElementDef {
+  return {
+    ...element,
+    name: copy.name,
+    flavor: copy.flavor,
   };
 }

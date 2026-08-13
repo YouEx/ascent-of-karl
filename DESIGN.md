@@ -322,6 +322,17 @@ element**: findes filen, vises den; ellers vises elementets emoji. Se §9. Valgt
 markeres med okker kant + indre okker hårlinje — begge valgte slots markeres, ikke kun
 den sidst rørte. Ny opdagelse markeres i hjørnet.
 
+**Karls opfindelser.** Improviserede elementer er samme fysiske brikker som resten
+— de må ikke ligne fremmed software oven på krøniken — men de får en stiplet
+blækstreg og den lille engelske markør _"Karl's invention"_. Stregen genbruger
+`Dashed`/`Ochre Ink`; der indføres ingen ny farve eller materialefamilie. Markøren
+skal være synlig i grid, fundkort og bog uden at dominere elementnavnet. Et
+improviseret fund får ikke rarity-etiket, historisk note eller kildeikon: det er
+runets eget påfund, ikke en arkæologisk påstand.
+Hele udvidelsens markup og stil ligger under root-attributten
+`data-improvise-enabled`; uden den er incumbent mobil- og desktoplayout
+beregningsmæssigt og visuelt uændret.
+
 **Slots.** `Slot`-flade med **stiplet** `Dashed`-kant og en blegt aftegnet
 element-silhuet i midten. Mellem de to slots sidder et cirkulært pergament-token med
 plustegn. Teksten er _"Select an element"_ + _"Choose from below"_ — **aldrig
@@ -339,6 +350,13 @@ tydeligt slukket.
 **Bogen.** Varmere papir end resten, indre skygge langs falsen, malet bogillustration
 frem for 📖. Bogen er det eneste sted, hvor brødtekst må sættes i serif _uden_ at
 komme fra `content/*.json`.
+
+**Opfindelser i bogen.** Den kanoniske tidslinje forbliver historisk og læser kun
+kurateret content. Under leksikonopslaget ligger i stedet en separat, stiplet sektion
+med titlen _"Karl's inventions"_. Dens tomme tilstand forklarer, at par uden opskrift
+kan ende her; den må aldrig lægge en improviseret node, note eller `sourceUrl` ind i
+tidslinjen. Netværks-copy har kun en lille inline-status ved værkstedet
+(loading/ready/fallback), blokerer aldrig Combine og åbner ingen ny modal.
 
 **Problem-chips.** Papirflade, tilstandsfarvet tekst og ikon (§2). Serif.
 
@@ -376,6 +394,11 @@ Karl checked twice."), aldrig "Ingen resultater".
 
 - **Fjeder-følelse, ikke lineær:** `--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1)`
   til noget der dukker op, `--ease-out: cubic-bezier(0.22, 1, 0.36, 1)` til alt andet.
+- **Karls opfindelser er ikke en fjeder-fejring.** Den stiplete copy-status og
+  invention-kortets egen reveal bruger én afsluttet, eksponentielt
+  decelererende `--ease-out`-bevægelse uden bounce/alternate. Det holder
+  netværksforbedringen rolig og gør dens tilstand tydelig uden at konkurrere
+  med canonical discovery-fejringen.
 - Varigheder: `120ms` (tryk) · `220ms` (overgang) · `420ms` (fejring).
 - **Kun `transform` og `opacity`.** Aldrig `top`, `left`, `width`, `height`.
 - **Fejring skaleres med sjældenhed** (`docs/design/sjaeldenhed.md`): almindelig
@@ -587,6 +610,7 @@ npm run test:visual
 | Dato       | Ændring                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 13-08-2026 | §10: den visuelle dommer er nu den gældende lukningsmetode: commit-identificeret baseline, rigtig produktions-capture, fem regionsmetrikker, obligatoriske overlays, 0,02-regressionsgrænse og en langsom opt-in-test uden for `npm test`. |
+| 13-08-2026 | §4: spillerens improviserede elementer er dokumenteret som samme pergamentmateriale med stiplet blæk og markøren "Karl's invention"; bogen holder dem i en separat sektion uden note, kilde eller canonical tidslinjenode, og copy-status er inline og ikke-blokerende. |
 | 12-08-2026 | §8: emoji er ikke længere illustrationssproget. Ikoner skæres ud af referencen (`tools/art/build_*.py` + `sizes.json` + eksplicit `width`/`height`); emoji er kun fallback. Metoden bag: når en flades struktur, blæk og materialitet alle er lave, skæres HELE fladen ud af referencen og CSS'ens `border`, `--grain` og `box-shadow` slettes — ellers påføres krommet to gange. Brugt på krøniken, fortælleren, dokkens felter og elementfliserne. |
 | 12-08-2026 | §2/§4/§8: akt-badgen dokumenteret med sine egne tokens `--act-badge`/`--act-badge-ink` (#1D3145/#F8EBEC, 11,46:1) i stedet for 11-08-2026-rækkens `navy`-gæt (`--navy`, pergament-på-navy 8,96:1), som aldrig blev den flade, der faktisk kom i brug. `--navy` står urørt men ubrugt i `tokens.css`. Token-dækningstesten udvidet til at kræve begge de rigtige hexer i dette dokument. |
 | 11-08-2026 | Målbilledet flyttet til `target-2026-08-11.webp`: malet landskab som lærred, tan pergament, varmt blæk, navy akt-badge, hulemaleri-ornamenter, elementkunst (§9). Typografireglen omskrevet til "serif taler, sans betjener". Rettet to kontrastfejl i referencen (etiketbrun 3,21:1 og Combine-knap 2,18:1). |

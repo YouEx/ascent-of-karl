@@ -236,6 +236,94 @@ async function auditTitleMobileViewport(browser) {
   await page.close();
 }
 
+async function auditGameMobileViewport(browser) {
+  const page = await freshGame(browser);
+  if (await page.locator("#improvise-status-host").count()) {
+    await page.locator('#grid .element[data-id="sten"]').click();
+    await page.locator('#grid .element[data-id="ler"]').click();
+  }
+  const epsilon = 0.5;
+  const layout = await page.evaluate(() => {
+    const dock = document.getElementById("dock")?.getBoundingClientRect();
+    const status = document
+      .getElementById("improvise-status-host")
+      ?.getBoundingClientRect();
+    return {
+      featureEnabled: document.documentElement.hasAttribute(
+        "data-improvise-enabled",
+      ),
+      featureMarkup: document.getElementById("improvise-status-host") !== null,
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      dock:
+        dock &&
+        {
+          left: dock.left,
+          right: dock.right,
+          width: dock.width,
+          top: dock.top,
+        },
+      status:
+        status &&
+        {
+          left: status.left,
+          right: status.right,
+          width: status.width,
+          bottom: status.bottom,
+        },
+    };
+  });
+  if (!layout.featureEnabled) {
+    record(
+      "Spillets mobilrude",
+      "feature-root-absent",
+      !layout.featureEnabled,
+    );
+    record(
+      "Spillets mobilrude",
+      "feature-markup-absent",
+      !layout.featureMarkup,
+    );
+  } else {
+    record(
+      "Spillets mobilrude",
+      "no-horizontal-scroll",
+      layout.scrollWidth <= layout.clientWidth + epsilon,
+      `${Math.round(layout.scrollWidth)}px mod ${layout.clientWidth}px`,
+    );
+    record(
+      "Spillets mobilrude",
+      "dock-in-viewport",
+      !!layout.dock &&
+        layout.dock.left >= -epsilon &&
+        layout.dock.right <= layout.clientWidth + epsilon,
+      layout.dock
+        ? `${Math.round(layout.dock.left)}–${Math.round(layout.dock.right)}px`
+        : "dokken mangler",
+    );
+    if (layout.status) {
+      record(
+        "Spillets mobilrude",
+        "copy-status-in-viewport",
+        layout.status.left >= -epsilon &&
+          layout.status.right <= layout.clientWidth + epsilon,
+        `${Math.round(layout.status.left)}–${Math.round(layout.status.right)}px`,
+      );
+      record(
+        "Spillets mobilrude",
+        "copy-status-above-dock",
+        !!layout.dock && layout.status.bottom <= layout.dock.top + epsilon,
+        layout.dock
+          ? `${Math.round(layout.status.bottom)}px mod dock-top ${Math.round(
+              layout.dock.top,
+            )}px`
+          : "dokken mangler",
+      );
+    }
+  }
+  await page.close();
+}
+
 async function freshGame(browser) {
   const page = await browser.newPage({ viewport: MOBILE, hasTouch: true });
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -360,6 +448,7 @@ const browser = await chromium.launch(execPath ? { executablePath: execPath } : 
 for (const o of OVERLAYS) await auditOverlay(browser, o);
 await auditTitleFatesModal(browser);
 await auditTitleMobileViewport(browser);
+await auditGameMobileViewport(browser);
 await browser.close();
 
 // --- rapport ---

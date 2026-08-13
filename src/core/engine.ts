@@ -9,7 +9,10 @@ import {
   improvisedElementId,
   MAX_IMPROVISED_DEPTH,
   sanitizeImprovisedElement,
+  validateImproviseCopy,
+  withImprovisedCopy,
 } from "./improvise";
+import type { ImproviseCopy } from "./improvise";
 import { explainSatisfaction, solvesNeed } from "./solves";
 import { judgePair } from "./verdict";
 import type {
@@ -227,7 +230,15 @@ export class Engine {
           element.traits.every(
             (trait, index) => trait === expected.traits[index],
           );
-        if (taxonomyMatches) {
+        const copyMatches =
+          element.emoji === expected.emoji &&
+          ((element.name === expected.name &&
+            element.flavor === expected.flavor) ||
+            validateImproviseCopy({
+              name: element.name,
+              flavor: element.flavor,
+            }) !== undefined);
+        if (taxonomyMatches && copyMatches) {
           accepted.set(id, element);
         }
       }
@@ -384,6 +395,19 @@ export class Engine {
   }
 
   /**
+   * Spillerens atomiske forsøg: en åben canonical opskrift vinder altid.
+   * Kun tomrummet går videre til den deterministiske improvisation.
+   */
+  attempt(a: string, b: string, copy?: ImproviseCopy): CombineOutcome {
+    this.assertTurnAllowed(a, b);
+    this.state.attempts++;
+    if (this.matchCombo(a, b)) {
+      return this.completeTurn(this.resolve(a, b));
+    }
+    return this.completeTurn(this.resolveImprovisation(a, b, copy));
+  }
+
+  /**
    * Atomisk improvisation: portvagt, registry, problemløsning og challenge
    * sker i én transition og koster præcis én sommer.
    */
@@ -403,20 +427,30 @@ export class Engine {
       });
     }
 
+    return this.completeTurn(this.resolveImprovisation(a, b));
+  }
+
+  private resolveImprovisation(
+    a: string,
+    b: string,
+    copy?: ImproviseCopy,
+  ): CombineOutcome {
+    const first = this.element(a);
+    const second = this.element(b);
     const judgment = judgePair(this, first, second);
     if (judgment.verdict !== "plausible" && judgment.verdict !== "absurd") {
-      return this.completeTurn({
+      return {
         kind: "improvise-rejected",
         a: first,
         b: second,
         reason: "verdict",
         ...judgment,
-      });
+      };
     }
 
     const attemptedDepth = Math.max(first.depth ?? 0, second.depth ?? 0) + 1;
     if (attemptedDepth > MAX_IMPROVISED_DEPTH) {
-      return this.completeTurn({
+      return {
         kind: "improvise-rejected",
         a: first,
         b: second,
@@ -424,25 +458,28 @@ export class Engine {
         verdict: judgment.verdict,
         evidence: judgment.evidence,
         attemptedDepth,
-      });
+      };
     }
 
     const id = improvisedElementId(a, b);
     const known = this.elementById.get(id);
     if (known && known.origin !== "improvised") {
-      return this.completeTurn({
+      return {
         kind: "improvise-rejected",
         a: first,
         b: second,
         reason: "canonical-recipe",
-      });
+      };
     }
     const reused = known?.origin === "improvised";
-    const element = reused ? known : buildFallbackElement(first, second);
+    let element = reused ? known : buildFallbackElement(first, second);
+    if (copy) element = withImprovisedCopy(element, copy);
     if (!reused) {
       this.state.improvisedElements.push(element);
       this.state.discovered.push(element.id);
       this.elementById.set(element.id, element);
+    } else if (copy) {
+      this.replaceImprovisedElement(element);
     }
 
     const act = this.currentAct();
@@ -456,7 +493,7 @@ export class Engine {
       break;
     }
 
-    return this.completeTurn({
+    return {
       kind: "improvised",
       element,
       reused,
@@ -464,7 +501,31 @@ export class Engine {
       ageUp: false,
       act,
       needExplanations,
-    });
+    };
+  }
+
+  /**
+   * Forbedrer kun navnet og flavoren på et allerede stabilt runtime-element.
+   * Returnerer intet for canonical eller ukendte ids.
+   */
+  enhanceImprovisedCopy(
+    id: string,
+    copy: ImproviseCopy,
+  ): ElementDef | undefined {
+    const known = this.elementById.get(id);
+    if (known?.origin !== "improvised") return undefined;
+    const enhanced = withImprovisedCopy(known, copy);
+    this.replaceImprovisedElement(enhanced);
+    return enhanced;
+  }
+
+  private replaceImprovisedElement(element: ElementDef): void {
+    const index = this.state.improvisedElements.findIndex(
+      (entry) => entry.id === element.id,
+    );
+    if (index < 0) return;
+    this.state.improvisedElements[index] = element;
+    this.elementById.set(element.id, element);
   }
 
   private assertTurnAllowed(a: string, b: string): void {

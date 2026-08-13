@@ -2,12 +2,21 @@ import { describe, expect, it } from "vitest";
 import { PlaytestLog, type LogStorage } from "../src/ui/playtest";
 
 /** Hukommelses-storage, så testene ikke kræver en browser. */
-function fakeStorage(seed: Record<string, string> = {}): LogStorage {
+function fakeStorage(seed: Record<string, string> = {}): LogStorage & {
+  raw(key: string): string | null;
+  writes(): number;
+} {
   const data = new Map(Object.entries(seed));
+  let writeCount = 0;
   return {
     getItem: (k) => data.get(k) ?? null,
-    setItem: (k, v) => void data.set(k, v),
+    setItem: (k, v) => {
+      writeCount++;
+      data.set(k, v);
+    },
     removeItem: (k) => void data.delete(k),
+    raw: (k) => data.get(k) ?? null,
+    writes: () => writeCount,
   };
 }
 
@@ -87,5 +96,102 @@ describe("PlaytestLog", () => {
     };
 
     expect(() => new PlaytestLog(storage).miss("ild", "vand", 1)).not.toThrow();
+  });
+
+  it("bevarer den eksakte v1 run/export-shape feature-off", () => {
+    const log = new PlaytestLog(fakeStorage());
+    log.miss("ild", "vand", 3);
+    log.run({
+      ending: "alderdom",
+      summers: 50,
+      discoveries: 20,
+      minutes: 18,
+      solved: ["sult"],
+      flags: [],
+    });
+
+    expect(log.read()).toEqual({
+      version: 1,
+      runs: [{
+        ending: "alderdom",
+        summers: 50,
+        discoveries: 20,
+        minutes: 18,
+        solved: ["sult"],
+        flags: [],
+        misses: ["ild+vand"],
+      }],
+      misses: [{ pair: "ild+vand", count: 1, firstSummer: 3 }],
+    });
+  });
+
+  it("læser en historisk v1-log uden at skrive eller backfille dens storage-shape", () => {
+    const raw = JSON.stringify({
+      version: 1,
+      runs: [{
+        ending: "ulve",
+        summers: 31,
+        discoveries: 12,
+        minutes: 9,
+        solved: ["ulve"],
+        flags: ["ram"],
+        misses: ["sten+sten"],
+      }],
+      misses: {
+        "sten+sten": { count: 1, firstSummer: 2 },
+      },
+      current: [],
+    });
+    const storage = fakeStorage({ "karl-playtest-v1": raw });
+    const log = new PlaytestLog(storage);
+
+    expect(log.read().runs[0]).toEqual({
+      ending: "ulve",
+      summers: 31,
+      discoveries: 12,
+      minutes: 9,
+      solved: ["ulve"],
+      flags: ["ram"],
+      misses: ["sten+sten"],
+    });
+    expect(storage.raw("karl-playtest-v1")).toBe(raw);
+    expect(storage.writes()).toBe(0);
+  });
+
+  it("stripper den fejlagtige 9ffccaf-v1-udvidelse i export uden at omskrive storage", () => {
+    const raw = JSON.stringify({
+      version: 1,
+      runs: [{
+        ending: "alderdom",
+        summers: 50,
+        discoveries: 20,
+        minutes: 18,
+        solved: [],
+        flags: [],
+        misses: [],
+        inventions: { total: 1, names: ["Should move to v2"] },
+        improvisations: [{ pair: "a+b" }],
+      }],
+      misses: {},
+      current: [],
+      currentImprovisations: [{ pair: "a+b" }],
+    });
+    const storage = fakeStorage({ "karl-playtest-v1": raw });
+
+    expect(new PlaytestLog(storage).read()).toEqual({
+      version: 1,
+      runs: [{
+        ending: "alderdom",
+        summers: 50,
+        discoveries: 20,
+        minutes: 18,
+        solved: [],
+        flags: [],
+        misses: [],
+      }],
+      misses: [],
+    });
+    expect(storage.raw("karl-playtest-v1")).toBe(raw);
+    expect(storage.writes()).toBe(0);
   });
 });

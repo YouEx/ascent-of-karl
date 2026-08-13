@@ -9,7 +9,9 @@ eller spillerdata, der retfærdiggør den ekstra betalte driftsflade.
 Ingen af trinene herunder er udført: der er ikke deployet noget, der er ikke
 sat en rigtig `OPENAI_API_KEY`, og buildet har ingen `VITE_NARRATOR_URL`.
 Improvisationsruten, som nu ligger i samme kilde, er heller ikke deployet,
-har ingen klient og har ingen `VITE_IMPROVISE_URL`.
+og produktionen sætter hverken `VITE_IMPROVISE_ENABLED` eller
+`VITE_IMPROVISE_URL`. Klienten findes nu, men er derfor død kode i det
+udrullede spil.
 Runbooken bevares, fordi beslutningen er reversibel, hvis senere data viser
 en konkret kvalitetskløft i grammatikhalen.
 
@@ -233,10 +235,20 @@ slået fra — det er den nuværende, afleverede tilstand.
   opskrift redigerer bevidst ikke `deploy.yml`** — at gøre det ER
   TASK-006-beslutningen, ikke en del af fase 2.
 
-`VITE_NARRATOR_URL` og en fremtidig `VITE_IMPROVISE_URL` er bevidst to
-uafhængige build-kontrakter. Denne ændring sætter ingen af dem. Senere
-klientarbejde må pege `VITE_IMPROVISE_URL` på `/improvise` uden at tænde
-live-fortælleren, og omvendt.
+`VITE_NARRATOR_URL`, `VITE_IMPROVISE_ENABLED` og `VITE_IMPROVISE_URL` er
+bevidst uafhængige build-kontrakter:
+
+- `VITE_IMPROVISE_ENABLED=true` åbner den deterministiske, offline
+  spillerfeature. Uden den kalder UI'et fortsat `Engine.combine()` som før.
+- `VITE_IMPROVISE_URL=https://…/improvise` forbedrer kun `name`/`flavor`.
+  URL'en har ingen effekt, hvis produktflaget er slukket, og spillet venter
+  aldrig på den (2,5 s timeout, synkront cache-read ved Combine).
+- `VITE_NARRATOR_URL` styrer fortsat kun live-fortælleren.
+
+Ingen af de tre variabler står i `.github/workflows/deploy.yml`. Et lokalt
+offline-check kan derfor køres med `VITE_IMPROVISE_ENABLED=true npm run dev`;
+et lokalt Worker-check tilføjer desuden `VITE_IMPROVISE_URL`. At sætte dem i
+produktion er en separat beslutning efter TASK-019/TASK-027/TASK-028.
 
 ## 7. Sådan verificeres opførslen efter et deploy
 
