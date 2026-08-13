@@ -8,6 +8,8 @@ eller spillerdata, der retfærdiggør den ekstra betalte driftsflade.
 
 Ingen af trinene herunder er udført: der er ikke deployet noget, der er ikke
 sat en rigtig `OPENAI_API_KEY`, og buildet har ingen `VITE_NARRATOR_URL`.
+Improvisationsruten, som nu ligger i samme kilde, er heller ikke deployet,
+har ingen klient og har ingen `VITE_IMPROVISE_URL`.
 Runbooken bevares, fordi beslutningen er reversibel, hvis senere data viser
 en konkret kvalitetskløft i grammatikhalen.
 
@@ -17,13 +19,15 @@ udelukkende ud fra de bagte replikker og grammatikken, præcis som i dag.
 
 ## Arkitektur i to sætninger
 
-Én Cloudflare Worker (`worker/`) proxyer modellen, så nøglen aldrig kommer i
-nærheden af browseren. Foran modellen sidder ét globalt, navngivet Durable
+Én Cloudflare Worker (`worker/`) rummer de to uafhængige, valgfrie
+modelruter (`/narrate`/den eksisterende rodsti og `/improvise`), så nøglen
+aldrig kommer i nærheden af browseren. Foran modellen sidder ét globalt, navngivet Durable
 Object (`Coordinator`, se `worker/src/coordinator-do.ts`) som den ENESTE
 stateful komponent: det håndhæver et rullende rate-limit pr. IP-hash
 (TASK-002), et dagligt UTC-udgiftsloft over kald der når modellen (TASK-003),
-og en delt cache nøglet på par + dom (TASK-004) — alt sammen i objektets
-egen SQLite-baserede storage, uden en KV ved siden af.
+og en delt cache nøglet på par + dom (TASK-004). Improvisation har egne
+kvote-/budget-/cache-nøgler i samme storage. Alt ligger i objektets egen
+SQLite-baserede storage, uden en KV ved siden af.
 
 ## 1. Forudsætninger
 
@@ -98,6 +102,9 @@ udledningen skrevet ind som kommentarer (se også
 | `RATE_LIMIT_WINDOW_SECONDS` / `RATE_LIMIT_MAX` | `60` / `20` | Rullende vindue pr. IP-hash (TASK-002). IP-identiteten bag hashen fastslås udelukkende ved Cloudflares kant (`cf-connecting-ip`, se afsnit 3's `IP_HASH_SALT`) — ikke af en klient-oplyst header. |
 | `DAILY_MAX_UPSTREAM_CALLS` | `350` | Globalt UTC-døgnloft over kald der når modellen (TASK-003) — se afsnit 8 for nødstoppet. Ramt: 503. |
 | `DAILY_MAX_UPSTREAM_CALLS_PER_IP` | `165` | Én IP-hashs egen andel af samme døgn (sikkerhedsrunde 2, punkt 2) — forhindrer at én spiller alene opbruger hele det globale loft. Meningsfuldt under halvdelen af det globale loft. Ramt (men globalt loft har stadig plads): 429, ikke 503. |
+| `IMPROVISE_RATE_LIMIT_WINDOW_SECONDS` / `IMPROVISE_RATE_LIMIT_MAX` | `60` / `10` | Eget rullende vindue for `/improvise`, med samme kant-fastslåede IP-hash men en separat storage-spand. Konservativ før-trafik-standard, ikke en måling. |
+| `IMPROVISE_DAILY_MAX_UPSTREAM_CALLS` | `100` | Eget globalt UTC-døgnloft for improvisations-cache-misses. Konservativ før-trafik-standard; ingen trafik findes endnu. |
+| `IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP` | `25` | Egen dagsandel pr. IP-hash for improvisation. En fremtidig klient-cap er UX/balance og må aldrig regnes som sikkerhed. |
 
 Ret kun `ALLOWED_ORIGINS`, hvis spillets rigtige URL ændrer sig. De fire
 tal-vars bør ikke ændres uden ny måling — se plan-dokumentet for hvordan de
@@ -225,6 +232,11 @@ slået fra — det er den nuværende, afleverede tilstand.
   synlig i browserens netværksfane under alle omstændigheder). **Denne
   opskrift redigerer bevidst ikke `deploy.yml`** — at gøre det ER
   TASK-006-beslutningen, ikke en del af fase 2.
+
+`VITE_NARRATOR_URL` og en fremtidig `VITE_IMPROVISE_URL` er bevidst to
+uafhængige build-kontrakter. Denne ændring sætter ingen af dem. Senere
+klientarbejde må pege `VITE_IMPROVISE_URL` på `/improvise` uden at tænde
+live-fortælleren, og omvendt.
 
 ## 7. Sådan verificeres opførslen efter et deploy
 
@@ -531,3 +543,93 @@ håndskrevne typer i `cf-types.ts` er derfor stadig autoritative; en
 prøvekørsel af `npx wrangler types` er tilføjet til `.gitignore`
 (`worker-configuration.d.ts`) med en kommentar om hvorfor, så den aldrig
 ved et uheld committes.
+
+## 12. `POST /improvise` — kildekontrakt, fortsat slukket
+
+Dette endpoint er implementeret i den **samme** Worker og det **samme**
+`Coordinator`-objekt. Der er ikke oprettet `proxy/`, ingen KV-binding og
+ingen ekstra secret. Det er kun kilde: ingen secret er provisioneret, intet
+er deployet, ingen Pages-/Vite-variabel er sat, og der findes ingen trafik
+eller høstede resultater.
+
+### 12a. Offentlig ledning
+
+```http
+POST /improvise
+content-type: application/json
+
+{"a":"sten","b":"pind","act":1}
+```
+
+- Kroppen er **eksakt** `{a: string, b: string, act: number}`; ekstra felter
+  afvises.
+- `a` og `b` er kanoniske element-id'er. Workeren slår navn, flavor og
+  taksonomi op i det bundlede `content/elements.json`; ukendte,
+  runtime-opfundne eller endnu ikke akt-tilgængelige id'er afvises før
+  cache og budget.
+- Paridentiteten sorteres internt. `sten+pind` og `pind+sten` er samme
+  opfindelse.
+- Et succes-svar er **kun**:
+
+```json
+{"name":"Flint club","flavor":"A stone tied to a stick. Karl has invented confidence with a handle."}
+```
+
+Modellen kan ikke returnere eller kontrollere `kind`, `stuff`, `traits`,
+`scale`, `solves`, flags, `ageUp`, `ending`, id'er, forældre, origin eller
+dybde. Den deterministiske klientkerne leverer klassifikationen separat;
+Workeren forbedrer kun copy.
+
+### 12b. Prompt og output-port
+
+Prompten bruger kun serveropslåede kanoniske forældrenavne, flavor og
+taksonomi samt aktnummeret. Tre håndskrevne toneeksempler følger med:
+mudderkage, ristede larver og klyngen.
+
+OpenAI kaldes med et strikt JSON-schema med præcis `name` og `flavor`.
+Workeren validerer derefter svaret igen: eksakte felter, navn på højst tre
+ord, ingen URL'er/citationstegn/kontroltegn/tegnsætningsvildnis og flavor på
+højst 240 tegn. Et ugyldigt modelsvar giver en eksplicit 502
+(`reason: "invalid model output"`), retries ikke automatisk og caches
+aldrig. Den senere klient ejer den deterministiske fallback.
+
+### 12c. Durable Object storage-kontrakt
+
+Alle nøgler ligger i den eksisterende `Coordinator`-storage:
+
+| Formål | Nøgle |
+|---|---|
+| Sorteret, namespaced copy-cache | `improv-cache:<promptNamespace>:<a>+<b>` |
+| Rullende rate limit pr. IP-hash | `rl:improvise:<ipHash>` |
+| Globalt UTC-dagsbudget | `budget:improvise` |
+| UTC-dagsbudget pr. IP-hash | `budget:improvise:ip:<ipHash>` |
+| Smalle efterspørgselstællinger | `improv-stats:<a>+<b>` |
+
+`promptNamespace` udledes automatisk af hele improvisationsprompten,
+eksemplerne, output-skemaet/-grænserne og modelnavnet. Cache-hit undgår både
+modelkald og budgetreservation. Samtidige misses på samme sorterede par
+deler ét kald via den eksisterende `InFlightRegistry`.
+
+Den eksisterende daglige alarm rydder også udløbne
+improvisations-rate-limit-poster, cache-poster over 30 dage,
+forældede pr.-IP-budgetposter og stats uden aktivitet i 90 dage.
+
+### 12d. Autentificeret eksport — serverhalvdelen af TASK-029
+
+```http
+GET /admin/improvisations?limit=200&cursor=...
+authorization: Bearer <ADMIN_EXPORT_TOKEN>
+```
+
+Endpointet genbruger præcis samme fail-closed tokenkontrol og interne
+markørheader som `/admin/pairs`. Det eksporterer kun den aktuelle
+prompt-namespaces cachede improvisationer med sorterede forældre,
+`name`/`flavor`, oprettelsestid og smalle tællinger (`count`,
+`cacheHits`, `upstreamCalls`, `firstSeen`, `lastSeen`). Ingen rå eller
+hashet IP, ingen prompt, intet token og ingen anden storage-post kan
+optræde.
+
+Dette er kun **server/export-halvdelen**. Der er ikke bygget et
+`tools/harvest.mjs`, ikke skrevet noget til
+`content/drafts/harvested.json`, og intet forfremmes automatisk. Faktisk
+trafik, høst og menneskelig kuratering er fortsat eksternt og åbent arbejde.

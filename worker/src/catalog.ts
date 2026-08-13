@@ -29,10 +29,12 @@ import elementsData from "../../content/elements.json";
 import act1 from "../../content/acts/act-1.json";
 import act2 from "../../content/acts/act-2.json";
 import { KNOWN_VERDICTS, type WireRequest } from "./validate";
+import type { ImproviseWireRequest } from "./improvise-validate";
 
 interface ElementRecord {
   id: string;
   name: string;
+  act: number;
   kind?: string;
   stuff?: string;
   scale?: string;
@@ -60,6 +62,8 @@ const needById = new Map<string, string>(
 export interface CanonicalThing {
   id: string;
   name: string;
+  /** Sat for rigtigt katalogindhold; valgfri så narratorens rene test-fixtures forbliver små. */
+  act?: number;
   kind?: string;
   stuff?: string;
   scale?: string;
@@ -85,6 +89,7 @@ export function lookupElement(id: string): CanonicalThing | undefined {
   return {
     id: el.id,
     name: el.name,
+    act: el.act,
     kind: el.kind,
     stuff: el.stuff,
     scale: el.scale,
@@ -122,4 +127,34 @@ export function resolveCanonicalBody(wire: WireRequest): CanonicalResult {
     if (need === undefined) return { ok: false, reason: "ukendt needId" };
   }
   return { ok: true, body: { a, b, verdict: wire.verdict, need, summer: wire.summer } };
+}
+
+export interface CanonicalImproviseBody {
+  a: CanonicalThing;
+  b: CanonicalThing;
+  act: number;
+}
+
+export type CanonicalImproviseResult =
+  | { ok: true; body: CanonicalImproviseBody }
+  | { ok: false; reason: string };
+
+/**
+ * Improvisation accepterer kun bundlede, kanoniske forældre. Runtime-id'er
+ * findes ikke i opslaget og kan derfor aldrig blive model-input.
+ */
+export function resolveCanonicalImproviseBody(wire: ImproviseWireRequest): CanonicalImproviseResult {
+  const a = lookupElement(wire.a);
+  if (!a) return { ok: false, reason: "unknown a" };
+  const b = lookupElement(wire.b);
+  if (!b) return { ok: false, reason: "unknown b" };
+  if (a.act === undefined || a.act > wire.act) {
+    return { ok: false, reason: "a unavailable in act" };
+  }
+  if (b.act === undefined || b.act > wire.act) {
+    return { ok: false, reason: "b unavailable in act" };
+  }
+
+  const [first, second] = a.id <= b.id ? [a, b] : [b, a];
+  return { ok: true, body: { a: first, b: second, act: wire.act } };
 }

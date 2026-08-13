@@ -71,6 +71,11 @@ export function isBodyTooLarge(rawText: string): boolean {
   return new TextEncoder().encode(rawText).length > LIMITS.bodyBytes;
 }
 
+/** `application/json` med eller uden parametre som `charset=utf-8`. */
+export function isJsonContentType(value: string | null): boolean {
+  return value?.split(";", 1)[0]?.trim().toLowerCase() === "application/json";
+}
+
 function isBoundedString(v: unknown, max: number): v is string {
   return typeof v === "string" && v.length > 0 && v.length <= max;
 }
