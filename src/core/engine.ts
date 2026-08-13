@@ -9,6 +9,7 @@ import {
   improvisedElementId,
   MAX_IMPROVISED_DEPTH,
   sanitizeImprovisedElement,
+  validateImproviseCopy,
   withImprovisedCopy,
 } from "./improvise";
 import type { ImproviseCopy } from "./improvise";
@@ -229,7 +230,15 @@ export class Engine {
           element.traits.every(
             (trait, index) => trait === expected.traits[index],
           );
-        if (taxonomyMatches) {
+        const copyMatches =
+          element.emoji === expected.emoji &&
+          ((element.name === expected.name &&
+            element.flavor === expected.flavor) ||
+            validateImproviseCopy({
+              name: element.name,
+              flavor: element.flavor,
+            }) !== undefined);
+        if (taxonomyMatches && copyMatches) {
           accepted.set(id, element);
         }
       }

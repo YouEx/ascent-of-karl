@@ -1,5 +1,4 @@
 import { pairKey } from "../core/engine";
-import type { InventionSummary } from "./run-summary";
 
 /**
  * Playtest-log (ROADMAP prioritet 2).
@@ -33,30 +32,9 @@ export interface RunRecord {
   minutes: number;
   solved: string[];
   flags: string[];
-  /** Dele-/runresumeet er bevidst begrænset til få navne. */
-  inventions: InventionSummary;
   /** Blindgyderne i netop dette run, i den rækkefølge de blev ramt */
   misses: string[];
-  /** Improvisationsforsøg i fast, persondatafrit skema. */
-  improvisations: ImprovisationRecord[];
 }
-
-export interface ImprovisationRecord {
-  pair: string;
-  act: number;
-  summer: number;
-  outcome: "accepted" | "rejected" | "reused";
-  solvedNeed: string | null;
-  solvedChallenge: string | null;
-  source: "fallback" | "worker-copy";
-  latencyMs: number | null;
-  timeout: boolean;
-}
-
-export type ImprovisationInput = Omit<ImprovisationRecord, "pair"> & {
-  a: string;
-  b: string;
-};
 
 export interface MissRecord {
   pair: string;
@@ -79,18 +57,10 @@ interface Stored {
   misses: Record<string, { count: number; firstSummer: number }>;
   /** Blindgyder i det igangværende run — flyttes til runs[] når det slutter */
   current: string[];
-  /** Samme for improvisationsforsøg; gemmes også midt i et run. */
-  currentImprovisations: ImprovisationRecord[];
 }
 
 function empty(): Stored {
-  return {
-    version: 1,
-    runs: [],
-    misses: {},
-    current: [],
-    currentImprovisations: [],
-  };
+  return { version: 1, runs: [], misses: {}, current: [] };
 }
 
 export class PlaytestLog {
@@ -107,66 +77,11 @@ export class PlaytestLog {
     });
   }
 
-  improvisation(record: ImprovisationInput): void {
-    this.update((data) => {
-      data.currentImprovisations.push({
-        pair: pairKey(record.a, record.b),
-        act: record.act,
-        summer: record.summer,
-        outcome: record.outcome,
-        solvedNeed: record.solvedNeed,
-        solvedChallenge: record.solvedChallenge,
-        source: record.source,
-        latencyMs: record.latencyMs,
-        timeout: record.timeout,
-      });
-    });
-  }
-
-  /** Sen latency/timeout må føjes til forsøget uden at ændre dets udfald. */
-  improvisationNetwork(
-    a: string,
-    b: string,
-    act: number,
-    summer: number,
-    network: { latencyMs: number; timeout: boolean },
-  ): void {
-    this.update((data) => {
-      const pair = pairKey(a, b);
-      const current = [...data.currentImprovisations]
-        .reverse()
-        .find(
-          (entry) =>
-            entry.pair === pair &&
-            entry.act === act &&
-            entry.summer === summer,
-        );
-      const completed = [...data.runs]
-        .reverse()
-        .flatMap((run) => [...run.improvisations].reverse())
-        .find(
-          (entry) =>
-            entry.pair === pair &&
-            entry.act === act &&
-            entry.summer === summer,
-        );
-      const target = current ?? completed;
-      if (!target) return;
-      target.latencyMs = network.latencyMs;
-      target.timeout = network.timeout;
-    });
-  }
-
   /** Runnet er slut. Lukker blindgyderne inde i det og begynder forfra. */
-  run(summary: Omit<RunRecord, "misses" | "improvisations">): void {
+  run(summary: Omit<RunRecord, "misses">): void {
     this.update((data) => {
-      data.runs.push({
-        ...summary,
-        misses: data.current,
-        improvisations: data.currentImprovisations,
-      });
+      data.runs.push({ ...summary, misses: data.current });
       data.current = [];
-      data.currentImprovisations = [];
     });
   }
 
@@ -191,19 +106,24 @@ export class PlaytestLog {
       // Instrumentet er mindre vigtigt end spillet det måler.
       if (parsed?.version !== 1 || !Array.isArray(parsed.runs)) return empty();
       return {
-        ...empty(),
-        ...parsed,
+        version: 1,
         runs: parsed.runs.map((run) => ({
-          ...run,
-          inventions: run.inventions ?? { total: 0, names: [] },
+          ending: run.ending,
+          summers: run.summers,
+          discoveries: run.discoveries,
+          minutes: run.minutes,
+          solved: Array.isArray(run.solved) ? run.solved : [],
+          flags: Array.isArray(run.flags) ? run.flags : [],
           misses: Array.isArray(run.misses) ? run.misses : [],
-          improvisations: Array.isArray(run.improvisations)
-            ? run.improvisations
-            : [],
         })),
-        current: Array.isArray(parsed.current) ? parsed.current : [],
-        currentImprovisations: Array.isArray(parsed.currentImprovisations)
-          ? parsed.currentImprovisations
+        misses:
+          typeof parsed.misses === "object" && parsed.misses !== null
+            ? parsed.misses
+            : {},
+        current: Array.isArray(parsed.current)
+          ? parsed.current.filter(
+              (entry): entry is string => typeof entry === "string",
+            )
           : [],
       };
     } catch {

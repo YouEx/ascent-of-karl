@@ -3,6 +3,7 @@ import {
   IMPROVISE_TIMEOUT_MS,
   ImproviseClient,
 } from "../src/ui/improvise-client";
+import * as improviseClientModule from "../src/ui/improvise-client";
 
 const request = { a: "baer", b: "ler", act: 1 };
 const validCopy = {
@@ -169,5 +170,52 @@ describe("ImproviseClient", () => {
 
     await Promise.all([first, second]);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignorerer et deferred A+B-svar efter selection er flyttet til C+D", async () => {
+    const Guard = (
+      improviseClientModule as typeof improviseClientModule & {
+        CopyGenerationGuard?: new () => {
+          begin(key: string): number;
+          abandon(): void;
+        };
+      }
+    ).CopyGenerationGuard;
+    const settle = (
+      improviseClientModule as typeof improviseClientModule & {
+        settleCurrentCopy?: (
+          pending: Promise<unknown>,
+          guard: unknown,
+          generation: number,
+          key: string,
+          apply: (state: unknown) => void,
+        ) => Promise<boolean>;
+      }
+    ).settleCurrentCopy;
+    expect(typeof Guard).toBe("function");
+    expect(typeof settle).toBe("function");
+    if (!Guard || !settle) return;
+
+    let release!: (state: unknown) => void;
+    const pending = new Promise<unknown>((resolve) => {
+      release = resolve;
+    });
+    const guard = new Guard();
+    const firstGeneration = guard.begin("a+b:act:1");
+    const effects: unknown[] = [];
+    const result = settle(
+      pending,
+      guard,
+      firstGeneration,
+      "a+b:act:1",
+      (state) => effects.push(state),
+    );
+
+    guard.abandon();
+    guard.begin("c+d:act:1");
+    release({ status: "ready", copy: validCopy, latencyMs: 80 });
+
+    await expect(result).resolves.toBe(false);
+    expect(effects).toEqual([]);
   });
 });

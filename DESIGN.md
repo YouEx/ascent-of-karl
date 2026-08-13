@@ -329,6 +329,9 @@ blækstreg og den lille engelske markør _"Karl's invention"_. Stregen genbruger
 skal være synlig i grid, fundkort og bog uden at dominere elementnavnet. Et
 improviseret fund får ikke rarity-etiket, historisk note eller kildeikon: det er
 runets eget påfund, ikke en arkæologisk påstand.
+Hele udvidelsens markup og stil ligger under root-attributten
+`data-improvise-enabled`; uden den er incumbent mobil- og desktoplayout
+beregningsmæssigt og visuelt uændret.
 
 **Slots.** `Slot`-flade med **stiplet** `Dashed`-kant og en blegt aftegnet
 element-silhuet i midten. Mellem de to slots sidder et cirkulært pergament-token med
@@ -391,6 +394,11 @@ Karl checked twice."), aldrig "Ingen resultater".
 
 - **Fjeder-følelse, ikke lineær:** `--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1)`
   til noget der dukker op, `--ease-out: cubic-bezier(0.22, 1, 0.36, 1)` til alt andet.
+- **Karls opfindelser er ikke en fjeder-fejring.** Den stiplete copy-status og
+  invention-kortets egen reveal bruger én afsluttet, eksponentielt
+  decelererende `--ease-out`-bevægelse uden bounce/alternate. Det holder
+  netværksforbedringen rolig og gør dens tilstand tydelig uden at konkurrere
+  med canonical discovery-fejringen.
 - Varigheder: `120ms` (tryk) · `220ms` (overgang) · `420ms` (fejring).
 - **Kun `transform` og `opacity`.** Aldrig `top`, `left`, `width`, `height`.
 - **Fejring skaleres med sjældenhed** (`docs/design/sjaeldenhed.md`): almindelig

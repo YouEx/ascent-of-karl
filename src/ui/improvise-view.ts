@@ -1,6 +1,10 @@
 import type { ElementDef, ProblemDef } from "../core/types";
 import { glyphHTML } from "./art";
 import type { ImproviseCopyState } from "./improvise-client";
+import {
+  inventionSummaryText,
+  type InventionSummary,
+} from "./run-summary";
 
 export function partitionChronicleEntries(
   elements: readonly ElementDef[],
@@ -13,8 +17,42 @@ export function partitionChronicleEntries(
   };
 }
 
-export function elementOriginClass(element: ElementDef): string {
-  return element.origin === "improvised" ? "is-improvised" : "";
+export function elementOriginClass(
+  element: ElementDef,
+  enabled: boolean,
+): string {
+  return enabled && element.origin === "improvised" ? "is-improvised" : "";
+}
+
+export function renderElementTileContent(
+  element: ElementDef,
+  enabled: boolean,
+): string {
+  return `${glyphHTML(element.id, element.emoji)}<span class="name">${escapeHTML(
+    element.name,
+  )}</span>${
+    enabled && element.origin === "improvised"
+      ? '<span class="invention-tag">Karl&#039;s invention</span>'
+      : ""
+  }`;
+}
+
+export function renderSlotContent(element: ElementDef): string {
+  return `${glyphHTML(
+    element.id,
+    element.emoji,
+    "slot-glyph",
+  )}<span>${escapeHTML(element.name)}</span>`;
+}
+
+export function renderInventionSummaryHTML(
+  summary: InventionSummary,
+  enabled = true,
+): string {
+  if (!enabled || summary.total === 0) return "";
+  return `<p class="ending-inventions">${escapeHTML(
+    inventionSummaryText(summary),
+  )}</p>`;
 }
 
 export function renderInventionsSection(
@@ -106,7 +144,7 @@ export function renderCopyStatus(state: ImproviseCopyState): string {
   }>${text}</p>`;
 }
 
-function escapeHTML(value: string): string {
+export function escapeHTML(value: string): string {
   return value.replace(
     /[&<>"']/g,
     (character) =>

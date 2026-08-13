@@ -17,18 +17,26 @@
 // Chromium ikke kan overleve den testproces, der ejede dem.
 import { describe, expect, it } from "vitest";
 import { rmSync, readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { chromium } from "playwright";
 // @ts-expect-error — dommerværktøjerne er ren JavaScript uden typedeklaration.
 import { runProcessGroup } from "../tools/judge/process-group.mjs";
 // @ts-expect-error — dommerværktøjerne er ren JavaScript uden typedeklaration.
 import { collectScoreRegressions } from "../tools/judge/score-tolerance.mjs";
 // @ts-expect-error — dommerværktøjerne er ren JavaScript uden typedeklaration.
 import { createVisualRunDir } from "../tools/judge/visual-regression.mjs";
+// @ts-expect-error — capture-værktøjet er ren JavaScript uden typedeklaration.
+import { ORIGIN, startServer, stopServer } from "../tools/judge/capture.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const BASELINE_PATH = join(ROOT, "tests/visual-baseline.json");
+const FEATURE_OFF_LAYOUT_PATH = join(
+  ROOT,
+  "tests/improvise-feature-off-layout.json",
+);
 const MAX_DROP = 0.02;
 
 // Vitest's eget testtimeout — kald under det er hver for sig kortere
@@ -79,6 +87,135 @@ describe("TASK-030: langsom visuel regression mod tests/visual-baseline.json", (
           regressions.map((entry: any) => `${entry.region}: fald ${entry.drop.toFixed(4)}`).join("\n"),
         ).toEqual([]);
       } finally {
+        rmSync(runDir, { recursive: true, force: true });
+      }
+    },
+    TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "matcher main-layout og screenshot-signatur feature-off på mobil og desktop",
+    async () => {
+      const baseline = JSON.parse(
+        readFileSync(FEATURE_OFF_LAYOUT_PATH, "utf8"),
+      );
+      const runDir = createVisualRunDir(ROOT);
+      let server;
+      let browser;
+      try {
+        server = await startServer();
+        browser = await chromium.launch({ headless: true });
+        for (const [name, expected] of Object.entries(
+          baseline.viewports,
+        ) as [string, any][]) {
+          const page = await browser.newPage({
+            viewport: { width: expected.width, height: expected.height },
+            screen: { width: expected.width, height: expected.height },
+            isMobile: expected.isMobile,
+            hasTouch: expected.isMobile,
+            deviceScaleFactor: 1,
+          });
+          await page.emulateMedia({ reducedMotion: "reduce" });
+          await page.goto(
+            `${ORIGIN}/?scenario=act1-opening&freeze=1`,
+            { waitUntil: "load" },
+          );
+          await page.waitForSelector("html[data-ready='true']");
+          const actual = await page.evaluate((selectors) => {
+            const rects: Record<string, Record<string, number>> = {};
+            for (const selector of selectors) {
+              const rect = document
+                .querySelector(selector)
+                ?.getBoundingClientRect();
+              if (!rect) continue;
+              rects[selector] = {
+                x: Number(rect.x.toFixed(3)),
+                y: Number(rect.y.toFixed(3)),
+                width: Number(rect.width.toFixed(3)),
+                height: Number(rect.height.toFixed(3)),
+              };
+            }
+            const header = getComputedStyle(
+              document.querySelector("header")!,
+            );
+            const tools = getComputedStyle(
+              document.querySelector("#tools")!,
+            );
+            const dock = getComputedStyle(
+              document.querySelector("#dock")!,
+            );
+            const narrator = getComputedStyle(
+              document.querySelector("#narrator")!,
+            );
+            const book = getComputedStyle(
+              document.querySelector("#book-panel")!,
+            );
+            return {
+              featureEnabled:
+                document.documentElement.hasAttribute(
+                  "data-improvise-enabled",
+                ),
+              clientWidth: document.documentElement.clientWidth,
+              scrollWidth: document.documentElement.scrollWidth,
+              rects,
+              styles: {
+                headerFlexWrap: header.flexWrap,
+                toolsFlexWrap: tools.flexWrap,
+                dockDisplay: dock.display,
+                dockGridTemplateColumns: dock.gridTemplateColumns,
+                narratorTop: narrator.top,
+                bookWidth: book.width,
+              },
+            };
+          }, baseline.selectors);
+
+          expect(actual.featureEnabled, `${name}: feature-root`).toBe(false);
+          expect(actual.clientWidth, `${name}: clientWidth`).toBe(
+            expected.clientWidth,
+          );
+          expect(actual.scrollWidth, `${name}: scrollWidth`).toBe(
+            expected.scrollWidth,
+          );
+          expect(actual.styles, `${name}: computed styles`).toEqual(
+            expected.styles,
+          );
+          for (const [selector, expectedRect] of Object.entries(
+            expected.rects,
+          ) as [string, Record<string, number>][]) {
+            const actualRect = actual.rects[selector];
+            expect(actualRect, `${name}: ${selector}`).toBeTruthy();
+            for (const field of ["x", "y", "width", "height"]) {
+              expect(
+                Math.abs(actualRect![field]! - expectedRect[field]!),
+                `${name}: ${selector}.${field}`,
+              ).toBeLessThanOrEqual(baseline.maxRectDelta);
+            }
+          }
+
+          const screenshotPath = join(runDir, `${name}.png`);
+          await page.screenshot({ path: screenshotPath });
+          const signature = JSON.parse(
+            execFileSync(
+              "python3",
+              ["tools/screenshot_signature.py", screenshotPath],
+              { cwd: ROOT, stdio: "pipe" },
+            ).toString("utf8"),
+          ) as number[];
+          const meanDelta =
+            signature.reduce(
+              (sum, value, index) =>
+                sum + Math.abs(value - expected.signature[index]),
+              0,
+            ) / signature.length;
+          expect(
+            meanDelta,
+            `${name}: screenshot-signatur`,
+          ).toBeLessThanOrEqual(baseline.maxSignatureMeanDelta);
+          await page.close();
+        }
+      } finally {
+        if (browser) await browser.close();
+        if (server) await stopServer(server);
         rmSync(runDir, { recursive: true, force: true });
       }
     },

@@ -709,6 +709,46 @@ describe("Engine.improvise — save og determinisme", () => {
     expect(state.creditedImprovised).toEqual([]);
   });
 
+  it.each([
+    ["markup-navn", (entry: ElementDef) => {
+      entry.name = '<img src=x onerror="alert(1)">';
+    }],
+    ["markup-emoji", (entry: ElementDef) => {
+      entry.emoji = "<svg onload=alert(1)>";
+    }],
+    ["markup-flavor", (entry: ElementDef) => {
+      entry.flavor = "<script>alert(1)</script>";
+    }],
+    ["oversize-navn", (entry: ElementDef) => {
+      entry.name = "A".repeat(500);
+    }],
+    ["oversize-emoji", (entry: ElementDef) => {
+      entry.emoji = "🪨".repeat(100);
+    }],
+    ["oversize-flavor", (entry: ElementDef) => {
+      entry.flavor = "A".repeat(5000);
+    }],
+  ])("afviser skadelig gemt invention-copy ved save-grænsen: %s", (_label, mutate) => {
+    const malicious = buildFallbackElement(fire, berries);
+    mutate(malicious);
+    const state = deserialize(JSON.stringify({
+      version: 1,
+      savedAt: "2026-08-13T15:00:00Z",
+      state: {
+        act: 1,
+        discovered: ["fire", "berries", malicious.id],
+        flags: [],
+        solvedProblems: [],
+        attempts: 1,
+        improvisedElements: [malicious],
+        creditedImprovised: [malicious.id],
+      },
+    }));
+
+    expect(state.improvisedElements).toEqual([]);
+    expect(state.creditedImprovised).toEqual([]);
+  });
+
   it("giver identiske udfald og state for hele samme offline-sekvens", () => {
     function run() {
       const engine = new Engine(testContent(false));

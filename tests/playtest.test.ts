@@ -1,41 +1,22 @@
 import { describe, expect, it } from "vitest";
-import {
-  PlaytestLog,
-  type LogStorage,
-  type RunRecord,
-} from "../src/ui/playtest";
-
-type ImprovisationCapableLog = PlaytestLog & {
-  improvisation?: (record: {
-    a: string;
-    b: string;
-    act: number;
-    summer: number;
-    outcome: "accepted" | "rejected" | "reused";
-    solvedNeed: string | null;
-    solvedChallenge: string | null;
-    source: "fallback" | "worker-copy";
-    latencyMs: number | null;
-    timeout: boolean;
-  }) => void;
-  improvisationNetwork?: (
-    a: string,
-    b: string,
-    act: number,
-    summer: number,
-    network: { latencyMs: number; timeout: boolean },
-  ) => void;
-};
-
-const noInventions = { total: 0, names: [] };
+import { PlaytestLog, type LogStorage } from "../src/ui/playtest";
 
 /** Hukommelses-storage, så testene ikke kræver en browser. */
-function fakeStorage(seed: Record<string, string> = {}): LogStorage {
+function fakeStorage(seed: Record<string, string> = {}): LogStorage & {
+  raw(key: string): string | null;
+  writes(): number;
+} {
   const data = new Map(Object.entries(seed));
+  let writeCount = 0;
   return {
     getItem: (k) => data.get(k) ?? null,
-    setItem: (k, v) => void data.set(k, v),
+    setItem: (k, v) => {
+      writeCount++;
+      data.set(k, v);
+    },
     removeItem: (k) => void data.delete(k),
+    raw: (k) => data.get(k) ?? null,
+    writes: () => writeCount,
   };
 }
 
@@ -73,9 +54,9 @@ describe("PlaytestLog", () => {
     const storage = fakeStorage();
     const log = new PlaytestLog(storage);
     log.miss("ild", "vand", 3);
-    log.run({ ending: "alderdom", summers: 50, discoveries: 20, minutes: 18, solved: [], flags: [], inventions: noInventions });
+    log.run({ ending: "alderdom", summers: 50, discoveries: 20, minutes: 18, solved: [], flags: [] });
     log.miss("sten", "sten", 2);
-    log.run({ ending: "ulve", summers: 31, discoveries: 12, minutes: 9, solved: ["ulve"], flags: ["ram"], inventions: noInventions });
+    log.run({ ending: "ulve", summers: 31, discoveries: 12, minutes: 9, solved: ["ulve"], flags: ["ram"] });
 
     const out = log.read();
     expect(out.runs.map((r) => r.ending)).toEqual(["alderdom", "ulve"]);
@@ -117,28 +98,9 @@ describe("PlaytestLog", () => {
     expect(() => new PlaytestLog(storage).miss("ild", "vand", 1)).not.toThrow();
   });
 
-  it("logger improvisationsforsøget i et fast, persondatafrit skema", () => {
-    const log = new PlaytestLog(fakeStorage()) as ImprovisationCapableLog;
-    expect(typeof log.improvisation).toBe("function");
-    expect(typeof log.improvisationNetwork).toBe("function");
-    if (!log.improvisation || !log.improvisationNetwork) return;
-
-    log.improvisation({
-      a: "ler",
-      b: "baer",
-      act: 1,
-      summer: 3,
-      outcome: "accepted",
-      solvedNeed: "sult",
-      solvedChallenge: "ulve",
-      source: "fallback",
-      latencyMs: null,
-      timeout: false,
-    });
-    log.improvisationNetwork("baer", "ler", 1, 3, {
-      latencyMs: 2500,
-      timeout: true,
-    });
+  it("bevarer den eksakte v1 run/export-shape feature-off", () => {
+    const log = new PlaytestLog(fakeStorage());
+    log.miss("ild", "vand", 3);
     log.run({
       ending: "alderdom",
       summers: 50,
@@ -146,75 +108,90 @@ describe("PlaytestLog", () => {
       minutes: 18,
       solved: ["sult"],
       flags: [],
-      inventions: { total: 1, names: ["Clay berries"] },
-    } as Omit<RunRecord, "misses" | "improvisations">);
-
-    const record = log.read().runs[0]!.improvisations[0]!;
-    expect(record).toEqual({
-      pair: "baer+ler",
-      act: 1,
-      summer: 3,
-      outcome: "accepted",
-      solvedNeed: "sult",
-      solvedChallenge: "ulve",
-      source: "fallback",
-      latencyMs: 2500,
-      timeout: true,
     });
-    expect(Object.keys(record).sort()).toEqual([
-      "act",
-      "latencyMs",
-      "outcome",
-      "pair",
-      "solvedChallenge",
-      "solvedNeed",
-      "source",
-      "summer",
-      "timeout",
-    ]);
-    expect(log.read().runs[0]!.inventions).toEqual({
-      total: 1,
-      names: ["Clay berries"],
+
+    expect(log.read()).toEqual({
+      version: 1,
+      runs: [{
+        ending: "alderdom",
+        summers: 50,
+        discoveries: 20,
+        minutes: 18,
+        solved: ["sult"],
+        flags: [],
+        misses: ["ild+vand"],
+      }],
+      misses: [{ pair: "ild+vand", count: 1, firstSummer: 3 }],
     });
   });
 
-  it("bevarer accepted/rejected/reused og worker-copy som lukkede værdier", () => {
-    const log = new PlaytestLog(fakeStorage()) as ImprovisationCapableLog;
-    expect(typeof log.improvisation).toBe("function");
-    if (!log.improvisation) return;
-    for (const [index, outcome] of [
-      "accepted",
-      "rejected",
-      "reused",
-    ].entries()) {
-      log.improvisation({
-        a: "a",
-        b: `b-${index}`,
-        act: 1,
-        summer: index + 1,
-        outcome: outcome as "accepted" | "rejected" | "reused",
-        solvedNeed: null,
-        solvedChallenge: null,
-        source: index === 0 ? "worker-copy" : "fallback",
-        latencyMs: index === 0 ? 80 : null,
-        timeout: false,
-      });
-    }
-    log.run({
-      ending: "alderdom",
-      summers: 50,
-      discoveries: 20,
-      minutes: 18,
-      solved: [],
-      flags: [],
-      inventions: noInventions,
-    } as Omit<RunRecord, "misses" | "improvisations">);
+  it("læser en historisk v1-log uden at skrive eller backfille dens storage-shape", () => {
+    const raw = JSON.stringify({
+      version: 1,
+      runs: [{
+        ending: "ulve",
+        summers: 31,
+        discoveries: 12,
+        minutes: 9,
+        solved: ["ulve"],
+        flags: ["ram"],
+        misses: ["sten+sten"],
+      }],
+      misses: {
+        "sten+sten": { count: 1, firstSummer: 2 },
+      },
+      current: [],
+    });
+    const storage = fakeStorage({ "karl-playtest-v1": raw });
+    const log = new PlaytestLog(storage);
 
-    expect(log.read().runs[0]!.improvisations.map((entry) => entry.outcome)).toEqual([
-      "accepted",
-      "rejected",
-      "reused",
-    ]);
-    expect(log.read().runs[0]!.improvisations[0]!.source).toBe("worker-copy");
+    expect(log.read().runs[0]).toEqual({
+      ending: "ulve",
+      summers: 31,
+      discoveries: 12,
+      minutes: 9,
+      solved: ["ulve"],
+      flags: ["ram"],
+      misses: ["sten+sten"],
+    });
+    expect(storage.raw("karl-playtest-v1")).toBe(raw);
+    expect(storage.writes()).toBe(0);
+  });
+
+  it("stripper den fejlagtige 9ffccaf-v1-udvidelse i export uden at omskrive storage", () => {
+    const raw = JSON.stringify({
+      version: 1,
+      runs: [{
+        ending: "alderdom",
+        summers: 50,
+        discoveries: 20,
+        minutes: 18,
+        solved: [],
+        flags: [],
+        misses: [],
+        inventions: { total: 1, names: ["Should move to v2"] },
+        improvisations: [{ pair: "a+b" }],
+      }],
+      misses: {},
+      current: [],
+      currentImprovisations: [{ pair: "a+b" }],
+    });
+    const storage = fakeStorage({ "karl-playtest-v1": raw });
+
+    expect(new PlaytestLog(storage).read()).toEqual({
+      version: 1,
+      runs: [{
+        ending: "alderdom",
+        summers: 50,
+        discoveries: 20,
+        minutes: 18,
+        solved: [],
+        flags: [],
+        misses: [],
+      }],
+      misses: [],
+    });
+    expect(storage.raw("karl-playtest-v1")).toBe(raw);
+    expect(storage.writes()).toBe(0);
   });
 });

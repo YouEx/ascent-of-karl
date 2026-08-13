@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import styles from "../src/ui/style.css?raw";
 import { Engine } from "../src/core/engine";
 import { judgePair } from "../src/core/verdict";
 import { loadContent } from "../src/content";
@@ -12,6 +13,8 @@ import {
   renderInventionEntry,
   renderInventionsSection,
 } from "../src/ui/improvise-view";
+import * as improviseViewModule from "../src/ui/improvise-view";
+import { glyphHTML } from "../src/ui/art";
 import {
   MAX_SHARED_INVENTIONS,
   inventionSummaryText,
@@ -106,8 +109,9 @@ describe("improvisationens semantiske UI", () => {
   });
 
   it("giver improviserede elementer en særskilt klasse", () => {
-    expect(elementOriginClass(made)).toBe("is-improvised");
-    expect(elementOriginClass({ ...made, origin: "canon" })).toBe("");
+    expect(elementOriginClass(made, false)).toBe("");
+    expect(elementOriginClass(made, true)).toBe("is-improvised");
+    expect(elementOriginClass({ ...made, origin: "canon" }, true)).toBe("");
   });
 
   it("renderer en separat, navngivet invention-sektion med tastaturknapper", () => {
@@ -193,5 +197,115 @@ describe("bounded run/share summary", () => {
     ]);
     expect(inventionSummaryText(summary)).toContain("+3 more");
     expect(inventionSummaryText(summary).length).toBeLessThan(160);
+  });
+
+  it("escaper skadelig invention-copy i grid, card, Chronicle og share-markup", () => {
+    const malicious = invention(
+      "improv:malicious",
+      '<img src=x onerror="alert(1)">',
+    );
+    malicious.emoji = "<svg onload=alert(1)>";
+    malicious.flavor = "<script>alert(1)</script>";
+    const tile = (
+      improviseViewModule as typeof improviseViewModule & {
+        renderElementTileContent?: (element: ElementDef) => string;
+      }
+    ).renderElementTileContent;
+    const share = (
+      improviseViewModule as typeof improviseViewModule & {
+        renderInventionSummaryHTML?: (summary: {
+          total: number;
+          names: string[];
+        }) => string;
+      }
+    ).renderInventionSummaryHTML;
+    expect(typeof tile).toBe("function");
+    expect(typeof share).toBe("function");
+    if (!tile || !share) return;
+
+    const outputs = [
+      tile(malicious),
+      renderInventionCard(
+        malicious,
+        glyphHTML(malicious.id, malicious.emoji, "card-glyph"),
+      ),
+      renderInventionEntry(malicious),
+      renderInventionsSection([malicious], malicious.id, true, 1),
+      share({ total: 1, names: [malicious.name] }),
+    ];
+    for (const html of outputs) {
+      expect(html).not.toContain("<script");
+      expect(html).not.toContain("<svg");
+      expect(html).not.toContain("<img src=x");
+      expect(html).toContain("&lt;");
+    }
+  });
+});
+
+describe("invention motion", () => {
+  it("bruger decelererende ease-out uden spring, bounce eller uendelig alternate", () => {
+    const inventionReveal = styles.match(
+      /\.invention-card \.card-emoji\s*\{([^}]+)\}/,
+    )?.[1];
+    const loadingInk = styles.match(
+      /\.improvise-status\.is-loading::before\s*\{([^}]+)\}/,
+    )?.[1];
+
+    expect(inventionReveal).toContain("var(--ease-out)");
+    expect(inventionReveal).not.toContain("ease-spring");
+    expect(loadingInk).toContain("var(--ease-out)");
+    expect(loadingInk).not.toMatch(/\binfinite\b|\balternate\b/);
+  });
+
+  describe("feature-root gating", () => {
+    it("renderer ingen invention-class/tag/summary feature-off", () => {
+      const tile = (
+        improviseViewModule as typeof improviseViewModule & {
+          renderElementTileContent?: (
+            element: ElementDef,
+            enabled: boolean,
+          ) => string;
+        }
+      ).renderElementTileContent;
+      const share = (
+        improviseViewModule as typeof improviseViewModule & {
+          renderInventionSummaryHTML?: (
+            summary: { total: number; names: string[] },
+            enabled: boolean,
+          ) => string;
+        }
+      ).renderInventionSummaryHTML;
+      expect(typeof tile).toBe("function");
+      expect(typeof share).toBe("function");
+      if (!tile || !share) return;
+
+      const made = invention("improv:gated", "Gated thing");
+      expect(tile(made, false)).not.toContain("is-improvised");
+      expect(tile(made, false)).not.toContain("Karl");
+      expect(share({ total: 1, names: [made.name] }, false)).toBe("");
+    });
+
+    it("prefixer de responsive feature-overrides med root-attributten", () => {
+      for (const selector of [
+        "header",
+        "#narrator",
+        "#tools",
+        "#dock",
+        "#book-panel",
+      ]) {
+        expect(styles).toContain(
+          `html[data-improvise-enabled] ${selector}`,
+        );
+      }
+    });
+  });
+
+  it("slår fortsat invention-bevægelse fra ved reduced motion", () => {
+    expect(styles).toMatch(
+      /prefers-reduced-motion:[\s\S]*\.invention-card \.card-emoji[\s\S]*animation:\s*none/,
+    );
+    expect(styles).toMatch(
+      /prefers-reduced-motion:[\s\S]*\.improvise-status\.is-loading::before[\s\S]*animation:\s*none/,
+    );
   });
 });

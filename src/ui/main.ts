@@ -20,18 +20,21 @@ import {
   performPlayerAttempt,
 } from "./improvise-flow";
 import {
+  renderElementTileContent,
   elementOriginClass,
   renderCopyStatus,
   renderInventionCard,
+  renderInventionSummaryHTML,
+  renderSlotContent,
 } from "./improvise-view";
 import {
+  CopyGenerationGuard,
   ImproviseClient,
+  settleCurrentCopy,
   type ImproviseCopyState,
 } from "./improvise-client";
-import {
-  inventionSummaryText,
-  summarizeInventions,
-} from "./run-summary";
+import { summarizeInventions } from "./run-summary";
+import { ImprovisationPlaytestLog } from "./improvise-playtest";
 import {
   activeScenario,
   bootSeed,
@@ -55,6 +58,9 @@ resetStorageForScenario([SAVE_KEY, NARRATOR_SAVE_KEY, ACHIEVEMENTS_KEY]);
 const content = loadContent();
 const engine = new Engine(content);
 const playtest = new PlaytestLog();
+const improvisationPlaytest = IMPROVISE_ENABLED
+  ? new ImprovisationPlaytestLog()
+  : null;
 // Challenges spawner ud fra dette seed — nyt pr. liv, gemt i saven, så et
 // genindlæst run ikke kan ryste terningerne igen. bootSeed() er fast under
 // frysning, så to optagelser af samme scenarie er identiske.
@@ -80,6 +86,9 @@ if (live.enabled) narrator.attachLive(live);
 // Produktflag og endpoint er to uafhængige kontrakter. Flaget åbner den
 // deterministiske feature; URL'en forbedrer kun copy, hvis den findes.
 const improviseClient = IMPROVISE_ENABLED ? new ImproviseClient() : null;
+if (IMPROVISE_ENABLED) {
+  document.documentElement.dataset.improviseEnabled = "true";
+}
 
 // --- Save/load (autosave pr. opdagelse, PRD §4.1) ---
 function save(): void {
@@ -248,7 +257,8 @@ const freshFinds = new Set<string>();
 /** Status der skal overleve, når slots ryddes efter selve forsøget. */
 let settledImproviseStatus: { text: string; cls: string } | null = null;
 /** Et prefetch observeres kun én gang, selv om renderSlots() kaldes igen. */
-const observedCopyKeys = new Set<string>();
+const observedCopyGenerations = new Set<number>();
+const copyGenerations = new CopyGenerationGuard();
 /** Forsøg der brugte fallback, mens copy stadig var i luften. */
 const pendingCopySummers = new Map<string, number[]>();
 
@@ -451,6 +461,9 @@ function applyLateCopy(
 
 function prefetchImprovisedCopy(a: string, b: string): void {
   if (!IMPROVISE_ENABLED || !improviseClient) return;
+  const act = engine.currentAct().act;
+  const key = copyKey(a, b, act);
+  const generation = copyGenerations.begin(key);
   if (engine.matchCombo(a, b)) {
     renderImproviseState({ status: "idle" });
     return;
@@ -471,35 +484,41 @@ function prefetchImprovisedCopy(a: string, b: string): void {
     return;
   }
 
-  const act = engine.currentAct().act;
   const request = { a, b, act };
-  const key = copyKey(a, b, act);
   const pending = improviseClient.prefetch(request);
   renderImproviseState(improviseClient.state(a, b, act));
-  if (observedCopyKeys.has(key)) return;
-  observedCopyKeys.add(key);
-  void pending.then((state) => {
-    if (state.status === "ready") applyLateCopy(a, b, state);
-    if (
-      (state.status === "ready" || state.status === "fallback") &&
-      state.latencyMs !== undefined
-    ) {
-      for (const summer of pendingCopySummers.get(key) ?? []) {
-        playtest.improvisationNetwork(a, b, act, summer, {
-          latencyMs: state.latencyMs,
-          timeout: state.status === "fallback" && state.timeout,
-        });
+  if (observedCopyGenerations.has(generation)) return;
+  observedCopyGenerations.add(generation);
+  void settleCurrentCopy(
+    pending,
+    copyGenerations,
+    generation,
+    key,
+    (state) => {
+      if (state.status === "ready") applyLateCopy(a, b, state);
+      if (
+        (state.status === "ready" || state.status === "fallback") &&
+        state.latencyMs !== undefined
+      ) {
+        for (const summer of pendingCopySummers.get(key) ?? []) {
+          improvisationPlaytest?.network(a, b, act, summer, {
+            latencyMs: state.latencyMs,
+            timeout: state.status === "fallback" && state.timeout,
+          });
+        }
+        pendingCopySummers.delete(key);
       }
-      pendingCopySummers.delete(key);
-    }
-    const [selectedA, selectedB] = selected;
-    if (
-      selectedA &&
-      selectedB &&
-      copyKey(selectedA, selectedB, engine.currentAct().act) === key
-    ) {
-      renderImproviseState(state);
-    }
+      const [selectedA, selectedB] = selected;
+      if (
+        selectedA &&
+        selectedB &&
+        copyKey(selectedA, selectedB, engine.currentAct().act) === key
+      ) {
+        renderImproviseState(state);
+      }
+    },
+  ).then((applied) => {
+    if (!applied) pendingCopySummers.delete(key);
   });
 }
 
@@ -507,12 +526,8 @@ function renderSlots(): void {
   const [a, b] = selected;
   // innerHTML frem for textContent: brikken kan være et maleri, ikke et tegn.
   // Navnene kommer fra content/elements.json, ikke fra spilleren.
-  el.slotA.innerHTML = a
-    ? `${glyphHTML(a, engine.element(a).emoji, "slot-glyph")}<span>${engine.element(a).name}</span>`
-    : EMPTY_SLOT;
-  el.slotB.innerHTML = b
-    ? `${glyphHTML(b, engine.element(b).emoji, "slot-glyph")}<span>${engine.element(b).name}</span>`
-    : EMPTY_SLOT;
+  el.slotA.innerHTML = a ? renderSlotContent(engine.element(a)) : EMPTY_SLOT;
+  el.slotB.innerHTML = b ? renderSlotContent(engine.element(b)) : EMPTY_SLOT;
   el.slotA.classList.toggle("filled", !!a);
   el.slotB.classList.toggle("filled", !!b);
   for (const [slot, id] of [[el.slotA, a], [el.slotB, b]] as const) {
@@ -602,16 +617,12 @@ function renderGrid(): void {
   el.grid.innerHTML = "";
   for (const def of visible) {
     const btn = document.createElement("button");
-    btn.className = `element ${elementOriginClass(def)} ${
+    btn.className = `element ${elementOriginClass(def, IMPROVISE_ENABLED)} ${
       freshFinds.has(def.id) ? "is-new" : ""
     } ${def.terminal ? "is-done" : ""}`;
     btn.dataset.id = def.id;
     if (def.terminal) btn.title = `${def.name} — finished. Nothing combines with it.`;
-    btn.innerHTML = `${glyphHTML(def.id, def.emoji)}<span class="name">${def.name}</span>${
-      def.origin === "improvised"
-        ? '<span class="invention-tag">Karl&#039;s invention</span>'
-        : ""
-    }`;
+    btn.innerHTML = renderElementTileContent(def, IMPROVISE_ENABLED);
     attachSelect(btn, def);
     el.grid.appendChild(btn);
   }
@@ -815,11 +826,7 @@ function showEndingScreen(): void {
       <h2>${ending.title}</h2>
       <p class="ending-line">${lastLineText}</p>
       <p class="ending-stats">${state.attempts} summers lived · ${state.discovered.length} discoveries · ${state.flags.length} quirks</p>
-      ${
-        inventionSummary.total > 0
-          ? `<p class="ending-inventions">${inventionSummaryText(inventionSummary)}</p>`
-          : ""
-      }
+      ${renderInventionSummaryHTML(inventionSummary, IMPROVISE_ENABLED)}
       ${isNew
         ? `<p class="achievement">Achievement unlocked: <strong>${ending.achievement}</strong></p>`
         : `<p class="achievement known">${ending.achievement}</p>`}
@@ -848,7 +855,17 @@ function showEndingScreen(): void {
   // Playtest-hjælp (ROADMAP prioritet 2): hele loggen, ikke kun dette run.
   // En tester der spiller tre gange skal kunne nøjes med at kopiere én gang.
   document.getElementById("ending-stats")!.addEventListener("click", async (e) => {
-    const payload = JSON.stringify(playtest.read());
+    const payload = JSON.stringify(
+      IMPROVISE_ENABLED
+        ? {
+            base: playtest.read(),
+            improvisation: improvisationPlaytest?.read() ?? {
+              version: 2,
+              runs: [],
+            },
+          }
+        : playtest.read(),
+    );
     const btn = e.currentTarget as HTMLButtonElement;
     try {
       await navigator.clipboard.writeText(payload);
@@ -909,7 +926,7 @@ function performCombine(a: string, b: string): void {
       outcome.challenge?.kind === "solved"
         ? outcome.challenge.def.id
         : null;
-    playtest.improvisation({
+    improvisationPlaytest?.improvisation({
       a,
       b,
       act: actAtAttempt,
@@ -989,6 +1006,9 @@ function performCombine(a: string, b: string): void {
       solved: engine.getState().solvedProblems,
       flags: engine.getState().flags,
       minutes: Math.round((performance.now() - runStartedAt) / 60000),
+    });
+    improvisationPlaytest?.run({
+      ending: ending.id,
       inventions: summarizeInventions(
         engine.getState().improvisedElements,
       ),
@@ -1011,9 +1031,15 @@ function performCombine(a: string, b: string): void {
  */
 function selectElement(def: ElementDef): void {
   settledImproviseStatus = null;
-  if (!selected[0]) selected[0] = def.id;
+  if (!selected[0]) {
+    copyGenerations.abandon();
+    selected[0] = def.id;
+  }
   else if (!selected[1]) selected[1] = def.id;
-  else selected = [def.id, null];
+  else {
+    copyGenerations.abandon();
+    selected = [def.id, null];
+  }
   renderSlots();
 }
 
@@ -1033,6 +1059,7 @@ el.combineBtn.addEventListener("click", () => {
 // Tryk på en fyldt slot for at tømme den
 for (const [slot, index] of [[el.slotA, 0], [el.slotB, 1]] as const) {
   const clearSlot = () => {
+    copyGenerations.abandon();
     selected[index] = null;
     renderSlots();
   };

@@ -1,20 +1,12 @@
-import type { ImproviseCopy } from "../core/improvise";
+import {
+  validateImproviseCopy,
+  type ImproviseCopy,
+} from "../core/improvise";
 
 export const IMPROVISE_TIMEOUT_MS = 2500;
 const ENDPOINT =
   (import.meta.env?.VITE_IMPROVISE_URL as string | undefined) ?? "";
 
-const NAME_CHARS = 48;
-const NAME_WORDS = 3;
-const FLAVOR_CHARS = 240;
-const CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/;
-const QUOTES = /["'`“”‘’«»]/;
-const URL =
-  /(?:https?:\/\/|www\.|\b[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.[a-z]{2,}(?:\/\S*)?)/i;
-const PUNCTUATION_WILDERNESS = /[!?.,;:—–-]{3,}/;
-const UNSAFE_PUNCTUATION = /[{}\[\]<>\\|@#$%^*_+=~\/]/;
-const SAFE_NAME = /^[\p{L}\p{N}]+(?:[ -][\p{L}\p{N}]+)*$/u;
-const SAFE_FLAVOR = /^[\p{L}\p{N}\p{Zs}.,!?;:()—–-]+$/u;
 
 export interface ImproviseRequest {
   a: string;
@@ -129,7 +121,7 @@ export class ImproviseClient {
           timeout: false,
         };
       }
-      const copy = validateCopy(raw);
+      const copy = validateImproviseCopy(raw);
       return copy
         ? { status: "ready", copy, latencyMs }
         : {
@@ -152,47 +144,41 @@ export class ImproviseClient {
   }
 }
 
-function safeCommon(value: string): boolean {
-  return (
-    value === value.trim() &&
-    !CONTROL_CHARS.test(value) &&
-    !QUOTES.test(value) &&
-    !URL.test(value) &&
-    !PUNCTUATION_WILDERNESS.test(value) &&
-    !UNSAFE_PUNCTUATION.test(value)
-  );
+/** Holder async copy bundet til den senest relevante selection. */
+export class CopyGenerationGuard {
+  private generation = 0;
+  private activeKey: string | null = null;
+
+  begin(key: string): number {
+    if (this.activeKey === key) return this.generation;
+    this.generation++;
+    this.activeKey = key;
+    return this.generation;
+  }
+
+  abandon(): void {
+    this.generation++;
+    this.activeKey = null;
+  }
+
+  isCurrent(generation: number, key: string): boolean {
+    return this.generation === generation && this.activeKey === key;
+  }
 }
 
-/** Strikt svarskontrakt: eksakt {name,flavor}; ugyldigt bliver aldrig renset. */
-function validateCopy(raw: unknown): ImproviseCopy | undefined {
-  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
-    return undefined;
-  }
-  const body = raw as Record<string, unknown>;
-  const keys = Object.keys(body).sort();
-  if (keys.length !== 2 || keys[0] !== "flavor" || keys[1] !== "name") {
-    return undefined;
-  }
-  if (typeof body.name !== "string" || typeof body.flavor !== "string") {
-    return undefined;
-  }
-  const { name, flavor } = body;
-  if (
-    name.length === 0 ||
-    name.length > NAME_CHARS ||
-    name.split(/\s+/).length > NAME_WORDS ||
-    !SAFE_NAME.test(name) ||
-    !safeCommon(name)
-  ) {
-    return undefined;
-  }
-  if (
-    flavor.length === 0 ||
-    flavor.length > FLAVOR_CHARS ||
-    !SAFE_FLAVOR.test(flavor) ||
-    !safeCommon(flavor)
-  ) {
-    return undefined;
-  }
-  return { name, flavor };
+/**
+ * Guardet kontrolleres efter await og FØR callbacken. Alle save-/render-
+ * sideeffekter skal ligge i callbacken, så en forladt selection er inert.
+ */
+export async function settleCurrentCopy<T>(
+  pending: Promise<T>,
+  guard: CopyGenerationGuard,
+  generation: number,
+  key: string,
+  apply: (state: T) => void,
+): Promise<boolean> {
+  const state = await pending;
+  if (!guard.isCurrent(generation, key)) return false;
+  apply(state);
+  return true;
 }

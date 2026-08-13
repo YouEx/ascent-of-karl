@@ -249,6 +249,10 @@ async function auditGameMobileViewport(browser) {
       .getElementById("improvise-status-host")
       ?.getBoundingClientRect();
     return {
+      featureEnabled: document.documentElement.hasAttribute(
+        "data-improvise-enabled",
+      ),
+      featureMarkup: document.getElementById("improvise-status-host") !== null,
       clientWidth: document.documentElement.clientWidth,
       scrollWidth: document.documentElement.scrollWidth,
       dock:
@@ -269,40 +273,53 @@ async function auditGameMobileViewport(browser) {
         },
     };
   });
-  record(
-    "Spillets mobilrude",
-    "no-horizontal-scroll",
-    layout.scrollWidth <= layout.clientWidth + epsilon,
-    `${Math.round(layout.scrollWidth)}px mod ${layout.clientWidth}px`,
-  );
-  record(
-    "Spillets mobilrude",
-    "dock-in-viewport",
-    !!layout.dock &&
-      layout.dock.left >= -epsilon &&
-      layout.dock.right <= layout.clientWidth + epsilon,
-    layout.dock
-      ? `${Math.round(layout.dock.left)}–${Math.round(layout.dock.right)}px`
-      : "dokken mangler",
-  );
-  if (layout.status) {
+  if (!layout.featureEnabled) {
     record(
       "Spillets mobilrude",
-      "copy-status-in-viewport",
-      layout.status.left >= -epsilon &&
-        layout.status.right <= layout.clientWidth + epsilon,
-      `${Math.round(layout.status.left)}–${Math.round(layout.status.right)}px`,
+      "feature-root-absent",
+      !layout.featureEnabled,
     );
     record(
       "Spillets mobilrude",
-      "copy-status-above-dock",
-      !!layout.dock && layout.status.bottom <= layout.dock.top + epsilon,
+      "feature-markup-absent",
+      !layout.featureMarkup,
+    );
+  } else {
+    record(
+      "Spillets mobilrude",
+      "no-horizontal-scroll",
+      layout.scrollWidth <= layout.clientWidth + epsilon,
+      `${Math.round(layout.scrollWidth)}px mod ${layout.clientWidth}px`,
+    );
+    record(
+      "Spillets mobilrude",
+      "dock-in-viewport",
+      !!layout.dock &&
+        layout.dock.left >= -epsilon &&
+        layout.dock.right <= layout.clientWidth + epsilon,
       layout.dock
-        ? `${Math.round(layout.status.bottom)}px mod dock-top ${Math.round(
-            layout.dock.top,
-          )}px`
+        ? `${Math.round(layout.dock.left)}–${Math.round(layout.dock.right)}px`
         : "dokken mangler",
     );
+    if (layout.status) {
+      record(
+        "Spillets mobilrude",
+        "copy-status-in-viewport",
+        layout.status.left >= -epsilon &&
+          layout.status.right <= layout.clientWidth + epsilon,
+        `${Math.round(layout.status.left)}–${Math.round(layout.status.right)}px`,
+      );
+      record(
+        "Spillets mobilrude",
+        "copy-status-above-dock",
+        !!layout.dock && layout.status.bottom <= layout.dock.top + epsilon,
+        layout.dock
+          ? `${Math.round(layout.status.bottom)}px mod dock-top ${Math.round(
+              layout.dock.top,
+            )}px`
+          : "dokken mangler",
+      );
+    }
   }
   await page.close();
 }
