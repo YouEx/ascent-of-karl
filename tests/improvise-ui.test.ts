@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
 import styles from "../src/ui/style.css?raw";
 import { Engine } from "../src/core/engine";
+import { freshChallengeState } from "../src/core/challenge";
+import {
+  IMPROVISE_RUN_CAP,
+  improvisedElementId,
+} from "../src/core/improvise";
+import { deserialize, serialize } from "../src/core/save";
 import { judgePair } from "../src/core/verdict";
 import { loadContent } from "../src/content";
 import type { ElementDef, ProblemDef } from "../src/core/types";
 import { performPlayerAttempt } from "../src/ui/improvise-flow";
+import * as improviseFlowModule from "../src/ui/improvise-flow";
 import {
   elementOriginClass,
   partitionChronicleEntries,
@@ -84,6 +91,181 @@ describe("feature-off parity", () => {
 
     expect(outcome.kind).toBe("improvised");
     expect(engine.getState().attempts).toBe(1);
+  });
+
+  it("stopper copy-prefetch ved det serialiserede run-loft", () => {
+    const shouldPrefetch = (
+      improviseFlowModule as typeof improviseFlowModule & {
+        shouldPrefetchImprovisedCopy?: (
+          engine: Engine,
+          a: string,
+          b: string,
+        ) => boolean;
+      }
+    ).shouldPrefetchImprovisedCopy;
+    expect(typeof shouldPrefetch).toBe("function");
+    if (!shouldPrefetch) return;
+
+    const engine = new Engine(loadContent());
+    const state = engine.getState();
+    engine.loadState({
+      ...state,
+      discovered: engine.content.elements
+        .filter((entry) => entry.act === 1)
+        .map((entry) => entry.id),
+      challenges: {
+        ...state.challenges,
+        seen: engine.content.challenges.map((entry) => entry.id),
+      },
+    });
+
+    for (let made = 0; made < IMPROVISE_RUN_CAP; made++) {
+      const known = new Set(
+        engine.getState().improvisedElements.map((entry) => entry.id),
+      );
+      const available = engine.availableElements();
+      let pair: [string, string] | undefined;
+      for (let left = 0; left < available.length && !pair; left++) {
+        for (let right = left + 1; right < available.length; right++) {
+          const a = available[left]!;
+          const b = available[right]!;
+          if (engine.matchCombo(a.id, b.id)) continue;
+          if (known.has(improvisedElementId(a.id, b.id))) continue;
+          if (Math.max(a.depth ?? 0, b.depth ?? 0) + 1 > 3) continue;
+          const verdict = judgePair(engine, a, b).verdict;
+          if (verdict === "plausible" || verdict === "absurd") {
+            pair = [a.id, b.id];
+            break;
+          }
+        }
+      }
+      expect(pair).toBeDefined();
+      if (!pair) return;
+      expect(engine.attempt(pair[0], pair[1]).kind).toBe("improvised");
+    }
+
+    const available = engine.availableElements();
+    let blocked: [string, string] | undefined;
+    for (let left = 0; left < available.length && !blocked; left++) {
+      for (let right = left + 1; right < available.length; right++) {
+        const a = available[left]!;
+        const b = available[right]!;
+        if (engine.matchCombo(a.id, b.id)) continue;
+        if (
+          engine
+            .getState()
+            .improvisedElements.some(
+              (entry) => entry.id === improvisedElementId(a.id, b.id),
+            )
+        ) {
+          continue;
+        }
+        const verdict = judgePair(engine, a, b).verdict;
+        if (verdict === "plausible" || verdict === "absurd") {
+          blocked = [a.id, b.id];
+          break;
+        }
+      }
+    }
+    expect(blocked).toBeDefined();
+    if (!blocked) return;
+    expect(shouldPrefetch(engine, blocked[0], blocked[1])).toBe(false);
+  });
+
+  it("viser run-loftet sandt og fra udfaldets målte tal", () => {
+    const rejectionStatus = (
+      improviseFlowModule as typeof improviseFlowModule & {
+        improvisationRejectionStatus?: (
+          outcome: Extract<
+            ReturnType<Engine["attempt"]>,
+            { kind: "improvise-rejected" }
+          >,
+        ) => string;
+      }
+    ).improvisationRejectionStatus;
+    expect(typeof rejectionStatus).toBe("function");
+    if (!rejectionStatus) return;
+
+    const engine = new Engine(loadContent());
+    expect(
+      rejectionStatus({
+        kind: "improvise-rejected",
+        a: engine.element("sten"),
+        b: engine.element("graes"),
+        reason: "run-limit",
+        limit: 7,
+      }),
+    ).toContain("7");
+  });
+
+  it("gemmer feature-on-afvisningens sommer og challenge-tick gennem reload", () => {
+    const shouldPersist = (
+      improviseFlowModule as typeof improviseFlowModule & {
+        shouldPersistAttemptState?: (
+          enabled: boolean,
+          outcome: ReturnType<Engine["attempt"]>,
+        ) => boolean;
+      }
+    ).shouldPersistAttemptState;
+    expect(typeof shouldPersist).toBe("function");
+    if (!shouldPersist) return;
+
+    const content = loadContent();
+    const engine = new Engine(content);
+    const state = engine.getState();
+    engine.loadState({
+      ...state,
+      challenges: {
+        ...freshChallengeState(),
+        active: { id: "ulve", startedAtPage: 0, turnsLeft: 3 },
+        seen: ["ulve"],
+        everSpawned: true,
+      },
+    });
+    const outcome = engine.attempt("sten", "graes");
+
+    expect(outcome).toMatchObject({
+      kind: "improvise-rejected",
+      reason: "verdict",
+      verdict: "near-miss",
+      challenge: { kind: "ticking", turnsLeft: 2 },
+    });
+    expect(shouldPersist(true, outcome)).toBe(true);
+
+    const restored = new Engine(
+      content,
+      deserialize(serialize(engine.getState(), "2026-08-13T20:30:00Z")),
+    );
+    expect(restored.getState().attempts).toBe(1);
+    expect(restored.getState().challenges.active?.turnsLeft).toBe(2);
+  });
+
+  it("gemmer alle rejection-grunde feature-on, men ændrer intet feature-off", () => {
+    const shouldPersist = (
+      improviseFlowModule as typeof improviseFlowModule & {
+        shouldPersistAttemptState?: (
+          enabled: boolean,
+          outcome: ReturnType<Engine["attempt"]>,
+        ) => boolean;
+      }
+    ).shouldPersistAttemptState;
+    expect(typeof shouldPersist).toBe("function");
+    if (!shouldPersist) return;
+    const engine = new Engine(loadContent());
+    const base = {
+      kind: "improvise-rejected" as const,
+      a: engine.element("sten"),
+      b: engine.element("graes"),
+    };
+
+    for (const outcome of [
+      { ...base, reason: "verdict" as const, verdict: "near-miss" as const },
+      { ...base, reason: "depth-limit" as const, attemptedDepth: 4 },
+      { ...base, reason: "run-limit" as const, limit: 5 },
+    ]) {
+      expect(shouldPersist(true, outcome)).toBe(true);
+      expect(shouldPersist(false, outcome)).toBe(false);
+    }
   });
 });
 

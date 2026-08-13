@@ -17,7 +17,10 @@ import { glyphHTML, problemGlyphHTML } from "./art";
 import { PlaytestLog } from "./playtest";
 import {
   IMPROVISE_ENABLED,
+  improvisationRejectionStatus,
   performPlayerAttempt,
+  shouldPrefetchImprovisedCopy,
+  shouldPersistAttemptState,
 } from "./improvise-flow";
 import {
   renderElementTileContent,
@@ -465,6 +468,10 @@ function prefetchImprovisedCopy(a: string, b: string): void {
   const key = copyKey(a, b, act);
   const generation = copyGenerations.begin(key);
   if (engine.matchCombo(a, b)) {
+    renderImproviseState({ status: "idle" });
+    return;
+  }
+  if (!shouldPrefetchImprovisedCopy(engine, a, b)) {
     renderImproviseState({ status: "idle" });
     return;
   }
@@ -984,11 +991,9 @@ function performCombine(a: string, b: string): void {
     );
   }
   if (outcome.kind === "improvise-rejected") {
-    const message = outcome.reason === "depth-limit"
-      ? "That invention cannot be taken any further."
-      : "Karl could not make that idea hold together.";
-    settleImproviseStatus(message, "is-rejected");
+    settleImproviseStatus(improvisationRejectionStatus(outcome), "is-rejected");
   }
+  if (shouldPersistAttemptState(IMPROVISE_ENABLED, outcome)) save();
   if (line) say(line);
   // Anden takt: fortælleren peger videre — eller bemærker at han lige blev
   // ignoreret. Køes bag historiereplikken, så den ikke overskriver sin optakt.

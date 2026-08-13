@@ -5,6 +5,7 @@ import {
   buildFallbackElement,
   improvisedElementId,
 } from "../src/core/improvise";
+import * as improviseModule from "../src/core/improvise";
 import { serialize, deserialize } from "../src/core/save";
 import { judgePair } from "../src/core/verdict";
 import { loadContent } from "../src/content";
@@ -27,6 +28,8 @@ type AttemptCapableEngine = Engine & {
     id: string,
     copy: { name: string; flavor: string },
   ) => ElementDef | undefined;
+  improvisationsRemaining?: () => number;
+  canCreateImprovisation?: (a: string, b: string) => boolean;
 };
 
 function element(
@@ -192,6 +195,58 @@ function endingThresholdEngine(
     },
   });
   return engine;
+}
+
+function balanceEngine(): Engine {
+  const content = loadContent();
+  const engine = new Engine(content);
+  const state = engine.getState();
+  engine.loadState({
+    ...state,
+    discovered: content.elements
+      .filter((entry) => entry.act === 1)
+      .map((entry) => entry.id),
+    challenges: {
+      ...freshChallengeState(),
+      seen: content.challenges.map((entry) => entry.id),
+    },
+  });
+  return engine;
+}
+
+function nextNovelImprovisationPair(engine: Engine): [string, string] {
+  const available = engine.availableElements();
+  const known = new Set(
+    engine.getState().improvisedElements.map((entry) => entry.id),
+  );
+  for (let left = 0; left < available.length; left++) {
+    for (let right = left + 1; right < available.length; right++) {
+      const a = available[left]!;
+      const b = available[right]!;
+      if (engine.matchCombo(a.id, b.id)) continue;
+      if (known.has(improvisedElementId(a.id, b.id))) continue;
+      if (Math.max(a.depth ?? 0, b.depth ?? 0) + 1 > 3) continue;
+      const verdict = judgePair(engine, a, b).verdict;
+      if (verdict === "plausible" || verdict === "absurd") {
+        return [a.id, b.id];
+      }
+    }
+  }
+  throw new Error("fandt ikke et nyt lovligt improvisationspar");
+}
+
+function fillImprovisationCap(engine: Engine, cap: number): [string, string] {
+  let firstPair: [string, string] | undefined;
+  for (let index = 0; index < cap; index++) {
+    const pair = nextNovelImprovisationPair(engine);
+    firstPair ??= pair;
+    const outcome = engine.attempt(pair[0], pair[1]);
+    expect(outcome.kind).toBe("improvised");
+    if (outcome.kind !== "improvised") {
+      throw new Error("forventede improviseret element");
+    }
+  }
+  return firstPair!;
 }
 
 describe("Engine.improvise — atomisk tur", () => {
@@ -512,6 +567,92 @@ describe("Engine.improvise — portcullis og dybde", () => {
       attemptedDepth: 4,
     });
     expect(engine.getState().attempts).toBe(4);
+  });
+});
+
+describe("Engine.improvise — målt run-loft og pris", () => {
+  const measuredCap = (
+    improviseModule as typeof improviseModule & {
+      IMPROVISE_RUN_CAP?: number;
+    }
+  ).IMPROVISE_RUN_CAP;
+  const measuredCost = (
+    improviseModule as typeof improviseModule & {
+      IMPROVISE_SUMMER_COST?: number;
+    }
+  ).IMPROVISE_SUMMER_COST;
+
+  it("fryser den robuste default til seks opfindelser à én sommer", () => {
+    expect(measuredCap).toBe(6);
+    expect(measuredCost).toBe(1);
+  });
+
+  it("accepterer præcis loftet og afviser den næste opfindelse på én sommer", () => {
+    const engine = balanceEngine() as AttemptCapableEngine;
+    expect(typeof engine.improvisationsRemaining).toBe("function");
+    if (!engine.improvisationsRemaining || measuredCap === undefined) return;
+
+    fillImprovisationCap(engine, measuredCap);
+    expect(engine.improvisationsRemaining()).toBe(0);
+    const before = engine.getState().attempts;
+    const [a, b] = nextNovelImprovisationPair(engine);
+    const rejected = engine.attempt(a, b);
+
+    expect(rejected).toMatchObject({
+      kind: "improvise-rejected",
+      reason: "run-limit",
+      limit: measuredCap,
+    });
+    expect(engine.getState().improvisedElements).toHaveLength(measuredCap);
+    expect(engine.getState().attempts - before).toBe(measuredCost);
+  });
+
+  it("bevarer loftet gennem save/load og lader ikke sen copy skabe én ekstra", () => {
+    const engine = balanceEngine() as AttemptCapableEngine;
+    if (measuredCap === undefined) return;
+    fillImprovisationCap(engine, measuredCap);
+    const restored = new Engine(
+      loadContent(),
+      deserialize(serialize(engine.getState(), "2026-08-13T18:00:00Z")),
+    ) as AttemptCapableEngine;
+    const [a, b] = nextNovelImprovisationPair(restored);
+    const unknownId = improvisedElementId(a, b);
+
+    expect(restored.improvisationsRemaining?.()).toBe(0);
+    expect(restored.canCreateImprovisation?.(a, b)).toBe(false);
+    expect(
+      restored.enhanceImprovisedCopy?.(unknownId, {
+        name: "Late sixth thing",
+        flavor: "A late response must not create gameplay state.",
+      }),
+    ).toBeUndefined();
+    expect(restored.attempt(a, b)).toMatchObject({
+      kind: "improvise-rejected",
+      reason: "run-limit",
+    });
+    expect(restored.getState().improvisedElements).toHaveLength(measuredCap);
+  });
+
+  it("bevarer canonical prioritet og tillader genbrug ved loftet", () => {
+    const engine = balanceEngine();
+    if (measuredCap === undefined) return;
+    const firstPair = fillImprovisationCap(engine, measuredCap);
+    const beforeCanonical = engine.getState().attempts;
+
+    const canonical = engine.attempt("sten", "sten");
+    expect(canonical.kind).toBe("known");
+    expect(engine.getState().attempts - beforeCanonical).toBe(1);
+
+    const locked = engine.attempt("larver", "ler");
+    expect(locked).toMatchObject({
+      kind: "improvise-rejected",
+      reason: "verdict",
+      verdict: "locked",
+    });
+
+    const reused = engine.attempt(firstPair[0], firstPair[1]);
+    expect(reused).toMatchObject({ kind: "improvised", reused: true });
+    expect(engine.getState().improvisedElements).toHaveLength(measuredCap);
   });
 });
 

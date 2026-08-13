@@ -159,6 +159,7 @@ interface LineContext {
   actual?: string;
   expected?: string;
   missing?: string;
+  limit?: string;
 }
 
 interface FailedNeedContext {
@@ -349,7 +350,8 @@ export class Narrator {
       .replaceAll("{need}", need)
       .replaceAll("{actual}", ctx?.actual ?? "")
       .replaceAll("{expected}", ctx?.expected ?? "")
-      .replaceAll("{missing}", ctx?.missing ?? "");
+      .replaceAll("{missing}", ctx?.missing ?? "")
+      .replaceAll("{limit}", ctx?.limit ?? "");
   }
 
   /** Vælg en replik og bogfør den, så den aldrig gentages i træk. */
@@ -850,13 +852,21 @@ export class Narrator {
     const pool =
       outcome.reason === "canonical-recipe"
         ? rejected.canonicalRecipe
+        : outcome.reason === "run-limit"
+          ? rejected.runLimit
         : outcome.reason === "depth-limit"
           ? rejected.depthLimit
           : outcome.verdict === "locked"
             ? rejected.verdict.locked
             : rejected.verdict.other;
     const id = this.poolLine(pool);
-    return id ? this.speak(id, { a: outcome.a.id, b: outcome.b.id }) : undefined;
+    return id
+      ? this.speak(id, {
+          a: outcome.a.id,
+          b: outcome.b.id,
+          limit: outcome.limit === undefined ? "" : String(outcome.limit),
+        })
+      : undefined;
   }
 
   private genericFailureLine(): string {

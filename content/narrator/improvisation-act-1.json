@@ -259,6 +259,22 @@
         "The chain ends at {a} and {b}.",
         "{a} plus {b}: too far from the ground."
       ]
+    },
+    {
+      "id": "improv-reject-limit-1",
+      "variants": [
+        "{a}, {b}: limit {limit}. No invention.",
+        "{a} plus {b}: {limit} inventions already.",
+        "{a} with {b}: all {limit} places filled."
+      ]
+    },
+    {
+      "id": "improv-reject-limit-2",
+      "variants": [
+        "{a}, {b}: Karl used all {limit} inventions.",
+        "{a} and {b}: the {limit}-invention book is full.",
+        "{a} plus {b}: invention {limit} was the last."
+      ]
     }
   ]
 }

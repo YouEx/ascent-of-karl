@@ -14,3 +14,44 @@ export function performPlayerAttempt(
 ): CombineOutcome {
   return enabled ? engine.attempt(a, b, copy) : engine.combine(a, b);
 }
+
+/**
+ * Copy-laget må kun starte et nyt request, hvis motoren stadig kan oprette
+ * elementet. Genbrug har allerede gemt copy, og et fyldt run-loft må ikke
+ * kunne omgås af et sent netværkssvar.
+ */
+export function shouldPrefetchImprovisedCopy(
+  engine: Engine,
+  a: string,
+  b: string,
+): boolean {
+  return engine.canCreateImprovisation(a, b);
+}
+
+export function improvisationRejectionStatus(
+  outcome: Extract<CombineOutcome, { kind: "improvise-rejected" }>,
+): string {
+  if (outcome.reason === "run-limit") {
+    return `Karl has used all ${outcome.limit ?? 0} inventions for this life.`;
+  }
+  if (outcome.reason === "depth-limit") {
+    return "That invention cannot be taken any further.";
+  }
+  return "Karl could not make that idea hold together.";
+}
+
+/**
+ * Discovery og improvisation gemmes allerede i deres render-grene. Når
+ * featuret er slået til, muterer alle øvrige udfald stadig sommer/challenge
+ * og skal derfor have den manglende autosave. Feature-off forbliver urørt.
+ */
+export function shouldPersistAttemptState(
+  enabled: boolean,
+  outcome: CombineOutcome,
+): boolean {
+  return (
+    enabled &&
+    outcome.kind !== "discovery" &&
+    outcome.kind !== "improvised"
+  );
+}

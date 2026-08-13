@@ -6,6 +6,8 @@ import {
 import type { ActiveChallenge, ChallengeState } from "./challenge";
 import {
   buildFallbackElement,
+  IMPROVISE_RUN_CAP,
+  IMPROVISE_SUMMER_COST,
   improvisedElementId,
   MAX_IMPROVISED_DEPTH,
   sanitizeImprovisedElement,
@@ -57,6 +59,13 @@ export type RuntimeGameState = Omit<
   creditedImprovised: string[];
 };
 
+export interface EngineOptions {
+  /** Rapportværktøjet kan prøve alternative lofter uden at ændre produkt-default. */
+  improvisationRunCap?: number | null;
+  /** Pris for et ikke-canonical forsøg; canonical kombinationer beholder combo.cost. */
+  improvisationSummerCost?: number;
+}
+
 export function pairKey(a: string, b: string): string {
   return [a, b].sort().join("+");
 }
@@ -76,10 +85,31 @@ export class Engine {
   private canonicalElementIds = new Set<string>();
   /** Prædikaterne der afgør hvad der løser hvad (content/predicates.json). */
   private predicates: Record<string, SolvePredicate>;
+  private readonly improvisationRunCap: number | null;
+  private readonly improvisationSummerCost: number;
 
-  constructor(content: ContentBundle, state?: GameState) {
+  constructor(
+    content: ContentBundle,
+    state?: GameState,
+    options: EngineOptions = {},
+  ) {
     this.content = content;
     this.predicates = content.predicates;
+    this.improvisationRunCap =
+      options.improvisationRunCap === undefined
+        ? IMPROVISE_RUN_CAP
+        : options.improvisationRunCap;
+    this.improvisationSummerCost =
+      options.improvisationSummerCost ?? IMPROVISE_SUMMER_COST;
+    if (
+      (this.improvisationRunCap !== null &&
+        (!Number.isInteger(this.improvisationRunCap) ||
+          this.improvisationRunCap < 0)) ||
+      !Number.isInteger(this.improvisationSummerCost) ||
+      this.improvisationSummerCost < 0
+    ) {
+      throw new Error("Ugyldig improvisationsbalance");
+    }
     for (const el of content.elements) {
       const canonical = {
         ...el,
@@ -309,6 +339,26 @@ export class Engine {
     return Math.max(0, this.content.config.turnLimit - this.state.attempts);
   }
 
+  /** Nye opfindelser tilbage i dette run. Udledes af det serialiserede registry. */
+  improvisationsRemaining(): number {
+    if (this.improvisationRunCap === null) return Number.POSITIVE_INFINITY;
+    return Math.max(
+      0,
+      this.improvisationRunCap - this.state.improvisedElements.length,
+    );
+  }
+
+  /**
+   * Må dette par oprette et NYT runtime-element?
+   * Genbrug er ikke oprettelse og behøver ingen ny copy-prefetch.
+   */
+  canCreateImprovisation(a: string, b: string): boolean {
+    if (this.matchCombo(a, b)) return false;
+    const known = this.elementById.get(improvisedElementId(a, b));
+    if (known) return false;
+    return this.improvisationsRemaining() > 0;
+  }
+
   /**
    * Antal ting Karl selv har opfundet. Base-elementerne tæller ikke med — de
    * er verden han vågner op i, ikke noget han har udrettet. (Age-up lægger
@@ -400,10 +450,11 @@ export class Engine {
    */
   attempt(a: string, b: string, copy?: ImproviseCopy): CombineOutcome {
     this.assertTurnAllowed(a, b);
-    this.state.attempts++;
     if (this.matchCombo(a, b)) {
+      this.state.attempts++;
       return this.completeTurn(this.resolve(a, b));
     }
+    this.state.attempts += this.improvisationSummerCost;
     return this.completeTurn(this.resolveImprovisation(a, b, copy));
   }
 
@@ -413,7 +464,7 @@ export class Engine {
    */
   improvise(a: string, b: string): CombineOutcome {
     this.assertTurnAllowed(a, b);
-    this.state.attempts++;
+    this.state.attempts += this.improvisationSummerCost;
 
     const first = this.element(a);
     const second = this.element(b);
@@ -437,6 +488,16 @@ export class Engine {
   ): CombineOutcome {
     const first = this.element(a);
     const second = this.element(b);
+    const id = improvisedElementId(a, b);
+    const known = this.elementById.get(id);
+    if (known && known.origin !== "improvised") {
+      return {
+        kind: "improvise-rejected",
+        a: first,
+        b: second,
+        reason: "canonical-recipe",
+      };
+    }
     const judgment = judgePair(this, first, second);
     if (judgment.verdict !== "plausible" && judgment.verdict !== "absurd") {
       return {
@@ -460,17 +521,16 @@ export class Engine {
         attemptedDepth,
       };
     }
-
-    const id = improvisedElementId(a, b);
-    const known = this.elementById.get(id);
-    if (known && known.origin !== "improvised") {
+    if (!known && this.improvisationsRemaining() <= 0) {
       return {
         kind: "improvise-rejected",
         a: first,
         b: second,
-        reason: "canonical-recipe",
+        reason: "run-limit",
+        limit: this.improvisationRunCap ?? 0,
       };
     }
+
     const reused = known?.origin === "improvised";
     let element = reused ? known : buildFallbackElement(first, second);
     if (copy) element = withImprovisedCopy(element, copy);

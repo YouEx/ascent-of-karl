@@ -1,0 +1,1182 @@
+/**
+ * Kausal balancerapport for runtime-improvisation.
+ *
+ * Baseline bygger først én 50-pars handlingsplan. Hver treatment replayer
+ * derefter præcis den plan, indtil dens eget run slutter. Det er parrede
+ * kontrafaktiske runs uden treatment-afhængigt parvalg.
+ *
+ * Politik, fast før resultaterne læses:
+ * - 60 % målrettet: vælg den bedste åbne canonical opskrift, prioriteret som
+ *   aktivt challenge → obligatorisk problem → age-up → skæbne → nyt fund.
+ * - 25 % nysgerrig: vælg det bedste af 12 seedede par, med forkærlighed for de
+ *   seks nyeste fund og et endnu uprøvet par.
+ * - 15 % blind: vælg det første af de samme 12 seedede par.
+ *
+ * Tre prædefinerede seed-planer × 2.000 runs beskytter mod ét heldigt
+ * seed-udsnit. Selection bruger guard-band-grænser og en separat gray-goo-
+ * regel; no-cap er kun stress-reference.
+ *
+ * Kør:
+ *   npm run improvise:report
+ *   npm run improvise:report -- --write docs/design/improvisation-balance-results.json
+ */
+
+import { writeFileSync } from "node:fs";
+import { Engine, pairKey } from "../src/core/engine";
+import { resolves } from "../src/core/challenge";
+import { solvesNeed } from "../src/core/solves";
+import { judgePair } from "../src/core/verdict";
+import { loadContent } from "../src/content";
+import type {
+  CombineOutcome,
+  ComboDef,
+  ContentBundle,
+  ElementDef,
+  Verdict,
+} from "../src/core/types";
+
+const POLICY_SAMPLE_SIZE = 12;
+const POLICY_GOAL_SHARE = 0.6;
+const POLICY_RECENT_SHARE = 0.25;
+const POLICY_RECENT_COUNT = 6;
+const REPORT_SCHEMA_VERSION = 2;
+
+export interface ImproviseBalanceConfiguration {
+  id: string;
+  label: string;
+  /** Alle ikke-canonical forsøg betaler denne pris, også afvisning/genbrug. */
+  summerCost: number;
+  /** Højeste antal nye runtime-elementer i runnet. null = intet loft. */
+  runCap: number | null;
+}
+
+export interface BalanceThresholds {
+  maxFateRateIncreasePoints: number;
+  maxAllRequiredRateIncreasePoints: number;
+  minCanonicalDiscoveryRetention: number;
+  maxMeanPositiveCanonicalDisplacement: number;
+  maxImprovisedCreditedShare: number;
+  maxImprovisedRequiredSolveShare: number;
+}
+
+export interface SeedSchedule {
+  id: string;
+  formula: string;
+  seedFor(index: number): number;
+}
+
+export const SEED_SCHEDULES: SeedSchedule[] = [
+  {
+    id: "linear-7919",
+    formula: "seed = runIndex * 7919 + 13",
+    seedFor: (index) => index * 7919 + 13,
+  },
+  {
+    id: "linear-104729",
+    formula: "seed = runIndex * 104729 + 97",
+    seedFor: (index) => index * 104729 + 97,
+  },
+  {
+    id: "multiplicative-32",
+    formula: "seed = uint32((runIndex + 1) * 2654435761 + 1013904223)",
+    seedFor: (index) =>
+      (Math.imul(index + 1, 2654435761) + 1013904223) >>> 0,
+  },
+];
+
+export const DEFAULT_BALANCE_THRESHOLDS: BalanceThresholds = {
+  maxFateRateIncreasePoints: 2,
+  maxAllRequiredRateIncreasePoints: 5,
+  minCanonicalDiscoveryRetention: 0.95,
+  maxMeanPositiveCanonicalDisplacement: 1,
+  maxImprovisedCreditedShare: 0.2,
+  maxImprovisedRequiredSolveShare: 0.2,
+};
+
+export const ROBUST_BALANCE_THRESHOLDS: BalanceThresholds = {
+  maxFateRateIncreasePoints: 1.5,
+  maxAllRequiredRateIncreasePoints: 4,
+  minCanonicalDiscoveryRetention: 0.96,
+  maxMeanPositiveCanonicalDisplacement: 0.8,
+  maxImprovisedCreditedShare: 0.18,
+  maxImprovisedRequiredSolveShare: 0.18,
+};
+
+export const GRAY_GOO_CANONICAL_RATIO = 0.2;
+
+const ONE_SUMMER_NO_CAP: ImproviseBalanceConfiguration = {
+  id: "one-summer-no-cap",
+  label: "1 summer / no cap",
+  summerCost: 1,
+  runCap: null,
+};
+
+const TWO_SUMMER_NO_CAP: ImproviseBalanceConfiguration = {
+  id: "two-summer-no-cap",
+  label: "2 summers / no cap",
+  summerCost: 2,
+  runCap: null,
+};
+
+export function buildCapCandidateConfigurations(
+  observedNoCapMax: number,
+): ImproviseBalanceConfiguration[] {
+  if (!Number.isInteger(observedNoCapMax) || observedNoCapMax < 1) {
+    throw new Error("observeret no-cap-maksimum skal være et positivt heltal");
+  }
+  return [
+    ...Array.from({ length: observedNoCapMax }, (_, index) => ({
+      id: `one-summer-cap-${index + 1}`,
+      label: `1 summer / cap ${index + 1}`,
+      summerCost: 1,
+      runCap: index + 1,
+    })),
+    ONE_SUMMER_NO_CAP,
+    TWO_SUMMER_NO_CAP,
+  ];
+}
+
+interface RunResult {
+  seed: number;
+  ending: string | null;
+  fateCompleted: boolean;
+  anyEnding: boolean;
+  automaticEnding: boolean;
+  challengeEnding: boolean;
+  requiredSolved: number;
+  allRequiredSolved: boolean;
+  challengesSpawned: number;
+  challengesSolved: number;
+  challengesFailed: number;
+  summersUsed: number;
+  successfulImprovisations: number;
+  reusedImprovisations: number;
+  rejectedImprovisations: number;
+  rejectionReasons: Record<string, number>;
+  verdicts: { plausible: number; absurd: number };
+  inventionsCreated: number;
+  inventionsCredited: number;
+  totalCreditedInventions: number;
+  improvisedRequiredSolves: number;
+  requiredSolves: number;
+  canonicalDiscoveries: number;
+  depthDistribution: Record<string, number>;
+  actionKeys: string[];
+}
+
+export interface DistributionSummary {
+  mean: number;
+  p50: number;
+  p90: number;
+  p95: number;
+  max: number;
+}
+
+export interface ModeSummary {
+  runs: number;
+  seedDigest: string;
+  runDigest: string;
+  fate: { count: number; rate: number };
+  endings: {
+    count: number;
+    rate: number;
+    automatic: number;
+    challenge: number;
+    byId: Record<string, number>;
+  };
+  requiredProblems: {
+    meanSolved: number;
+    allCount: number;
+    allRate: number;
+    solved: number;
+    solvedByImprovisation: number;
+    improvisedShare: number;
+  };
+  challenges: {
+    spawned: number;
+    solved: number;
+    failed: number;
+    solveRate: number;
+  };
+  summersUsed: DistributionSummary;
+  improvisations: {
+    successful: number;
+    reused: number;
+    rejected: number;
+    rejectionReasons: Record<string, number>;
+    verdicts: { plausible: number; absurd: number };
+    inventionsCreated: number;
+    inventionsCredited: number;
+    perRunCreated: DistributionSummary;
+    perRunCredited: DistributionSummary;
+    depthDistribution: Record<string, number>;
+  };
+  creditedInventions: {
+    total: number;
+    improvised: number;
+    improvisedShare: number;
+  };
+  canonicalDiscoveries: DistributionSummary;
+}
+
+export interface ConfigurationSafety {
+  passed: boolean;
+  failures: string[];
+  observed: {
+    fateRateIncreasePoints: number;
+    allRequiredRateIncreasePoints: number;
+    canonicalDiscoveryRetention: number;
+    meanPositiveCanonicalDisplacement: number;
+    improvisedCreditedShare: number;
+    improvisedRequiredSolveShare: number;
+  };
+}
+
+export interface ConfigurationComparison {
+  configuration: ImproviseBalanceConfiguration;
+  matchedPairs: number;
+  baseline: ModeSummary;
+  improvisation: ModeSummary;
+  canonicalDiscoveriesDisplaced: {
+    netMean: number;
+    positiveMean: number;
+    p50: number;
+    p90: number;
+    p95: number;
+  };
+  safety: ConfigurationSafety;
+  schedules: ScheduleComparison[];
+  robust: {
+    passed: boolean;
+    failures: string[];
+  };
+}
+
+export interface ScheduleComparison {
+  scheduleId: string;
+  baseline: ModeSummary;
+  improvisation: ModeSummary;
+  canonicalDiscoveriesDisplaced: {
+    netMean: number;
+    positiveMean: number;
+    p50: number;
+    p90: number;
+    p95: number;
+  };
+  safety: ConfigurationSafety;
+  grayGoo: {
+    limit: number;
+    observedP95: number;
+    passed: boolean;
+  };
+}
+
+export interface ImproviseBalanceReport {
+  schemaVersion: number;
+  methodology: {
+    runsPerMode: number;
+    matchedSeeds: true;
+    seedSchedules: Array<{ id: string; formula: string }>;
+    playerPolicy: {
+      goalDirectedShare: number;
+      recentCuriosityShare: number;
+      blindCuriosityShare: number;
+      sampledPairsPerTurn: number;
+      recentWindow: number;
+      fixedDrawCountPerTurn: boolean;
+    };
+    costSemantics: string;
+    capSemantics: string;
+    thresholds: BalanceThresholds;
+    robustThresholds: BalanceThresholds;
+    grayGooGuard: {
+      canonicalRatio: number;
+      rule: string;
+    };
+    exactActionReplay: true;
+    candidateRange: {
+      observedNoCapMax: number;
+      rule: string;
+    };
+  };
+  configurations: ConfigurationComparison[];
+  selection: {
+    recommended: ImproviseBalanceConfiguration | null;
+    rule: string;
+  };
+}
+
+export interface BuildReportOptions {
+  runsPerMode?: number;
+  configurations?: ImproviseBalanceConfiguration[];
+  thresholds?: BalanceThresholds;
+  content?: ContentBundle;
+  seedSchedules?: SeedSchedule[];
+}
+
+function rng(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+}
+
+function fnv1a(text: string): string {
+  let hash = 2166136261;
+  for (let index = 0; index < text.length; index++) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `fnv1a32:${(hash >>> 0).toString(16).padStart(8, "0")}`;
+}
+
+function stableValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(stableValue);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, child]) => [key, stableValue(child)]),
+  );
+}
+
+export function stableReportJson(report: ImproviseBalanceReport): string {
+  const compact = {
+    schemaVersion: report.schemaVersion,
+    methodology: report.methodology,
+    selection: report.selection,
+    baseline: report.configurations[0]?.baseline ?? null,
+    configurations: report.configurations.map((comparison) => ({
+      configuration: comparison.configuration,
+      matchedPairs: comparison.matchedPairs,
+      improvisation: comparison.improvisation,
+      canonicalDiscoveriesDisplaced:
+        comparison.canonicalDiscoveriesDisplaced,
+      safety: comparison.safety,
+      robust: comparison.robust,
+      schedules: comparison.schedules.map((schedule) => ({
+        scheduleId: schedule.scheduleId,
+        safety: schedule.safety,
+        grayGoo: schedule.grayGoo,
+      })),
+    })),
+  };
+  return `${JSON.stringify(stableValue(compact))}\n`;
+}
+
+export function reportDigest(report: ImproviseBalanceReport): string {
+  return fnv1a(stableReportJson(report));
+}
+
+function percentile(values: number[], share: number): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((left, right) => left - right);
+  const index = Math.min(
+    sorted.length - 1,
+    Math.max(0, Math.ceil(share * sorted.length) - 1),
+  );
+  return sorted[index]!;
+}
+
+function round(value: number, digits = 4): number {
+  return Number(value.toFixed(digits));
+}
+
+function distribution(values: number[]): DistributionSummary {
+  const total = values.reduce((sum, value) => sum + value, 0);
+  return {
+    mean: round(values.length ? total / values.length : 0),
+    p50: percentile(values, 0.5),
+    p90: percentile(values, 0.9),
+    p95: percentile(values, 0.95),
+    max: values.length ? Math.max(...values) : 0,
+  };
+}
+
+function increment(target: Record<string, number>, key: string, amount = 1): void {
+  target[key] = (target[key] ?? 0) + amount;
+}
+
+function availableCanonicalCombos(
+  engine: Engine,
+  content: ContentBundle,
+): ComboDef[] {
+  const discovered = new Set(engine.getState().discovered);
+  const seenPairs = new Set<string>();
+  const available: ComboDef[] = [];
+  for (const defined of content.combos) {
+    const key = pairKey(defined.pair[0], defined.pair[1]);
+    if (seenPairs.has(key)) continue;
+    seenPairs.add(key);
+    if (!discovered.has(defined.pair[0]) || !discovered.has(defined.pair[1])) {
+      continue;
+    }
+    const combo = engine.matchCombo(defined.pair[0], defined.pair[1]);
+    if (!combo) continue;
+    if (!discovered.has(combo.result) || (combo.ending && engine.endingsUnlocked())) {
+      available.push(combo);
+    }
+  }
+  return available;
+}
+
+function goalScore(engine: Engine, combo: ComboDef): number {
+  const result = engine.element(combo.result);
+  const active = engine.activeChallenge();
+  let score = 100 - (result.depth ?? 0);
+  if (active && resolves(active.def, result, engine.content.predicates)) {
+    score += 10_000;
+  }
+  for (const problem of engine.unsolvedRequiredProblems()) {
+    if (solvesNeed(result, problem.id, engine.content.predicates)) {
+      score += 5_000;
+    }
+  }
+  if (combo.ageUp && engine.unsolvedRequiredProblems().length === 0) {
+    score += 2_000;
+  }
+  if (combo.ending && engine.endingsUnlocked()) score += 1_000;
+  if (combo.spor === "komisk") score += 5;
+  return score;
+}
+
+function sampledPairScore(
+  engine: Engine,
+  pair: [string, string],
+  tried: Set<string>,
+): number {
+  const pool = engine.getState().discovered;
+  const recent = new Set(pool.slice(Math.max(0, pool.length - POLICY_RECENT_COUNT)));
+  let score = 0;
+  if (recent.has(pair[0]) || recent.has(pair[1])) score += 4;
+  if (!tried.has(pairKey(pair[0], pair[1]))) score += 2;
+  return score;
+}
+
+function buildActionPlan(
+  content: ContentBundle,
+  seed: number,
+): Array<[string, string]> {
+  const engine = new Engine(content);
+  engine.loadState({ ...engine.getState(), seed });
+  const random = rng(seed ^ 0x9e3779b9);
+  const tried = new Set<string>();
+  const actions: Array<[string, string]> = [];
+  for (let action = 0; action < content.config.turnLimit; action++) {
+    if (engine.getState().ended) {
+      engine.loadState({ ...engine.getState(), ended: null });
+    }
+    const pair = choosePair(engine, content, random, tried);
+    tried.add(pairKey(pair[0], pair[1]));
+    actions.push(pair);
+    engine.combine(pair[0], pair[1]);
+  }
+  return actions;
+}
+
+function choosePair(
+  engine: Engine,
+  content: ContentBundle,
+  random: () => number,
+  tried: Set<string>,
+): [string, string] {
+  const pool = engine.getState().discovered;
+  const mode = random();
+  const samples: [string, string][] = [];
+  for (let index = 0; index < POLICY_SAMPLE_SIZE; index++) {
+    const first = pool[Math.floor(random() * pool.length)]!;
+    const second = pool[Math.floor(random() * pool.length)]!;
+    samples.push([first, second]);
+  }
+  const tieDraw = random();
+
+  if (mode < POLICY_GOAL_SHARE) {
+    const goals = availableCanonicalCombos(engine, content);
+    if (goals.length > 0) {
+      const scored = goals.map((combo) => ({
+        combo,
+        score: goalScore(engine, combo),
+      }));
+      const high = Math.max(...scored.map((entry) => entry.score));
+      const tied = scored
+        .filter((entry) => entry.score === high)
+        .sort((left, right) =>
+          pairKey(left.combo.pair[0], left.combo.pair[1]).localeCompare(
+            pairKey(right.combo.pair[0], right.combo.pair[1]),
+          ),
+        );
+      const chosen = tied[Math.floor(tieDraw * tied.length)]!.combo;
+      return [chosen.pair[0], chosen.pair[1]];
+    }
+  }
+
+  if (mode < POLICY_GOAL_SHARE + POLICY_RECENT_SHARE) {
+    const scored = samples.map((pair) => ({
+      pair,
+      score: sampledPairScore(engine, pair, tried),
+    }));
+    const high = Math.max(...scored.map((entry) => entry.score));
+    const tied = scored.filter((entry) => entry.score === high);
+    return tied[Math.floor(tieDraw * tied.length)]!.pair;
+  }
+
+  return samples[0]!;
+}
+
+function simulateRun(
+  content: ContentBundle,
+  seed: number,
+  configuration: ImproviseBalanceConfiguration,
+  improvisationEnabled: boolean,
+  actionPlan = buildActionPlan(content, seed),
+): RunResult {
+  const engine = new Engine(content, undefined, {
+    improvisationRunCap: configuration.runCap,
+    improvisationSummerCost: configuration.summerCost,
+  });
+  engine.loadState({ ...engine.getState(), seed });
+  const requiredIds = new Set(
+    content.acts
+      .flatMap((act) => act.problems)
+      .filter((problem) => problem.required)
+      .map((problem) => problem.id),
+  );
+  const metrics: RunResult = {
+    seed,
+    ending: null,
+    fateCompleted: false,
+    anyEnding: false,
+    automaticEnding: false,
+    challengeEnding: false,
+    requiredSolved: 0,
+    allRequiredSolved: false,
+    challengesSpawned: 0,
+    challengesSolved: 0,
+    challengesFailed: 0,
+    summersUsed: 0,
+    successfulImprovisations: 0,
+    reusedImprovisations: 0,
+    rejectedImprovisations: 0,
+    rejectionReasons: {},
+    verdicts: { plausible: 0, absurd: 0 },
+    inventionsCreated: 0,
+    inventionsCredited: 0,
+    totalCreditedInventions: 0,
+    improvisedRequiredSolves: 0,
+    requiredSolves: 0,
+    canonicalDiscoveries: 0,
+    depthDistribution: {},
+    actionKeys: [],
+  };
+
+  for (const [a, b] of actionPlan) {
+    if (engine.getState().ended) break;
+    metrics.actionKeys.push(pairKey(a, b));
+    const canonical = engine.matchCombo(a, b);
+    let outcome: CombineOutcome;
+    let attemptedVerdict: Verdict | undefined;
+
+    if (!improvisationEnabled) {
+      outcome = engine.combine(a, b);
+    } else {
+      if (!canonical) {
+        const judgment = judgePair(engine, engine.element(a), engine.element(b));
+        attemptedVerdict = judgment.verdict;
+      }
+      outcome = engine.attempt(a, b);
+    }
+
+    const challenge = outcome.challenge;
+    if (challenge?.kind === "spawned") metrics.challengesSpawned++;
+    if (challenge?.kind === "solved") metrics.challengesSolved++;
+    if (challenge?.kind === "failed") metrics.challengesFailed++;
+
+    if (outcome.kind === "improvised") {
+      if (attemptedVerdict === "plausible" || attemptedVerdict === "absurd") {
+        metrics.verdicts[attemptedVerdict]++;
+      }
+      if (outcome.reused) {
+        metrics.reusedImprovisations++;
+      } else {
+        metrics.successfulImprovisations++;
+        metrics.inventionsCreated++;
+        increment(
+          metrics.depthDistribution,
+          String(outcome.element.depth ?? 0),
+        );
+      }
+      if (outcome.solved?.required) metrics.improvisedRequiredSolves++;
+    } else if (outcome.kind === "improvise-rejected") {
+      metrics.rejectedImprovisations++;
+      increment(metrics.rejectionReasons, outcome.reason);
+    }
+  }
+
+  const state = engine.getState();
+  const ending = engine.activeEnding();
+  const solvedRequired = state.solvedProblems.filter((id) =>
+    requiredIds.has(id),
+  ).length;
+  const automaticEnding = Boolean(ending?.automatic);
+  const challengeEnding = Boolean(ending?.viaChallenge);
+  metrics.ending = ending?.id ?? null;
+  metrics.anyEnding = Boolean(ending);
+  metrics.automaticEnding = automaticEnding;
+  metrics.challengeEnding = challengeEnding;
+  metrics.fateCompleted = Boolean(ending && !automaticEnding && !challengeEnding);
+  metrics.requiredSolved = solvedRequired;
+  metrics.requiredSolves = solvedRequired;
+  metrics.allRequiredSolved = solvedRequired === requiredIds.size;
+  metrics.summersUsed = state.attempts;
+  metrics.inventionsCredited = state.creditedImprovised.length;
+  metrics.totalCreditedInventions = engine.inventions();
+  metrics.canonicalDiscoveries = state.discovered.filter((id) => {
+    const element = engine.element(id);
+    return element.origin !== "improvised" && !element.base;
+  }).length;
+  return metrics;
+}
+
+export function traceMatchedActions(options: {
+  seed: number;
+  configuration: ImproviseBalanceConfiguration;
+  content?: ContentBundle;
+}): { plan: string[]; baseline: string[]; improvisation: string[] } {
+  const content = options.content ?? loadContent();
+  const plan = buildActionPlan(content, options.seed);
+  return {
+    plan: plan.map(([a, b]) => pairKey(a, b)),
+    baseline: simulateRun(
+      content,
+      options.seed,
+      options.configuration,
+      false,
+      plan,
+    ).actionKeys,
+    improvisation: simulateRun(
+      content,
+      options.seed,
+      options.configuration,
+      true,
+      plan,
+    ).actionKeys,
+  };
+}
+
+export function selectRecommendedConfiguration(
+  candidates: Array<{
+    configuration: ImproviseBalanceConfiguration;
+    schedulePasses: boolean[];
+    grayGooPasses: boolean[];
+  }>,
+): ImproviseBalanceConfiguration | null {
+  const passing = candidates
+    .filter(
+      (candidate) =>
+        candidate.configuration.summerCost === 1 &&
+        candidate.configuration.runCap !== null &&
+        candidate.schedulePasses.length > 0 &&
+        candidate.schedulePasses.every(Boolean) &&
+        candidate.grayGooPasses.length > 0 &&
+        candidate.grayGooPasses.every(Boolean),
+    )
+    .sort(
+      (left, right) =>
+        (right.configuration.runCap ?? -1) -
+        (left.configuration.runCap ?? -1),
+    );
+  return passing[0]?.configuration ?? null;
+}
+
+function summarize(runs: RunResult[]): ModeSummary {
+  const endingIds: Record<string, number> = {};
+  const rejectionReasons: Record<string, number> = {};
+  const depthDistribution: Record<string, number> = {};
+  let requiredSolved = 0;
+  let improvisedRequiredSolves = 0;
+  let challengeSpawned = 0;
+  let challengeSolved = 0;
+  let challengeFailed = 0;
+  let successful = 0;
+  let reused = 0;
+  let rejected = 0;
+  let plausible = 0;
+  let absurd = 0;
+  let created = 0;
+  let credited = 0;
+  let totalCredited = 0;
+
+  for (const run of runs) {
+    if (run.ending) increment(endingIds, run.ending);
+    requiredSolved += run.requiredSolved;
+    improvisedRequiredSolves += run.improvisedRequiredSolves;
+    challengeSpawned += run.challengesSpawned;
+    challengeSolved += run.challengesSolved;
+    challengeFailed += run.challengesFailed;
+    successful += run.successfulImprovisations;
+    reused += run.reusedImprovisations;
+    rejected += run.rejectedImprovisations;
+    plausible += run.verdicts.plausible;
+    absurd += run.verdicts.absurd;
+    created += run.inventionsCreated;
+    credited += run.inventionsCredited;
+    totalCredited += run.totalCreditedInventions;
+    for (const [reason, count] of Object.entries(run.rejectionReasons)) {
+      increment(rejectionReasons, reason, count);
+    }
+    for (const [depth, count] of Object.entries(run.depthDistribution)) {
+      increment(depthDistribution, depth, count);
+    }
+  }
+
+  const fateCount = runs.filter((run) => run.fateCompleted).length;
+  const endingCount = runs.filter((run) => run.anyEnding).length;
+  const allRequiredCount = runs.filter((run) => run.allRequiredSolved).length;
+  const automaticCount = runs.filter((run) => run.automaticEnding).length;
+  const challengeEndingCount = runs.filter((run) => run.challengeEnding).length;
+  const runDigestRows = runs.map((run) => ({
+    seed: run.seed,
+    ending: run.ending,
+    requiredSolved: run.requiredSolved,
+    summersUsed: run.summersUsed,
+    successfulImprovisations: run.successfulImprovisations,
+    canonicalDiscoveries: run.canonicalDiscoveries,
+  }));
+
+  return {
+    runs: runs.length,
+    seedDigest: fnv1a(runs.map((run) => run.seed).join(",")),
+    runDigest: fnv1a(JSON.stringify(runDigestRows)),
+    fate: {
+      count: fateCount,
+      rate: round(runs.length ? fateCount / runs.length : 0),
+    },
+    endings: {
+      count: endingCount,
+      rate: round(runs.length ? endingCount / runs.length : 0),
+      automatic: automaticCount,
+      challenge: challengeEndingCount,
+      byId: endingIds,
+    },
+    requiredProblems: {
+      meanSolved: round(runs.length ? requiredSolved / runs.length : 0),
+      allCount: allRequiredCount,
+      allRate: round(runs.length ? allRequiredCount / runs.length : 0),
+      solved: requiredSolved,
+      solvedByImprovisation: improvisedRequiredSolves,
+      improvisedShare: round(
+        requiredSolved ? improvisedRequiredSolves / requiredSolved : 0,
+      ),
+    },
+    challenges: {
+      spawned: challengeSpawned,
+      solved: challengeSolved,
+      failed: challengeFailed,
+      solveRate: round(
+        challengeSolved + challengeFailed
+          ? challengeSolved / (challengeSolved + challengeFailed)
+          : 0,
+      ),
+    },
+    summersUsed: distribution(runs.map((run) => run.summersUsed)),
+    improvisations: {
+      successful,
+      reused,
+      rejected,
+      rejectionReasons,
+      verdicts: { plausible, absurd },
+      inventionsCreated: created,
+      inventionsCredited: credited,
+      perRunCreated: distribution(runs.map((run) => run.inventionsCreated)),
+      perRunCredited: distribution(runs.map((run) => run.inventionsCredited)),
+      depthDistribution,
+    },
+    creditedInventions: {
+      total: totalCredited,
+      improvised: credited,
+      improvisedShare: round(credited ? credited / totalCredited : 0),
+    },
+    canonicalDiscoveries: distribution(
+      runs.map((run) => run.canonicalDiscoveries),
+    ),
+  };
+}
+
+function safetyFor(
+  configuration: ImproviseBalanceConfiguration,
+  baseline: ModeSummary,
+  improvisation: ModeSummary,
+  positiveDisplacementMean: number,
+  thresholds: BalanceThresholds,
+): ConfigurationSafety {
+  const observed = {
+    fateRateIncreasePoints: round(
+      (improvisation.fate.rate - baseline.fate.rate) * 100,
+      2,
+    ),
+    allRequiredRateIncreasePoints: round(
+      (improvisation.requiredProblems.allRate -
+        baseline.requiredProblems.allRate) *
+        100,
+      2,
+    ),
+    canonicalDiscoveryRetention: round(
+      baseline.canonicalDiscoveries.mean
+        ? improvisation.canonicalDiscoveries.mean /
+            baseline.canonicalDiscoveries.mean
+        : 1,
+    ),
+    meanPositiveCanonicalDisplacement: round(positiveDisplacementMean),
+    improvisedCreditedShare:
+      improvisation.creditedInventions.improvisedShare,
+    improvisedRequiredSolveShare:
+      improvisation.requiredProblems.improvisedShare,
+  };
+  const failures: string[] = [];
+  if (configuration.summerCost < 1) {
+    failures.push("improvisation cost must be at least one summer");
+  }
+  if (
+    observed.fateRateIncreasePoints >
+    thresholds.maxFateRateIncreasePoints
+  ) {
+    failures.push(
+      `fate +${observed.fateRateIncreasePoints}pp > ${thresholds.maxFateRateIncreasePoints}pp`,
+    );
+  }
+  if (
+    observed.allRequiredRateIncreasePoints >
+    thresholds.maxAllRequiredRateIncreasePoints
+  ) {
+    failures.push(
+      `all-required +${observed.allRequiredRateIncreasePoints}pp > ${thresholds.maxAllRequiredRateIncreasePoints}pp`,
+    );
+  }
+  if (
+    observed.canonicalDiscoveryRetention <
+    thresholds.minCanonicalDiscoveryRetention
+  ) {
+    failures.push(
+      `canonical retention ${round(observed.canonicalDiscoveryRetention * 100, 1)}% < ${thresholds.minCanonicalDiscoveryRetention * 100}%`,
+    );
+  }
+  if (
+    observed.meanPositiveCanonicalDisplacement >
+    thresholds.maxMeanPositiveCanonicalDisplacement
+  ) {
+    failures.push(
+      `canonical displacement ${observed.meanPositiveCanonicalDisplacement}/run > ${thresholds.maxMeanPositiveCanonicalDisplacement}`,
+    );
+  }
+  if (
+    observed.improvisedCreditedShare >
+    thresholds.maxImprovisedCreditedShare
+  ) {
+    failures.push(
+      `improvised credited share ${round(observed.improvisedCreditedShare * 100, 1)}% > ${thresholds.maxImprovisedCreditedShare * 100}%`,
+    );
+  }
+  if (
+    observed.improvisedRequiredSolveShare >
+    thresholds.maxImprovisedRequiredSolveShare
+  ) {
+    failures.push(
+      `improvised required-solve share ${round(observed.improvisedRequiredSolveShare * 100, 1)}% > ${thresholds.maxImprovisedRequiredSolveShare * 100}%`,
+    );
+  }
+  return { passed: failures.length === 0, failures, observed };
+}
+
+function compareRunSets(
+  configuration: ImproviseBalanceConfiguration,
+  baselineRuns: RunResult[],
+  improvisationRuns: RunResult[],
+  thresholds: BalanceThresholds,
+): {
+  baseline: ModeSummary;
+  improvisation: ModeSummary;
+  displaced: ConfigurationComparison["canonicalDiscoveriesDisplaced"];
+  safety: ConfigurationSafety;
+} {
+  const baseline = summarize(baselineRuns);
+  const improvisation = summarize(improvisationRuns);
+  const displacement = baselineRuns.map((run, index) => {
+    const treatment = improvisationRuns[index]!;
+    return run.canonicalDiscoveries - treatment.canonicalDiscoveries;
+  });
+  const positive = displacement.map((value) => Math.max(0, value));
+  const netMean =
+    displacement.reduce((sum, value) => sum + value, 0) /
+    Math.max(1, displacement.length);
+  const positiveMean =
+    positive.reduce((sum, value) => sum + value, 0) /
+    Math.max(1, positive.length);
+  const displaced = {
+    netMean: round(netMean),
+    positiveMean: round(positiveMean),
+    p50: percentile(positive, 0.5),
+    p90: percentile(positive, 0.9),
+    p95: percentile(positive, 0.95),
+  };
+  return {
+    baseline,
+    improvisation,
+    displaced,
+    safety: safetyFor(
+      configuration,
+      baseline,
+      improvisation,
+      positiveMean,
+      thresholds,
+    ),
+  };
+}
+
+export function buildImproviseBalanceReport(
+  options: BuildReportOptions = {},
+): ImproviseBalanceReport {
+  const content = options.content ?? loadContent();
+  const runsPerMode = options.runsPerMode ?? 2000;
+  const thresholds = options.thresholds ?? DEFAULT_BALANCE_THRESHOLDS;
+  const seedSchedules = options.seedSchedules ?? SEED_SCHEDULES;
+  const comparisons: ConfigurationComparison[] = [];
+
+  const prepared = seedSchedules.map((schedule) => {
+    const plans: Array<Array<[string, string]>> = [];
+    const baselineRuns: RunResult[] = [];
+    for (let index = 0; index < runsPerMode; index++) {
+      const seed = schedule.seedFor(index);
+      const plan = buildActionPlan(content, seed);
+      plans.push(plan);
+      baselineRuns.push(
+        simulateRun(content, seed, ONE_SUMMER_NO_CAP, false, plan),
+      );
+    }
+    return { schedule, plans, baselineRuns };
+  });
+
+  const noCapBySchedule = new Map<string, RunResult[]>();
+  let observedNoCapMax = 0;
+  if (!options.configurations) {
+    for (const entry of prepared) {
+      const runs = entry.plans.map((plan, index) =>
+        simulateRun(
+          content,
+          entry.schedule.seedFor(index),
+          ONE_SUMMER_NO_CAP,
+          true,
+          plan,
+        ),
+      );
+      noCapBySchedule.set(entry.schedule.id, runs);
+      observedNoCapMax = Math.max(
+        observedNoCapMax,
+        ...runs.map((run) => run.inventionsCreated),
+      );
+    }
+  }
+  const configurations =
+    options.configurations ??
+    buildCapCandidateConfigurations(observedNoCapMax);
+
+  for (const configuration of configurations) {
+    const scheduleComparisons: ScheduleComparison[] = [];
+    const allBaselineRuns: RunResult[] = [];
+    const allImprovisationRuns: RunResult[] = [];
+    for (const entry of prepared) {
+      const improvisationRuns =
+        configuration.id === ONE_SUMMER_NO_CAP.id &&
+        noCapBySchedule.has(entry.schedule.id)
+          ? noCapBySchedule.get(entry.schedule.id)!
+          : entry.plans.map((plan, index) => {
+              const seed = entry.schedule.seedFor(index);
+              return simulateRun(content, seed, configuration, true, plan);
+            });
+      const compared = compareRunSets(
+        configuration,
+        entry.baselineRuns,
+        improvisationRuns,
+        ROBUST_BALANCE_THRESHOLDS,
+      );
+      const grayGooLimit = Math.floor(
+        compared.baseline.canonicalDiscoveries.p50 *
+          GRAY_GOO_CANONICAL_RATIO,
+      );
+      const observedP95 =
+        compared.improvisation.improvisations.perRunCreated.p95;
+      scheduleComparisons.push({
+        scheduleId: entry.schedule.id,
+        baseline: compared.baseline,
+        improvisation: compared.improvisation,
+        canonicalDiscoveriesDisplaced: compared.displaced,
+        safety: compared.safety,
+        grayGoo: {
+          limit: grayGooLimit,
+          observedP95,
+          passed: observedP95 <= grayGooLimit,
+        },
+      });
+      allBaselineRuns.push(...entry.baselineRuns);
+      allImprovisationRuns.push(...improvisationRuns);
+    }
+    const aggregate = compareRunSets(
+      configuration,
+      allBaselineRuns,
+      allImprovisationRuns,
+      thresholds,
+    );
+    const robustFailures = scheduleComparisons.flatMap((schedule) => [
+      ...schedule.safety.failures.map(
+        (failure) => `${schedule.scheduleId}: ${failure}`,
+      ),
+      ...(schedule.grayGoo.passed
+        ? []
+        : [
+            `${schedule.scheduleId}: gray-goo p95 ${schedule.grayGoo.observedP95} > ${schedule.grayGoo.limit}`,
+          ]),
+    ]);
+    comparisons.push({
+      configuration,
+      matchedPairs: allBaselineRuns.length,
+      baseline: aggregate.baseline,
+      improvisation: aggregate.improvisation,
+      canonicalDiscoveriesDisplaced: aggregate.displaced,
+      safety: aggregate.safety,
+      schedules: scheduleComparisons,
+      robust: {
+        passed: robustFailures.length === 0,
+        failures: robustFailures,
+      },
+    });
+  }
+
+  const recommended = selectRecommendedConfiguration(
+    comparisons.map((comparison) => ({
+      configuration: comparison.configuration,
+      schedulePasses: comparison.schedules.map(
+        (schedule) => schedule.safety.passed,
+      ),
+      grayGooPasses: comparison.schedules.map(
+        (schedule) => schedule.grayGoo.passed,
+      ),
+    })),
+  );
+
+  return {
+    schemaVersion: REPORT_SCHEMA_VERSION,
+    methodology: {
+      runsPerMode,
+      matchedSeeds: true,
+      seedSchedules: seedSchedules.map(({ id, formula }) => ({ id, formula })),
+      playerPolicy: {
+        goalDirectedShare: POLICY_GOAL_SHARE,
+        recentCuriosityShare: POLICY_RECENT_SHARE,
+        blindCuriosityShare: round(
+          1 - POLICY_GOAL_SHARE - POLICY_RECENT_SHARE,
+        ),
+        sampledPairsPerTurn: POLICY_SAMPLE_SIZE,
+        recentWindow: POLICY_RECENT_COUNT,
+        fixedDrawCountPerTurn: true,
+      },
+      costSemantics:
+        "Every non-canonical attempt pays the configured summer cost, whether accepted, reused, rejected, or capped. Extra cost consumes lifespan but does not tick a challenge twice, matching canonical combo.cost.",
+      capSemantics:
+        "The cap counts unique successful runtime inventions. Reuse remains legal; a new no-recipe pair at the boundary is rejected and still consumes its configured cost.",
+      thresholds,
+      robustThresholds: ROBUST_BALANCE_THRESHOLDS,
+      grayGooGuard: {
+        canonicalRatio: GRAY_GOO_CANONICAL_RATIO,
+        rule:
+          "Per-run created inventions p95 must not exceed 20% of baseline canonical-discovery p50 in any seed schedule.",
+      },
+      exactActionReplay: true,
+      candidateRange: {
+        observedNoCapMax:
+          options.configurations === undefined
+            ? observedNoCapMax
+            : Math.max(
+                0,
+                ...configurations
+                  .map((configuration) => configuration.runCap ?? 0),
+              ),
+        rule:
+          "Measure the same-run one-summer/no-cap reference first, then test every integer cap from 1 through its observed per-run invention maximum.",
+      },
+    },
+    configurations: comparisons,
+    selection: {
+      recommended,
+      rule:
+        "Choose the highest finite one-summer integer cap that passes robust thresholds and the gray-goo guard in every schedule; no-cap is a non-selectable stress reference.",
+    },
+  };
+}
+
+function percent(value: number): string {
+  return `${(value * 100).toFixed(1)}%`;
+}
+
+export function humanReport(report: ImproviseBalanceReport): string {
+  const lines = [
+    `Improvisation balance · ${report.methodology.runsPerMode} matched seeds × ${report.methodology.seedSchedules.length} schedules per mode`,
+    `hash ${reportDigest(report)}`,
+    `selected: ${report.selection.recommended?.id ?? "none"}`,
+    "",
+    "configuration          fate Δ   required Δ  canon kept  displaced  credited  verdict    robust",
+  ];
+  for (const entry of report.configurations) {
+    const observed = entry.safety.observed;
+    const verdict =
+      `${entry.improvisation.improvisations.verdicts.absurd}/` +
+      `${entry.improvisation.improvisations.verdicts.plausible}`;
+    lines.push(
+      [
+        entry.configuration.id.padEnd(22),
+        `${observed.fateRateIncreasePoints.toFixed(1)}pp`.padStart(8),
+        `${observed.allRequiredRateIncreasePoints.toFixed(1)}pp`.padStart(12),
+        percent(observed.canonicalDiscoveryRetention).padStart(11),
+        observed.meanPositiveCanonicalDisplacement.toFixed(2).padStart(10),
+        percent(observed.improvisedCreditedShare).padStart(9),
+        verdict.padStart(9),
+        (entry.robust.passed ? "ROBUST" : "FAIL").padStart(7),
+      ].join(" "),
+    );
+  }
+  return lines.join("\n");
+}
+
+function parseArgs(args: string[]): {
+  runsPerMode: number;
+  jsonOnly: boolean;
+  writePath?: string;
+} {
+  let runsPerMode = 2000;
+  let jsonOnly = false;
+  let writePath: string | undefined;
+  for (let index = 0; index < args.length; index++) {
+    const arg = args[index];
+    if (arg === "--runs") {
+      runsPerMode = Number(args[++index]);
+    } else if (arg === "--json") {
+      jsonOnly = true;
+    } else if (arg === "--write") {
+      writePath = args[++index];
+    }
+  }
+  if (!Number.isInteger(runsPerMode) || runsPerMode < 1) {
+    throw new Error("--runs skal være et positivt heltal");
+  }
+  return { runsPerMode, jsonOnly, writePath };
+}
+
+export function main(args: string[]): void {
+  const options = parseArgs(args);
+  const report = buildImproviseBalanceReport({
+    runsPerMode: options.runsPerMode,
+  });
+  const json = stableReportJson(report);
+  if (options.writePath) writeFileSync(options.writePath, json);
+  if (!options.jsonOnly) console.log(humanReport(report));
+  console.log(json.trimEnd());
+}
