@@ -87,6 +87,60 @@ const results = [];
 const record = (overlay, check, ok, detail = "") =>
   results.push({ overlay, check, ok, detail });
 
+/**
+ * Stopper PÅ titelskærmen — modsat freshGame(), der altid klikker sig videre.
+ * Titlen gør resten af #app `inert`, så den ligger uden for fokus og
+ * tilgængelighedstræet mens den vises (TASK-021). Men #trophy-modal er en
+ * SØSKENDE til #title-screen inde i #app, ikke en del af spillets baggrund —
+ * åbner man den fra titlen (Fates-knappen), skal den regel ikke gælde den.
+ */
+async function freshTitle(browser) {
+  const page = await browser.newPage({ viewport: MOBILE, hasTouch: true });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(URL);
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.waitForSelector("#title-screen #t-fates");
+  return page;
+}
+
+/**
+ * Titlens Fates-knap åbner samme #trophy-modal som spillets trofæ-knap —
+ * men mens titlen er fremme, gør setBackgroundInert(true) hele resten af
+ * #app inert, herunder søskenden #trophy-modal selv, hvis den ikke er
+ * eksplicit undtaget. Følgen: modalen ses, men kan hverken fokuseres,
+ * læses op eller lukkes med musen — en fælde uden nogen udgang.
+ */
+async function auditTitleFatesModal(browser) {
+  const page = await freshTitle(browser);
+  await page.click("#t-fates");
+  await page.waitForTimeout(250);
+
+  const notInert = await page.evaluate(
+    () => !document.getElementById("trophy-modal")?.hasAttribute("inert"),
+  );
+  record("Titlens Fates", "trophy-not-inert", notInert);
+
+  const focusInside = await page.evaluate(
+    () => !!document.getElementById("trophy-modal")?.contains(document.activeElement),
+  );
+  record("Titlens Fates", "focus-in", focusInside);
+
+  // Interaktivitet: den synlige lukkeknap skal faktisk kunne klikkes.
+  // inert blokerer museklik i hele undertræet, selvom modalen ser åben ud —
+  // derfor tester vi den rigtige effekt (lukker den?), ikke kun at knappen
+  // findes i DOM'en.
+  await page.click("#trophy-close").catch(() => {});
+  await page.waitForTimeout(250);
+  const closed = await page
+    .locator("#trophy-modal")
+    .isVisible()
+    .then((v) => !v);
+  record("Titlens Fates", "close-click-works", closed);
+
+  await page.close();
+}
+
 async function freshGame(browser) {
   const page = await browser.newPage({ viewport: MOBILE, hasTouch: true });
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -209,6 +263,7 @@ async function auditOverlay(browser, o) {
 const execPath = process.env.CHROMIUM_PATH;
 const browser = await chromium.launch(execPath ? { executablePath: execPath } : {});
 for (const o of OVERLAYS) await auditOverlay(browser, o);
+await auditTitleFatesModal(browser);
 await browser.close();
 
 // --- rapport ---

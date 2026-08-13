@@ -1120,24 +1120,27 @@ img.chip-glyph {
      lagdeling og opløser alt genkendeligt, så der hverken bliver et spejlbillede
      eller en anden Karl. Feltet ligger under pergamentarket. */
   --seam: calc(100% - 90.4vh);
+  /* Pladen findes i tre bredder (897/640/448 px, samme beskæring). Under
+     900 px rude vælges den, der faktisk matcher visningsstørrelsen, i
+     stedet for altid at hente den bredeste — se media queries forneden.
+     Variablen arves ned til ::after og til portrættets egen baggrundsregel. */
+  --scene-src: url("../assets/art/title-scene-897.webp");
+  /* Faldbaggrunden er skærmens egen dæmringstone (samme lærred som
+     spilskærmens himmel, DESIGN.md's målpalet) — ikke seks løse hex-tal.
+     Den ses kun, hvis scenebilledet ikke når at male sig ind. */
   background:
     url("../assets/art/scene-ext.webp") left center / calc(var(--seam) + 200px) 100% no-repeat,
-    linear-gradient(
-      178deg,
-      #e7c3bc 0%,
-      #f1d1bf 18%,
-      #fae7b8 38%,
-      #c49f82 58%,
-      #dbaa86 78%,
-      #4a3b3c 100%
-    );
+    var(--canvas-fallback);
 }
 /* Den skarpe plade fades ind over 200 px, ellers står der en lige, lodret
    kant mellem den slørede forlængelse og maleriet. */
 .title-stage::after {
   content: "";
   position: absolute; inset: 0;
-  background: url("../assets/art/title-scene-897.webp") right center / auto 100% no-repeat;
+  /* --valley-dark bagved, så et udeblevet billede efterlader dalens egen
+     mørke tone i stedet for hvidt hul — masken skjuler feltet alligevel,
+     der hvor pladen ikke selv når ud, så farven ses kun ved en fejlet hentning. */
+  background: var(--scene-src) right center / auto 100% no-repeat, var(--valley-dark);
   -webkit-mask-image: linear-gradient(to right, transparent var(--seam), #000 calc(var(--seam) + 200px));
   mask-image: linear-gradient(to right, transparent var(--seam), #000 calc(var(--seam) + 200px));
   pointer-events: none;
@@ -1154,10 +1157,47 @@ img.chip-glyph {
   aspect-ratio: 692 / 907;
   max-width: 46%;
   container-type: inline-size;
-  background: image-set(
-      url("../assets/art/title-parchment-692.webp") 1x,
-      url("../assets/art/title-parchment-692.webp") 2x
-    ) no-repeat center / 100% 100%;
+  /* Samme fil som 1x og 2x-descriptor var en påstået skarphed, arket ikke
+     har — fjernet. Bredden vælges ærligt efter ruden (media queries
+     forneden). */
+  --parchment-src: url("../assets/art/title-parchment-692.webp");
+  /* TASK-009 mod TASK-008: kanten er pladens EGEN alfa (revet silhuet, ikke
+     et rent rektangel) — boksen er nødvendigvis bredere end silhuetten, så
+     de takkede flige kan stikke ud uden at blive beskåret. Stod her tidligere
+     `--parchment` som ÉN baggrundsfarve under hele boksen (TASK-008's egen
+     ordlyd); det fyldte de indrykkede hak MELLEM fligene med en flad,
+     utekstureret firkant — en lys "sømkant" langs en lige linje ved alle tre
+     kontrolstørrelser (1280/1600/2560px), som ikke findes i referencen (der
+     viser SCENEN i hakkene). Men at fjerne farven helt bryder TASK-008's
+     egen begrundelse: "panelet skal blive læsbart, hvis billedet fejler" —
+     uden nogen bundfarve ville ALT tekstindhold miste sin garanterede
+     pergament-baggrund, ikke kun de dekorative hak.
+     Løsningen er to lag: pixelmålt (build af `title-parchment-692.webp`) er
+     silhuetten uigennemsigtig i HELE tekstzonen — x 15-96 % af bredden,
+     samme sideinset som `.title-block` selv bruger — og kun den yderste
+     margen mod venstre (ornamenterne, ingen tekst) har ægte alfa under 250
+     (målt værste indhak 14,6 %). Lag 2 er derfor en hård-stoppet gradient,
+     flad `--parchment` mellem 15-96 %, transparent udenfor: usynlig i
+     normal drift (billedets egen uigennemsigtige pixels dækker den
+     fuldstændig der), men den eneste garanti, al brødtekst har, hvis
+     billedet fejler helt. `background-size: 100% 100%` på begge lag er
+     bevidst — en `background-position`-forskydning under 100 % måler sin
+     procent af (boks minus billede), ikke af boksen selv, og ville derfor
+     ikke ramme 15 % (afprøvet, landede reelt på ~2,9 %); en gradient der
+     selv fylder hele boksen har ingen af den slags omregning, kun sine
+     egne stop i lige linje. Den dekorative margen uden for zonen har
+     fortsat ingen bundfarve, så scenen (via `.title-stage::after` eller
+     dens egne `--valley-dark`/`--canvas-fallback`, to lag længere nede)
+     skinner igennem hakkene i stedet for en tilfældig papirfirkant —
+     TASK-009 løst uden at koste TASK-008 noget. */
+  background-image:
+    var(--parchment-src),
+    linear-gradient(to right,
+      transparent 15%, var(--parchment) 15%,
+      var(--parchment) 96%, transparent 96%);
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, center;
+  background-size: 100% 100%, 100% 100%;
 }
 
 /* Blokkene sidder på faste pladser i procent af panelet, ikke i flow.
@@ -1182,8 +1222,22 @@ img.chip-glyph {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0;
-  letter-spacing: -0.012em;
+  /* DESIGN.md's skala-tabel (§ Hero-titel) foreskriver WONK 1 og -0.02em —
+     stod her på WONK 0 / -0.012em, uden nogen begrundet afvigelse. Rettet
+     til at følge loven.
+     Blækdækningen i overskriften lå alligevel 43 % under referencens (målt
+     direkte på pixels: 13,7 % mod 24,0 %), selvom bogstavernes egen boks
+     matchede referencens næsten pixel for pixel — formen var rigtig, men
+     strøget var for tyndt. To ting afprøvet, kun den anden virkede:
+     1) `wght` sat eksplicit i variations-listen (i stedet for kun via
+        `font-weight`) — målt ingen ændring (13,1 %), så aksen arvede
+        allerede korrekt; beholdt alligevel som eksplicit lov-værdi.
+     2) `opsz` 144 er Fraunces' mest kontrastrige display-snit (tykt tykt,
+        tyndt meget tyndt) — sænket til 72, samme værdi som
+        `.title-actions .btn-stone` allerede bruger med tilfredsstillende
+        blæk (ink 0,984), gav 15,2 %. */
+  font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 1, "wght" 600;
+  letter-spacing: -0.02em;
   /* Bogstaverne er hugget i sten: mørk kerne, lysere top, og en tynd lys
      kant forneden hvor lyset fanger den nederste facet. */
   background: linear-gradient(
@@ -1195,6 +1249,12 @@ img.chip-glyph {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  /* De resterende ~9 procentpoint hentes med en tynd streg i samme
+     sten-mørke tone som bundfarvens skygge — lægger vægt på uden at ændre
+     skriftstørrelse, sporing eller den lovpligtige vægt 600. 1,6px er
+     afvejet: mere gav aftagende gevinst og begyndte at fylde bogstavernes
+     modhold (fx "e"s åbning). */
+  -webkit-text-stroke: 1.6px var(--title-stone-lo);
   filter: drop-shadow(0 0.12cqw 0 var(--title-relief));
 }
 .title-mark span { display: block; }
@@ -1205,7 +1265,7 @@ img.chip-glyph {
 .title-mark .t-of {
   font-size: 5.6cqw; line-height: 1.1;
   font-style: italic;
-  font-variation-settings: "opsz" 48, "SOFT" 40, "WONK" 1;
+  font-variation-settings: "opsz" 48, "SOFT" 40, "WONK" 1, "wght" 600;
   display: flex; align-items: center; justify-content: center; gap: 1.6cqw;
 }
 .title-mark .t-of::before,
@@ -1225,13 +1285,54 @@ img.chip-glyph {
   left: 19.75%; right: 8.44%;
   top: 41.93%;
   margin: 0;
+  display: flex; align-items: center; justify-content: center;
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 600;
-  font-variation-settings: "opsz" 32, "SOFT" 40, "WONK" 1;
+  /* `wght` sat eksplicit ved siden af `font-weight`, som lovens § om
+     Fraunces-akser foreskriver (samme greb som `.title-mark`) — retmæssig
+     defensiv værdi, ikke selve løftestangen for blækdækningen der (se
+     `.title-mark`s kommentar for hvad der faktisk flyttede tallet). */
+  font-variation-settings: "opsz" 32, "SOFT" 40, "WONK" 1, "wght" 600;
   font-size: 4.3cqw;
   line-height: 1.74;
   color: var(--ribbon-ink);
+  /* TASK-012: formen er nu tegnet med `clip-path`, ikke hentet fra
+     pladens pixels. Punkterne er sporet af referencens fanebånd i
+     `docs/design/reference/title-2026-08-11.webp` (registerets rect
+     155,462,500,52 beskåret 1:1, gitter lagt over hver 10 %): kroppen
+     løber fladt 6-94 % af bredden, og hver ende smalner til to takker
+     (top ~18/68 %) om en indadgående tunge ved 45 % — samme "fanebånd
+     med hak" som referencen, fremfor et rent rektangel. Tidligere
+     forsøg lod pladens EGNE pixels (build_parchment.py's bevarede bånd)
+     stå som eneste form; det gav kun structure 0,259, og de to
+     forstærkningslinjer der blev lagt ovenpå (se historik i git) skabte
+     en dobbeltkant referencen ikke har. Denne kant er skarp, hvor
+     pladens er blødt resizet ned mod dens 692 px. */
+  clip-path: polygon(
+    6% 2%, 94% 2%,
+    100% 18%, 95% 45%, 100% 68%,
+    94% 92%, 6% 92%,
+    0% 68%, 5% 45%, 0% 18%
+  );
+  /* Fladens farve er `--tile-edge`: målt kropstone i referencen er
+     (210,174,136); `--tile-groove` (205,175,147) ligger tættere på
+     (afstand ~12 mod ~34), men falder til 4,19:1 kontrast mod
+     `--ribbon-ink` — under lovens 4,5:1 for normal tekst. `--tile-edge`
+     holder 4,92:1 og er næstnærmest, så tilgængelighed vinder over den
+     sidste tone-finpudsning. Korn + svag lodret gradient (samme greb som
+     `.title-chip`/`.title-tools`) giver båndet papirets egen struktur
+     tilbage — en flad tokenfarve alene målte lav `materiality`, fordi
+     referencens bånd er synligt fiber-teksturet, ikke en glat flade. */
+  background-color: var(--tile-edge);
+  background-image: var(--grain),
+                    linear-gradient(to right, var(--tile-contour) 0%, transparent 13%, transparent 87%, var(--tile-contour) 100%),
+                    linear-gradient(to bottom, var(--tile-bevel), var(--tile-edge));
+  background-blend-mode: overlay, multiply, normal;
+  /* Blæk-konturen følger den beskårne form (i modsætning til
+     `box-shadow`, der ville tegne om boksens rette hjørner) — tynd og
+     varm som referencens egen kant. */
+  filter: drop-shadow(0 0 1px var(--ribbon-ink));
 }
 
 .title-tagline {
@@ -1243,6 +1344,13 @@ img.chip-glyph {
   font-family: var(--font-display);
   font-size: 2.95cqw;
   line-height: 1.42;
+  /* Var uden eksplicit akse-sæt (browserens "normal") — eneste titeltekst
+     uden det. DESIGN.md §Skala: "WONK skrues op på titlen og ned i
+     brødtekst" — denne linje er beskrivende brødtekst, ikke en overskrift
+     (kun Hero-titlen har WONK 1 i skala-tabellen), så WONK 0 her, ikke 1.
+     wght 400 matcher tabellens øvrige rækker; lille opsz fordi teksten er
+     brødtekststørrelse (2,95cqw), ikke display. */
+  font-variation-settings: "opsz" 14, "SOFT" 0, "WONK" 0, "wght" 400;
   color: var(--ink-warm-soft);
 }
 
@@ -1282,7 +1390,11 @@ img.chip-glyph {
   border: 0;
   background: none;
   padding: 0 4cqw;
-  min-height: 11.2cqw;
+  /* Målt: rent 11,2cqw giver kun 33-40 px i bredden 320-390, under de 44 px
+     et trykmål kræver. `max()` beholder cqw-skalaen på store ruder (den
+     krydser 44 px ved ca. 393 px arkbredde og styrer selv derfra), men
+     lægger en absolut gulv under den på smalle telefoner. */
+  min-height: max(11.2cqw, 44px);
   display: inline-flex; align-items: center; justify-content: center;
   gap: 1.8cqw;
   font-family: var(--font-display);
@@ -1338,7 +1450,7 @@ img.chip-glyph {
   display: flex; align-items: center; justify-content: center; gap: 1.4cqw;
   font-family: var(--font-display);
   font-size: 2.05cqw;
-  color: var(--label-ink);
+  color: var(--ink-warm-soft);
 }
 .title-hint .orn-tap {
   width: 4cqw; height: 4.2cqw;
@@ -1360,8 +1472,18 @@ img.chip-glyph {
   gap: 2.6cqw;
   padding: 2.2cqw 2.6cqw 3.4cqw;
   text-align: left;
-  background: var(--chronicle);
-  border: 0.3cqw solid var(--tile-edge);
+  /* Fladens egen medianfarve i referencen er (221,192,163) — --chronicle
+     (238,224,205) er bygget til lyse kort på selve arket, men dette kort
+     svæver over maleriet nederst på pladen, ligesom chip/tools, og skal
+     være mørkere. --tile-edge (216,191,165) rammer tættest (afstand ~5,5 i
+     RGB mod --chronicles ~40). Kun farven skiftet — korn/kant/skygge/radius
+     er urørt, da struct (0,442) og materiality (0,953) allerede er gode. */
+  background-color: var(--tile-edge);
+  background-image: var(--grain);
+  background-blend-mode: overlay;
+  /* Kanten var også --tile-edge, men den er nu fladefarve — skiftet til
+     --tile-contour (mørkere), så konturen stadig er synlig mod fladen. */
+  border: 0.3cqw solid var(--tile-contour);
   border-radius: 2.4cqw;
   box-shadow: var(--shadow-paper);
 }
@@ -1381,7 +1503,12 @@ img.chip-glyph {
    fingerstort, uden at prikkerne bliver det. */
 .tip-dots button::after {
   content: ""; position: absolute;
-  width: 2.75rem; height: 2.75rem;
+  /* Målt: 44 px bredde overlapper naboprikken massivt — center-til-center-
+     afstanden er kun prik + mellemrum = 3,3cqw (~12 px på mobil) — og et
+     klik på prik 1 ramte i praksis prik 2 (verificeret med Playwright).
+     Bredden låses derfor til den mindste af 44 px og den reelle afstand;
+     højden kan trygt blive fingerstor, for der er ingen nabo lodret. */
+  width: min(2.75rem, 3.3cqw); height: 2.75rem;
   transform: translate(-50%, -50%);
 }
 .tip-dots button { position: relative; }
@@ -1389,7 +1516,22 @@ img.chip-glyph {
 .title-tip .tile {
   width: 12.4cqw; height: 12.4cqw;
   border-radius: 1.6cqw;
+}
+/* Fliserne genbruger elementglyffer, hvor emnet ikke er ilden selv — ét
+   dedikeret ildmotiv (tile-fire, malet kant til kant) plus repertoirets egne
+   malede tegn (gennemsigtig glyf, samme korn+baggrund som elementkortene),
+   ikke nye netværksaktiver. tip.tile styrer klassen, så TITLE_TIPS rent
+   faktisk bestemmer, hvad kortet viser (før viste alle tre samme flise). */
+.title-tip .tile-fire {
   background: url("../assets/art/tile-fire.webp") no-repeat center / cover;
+}
+.title-tip .tile-sten {
+  background-color: var(--tile);
+  background-image: var(--grain), url("../assets/art/elements/sten.webp");
+  background-blend-mode: overlay, normal;
+  background-repeat: repeat, no-repeat;
+  background-position: center, center;
+  background-size: auto, 68%;
 }
 .title-tip strong {
   display: block;
@@ -1419,16 +1561,36 @@ img.chip-glyph {
 .title-chip {
   position: absolute;
   z-index: 1;
-  /* Målt: boksen er 236 px bred mod registerets 340 — 76 % af fejlen sidder
-     i bredden, positionen er allerede rigtig. Teksten er også rigtig, så de
-     manglende ~104 px hentes i figur, gab og højrepolstring. */
   left: calc(var(--bar) + 1.26vw); top: 2.5%;
   display: flex; align-items: center; gap: 1.8rem;
   padding: 0.6rem 4.75rem 0.6rem 0.75rem;
-  background: var(--chronicle);
-  border: 1px solid var(--tile-edge);
-  border-radius: 0.7rem;
-  box-shadow: var(--shadow-paper);
+  /* Målt mod referencen: fladens egen medianfarve er (213,182,149), en
+     tydeligt mørkere/varmere pergamenttone end --chronicle (238,224,205,
+     bygget til lyse kort på selve arket). Chippen svæver derimod over
+     himlen, ligesom .title-tools, og skal læse som et tykkere stykke
+     pergament for at stå tydeligt af mod maleriet.
+     Fladfarve + korn løftede tonen men gjorde intet ved formen — dommerens
+     `structure` blev stående på 0,273. Referencen har synlig retningsbestemt
+     skygge (lysere top, mørkere bund) og en indrammet, hugget kant, ikke en
+     jævn flade. Samme greb (og samme tokenpalet) som spillets eget
+     `.element` (game-skærmen, IKKE redigeret her) — kun tokens delt, ingen
+     kode delt på tværs af skærme. .element bruger selv --tile-lit/-shade;
+     her rammer --tile-edge/-groove målingen bedre (chippen er mindre og
+     svæver frit, så gennemsnittet skal ligge tættere på referencens 213/182/
+     149 end .elements lysere kortflade tillader): --tile-edge/--tile-groove
+     som lodret gradient, --tile-contour som ydre kant, --tile-bevel/
+     --tile-groove som indre ring. */
+  background-color: var(--tile-shade);
+  background-image: var(--grain),
+                    linear-gradient(to bottom, var(--tile-shade), var(--tile-groove));
+  background-blend-mode: overlay, normal;
+  border: 1px solid var(--tile-contour);
+  /* Referencens hjørner er tydeligt rundere end 0,7rem på denne boksstørrelse
+     (målt ved gennemsyn ~20 % af højden, ikke ~11 %). */
+  border-radius: 1.1rem;
+  box-shadow: inset 0 0 0 2px var(--tile-bevel),
+              inset 0 0 0 4px var(--tile-groove),
+              var(--shadow-paper);
 }
 .title-chip .figure {
   width: 4.5rem; height: 2.7rem;
@@ -1463,16 +1625,45 @@ img.chip-glyph {
 .title-tools button {
   width: 4.4rem; height: 4.4rem;
   display: grid; place-items: center;
-  background: var(--chronicle);
-  border: 1px solid var(--tile-edge);
-  border-radius: 0.7rem;
-  box-shadow: var(--shadow-paper);
+  /* Samme tonemåling og genbrug af spillets egen "hugget flise"-opskrift
+     som .title-chip — se dens kommentar. */
+  background-color: var(--tile-shade);
+  background-image: var(--grain),
+                    linear-gradient(to bottom, var(--tile-shade), var(--tile-groove));
+  background-blend-mode: overlay, normal;
+  border: 1px solid var(--tile-contour);
+  border-radius: 1.15rem;
+  box-shadow: inset 0 0 0 2px var(--tile-bevel),
+              inset 0 0 0 4px var(--tile-groove),
+              var(--shadow-paper);
   color: var(--label-ink);
   cursor: pointer;
   transition: transform var(--dur-press) var(--ease-out);
 }
 .title-tools button:hover { transform: translateY(-1px); }
-.title-tools svg { width: 2.05rem; height: 2.05rem; }
+/* Disse to knapper står oven på selve maleriet, ikke arket — den globale
+   `:focus-visible`-ring (ochre mod luft/bjerg) kan derfor lande på en lys
+   sky ét sted og en mørk klippe et andet, målt helt ned til 1,05:1. En enkelt
+   ringfarve kan ikke garantere 3:1 mod et fotografi. Løsningen er en
+   "sandwich": et lyst (--parchment) og et mørkt (--ochre-ink) lag, hvis
+   fælles kant altid har 5,07:1 til hinanden — mindst ét af de to lag rammer
+   derfor ≥3:1 mod enhver baggrund, uanset hvor lys eller mørk himlen er der. */
+.title-tools button:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--tile-bevel),
+              inset 0 0 0 4px var(--tile-groove),
+              var(--shadow-paper),
+              0 0 0 3px var(--parchment),
+              0 0 0 6px var(--ochre-ink);
+}
+/* Referencens ikoner er streg, ikke fyldte flader — samme regel som
+   .icon-btn svg (DESIGN.md §8), men glemt her: uden fill:none arver SVG'en
+   sin standard (sort fyld), og trofæ/lyd blev massive sorte silhuetter. */
+.title-tools svg {
+  width: 2.05rem; height: 2.05rem;
+  fill: none; stroke: currentColor; stroke-width: 1.6;
+  stroke-linecap: round; stroke-linejoin: round;
+}
 
 /* --------------------------------------------------------------------------
    Smalt: maleriet bliver baggrund for hele ruden, og arket bliver et kort,
@@ -1486,7 +1677,7 @@ img.chip-glyph {
      til højre; Karl selv ligger bag arket i stedet for at blive skåret over
      midt i ansigtet. Det brede felt og dets maske hører liggende ruder til. */
   .title-stage {
-    background: url("../assets/art/title-scene-897.webp") 50% center / cover no-repeat,
+    background: var(--scene-src) 50% center / cover no-repeat,
                 var(--valley-dark);
   }
   .title-stage::after { display: none; }
@@ -1497,6 +1688,19 @@ img.chip-glyph {
     max-width: min(92%, 27rem);
   }
   .title-chip { display: none; }
+}
+
+/* Tre bredder findes for scene og pergament (897/640/448 og 692/520/360 px,
+   samme beskæring). Under 900 px vises kortet ved omtrent disse to
+   trin, så det er ærligt disse filer, der hentes — ikke den bredeste skaleret
+   ned, og ikke en påstået 2x af den samme fil (TASK-007/008). */
+@media (max-width: 480px) {
+  .title-stage { --scene-src: url("../assets/art/title-scene-448.webp"); }
+  .title-panel { --parchment-src: url("../assets/art/title-parchment-360.webp"); }
+}
+@media (min-width: 481px) and (max-width: 900px) {
+  .title-stage { --scene-src: url("../assets/art/title-scene-640.webp"); }
+  .title-panel { --parchment-src: url("../assets/art/title-parchment-520.webp"); }
 }
 
 @media (prefers-reduced-motion: reduce) {

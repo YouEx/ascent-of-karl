@@ -778,7 +778,7 @@ el.restart.addEventListener("click", () => {
  */
 const TITLE_TIPS = [
   { tile: "fire", title: "Fire: Best invention. Ever.", body: "Some combinations change everything." },
-  { tile: "fire", title: "The narrator has opinions.", body: "He will tell you what to do. He is not always right." },
+  { tile: "sten", title: "The narrator has opinions.", body: "He will tell you what to do. He is not always right." },
   { tile: "fire", title: "Fifty summers. That is all.", body: "Every attempt costs one, even the stupid ones." },
 ];
 
@@ -790,7 +790,7 @@ function renderTip(): void {
   if (!host) return;
   const tip = TITLE_TIPS[tipIndex]!;
   host.innerHTML = `
-    <div class="tile" aria-hidden="true"></div>
+    <div class="tile tile-${tip.tile}" aria-hidden="true"></div>
     <div class="tip-text">
       <strong>${tip.title}</strong>
       <span>${tip.body}</span>
@@ -810,6 +810,32 @@ function renderTip(): void {
       renderTip();
     });
   });
+}
+
+/**
+ * Mens titelskærmen vises, ligger resten af spillets DOM stadig bagved —
+ * kun visuelt dækket af titlens faste, uigennemsigtige lag (#title-screen er
+ * `position: fixed; inset: 0`). Uden dette lækker Tab-rækkefølgen og
+ * skærmlæserens fokus ind i usynlige spil-knapper (søgefelt, elementkort,
+ * dock) FØR titlens egne — TASK-021's krævede rækkefølge (Begin → Fates →
+ * trofæ → lyd) kan ikke holde, hvis ti skjulte knapper kommer først.
+ * `inert` fjerner baggrunden fra fokus og tilgængelighedstræet uden at røre
+ * dens layout eller synlige tilstand.
+ *
+ * #trophy-modal er undtaget: den er ganske vist en søskende til
+ * #title-screen inde i #app, men titlens EGEN Fates-knap åbner den samme
+ * modal (renderTrophyModal, se el.trophiesBtn) — CSS'ens z-index løfter den
+ * allerede over titlen for netop den sti. Var den også inert, ville modalen
+ * ses, men hverken kunne fokuseres, læses op eller lukkes med musen: synlig,
+ * men en blindgyde. Så længe den er #trophy-modal[hidden], fjerner det alene
+ * den fra fokus og tilgængelighedstræet — undtagelsen har derfor ingen
+ * virkning før den rent faktisk vises.
+ */
+function setBackgroundInert(inert: boolean): void {
+  for (const child of Array.from(app.children)) {
+    if (child.id === "title-screen" || child.id === "trophy-modal") continue;
+    child.toggleAttribute("inert", inert);
+  }
 }
 
 function showTitleScreen(): void {
@@ -861,6 +887,7 @@ function showTitleScreen(): void {
       </div>
     </div>`;
   el.titleScreen.hidden = false;
+  setBackgroundInert(true);
 
   renderTip();
   if (tipTimer) clearInterval(tipTimer);
@@ -899,6 +926,7 @@ function startGame(resume: boolean): void {
   if (tipTimer) clearInterval(tipTimer);
   tipTimer = undefined;
   el.titleScreen.hidden = true;
+  setBackgroundInert(false);
   runStartedAt = performance.now();
   renderAll();
   const resumedEnding = engine.activeEnding();
@@ -988,6 +1016,7 @@ function applyScenario(): void {
     }
     if (spec.start) {
       el.titleScreen.hidden = true;
+      setBackgroundInert(false);
       runStartedAt = performance.now();
       renderAll();
     }

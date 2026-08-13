@@ -163,6 +163,44 @@ Er et ornament læsbart som information, er det tegnet forkert. Se §8.
 > og faktisk ligner _mere_ udskåret klippe end den blege tan gjorde. Motivet fra
 > referencen — lyse bogstaver hugget ind i sten — er bevaret; kun lysheden er rettet.
 
+### Titelskærmen (overskrift, fanebånd og sten-knapper)
+
+Titlens egen overskrift, fanebånd ("reinvent history, badly") og de to sten-knapper
+(Begin/Continue/New life, Fates) bruger fem nye tokens, ingen delt med resten af
+spillet — hugget i samme motiv som Combine-knappen ovenfor, men i titlens egne,
+mørkere toner. Panel, ramme og redskabsknapper genbruger derimod bevidst papirets
+og flisernes egne, allerede dokumenterede tokens (`Parchment`, `Tile Edge`,
+`Valley Dark` og spillets "hugget flise"-opskrift) — titelskærmen er samme flade,
+ikke en ny en:
+
+- **Title Stone Hi** `#6A4B30` — overskriftens lyseste facet, toppen af bogstavernes
+  lodrette gradient
+- **Title Stone** `#422C1C` — overskriftens midtertone, 46 % ned gennem gradienten
+- **Title Stone Lo** `#33210F` — overskriftens mørkeste bund og dens 1,6px konturstreg
+- **Ribbon Ink** `#6D4118` — fanebåndets tekst
+- **Btn Ink** `#42240C` — knappernes tekst (Begin/Continue/New life/Fates)
+
+> **Overskriften er ikke én farve.** Bogstaverne fyldes med en lodret gradient
+> (`background-clip: text`, 177°) fra `Title Stone Hi` gennem `Title Stone` til
+> `Title Stone Lo` — samme "hugget i sten"-motiv som Combine-knappen, men egne
+> toner, fordi overskriften står på pergament, ikke på en fritstående sten-flade.
+> Værste kontrast-tilfælde er den LYSESTE ende: `Title Stone Hi` mod `Parchment`
+> giver **5,87:1** — over både stor teksts 3:1-grænse og normalteksts 4,5:1.
+>
+> **Fanebåndet og knapperne sidder ikke på pergamentet, og deres tekst måles derfor
+> mod deres EGEN flade, ikke mod papirtrinnene ovenfor.** `Ribbon Ink` mod fanebåndets
+> flade `Tile Edge` giver **4,92:1** (`Tile Groove` lå tættere på referencens egen
+> tone, men gav kun 4,19:1 og dumpede AA). `Btn Ink` mod knappernes malede stenflade
+> — et rent aktiv uden fladt token — er målt til **4,62:1** på det mørkeste punkt i
+> knappens tekstbånd, tættest på grænsen af titlens par og derfor den, der er pinnet
+> i `tests/design-tokens.test.ts` i stedet for kun i et screenshot.
+>
+> Titlens to redskabsknapper (trofæ, lyd) genbruger spillets egen "hugget
+> flise"-opskrift (`Tile Shade` → `Tile Groove`, samme som `.title-chip`) med
+> `Label Ink` som ikonstreg. De er rent grafiske SVG-streger, ikke løbetekst, og
+> måles derfor mod WCAG 1.4.11's ikke-tekst-grænse (3:1), ikke tekstens 4,5:1:
+> **3,61:1** mod gradientens mørkeste ende.
+
 ### Tilstandsfarver (semantik, ikke dekoration)
 
 Et spil har tilstande en hjemmeside ikke har. De her fem er **betydning** og må kun
