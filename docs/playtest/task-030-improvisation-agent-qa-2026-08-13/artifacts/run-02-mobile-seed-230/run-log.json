@@ -1,0 +1,1141 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "id": "run-02-mobile-seed-230",
+    "seed": 230,
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "input": "tap",
+    "mobile": true,
+    "reloadAfterCap": false
+  },
+  "url": "http://127.0.0.1:5199/",
+  "featureState": {
+    "enabled": true,
+    "statusHost": true
+  },
+  "offlineProof": {
+    "improviseRequests": []
+  },
+  "goal": "Solve cold, tools, and hunger as absurdly as the discovered pool permits while using only the normal UI.",
+  "attempts": [
+    {
+      "label": "canonical-priority",
+      "pair": "sten+sten",
+      "parents": [
+        "sten",
+        "sten"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "gnister",
+      "invention": null,
+      "narrator": "Sparks fly. Karl gasps. I gasp. The boar leaves. Progress smells like flint.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 1,
+      "cap": {
+        "used": 0,
+        "limit": 6,
+        "remaining": 6
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n✨\nSparks\n\nTiny stars that live for half a second. Karl applauds every time.\n\n📜 Stone Age fire-starting struck flint against pyrite — two ordinary stones really can make sparks.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-mud",
+      "pair": "ler+vand",
+      "parents": [
+        "ler",
+        "vand"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "mudder",
+      "invention": null,
+      "narrator": "He looks at it the way a dog looks at a door it opened by accident.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 2,
+      "cap": {
+        "used": 0,
+        "limit": 6,
+        "remaining": 6
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🟫\nMud\n\nClay plus water. Karl calls it 'soft dirt' and is very proud of the name.\n\n📜 Mud and clay were humanity's first building materials — sun-dried bricks are over 9,000 years old.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-standing-stone",
+      "pair": "mudder+sten",
+      "parents": [
+        "sten",
+        "mudder"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "bautasten",
+      "invention": null,
+      "narrator": "He plants the stone in mud and steps back. No warmth, no dinner, no advantage of any kind — just a mark that says someone was here and meant it.",
+      "statusToast": "",
+      "solvedNeed": "mening",
+      "solvedChallenge": null,
+      "turn": 3,
+      "cap": {
+        "used": 0,
+        "limit": 6,
+        "remaining": 6
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🗿\nStanding stone\n\nA tall stone, raised on end for no practical reason. Karl touches it carefully, then throws a bone in the air. He doesn't know why.\n\n📜 Thousands of menhirs — raised standing stones — dot Europe, some over 6,000 years old. Their purpose is still debated.\n\n✓ Problem solved: Karl wonders why\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "absurd-cold",
+      "pair": "bautasten+graes",
+      "parents": [
+        "graes",
+        "bautasten"
+      ],
+      "expectedVerdict": "absurd",
+      "outcome": "accepted",
+      "canonicalResult": null,
+      "invention": {
+        "id": "improv:9:bautasten:5:graes",
+        "name": "Standing stone-Dry grass contraption",
+        "depth": 3,
+        "kind": "structure",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "dry",
+          "heavy",
+          "light",
+          "insulating",
+          "sacred"
+        ]
+      },
+      "narrator": "Karl raises standing stone-dry grass contraption. The cold retreats.",
+      "statusToast": "Standing stone-Dry grass contraption joined Karl's inventions.",
+      "solvedNeed": "kulde",
+      "solvedChallenge": null,
+      "turn": 4,
+      "cap": {
+        "used": 1,
+        "limit": 6,
+        "remaining": 5
+      },
+      "challenge": null,
+      "cardText": "KARL'S INVENTION\n\n🗿\nStanding stone-Dry grass contraption\n\nKarl combines Standing stone with Dry grass. The result exists, which was the full extent of the plan.\n\n✓ Problem solved: Karl is freezing\n\nKeep it",
+      "agentFeedback": {
+        "understandable": true,
+        "note": "The line names the solved need; the absurdity is legible from the standing-stone/grass invention."
+      }
+    },
+    {
+      "label": "canonical-tool",
+      "pair": "pind+sten",
+      "parents": [
+        "sten",
+        "pind"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "stenoekse",
+      "invention": null,
+      "narrator": "The axe is invented! Trees everywhere grow nervous. Karl mostly plans to use it for pointing at things.",
+      "statusToast": "",
+      "solvedNeed": "vaerktoej",
+      "solvedChallenge": null,
+      "turn": 5,
+      "cap": {
+        "used": 1,
+        "limit": 6,
+        "remaining": 5
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🪓\nStone axe\n\nA rock on a stick. Humanity's first subscription to tools.\n\n📜 The oldest stone tools are over 2.5 million years old — older than modern humans themselves.\n\n✓ Problem solved: Bare hands\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-round-stone",
+      "pair": "sten+vand",
+      "parents": [
+        "sten",
+        "vand"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "rullesten",
+      "invention": null,
+      "narrator": "Karl's contribution to civilisation grows by one confusing unit.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 6,
+      "cap": {
+        "used": 1,
+        "limit": 6,
+        "remaining": 5
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n⚪\nRound stone\n\nPolished perfectly round by the river. Karl calls it 'the good rock' and guards it jealously.\n\n📜 River pebbles really are rounded by erosion — tumbling water does in centuries what a stonemason does in days.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-cave-painting",
+      "pair": "baer+sten",
+      "parents": [
+        "baer",
+        "sten"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "hulemaleri",
+      "invention": null,
+      "narrator": "Art! Karl smears berry juice on stone and steps back, moved. It's either a boar or a sunset. He refuses to explain. All great artists refuse to explain.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 7,
+      "cap": {
+        "used": 1,
+        "limit": 6,
+        "remaining": 5
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🎨\nCave painting\n\nBerry juice on stone. It's either a boar, a sunset, or Ugh. Karl refuses to explain his art.\n\n📜 The oldest known cave paintings are over 45,000 years old — found in Sulawesi, Indonesia.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-juice",
+      "pair": "baer+vand",
+      "parents": [
+        "baer",
+        "vand"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "saft",
+      "invention": null,
+      "narrator": "Karl beholds it. Neither of us is sure what happens next.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 8,
+      "cap": {
+        "used": 1,
+        "limit": 6,
+        "remaining": 5
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🧃\nBerry juice\n\nCrushed berries. Karl drinks it, wears it, and paints with it — often in the same motion.\n\n📜 Fruit pressing predates writing by millennia — the residue of crushed berries turns up on Stone Age grinding stones.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "rejected-self",
+      "pair": "ler+ler",
+      "parents": [
+        "ler",
+        "ler"
+      ],
+      "expectedVerdict": null,
+      "outcome": "rejected",
+      "canonicalResult": null,
+      "invention": null,
+      "narrator": "clay with clay proves nothing new.",
+      "statusToast": "Karl could not make that idea hold together.",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 9,
+      "cap": {
+        "used": 1,
+        "limit": 6,
+        "remaining": 5
+      },
+      "challenge": null,
+      "cardText": null,
+      "agentFeedback": {
+        "understandable": true,
+        "note": "The toast clearly rejects the attempt, but the narrator's joke does not always explain the self-pair specifically."
+      }
+    },
+    {
+      "label": "depth-1",
+      "pair": "graes+sten",
+      "parents": [
+        "sten",
+        "graes"
+      ],
+      "expectedVerdict": "plausible",
+      "outcome": "accepted",
+      "canonicalResult": null,
+      "invention": {
+        "id": "improv:5:graes:4:sten",
+        "name": "Dry grass-Stone contraption",
+        "depth": 1,
+        "kind": "material",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "blunt",
+          "dry",
+          "heavy",
+          "light",
+          "insulating"
+        ]
+      },
+      "narrator": "The test fails. Karl's hunger remains.",
+      "statusToast": "Dry grass-Stone contraption joined Karl's inventions.",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 10,
+      "cap": {
+        "used": 2,
+        "limit": 6,
+        "remaining": 4
+      },
+      "challenge": null,
+      "cardText": "KARL'S INVENTION\n\n🍂\nDry grass-Stone contraption\n\nKarl combines Dry grass with Stone. The result exists, which was the full extent of the plan.\n\nKeep it",
+      "agentFeedback": {
+        "understandable": true,
+        "note": "The narrator connects the accepted invention to the still-unsolved hunger need."
+      }
+    },
+    {
+      "label": "canonical-ore",
+      "pair": "sten+stenoekse",
+      "parents": [
+        "stenoekse",
+        "sten"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "malm",
+      "invention": null,
+      "narrator": "He mines the sparkly stones because they're pretty. Sometimes history advances for the silliest reasons. Usually, in fact.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 11,
+      "cap": {
+        "used": 2,
+        "limit": 6,
+        "remaining": 4
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n⛏️\nOre\n\nGlittering stones from the rock face. Karl thinks it's decoration. It's the future.\n\n📜 The oldest known mines are over 40,000 years old — long before anyone knew what metal was.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-wheel",
+      "pair": "rullesten+stenoekse",
+      "parents": [
+        "rullesten",
+        "stenoekse"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "hjul",
+      "invention": null,
+      "narrator": "A round stone with a hole. It rolls. Karl has just invented the single most important machine part in history, and he's using it as a toy.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 12,
+      "cap": {
+        "used": 2,
+        "limit": 6,
+        "remaining": 4
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🛞\nWheel\n\nIt rolls. It ROLLS. Karl has chased it across the valley twice already.\n\n📜 The wheel arrived surprisingly late — around 3500 BC in Mesopotamia, long after farming and pottery.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "depth-2",
+      "pair": "improv:5:graes:4:sten+stenoekse",
+      "parents": [
+        "improv:5:graes:4:sten",
+        "stenoekse"
+      ],
+      "expectedVerdict": "plausible",
+      "outcome": "accepted",
+      "canonicalResult": null,
+      "invention": {
+        "id": "improv:21:improv:5:graes:4:sten:9:stenoekse",
+        "name": "Dry grass-Stone contraption worked by Stone axe",
+        "depth": 2,
+        "kind": "tool",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "blunt",
+          "dry",
+          "heavy",
+          "light",
+          "insulating"
+        ]
+      },
+      "narrator": "Novelty does not answer Karl's hunger.",
+      "statusToast": "Dry grass-Stone contraption worked by Stone axe joined Karl's inventions.",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 13,
+      "cap": {
+        "used": 3,
+        "limit": 6,
+        "remaining": 3
+      },
+      "challenge": null,
+      "cardText": "KARL'S INVENTION\n\n🪓\nDry grass-Stone contraption worked by Stone axe\n\nKarl works Dry grass-Stone contraption with Stone axe. Purpose appears shortly after the bruising.\n\nKeep it",
+      "agentFeedback": null
+    },
+    {
+      "label": "plausible-hunger",
+      "pair": "baer+stenoekse",
+      "parents": [
+        "baer",
+        "stenoekse"
+      ],
+      "expectedVerdict": "plausible",
+      "outcome": "accepted",
+      "canonicalResult": null,
+      "invention": {
+        "id": "improv:4:baer:9:stenoekse",
+        "name": "Berries worked by Stone axe",
+        "depth": 2,
+        "kind": "tool",
+        "stuff": "plant",
+        "traits": [
+          "edible",
+          "light"
+        ]
+      },
+      "narrator": "berries worked by stone axe answers Karl's hunger. Karl beams.",
+      "statusToast": "Berries worked by Stone axe joined Karl's inventions.",
+      "solvedNeed": "sult",
+      "solvedChallenge": null,
+      "turn": 14,
+      "cap": {
+        "used": 4,
+        "limit": 6,
+        "remaining": 2
+      },
+      "challenge": null,
+      "cardText": "KARL'S INVENTION\n\n🪓\nBerries worked by Stone axe\n\nKarl works Berries with Stone axe. Purpose appears shortly after the bruising.\n\n✓ Problem solved: Karl is hungry\n\nKeep it",
+      "agentFeedback": {
+        "understandable": true,
+        "note": "The line explicitly says the invention answers Karl's hunger."
+      }
+    },
+    {
+      "label": "depth-3",
+      "pair": "improv:21:improv:5:graes:4:sten:9:stenoekse+improv:4:baer:9:stenoekse",
+      "parents": [
+        "improv:21:improv:5:graes:4:sten:9:stenoekse",
+        "improv:4:baer:9:stenoekse"
+      ],
+      "expectedVerdict": "plausible",
+      "outcome": "accepted",
+      "canonicalResult": null,
+      "invention": {
+        "id": "improv:43:improv:21:improv:5:graes:4:sten:9:stenoekse:25:improv:4:baer:9:stenoekse",
+        "name": "Dry grass-Stone contraption worked by Stone axe-Berries worked by Stone axe contraption",
+        "depth": 3,
+        "kind": "tool",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "blunt",
+          "dry",
+          "edible",
+          "heavy",
+          "light",
+          "insulating"
+        ]
+      },
+      "narrator": "Karl's boredom requires sound. It is absent.",
+      "statusToast": "Dry grass-Stone contraption worked by Stone axe-Berries worked by Stone axe contraption joined Karl's inventions.",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 15,
+      "cap": {
+        "used": 5,
+        "limit": 6,
+        "remaining": 1
+      },
+      "challenge": null,
+      "cardText": "KARL'S INVENTION\n\n🪓\nDry grass-Stone contraption worked by Stone axe-Berries worked by Stone axe contraption\n\nKarl combines Dry grass-Stone contraption worked by Stone axe with Berries worked by Stone axe. The result exists, which was the full extent of the plan.\n\nKeep it",
+      "agentFeedback": null
+    },
+    {
+      "label": "depth-limit",
+      "pair": "improv:43:improv:21:improv:5:graes:4:sten:9:stenoekse:25:improv:4:baer:9:stenoekse+improv:9:bautasten:5:graes",
+      "parents": [
+        "improv:43:improv:21:improv:5:graes:4:sten:9:stenoekse:25:improv:4:baer:9:stenoekse",
+        "improv:9:bautasten:5:graes"
+      ],
+      "expectedVerdict": "plausible",
+      "outcome": "rejected",
+      "canonicalResult": null,
+      "invention": null,
+      "narrator": "dry grass-stone contraption worked by stone axe-berries worked by stone axe contraption and standing stone-dry grass contraption end this family tree.",
+      "statusToast": "That invention cannot be taken any further.",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 16,
+      "cap": {
+        "used": 5,
+        "limit": 6,
+        "remaining": 1
+      },
+      "challenge": null,
+      "cardText": null,
+      "agentFeedback": {
+        "understandable": true,
+        "note": "The status states the depth boundary directly."
+      }
+    },
+    {
+      "label": "reuse",
+      "pair": "bautasten+graes",
+      "parents": [
+        "graes",
+        "bautasten"
+      ],
+      "expectedVerdict": "absurd",
+      "outcome": "reused",
+      "canonicalResult": null,
+      "invention": null,
+      "narrator": "standing stone-dry grass contraption returns. The applause does not.",
+      "statusToast": "Karl has already invented Standing stone-Dry grass contraption.",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 17,
+      "cap": {
+        "used": 5,
+        "limit": 6,
+        "remaining": 1
+      },
+      "challenge": null,
+      "cardText": null,
+      "agentFeedback": {
+        "understandable": true,
+        "note": "The status distinguishes reuse from a new invention."
+      }
+    },
+    {
+      "label": "cap-sixth-invention",
+      "pair": "gnister+stenoekse",
+      "parents": [
+        "gnister",
+        "stenoekse"
+      ],
+      "expectedVerdict": "plausible",
+      "outcome": "accepted",
+      "canonicalResult": null,
+      "invention": {
+        "id": "improv:7:gnister:9:stenoekse",
+        "name": "Fire-touched Stone axe",
+        "depth": 2,
+        "kind": "tool",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "sharp",
+          "hot",
+          "dry",
+          "weapon"
+        ]
+      },
+      "narrator": "New object, old problem: Karl's boredom.",
+      "statusToast": "Fire-touched Stone axe joined Karl's inventions.",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 18,
+      "cap": {
+        "used": 6,
+        "limit": 6,
+        "remaining": 0
+      },
+      "challenge": null,
+      "cardText": "KARL'S INVENTION\n\n🪓\nFire-touched Stone axe\n\nKarl applies Sparks to Stone axe. It is hotter, drier, and somehow now part of the plan.\n\nKeep it",
+      "agentFeedback": null
+    },
+    {
+      "label": "run-limit",
+      "pair": "saft+stenoekse",
+      "parents": [
+        "saft",
+        "stenoekse"
+      ],
+      "expectedVerdict": "absurd",
+      "outcome": "rejected",
+      "canonicalResult": null,
+      "invention": null,
+      "narrator": "Wolves. Four of them, at the treeline, deciding whether Karl counts as food. He does. The only question is whether he can change their minds.",
+      "statusToast": "Karl has used all 6 inventions for this life.",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 19,
+      "cap": {
+        "used": 6,
+        "limit": 6,
+        "remaining": 0
+      },
+      "challenge": {
+        "id": "ulve",
+        "startedAtPage": 19,
+        "turnsLeft": 4,
+        "repeat": false
+      },
+      "cardText": null,
+      "agentFeedback": {
+        "understandable": true,
+        "note": "The cap toast is explicit. A simultaneously spawned challenge owns the narrator line, so the cap's narrator family is masked in this turn."
+      }
+    },
+    {
+      "label": "canonical-seed",
+      "pair": "baer+baer",
+      "parents": [
+        "baer",
+        "baer"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "froe",
+      "invention": null,
+      "narrator": "The sparks! The lead wolf looks at it, looks at Karl, and makes the sensible choice.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 20,
+      "cap": {
+        "used": 6,
+        "limit": 6,
+        "remaining": 0
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🌱\nSeeds\n\nThe bits of the berry Karl always spat out. It turns out they were the important bits.\n\n📜 Seeds can wait decades for the right conditions — a 2,000-year-old date palm seed from Masada was successfully sprouted.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-boomerang",
+      "pair": "pind+pind",
+      "parents": [
+        "pind",
+        "pind"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "boomerang",
+      "invention": null,
+      "narrator": "Karl invents it and immediately forgets how. This will be a recurring theme.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 21,
+      "cap": {
+        "used": 6,
+        "limit": 6,
+        "remaining": 0
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🪃\nBoomerang\n\nA bent stick that comes back. Karl has invented losing things professionally.\n\n📜 The oldest known boomerang is 23,000 years old, carved from mammoth tusk — found in a cave in Poland.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-bird",
+      "pair": "froe+graes",
+      "parents": [
+        "froe",
+        "graes"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "fugl",
+      "invention": null,
+      "narrator": "The kind of thing that ends up in a museum with a label nobody reads.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 22,
+      "cap": {
+        "used": 6,
+        "limit": 6,
+        "remaining": 0
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\nBird\n\nSmall, loud, and airborne — three things Karl will never be. It mocks him from a branch.\n\n📜 Birds followed human settlements for spilled seed long before anyone thought to keep them — the same commensal path the dog took.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-feather",
+      "pair": "boomerang+fugl",
+      "parents": [
+        "fugl",
+        "boomerang"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "fjer",
+      "invention": null,
+      "narrator": "Karl celebrates. The celebration is mostly arm movement.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 23,
+      "cap": {
+        "used": 6,
+        "limit": 6,
+        "remaining": 0
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🪶\nFeather\n\nSoft, elegant, aerodynamic. Karl sticks it behind his ear and becomes 40% more distinguished.\n\n📜 Feathers were prized long before writing — Neanderthals harvested raptor feathers, apparently just for decoration.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "canonical-wings",
+      "pair": "fjer+fjer",
+      "parents": [
+        "fjer",
+        "fjer"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "vinger",
+      "invention": null,
+      "narrator": "I'll be honest: I didn't see that coming, and I've read ahead.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 24,
+      "cap": {
+        "used": 6,
+        "limit": 6,
+        "remaining": 0
+      },
+      "challenge": null,
+      "cardText": "COMMON\n\n🪽\nWings\n\nFeathers lashed to Karl's arms. He flaps experimentally. The bird watches with grave professional concern.\n\n📜 'Tower jumping' with homemade wings goes back over a thousand years — brave, well-documented, and rarely successful.\n\nNice",
+      "agentFeedback": null
+    },
+    {
+      "label": "ending-icarus",
+      "pair": "bautasten+vinger",
+      "parents": [
+        "vinger",
+        "bautasten"
+      ],
+      "expectedVerdict": null,
+      "outcome": "canonical-discovery",
+      "canonicalResult": "flyveforsoeg",
+      "invention": null,
+      "narrator": "He flew. For nearly a full second, Karl truly flew — and no one can take that from him, least of all the ground, which merely took everything else. Fly high, Karl. THE END.",
+      "statusToast": "",
+      "solvedNeed": null,
+      "solvedChallenge": null,
+      "turn": 26,
+      "cap": {
+        "used": 6,
+        "limit": 6,
+        "remaining": 0
+      },
+      "challenge": null,
+      "cardText": null,
+      "agentFeedback": null
+    }
+  ],
+  "persistence": null,
+  "chronicleText": "Act 1 · The Stone Age\n🪓\n\nKARL'S INVENTION\n\nFire-touched Stone axe\n\nKarl applies Sparks to Stone axe. It is hotter, drier, and somehow now part of the plan.\n\n✨\n🟫\n🗿\n🪓\n⚪\n🎨\n🧃\n⛏️\n🛞\nKarl's inventions\n6\n🗿\nKARL'S INVENTION\nStanding stone-Dry grass contraption\n🍂\nKARL'S INVENTION\nDry grass-Stone contraption\n🪓\nKARL'S INVENTION\nDry grass-Stone contraption worked by Stone axe\n🪓\nKARL'S INVENTION\nBerries worked by Stone axe\n🪓\nKARL'S INVENTION\nDry grass-Stone contraption worked by Stone axe-Berries worked by Stone axe contraption\n🪓\nKARL'S INVENTION\nFire-touched Stone axe\nTimeline —\n9/179\ndiscovered",
+  "endingText": "🪽\nThe Flight of Karl\n\nHe flew. For nearly a full second, Karl truly flew — and no one can take that from him, least of all the ground, which merely took everything else. Fly high, Karl. THE END.\n\n26 summers lived · 27 discoveries · 1 quirks\n\nKarl's inventions: Standing stone-Dry grass contraption, Dry grass-Stone contraption, Dry grass-Stone contraption worked by Stone axe, Berries worked by Stone axe, Dry grass-Stone contraption worked by Stone axe-Berries worked by Stone axe contraption +1 more\n\nAchievement unlocked: Almost Icarus\n\nLive again Copy playtest log",
+  "sharePayload": {
+    "base": {
+      "version": 1,
+      "runs": [
+        {
+          "ending": "icarus",
+          "summers": 26,
+          "discoveries": 27,
+          "minutes": 0,
+          "solved": [
+            "mening",
+            "kulde",
+            "vaerktoej",
+            "sult"
+          ],
+          "flags": [
+            "kunstner"
+          ],
+          "misses": []
+        }
+      ],
+      "misses": []
+    },
+    "improvisation": {
+      "version": 2,
+      "runs": [
+        {
+          "ending": "icarus",
+          "inventions": {
+            "total": 6,
+            "names": [
+              "Standing stone-Dry grass contraption",
+              "Dry grass-Stone contraption",
+              "Dry grass-Stone contraption worked by Stone axe",
+              "Berries worked by Stone axe",
+              "Dry grass-Stone contraption worked by Stone axe-Berries worked by Stone axe contraption"
+            ]
+          },
+          "improvisations": [
+            {
+              "pair": "bautasten+graes",
+              "act": 1,
+              "summer": 4,
+              "outcome": "accepted",
+              "solvedNeed": "kulde",
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "ler+ler",
+              "act": 1,
+              "summer": 9,
+              "outcome": "rejected",
+              "solvedNeed": null,
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "graes+sten",
+              "act": 1,
+              "summer": 10,
+              "outcome": "accepted",
+              "solvedNeed": null,
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "improv:5:graes:4:sten+stenoekse",
+              "act": 1,
+              "summer": 13,
+              "outcome": "accepted",
+              "solvedNeed": null,
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "baer+stenoekse",
+              "act": 1,
+              "summer": 14,
+              "outcome": "accepted",
+              "solvedNeed": "sult",
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "improv:21:improv:5:graes:4:sten:9:stenoekse+improv:4:baer:9:stenoekse",
+              "act": 1,
+              "summer": 15,
+              "outcome": "accepted",
+              "solvedNeed": null,
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "improv:43:improv:21:improv:5:graes:4:sten:9:stenoekse:25:improv:4:baer:9:stenoekse+improv:9:bautasten:5:graes",
+              "act": 1,
+              "summer": 16,
+              "outcome": "rejected",
+              "solvedNeed": null,
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "bautasten+graes",
+              "act": 1,
+              "summer": 17,
+              "outcome": "reused",
+              "solvedNeed": null,
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "gnister+stenoekse",
+              "act": 1,
+              "summer": 18,
+              "outcome": "accepted",
+              "solvedNeed": null,
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            },
+            {
+              "pair": "saft+stenoekse",
+              "act": 1,
+              "summer": 19,
+              "outcome": "rejected",
+              "solvedNeed": null,
+              "solvedChallenge": null,
+              "source": "fallback",
+              "latencyMs": null,
+              "timeout": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "finalState": {
+    "act": 1,
+    "discovered": [
+      "sten",
+      "pind",
+      "graes",
+      "vand",
+      "ler",
+      "baer",
+      "gnister",
+      "mudder",
+      "bautasten",
+      "improv:9:bautasten:5:graes",
+      "stenoekse",
+      "rullesten",
+      "hulemaleri",
+      "saft",
+      "improv:5:graes:4:sten",
+      "malm",
+      "hjul",
+      "improv:21:improv:5:graes:4:sten:9:stenoekse",
+      "improv:4:baer:9:stenoekse",
+      "improv:43:improv:21:improv:5:graes:4:sten:9:stenoekse:25:improv:4:baer:9:stenoekse",
+      "improv:7:gnister:9:stenoekse",
+      "froe",
+      "boomerang",
+      "fugl",
+      "fjer",
+      "vinger",
+      "flyveforsoeg"
+    ],
+    "flags": [
+      "kunstner"
+    ],
+    "solvedProblems": [
+      "mening",
+      "kulde",
+      "vaerktoej",
+      "sult"
+    ],
+    "attempts": 26,
+    "ended": "icarus",
+    "challenges": {
+      "active": null,
+      "gap": 5,
+      "seen": [
+        "ulve"
+      ],
+      "lastSeenAt": {
+        "ulve": 19
+      },
+      "everSpawned": true
+    },
+    "seed": 230,
+    "improvisedElements": [
+      {
+        "id": "improv:9:bautasten:5:graes",
+        "origin": "improvised",
+        "parents": [
+          "bautasten",
+          "graes"
+        ],
+        "name": "Standing stone-Dry grass contraption",
+        "emoji": "🗿",
+        "act": 1,
+        "base": false,
+        "depth": 3,
+        "terminal": true,
+        "kind": "structure",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "dry",
+          "heavy",
+          "light",
+          "insulating",
+          "sacred"
+        ],
+        "scale": "body",
+        "flavor": "Karl combines Standing stone with Dry grass. The result exists, which was the full extent of the plan."
+      },
+      {
+        "id": "improv:5:graes:4:sten",
+        "origin": "improvised",
+        "parents": [
+          "graes",
+          "sten"
+        ],
+        "name": "Dry grass-Stone contraption",
+        "emoji": "🍂",
+        "act": 1,
+        "base": false,
+        "depth": 1,
+        "terminal": false,
+        "kind": "material",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "blunt",
+          "dry",
+          "heavy",
+          "light",
+          "insulating"
+        ],
+        "scale": "hand",
+        "flavor": "Karl combines Dry grass with Stone. The result exists, which was the full extent of the plan."
+      },
+      {
+        "id": "improv:21:improv:5:graes:4:sten:9:stenoekse",
+        "origin": "improvised",
+        "parents": [
+          "improv:5:graes:4:sten",
+          "stenoekse"
+        ],
+        "name": "Dry grass-Stone contraption worked by Stone axe",
+        "emoji": "🪓",
+        "act": 1,
+        "base": false,
+        "depth": 2,
+        "terminal": false,
+        "kind": "tool",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "blunt",
+          "dry",
+          "heavy",
+          "light",
+          "insulating"
+        ],
+        "scale": "hand",
+        "flavor": "Karl works Dry grass-Stone contraption with Stone axe. Purpose appears shortly after the bruising."
+      },
+      {
+        "id": "improv:4:baer:9:stenoekse",
+        "origin": "improvised",
+        "parents": [
+          "baer",
+          "stenoekse"
+        ],
+        "name": "Berries worked by Stone axe",
+        "emoji": "🪓",
+        "act": 1,
+        "base": false,
+        "depth": 2,
+        "terminal": false,
+        "kind": "tool",
+        "stuff": "plant",
+        "traits": [
+          "edible",
+          "light"
+        ],
+        "scale": "hand",
+        "flavor": "Karl works Berries with Stone axe. Purpose appears shortly after the bruising."
+      },
+      {
+        "id": "improv:43:improv:21:improv:5:graes:4:sten:9:stenoekse:25:improv:4:baer:9:stenoekse",
+        "origin": "improvised",
+        "parents": [
+          "improv:21:improv:5:graes:4:sten:9:stenoekse",
+          "improv:4:baer:9:stenoekse"
+        ],
+        "name": "Dry grass-Stone contraption worked by Stone axe-Berries worked by Stone axe contraption",
+        "emoji": "🪓",
+        "act": 1,
+        "base": false,
+        "depth": 3,
+        "terminal": true,
+        "kind": "tool",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "blunt",
+          "dry",
+          "edible",
+          "heavy",
+          "light",
+          "insulating"
+        ],
+        "scale": "hand",
+        "flavor": "Karl combines Dry grass-Stone contraption worked by Stone axe with Berries worked by Stone axe. The result exists, which was the full extent of the plan."
+      },
+      {
+        "id": "improv:7:gnister:9:stenoekse",
+        "origin": "improvised",
+        "parents": [
+          "gnister",
+          "stenoekse"
+        ],
+        "name": "Fire-touched Stone axe",
+        "emoji": "🪓",
+        "act": 1,
+        "base": false,
+        "depth": 2,
+        "terminal": false,
+        "kind": "tool",
+        "stuff": "stone",
+        "traits": [
+          "hard",
+          "sharp",
+          "hot",
+          "dry",
+          "weapon"
+        ],
+        "scale": "hand",
+        "flavor": "Karl applies Sparks to Stone axe. It is hotter, drier, and somehow now part of the plan."
+      }
+    ],
+    "creditedImprovised": [
+      "improv:9:bautasten:5:graes",
+      "improv:4:baer:9:stenoekse"
+    ]
+  },
+  "screenshots": [
+    "artifacts/run-02-mobile-seed-230/01-title.webp",
+    "artifacts/run-02-mobile-seed-230/02a-mobile-tap-selection.webp",
+    "artifacts/run-02-mobile-seed-230/02-canonical-priority-sparks.webp",
+    "artifacts/run-02-mobile-seed-230/03-absurd-cold-invention.webp",
+    "artifacts/run-02-mobile-seed-230/04-rejected-self-toast.webp",
+    "artifacts/run-02-mobile-seed-230/05-plausible-hunger-invention.webp",
+    "artifacts/run-02-mobile-seed-230/06-depth-3-invention.webp",
+    "artifacts/run-02-mobile-seed-230/07-depth-limit-toast.webp",
+    "artifacts/run-02-mobile-seed-230/08-reuse-toast.webp",
+    "artifacts/run-02-mobile-seed-230/09-run-limit-and-challenge.webp",
+    "artifacts/run-02-mobile-seed-230/10-chronicle-six-inventions.webp",
+    "artifacts/run-02-mobile-seed-230/13-ending-run-summary.webp",
+    "artifacts/run-02-mobile-seed-230/14-copied-playtest-log.webp"
+  ]
+}

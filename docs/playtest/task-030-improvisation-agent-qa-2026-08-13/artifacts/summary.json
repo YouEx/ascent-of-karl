@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-13T21:52:20.040Z",
+  "runs": [
+    {
+      "id": "run-01-desktop-seed-163",
+      "seed": 163,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "input": "keyboard",
+      "ending": "icarus",
+      "summers": 26,
+      "solvedProblems": [
+        "mening",
+        "kulde",
+        "vaerktoej",
+        "sult"
+      ],
+      "inventions": 6,
+      "persistence": {
+        "before": {
+          "attempts": 19,
+          "inventions": 6,
+          "challenge": {
+            "id": "toerke",
+            "startedAtPage": 19,
+            "turnsLeft": 5,
+            "repeat": false
+          }
+        },
+        "after": {
+          "attempts": 19,
+          "inventions": 6,
+          "challenge": {
+            "id": "toerke",
+            "startedAtPage": 19,
+            "turnsLeft": 5,
+            "repeat": false
+          },
+          "challengeText": "☀️\nThe stream has stopped\n5 summers to find a way out"
+        }
+      },
+      "screenshots": [
+        "artifacts/run-01-desktop-seed-163/01-title.webp",
+        "artifacts/run-01-desktop-seed-163/02-canonical-priority-sparks.webp",
+        "artifacts/run-01-desktop-seed-163/03-absurd-cold-invention.webp",
+        "artifacts/run-01-desktop-seed-163/04-rejected-self-toast.webp",
+        "artifacts/run-01-desktop-seed-163/05-plausible-hunger-invention.webp",
+        "artifacts/run-01-desktop-seed-163/06-depth-3-invention.webp",
+        "artifacts/run-01-desktop-seed-163/07-depth-limit-toast.webp",
+        "artifacts/run-01-desktop-seed-163/08-reuse-toast.webp",
+        "artifacts/run-01-desktop-seed-163/09-run-limit-and-challenge.webp",
+        "artifacts/run-01-desktop-seed-163/10-chronicle-six-inventions.webp",
+        "artifacts/run-01-desktop-seed-163/11-reload-continue-title.webp",
+        "artifacts/run-01-desktop-seed-163/12-resumed-challenge.webp",
+        "artifacts/run-01-desktop-seed-163/13-ending-run-summary.webp",
+        "artifacts/run-01-desktop-seed-163/14-copied-playtest-log.webp"
+      ]
+    },
+    {
+      "id": "run-02-mobile-seed-230",
+      "seed": 230,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "input": "tap",
+      "ending": "icarus",
+      "summers": 26,
+      "solvedProblems": [
+        "mening",
+        "kulde",
+        "vaerktoej",
+        "sult"
+      ],
+      "inventions": 6,
+      "persistence": null,
+      "screenshots": [
+        "artifacts/run-02-mobile-seed-230/01-title.webp",
+        "artifacts/run-02-mobile-seed-230/02a-mobile-tap-selection.webp",
+        "artifacts/run-02-mobile-seed-230/02-canonical-priority-sparks.webp",
+        "artifacts/run-02-mobile-seed-230/03-absurd-cold-invention.webp",
+        "artifacts/run-02-mobile-seed-230/04-rejected-self-toast.webp",
+        "artifacts/run-02-mobile-seed-230/05-plausible-hunger-invention.webp",
+        "artifacts/run-02-mobile-seed-230/06-depth-3-invention.webp",
+        "artifacts/run-02-mobile-seed-230/07-depth-limit-toast.webp",
+        "artifacts/run-02-mobile-seed-230/08-reuse-toast.webp",
+        "artifacts/run-02-mobile-seed-230/09-run-limit-and-challenge.webp",
+        "artifacts/run-02-mobile-seed-230/10-chronicle-six-inventions.webp",
+        "artifacts/run-02-mobile-seed-230/13-ending-run-summary.webp",
+        "artifacts/run-02-mobile-seed-230/14-copied-playtest-log.webp"
+      ]
+    },
+    {
+      "id": "run-03-desktop-seed-432",
+      "seed": 432,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "input": "mouse",
+      "ending": "icarus",
+      "summers": 26,
+      "solvedProblems": [
+        "mening",
+        "kulde",
+        "vaerktoej",
+        "sult"
+      ],
+      "inventions": 6,
+      "persistence": null,
+      "screenshots": [
+        "artifacts/run-03-desktop-seed-432/01-title.webp",
+        "artifacts/run-03-desktop-seed-432/02-canonical-priority-sparks.webp",
+        "artifacts/run-03-desktop-seed-432/03-absurd-cold-invention.webp",
+        "artifacts/run-03-desktop-seed-432/04-rejected-self-toast.webp",
+        "artifacts/run-03-desktop-seed-432/05-plausible-hunger-invention.webp",
+        "artifacts/run-03-desktop-seed-432/06-depth-3-invention.webp",
+        "artifacts/run-03-desktop-seed-432/07-depth-limit-toast.webp",
+        "artifacts/run-03-desktop-seed-432/08-reuse-toast.webp",
+        "artifacts/run-03-desktop-seed-432/09-run-limit-and-challenge.webp",
+        "artifacts/run-03-desktop-seed-432/10-chronicle-six-inventions.webp",
+        "artifacts/run-03-desktop-seed-432/13-ending-run-summary.webp",
+        "artifacts/run-03-desktop-seed-432/14-copied-playtest-log.webp"
+      ]
+    }
+  ]
+}

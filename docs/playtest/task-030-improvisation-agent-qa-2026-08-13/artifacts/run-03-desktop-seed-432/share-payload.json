@@ -1,0 +1,154 @@
+{
+  "base": {
+    "version": 1,
+    "runs": [
+      {
+        "ending": "icarus",
+        "summers": 26,
+        "discoveries": 27,
+        "minutes": 0,
+        "solved": [
+          "mening",
+          "kulde",
+          "vaerktoej",
+          "sult"
+        ],
+        "flags": [
+          "kunstner"
+        ],
+        "misses": []
+      }
+    ],
+    "misses": []
+  },
+  "improvisation": {
+    "version": 2,
+    "runs": [
+      {
+        "ending": "icarus",
+        "inventions": {
+          "total": 6,
+          "names": [
+            "Standing stone-Dry grass contraption",
+            "Dry grass-Stone contraption",
+            "Dry grass-Stone contraption worked by Stone axe",
+            "Berries worked by Stone axe",
+            "Dry grass-Stone contraption worked by Stone axe-Berries worked by Stone axe contraption"
+          ]
+        },
+        "improvisations": [
+          {
+            "pair": "bautasten+graes",
+            "act": 1,
+            "summer": 4,
+            "outcome": "accepted",
+            "solvedNeed": "kulde",
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "ler+ler",
+            "act": 1,
+            "summer": 9,
+            "outcome": "rejected",
+            "solvedNeed": null,
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "graes+sten",
+            "act": 1,
+            "summer": 10,
+            "outcome": "accepted",
+            "solvedNeed": null,
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "improv:5:graes:4:sten+stenoekse",
+            "act": 1,
+            "summer": 13,
+            "outcome": "accepted",
+            "solvedNeed": null,
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "baer+stenoekse",
+            "act": 1,
+            "summer": 14,
+            "outcome": "accepted",
+            "solvedNeed": "sult",
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "improv:21:improv:5:graes:4:sten:9:stenoekse+improv:4:baer:9:stenoekse",
+            "act": 1,
+            "summer": 15,
+            "outcome": "accepted",
+            "solvedNeed": null,
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "improv:43:improv:21:improv:5:graes:4:sten:9:stenoekse:25:improv:4:baer:9:stenoekse+improv:9:bautasten:5:graes",
+            "act": 1,
+            "summer": 16,
+            "outcome": "rejected",
+            "solvedNeed": null,
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "bautasten+graes",
+            "act": 1,
+            "summer": 17,
+            "outcome": "reused",
+            "solvedNeed": null,
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "gnister+stenoekse",
+            "act": 1,
+            "summer": 18,
+            "outcome": "accepted",
+            "solvedNeed": null,
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          },
+          {
+            "pair": "saft+stenoekse",
+            "act": 1,
+            "summer": 19,
+            "outcome": "rejected",
+            "solvedNeed": null,
+            "solvedChallenge": null,
+            "source": "fallback",
+            "latencyMs": null,
+            "timeout": false
+          }
+        ]
+      }
+    ]
+  }
+}
