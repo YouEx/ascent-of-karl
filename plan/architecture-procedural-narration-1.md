@@ -27,7 +27,12 @@ tags: [architecture, engine, narrator, content, tooling, feature]
 > ud to gange. Loftet er nu en test (`tests/pairs.test.ts`), ikke en linje i
 > build-loggen som ingen læser. Næste batch fortsætter mod N=600.
 
-Spillet har 187 elementer og 225 opskrifter. Det er 17.578 mulige par, hvoraf 225 er skrevet. De resterende 17.353 deler otte generiske hånlinjer.
+Ved planens start havde spillet 187 elementer og 225 opskrifter: 17.578
+mulige uordnede par (inklusive selv-par), hvor 17.353 faldt tilbage på otte
+generiske hånlinjer. **Status 2026-08-13:** opskriftsbogen har 409
+kombinationer, grammatikken svarer på alle øvrige par med begge navne, og
+den nu 14-linjers generiske pulje er en teknisk nødudgang med 0 hits i 2.000
+simulerede runs.
 
 Målt på den rigtige motor over 4.000 gennemspilninger: **80,6 % af alle forsøg fejler**, og et liv er 50 somre. En spiller møder altså omkring 40 fiaskoer pr. run og ser dermed hver af de otte linjer omkring fem gange på ét liv. **Fiaskoteksten er ikke en randbemærkning i spillet — den er spillets største tekstflade.** Den er i dag den eneste flade uden indhold.
 
@@ -141,7 +146,7 @@ Planen er en ombygning af udfaldsmodellen, ikke en omskrivning af spillet. Motor
 |------|-------------|-----------|------|
 | TASK-032 | Afgør turøkonomien. Når fiasko bliver sjovt, bliver 50 somre en straf for at lege. Tre muligheder at måle på: (a) uændret, (b) `plausible`- og `near-miss`-fiaskoer koster en halv sommer, (c) turLimit hæves til 60. Beslutning træffes på playtest, ikke på skrivebordet. Dette er en designbeslutning til Martin, ikke en implementeringsdetalje. | | |
 | TASK-033 | Playtest i browseren: spil tre fulde runs, log hver replik, og læs dem som en samlet tekst. Illusionen holder eller falder på helheden, ikke på den enkelte linje. | | |
-| TASK-034 | Fjern den deprecated `"nothing"`-alias fra `types.ts` og de otte generiske replikker fra `content/narrator/act-1.json`, når TEST-004 har været grøn i to udrulninger. | | |
+| TASK-034 | Fjern den deprecated `"nothing"`-alias fra `types.ts` og de 14 generiske replikker fra `content/narrator/act-1.json`, når TEST-004 har været grøn i to udrulninger. | | |
 | TASK-035 | Opdatér `PRD.md` §2.4 og `docs/design/fortaelleren.md` med den nye trelagsmodel, og skriv en note i `README.md` om, hvordan man tilføjer et element uden at skrive en eneste replik. | | |
 
 ## 3. Alternatives

@@ -122,8 +122,8 @@ Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 |------|-------------|-----------|------|
 | TASK-001 | Beskær mockuppens højre halvdel (x ≥ 43,5 %) til scenepladen 897×992. | ✅ | 2026-08-11 |
 | TASK-002 | Mal de to indbagte knapper væk med en lodret spejlet klon fra området nedenunder. Det ugennemsigtige felt skal dække knap **og** slagskygge; udtoning kun udenfor, ellers blandes knapkanten tilbage som et spøgelse. | ✅ | 2026-08-11 |
-| TASK-003 | Kod `public/art/title-scene-{897,640,448}.webp`, q84. Verificér hver ≤ 220 kB (REQ-004). | ✅ | 2026-08-11 |
-| TASK-004 | Byg `public/art/title-parchment-{692,520,360}.webp` med `tools/art/build_parchment.py`: arkets silhuet findes på lysstyrke, tekst og knapper viskes væk med papir regnet af arkets eget lysforløb og eget korn, og ornamenterne bliver liggende, hvor de blev malet. Ægte alfa, så den revne kant kan ligge over scenen (REQ-005). | ✅ | 2026-08-11 |
+| TASK-003 | Kod `src/assets/art/title-scene-{897,640,448}.webp`, q84. Verificér hver ≤ 220 kB (REQ-004). **Alle tre filer findes og holder budgettet; CSS bruger dog kun 897-varianten via almindelig `url()`, så TASK-007 skal wire de responsive varianter.** | ✅ | 2026-08-11 |
+| TASK-004 | Byg `src/assets/art/title-parchment-{692,520,360}.webp` med `tools/art/build_parchment.py`: arkets silhuet findes på lysstyrke, tekst og knapper viskes væk med papir regnet af arkets eget lysforløb og eget korn, og ornamenterne bliver liggende, hvor de blev malet. Ægte alfa, så den revne kant kan ligge over scenen (REQ-005). **Alle tre filer findes; `.title-panel` bruger endnu kun 692-varianten (samme fil som 1x/2x), så TASK-008 skal wire 520/360.** | ✅ | 2026-08-11 |
 | TASK-005 | Tilføj UI-ikonerne `gear` og `tap` til `icons.ts`. Krommets ikoner bliver ved med at være streg-ikoner i det eksisterende sæt (PAT-001); det malede hører til pergamentet, ikke til knapperne. | ✅ | 2026-08-11 |
 
 ### Implementation Phase 2
