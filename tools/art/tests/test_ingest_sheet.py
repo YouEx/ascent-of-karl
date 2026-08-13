@@ -31,12 +31,14 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import ingest_sheet  # noqa: E402
+import contact_sheet  # noqa: E402
 from sheet_ingest import CutParams, DetectParams  # noqa: E402
 
 SCRIPT = Path(__file__).resolve().parents[1] / "ingest_sheet.py"
 
 
 def make_sheet(tmp_path: Path, boxes: list[tuple[int, int, int, int]], bg=(230, 208, 182), fg=(90, 70, 40), size=(400, 200)) -> Path:
+    tmp_path.mkdir(parents=True, exist_ok=True)
     img = Image.new("RGB", size, bg)
     a = np.asarray(img).copy()
     for x0, y0, x1, y1 in boxes:
@@ -180,6 +182,78 @@ class TestApplyManifest:
         manifest["tiles"][1]["id"] = "samme"
         with pytest.raises(SystemExit):
             ingest_sheet.apply_manifest(manifest, sheet, tmp_path / "out")
+
+    def test_omdoebning_fjerner_kun_det_tidligere_manifest_ejede_output(self, tmp_path: Path) -> None:
+        sheet = make_sheet(tmp_path, TWO_BOXES)
+        manifest = ingest_sheet.build_manifest(sheet, DetectParams(), CutParams())
+        manifest["tiles"][0]["id"] = "gammelt-navn"
+        manifest["tiles"][1]["id"] = "beholdt"
+        out_dir = tmp_path / "out"
+        ingest_sheet.apply_manifest(manifest, sheet, out_dir)
+
+        unrelated = out_dir / "haandlavet.webp"
+        Image.new("RGBA", (8, 8), (1, 2, 3, 255)).save(unrelated, "WEBP", lossless=True)
+
+        renamed = json.loads(json.dumps(manifest))
+        renamed["tiles"][0]["id"] = "nyt-navn"
+        ingest_sheet.apply_manifest(renamed, sheet, out_dir)
+
+        assert not (out_dir / "gammelt-navn.webp").exists()
+        assert (out_dir / "nyt-navn.webp").exists()
+        assert (out_dir / "beholdt.webp").exists()
+        assert unrelated.exists(), "uvedkommende filer må aldrig ryddes af manifestet"
+
+        contact_ids = [name for name, _ in contact_sheet.discover_tiles(out_dir, None)]
+        assert contact_ids == ["beholdt", "haandlavet", "nyt-navn"]
+
+    def test_fjernet_id_ryddes_men_uvedkommende_output_bevares(self, tmp_path: Path) -> None:
+        sheet = make_sheet(tmp_path, TWO_BOXES)
+        manifest = ingest_sheet.build_manifest(sheet, DetectParams(), CutParams())
+        manifest["tiles"][0]["id"] = "skal-fjernes"
+        manifest["tiles"][1]["id"] = "skal-blive"
+        out_dir = tmp_path / "out"
+        ingest_sheet.apply_manifest(manifest, sheet, out_dir)
+
+        unrelated = out_dir / "andet-ark.webp"
+        Image.new("RGBA", (8, 8), (4, 5, 6, 255)).save(unrelated, "WEBP", lossless=True)
+
+        removed = json.loads(json.dumps(manifest))
+        removed["tiles"][0]["id"] = None
+        ingest_sheet.apply_manifest(removed, sheet, out_dir)
+
+        assert not (out_dir / "skal-fjernes.webp").exists()
+        assert (out_dir / "skal-blive.webp").exists()
+        assert unrelated.exists(), "kun tidligere manifest-ejede filer må fjernes"
+
+    def test_to_forskellige_ark_maa_ikke_eje_samme_output_id(self, tmp_path: Path) -> None:
+        sheet_a = make_sheet(tmp_path / "a", TWO_BOXES)
+        sheet_b = make_sheet(tmp_path / "b", TWO_BOXES)
+        manifest_a = ingest_sheet.build_manifest(sheet_a, DetectParams(), CutParams())
+        manifest_b = ingest_sheet.build_manifest(sheet_b, DetectParams(), CutParams())
+        manifest_a["tiles"][0]["id"] = "delt"
+        manifest_b["tiles"][0]["id"] = "delt"
+        out_dir = tmp_path / "out"
+
+        ingest_sheet.apply_manifest(manifest_a, sheet_a, out_dir)
+        with pytest.raises(SystemExit, match="ejes allerede"):
+            ingest_sheet.apply_manifest(manifest_b, sheet_b, out_dir)
+
+    def test_ugyldig_ejerledger_afvises_uden_at_slette_output(self, tmp_path: Path) -> None:
+        sheet = make_sheet(tmp_path, TWO_BOXES)
+        manifest = ingest_sheet.build_manifest(sheet, DetectParams(), CutParams())
+        manifest["tiles"][0]["id"] = "gyldig"
+        out_dir = tmp_path / "out"
+        out_dir.mkdir()
+        unrelated = out_dir / "uvedkommende.webp"
+        Image.new("RGBA", (8, 8), (7, 8, 9, 255)).save(unrelated, "WEBP", lossless=True)
+        (out_dir / ".sheet-ingest-ownership.json").write_text(
+            json.dumps({"version": 1, "files": {"../../udenfor": "ejer"}}),
+            encoding="utf-8",
+        )
+
+        with pytest.raises(SystemExit, match="ejerledger"):
+            ingest_sheet.apply_manifest(manifest, sheet, out_dir)
+        assert unrelated.exists()
 
 
 class TestCli:

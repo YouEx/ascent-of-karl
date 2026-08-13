@@ -19,7 +19,10 @@ siden manifestet blev skrevet (sha256), afviser dubletter, og skærer/
 skalerer/gemmer nøjagtigt de navngivne fliser — samme pad/skalerings-
 aritmetik og samme WebP-parametre (quality=82, method=6) som
 `build_elements.py` altid har brugt, så output fra et tematisk ark ikke
-driver fra de 13 grundelementer i kvalitet eller filstørrelse.
+driver fra de 13 grundelementer i kvalitet eller filstørrelse. En skjult
+ejerledger i outputmappen husker hvilke id'er hvert kildeark faktisk har
+skrevet. Ved næste apply fjernes kun filer, som samme ark tidligere ejede
+og nu har omdøbt eller fjernet — aldrig andre `.webp`-filer i mappen.
 
 Kør:
     python3 tools/art/ingest_sheet.py detect --sheet <ark.png> --out <manifest.json>
@@ -52,6 +55,8 @@ ROOT = Path(__file__).resolve().parents[2]
 WEBP_QUALITY = 82
 WEBP_METHOD = 6
 ELEMENT_ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+OWNERSHIP_FILENAME = ".sheet-ingest-ownership.json"
+OWNERSHIP_VERSION = 1
 
 
 def sha256_of(path: Path) -> str:
@@ -114,6 +119,41 @@ def load_manifest(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_ownership(out_dir: Path) -> dict:
+    path = out_dir / OWNERSHIP_FILENAME
+    if not path.exists():
+        return {"version": OWNERSHIP_VERSION, "files": {}}
+    try:
+        ledger = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"ugyldig ejerledger {path}: {exc}") from exc
+
+    files = ledger.get("files")
+    if ledger.get("version") != OWNERSHIP_VERSION or not isinstance(files, dict):
+        raise SystemExit(f"ugyldig ejerledger {path}: forventede version 1 og et files-objekt.")
+    for tile_id, owner in files.items():
+        if not ELEMENT_ID_RE.fullmatch(tile_id) or not isinstance(owner, str) or not owner:
+            raise SystemExit(f"ugyldig ejerledger {path}: {tile_id!r} har en ugyldig ejer.")
+    return ledger
+
+
+def write_ownership(ledger: dict, out_dir: Path) -> None:
+    path = out_dir / OWNERSHIP_FILENAME
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(
+        json.dumps(ledger, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    tmp.replace(path)
+
+
+def manifest_owner(manifest: dict) -> str:
+    owner = manifest.get("sheet")
+    if not isinstance(owner, str) or not owner:
+        raise SystemExit("manifestet mangler en stabil 'sheet'-ejer til outputafstemning.")
+    return owner
+
+
 def validate_manifest(manifest: dict, sheet_path: Path) -> None:
     """Hård fejl (SystemExit), aldrig en tavs antagelse, hvis:
     - kildearket er ændret siden manifestet blev bygget (sha256 driver)
@@ -166,8 +206,30 @@ def apply_manifest(
     out_dir: Path,
 ) -> dict[str, Path]:
     """Skærer alle fliser med et udfyldt id ud af `sheet_path` og gemmer dem
-    som WebP i `out_dir`. Fliser med `id: null` springes bevidst over."""
+    som WebP i `out_dir`. Fliser med `id: null` springes bevidst over.
+
+    Efter en vellykket skrivning afstemmes output mod ejerledgeren: kun id'er,
+    som dette samme manifest-ark tidligere skrev, må fjernes."""
     validate_manifest(manifest, sheet_path)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    owner = manifest_owner(manifest)
+    ledger = load_ownership(out_dir)
+    owned_files: dict[str, str] = ledger["files"]
+    current_ids = {
+        tile["id"] for tile in manifest["tiles"] if tile.get("id") is not None
+    }
+    for tile_id in current_ids:
+        previous_owner = owned_files.get(tile_id)
+        if previous_owner is not None and previous_owner != owner:
+            raise SystemExit(
+                f"{tile_id}.webp ejes allerede af et andet kildeark "
+                f"({previous_owner}); output overskrives ikke."
+            )
+    previous_ids = {
+        tile_id for tile_id, previous_owner in owned_files.items()
+        if previous_owner == owner
+    }
 
     a = load_rgb(sheet_path)
     bg = sample_border_background(a)
@@ -183,7 +245,6 @@ def apply_manifest(
     dist, _mask = content_mask(a, bg, mask_threshold)
     full = cut_full_rgba(a, bg, dist, cut_params)
 
-    out_dir.mkdir(parents=True, exist_ok=True)
     saved: dict[str, Path] = {}
     for tile in manifest["tiles"]:
         tile_id = tile.get("id")
@@ -194,6 +255,15 @@ def apply_manifest(
         path = out_dir / f"{tile_id}.webp"
         crop.save(path, "WEBP", quality=WEBP_QUALITY, method=WEBP_METHOD)
         saved[tile_id] = path
+
+    for stale_id in sorted(previous_ids - current_ids):
+        stale_path = out_dir / f"{stale_id}.webp"
+        if stale_path.exists():
+            stale_path.unlink()
+        owned_files.pop(stale_id, None)
+    for tile_id in sorted(current_ids):
+        owned_files[tile_id] = owner
+    write_ownership(ledger, out_dir)
     return saved
 
 
@@ -212,7 +282,7 @@ def _cmd_apply(args: argparse.Namespace) -> None:
     sheet_path = args.sheet if args.sheet else (ROOT / manifest["sheet"])
     saved = apply_manifest(manifest, sheet_path, args.out_dir)
     if not saved:
-        print("ingen fliser havde et udfyldt id — intet at gemme.")
+        print("ingen fliser havde et udfyldt id — ejerledger og tidligere output er afstemt.")
         return
     for tile_id, path in saved.items():
         print(f"  {path.name:20s} <- {tile_id}  ({path.stat().st_size / 1024:.1f} kB)")
