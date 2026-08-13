@@ -16,6 +16,14 @@ byte for byte med det indtjekkede facit. Ingen destruktiv kørsel, ingen
 overraskelse: enten matcher drafts facittet, eller også fejler denne kontrol
 og siger præcis hvorfor, uden at røre en eneste rigtig fil.
 
+`check_grammar_assembly(real_out=...)` er det importerbare kerneindgangspunkt
+(kodegennemgang 2026-08-13) — judge.py's gate() kalder den direkte som ÉN af
+de kontroller den fulde stemmeport består af, i stedet for at stole på at et
+menneske selv husker at køre denne fil separat. `real_out` kan pege på en
+anden sti end det rigtige indhold — bruges af judge.py's selftest() til at
+BEVISE at kontrollen fanger afvigelser, ved at pege den på en bevidst
+afdrevet kopi, uden nogensinde at røre content/narrator/grammar-act-1.json.
+
 Brug:
     python3 tools/voice/check_grammar_assembly.py
 
@@ -24,43 +32,69 @@ drafts, 1 ellers (inklusiv hvis assemble_grammar.py selv finder problemer).
 """
 from __future__ import annotations
 
+import contextlib
+import io
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import assemble_grammar  # noqa: E402 — ligger i tools/, ikke tools/voice/
+
 REAL_OUT = ROOT / "content" / "narrator" / "grammar-act-1.json"
 SCRATCH_DIR = Path(__file__).resolve().parent / ".tmp"
 SCRATCH_OUT = SCRATCH_DIR / "grammar-act-1.assembled-check.json"
 
 
-def main() -> int:
-    sys.path.insert(0, str(ROOT / "tools"))
-    import assemble_grammar  # noqa: E402 — ligger i tools/, ikke tools/voice/
+def check_grammar_assembly(*, real_out: Path | None = None) -> list[str]:
+    """Kører den ægte samler mod en midlertidig sti og sammenligner byte for
+    byte med `real_out` (standard: det rigtige content/narrator/grammar-act-1.json).
+    Returnerer en liste af menneskelæsbare problemer — tom liste = reproducerbart.
+
+    `real_out` findes udelukkende så judge.py's selftest() kan pege kontrollen
+    på en bevidst afdrevet, midlertidig kopi og bevise at den rent faktisk
+    fanger afvigelser (aldrig kaldt med andet end standardværdien fra gate()
+    selv eller denne fils egen main())."""
+    target = real_out if real_out is not None else REAL_OUT
+    problems: list[str] = []
 
     SCRATCH_DIR.mkdir(exist_ok=True)
     try:
-        rc = assemble_grammar.main(["--out", str(SCRATCH_OUT)])
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            rc = assemble_grammar.main(["--out", str(SCRATCH_OUT)])
         if rc != 0:
-            print("✗ assemble_grammar.py meldte selv problemer — se output ovenfor.")
-            print("  Facittet er IKKE rørt (kørslen skrev kun til en midlertidig sti).")
-            return 1
+            problems.append(
+                "assemble_grammar.py meldte selv problemer ved en tør kørsel "
+                f"(facittet er IKKE rørt):\n{buf.getvalue().rstrip()}"
+            )
+            return problems
 
         assembled = SCRATCH_OUT.read_text(encoding="utf-8")
-        real = REAL_OUT.read_text(encoding="utf-8")
+        real = target.read_text(encoding="utf-8")
     finally:
         SCRATCH_OUT.unlink(missing_ok=True)
         try:
             SCRATCH_DIR.rmdir()
         except OSError:
-            pass  # ikke tom (fx en samtidig kørsel) — lad den stå, intet er utæt
+            pass  # ikke tom (fx en samtidig kørsel, eller selftest's afdrevne kopi) — lad den stå
 
-    if assembled == real:
+    if assembled != real:
+        problems.append(
+            f"{target} matcher IKKE en frisk samling af sine egne drafts — "
+            "ret content/narrator/drafts/grammar-*.json, ikke facittet; "
+            "facittet SKAL være det drafts udtrykker, aldrig omvendt."
+        )
+    return problems
+
+
+def main() -> int:
+    problems = check_grammar_assembly()
+    if not problems:
         print(f"✅ {REAL_OUT.relative_to(ROOT)} er reproducerbart fra drafts, byte for byte.")
         return 0
-
-    print(f"✗ {REAL_OUT.relative_to(ROOT)} matcher IKKE en frisk samling af sine egne drafts.")
-    print("  Ret drafts under content/narrator/drafts/grammar-*.json, ikke facittet —")
-    print("  facittet SKAL være det drafts udtrykker, aldrig omvendt.")
+    for p in problems:
+        print(f"✗ {p}")
     return 1
 
 

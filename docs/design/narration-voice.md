@@ -39,7 +39,7 @@ En hård port der fældede 488 allerede godkendte replikker kunne ikke lukke TAS
 
 ## Frosset ordtal-bånd for bagte par (2026-08-13)
 
-Frosset version 1, 2026-08-13, fra commit `c7a0d7198417` (404 par, 908 varianter). Genkalibrering: `python3 tools/voice/freeze_pairs_baseline.py` — aldrig automatisk.
+Frosset version 2, 2026-08-13, fra commit `0cb91b78469c` (404 par, 908 varianter). Genkalibrering: `python3 tools/voice/freeze_pairs_baseline.py` — aldrig automatisk.
 
 | | median | p10 | p90 | n |
 |---|---:|---:|---:|---:|
@@ -295,6 +295,8 @@ Ingen — se forklaringen ovenfor.
 
 9. **`gate()` komponerer nu `check_pairs.py` — en udvidelse af TASK-030's scope, ikke en bogstavelig instruks.** Den oprindelige opgavetekst bad om at "give judge.py en ren indgang" for STEMME-scoring; kodegennemgang bad specifikt om at `gate()` også skulle bevise par-KONTRAKTEN (navn, dom, dublet, længde) i stedet for at antage et menneske huskede at køre `check_pairs.py` separat. Implementeret ved import (ikke subprocess) af en ny, ren `check_pairs_data()`/`check_pairs_file()`-kerne udtrukket af den eksisterende fil — `main()`'s CLI-adfærd er verificeret uændret (samme udskrift, samme returkode på alle 10 udkast-batches). Ikke en judgment call i samme forstand som punkt 7/8 (brugeren bad eksplicit om præcis dette), men nævnt her fordi det udvider hvad `gate()` dømmer ud over den oprindelige opgavetekst.
 
+10. **`gate()` komponerer nu OGSÅ begge facit-filers reproducerbarhed fra drafts — sidste blokerende kodegennemgang-punkt (2026-08-13), ikke en bogstavelig instruks.** `tools/voice/check_grammar_assembly.py` (forrige runde) og `tools/voice/check_pairs_assembly.py` (denne runde) beviser hver især at `content/narrator/{grammar,pairs}-act-1.json` er byte-for-byte reproducerbare fra deres egne drafts under `content/narrator/drafts/`. Begge var tidligere kun selvstændigt kørbare filer — kodegennemgang påpegede at et menneske der glemmer at køre dem separat efterlader præcis det hul der tidligere lod grammatikkens facit gå ud af trit med sine drafts. Begge er nu refaktoreret til et importerbart kerneindgangspunkt (`check_grammar_assembly(real_out=...)`/`check_pairs_assembly(real_out=...)` → liste af problemer, tom = bestået) som `gate()` kalder direkte, FØR den dømmer noget indhold — bevist ved to niveauer i `judge.py`'s selftest: kontrolfunktionen alene, og den FULDE `gate()`, fanger begge et bevidst injiceret, afdrevet facit via en midlertidig sti (aldrig det rigtige indhold). Samtidig blev `hardCap`/`overHardCap` fjernet fra det frosne par-ordtalsbånd (`pairs_baseline.json`, version 1→2, se "Frosset ordtal-bånd" ovenfor) — de beskriver et 32-ords GENERATOR-loft (grammatik) som bagte par aldrig har haft; deres reelle grænse er check_pairs.py's 320-tegns kontrakt. Ingen af fordelingstallene (mean/median/stdev/percentiler) ændrede sig ved fjernelsen, kun de to meningsløse nøgler forsvandt.
+
 ## Wiring into validate
 
 `tools/validate.py` ejes af en anden agent lige nu og røres ikke her. Sådan kobles stemmedommeren ind, når den anden agents arbejde er flettet — indsæt lige før den afsluttende rapportering (før `for note in notes:` nederst i `main()`, efter tjekket af "Flags der kræves men aldrig sættes"):
@@ -307,7 +309,7 @@ Ingen — se forklaringen ovenfor.
         err(f"stemme: {f}")
 ```
 
-Fem linjer, ét anker-punkt. `voice_judge.gate()` returnerer allerede menneskelæsbare, danske fejlstrenge (streng pr. kandidat-linje der enten rammer en hård afvisning eller scorer under den kalibrerede tærskel) — `err()` lægger dem oveni de eksisterende fejl, så `python3 tools/validate.py` fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv kilde-sammensætningen internt (se "Politik: kilde-sammensatte gates" ovenfor) — grammatik og bagte par scores hver mod deres egen kontrakt, uden at wiring'en her behøver filtrere labels efter præfiks. Verificeret: `python3 tools/voice/gate.py` slutter med exit 0 på det nuværende indhold (0 grammatik-fejl, 0 par-fejl), så denne snippet kan indsættes direkte uden at gøre `npm run validate` rød.
+Fem linjer, ét anker-punkt. `voice_judge.gate()` returnerer allerede menneskelæsbare, danske fejlstrenge (streng pr. kandidat-linje der enten rammer en hård afvisning eller scorer under den kalibrerede tærskel, PLUS en streng pr. facit-fil der ikke er reproducerbar fra sine drafts) — `err()` lægger dem oveni de eksisterende fejl, så `python3 tools/validate.py` fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv kilde-sammensætningen internt (se "Politik: kilde-sammensatte gates" ovenfor) — grammatik og bagte par scores hver mod deres egen kontrakt, uden at wiring'en her behøver filtrere labels efter præfiks. Verificeret: `python3 tools/voice/gate.py` slutter med exit 0 på det nuværende indhold (0 grammatik-fejl, 0 par-fejl, begge facit-filer reproducerbare fra drafts), så denne snippet kan indsættes direkte uden at gøre `npm run validate` rød.
 
 ---
 _Genereret af `python3 tools/voice/calibrate.py`. Regenerér efter enhver ændring i `content/narrator/*.json`, `tools/voice/lexicon.json`, `tools/voice/metrics.py` eller `tools/voice/judge.py`._

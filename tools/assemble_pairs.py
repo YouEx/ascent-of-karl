@@ -16,9 +16,25 @@ skifter dom mellem gennemspilninger — samme par mødes i forskellige
 spiltilstande. En bagt replik der siger "du var tæt på" ville være løgn de
 gange sandheden er "det var absurd". Bages kun den dominerende dom; resten
 falder igennem til grammatikken, som altid har ret.
+
+Køres normalt uden argumenter og skriver det rigtige indhold, som før.
+
+## Reproducerbarhed (2026-08-13)
+
+Samme princip som tools/assemble_grammar.py: drafts under
+content/narrator/drafts/pairs-*.json er facittet content/narrator/pairs-act-1.json
+er udledt af, og skal derfor altid kunne gensamles til BYTE-FOR-BYTE samme
+fil. `--out <sti>` skriver i stedet til en midlertidig sti uden at røre det
+rigtige indhold, så tools/voice/check_pairs_assembly.py kan bevise
+reproducerbarheden — og judge.py's gate() kan gøre det samme hver gang den
+kører — uden en destruktiv kørsel i eget bo.
+
+    python3 tools/assemble_pairs.py                    # skriver rigtigt indhold
+    python3 tools/assemble_pairs.py --out sti/til/fil   # tør kørsel, rører intet
 """
 from __future__ import annotations
 
+import argparse
 import json
 import subprocess
 import sys
@@ -38,7 +54,12 @@ def line_id(key: str, verdict: str) -> str:
     return "pair-" + key.replace("+", "-") + "-" + verdict
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--out", type=Path, default=OUT,
+                    help="skriv hertil i stedet for det rigtige indhold (tør kørsel)")
+    args = ap.parse_args(argv)
+
     jobs = {j["key"]: j for j in json.loads(JOBS.read_text())["jobs"]}
     pairs: list[str] = []
     lines: list[dict] = []
@@ -75,10 +96,10 @@ def main() -> int:
         print(f"⚠️  {len(unwritten)} par i _jobs.json har ingen replik: "
               f"{', '.join(unwritten[:5])}")
 
-    OUT.write_text(json.dumps(
+    args.out.write_text(json.dumps(
         {"act": 1, "pairs": pairs, "lines": lines}, ensure_ascii=False, indent=2) + "\n")
     n = sum(len(l["variants"]) for l in lines)
-    print(f"✅ {OUT.relative_to(ROOT)}: {len(pairs)} opslag, {n} replikker")
+    print(f"✅ {args.out.name}: {len(pairs)} opslag, {n} replikker")
     return 0
 
 

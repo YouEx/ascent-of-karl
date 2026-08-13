@@ -10,9 +10,12 @@ anden agents arbejde er flettet).
 Dømmer al statisk kandidattekst i repoet — grammatikkens ekspanderede
 linjer og de bagte par, BÅDE mod stemme-fingeraftrykket OG mod par-kontrakten
 (check_pairs.py, importeret og kørt her, ikke bare antaget kørt separat af et
-menneske — se gate()'s docstring). Udskriver hver afvisning menneskelæsbart
-og afslutter med exit 1 hvis der er mindst én. Tom output og exit 0 = alt
-kandidatindhold lyder som fortælleren OG overholder par-kontrakten.
+menneske), OG at begge facit-filer (grammar-act-1.json, pairs-act-1.json)
+rent faktisk er reproducerbare fra deres egne drafts (check_grammar_assembly.py
+/ check_pairs_assembly.py — se gate()'s docstring for hvorfor). Udskriver hver
+afvisning menneskelæsbart og afslutter med exit 1 hvis der er mindst én. Tom
+output og exit 0 = alt kandidatindhold lyder som fortælleren, overholder
+par-kontrakten, OG begge facit-filer matcher deres drafts.
 
     python3 tools/voice/gate.py
 """

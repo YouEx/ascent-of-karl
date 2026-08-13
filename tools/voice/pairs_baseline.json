@@ -23,11 +23,18 @@
     "— køres kun når et menneske har besluttet at bagte pars ordtal-norm",
     "reelt skal flytte sig (fx efter en ny, bevidst godkendt bølge af bagte",
     "par). Scriptet overskriver denne fil og printer før/efter-tallene, så",
-    "ændringen altid er synlig i en diff, aldrig stiltiende."
+    "ændringen altid er synlig i en diff, aldrig stiltiende.",
+    "",
+    "v2 (kodegennemgang 2026-08-13): fjernede hardCap/overHardCap fra",
+    "wordCount. De to nøgler beskriver et 32-ORDS generator-loft",
+    "(judge.py's HARD_MAX_WORDS) som bagte par aldrig har haft — parrenes",
+    "reelle grænse er check_pairs.py's 320-TEGNS kontrakt. Ingen af",
+    "fordelingstallene (mean/median/stdev/min/max/p10-p95) ændrede sig ved",
+    "v2 — kun de to meningsløse nøgler forsvandt."
   ],
-  "version": 1,
+  "version": 2,
   "frozenAt": "2026-08-13",
-  "frozenFromCommit": "c7a0d7198417b15f1e118d66cc9f312b385a34d0",
+  "frozenFromCommit": "0cb91b78469c1df694739c66d30106fb4b1afe0c",
   "sourcePairCount": 404,
   "sourceVariantCount": 908,
   "wordCount": {
@@ -41,8 +48,6 @@
     "p50": 32.0,
     "p75": 38.0,
     "p90": 43.0,
-    "p95": 46.0,
-    "hardCap": 32,
-    "overHardCap": 445
+    "p95": 46.0
   }
 }

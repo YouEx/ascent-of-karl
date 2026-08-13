@@ -19,6 +19,12 @@ Scriptet genberegner ordtal-fordelingen fra det NUVÆRENDE indhold i
 content/narrator/pairs-act-1.json, printer før/efter-tallene tydeligt, og
 overskriver pairs_baseline.json. Ændringen står derefter i git-diff'en som
 enhver anden indholdsændring — aldrig stiltiende.
+
+Båndet indeholder IKKE hardCap/overHardCap (kodegennemgang 2026-08-13): de
+beskriver et 32-ORDS generator-loft (grammatik/live-tekst, se judge.py's
+HARD_MAX_WORDS) som bagte par aldrig har haft — deres reelle grænse er
+check_pairs.py's 320-TEGNS kontrakt. Se recompute_pairs_wordcount_band()'s
+docstring i judge.py for hvor de to nøgler strippes.
 """
 from __future__ import annotations
 
@@ -30,8 +36,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from judge import expand_pairs  # noqa: E402
-from metrics import words_per_line_stats  # noqa: E402
+from judge import expand_pairs, recompute_pairs_wordcount_band  # noqa: E402
 
 BASELINE_PATH = Path(__file__).resolve().parent / "pairs_baseline.json"
 
@@ -49,7 +54,7 @@ def main() -> int:
     old = json.loads(BASELINE_PATH.read_text(encoding="utf-8")) if BASELINE_PATH.exists() else None
 
     pairs = expand_pairs()
-    stats = words_per_line_stats([text for _, text in pairs])
+    stats = recompute_pairs_wordcount_band(pairs)  # allerede uden hardCap/overHardCap, se dens docstring
     # Mærkat er "pairs:<parNøgle>:<dom>#<variantindeks>" — parNøglen+dom er alt
     # mellem første og sidste ":", variantindekset er efter "#".
     pair_keys = {label.split("#")[0] for label, _ in pairs}

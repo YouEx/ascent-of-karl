@@ -76,6 +76,13 @@ sys.path.insert(0, str(ROOT / "tools"))
 import check_pairs  # noqa: E402 — TASK-030's par-kontrakt-komposition, se gate()
 import assemble_pairs  # noqa: E402 — kun for DRAFTS/BATCHES, samme liste som fletningen selv bruger
 
+# check_grammar_assembly/check_pairs_assembly ligger i tools/voice/ selv (samme
+# mappe som denne fil) — intet ekstra sys.path-indslag nødvendigt, Python
+# finder dem automatisk (se deres egne docstrings for hvorfor gate() komponerer
+# dem direkte i stedet for at stole på at et menneske kører dem separat).
+import check_grammar_assembly  # noqa: E402
+import check_pairs_assembly  # noqa: E402
+
 # --- Faste politik-tal fra planen (TASK-028) — IKKE kalibreret, se docstring ---
 HARD_MAX_SENTENCES = 3
 HARD_MAX_WORDS = 32
@@ -325,10 +332,20 @@ def recompute_pairs_wordcount_band(pairs: list[tuple[str, str]] | None = None) -
     calibrate.py (til at RAPPORTERE om det frosne bånd stadig matcher det
     nuværende indhold — se "Politik: frosset ordtal-bånd" i den genererede
     rapport). Aldrig kaldt fra score()/gate() — de bruger altid det frosne
-    pairs_wordcount_band() ovenfor."""
+    pairs_wordcount_band() ovenfor.
+
+    hardCap/overHardCap strippes fra resultatet (kodegennemgang 2026-08-13):
+    de er et 32-ORDS generator-loft-begreb (se HARD_MAX_WORDS) der gælder
+    grammatik/fremtidig live-tekst — bagte par har intet ordtal-loft, kun
+    check_pairs.py's 320-TEGNS kontrakt. At lade dem stå i par-båndet ville
+    påstå en grænse par aldrig har haft. Strippes IKKE i words_per_line_stats()
+    selv, for den bruges også til det håndskrevne fingeraftryk, hvor
+    hardCap/overHardCap ER den rigtige, meningsfulde ting at vise (se
+    metrics.py's docstring)."""
     if pairs is None:
         pairs = expand_pairs()
-    return words_per_line_stats([text for _, text in pairs])
+    stats = words_per_line_stats([text for _, text in pairs])
+    return {k: v for k, v in stats.items() if k not in ("hardCap", "overHardCap")}
 
 
 def score(text: str, fingerprint: dict[str, Any], corpus_vocab: set[str] | None = None,
@@ -503,18 +520,25 @@ def calibrated_threshold(fingerprint: dict[str, Any], percentile: str = "p5") ->
 def gate() -> list[str]:
     """TASK-030's importable indgang. Dømmer ALT kandidatindhold der findes
     som statisk indhold i repoet: grammatikkens ekspanderede linjer, de bagte
-    par (stemme + register), OG de bagte pars strukturelle kontrakt (navn,
-    dom, dublet, længde — check_pairs.py, TASK-023). De sidste er en ANDEN
-    slags fejl end stemme-scoren kan se: en replik kan lyde perfekt som
-    fortælleren og stadig nævne det forkerte element, eller være en dublet af
-    en anden replik. At antage et menneske huskede at køre check_pairs.py
-    separat var utilstrækkeligt (kodegennemgang 2026-08-13) — derfor
-    IMPORTERES den rigtige kontrol her og køres mod de 10 UDKAST-batches
-    (samme shape check_pairs.py forstår; DEN ASSEMBLEREDE fil har en anden
-    shape — "pairs" er der en liste af strenge, ikke objekter — se
-    assemble_pairs.py's egen præcedens for at køre check_pairs.py pr. batch,
-    aldrig mod outputtet). Én kommando beviser nu HELE par-kontrakten, ikke
-    kun stemme-halvdelen af den.
+    par (stemme + register), de bagte pars strukturelle kontrakt (navn, dom,
+    dublet, længde — check_pairs.py, TASK-023), OG at BEGGE assemblerede
+    facit-filer rent faktisk er reproducerbare fra deres egne drafts
+    (check_grammar_assembly.py / check_pairs_assembly.py, kodegennemgang
+    2026-08-13 — se deres docstrings: en kalibrering der måler et facit som
+    er gledet ud af trit med sine drafts måler den forkerte ting, og præcis
+    det skete engang med grammatikken). Alle fire er komponeret direkte her —
+    at antage et menneske selv husker at køre check_pairs.py, eller de to
+    samlings-kontroller, separat var utilstrækkeligt. Én kommando beviser nu
+    HELE stemme- og par-kontrakten, ikke kun de dele en scoringsfunktion kan se.
+
+    De strukturelle kontroller er en ANDEN slags fejl end stemme-scoren kan
+    se: en replik kan lyde perfekt som fortælleren og stadig nævne det
+    forkerte element, være en dublet, eller stamme fra et facit der ikke
+    matcher sine egne drafts. check_pairs-kontrakten køres mod de 10
+    UDKAST-batches (samme shape check_pairs.py forstår; DEN ASSEMBLEREDE fil
+    har en anden shape — "pairs" er der en liste af strenge, ikke objekter —
+    se assemble_pairs.py's egen præcedens for at køre check_pairs.py pr.
+    batch, aldrig mod outputtet).
 
     (Live-generering ved runtime har intet statisk indhold at dømme her — se
     docs/design/narration-voice.md, "Wiring into validate", for hvordan et
@@ -522,6 +546,14 @@ def gate() -> list[str]:
 
     Returnerer en liste af menneskelæsbare fejlbeskeder. Tom liste = bestået.
     """
+    failures: list[str] = []
+
+    # Reproducerbarhed FØRST: er facit-filerne overhovedet det deres drafts
+    # udtrykker? Uden dette kunne resten af gate() dømme et facit der reelt
+    # var forældet eller håndredigeret uden om drafts (se check_*_assembly.py).
+    failures.extend(f"grammatik-samling: {p}" for p in check_grammar_assembly.check_grammar_assembly())
+    failures.extend(f"par-samling: {p}" for p in check_pairs_assembly.check_pairs_assembly())
+
     fingerprint = build_fingerprint()
     threshold = calibrated_threshold(fingerprint)
     corpus_vocab = set(fingerprint["vocabulary"]["frequency"])
@@ -535,7 +567,6 @@ def gate() -> list[str]:
     ]
     pairs_band = pairs_wordcount_band()  # frosset facit, se pairs_wordcount_band()'s docstring
 
-    failures: list[str] = []
     for source, candidates in sourced:
         for label, text in candidates:
             rejects = hard_reject(text, fingerprint, source=source)
@@ -684,6 +715,66 @@ def selftest() -> int:
             f"den oppustede mængde selv burde scorer den oppustede mængde højt (viser HVORFOR "
             f"selvkalibrering ikke opdager skred), fik {inflated_mean_vs_live:.3f}"
         )
+
+    # Samlings-reproducerbarhed (kodegennemgang 2026-08-13, sidste blokerende
+    # punkt): beviser at check_grammar_assembly()/check_pairs_assembly() — og
+    # gate() SELV, som er hvad validate.py rent faktisk vil kalde — fanger et
+    # facit der er gledet ud af trit med sine drafts. At de består mod det
+    # NUVÆRENDE, rigtige indhold viser kun at intet er i stykker LIGE NU, ikke
+    # at kontrollen kan opdage noget — derfor et injiceret, kunstigt afdrevet
+    # "facit" via en midlertidig sti (`real_out=` / REAL_OUT), aldrig en
+    # ændring af det rigtige indhold. To niveauer: (1) kontrolfunktionen
+    # kaldt direkte med `real_out=` beviser selve mekanismen; (2) den FULDE
+    # gate(), med REAL_OUT midlertidigt ombundet, beviser at gate() (det
+    # eneste sted validate.py nogensinde skal kalde) reelt reagerer — ikke
+    # kun kontrolfunktionen i isolation.
+    def _drifted_copy(real_path: Path, scratch_name: str) -> Path:
+        data = json.loads(real_path.read_text(encoding="utf-8"))
+        data["lines"][0]["variants"][0] += " — selftest-injiceret drift, skal ALDRIG bestå"
+        scratch = check_grammar_assembly.SCRATCH_DIR / scratch_name
+        scratch.parent.mkdir(exist_ok=True)
+        scratch.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return scratch
+
+    # (1) kontrolfunktionerne i isolation, med et eksplicit injiceret facit.
+    grammar_drift = _drifted_copy(check_grammar_assembly.REAL_OUT, "selftest-grammar-drift.json")
+    try:
+        if not check_grammar_assembly.check_grammar_assembly(real_out=grammar_drift):
+            fails.append("check_grammar_assembly(real_out=...) fangede IKKE et injiceret, afdrevet facit")
+    finally:
+        grammar_drift.unlink(missing_ok=True)
+
+    pairs_drift = _drifted_copy(check_pairs_assembly.REAL_OUT, "selftest-pairs-drift.json")
+    try:
+        if not check_pairs_assembly.check_pairs_assembly(real_out=pairs_drift):
+            fails.append("check_pairs_assembly(real_out=...) fangede IKKE et injiceret, afdrevet facit")
+    finally:
+        pairs_drift.unlink(missing_ok=True)
+
+    # (2) den fulde gate(): REAL_OUT midlertidigt ombundet til den afdrevne
+    # kopi, ALDRIG det rigtige indhold — og ubetinget gendannet i finally,
+    # uanset om gate() selv rejser en undtagelse.
+    grammar_drift = _drifted_copy(check_grammar_assembly.REAL_OUT, "selftest-grammar-drift-gate.json")
+    orig_grammar_real_out = check_grammar_assembly.REAL_OUT
+    try:
+        check_grammar_assembly.REAL_OUT = grammar_drift
+        gate_result = gate()
+        if not any("grammatik-samling" in f for f in gate_result):
+            fails.append("gate() fangede IKKE et injiceret, afdrevet grammatik-facit (REAL_OUT ombundet)")
+    finally:
+        check_grammar_assembly.REAL_OUT = orig_grammar_real_out
+        grammar_drift.unlink(missing_ok=True)
+
+    pairs_drift = _drifted_copy(check_pairs_assembly.REAL_OUT, "selftest-pairs-drift-gate.json")
+    orig_pairs_real_out = check_pairs_assembly.REAL_OUT
+    try:
+        check_pairs_assembly.REAL_OUT = pairs_drift
+        gate_result = gate()
+        if not any("par-samling" in f for f in gate_result):
+            fails.append("gate() fangede IKKE et injiceret, afdrevet par-facit (REAL_OUT ombundet)")
+    finally:
+        check_pairs_assembly.REAL_OUT = orig_pairs_real_out
+        pairs_drift.unlink(missing_ok=True)
 
     for f in fails:
         print("FEJL:", f)
