@@ -118,6 +118,37 @@ Dette er bekræftet PRÆ-EKSISTERENDE og identisk for en urelateret, urørt
 overlejring (bogpanelet) — det er ikke en titelskærms-regression, og at rette
 det ville være ny scope ud over denne opgave.
 
+### Tillæg 13-08-2026: mobilruden blev målt mod den forkerte viewport
+
+Den integrerede browserverifikation efter merge modbeviste TASK-019's tidligere
+konklusion om, at spilskærmens vandrette overflow ikke kunne påvirke den faste
+titel. I en rigtig mobilkontekst (`390×844`, `isMobile: true`, DPR 2) udvidede
+de skjulte spilkontroller layout-viewportun til **693×1498**, mens den synlige
+visual viewport fortsat var **390×844**. `position: fixed; inset: 0` fulgte
+layout-viewportun: titlen blev 693 px bred, og pergamentet landede ved
+`x=156–537`, altså delvist uden for den synlige rude.
+
+TDD-beviset ligger i `tools/ux_audit.mjs`: tre nye browserchecks
+(`visual-width`, `visual-height`, `panel-in-viewport`) blev først kørt RØDT mod
+den integrerede kode — **3/34 fejlede** med de målte tal ovenfor. Den mindste
+rettelse binder `#title-screen` til `100dvw × 100dvh` og lægger det ved
+`inset: 0 auto auto 0`; spilskærmens layout er urørt. Samme audit er derefter
+GRØN **34/34**: titlen måler 390×844, og pergamentet ligger ved `x=16–374`.
+`tests/title-screen.test.ts` pinner desuden begge dynamic viewport-units i den
+hurtige teststi.
+
+Pre-commit-gennemgangen fandt samme årsag i den Fates-modal, titlen selv kan
+åbne: modalens slør var stadig 693 px bredt, og dens indhold lå ved
+`x=137–557`. Auditten fik derfor to yderligere browserchecks og blev kørt RØDT
+igen (**2/36 fejlede**). Den fælles fuldskærmsregel for `#card`, `#banner`,
+`#ending` og `#trophy-modal` bruger nu samme `100dvw × 100dvh`-binding; Fates
+ligger efter rettelsen helt i 390 px-ruden, og hele auditten er GRØN **36/36**.
+
+Den tidligere Esc-fokusbemærkning ovenfor er også supersederet af den afsluttende
+uafhængige kodegennemgang: den kunne ikke reproduceres; fokus vendte korrekt
+tilbage til udløseren. Det ændrer ikke inert-rettelsen, men betyder, at der ikke
+står en kendt, åben fokusfejl tilbage i `overlay.ts`.
+
 ## 1. Requirements & Constraints
 
 - **REQ-001**: Kompositionen er to spalter: pergament ca. 0-42 % af bredden,
