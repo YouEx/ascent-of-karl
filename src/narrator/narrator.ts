@@ -719,14 +719,27 @@ export class Narrator {
       outcome.b,
     );
     const heardFromPool = this.state.recentGrammar.filter((id) => pool.includes(id));
+    let recentForPick = this.state.recentGrammar;
+    let outsidePool: string[] | undefined;
     if (new Set(heardFromPool).size === pool.length) {
-      this.state.recentGrammar = this.state.recentGrammar.filter(
+      const latest = heardFromPool[0];
+      outsidePool = this.state.recentGrammar.filter(
         (id) => !pool.includes(id),
       );
+      // Sidste replik udelukkes kun fra den første lodtrækning i den nye
+      // cyklus. Derefter starter hukommelsen forfra med det valgte id —
+      // ellers bliver hver ny cyklus én replik kortere og skævvrider loftet
+      // for, hvor ofte samme joke kan høres i ét run.
+      recentForPick = latest
+        ? [latest, ...outsidePool]
+        : outsidePool;
     }
-    const id = pickGrammarLine(pool, this.state.recentGrammar, () => this.rand());
+    const id = pickGrammarLine(pool, recentForPick, () => this.rand());
     if (!id) return undefined;
-    this.state.recentGrammar = [id, ...this.state.recentGrammar];
+    this.state.recentGrammar = [
+      id,
+      ...(outsidePool ?? this.state.recentGrammar),
+    ];
     const ctx = verdictContext(outcome.a, outcome.b, outcome.evidence);
     const spoken = this.speak(id, ctx);
     // Nævnte replikken den rigtige partner, er det et råd — og et råd skal

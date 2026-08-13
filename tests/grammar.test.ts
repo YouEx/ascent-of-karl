@@ -144,5 +144,22 @@ describe("Grammatikken: i den rigtige motor", () => {
       expect(repeats, `frø ${seed}`).toBe(0);
     }
   });
-});
 
+  it("starter ikke en ny puljecyklus med den replik der netop sluttede den gamle", () => {
+    const grammarIds = new Set(Object.values(act1.grammar ?? {}).flat());
+    const offenders: string[] = [];
+    for (let run = 0; run < 1000; run++) {
+      const seed = run * 7919 + 13;
+      const said = playAndCollectFailures(content, seed)
+        .filter((line) => grammarIds.has(line.id));
+      for (let i = 1; i < said.length; i++) {
+        if (said[i]!.id === said[i - 1]!.id) {
+          offenders.push(`run ${run} (seed ${seed}): ${said[i]!.id}`);
+          break;
+        }
+      }
+      if (offenders.length >= 5) break;
+    }
+    expect(offenders).toEqual([]);
+  });
+});

@@ -2,7 +2,7 @@
 goal: Gøre fortælleren i stand til at fortælle om præcis de to ting spilleren lagde sammen — hver gang, for hvert par, uden at "nothing happens" nogensinde optræder igen
 version: 1.0
 date_created: 2026-08-12
-last_updated: 2026-08-12
+last_updated: 2026-08-13
 owner: Martin (YouEx)
 status: 'In progress'
 tags: [architecture, engine, narrator, content, tooling, feature]
@@ -112,6 +112,14 @@ Planen er en ombygning af udfaldsmodellen, ikke en omskrivning af spillet. Motor
 | TASK-018 | Tilføj anti-gentagelse på tværs af domme. Det første globale K=6-vindue bestod den lokale test, men TEST-007 fandt op til 5 gentagelser i ét run. `NarratorState.recentGrammar` holder nu en separat, implicit cyklus pr. pulje: alle replikker i dommen skal høres, før puljen nulstilles. | ✅ | 2026-08-12 |
 | TASK-019 | Indsæt grammatikken i `reactTo` som nyt trin lige før `genericFailureLine`. Den generiske pulje bliver dermed uopnåelig i praksis og bevares kun som nødudgang, hvis grammatikken mangler en regel — hvilket TEST-004 forbyder. | ✅ | 2026-08-12 |
 | TASK-020 | Skriv mindst 6 varianter pr. dom for de otte domme (≈ 48 regler) og tag-specialiseringer for de 12 hyppigste `stuff`-par fra TASK-001. | ✅ | 2026-08-12 |
+
+**Tillæg 13-08-2026:** En branch-gennemgang fandt, at en udtømt pulje blev
+nulstillet helt før næste lodtrækning. Dermed kunne den nye cyklus begynde med
+det samme joke-id, som netop sluttede den gamle. En deterministisk 1.000-runs
+test fandt fem konkrete frø før rettelsen. Reset-logikken udelukker nu kun den
+seneste replik fra den første lodtrækning og starter derefter en fuld ny cyklus
+med det valgte id. Resultat: ingen nabogentagelser, stadig højst tre forekomster
+pr. run i TEST-007's 2.000 runs, og nødudgangen forbliver på 0 hits.
 
 ### Implementation Phase 4
 
