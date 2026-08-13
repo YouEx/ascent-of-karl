@@ -24,3 +24,35 @@ declare module "node:path" {
 declare module "node:url" {
   export function fileURLToPath(url: string): string;
 }
+
+declare module "node:child_process" {
+  interface Output {
+    toString(encoding?: string): string;
+  }
+
+  interface ChildProcess {
+    killed: boolean;
+    exitCode: number | null;
+    signalCode: string | null;
+  }
+
+  export function execFileSync(
+    file: string,
+    args?: readonly string[],
+    options?: {
+      cwd?: string;
+      stdio?: "pipe" | "inherit";
+      timeout?: number;
+    },
+  ): Output;
+
+  export function spawn(
+    file: string,
+    args?: readonly string[],
+    options?: { stdio?: "ignore" | "pipe" | "inherit" },
+  ): ChildProcess;
+}
+
+declare const process: {
+  execPath: string;
+};

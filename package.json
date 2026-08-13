@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:visual": "vitest run --config vitest.visual.config.ts",
     "validate": "python3 tools/validate.py",
     "predicates": "python3 tools/predicate_report.py",
     "predicates:fixture": "python3 tools/parity_fixture.py",

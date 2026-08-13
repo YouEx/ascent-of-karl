@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "commit": "429849dd2ba4d483946c844f91facc96b68df49b",
+  "capturedAt": "2026-08-13",
+  "maxDrop": 0.02,
+  "note": "Frisk optaget, scoret og accepteret på denne commit (TASK-029). Se plan/architecture-visual-judge-1.md TASK-029/032 og tests/visual.test.ts (TASK-030), som sammenligner mod disse tal og fejler ved et fald over 0,02 i en region.",
+  "screens": {
+    "game": {
+      "overall": 0.8528,
+      "regions": {
+        "app-frame": 0.879,
+        "header": 0.8705,
+        "narrator": 0.8869,
+        "chronicle": 0.878,
+        "chips": 0.8857,
+        "slots": 0.8662,
+        "combine": 0.9007,
+        "search": 0.9062,
+        "grid": 0.7028
+      }
+    },
+    "title": {
+      "overall": 0.7838,
+      "regions": {
+        "headline": 0.752,
+        "ribbon": 0.7452,
+        "tagline": 0.7352,
+        "divider": 0.8267,
+        "actions": 0.8251,
+        "hint": 0.7363,
+        "tip-card": 0.7642,
+        "chip": 0.7543,
+        "tools": 0.7369,
+        "scene": 0.9524
+      }
+    }
+  }
+}
