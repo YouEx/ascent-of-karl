@@ -10,17 +10,15 @@ palet skal være ens på tværs af brikkerne; 13 selvstændige billeder ville
 drive fra hinanden på alle tre, og forskellen ses tydeligst når brikkerne
 ligger side om side i gitteret — hvilket er præcis dét, de gør.
 
-Udskæringen bruger fremspring frem for sammenhængskomponenter: arket er et
-gitter med luft imellem, og `scipy` findes ikke i dette miljø. En sum af
-maskede pixels per række giver bånd med indhold; inde i hvert bånd giver
-samme sum per søjle den enkelte genstand. Det er robust over for, at
-generatorens gitter ikke er helt regelmæssigt.
+Selve udskæringsmotoren (fremspringsdetektion, alfa-fra-baggrundsafstand,
+beskæring med fast luft) er flyttet til `sheet_ingest.py`, så FREMTIDIGE
+tematiske ark (TASK-038) kan genbruge nøjagtig samme aritmetik i stedet for
+at få en ny, drivende metode. Denne fil er nu kun ARKETS EGNE konstanter —
+hvilken fil, hvilken rækkefølge, hvilke tærskler — plus gemning. Se
+`sheet_ingest.py`'s docstring for selve metoden.
 
-Alfa regnes ud af afstanden til den flade baggrund og lægges tilbage som
-u-præmultipliceret farve. Derfor overlever de bløde kanter og den svage
-kontaktskygge, og brikken kan ligge på et hvilket som helst kort uden at
-tegne en firkant. Genstande, der er lysere end baggrunden — vanddråben —
-får med vilje lav alfa; det er sådan, vand skal se ud.
+`tools/art/tests/test_build_elements_regression.py` låser at denne omlægning
+ikke ændrede en eneste byte af de 13 filer arket producerer.
 
 Rækkefølgen er læserækkefølge og skal matche ORDER herunder. Ændrer man
 arket, skal ORDER følge med.
@@ -39,8 +37,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import numpy as np
-from PIL import Image
+from sheet_ingest import CutParams, DetectParams, cut_tiles
 
 ROOT = Path(__file__).resolve().parents[2]
 SHEET = ROOT / "docs/design/reference/elements-sheet.png"
@@ -61,25 +58,8 @@ ALPHA_FLOOR = 9      # under dette er pixlen baggrund og bliver helt gennemsigti
 ALPHA_FULL = 42      # afstand hvor alfa når 1,0
 MIN_AREA = 400       # kasserer støvkorn og komprimeringsstøj
 
-
-def _bands(profile: np.ndarray, gap: int) -> list[tuple[int, int]]:
-    """Sammenhængende områder med indhold, adskilt af mindst `gap` tomme linjer."""
-    on = profile > 0
-    bands, start, run = [], None, 0
-    for i, v in enumerate(on):
-        if v:
-            if start is None:
-                start = i - run if run and bands and i - run <= bands[-1][1] + gap else i
-            run = 0
-        else:
-            if start is not None:
-                run += 1
-                if run >= gap:
-                    bands.append((start, i - run + 1))
-                    start = None
-    if start is not None:
-        bands.append((start, len(on)))
-    return [(a, b) for a, b in bands if b - a > 4]
+DETECT_PARAMS = DetectParams(mask_threshold=MASK_THRESHOLD, min_area=MIN_AREA)
+CUT_PARAMS = CutParams(tile=TILE, pad=PAD, alpha_floor=ALPHA_FLOOR, alpha_full=ALPHA_FULL)
 
 
 def main() -> None:
@@ -87,60 +67,13 @@ def main() -> None:
     if not src.exists():
         raise SystemExit(f"mangler {src}\nSe scriptets docstring.")
 
-    img = Image.open(src).convert("RGB")
-    a = np.asarray(img).astype(np.float64)
-    h, w, _ = a.shape
-
-    # Baggrunden er flad. Medianen af en kantramme rammer den uden at blive
-    # trukket af en genstand, der ligger tæt på kanten.
-    border = np.concatenate([
-        a[:8].reshape(-1, 3), a[-8:].reshape(-1, 3),
-        a[:, :8].reshape(-1, 3), a[:, -8:].reshape(-1, 3),
-    ])
-    bg = np.median(border, axis=0)
-
-    dist = np.abs(a - bg).max(axis=2)
-    mask = dist > MASK_THRESHOLD
-
-    gap = max(8, h // 60)
-    boxes: list[tuple[int, int, int, int]] = []
-    for y0, y1 in _bands(mask[:, :].sum(axis=1), gap):
-        strip = mask[y0:y1]
-        for x0, x1 in _bands(strip.sum(axis=0), gap):
-            sub = strip[:, x0:x1]
-            if sub.sum() < MIN_AREA:
-                continue
-            ys = np.where(sub.any(axis=1))[0]
-            boxes.append((x0, y0 + ys[0], x1, y0 + ys[-1] + 1))
-
-    if len(boxes) != len(ORDER):
-        raise SystemExit(
-            f"fandt {len(boxes)} genstande, forventede {len(ORDER)}.\n"
-            "Arket matcher ikke ORDER — ret ORDER eller arket, gæt ikke."
-        )
-
-    # Alfa ud af afstanden til baggrunden, farven u-præmultipliceret tilbage.
-    # Gulvet er ikke pynt: uden det får den flade baggrund en lille positiv
-    # alfa, og brikken tegner en svag varm firkant på alt lysere end arket.
-    alpha = np.clip((dist - ALPHA_FLOOR) / (ALPHA_FULL - ALPHA_FLOOR), 0.0, 1.0)
-    safe = np.maximum(alpha, 1e-6)[..., None]
-    fg = np.clip((a - (1.0 - alpha)[..., None] * bg) / safe, 0, 255)
-    rgba = np.dstack([fg, alpha * 255.0]).astype(np.uint8)
-    full = Image.fromarray(rgba)
+    tiles = cut_tiles(src, ORDER, DETECT_PARAMS, CUT_PARAMS)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    for name, (x0, y0, x1, y1) in zip(ORDER, boxes):
-        bw, bh = x1 - x0, y1 - y0
-        pad = int(round(max(bw, bh) * PAD))
-        crop = full.crop((x0 - pad, y0 - pad, x1 + pad, y1 + pad))
-        scale = TILE / max(crop.width, crop.height)
-        crop = crop.resize(
-            (max(1, round(crop.width * scale)), max(1, round(crop.height * scale))),
-            Image.LANCZOS,
-        )
+    for name, crop in tiles.items():
         path = OUT_DIR / f"{name}.webp"
         crop.save(path, "WEBP", quality=82, method=6)
-        print(f"  {path.name:14s} {bw}x{bh} → {crop.width}x{crop.height}  {path.stat().st_size / 1024:.1f} kB")
+        print(f"  {path.name:14s} → {crop.width}x{crop.height}  {path.stat().st_size / 1024:.1f} kB")
 
 
 if __name__ == "__main__":

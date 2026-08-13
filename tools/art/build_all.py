@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Kører alle deterministiske `build_*.py` i mappen i rigtig rækkefølge.
+"""Kører hele den deterministiske art-pipeline i rigtig rækkefølge.
 
-Scriptene skærer krom og elementkunst ud af de committede referencebilleder i
+De første scripts skærer krom og elementkunst ud af de committede referencebilleder i
 `docs/design/reference/` — det er samme håndværk som `tools/social/`, bare
 uden en fælles CLI, fordi de er skrevet ét ad gangen efterhånden som
 dommeren fandt næste forkerte flade. Denne fil samler dem, den erstatter dem
@@ -51,8 +51,9 @@ ROOT = Path(__file__).resolve().parents[2]
 ART_DIR = Path(__file__).resolve().parent
 
 # Producenter først, rettelsen af grundelementerne sidst (se docstring).
-# Resten har ingen indbyrdes afhængighed og holdes alfabetisk så en diff af
-# denne liste er let at læse.
+# Derefter regenereres batchmanifestet fra content og kontaktarket fra de
+# færdige elementfiler. Resten har ingen indbyrdes afhængighed og holdes
+# alfabetisk så en diff af denne liste er let at læse.
 SCRIPTS = [
     "build_bg_wide.py",
     "build_elements.py",
@@ -70,6 +71,8 @@ SCRIPTS = [
     "build_sparkle.py",
     "build_ui.py",
     "build_element_art.py",
+    "build_batch_manifest.py",
+    "contact_sheet.py",
 ]
 
 

@@ -523,6 +523,23 @@ billeder — derfor står den her og ikke i et script.
   ikke ét ad gangen i fuld opløsning. Drift i lysretning, margin og mætning er
   usynlig ved 100 % og øjenfaldende i et grid — og griddet er det, spilleren ser.
 
+### Kontaktarkets mål
+
+Kontaktarket er ikke en særskilt komposition. Det genbruger spillets egne tokens,
+så en ændring af flisen automatisk ændrer review-arket:
+
+| Rolle | Token | Mål |
+| --- | --- | --- |
+| Elementkort, desktop | `--element-card-width` × `--element-card-height` | 129×121 px |
+| Kunstfelt | `--element-art-max-width` × `--element-art-max-height` | 91×67 px |
+| Luft mellem review-fliser | `--contact-sheet-gutter` | 12 px |
+| Review-margin | `--contact-sheet-margin` | 16 px |
+| Navnelinje | `--contact-sheet-label-height` / `--contact-sheet-label-font-size` | 22 px / 12 px |
+| Header | `--contact-sheet-header-height` / `--contact-sheet-header-font-size` | 56 px / 15 px |
+
+Flader og blæk læses tilsvarende fra `Parchment`, `Tile` og `Ink`; kontaktarket
+må ikke indføre egne farver.
+
 ---
 
 ## 10. Ændringslog
