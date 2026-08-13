@@ -14,6 +14,8 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { loadContent } from "../src/content";
 import type { ElementDef } from "../src/core/types";
+// @ts-expect-error — hjælpefilen er ren ESM uden typedeklaration.
+import { bakedPairKeys } from "./pair_lookup.mjs";
 
 const content = loadContent();
 const act1 = content.narrator.find((n) => n.act === 1)!;
@@ -31,8 +33,14 @@ try {
   const baked = JSON.parse(
     readFileSync("content/narrator/pairs-act-1.json", "utf8"),
   );
-  for (const k of Object.keys(baked.pairs ?? {})) bakedKeys.add(k.split(":")[0]!);
-} catch {
+  for (const key of bakedPairKeys(baked)) bakedKeys.add(key);
+} catch (error) {
+  const missing =
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "ENOENT";
+  if (!missing) throw error;
   // Første runde: der findes endnu ingen samlet fil, og så skal alt skrives.
 }
 

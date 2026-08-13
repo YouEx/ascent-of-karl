@@ -20,13 +20,14 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { bakedLookupKeys } from "./pair_lookup.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => JSON.parse(readFileSync(resolve(ROOT, p), "utf8"));
 
 const freq = read("docs/design/pair-frequency.json");
 const baked = read("content/narrator/pairs-act-1.json");
-const bakedKeys = new Set(Object.keys(baked.pairs));
+const bakedKeys = bakedLookupKeys(baked);
 
 let total = 0;
 let covered = 0;
