@@ -1,5 +1,6 @@
 import type { Engine } from "../core/engine";
 import { pairKey } from "../core/engine";
+import { judgePair } from "../core/verdict";
 import { grammarPool, pickGrammarLine, verdictContext } from "./grammar";
 import type { LiveNarrator } from "./live";
 import type { PairContent } from "./pairs";
@@ -7,7 +8,10 @@ import { pairLineId } from "./pairs";
 import type {
   CombineOutcome,
   NarratorContentDef,
+  NarratorImprovisationDef,
   NarratorLineDef,
+  PredicateFailure,
+  PredicateExplanation,
   ProblemDef,
 } from "../core/types";
 
@@ -150,6 +154,16 @@ interface LineContext {
   wrong?: string;
   /** near-miss: hvilket af de to der faktisk var rigtigt. */
   rightOne?: string;
+  /** Improvisationsdommens spiller-vendte kontekst. */
+  need?: string;
+  actual?: string;
+  expected?: string;
+  missing?: string;
+}
+
+interface FailedNeedContext {
+  name: string;
+  explanation: PredicateExplanation;
 }
 
 /** En afspillet replik: id, valgt variant-index (til lydfil-opslag) og udfyldt tekst. */
@@ -312,6 +326,10 @@ export class Narrator {
     // {element} peger normalt på det element spilleren fejer med; ved en
     // opdagelse er det i stedet det netop opfundne, som ctx leverer direkte.
     const element = ctx?.element?.toLowerCase() ?? name(this.state.sweepElement);
+    const need = ctx?.need ?? "";
+    const needCap = need
+      ? need[0]!.toUpperCase() + need.slice(1)
+      : "";
     // {shared} og {trait} er ikke elementer men ord fra taksonomien ("plant",
     // "hot"). De skrives som de er — grammatikken skal kunne sige "both of
     // them grow" uden at slå noget op.
@@ -326,7 +344,12 @@ export class Narrator {
       .replaceAll("{shared}", ctx?.shared ?? "")
       .replaceAll("{trait}", ctx?.trait ?? "")
       .replaceAll("{trait2}", ctx?.trait2 ?? "")
-      .replaceAll("{element}", element);
+      .replaceAll("{element}", element)
+      .replaceAll("{Need}", needCap)
+      .replaceAll("{need}", need)
+      .replaceAll("{actual}", ctx?.actual ?? "")
+      .replaceAll("{expected}", ctx?.expected ?? "")
+      .replaceAll("{missing}", ctx?.missing ?? "");
   }
 
   /** Vælg en replik og bogfør den, så den aldrig gentages i træk. */
@@ -430,10 +453,16 @@ export class Narrator {
     if (elapsedMs !== undefined && elapsedMs <= FAST_MS) this.state.fastStreak++;
     else this.state.fastStreak = 0;
 
-    if (outcome.kind === "nofuse") {
+    if (
+      outcome.kind === "nofuse" ||
+      outcome.kind === "improvise-rejected"
+    ) {
       this.state.failStreak++;
       this.state.failsSinceDiscovery++;
-    } else if (outcome.kind === "discovery") {
+    } else if (
+      outcome.kind === "discovery" ||
+      (outcome.kind === "improvised" && !outcome.reused)
+    ) {
       this.state.failStreak = 0;
       this.state.failsSinceDiscovery = 0;
     }
@@ -547,6 +576,289 @@ export class Narrator {
     return pool[Math.floor(this.rand() * pool.length)]!;
   }
 
+  /** Vælg fra en data-pulje med samme globale id-no-repeat som resten. */
+  private poolLine(pool: readonly string[]): string | undefined {
+    const allowed = pool.filter((id) => this.flagsAllow(this.line(id)));
+    if (!allowed.length) return undefined;
+    const withoutLast = allowed.filter((id) => id !== this.state.lastLineId);
+    const candidates = withoutLast.length ? withoutLast : allowed;
+    return candidates[Math.floor(this.rand() * candidates.length)];
+  }
+
+  /**
+   * En improviseret løsning er selve historiens beat. Challenge-løsningen
+   * erstatter challengets generiske successLine; problemløsningen står efter
+   * nye/akutte challenge-beats, men før opdagelses-fallbacken.
+   */
+  private improvisedSuccessLine(
+    a: string,
+    b: string,
+    outcome: CombineOutcome,
+    target: "challenge" | "problem",
+  ): SpokenLine | undefined {
+    if (outcome.kind !== "improvised") return undefined;
+    const improvisation = this.content().improvisation;
+    if (!improvisation) return undefined;
+
+    const solvedChallenge =
+      outcome.challenge?.kind === "solved" &&
+      outcome.challenge.by.id === outcome.element.id
+        ? outcome.challenge
+        : undefined;
+    const needId =
+      target === "challenge"
+        ? solvedChallenge?.def.id
+        : outcome.solved?.id;
+    if (!needId) return undefined;
+    const need =
+      improvisation.labels.needs[needId] ??
+      (target === "challenge"
+        ? solvedChallenge?.def.title
+        : outcome.solved?.name);
+    if (!need) return undefined;
+
+    const verdict = judgePair(
+      this.engine,
+      this.engine.element(a),
+      this.engine.element(b),
+    ).verdict;
+    const pool =
+      verdict === "absurd"
+        ? improvisation.absurdSolved
+        : target === "challenge"
+          ? improvisation.challengeSolved
+          : improvisation.problemSolved;
+    const id = this.poolLine(pool);
+    return id
+      ? this.speak(id, { a, b, element: outcome.element.name, need })
+      : undefined;
+  }
+
+  private failedNeed(
+    outcome: CombineOutcome & { kind: "improvised" },
+  ): FailedNeedContext | undefined {
+    const failed = (id: string) => {
+      const explanation = outcome.needExplanations[id];
+      return explanation && !explanation.satisfied ? explanation : undefined;
+    };
+
+    const active = this.engine.activeChallenge();
+    if (active) {
+      const explanation = failed(active.def.id);
+      if (explanation) {
+        return {
+          name:
+            this.content().improvisation?.labels.needs[active.def.id] ??
+            active.def.title,
+          explanation,
+        };
+      }
+    }
+
+    const pulled = this.state.pulledProblem;
+    if (pulled) {
+      const problem = outcome.act.problems.find((entry) => entry.id === pulled);
+      const explanation = problem && failed(problem.id);
+      if (problem && explanation) {
+        return {
+          name:
+            this.content().improvisation?.labels.needs[problem.id] ??
+            problem.name,
+          explanation,
+        };
+      }
+    }
+
+    for (const problem of outcome.act.problems) {
+      const explanation = failed(problem.id);
+      if (explanation) {
+        return {
+          name:
+            this.content().improvisation?.labels.needs[problem.id] ??
+            problem.name,
+          explanation,
+        };
+      }
+    }
+    for (const challenge of this.engine.content.challenges) {
+      const explanation = failed(challenge.id);
+      if (explanation) {
+        return {
+          name:
+            this.content().improvisation?.labels.needs[challenge.id] ??
+            challenge.title,
+          explanation,
+        };
+      }
+    }
+    return undefined;
+  }
+
+  private joinLabels(
+    values: string[],
+    final: string,
+    labels: NarratorImprovisationDef["labels"],
+  ): string {
+    if (values.length <= 1) return values[0] ?? "";
+    if (values.length === 2) return `${values[0]}${final}${values[1]}`;
+    return `${values.slice(0, -1).join(labels.list.separator)}${final}${values.at(-1)}`;
+  }
+
+  /**
+   * Oversæt kun det prædikatbeviset faktisk siger. Mangler et spiller-vendt
+   * label, falder vi til en bred sandhed i stedet for at lække rå taksonomi.
+   */
+  private evidenceContext(
+    failure: PredicateFailure | undefined,
+    labels: NarratorImprovisationDef["labels"],
+  ): {
+    requirement: keyof NarratorImprovisationDef["noSolution"];
+    context: Pick<LineContext, "actual" | "expected" | "missing">;
+  } {
+    if (!failure) return { requirement: "fallback", context: {} };
+
+    if (failure.requirement === "kind") {
+      const actual = labels.kind[failure.actual];
+      const expected = failure.expected.map((value) => labels.kind[value]);
+      if (!actual || expected.some((value) => !value)) {
+        return { requirement: "fallback", context: {} };
+      }
+      return {
+        requirement: "kind",
+        context: {
+          actual,
+          expected: this.joinLabels(expected, labels.list.finalOr, labels),
+        },
+      };
+    }
+    if (failure.requirement === "stuff") {
+      const actual = labels.stuff[failure.actual];
+      const expected = failure.expected.map((value) => labels.stuff[value]);
+      if (!actual || expected.some((value) => !value)) {
+        return { requirement: "fallback", context: {} };
+      }
+      return {
+        requirement: "stuff",
+        context: {
+          actual,
+          expected: this.joinLabels(expected, labels.list.finalOr, labels),
+        },
+      };
+    }
+    if (failure.requirement === "traits") {
+      const missing = failure.missing.map((value) => labels.traits[value]);
+      if (missing.some((value) => !value)) {
+        return { requirement: "fallback", context: {} };
+      }
+      return {
+        requirement: "traits",
+        context: {
+          missing: this.joinLabels(missing, labels.list.finalAnd, labels),
+        },
+      };
+    }
+    if (failure.requirement === "scale") {
+      const actual = labels.scale[failure.actual];
+      const expected = failure.expected.map((value) => labels.scale[value]);
+      if (!actual || expected.some((value) => !value)) {
+        return { requirement: "fallback", context: {} };
+      }
+      return {
+        requirement: "scale",
+        context: {
+          actual,
+          expected: this.joinLabels(expected, labels.list.finalOr, labels),
+        },
+      };
+    }
+    if (failure.requirement === "minDepth") {
+      const actual = labels.depth[String(failure.actual)];
+      const expected = labels.depth[String(failure.expected)];
+      if (!actual || !expected) {
+        return { requirement: "fallback", context: {} };
+      }
+      return { requirement: "minDepth", context: { actual, expected } };
+    }
+    // Runtime-improvisationer er altid fremstillede (`base: false`), så et
+    // crafted-bevis kan ikke opstå fra Engine.improvise. Hold fallbacken
+    // defensiv uden at bære en død spillertekst-pulje.
+    if (failure.requirement === "crafted") {
+      return { requirement: "fallback", context: {} };
+    }
+    return { requirement: failure.requirement, context: {} };
+  }
+
+  private improvisedNoSolutionLine(
+    outcome: CombineOutcome,
+  ): SpokenLine | undefined {
+    if (
+      outcome.kind !== "improvised" ||
+      outcome.reused ||
+      outcome.solved ||
+      outcome.challenge?.kind === "solved"
+    ) {
+      return undefined;
+    }
+    const improvisation = this.content().improvisation;
+    const failed = this.failedNeed(outcome);
+    if (!improvisation) return undefined;
+    if (!failed) {
+      const id = this.poolLine(improvisation.noCurrentNeed);
+      return id
+        ? this.speak(id, { element: outcome.element.name })
+        : undefined;
+    }
+    const evidence = this.evidenceContext(
+      failed.explanation.failures[0],
+      improvisation.labels,
+    );
+    const id = this.poolLine(
+      improvisation.noSolution[evidence.requirement] ??
+        improvisation.noSolution.fallback,
+    );
+    return id
+      ? this.speak(id, {
+          element: outcome.element.name,
+          need: failed.name,
+          ...evidence.context,
+        })
+      : undefined;
+  }
+
+  private improvisedReusedLine(outcome: CombineOutcome): SpokenLine | undefined {
+    if (
+      outcome.kind !== "improvised" ||
+      !outcome.reused ||
+      outcome.solved ||
+      outcome.challenge?.kind === "solved"
+    ) {
+      return undefined;
+    }
+    const pool = this.content().improvisation?.reused;
+    const id = pool && this.poolLine(pool);
+    return id
+      ? this.speak(id, { element: outcome.element.name })
+      : undefined;
+  }
+
+  private improvisationRejectedLine(
+    outcome: CombineOutcome,
+  ): SpokenLine | undefined {
+    if (outcome.kind !== "improvise-rejected") return undefined;
+    const rejected = this.content().improvisation?.rejected;
+    if (!rejected) return undefined;
+    const pool =
+      outcome.reason === "canonical-recipe"
+        ? rejected.canonicalRecipe
+        : outcome.reason === "depth-limit"
+          ? rejected.depthLimit
+          : outcome.verdict === "locked"
+            ? rejected.verdict.locked
+            : rejected.verdict.other;
+    const id = this.poolLine(pool);
+    return id ? this.speak(id, { a: outcome.a.id, b: outcome.b.id }) : undefined;
+  }
+
   private genericFailureLine(): string {
     const pool = this.content().genericFailure.filter((id) => {
       const def = this.line(id);
@@ -578,6 +890,16 @@ export class Narrator {
       return this.speak(ending.line, ctx);
     }
 
+    // En challenge løst af opfindelsen er mere specifik end challengets
+    // generiske successLine: opfindelsens absurditet er hele pointen.
+    const improvisedChallenge = this.improvisedSuccessLine(
+      a,
+      b,
+      outcome,
+      "challenge",
+    );
+    if (improvisedChallenge) return improvisedChallenge;
+
     // 0a. Challenges presser alt andet i baggrunden — de har en frist
     if (outcome.challenge) {
       const ch = outcome.challenge;
@@ -591,6 +913,14 @@ export class Narrator {
         if (warn) return this.speak(warn, ctx);
       }
     }
+
+    const improvisedProblem = this.improvisedSuccessLine(
+      a,
+      b,
+      outcome,
+      "problem",
+    );
+    if (improvisedProblem) return improvisedProblem;
 
     // 0b. Afværget skæbne: Karl kiggede døden i øjnene og gik hjem igen
     if (
@@ -615,6 +945,15 @@ export class Narrator {
       }
       return undefined;
     }
+
+    const reused = this.improvisedReusedLine(outcome);
+    if (reused) return reused;
+
+    const rejected = this.improvisationRejectedLine(outcome);
+    if (rejected) return rejected;
+
+    const improvisedNoSolution = this.improvisedNoSolutionLine(outcome);
+    if (improvisedNoSolution) return improvisedNoSolution;
 
     // 1b. Hans eget råd slog fejl. Den står FØR adfærd, fordi der ikke findes
     // et øjeblik med højere signal end at spilleren gjorde præcis, hvad der
@@ -802,13 +1141,17 @@ export class Narrator {
    * "Sådan gik det. — Og nu ville historien gerne dette."
    */
   followUp(outcome: CombineOutcome): SpokenLine | undefined {
-    if (outcome.kind !== "discovery") return undefined;
+    if (outcome.kind !== "discovery" && outcome.kind !== "improvised") {
+      return undefined;
+    }
     // Slutninger og age-up er historiens egne store takter. Et træk oveni
     // ville tale hen over dem.
     if (this.engine.activeEnding() || outcome.ageUp) return undefined;
 
-    const defiance = this.defianceLine(outcome);
-    if (defiance) return this.speak(defiance, { element: outcome.element.name });
+    if (outcome.kind === "discovery") {
+      const defiance = this.defianceLine(outcome);
+      if (defiance) return this.speak(defiance, { element: outcome.element.name });
+    }
 
     const next = this.currentPull();
     if (!next?.pull) {

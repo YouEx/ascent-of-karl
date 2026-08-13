@@ -118,11 +118,99 @@ GRAMMAR_FILLERS = {
     "shared": "hot",
 }
 
+IMPROVISATION_SHORT_FILLERS = {
+    "a": "stone",
+    "b": "dry grass",
+    "element": "fire-touched berries",
+    "need": "the cold",
+    "actual": "food",
+    "expected": "a structure or a tool",
+    "missing": "heat and an edge",
+}
+
 
 def fill_grammar_placeholders(text: str) -> str:
     for key, val in GRAMMAR_FILLERS.items():
         text = text.replace("{" + key + "}", val)
     return text
+
+
+def fill_improvisation_placeholders(
+    text: str,
+    fillers: dict[str, str] | None = None,
+) -> str:
+    values = fillers or IMPROVISATION_SHORT_FILLERS
+    need = values.get("need", "")
+    text = text.replace("{Need}", need[:1].upper() + need[1:])
+    for key, val in values.items():
+        text = text.replace("{" + key + "}", val)
+    return text
+
+
+def improvisation_element_fillers() -> list[str]:
+    """Kort runtime-eksempel + konservativt dybde-3-navn.
+
+    Den lange fixture følger buildFallbackElement()s mest voksende lovlige
+    navneform, ``left-right contraption``, tre rekursive niveauer. Begge frø
+    bruger akt-1-basenavnenes målte maksimumsordtal; dermed er den et bevidst
+    overmål af en gyldig offline-navnekæde, ikke en håndskrevet tilfældig
+    streng.
+    """
+    elements = json.loads((CONTENT / "elements.json").read_text(encoding="utf-8"))
+    base_names = sorted(
+        (
+            element["name"]
+            for element in elements
+            if element.get("base") and element.get("act") == 1
+        ),
+        key=lambda name: (len(tokenize_words(name)), len(name)),
+        reverse=True,
+    )
+    # Brug maksimumslængden på BEGGE sider. Det er bevidst konservativt:
+    # to forskellige baseting kan have samme maksimale ordtal, også når det
+    # aktuelle akt-1-content kun har én repræsentant i den længdeklasse.
+    left = base_names[0]
+    right = base_names[0]
+    for _ in range(3):
+        left, right = (
+            f"{left}-{right} contraption",
+            f"{right}-{left} contraption",
+        )
+    longest = max((left, right), key=lambda name: len(tokenize_words(name)))
+    return [IMPROVISATION_SHORT_FILLERS["element"], longest]
+
+
+def improvisation_filler_profiles() -> list[tuple[str, dict[str, str]]]:
+    act = json.loads(
+        (CONTENT / "narrator" / "act-1.json").read_text(encoding="utf-8")
+    )
+    needs = act["improvisation"]["labels"]["needs"].values()
+    longest_need = max(needs, key=lambda value: len(tokenize_words(value)))
+    short_name, max_name = improvisation_element_fillers()
+    base_names = [
+        element["name"].lower()
+        for element in json.loads(
+            (CONTENT / "elements.json").read_text(encoding="utf-8")
+        )
+        if element.get("base") and element.get("act") == 1
+    ]
+    longest_base = max(
+        base_names,
+        key=lambda value: (len(tokenize_words(value)), len(value)),
+    )
+    return [
+        ("short", dict(IMPROVISATION_SHORT_FILLERS)),
+        (
+            "max",
+            {
+                **IMPROVISATION_SHORT_FILLERS,
+                "a": max_name,
+                "b": longest_base,
+                "element": max_name,
+                "need": longest_need,
+            },
+        ),
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -414,7 +502,7 @@ def judge(text: str, fingerprint: dict[str, Any] | None = None, *, source: str =
 
 
 # ---------------------------------------------------------------------------
-# Ekspansion af grammatik og bagte par "sådan som spillet gør det" — se
+# Ekspansion af grammatik, improvisationsdom og bagte par "sådan som spillet gør det" — se
 # mergeGrammar() i src/content.ts og grammarPool()/pickGrammarLine() i
 # src/narrator/grammar.ts. Delt mellem calibrate.py (TASK-029) og gate()
 # (TASK-030), så de aldrig kan komme i utakt med hinanden.
@@ -438,6 +526,33 @@ def expand_grammar() -> list[tuple[str, str]]:
                 continue
             for i, variant in enumerate(line_def["variants"]):
                 out.append((f"grammar:{verdict}:{line_id}#{i}", fill_grammar_placeholders(variant)))
+    return out
+
+
+def expand_improvisation() -> list[tuple[str, str]]:
+    """Alle statiske dom-varianter, udfyldt som Narrator.fill() ville vise dem.
+
+    De bor adskilt fra det håndskrevne fingeraftryk, fordi TASK-026 kræver at
+    de dømmes SOM kandidater i stedet for stiltiende at flytte den reference,
+    de selv skal måles imod. Hver variant får en short-profil til fuld
+    stemmescore og en max-profil med konservativt dybde-3-navn til de hårde
+    runtime-lofter.
+    """
+    data = json.loads(
+        (CONTENT / "narrator" / "improvisation-act-1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    out: list[tuple[str, str]] = []
+    for profile, fillers in improvisation_filler_profiles():
+        for line in data["lines"]:
+            for index, variant in enumerate(line["variants"]):
+                out.append(
+                    (
+                        f"improvisation:{profile}:{line['id']}#{index}",
+                        fill_improvisation_placeholders(variant, fillers),
+                    )
+                )
     return out
 
 
@@ -517,10 +632,14 @@ def calibrated_threshold(fingerprint: dict[str, Any], percentile: str = "p5") ->
     return scores[k]
 
 
-def gate() -> list[str]:
+def gate(
+    *,
+    extra_candidates: list[tuple[str, str]] | None = None,
+) -> list[str]:
     """TASK-030's importable indgang. Dømmer ALT kandidatindhold der findes
-    som statisk indhold i repoet: grammatikkens ekspanderede linjer, de bagte
-    par (stemme + register), de bagte pars strukturelle kontrakt (navn, dom,
+    som statisk indhold i repoet: grammatikkens ekspanderede linjer,
+    improvisationsdommene, de bagte par (stemme + register), de bagte pars
+    strukturelle kontrakt (navn, dom,
     dublet, længde — check_pairs.py, TASK-023), OG at BEGGE assemblerede
     facit-filer rent faktisk er reproducerbare fra deres egne drafts
     (check_grammar_assembly.py / check_pairs_assembly.py, kodegennemgang
@@ -573,7 +692,14 @@ def gate() -> list[str]:
     # Kildemærket, så hard_reject() ved om sætnings-/ordloftet gælder (kun
     # grammatik — se hard_reject()'s docstring for den fulde begrundelse).
     sourced: list[tuple[str, list[tuple[str, str]]]] = [
-        ("grammar", expand_grammar()),
+        (
+            "grammar",
+            [
+                *expand_grammar(),
+                *expand_improvisation(),
+                *(extra_candidates or []),
+            ],
+        ),
         ("pairs", expand_pairs()),
     ]
     pairs_band = pairs_wordcount_band()  # frosset facit, se pairs_wordcount_band()'s docstring
@@ -583,6 +709,12 @@ def gate() -> list[str]:
             rejects = hard_reject(text, fingerprint, source=source)
             if rejects:
                 failures.append(f"{label}: hård afvisning — {'; '.join(rejects)} — {text!r}")
+                continue
+            # Den kontinuerlige stemmescore skal dømme den SKREVNE prosa, ikke
+            # et 23-ords deterministisk egennavn. Max-profilen findes kun for
+            # at bevise de fulde runtime-linjers hårde ord-/sætningslofter;
+            # samme variant scores allerede med short-profilen lige ovenfor.
+            if label.startswith("improvisation:max:"):
                 continue
             result = score(text, fingerprint, corpus_vocab, dom_vocab, source=source, pairs_band=pairs_band)
             if result["overall"] < threshold:
@@ -816,7 +948,10 @@ def main() -> int:
             print("❌", f)
         print(f"\n{len(failures)} kandidat-replikker dømt ude.")
         return 1
-    print("✅ Alt kandidatindhold (grammatik + bagte par) består stemmedommeren.")
+    print(
+        "✅ Alt kandidatindhold "
+        "(grammatik + improvisation + bagte par) består stemmedommeren."
+    )
     return 0
 
 

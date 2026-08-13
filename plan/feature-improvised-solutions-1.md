@@ -40,9 +40,11 @@ tags: [feature, architecture, engine, narrator, content, infrastructure]
 >
 > **Fase 2's offline core er leveret** (2026-08-13).
 > TASK-009–014 er implementeret test-first i `src/core/improvise.ts`,
-> `Engine.improvise()` og det serialiserede `GameState`. TASK-022's core/type-
-> halvdel og TASK-024's rene prædikatbevis er også leveret; fortæller- og UI-
-> halvdelene er fortsat åbne, og produktflaget er fortsat slukket.
+> `Engine.improvise()` og det serialiserede `GameState`. TASK-022 og TASK-024
+> er nu også ført helt gennem fortællerforbrugeren: udfaldene får deres egen
+> prioriterede dom, og det rekursive prædikatbevis oversættes til spillertekst
+> uden rå tags/id'er. UI-halvdelene er fortsat åbne, og produktflaget er
+> fortsat slukket.
 >
 > **Arkitekturrecovery, der erstatter den stale modeldeling nedenfor:**
 > deterministiske regler ejer altid `kind`, `stuff`, `traits`, `scale`,
@@ -55,9 +57,8 @@ tags: [feature, architecture, engine, narrator, content, infrastructure]
 > `TASK-016`-`TASK-018` og `TASK-021` er leveret under den frosne
 > integrationskontrakt nedenfor; serverhalvdelen af `TASK-019` og `TASK-029`
 > er leveret. Der er ingen klient, ingen `VITE_IMPROVISE_URL`, ingen secrets,
-> intet deploy og ingen trafik. Fortællerens dom, UI og balanceringen mangler
-> fortsat. Kun `TASK-026` i fase 4 afhænger af narrationsplanens fase 5/6
-> (stemmedommer, turøkonomi, se DEP-004).
+> intet deploy og ingen trafik. Fortællerens dom er leveret og stemme-gated;
+> UI og balanceringen mangler fortsat.
 
 Spillets sjoveste indhold findes allerede: **mudderkage** (mudder + bær) mætter Karl, og **klyngen** (nabo + skind) holder ham varm. Begge er mærket `spor: "komisk"`. Ideen om at løse en alvorlig nød på en latterlig måde er ikke ny — den er spillets bedste greb. Den er bare begrænset til de absurditeter, forfatteren nåede at forestille sig på forhånd.
 
@@ -160,11 +161,11 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-022 | Ny udfaldstype `improvised` i `CombineOutcome` med elementet, `reused`, løst problem/challenge og `needExplanations`. **Core/type-halvdelen er leveret; fortællerforbrugeren er åben.** | 🟡 core | 2026-08-13 |
-| TASK-023 | Skriv replikfamilien "dommen": accept (`{element} solves {problem}`), afvisning (elementet er nyt, men løser intet), og den bedste af dem alle — **den absurde accept**, hvor tingen faktisk opfylder prædikatet på en måde ingen havde tænkt. Sidstnævnte skal have flest varianter. | | |
-| TASK-024 | Afvisning skal navngive *hvorfor* ud fra tags. `explainSatisfaction()` leverer nu et rent, rekursivt og serialiserbart bevis for atomare krav samt `allOf`/`anyOf`/`not`; fortællerreplikkerne er fortsat åbne. | 🟡 evidence | 2026-08-13 |
+| TASK-022 | Ny udfaldstype `improvised` i `CombineOutcome` med elementet, `reused`, løst problem/challenge og `needExplanations`. Core/type + fortællerforbruger er leveret; UI er fortsat uden for denne opgave. | ✅ | 2026-08-13 |
+| TASK-023 | Skriv replikfamilien "dommen": accept (`{element} solves {problem}`), afvisning (elementet er nyt, men løser intet), og den bedste af dem alle — **den absurde accept**, hvor tingen faktisk opfylder prædikatet på en måde ingen havde tænkt. Sidstnævnte har 24 varianter mod 8 i hver almindelig succesfamilie. | ✅ | 2026-08-13 |
+| TASK-024 | Afvisning navngiver *hvorfor* fra `NeedExplanations`: atomare krav får spiller-vendte labels, mens `allOf`/`anyOf`/`not` bruger bredere, bevisligt sande formuleringer frem for gæt. `crafted` er eksplicit uopnåelig for runtime-opfindelser (`base: false`) og har ingen død tekstpulje. | ✅ | 2026-08-13 |
 | TASK-025 | Krønikeindførsel for improviserede løsninger med spillerens egen opfindelse fremhævet — det er runets historie, og den skal kunne deles. | | |
-| TASK-026 | Kør alle nye replikker gennem stemmedommeren fra narrationsplanens fase 5. Ingen undtagelse, fordi teksten er genereret. | | |
+| TASK-026 | Alle 109 nye varianter køres gennem `voice_judge.gate()` fra `npm run validate`: fuld stemmescore med kort navn plus hårde ord-/sætningslofter med konservativt 23-ords dybde-3-navn (218 runtime-ekspansioner). En injiceret lav-stemme variant beviser afvisningsvejen. | ✅ | 2026-08-13 |
 
 ### Implementation Phase 5
 
@@ -201,7 +202,9 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **FILE-004**: `src/core/improviseClient.ts` *(ny)* — async proxy-kald med timeout og fallback.
 - **FILE-005**: `src/core/engine.ts` — løsning afgøres af prædikat; improviserede elementers rettigheder håndhæves.
 - **FILE-006**: `content/acts/act-1.json`, `content/challenges.json` — `solvedBy` bliver prædikat; allowlisten overlever som `alsoSolvedBy`.
-- **FILE-007**: `content/narrator/act-1.json` — dommens replikfamilie.
+- **FILE-007**: `content/narrator/act-1.json` +
+  `content/narrator/improvisation-act-1.json` — dommens puljer/labels og de
+  stemme-gatede kandidatvarianter.
 - **FILE-008**: `worker/src/improvise*.ts` + den eksisterende Worker/`Coordinator` — skema, model-copy, DO-cache, kvoter, oprydning og admin-eksport.
 - **FILE-009**: `tools/predicate_report.mjs` *(ny)* — prædikat mod allowlist, falske negativer er fejl.
 - **FILE-010**: `tools/harvest.mjs` *(stadig åben)* — den leverede servereksport er inputtet; faktisk høst tilbage til `drafts/` er ekstern og ikke bygget.

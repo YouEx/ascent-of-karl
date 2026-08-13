@@ -295,7 +295,9 @@ export interface ActDef {
  * Hver afspilning vælger én variant via playthrough-seedet RNG, så to
  * gennemspilninger ikke lyder ens. Tekst-first; audioId kobles på i Step 4.
  * Varianter kan bruge pladsholdere: {a}, {b} (parrets navne), {element}
- * (sweep-elementets navn) — udfyldes med små bogstaver.
+ * (sweep/opfindelsens navn) samt improvisationsbevisets spiller-vendte
+ * {need}/{Need}/{actual}/{expected}/{missing}; {Need} er samme frase med
+ * stort begyndelsesbogstav, når den åbner en sætning.
  */
 export interface NarratorLineDef {
   id: string;
@@ -321,6 +323,52 @@ export interface NarratorLineDef {
    */
   suggests?: [string, string][];
   audioId?: string;
+}
+
+export type ImprovisationEvidenceRequirement =
+  | Exclude<PredicateFailure["requirement"], "crafted">
+  | "fallback";
+
+export interface NarratorImprovisationDef {
+  /** Ny opfindelse løser et almindeligt problem. */
+  problemSolved: string[];
+  /** Ny opfindelse afværger det aktive challenge. */
+  challengeSolved: string[];
+  /** Absurd par, der mod al forventning løser en nød — produktets største payoff. */
+  absurdSolved: string[];
+  /** Ny opfindelse, som ikke løser noget; puljen vælges fra prædikatbeviset. */
+  noSolution: Record<ImprovisationEvidenceRequirement, string[]>;
+  /** Ingen uløst nød gav et bevis, så dommen må være bred og uden gæt. */
+  noCurrentNeed: string[];
+  /** Samme stabile opfindelse blev lavet igen. */
+  reused: string[];
+  /** Improvisationen blev stoppet før et element blev oprettet. */
+  rejected: {
+    canonicalRecipe: string[];
+    verdict: {
+      locked: string[];
+      other: string[];
+    };
+    depthLimit: string[];
+  };
+  /**
+   * Spiller-vendte ord for taksonomien. Koden må aldrig lække rå id'er eller
+   * gætte en forklaring; den oversætter kun bevisets kendte værdier herfra.
+   */
+  labels: {
+    /** Grammatiske navneordfraser pr. problem/challenge-id. */
+    needs: Record<string, string>;
+    kind: Record<ElementKind, string>;
+    stuff: Record<ElementStuff, string>;
+    traits: Record<ElementTrait, string>;
+    scale: Record<ElementScale, string>;
+    depth: Record<string, string>;
+    list: {
+      separator: string;
+      finalAnd: string;
+      finalOr: string;
+    };
+  };
 }
 
 /**
@@ -398,6 +446,8 @@ export interface NarratorContentDef {
    * (`spor: "komisk"`). Mudderkagen fortjener mere end en tør bemærkning.
    */
   defianceComic?: string[];
+  /** Dommen over runtime-improvisationer (plan/feature-improvised-solutions-1.md). */
+  improvisation?: NarratorImprovisationDef;
 }
 
 /**

@@ -143,12 +143,30 @@ def main() -> int:
 
     hw = J.handwritten_variants(fp)
     gram = J.expand_grammar()
+    improvisation = J.expand_improvisation()
+    improvisation_short = [
+        item
+        for item in improvisation
+        if item[0].startswith("improvisation:short:")
+    ]
+    improvisation_max = [
+        item
+        for item in improvisation
+        if item[0].startswith("improvisation:max:")
+    ]
     pairs = J.expand_pairs()
     pairs_band = J.pairs_wordcount_band()  # FROSSET facit — se judge.py's docstring
     pairs_band_live = J.recompute_pairs_wordcount_band(pairs)  # kun til rapportens skreds-tjek
 
     hw_scored = _score_all(hw, fp, corpus_vocab, dom_vocab)
     gram_scored = _score_all(gram, fp, corpus_vocab, dom_vocab, source="grammar")
+    improvisation_scored = _score_all(
+        improvisation_short,
+        fp,
+        corpus_vocab,
+        dom_vocab,
+        source="grammar",
+    )
     pairs_scored = _score_all(pairs, fp, corpus_vocab, dom_vocab, source="pairs", pairs_band=pairs_band)
 
     hw_dist = _dist([s["overall"] for _, _, s in hw_scored])
@@ -156,10 +174,26 @@ def main() -> int:
     pairs_dist = _dist([s["overall"] for _, _, s in pairs_scored])
 
     gram_reject = _hard_reject_breakdown(gram, fp, source="grammar")
+    improvisation_reject = _hard_reject_breakdown(
+        improvisation,
+        fp,
+        source="grammar",
+    )
+    improvisation_max_reject = _hard_reject_breakdown(
+        improvisation_max,
+        fp,
+        source="grammar",
+    )
     pairs_reject = _hard_reject_breakdown(pairs, fp, source="pairs")
     pairs_length_desc = _length_overage(pairs)  # beskrivende kun — ikke håndhævet, se docstring
 
     threshold = J.calibrated_threshold(fp)
+    improvisation_below_threshold = sum(
+        1
+        for _, text, result in improvisation_scored
+        if not J.hard_reject(text, fp, source="grammar")
+        and result["overall"] < threshold
+    )
 
     # Tærskel-sammenligning ved p1/p5/p10 — til at begrunde valget.
     hw_only_scores = sorted(s["overall"] for _, _, s in hw_scored)
@@ -249,6 +283,24 @@ def main() -> int:
         f"Se docstringen øverst i `metrics.py` for den fulde begrundelse.\n"
     )
 
+    md.append("\n## Improvisationsdommen som kandidatkorpus (2026-08-13)\n\n")
+    md.append(
+        f"`content/narrator/improvisation-act-1.json` indeholder "
+        f"**{len(improvisation_short)}** nye varianter. De flettes ind i runtime-"
+        "`lines`, men ikke i det håndskrevne fingeraftryk ovenfor: TASK-026 "
+        "kræver, at de dømmes som kandidattekst, ikke at de flytter den "
+        "reference de selv måles imod. `expand_improvisation()` udfylder "
+        "`{a}`, `{b}`, `{element}`, `{need}`, `{actual}`, `{expected}` og "
+        "`{missing}` som spillet gør. Hver variant ekspanderes i to profiler "
+        f"({len(improvisation)} runtime-linjer i alt): `short` får den fulde "
+        "stemme-score, mens `max` bruger et konservativt 23-ords dybde-3-navn "
+        "og håndhæver de fulde linjers hårde ord-/sætningslofter. Egennavnet "
+        "selv indgår ikke en ekstra gang i den kontinuerlige stemmescore. Den "
+        f"aktuelle mængde har {improvisation_reject['any']} hårde afvisninger "
+        f"({improvisation_max_reject['any']} i max-profilen) og "
+        f"{improvisation_below_threshold} short-scorer under tærsklen.\n"
+    )
+
     md.append("\n## Fingeraftrykket — nøgletal\n\n")
     wl = fp["wordLength"]["pooled"]
     spl = fp["sentencesPerLine"]
@@ -291,7 +343,8 @@ def main() -> int:
         "sammensat af to kilde-specifikke regelsæt i stedet for ét fælles regelsæt — "
         "ikke en svækkelse af nogen af dem:\n\n"
         "1. **32-ords-/3-sætnings-loftet håndhæves kun for `source=\"grammar\"`** "
-        "(grammatik og fremtidig live-genereret tekst). Bagte par har deres eget, "
+        "(grammatik, improvisationsdomme og fremtidig live-genereret tekst). "
+        "Bagte par har deres eget, "
         "allerede godkendte kontraktloft — 320 tegn, `tools/check_pairs.py`, TASK-023 — "
         "og håndhæves IKKE mod grammatikkens ordtal-loft. Stemmescore, "
         "moderne/fejlmeddelelses-register og meningsfuld punchline-genbrug gælder "
@@ -713,8 +766,11 @@ def main() -> int:
         "`err()` lægger dem oveni de eksisterende fejl, så `python3 tools/validate.py` "
         "fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv "
         "kilde-sammensætningen internt (se \"Politik: kilde-sammensatte gates\" "
-        "ovenfor) — grammatik og bagte par scores hver mod deres egen kontrakt, uden "
-        "at koblingen behøver filtrere labels efter præfiks. Samlingskontrollerne bruger "
+        f"ovenfor) — grammatik og de {len(improvisation_short)} "
+        f"improvisationsvarianter ({len(improvisation)} runtime-ekspansioner) "
+        "bruger kandidat-"
+        "kontrakten, mens bagte par scores mod deres egen kontrakt, uden at koblingen "
+        "behøver filtrere labels efter præfiks. Samlingskontrollerne bruger "
         "en unik midlertidig mappe pr. kørsel, så samtidige `validate`/gate-kørsler ikke "
         "kan slette hinandens scratch-filer.\n"
     )
@@ -731,6 +787,12 @@ def main() -> int:
     print(f"Håndskrevet: n={hw_dist['n']} median={hw_dist['median']:.3f} p5={hw_dist['p5']:.3f}")
     print(f"Grammatik:   n={gram_dist['n']} median={gram_dist['median']:.3f} "
           f"hård-afvist={gram_reject['any']}/{gram_reject['n']}")
+    print(
+        f"Improvisation: varianter={len(improvisation_short)} "
+        f"ekspansioner={len(improvisation)} "
+        f"hård-afvist={improvisation_reject['any']} "
+        f"under-tærskel={improvisation_below_threshold}"
+    )
     print(f"Bagte par:   n={pairs_dist['n']} median={pairs_dist['median']:.3f} "
           f"hård-afvist={pairs_reject['any']}/{pairs_reject['n']}")
     print(f"Tærskel (p5): {threshold:.4f}")

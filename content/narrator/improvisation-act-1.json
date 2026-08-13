@@ -1,0 +1,264 @@
+{
+  "act": 1,
+  "lines": [
+    {
+      "id": "improv-problem-1",
+      "variants": [
+        "{element} solves {need}. History adjusts.",
+        "{Need}, solved by {element}. Unexpectedly.",
+        "{element} answers {need}. Karl beams.",
+        "{Need} yields to {element}. I object."
+      ]
+    },
+    {
+      "id": "improv-problem-2",
+      "variants": [
+        "{element} ends {need}. The book sighs.",
+        "{Need} meets {element} and loses.",
+        "{element}: the answer to {need}. Apparently.",
+        "{Need}, courtesy of {element}. Against advice."
+      ]
+    },
+    {
+      "id": "improv-challenge-1",
+      "variants": [
+        "{element} defeats {need}. Karl survives.",
+        "{Need} retreats from {element}. Sensibly.",
+        "{element} answers {need}. The danger leaves.",
+        "{Need}, ended by {element}. History continues."
+      ]
+    },
+    {
+      "id": "improv-challenge-2",
+      "variants": [
+        "{element} carries Karl past {need}. I object.",
+        "{Need} loses to {element}. Karl remains.",
+        "Somehow, {element} settles {need}. History continues.",
+        "{Need}, survived by means of {element}. Somehow."
+      ]
+    },
+    {
+      "id": "improv-absurd-1",
+      "variants": [
+        "No. {element} solves {need}. I remain opposed.",
+        "{element} defeats {need}. That is absurdly true.",
+        "{Need}, conquered by {element}. Reason leaves.",
+        "{element} answers {need}. The book laughs.",
+        "Impossible, yet effective: {element} solves {need}.",
+        "{Need} loses to {element}. Karl accepts applause."
+      ]
+    },
+    {
+      "id": "improv-absurd-2",
+      "variants": [
+        "{element} works on {need}. I resent evidence.",
+        "{Need}, beaten by {element}. Ridiculous. Effective.",
+        "{element} settles {need}. History protests.",
+        "{Need} falls to {element}. Prediction resigns.",
+        "{element} solves {need}. My notes object.",
+        "{Need}, solved by {element}. Standards collapse."
+      ]
+    },
+    {
+      "id": "improv-absurd-3",
+      "variants": [
+        "Karl raises {element}. {Need} retreats.",
+        "{element} defeats {need}. Karl becomes unbearable.",
+        "{Need} blinked first. {element} wins.",
+        "{element} solves {need}. Karl claims foresight.",
+        "{Need} meets {element}. Karl celebrates.",
+        "{element} works. {Need} does not. Karl grins."
+      ]
+    },
+    {
+      "id": "improv-absurd-4",
+      "variants": [
+        "{element} solves {need}. I was wrong.",
+        "{Need} yields to {element}. Regrettably impressive.",
+        "{element} answers {need}. Fine work, Karl.",
+        "{Need}, defeated by {element}. I concede.",
+        "{element} settles {need}. My doubts retire.",
+        "Absurd, effective, final: {element} defeats {need}."
+      ]
+    },
+    {
+      "id": "improv-none-kind",
+      "variants": [
+        "{actual}, not {expected}. {Need} remains.",
+        "{Need} accepts {expected}, not {actual}.",
+        "Wrong kind: {actual}. {Need} needs {expected}."
+      ]
+    },
+    {
+      "id": "improv-none-stuff",
+      "variants": [
+        "{actual}, not {expected}. {Need} remains.",
+        "{Need} needs {expected}; this is {actual}.",
+        "Wrong material: {actual}. {Need} calls for {expected}."
+      ]
+    },
+    {
+      "id": "improv-none-traits",
+      "variants": [
+        "Missing {missing}. {Need} remains.",
+        "{Need} requires {missing}. It is absent.",
+        "Without {missing}, {need} stays unsolved."
+      ]
+    },
+    {
+      "id": "improv-none-scale",
+      "variants": [
+        "{actual}, not {expected}. {Need} remains.",
+        "{Need} needs {expected}, not {actual}.",
+        "Wrong scale: {actual}. {Need} calls for {expected}."
+      ]
+    },
+    {
+      "id": "improv-none-depth",
+      "variants": [
+        "{actual}, not {expected}. {Need} remains.",
+        "{Need} requires {expected}; this took {actual}.",
+        "Too shallow: {actual}. {Need} needs {expected}."
+      ]
+    },
+    {
+      "id": "improv-none-any",
+      "variants": [
+        "No permitted route fits. {Need} remains.",
+        "Several routes were offered. {Need} accepts none.",
+        "Every route misses. {Need} survives."
+      ]
+    },
+    {
+      "id": "improv-none-all",
+      "variants": [
+        "At least one condition fails. {Need} remains.",
+        "{Need} requires the full set. It is incomplete.",
+        "The complete test fails. {Need} remains."
+      ]
+    },
+    {
+      "id": "improv-none-not",
+      "variants": [
+        "{Need} rejects a condition present here.",
+        "One present condition disqualifies this from {need}.",
+        "Something present is forbidden by {need}."
+      ]
+    },
+    {
+      "id": "improv-none-broad",
+      "variants": [
+        "The test fails. {Need} remains.",
+        "New object, old problem: {need}.",
+        "{Need} is still unsolved.",
+        "Novelty does not answer {need}."
+      ]
+    },
+    {
+      "id": "improv-none-fallback",
+      "variants": [
+        "The evidence is broad. {Need} remains.",
+        "No precise claim, only this: {need} remains.",
+        "The conditions fail. {Need} survives."
+      ]
+    },
+    {
+      "id": "improv-none-current-1",
+      "variants": [
+        "{element} exists. No current problem needs it.",
+        "Karl makes {element}. It is new, stable, and presently useless.",
+        "{element} solves nothing before us. Karl approves."
+      ]
+    },
+    {
+      "id": "improv-none-current-2",
+      "variants": [
+        "Karl made {element}. The problem list did not move.",
+        "{element} arrives without a job.",
+        "Karl presents {element}. No current problem claims it."
+      ]
+    },
+    {
+      "id": "improv-reused-1",
+      "variants": [
+        "Still {element}. Still not new.",
+        "{element}, again. History counts once.",
+        "Same {element}. No second discovery.",
+        "{element} returns. The applause does not."
+      ]
+    },
+    {
+      "id": "improv-reused-2",
+      "variants": [
+        "Karl has made {element} before. History keeps one entry.",
+        "Same parents, same {element}.",
+        "Karl makes {element} again. The book refuses a second entry.",
+        "Karl remakes {element}. I recognise it, regrettably."
+      ]
+    },
+    {
+      "id": "improv-reject-canonical-1",
+      "variants": [
+        "{a} and {b} already have an answer.",
+        "{a} with {b}: already accounted for.",
+        "History already knows {a} and {b}."
+      ]
+    },
+    {
+      "id": "improv-reject-canonical-2",
+      "variants": [
+        "{a} and {b} are not unexplored.",
+        "The book already owns {a} and {b}.",
+        "{a} plus {b}: an established answer."
+      ]
+    },
+    {
+      "id": "improv-reject-locked-1",
+      "variants": [
+        "{a} and {b}: correct, but not yet.",
+        "{a} with {b}: the answer is locked away.",
+        "The path exists for {a} and {b}, later."
+      ]
+    },
+    {
+      "id": "improv-reject-locked-2",
+      "variants": [
+        "Correct pair, wrong moment: {a} and {b}.",
+        "History knows {a} and {b}; Karl does not.",
+        "{a} with {b}: right pair, wrong moment."
+      ]
+    },
+    {
+      "id": "improv-reject-verdict-1",
+      "variants": [
+        "{a} and {b} do not justify invention.",
+        "{a} with {b}: no third thing.",
+        "{a} and {b} remain themselves."
+      ]
+    },
+    {
+      "id": "improv-reject-verdict-2",
+      "variants": [
+        "No invention from {a} and {b}.",
+        "{a} and {b}: bold, but unsupported.",
+        "{a} with {b} proves nothing new."
+      ]
+    },
+    {
+      "id": "improv-reject-depth-1",
+      "variants": [
+        "{a} and {b} end this family tree.",
+        "No further branch from {a} and {b}.",
+        "{a} with {b}: ancestry stops here."
+      ]
+    },
+    {
+      "id": "improv-reject-depth-2",
+      "variants": [
+        "{a} and {b} are one generation too far.",
+        "The chain ends at {a} and {b}.",
+        "{a} plus {b}: too far from the ground."
+      ]
+    }
+  ]
+}

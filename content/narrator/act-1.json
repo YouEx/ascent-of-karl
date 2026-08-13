@@ -1874,5 +1874,168 @@
   ],
   "obeyedFailure": [
     "obeyed-failure"
-  ]
+  ],
+  "improvisation": {
+    "problemSolved": [
+      "improv-problem-1",
+      "improv-problem-2"
+    ],
+    "challengeSolved": [
+      "improv-challenge-1",
+      "improv-challenge-2"
+    ],
+    "absurdSolved": [
+      "improv-absurd-1",
+      "improv-absurd-2",
+      "improv-absurd-3",
+      "improv-absurd-4"
+    ],
+    "noSolution": {
+      "kind": [
+        "improv-none-kind",
+        "improv-none-broad"
+      ],
+      "stuff": [
+        "improv-none-stuff",
+        "improv-none-broad"
+      ],
+      "traits": [
+        "improv-none-traits",
+        "improv-none-broad"
+      ],
+      "scale": [
+        "improv-none-scale",
+        "improv-none-broad"
+      ],
+      "minDepth": [
+        "improv-none-depth",
+        "improv-none-broad"
+      ],
+      "anyOf": [
+        "improv-none-any",
+        "improv-none-broad"
+      ],
+      "allOf": [
+        "improv-none-all",
+        "improv-none-broad"
+      ],
+      "not": [
+        "improv-none-not",
+        "improv-none-broad"
+      ],
+      "fallback": [
+        "improv-none-fallback",
+        "improv-none-broad"
+      ]
+    },
+    "noCurrentNeed": [
+      "improv-none-current-1",
+      "improv-none-current-2"
+    ],
+    "reused": [
+      "improv-reused-1",
+      "improv-reused-2"
+    ],
+    "rejected": {
+      "canonicalRecipe": [
+        "improv-reject-canonical-1",
+        "improv-reject-canonical-2"
+      ],
+      "verdict": {
+        "locked": [
+          "improv-reject-locked-1",
+          "improv-reject-locked-2"
+        ],
+        "other": [
+          "improv-reject-verdict-1",
+          "improv-reject-verdict-2"
+        ]
+      },
+      "depthLimit": [
+        "improv-reject-depth-1",
+        "improv-reject-depth-2"
+      ]
+    },
+    "labels": {
+      "needs": {
+        "kulde": "the cold",
+        "vaerktoej": "the tool shortage",
+        "sult": "Karl's hunger",
+        "kedsomhed": "Karl's boredom",
+        "ensomhed": "Karl's loneliness",
+        "mening": "Karl's search for meaning",
+        "ulve": "the wolves",
+        "toerke": "the drought",
+        "sygdom": "Karl's fever"
+      },
+      "kind": {
+        "material": "material",
+        "tool": "tool",
+        "food": "food",
+        "creature": "creature",
+        "person": "person",
+        "structure": "structure",
+        "phenomenon": "phenomenon",
+        "abstract": "idea"
+      },
+      "stuff": {
+        "stone": "stone",
+        "wood": "wood",
+        "plant": "plant matter",
+        "flesh": "flesh",
+        "clay": "clay",
+        "metal": "metal",
+        "water": "water",
+        "fire": "fire",
+        "fibre": "fibre",
+        "bone": "bone",
+        "none": "no useful material"
+      },
+      "traits": {
+        "hard": "hardness",
+        "soft": "softness",
+        "sharp": "an edge",
+        "blunt": "blunt force",
+        "hot": "heat",
+        "cold": "cold",
+        "wet": "wetness",
+        "dry": "dryness",
+        "alive": "life",
+        "dead": "dead matter",
+        "edible": "something edible",
+        "heavy": "weight",
+        "light": "lightness",
+        "fragile": "fragility",
+        "sticky": "adhesion",
+        "insulating": "insulation",
+        "tame": "tameness",
+        "weapon": "use as a weapon",
+        "vessel": "a vessel",
+        "digs": "the ability to dig",
+        "healing": "healing",
+        "sacred": "sacred meaning",
+        "floats": "the ability to float",
+        "loud": "sound",
+        "portable": "portability"
+      },
+      "scale": {
+        "hand": "hand",
+        "body": "body",
+        "camp": "camp",
+        "landscape": "landscape"
+      },
+      "depth": {
+        "0": "no steps",
+        "1": "one step",
+        "2": "two steps",
+        "3": "three steps",
+        "4": "four steps"
+      },
+      "list": {
+        "separator": ", ",
+        "finalAnd": " and ",
+        "finalOr": " or "
+      }
+    }
+  }
 }
