@@ -61,13 +61,14 @@ bagefter uden en eneste kodeændring.
   opdagelseskort), `book.ts` (fanerækken, opslaget, tidslinje-SVG'en).
   **Indsnævret 2026-08-12 efter review:** teksten sagde oprindeligt "alle 8
   render-steder" men listede selv 9 (6 element-steder + 3 andre) — tallet var
-  forkert i forvejen. Optalt på ny ved `grep -n
-  "glyphHTML\|hasArt\|artUrl\|\.emoji\b" src/ui/main.ts src/ui/book.ts`: der
-  findes 9 steder i alt, hvoraf de sidste 3 (trofæ, slutskærm,
-  challenge-banner) viser slutnings-/challenge-kunst fra et andet id-rum end
-  elementernes — se det udskilte REQ-008. At blande dem sammen med
-  elementkunsten skjulte at REQ-006, forstået korrekt, reelt var 100 % opfyldt
-  af TASK-031, bag et misvisende "kun 3 af 8"-regnskab.
+  forkert i forvejen. Optalt på ny ved
+  `grep -n "\.emoji\b" src/ui/main.ts src/ui/book.ts`: 10 kodelinjer — 7
+  linjer dækker de 6 element-rendersteder (slot A/B er ét symmetrisk sted),
+  og de sidste 3 er trofæ, slutskærm og challenge-banner. De viser
+  slutnings-/challenge-kunst fra et andet id-rum end elementernes — se det
+  udskilte REQ-008. At blande dem sammen med elementkunsten skjulte at
+  REQ-006, forstået korrekt, reelt var 100 % opfyldt af TASK-031, bag et
+  misvisende "kun 3 af 8"-regnskab.
 
 ### Ydelse
 
