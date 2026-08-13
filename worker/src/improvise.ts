@@ -76,10 +76,11 @@ export function createImproviseDeps(partial: {
 export function improviseCacheKey(
   aId: string,
   bId: string,
+  act: number,
   namespace: string,
 ): string {
   const [first, second] = aId <= bId ? [aId, bId] : [bId, aId];
-  return `${IMPROVISE_CACHE_KEY_PREFIX}${namespace}:${first}+${second}`;
+  return `${IMPROVISE_CACHE_KEY_PREFIX}${namespace}:${first}+${second}:act:${act}`;
 }
 
 export async function reserveImproviseRateLimitSlot(
@@ -113,6 +114,7 @@ export async function decideImprovise(
   ipHash: string,
   deps: ImproviseDeps,
 ): Promise<ImproviseResponse> {
+  const requestNow = deps.now();
   const decision: Decision = await deps.gate.run(async () => {
     const validated = validateImproviseBody(rawBody);
     if (!validated.ok) {
@@ -125,9 +127,9 @@ export async function decideImprovise(
     }
 
     const { a, b, act } = canonical.body;
-    const key = improviseCacheKey(a.id, b.id, deps.config.cacheNamespace);
+    const key = improviseCacheKey(a.id, b.id, act, deps.config.cacheNamespace);
     const recordStats = (outcome: ImproviseStatsOutcome) =>
-      recordImproviseStats(deps.store, deps.now(), a.id, b.id, outcome);
+      recordImproviseStats(deps.store, requestNow, a.id, b.id, act, outcome);
 
     const cached = await deps.store.get<CachedImprovisation>(key);
     if (cached) {
@@ -142,7 +144,7 @@ export async function decideImprovise(
     }
 
     const globalRecord = await deps.store.get<BudgetRecord>(IMPROVISE_BUDGET_KEY);
-    const globalReservation = reserveBudget(globalRecord, deps.now(), deps.config.dailyMax);
+    const globalReservation = reserveBudget(globalRecord, requestNow, deps.config.dailyMax);
     if (!globalReservation.ok) {
       await recordStats("other");
       return {
@@ -157,7 +159,7 @@ export async function decideImprovise(
 
     const ipBudgetKey = IMPROVISE_IP_BUDGET_KEY_PREFIX + ipHash;
     const ipRecord = await deps.store.get<BudgetRecord>(ipBudgetKey);
-    const ipReservation = reserveBudget(ipRecord, deps.now(), deps.config.dailyMaxPerIp);
+    const ipReservation = reserveBudget(ipRecord, requestNow, deps.config.dailyMaxPerIp);
     if (!ipReservation.ok) {
       await recordStats("other");
       return {
@@ -183,7 +185,7 @@ export async function decideImprovise(
           bId: b.id,
           act,
           value: result.value,
-          createdAt: deps.now(),
+          createdAt: requestNow,
         });
       }
       return result;

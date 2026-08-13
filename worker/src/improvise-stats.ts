@@ -4,7 +4,7 @@ import type { ImproviseCopy } from "./improvise-output";
 
 export const IMPROVISE_STATS_KEY_PREFIX = "improv-stats:";
 export const IMPROVISE_STATS_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
-export const IMPROVISE_EXPORT_SCHEMA_VERSION = 1;
+export const IMPROVISE_EXPORT_SCHEMA_VERSION = 2;
 
 export type ImproviseStatsOutcome = "hit" | "upstream" | "other";
 
@@ -19,6 +19,7 @@ export interface CachedImprovisation {
 export interface ImproviseStatsRecord {
   aId: string;
   bId: string;
+  act: number;
   count: number;
   cacheHits: number;
   upstreamCalls: number;
@@ -26,9 +27,9 @@ export interface ImproviseStatsRecord {
   lastSeen: number;
 }
 
-export function improviseStatsKey(aId: string, bId: string): string {
+export function improviseStatsKey(aId: string, bId: string, act: number): string {
   const [first, second] = aId <= bId ? [aId, bId] : [bId, aId];
-  return `${IMPROVISE_STATS_KEY_PREFIX}${first}+${second}`;
+  return `${IMPROVISE_STATS_KEY_PREFIX}${first}+${second}:act:${act}`;
 }
 
 function nextStats(
@@ -37,11 +38,13 @@ function nextStats(
   outcome: ImproviseStatsOutcome,
   aId: string,
   bId: string,
+  act: number,
 ): ImproviseStatsRecord {
   const [first, second] = aId <= bId ? [aId, bId] : [bId, aId];
   const base = existing ?? {
     aId: first,
     bId: second,
+    act,
     count: 0,
     cacheHits: 0,
     upstreamCalls: 0,
@@ -67,12 +70,13 @@ export async function recordImproviseStats(
   now: number,
   aId: string,
   bId: string,
+  act: number,
   outcome: ImproviseStatsOutcome,
 ): Promise<void> {
   try {
-    const key = improviseStatsKey(aId, bId);
+    const key = improviseStatsKey(aId, bId, act);
     const existing = await store.get<ImproviseStatsRecord>(key);
-    await store.put(key, nextStats(existing, now, outcome, aId, bId));
+    await store.put(key, nextStats(existing, now, outcome, aId, bId, act));
   } catch {
     // Statistik må aldrig vælte spillerens svar.
   }
@@ -124,9 +128,12 @@ export function buildImproviseExport(
   opts: { promptNamespace: string; now: number; limit: number; cursor: string | null },
 ): ImproviseExportPayload {
   const all = [...cachedEntries.values()]
-    .map((cached): ImproviseExportEntry => {
-      const stats = statsEntries.get(improviseStatsKey(cached.aId, cached.bId));
-      return {
+    .map((cached) => {
+      const stats = statsEntries.get(
+        improviseStatsKey(cached.aId, cached.bId, cached.act),
+      );
+      const cursorKey = `${cached.aId}~${cached.bId}~${cached.act}`;
+      const entry: ImproviseExportEntry = {
         aId: cached.aId,
         bId: cached.bId,
         act: cached.act,
@@ -139,18 +146,18 @@ export function buildImproviseExport(
         firstSeen: stats?.firstSeen ?? cached.createdAt,
         lastSeen: stats?.lastSeen ?? cached.createdAt,
       };
+      return { cursorKey, entry };
     })
     .sort((a, b) => {
-      if (b.count !== a.count) return b.count - a.count;
-      if (b.lastSeen !== a.lastSeen) return b.lastSeen - a.lastSeen;
-      if (a.aId !== b.aId) return a.aId < b.aId ? -1 : 1;
-      return a.bId < b.bId ? -1 : a.bId > b.bId ? 1 : 0;
+      return a.cursorKey < b.cursorKey ? -1 : a.cursorKey > b.cursorKey ? 1 : 0;
     });
 
-  const parsedCursor = opts.cursor ? Number.parseInt(opts.cursor, 10) : 0;
-  const start = Number.isFinite(parsedCursor) && parsedCursor >= 0 ? parsedCursor : 0;
-  const page = all.slice(start, start + opts.limit);
-  const nextCursor = start + opts.limit < all.length ? String(start + opts.limit) : null;
+  const remaining = opts.cursor
+    ? all.filter((item) => item.cursorKey > opts.cursor!)
+    : all;
+  const page = remaining.slice(0, opts.limit);
+  const nextCursor =
+    page.length < remaining.length ? page.at(-1)?.cursorKey ?? null : null;
 
   return {
     schemaVersion: IMPROVISE_EXPORT_SCHEMA_VERSION,
@@ -159,11 +166,11 @@ export function buildImproviseExport(
     total: all.length,
     counts: {
       cached: all.length,
-      requests: all.reduce((sum, entry) => sum + entry.count, 0),
-      cacheHits: all.reduce((sum, entry) => sum + entry.cacheHits, 0),
-      upstreamCalls: all.reduce((sum, entry) => sum + entry.upstreamCalls, 0),
+      requests: all.reduce((sum, item) => sum + item.entry.count, 0),
+      cacheHits: all.reduce((sum, item) => sum + item.entry.cacheHits, 0),
+      upstreamCalls: all.reduce((sum, item) => sum + item.entry.upstreamCalls, 0),
     },
-    entries: page,
+    entries: page.map((item) => item.entry),
     nextCursor,
   };
 }

@@ -80,17 +80,19 @@ const RESPONSE_SCHEMA = {
   },
 } as const;
 
-const USER_TEMPLATE =
-  "ACT: {act}\nFIRST: {canonical parent}\nSECOND: {canonical parent}\nWrite only the new name and flavor.";
+const RESPONSE_FORMAT = {
+  type: "json_schema",
+  json_schema: {
+    name: "karl_improvisation_copy",
+    strict: true,
+    schema: RESPONSE_SCHEMA,
+  },
+} as const;
 
-/** Hele copy-kontrakten; bruges som automatisk cache-navnerum. */
-export const IMPROVISE_PROMPT_VERSION_INPUT = JSON.stringify({
-  system: IMPROVISE_SYSTEM,
-  examples: IMPROVISE_EXAMPLES,
-  userTemplate: USER_TEMPLATE,
-  responseSchema: RESPONSE_SCHEMA,
-  outputLimits: IMPROVISE_OUTPUT_LIMITS,
-});
+const MODEL_OPTIONS = {
+  temperature: 0.8,
+  max_tokens: 120,
+} as const;
 
 function describeParent(parent: CanonicalThing): string {
   return JSON.stringify({
@@ -119,6 +121,50 @@ export function buildImproviseUserPrompt(body: CanonicalImproviseBody): string {
   ].join("\n\n");
 }
 
+function buildMessages(body: CanonicalImproviseBody) {
+  return [
+    { role: "system", content: IMPROVISE_SYSTEM },
+    { role: "user", content: buildImproviseUserPrompt(body) },
+  ] as const;
+}
+
+const PROMPT_FINGERPRINT_BODY: CanonicalImproviseBody = {
+  act: 314159,
+  a: {
+    id: "fingerprint-a",
+    name: "__FIRST_NAME__",
+    flavor: "__FIRST_FLAVOR__",
+    kind: "material",
+    stuff: "stone",
+    traits: ["hard", "heavy"],
+    scale: "hand",
+  },
+  b: {
+    id: "fingerprint-b",
+    name: "__SECOND_NAME__",
+    flavor: "__SECOND_FLAVOR__",
+    kind: "tool",
+    stuff: "wood",
+    traits: ["sharp", "light"],
+    scale: "body",
+  },
+};
+
+/**
+ * Hele den faktiske modelkontrakt. Samme renderer, beskriver og message-
+ * builder som runtime-kaldet bruges på en fuldt udfyldt sentinel, så en
+ * ændring i literals, eksempler, feltstruktur eller serialisering ændrer
+ * navnerummet automatisk.
+ */
+export const IMPROVISE_PROMPT_VERSION_INPUT = [
+  buildMessages(PROMPT_FINGERPRINT_BODY)
+    .map((message) => `${message.role}\u0001${message.content}`)
+    .join("\u0002"),
+  JSON.stringify(RESPONSE_FORMAT),
+  JSON.stringify(MODEL_OPTIONS),
+  JSON.stringify(IMPROVISE_OUTPUT_LIMITS),
+].join("\u0000");
+
 export async function callImproviseOpenAI(
   body: CanonicalImproviseBody,
   env: ModelEnv,
@@ -133,20 +179,9 @@ export async function callImproviseOpenAI(
       },
       body: JSON.stringify({
         model: env.MODEL ?? DEFAULT_MODEL,
-        messages: [
-          { role: "system", content: IMPROVISE_SYSTEM },
-          { role: "user", content: buildImproviseUserPrompt(body) },
-        ],
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "karl_improvisation_copy",
-            strict: true,
-            schema: RESPONSE_SCHEMA,
-          },
-        },
-        temperature: 0.8,
-        max_tokens: 120,
+        messages: buildMessages(body),
+        response_format: RESPONSE_FORMAT,
+        ...MODEL_OPTIONS,
       }),
     });
   } catch {

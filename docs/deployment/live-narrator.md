@@ -567,8 +567,9 @@ content-type: application/json
   taksonomi op i det bundlede `content/elements.json`; ukendte,
   runtime-opfundne eller endnu ikke akt-tilgængelige id'er afvises før
   cache og budget.
-- Paridentiteten sorteres internt. `sten+pind` og `pind+sten` er samme
-  opfindelse.
+- Paridentiteten sorteres internt **sammen med aktnummeret**.
+  `sten+pind` og `pind+sten` er samme opfindelse i samme akt; samme par i
+  akt 1 og akt 2 er to forskellige, deterministiske identiteter.
 - Et succes-svar er **kun**:
 
 ```json
@@ -599,16 +600,26 @@ Alle nøgler ligger i den eksisterende `Coordinator`-storage:
 
 | Formål | Nøgle |
 |---|---|
-| Sorteret, namespaced copy-cache | `improv-cache:<promptNamespace>:<a>+<b>` |
+| Sorteret, namespaced copy-cache | `improv-cache:<promptNamespace>:<a>+<b>:act:<act>` |
 | Rullende rate limit pr. IP-hash | `rl:improvise:<ipHash>` |
 | Globalt UTC-dagsbudget | `budget:improvise` |
 | UTC-dagsbudget pr. IP-hash | `budget:improvise:ip:<ipHash>` |
-| Smalle efterspørgselstællinger | `improv-stats:<a>+<b>` |
+| Smalle efterspørgselstællinger | `improv-stats:<a>+<b>:act:<act>` |
 
-`promptNamespace` udledes automatisk af hele improvisationsprompten,
-eksemplerne, output-skemaet/-grænserne og modelnavnet. Cache-hit undgår både
-modelkald og budgetreservation. Samtidige misses på samme sorterede par
-deler ét kald via den eksisterende `InFlightRegistry`.
+`promptNamespace` udledes automatisk af den **faktiske runtime-renderer**:
+samme message-builder og `describeParent`-serialisering køres med en fuldt
+udfyldt sentinel, så alle labels, separatorer, kanoniske parent-felter og
+de tre eksempler indgår præcis som de renderes. Det færdige fingeraftryk
+indeholder desuden systemprompten/rollerne, det faktiske response-format og
+JSON-schema, modeloptionerne, output-grænserne og modelnavnet. Der findes
+ingen separat, ubrugt skabelonstreng, som kan drive fra runtime-prompten.
+
+Cache-hit undgår både modelkald og budgetreservation. Samtidige misses på
+samme sorterede **par+akt** deler ét kald via den eksisterende
+`InFlightRegistry`; forskellige akter deler aldrig cache eller in-flight.
+Ved et cache-miss indfanges ét request-tidspunkt før storage-awaits, og
+både det globale og pr.-IP UTC-dagsbudget reserveres mod netop den samme
+UTC-dato — også hvis anmodningen krydser midnat undervejs.
 
 Den eksisterende daglige alarm rydder også udløbne
 improvisations-rate-limit-poster, cache-poster over 30 dage,
@@ -623,7 +634,11 @@ authorization: Bearer <ADMIN_EXPORT_TOKEN>
 
 Endpointet genbruger præcis samme fail-closed tokenkontrol og interne
 markørheader som `/admin/pairs`. Det eksporterer kun den aktuelle
-prompt-namespaces cachede improvisationer med sorterede forældre,
+prompt-namespaces cachede improvisationer i stabil, leksikalsk
+`pair+act`-rækkefølge med en cursor-after-key. Ændringer i `count` eller
+`lastSeen` mellem sider kan derfor ikke flytte en allerede set række og
+skabe dubletter/huller. Hver række bevarer stadig de aktuelle,
+sorterede forældre,
 `name`/`flavor`, oprettelsestid og smalle tællinger (`count`,
 `cacheHits`, `upstreamCalls`, `firstSeen`, `lastSeen`). Ingen rå eller
 hashet IP, ingen prompt, intet token og ingen anden storage-post kan

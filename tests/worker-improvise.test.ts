@@ -3,6 +3,26 @@ import worker from "../worker/src/index";
 import { Coordinator, CACHE_MAX_AGE_MS } from "../worker/src/coordinator-do";
 import { BUDGET_KEY, IP_BUDGET_KEY_PREFIX } from "../worker/src/coordinator";
 import { ADMIN_VERIFIED_HEADER } from "../worker/src/admin";
+import {
+  createImproviseDeps,
+  decideImprovise,
+  IMPROVISE_BUDGET_KEY,
+  IMPROVISE_IP_BUDGET_KEY_PREFIX,
+} from "../worker/src/improvise";
+import {
+  buildImproviseUserPrompt,
+  IMPROVISE_PROMPT_VERSION_INPUT,
+} from "../worker/src/improvise-model";
+import {
+  buildImproviseExport,
+  improviseStatsKey,
+  type CachedImprovisation,
+  type ImproviseStatsRecord,
+} from "../worker/src/improvise-stats";
+import { promptNamespace } from "../worker/src/cache-key";
+import { InMemoryStore } from "../worker/src/store";
+import type { BudgetRecord } from "../worker/src/budget";
+import type { CanonicalImproviseBody } from "../worker/src/catalog";
 import type {
   DurableObjectId,
   DurableObjectNamespace,
@@ -78,6 +98,16 @@ const VALID_OUTPUT = {
   name: "Flint club",
   flavor: "A stone tied to a stick. Karl has invented confidence with a handle.",
 };
+const ACT_OUTPUTS = {
+  1: {
+    name: "First age club",
+    flavor: "Karl gives the stone a handle and immediately considers the age improved.",
+  },
+  2: {
+    name: "Second age club",
+    flavor: "Karl revisits the handled stone with the confidence of a later century.",
+  },
+} as const;
 
 function nyCoordinator(
   env: Record<string, string | undefined> = {},
@@ -132,6 +162,27 @@ function adminImproviseRequest(
 
 function stubModelOutput(output: unknown, delayMs = 0) {
   const fetchStub = vi.fn(async (_input: string | URL | Request, _init?: RequestInit) => {
+    if (delayMs > 0) await new Promise((resolve) => setTimeout(resolve, delayMs));
+    return new Response(
+      JSON.stringify({
+        choices: [{ message: { content: JSON.stringify(output) } }],
+      }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  });
+  vi.stubGlobal("fetch", fetchStub);
+  return fetchStub;
+}
+
+function stubModelOutputByAct(delayMs = 0) {
+  const fetchStub = vi.fn(async (_input: string | URL | Request, init?: RequestInit) => {
+    const upstreamBody = JSON.parse(String(init?.body)) as {
+      messages: { role: string; content: string }[];
+    };
+    const userPrompt = upstreamBody.messages.find((message) => message.role === "user")?.content ?? "";
+    const act = Number.parseInt(userPrompt.match(/\bACT: (\d+)\b/)?.[1] ?? "", 10) as 1 | 2;
+    const output = ACT_OUTPUTS[act];
+    if (!output) throw new Error(`uventet akt i prompt: ${act}`);
     if (delayMs > 0) await new Promise((resolve) => setTimeout(resolve, delayMs));
     return new Response(
       JSON.stringify({
@@ -331,6 +382,39 @@ describe("/improvise prompt og struktureret modelkontrakt", () => {
       expect(Object.keys(responseFormat.json_schema.schema.properties)).not.toContain(forbidden);
     }
   });
+
+  it("namespace-inputtet indeholder den FAKTISK renderede skabelon og ændres ved en rendererændring", () => {
+    const fingerprintBody: CanonicalImproviseBody = {
+      act: 314159,
+      a: {
+        id: "fingerprint-a",
+        name: "__FIRST_NAME__",
+        flavor: "__FIRST_FLAVOR__",
+        kind: "material",
+        stuff: "stone",
+        traits: ["hard", "heavy"],
+        scale: "hand",
+      },
+      b: {
+        id: "fingerprint-b",
+        name: "__SECOND_NAME__",
+        flavor: "__SECOND_FLAVOR__",
+        kind: "tool",
+        stuff: "wood",
+        traits: ["sharp", "light"],
+        scale: "body",
+      },
+    };
+    const rendered = buildImproviseUserPrompt(fingerprintBody);
+
+    expect(IMPROVISE_PROMPT_VERSION_INPUT).toContain(rendered);
+    const changedRendered = rendered.replace("FIRST:", "PRIMARY:");
+    const changedContract = IMPROVISE_PROMPT_VERSION_INPUT.replace(rendered, changedRendered);
+    expect(changedContract).not.toBe(IMPROVISE_PROMPT_VERSION_INPUT);
+    expect(promptNamespace(changedContract, "model-a")).not.toBe(
+      promptNamespace(IMPROVISE_PROMPT_VERSION_INPUT, "model-a"),
+    );
+  });
 });
 
 describe("/improvise output-validering: ugyldigt svar fejler eksplicit og caches ALDRIG", () => {
@@ -399,7 +483,86 @@ describe("/improvise cache: sorteret par, prompt-navnerum, budgetfri hits og coa
     expect(fetchStub).toHaveBeenCalledTimes(1);
     const entries = await storage.list({ prefix: "improv-cache:" });
     expect(entries.size).toBe(1);
-    expect([...entries.keys()][0]).toMatch(/^improv-cache:[0-9a-f]+:pind\+sten$/);
+    expect([...entries.keys()][0]).toMatch(/^improv-cache:[0-9a-f]+:pind\+sten:act:1$/);
+  });
+
+  it("samme par i to akter er to deterministiske identiteter uanset sekventiel ankomstrækkefølge", async () => {
+    for (const order of [[1, 2], [2, 1]] as const) {
+      const { coordinator } = nyCoordinator();
+      const fetchStub = stubModelOutputByAct();
+      const seen = new Map<number, Record<string, unknown>>();
+
+      for (const act of order) {
+        const response = await coordinator.fetch(
+          improviseRequest({ a: "sten", b: "pind", act }),
+        );
+        expect(response.status).toBe(200);
+        seen.set(act, await jsonBody(response));
+      }
+
+      expect(seen.get(1)).toEqual(ACT_OUTPUTS[1]);
+      expect(seen.get(2)).toEqual(ACT_OUTPUTS[2]);
+      expect(fetchStub).toHaveBeenCalledTimes(2);
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("samtidige requests for samme par i forskellige akter coalescer IKKE sammen", async () => {
+    const { coordinator } = nyCoordinator();
+    const fetchStub = stubModelOutputByAct(10);
+
+    const [act1, act2] = await Promise.all([
+      coordinator.fetch(
+        improviseRequest(
+          { a: "sten", b: "pind", act: 1 },
+          { ipHash: "1".repeat(64) },
+        ),
+      ),
+      coordinator.fetch(
+        improviseRequest(
+          { a: "pind", b: "sten", act: 2 },
+          { ipHash: "2".repeat(64) },
+        ),
+      ),
+    ]);
+
+    expect(await act1.json()).toEqual(ACT_OUTPUTS[1]);
+    expect(await act2.json()).toEqual(ACT_OUTPUTS[2]);
+    expect(fetchStub).toHaveBeenCalledTimes(2);
+  });
+
+  it("stats og admin-eksport holder samme par adskilt pr. akt", async () => {
+    const { coordinator, storage } = nyCoordinator();
+    const fetchStub = stubModelOutputByAct();
+
+    await coordinator.fetch(improviseRequest({ a: "sten", b: "pind", act: 1 }));
+    await coordinator.fetch(improviseRequest({ a: "pind", b: "sten", act: 1 }));
+    await coordinator.fetch(improviseRequest({ a: "sten", b: "pind", act: 2 }));
+
+    const stats = await storage.list({ prefix: "improv-stats:" });
+    expect([...stats.keys()].sort()).toEqual([
+      "improv-stats:pind+sten:act:1",
+      "improv-stats:pind+sten:act:2",
+    ]);
+
+    const exported = await coordinator.fetch(
+      adminImproviseRequest({ [ADMIN_VERIFIED_HEADER]: "1" }),
+    );
+    const body = (await exported.json()) as {
+      total: number;
+      entries: {
+        act: number;
+        count: number;
+        cacheHits: number;
+        upstreamCalls: number;
+      }[];
+    };
+    expect(body.total).toBe(2);
+    expect(body.entries).toEqual([
+      expect.objectContaining({ act: 1, count: 2, cacheHits: 1, upstreamCalls: 1 }),
+      expect.objectContaining({ act: 2, count: 1, cacheHits: 0, upstreamCalls: 1 }),
+    ]);
+    expect(fetchStub).toHaveBeenCalledTimes(2);
   });
 
   it("en ændret model giver et nyt prompt-navnerum og genbruger ikke gammel copy", async () => {
@@ -518,6 +681,47 @@ describe("/improvise serverkvoter bruger egne lager-nøgler og kan ikke erstatte
     expect(await jsonBody(second)).toMatchObject({ reason: "daily budget" });
     expect(await storage.get(BUDGET_KEY)).toBeUndefined();
     expect((await storage.list({ prefix: IP_BUDGET_KEY_PREFIX })).size).toBe(0);
+  });
+
+  it("globalt og pr.-IP budget reserveres på samme request-tidspunkt ved UTC-midnat", async () => {
+    const beforeMidnight = Date.UTC(2026, 7, 13, 23, 59, 59, 999);
+    const afterMidnight = Date.UTC(2026, 7, 14, 0, 0, 0, 1);
+    let now = beforeMidnight;
+
+    class MidnightStore extends InMemoryStore {
+      override async get<T = unknown>(key: string): Promise<T | undefined> {
+        if (key.startsWith(IMPROVISE_IP_BUDGET_KEY_PREFIX)) now = afterMidnight;
+        return super.get<T>(key);
+      }
+    }
+
+    const store = new MidnightStore();
+    const deps = createImproviseDeps({
+      store,
+      now: () => now,
+      callUpstream: async () => ({ ok: true, value: VALID_OUTPUT }),
+      config: {
+        rateLimitWindowMs: 60_000,
+        rateLimitMax: 100,
+        dailyMax: 10,
+        dailyMaxPerIp: 10,
+        cacheNamespace: "midnight-test",
+      },
+    });
+
+    const result = await decideImprovise(
+      { a: "sten", b: "pind", act: 1 },
+      IP_HASH,
+      deps,
+    );
+    expect(result.status).toBe(200);
+
+    const globalBudget = await store.get<BudgetRecord>(IMPROVISE_BUDGET_KEY);
+    const ipBudget = await store.get<BudgetRecord>(
+      IMPROVISE_IP_BUDGET_KEY_PREFIX + IP_HASH,
+    );
+    expect(globalBudget?.date).toBe("2026-08-13");
+    expect(ipBudget?.date).toBe("2026-08-13");
   });
 });
 
@@ -671,5 +875,71 @@ describe("GET /admin/improvisations: autentificeret cache-eksport og tællinger"
     );
     expect(ok.status).toBe(200);
     expect(await storage.get("budget:improvise")).toBeUndefined();
+  });
+
+  it("cursor-after-key giver ingen dubletter eller huller når counts ændres mellem sider", () => {
+    const cached = new Map<string, CachedImprovisation>([
+      [
+        "improv-cache:ns:a+b:act:1",
+        { aId: "a", bId: "b", act: 1, value: VALID_OUTPUT, createdAt: 1 },
+      ],
+      [
+        "improv-cache:ns:c+d:act:1",
+        { aId: "c", bId: "d", act: 1, value: VALID_OUTPUT, createdAt: 2 },
+      ],
+      [
+        "improv-cache:ns:e+f:act:2",
+        { aId: "e", bId: "f", act: 2, value: VALID_OUTPUT, createdAt: 3 },
+      ],
+    ]);
+
+    const record = (
+      aId: string,
+      bId: string,
+      act: number,
+      count: number,
+    ): ImproviseStatsRecord => ({
+      aId,
+      bId,
+      act,
+      count,
+      cacheHits: 0,
+      upstreamCalls: 1,
+      firstSeen: 1,
+      lastSeen: count,
+    });
+    const stats = new Map<string, ImproviseStatsRecord>([
+      [improviseStatsKey("a", "b", 1), record("a", "b", 1, 30)],
+      [improviseStatsKey("c", "d", 1), record("c", "d", 1, 20)],
+      [improviseStatsKey("e", "f", 2), record("e", "f", 2, 10)],
+    ]);
+
+    const first = buildImproviseExport(cached, stats, {
+      promptNamespace: "ns",
+      now: 100,
+      limit: 2,
+      cursor: null,
+    });
+    expect(first.entries.map((entry) => `${entry.aId}+${entry.bId}:act:${entry.act}`)).toEqual([
+      "a+b:act:1",
+      "c+d:act:1",
+    ]);
+    expect(first.nextCursor).toBe("c~d~1");
+    const promoted = record("e", "f", 2, 100);
+    stats.set(improviseStatsKey("e", "f", 2), promoted);
+
+    const second = buildImproviseExport(cached, stats, {
+      promptNamespace: "ns",
+      now: 101,
+      limit: 2,
+      cursor: first.nextCursor,
+    });
+    const combined = [...first.entries, ...second.entries].map(
+      (entry) => `${entry.aId}+${entry.bId}:act:${entry.act}`,
+    );
+    expect(combined).toEqual(["a+b:act:1", "c+d:act:1", "e+f:act:2"]);
+    expect(new Set(combined).size).toBe(3);
+    expect(second.entries[0]?.count).toBe(100);
+    expect(second.nextCursor).toBeNull();
   });
 });
