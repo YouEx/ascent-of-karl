@@ -37,6 +37,11 @@ tags: [architecture, engine, narrator, content, tooling, feature]
 > `inert` alene, fordi de naturligt mangler i canon-indexet. Gameplay-
 > klassifikation og ids ejes af offline-regler. En fremtidig model må kun
 > forbedre navn/flavor og ændrer hverken denne plans verdikt eller tags.
+> Improvisationskilden er nu komplet, men production-off indtil den særskilte
+> eksterne gate er bestået; se
+> `plan/feature-improvised-solutions-1.md`,
+> `docs/design/improvisation-balance.md` og TASK-030-beviset under
+> `docs/playtest/`.
 
 Ved planens start havde spillet 187 elementer og 225 opskrifter: 17.578
 mulige uordnede par (inklusive selv-par), hvor 17.353 faldt tilbage på otte

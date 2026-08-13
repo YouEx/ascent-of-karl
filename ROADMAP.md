@@ -13,8 +13,9 @@ loopet er bevist (beslutning 2026-08-05, se docs/design/act-1.md).*
 | Bølge 3: fossiler, monolit, istid-dyr, brød, hav-myter, sport, skrift | 205 | ✅ |
 | Bølge 4: challenges med frist + sidequests med flere veje | **225** | ✅ |
 
-Akt I står nu på **187 elementer, 225 kombinationer, 15 skæbner og 770
-fortæller-varianter**. Næste indholdsarbejde bør drives af playtest-data,
+De fire indholdsbølger nåede 225; den aktuelle kilde står på **187
+elementer, 409 canonical kombinationer og 15 skæbner** efter de senere
+system- og indholdsforløb. Næste indholdsarbejde bør drives af playtest-data,
 ikke af flere tal — se prioriteringen nedenfor.
 
 Værktøjer: `tools/superset_status.py` (adoption-tracking mod de 14.913
@@ -32,11 +33,14 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
    (2026-08-10). Actions-nedbruddet fra 2026-08-06 er ovre; både `ci.yml` og
    `deploy.yml` er grønne. Delekortet er på plads og genereres nu fra
    designsystemet (`npm run social`), så linket kan sendes direkte til testere.
-2. **Playtest-runde 1** (PRD Step 5, fremrykket) — **NÆSTE**: 5-10 personer,
-   uden forklaring. Mål: griner de, går de i stå, kan kombinationer ræsonneres?
-   Fanger om fortæller-humoren lander FØR vi investerer i art/voice.
-   Materialet ligger klar i `docs/playtest/` (invitation, observationsguide,
-   spørgeskema). Mangler kun deltagere.
+2. **Ekstern improvisationsplaytest** — **NÆSTE**: source er færdig, og tre
+   agent-QA-runs fandt ingen source-defekt. Det er ikke human evidens. Rekruttér
+   præcis **5–10 engelsktalende deltagere** på tværs af crafting-game- og
+   low-game-experience-grupper; de spiller uden forklaring. Mål: søger de
+   absurditeten frivilligt, lander narratorens dom, og føles cap 6 beskyttende
+   frem for straffende? Materialet ligger i `docs/playtest/`, og agentbeviset
+   i `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`.
+   **Der skal ikke implementeres mere før denne runde.**
 3. **Bølge 2-content** efter playtest-læring (hvad leder folk efter, som
    ikke findes?). Superset-listen er idébanken.
 4. **Art-stilprøver** (PRD Step 4): Karl som synlig figur er nu **afgjort —
@@ -54,6 +58,20 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
 7. **Distribution**: itch.io-side (gratis, lav friktion) → Steam-side når
    Akt I føles komplet (wishlist-opbygning; PRD §8-mål justeres til
    én-akts-spillet).
+
+## Improvisationens release-status
+
+- **Source:** komplet — offline core, UI/Chronicle/playtest v2, narrator-dom,
+  copy-only Worker-kilde, sikker harvest og balancecheck.
+- **Lokal QA:** kør
+  `env -u VITE_IMPROVISE_URL VITE_IMPROVISE_ENABLED=true npm run dev`.
+- **Produktion:** off. `.github/workflows/deploy.yml` sætter hverken
+  `VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`, og der er ingen
+  provisioneret improvisations-Worker-trafik.
+- **Release-gate:** den eksterne playtest ovenfor. Først efter dokumenteret
+  human evidens må production-enable vurderes.
+- **Høst:** værktøjet er færdigt, men faktisk output afventer deployet Worker,
+  admin-token og rigtig trafik. Der findes intet fabrikeret harvest-output.
 
 ## Bevidst udskudt
 

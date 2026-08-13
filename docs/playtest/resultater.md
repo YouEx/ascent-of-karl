@@ -1,6 +1,7 @@
 # Playtest-runde 1 — samlede fund
 
-*Status: **ikke påbegyndt.** Ingen testere rekrutteret endnu.
+*Ekstern-human status: **ikke påbegyndt.** Ingen deltagere rekrutteret endnu.
+De tre agent-QA-runs tæller ikke i tabellen eller acceptancen.
 Udfyld løbende, ikke til sidst. Metode: `README.md`.*
 
 ## Deltagere

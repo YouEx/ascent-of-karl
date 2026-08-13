@@ -6,6 +6,10 @@
 `VITE_IMPROVISE_URL` explicitly absent  
 **Artifact root:** `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`
 
+**Balance contract:** cap 6, one summer and reproducibility hash
+`fnv1a32:fa873b0e` come from
+[`docs/design/improvisation-balance.md`](../../design/improvisation-balance.md).
+
 ## Method
 
 The playtest used a real local Vite app and Playwright browser interactions
@@ -189,8 +193,9 @@ recipes, predicates and intended jokes, so these runs cannot establish that
 new players seek absurdity voluntarily, understand onboarding, or laugh.
 
 The exact blocker to production enablement is an observed external-human
-round: 5–10 English-speaking participants across crafting-game and low-game
-experience groups, playing without explanation under `docs/playtest/README.md`,
+round: 5–10 English-speaking participants across crafting-game- and
+low-game-experience groups, playing without explanation under
+`docs/playtest/README.md`,
 with their reactions and copied logs recorded. Until that evidence exists,
 `VITE_IMPROVISE_ENABLED` must remain unset in deploy, and no Worker URL,
 secret or production traffic should be configured.
