@@ -463,7 +463,7 @@ def main() -> int:
                 )
 
             rejected = improvisation.get("rejected")
-            rejection_keys = {"canonicalRecipe", "verdict", "depthLimit"}
+            rejection_keys = {"canonicalRecipe", "verdict", "depthLimit", "runLimit"}
             if not isinstance(rejected, dict):
                 err(f"Akt {act['act']}: improvisation.rejected skal være et objekt")
                 rejected = {}
@@ -480,6 +480,10 @@ def main() -> int:
                 "depthLimit": check_improv_pool(
                     rejected.get("depthLimit"),
                     "improvisation.rejected.depthLimit",
+                ),
+                "runLimit": check_improv_pool(
+                    rejected.get("runLimit"),
+                    "improvisation.rejected.runLimit",
                 ),
             }
             verdict_rejected = rejected.get("verdict")
@@ -573,7 +577,8 @@ def main() -> int:
                 )
 
             improv_placeholders = {
-                "a", "b", "element", "need", "Need", "actual", "expected", "missing"
+                "a", "b", "element", "need", "Need", "actual", "expected", "missing",
+                "limit"
             }
             for ref in configured_ids:
                 line = lines_by_id.get(ref)

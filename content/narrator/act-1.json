@@ -1941,6 +1941,10 @@
         "improv-reject-canonical-1",
         "improv-reject-canonical-2"
       ],
+      "runLimit": [
+        "improv-reject-limit-1",
+        "improv-reject-limit-2"
+      ],
       "verdict": {
         "locked": [
           "improv-reject-locked-1",

@@ -711,6 +711,45 @@ describe("Narrator: genbrug, afvisning og serialiseret variation", () => {
     expect(productionNarrator.improvisation!.rejected.depthLimit).toContain(line?.id);
   });
 
+  it("kortlægger run-loftet til en sand, data-drevet pulje uden gentagelse", () => {
+    const runLimit = (
+      productionNarrator.improvisation!.rejected as NonNullable<
+        typeof productionNarrator.improvisation
+      >["rejected"] & {
+        runLimit?: string[];
+      }
+    ).runLimit;
+    expect(runLimit).toBeDefined();
+    expect(runLimit?.length).toBeGreaterThanOrEqual(2);
+    if (!runLimit) return;
+
+    const engine = new Engine(production);
+    const narrator = new Narrator(engine, freshNarratorState(41));
+    const outcome = {
+      kind: "improvise-rejected",
+      a: engine.element("sten"),
+      b: engine.element("graes"),
+      reason: "run-limit",
+      limit: 5,
+    } as unknown as CombineOutcome;
+    const heard = Array.from({ length: 6 }, () =>
+      narrator.react("sten", "graes", outcome),
+    );
+
+    for (const line of heard) {
+      expect(line).toBeTruthy();
+      expect(runLimit).toContain(line?.id);
+      expect(line?.text).toContain("5");
+      expect(line?.text.toLowerCase()).toContain("stone");
+      expect(line?.text.toLowerCase()).toContain("dry grass");
+      expect(line?.text).not.toContain("{");
+    }
+    for (let index = 1; index < heard.length; index++) {
+      expect(heard[index]!.id).not.toBe(heard[index - 1]!.id);
+      expect(heard[index]!.text).not.toBe(heard[index - 1]!.text);
+    }
+  });
+
   it("gentager hverken replik-id eller variant i en række genbrug", () => {
     const content = testContent([], {});
     const { engine, narrator } = narrated(content, 31);
@@ -828,7 +867,11 @@ function realLongDepthThreeInvention(): ElementDef {
     predicates: {},
     config: { turnLimit: 99, endingsUnlockAt: 99 },
   };
-  const engine = new Engine(content);
+  // Stemmegaten tester det maksimale navn, ikke produktets per-run-balance.
+  // Uden loft kan den bygge den fulde symmetriske dybde-3 fixture.
+  const engine = new Engine(content, undefined, {
+    improvisationRunCap: null,
+  });
   const make = (a: string, b: string): ElementDef => {
     const outcome = engine.improvise(a, b);
     expect(outcome.kind).toBe("improvised");
@@ -878,13 +921,18 @@ fillers = judge.improvisation_element_fillers()
 expanded = judge.expand_improvisation()
 short_ids = sorted({label.split(":")[2].split("#")[0] for label, _ in expanded if label.startswith("improvisation:short:")})
 max_ids = sorted({label.split(":")[2].split("#")[0] for label, _ in expanded if label.startswith("improvisation:max:")})
-failures = [f for f in judge.gate() if "improvisation:max:" in f]
+all_failures = judge.gate()
+failures = [f for f in all_failures if "improvisation:max:" in f]
+run_limit = [label for label, _ in expanded if "improv-reject-limit-" in label]
+run_limit_failures = [f for f in all_failures if "improv-reject-limit-" in f]
 print(json.dumps({
   "realWords": len(judge.tokenize_words(real_name)),
   "maxWords": max(len(judge.tokenize_words(name)) for name in fillers),
   "shortIds": short_ids,
   "maxIds": max_ids,
   "failures": failures,
+  "runLimit": run_limit,
+  "runLimitFailures": run_limit_failures,
 }))
 `);
 
@@ -895,12 +943,16 @@ print(json.dumps({
       shortIds: string[];
       maxIds: string[];
       failures: string[];
+      runLimit: string[];
+      runLimitFailures: string[];
     };
     expect(parsed.realWords).toBeGreaterThan(10);
     expect(parsed.maxWords).toBeGreaterThanOrEqual(parsed.realWords);
     expect(parsed.maxIds).toEqual(parsed.shortIds);
     expect(parsed.failures).toEqual([]);
-  }, 20_000);
+    expect(parsed.runLimit.length).toBeGreaterThanOrEqual(12);
+    expect(parsed.runLimitFailures).toEqual([]);
+  }, 30_000);
 
   it("afviser en lav-stemme improvisationsvariant gennem den samme gate som validate", async () => {
     const result = await runPython(`
@@ -916,5 +968,5 @@ print(json.dumps([f for f in failures if "improvisation:test-bad#0" in f]))
     const failures = JSON.parse(result.stdout) as string[];
     expect(failures).toHaveLength(1);
     expect(failures[0]).toContain("hård afvisning");
-  }, 20_000);
+  }, 30_000);
 });

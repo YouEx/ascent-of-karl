@@ -345,6 +345,7 @@ export interface NarratorImprovisationDef {
   /** Improvisationen blev stoppet før et element blev oprettet. */
   rejected: {
     canonicalRecipe: string[];
+    runLimit: string[];
     verdict: {
       locked: string[];
       other: string[];
@@ -603,10 +604,12 @@ export type CombineOutcome = {
       kind: "improvise-rejected";
       a: ElementDef;
       b: ElementDef;
-      reason: "canonical-recipe" | "verdict" | "depth-limit";
+      reason: "canonical-recipe" | "verdict" | "depth-limit" | "run-limit";
       verdict?: Verdict;
       evidence?: VerdictEvidence;
       attemptedDepth?: number;
+      /** Det serialiserede run-loft, der blev nået. Kun ved run-limit. */
+      limit?: number;
     });
 
 /**

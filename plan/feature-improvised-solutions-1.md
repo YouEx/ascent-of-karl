@@ -62,8 +62,11 @@ tags: [feature, architecture, engine, narrator, content, infrastructure]
 > Karls opfindelser ude af den historiske tidslinje. Hele spillerfladen er
 > fortsat gated af `VITE_IMPROVISE_ENABLED === "true"`; deploy-workflowet
 > sætter hverken det flag eller `VITE_IMPROVISE_URL`, så der er ingen trafik.
-> Fortællerens dom er leveret og stemme-gated. `TASK-019`'s klient-cap,
-> balanceringen, secrets, deploy og rigtig trafik er fortsat åbne.
+> Fortællerens dom er leveret og stemme-gated. `TASK-019`'s klient-cap og
+> `TASK-027`/`TASK-028`'s balancering er nu leveret: 2.000 parrede seeds pr.
+> konfiguration valgte én sommer og højst fem unikke opfindelser pr. run
+> (`docs/design/improvisation-balance.md`). Secrets, deploy, rigtig trafik og
+> den menneskelige TASK-030-playtest er fortsat åbne.
 
 Spillets sjoveste indhold findes allerede: **mudderkage** (mudder + bær) mætter Karl, og **klyngen** (nabo + skind) holder ham varm. Begge er mærket `spor: "komisk"`. Ideen om at løse en alvorlig nød på en latterlig måde er ikke ny — den er spillets bedste greb. Den er bare begrænset til de absurditeter, forfatteren nåede at forestille sig på forhånd.
 
@@ -105,7 +108,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **SEC-002**: Improviserede navne indgår i senere prompts og er dermed en langsom prompt-injektionskanal. Navne begrænses hårdt (≤ 3 ord, intet tegnsætningsvildnis, ingen URL'er, ingen citationstegn), og en fremtidig model må kun svare med struktureret `{name, flavor}`. Alt andet kasseres.
 - **SEC-003**: Rate limit pr. klient i proxyen, og et hårdt loft over improvisationer pr. run. Et spil på en statisk side må ikke kunne bruges som gratis LLM-endpoint.
 - **CON-001**: `Engine.combine`, `Engine.improvise` og deres state-transitioner forbliver **synkrone, rene og deterministiske** (CON-002 i narrationsplanen). En fremtidig async copy-forbedring må ligge udenfor motoren og må kun erstatte navn/flavor. Ingen netværkskald eller gameplay-tags kommer ind i motoren.
-- **CON-002**: `turnLimit` er 50. Improvisation koster en sommer som alt andet — turbudgettet er det naturlige loft for hvor meget slop der kan komme ind i ét liv.
+- **CON-002**: `turnLimit` er 50. Målingen 2026-08-13 fastholder én sommer pr. ikke-canonical forsøg og tilføjer et eksplicit loft på fem unikke improviserede elementer pr. run. Genbrug er tilladt; et sjette nyt element afvises og koster stadig forsøgets ene sommer.
 - **CON-003**: Improvisation forudsætter taksonomien fra narrationsplanens fase 1 (TASK-002 til TASK-005 dér). Denne plan kan ikke starte før.
 - **CON-004**: Krøniken og delekortet skal kunne vise et improviseret element uden at love, at det er historisk. De kuraterede elementers `note` og `sourceUrl` er spillets troværdighed og må ikke blandes sammen med spillerens påfund.
 - **GUD-001**: Vittigheden skal koste noget. En absurd løsning skal være sværere eller dyrere end den oplagte — ellers er absurditet ikke et valg, men den optimale strategi.
@@ -156,7 +159,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 | TASK-016 | **Leveret under frosset kontrakt:** genbrug den EKSISTERENDE Worker og `Coordinator`; `POST /improvise` accepterer eksakt `{a,b,act}` med kanoniske id'er og returnerer offentligt kun `{name,flavor}`. Ingen `proxy/`, ingen KV, ingen mekaniske felter fra modellen. | ✅ | 2026-08-13 |
 | TASK-017 | **Leveret:** sorteret par+akt-cache i det eksisterende Durable Object storage, med automatisk navnerum fra den faktisk renderede promptkontrakt+model. Cache-hit undgår både modelkald og improvisationsbudget; samtidige misses coalesces kun inden for samme par+akt. | ✅ | 2026-08-13 |
 | TASK-018 | **Leveret under frosset kontrakt:** strikt modelskema `{name,flavor}` og servervalidering af eksakte felter, ≤3 ord, URL'er, citationstegn, kontroltegn, tegnsætningsvildnis og flavor-grænse. Ugyldigt svar giver eksplicit 502, caches aldrig og retries ikke automatisk; den senere klient ejer fallback. | ✅ | 2026-08-13 |
-| TASK-019 | **Serverhalvdel leveret:** egne rullende og daglige globalt/pr.-IP-kvoter med egne storage-nøgler, genbrugt IP-hash og alarmoprydning. Klientens fremtidige per-run-cap/fortællerreplik er stadig åben og er UX/balance — aldrig sikkerhedsgrænsen. | ◐ | 2026-08-13 |
+| TASK-019 | **Leveret:** serverens rullende og daglige globalt/pr.-IP-kvoter består. Klienten/motoren håndhæver desuden det målte loft på fem unikke opfindelser pr. run, udledt af det serialiserede registry; canonical opskrifter vinder først, genbrug er tilladt, sen copy kan kun forbedre et eksisterende id, og `run-limit` har sin egen stemme-gatede fortællerfamilie. Loftet er UX/balance, aldrig erstatning for servergrænsen. | ✅ | 2026-08-13 |
 | TASK-020 | **Leveret som `src/ui/improvise-client.ts` (ikke den stale core-sti):** prefetch starter ved andet valg, sender eksakt `{a,b,act}` for canonical forældre, har 2,5 s timeout og strikt `{name,flavor}`-validering. Combine læser kun allerede-klar copy synkront og venter aldrig; sen copy bruger motorens copy-only enhancement på det stabile id. Selection-generationen guards før enhver save/render/status-sideeffekt, så et forladt A+B-svar ikke kan kapre C+D. URL'en er valgfri og uafhængig af live-fortælleren. | ✅ | 2026-08-13 |
 | TASK-021 | Prompten bygges af serveropslåede kanoniske forældrenavne/flavor/taksonomi og tre håndskrevne toneeksempler — **mudderkage**, ristede larver og klyngen. | ✅ | 2026-08-13 |
 
@@ -178,8 +181,8 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-027 | Simulér 2.000 runs med improvisation slået til: hvor mange nøder løses af improviserede elementer, hvor mange somre bruges, og hvor ofte når spilleren en skæbne? Sammenlign med baseline. Hvis improvisation gør spillet nemmere, skal den koste mere end én sommer (GUD-001). | | |
-| TASK-028 | Afgør prisen på improvisation ud fra TASK-027, ikke ud fra mavefornemmelse. Kandidater: 1 sommer (som i dag), 2 somre, eller 1 sommer men kun N gange pr. run. | | |
+| TASK-027 | **Leveret:** `npm run improvise:report` kører 2.000 parrede seeds pr. konfiguration med samme dokumenterede spillerpolitik på begge sider og rapporterer skæbne/slutning, problemer, challenges, somre, accept/genbrug/afvisning, absurd/plausibel, kredit, canonical displacement, dybde og per-run-percentiler. Den kompakte rå artefakt er `docs/design/improvisation-balance-results.json` (`fnv1a32:e2e20ef3`, reproduceret byte-identisk to gange). | ✅ | 2026-08-13 |
+| TASK-028 | **Leveret:** prædefinerede grænser valgte én sommer og cap 5 — den mest permissive beståede 1-sommer-cap. Skæbner faldt 2,40 %→1,70 %, alle obligatoriske problemer forblev 100 %, 99,61 % canonical discovery blev bevaret, og positiv displacement var 0,393/run. To somre/no-cap fejlede med kun 73,62 % canonical retention og 8,165 displacement/run. Det er en kildeanbefaling; produktflaget forbliver slukket. | ✅ | 2026-08-13 |
 | TASK-029 | **Server/export-halvdel leveret:** autentificeret `GET /admin/improvisations` eksporterer den aktuelle namespacede DO-cache i stabil leksikalsk par+akt-rækkefølge med cursor-after-key og efterspørgsels-/hit-/upstream-tællinger. Et eksternt høsteværktøj, faktisk trafik, skrivning til `content/drafts/harvested.json` og menneskelig forfremmelse er stadig åbne; intet høstes automatisk. | ◐ | 2026-08-13 |
 | TASK-030 | Playtest: spil tre runs hvor målet udelukkende er at løse de tre nøder så absurd som muligt. Hvis det ikke er sjovere end at spille normalt, er prædikaterne for løse eller fortællerens domme for tørre. | | |
 | TASK-031 | Opdatér `PRD.md` og `DESIGN.md` med magtdelingen (PAT-001) og de to elementklasser, så reglen overlever den næste, der rører systemet. | | |
@@ -215,6 +218,8 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **FILE-010**: `tools/harvest.mjs` *(stadig åben)* — den leverede servereksport er inputtet; faktisk høst tilbage til `drafts/` er ekstern og ikke bygget.
 - **FILE-011**: `src/ui/book.ts` — krøniken skelner kurateret fra improviseret.
 - **FILE-012**: `tools/validate.py` — prædikater valideres; `alsoSolvedBy`-overlap advares.
+- **FILE-013**: `tools/improvise_report.ts` + `tools/improvise_report_cli.ts` — parret, deterministisk balance-simulering og JSON/menneskerapport.
+- **FILE-014**: `docs/design/improvisation-balance.md` + `docs/design/improvisation-balance-results.json` — metode, tærskler, råt facit, anbefaling og menneskelig caveat.
 
 ## 6. Testing
 
@@ -228,7 +233,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **TEST-008**: Offline-tilstand: med proxyen slået fra er et helt run spilbart, alle nøder løselige, og udfaldet deterministisk for en given seed (REQ-007).
 - **TEST-009**: Workerens validering afviser navne over 3 ord, ekstra felter, URL'er, citationstegn, kontroltegn, tegnsætningsvildnis og for lang flavor; enhver mekanik modellen måtte finde på at sende er et ekstra felt og afvises.
 - **TEST-010**: Save/load med improviserede elementer i state; gamle saves uden feltet loader (CON-006 i narrationsplanen).
-- **TEST-011**: 2.000 simulerede runs med og uden improvisation: skæbne-rate og somreforbrug rapporteres, så TASK-028 kan træffes på tal.
+- **TEST-011**: 2.000 parrede simulerede runs med og uden improvisation pr. konfiguration: skæbne-rate, problemer, challenges, somre, improvisationsudfald, canonical displacement, dybde og percentiler rapporteres. Testen beviser seed-match, reproducerbarhed og at en bevidst gratis/no-cap-konfiguration dømmes ude.
 
 ## 7. Risks & Assumptions
 

@@ -15,6 +15,7 @@
     "validate": "python3 tools/validate.py",
     "predicates": "python3 tools/predicate_report.py",
     "predicates:fixture": "python3 tools/parity_fixture.py",
+    "improvise:report": "vite-node tools/improvise_report_cli.ts",
     "voice:profile": "python3 tools/voice/export_worker_profile.py",
     "voice:parity-fixture": "python3 tools/voice/export_voice_parity_fixture.py",
     "verdicts": "vite-node tools/verdict_report.ts",
