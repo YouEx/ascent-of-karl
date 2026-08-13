@@ -35,6 +35,9 @@ import { findExpiredCacheKeys, findStaleIpBudgetKeys, findStaleRateLimitKeys } f
 import { isBodyTooLarge } from "./validate";
 import { promptNamespace } from "./cache-key";
 import { callUpstreamOpenAI, DEFAULT_MODEL, PROMPT_VERSION_INPUT, type ModelEnv } from "./model";
+import { VOICE_PROFILE_HASH, VOICE_PROFILE_VERSION } from "./voice/gate";
+import { ADMIN_VERIFIED_HEADER } from "./admin";
+import { STATS_KEY_PREFIX, STATS_MAX_AGE_MS, buildStatsExport, clampExportLimit, findStaleStatsKeys, type PairStatsRecord } from "./stats";
 
 export interface CoordinatorEnv extends ModelEnv {
   /** Sekunder i det rullende vindue (TASK-002). Se wrangler.toml for den målte default. */
@@ -89,6 +92,18 @@ export const CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 dage
  */
 export const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000; // 1 døgn
 
+/**
+ * Rate-limitens nøgle for admin-eksporten (TASK-008): genbruger PRÆCIS
+ * samme mekanisme som narrator-strømmens IP-hash-baserede rullende vindue
+ * (`reserveRateLimitSlot`, `coordinator.ts`), men med en FAST,
+ * menneskelæselig sentinel-streng i stedet for en rigtig ipHash — en helt
+ * ny rate-limiter for ét enkelt endpoint ville være unødvendig
+ * kompleksitet. Kan aldrig kollidere med en ægte ipHash: en gyldig ipHash
+ * er ALTID præcis 64 små hex-tegn (`ip.ts`s `isValidIpHash`), og denne
+ * streng er hverken 64 tegn lang eller ren hex.
+ */
+const ADMIN_RATE_LIMIT_SENTINEL = "admin:pairs-export";
+
 interface AdapterResponse {
   status: number;
   body: unknown;
@@ -127,12 +142,15 @@ export class Coordinator {
   private getDeps(): CoordinatorDeps {
     if (!this.deps) {
       // Udledt ÉN gang pr. objekt-instans (ikke pr. forespørgsel) — hele
-      // prompt-kontrakten (SYSTEM+DOMME+skabelon, `PROMPT_VERSION_INPUT`)
-      // og modellen ændrer sig kun ved en gendeploy, som skaber en FRISK
-      // instans alligevel (sikkerhedsrunde 3, punkt 3; udvidet i en
-      // opfølgning til at dække DOMME og brugerprompt-skabelonen, ikke
-      // kun SYSTEM).
-      const cacheNamespace = promptNamespace(PROMPT_VERSION_INPUT, this.env.MODEL ?? DEFAULT_MODEL);
+      // prompt-kontrakten (SYSTEM+DOMME+skabelon, `PROMPT_VERSION_INPUT`),
+      // modellen OG stemmeprofilen (`VOICE_PROFILE_HASH`, TASK-007) ændrer
+      // sig kun ved en gendeploy, som skaber en FRISK instans alligevel
+      // (sikkerhedsrunde 3, punkt 3; udvidet i en opfølgning til at dække
+      // DOMME og brugerprompt-skabelonen, ikke kun SYSTEM; udvidet igen af
+      // TASK-007 til også at dække stemmepolitikken — en strammet/løsnet
+      // stemmegate skal ikke blive ved med at servere gamle cache-linjer
+      // dømt efter GÅRSDAGENS politik).
+      const cacheNamespace = promptNamespace(PROMPT_VERSION_INPUT, this.env.MODEL ?? DEFAULT_MODEL, VOICE_PROFILE_HASH);
       this.deps = createCoordinatorDeps({
         store: this.state.storage,
         callUpstream: (body) => callUpstreamOpenAI(body, this.env),
@@ -174,10 +192,10 @@ export class Coordinator {
    * Kaldes af Cloudflare, når den planlagte alarm ringer (sikkerhedsrunde
    * 2, punkt 4: "Durable Object storage has no magic TTL" — dette ER den
    * eksplicitte sletning/alarm, kravet beder om). Rydder døde
-   * rate-limit-poster, for gamle cache-poster, og (sikkerhedsrunde 3,
-   * punkt 2) pr.-IP-budgetposter hvis gemte UTC-dato hverken er i dag eller
-   * i går — planlægger så næste omgang, uanset om denne omgang selv gik
-   * helt godt.
+   * rate-limit-poster, for gamle cache-poster, (sikkerhedsrunde 3, punkt 2)
+   * pr.-IP-budgetposter hvis gemte UTC-dato hverken er i dag eller i går,
+   * og (TASK-008) stats-poster uden aktivitet i `STATS_MAX_AGE_MS` —
+   * planlægger så næste omgang, uanset om denne omgang selv gik helt godt.
    */
   async alarm(): Promise<void> {
     const deps = this.getDeps();
@@ -197,11 +215,59 @@ export class Coordinator {
       for (const key of findStaleIpBudgetKeys(ipBudgetEntries, now)) {
         await this.state.storage.delete(key);
       }
+
+      // TASK-008: efterspørgselssignalet ryddes UAFHÆNGIGT af cachen (se
+      // `stats.ts`s fil-kommentar — de har hver sin levetid) og baseret på
+      // SENEST set, ikke oprettet, så et par der stadig aktivt bliver
+      // spurgt om, aldrig forsvinder midt i en lang bagerundes gennemgang.
+      const statsEntries = await this.state.storage.list<PairStatsRecord>({ prefix: STATS_KEY_PREFIX });
+      for (const key of findStaleStatsKeys(statsEntries, now, STATS_MAX_AGE_MS)) {
+        await this.state.storage.delete(key);
+      }
     } finally {
       // Planlæg NÆSTE oprydning, selvom denne omgang fejlede halvvejs — én
       // dårlig omgang må ikke stoppe alle fremtidige for evigt.
       await this.state.storage.setAlarm(now + CLEANUP_INTERVAL_MS);
     }
+  }
+
+  /**
+   * `GET /admin/pairs` (TASK-008): den høstede-efterspørgsel-eksport. Egen
+   * metode, adskilt fra narrator-strømmen i `fetch()` nedenfor — helt
+   * anden godkendelsesform, og skal ALDRIG kunne nå `decide()`, modellen
+   * eller budgettet.
+   *
+   * Tjekker `ADMIN_VERIFIED_HEADER` som forsvar-i-dybde: selve
+   * bearer-token-kontrollen er allerede sket i `index.ts` (det RÅ token
+   * når aldrig herind) — men dette objekt stoler ALDRIG blindt på at kun
+   * `index.ts` arkitektonisk kan kalde det, præcis som det aldrig stoler
+   * blindt på `INTERNAL_IP_HASH_HEADER`s blotte tilstedeværelse i
+   * narrator-strømmen.
+   */
+  private async handleAdminExport(req: Request, url: URL): Promise<Response> {
+    if (req.method !== "GET") {
+      return this.toHttpResponse(405, { error: "GET only" });
+    }
+    if (req.headers.get(ADMIN_VERIFIED_HEADER) !== "1") {
+      return this.toHttpResponse(401, { error: "unauthorized" });
+    }
+
+    const deps = this.getDeps();
+    const rateLimit = await reserveRateLimitSlot(ADMIN_RATE_LIMIT_SENTINEL, deps);
+    if (!rateLimit.allowed) {
+      return this.toHttpResponse(429, { error: "rate limited" }, rateLimit.retryAfterSeconds);
+    }
+
+    const entries = await this.state.storage.list<PairStatsRecord>({ prefix: STATS_KEY_PREFIX });
+    const payload = buildStatsExport(entries, {
+      limit: clampExportLimit(url.searchParams.get("limit")),
+      cursor: url.searchParams.get("cursor"),
+      now: deps.now(),
+      cacheNamespace: deps.config.cacheNamespace,
+      voiceProfileVersion: VOICE_PROFILE_VERSION,
+      voiceProfileHash: VOICE_PROFILE_HASH,
+    });
+    return this.toHttpResponse(200, payload);
   }
 
   /** Bygger det færdige HTTP-svar — ét sted, så `fetch()`s tidlige
@@ -215,6 +281,15 @@ export class Coordinator {
 
   async fetch(req: Request): Promise<Response> {
     await this.ensureCleanupScheduled();
+
+    // TASK-008: `/admin/pairs` er en HELT ANDEN sti end narrator-strømmen
+    // nedenfor — tjekkes derfor FØRST, før det generelle "POST only"-krav
+    // (admin-eksporten er bevidst GET, se `handleAdminExport`s egen
+    // dokumentation), og rører ALDRIG `decide()`, modellen eller budgettet.
+    const url = new URL(req.url);
+    if (url.pathname === "/admin/pairs") {
+      return this.handleAdminExport(req, url);
+    }
 
     if (req.method !== "POST") {
       return this.toHttpResponse(405, { error: "POST only" });

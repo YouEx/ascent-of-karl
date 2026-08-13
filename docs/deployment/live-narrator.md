@@ -325,7 +325,165 @@ To uafhængige måder at slukke laget på, uden at ændre spillets øvrige kode:
 Begge kan bruges samtidig eller hver for sig; ingen af dem kræver at slette
 Durable Object'et eller dets lagrede tilstand.
 
-## 9. Hvad denne opskrift bevidst IKKE dækker
+## 9. Høst af rigtig trafik tilbage til bagning (TASK-008, valgfrit)
+
+Dette lag bygger OVEN PÅ alt ovenstående — det kræver ikke en ny worker,
+kun én ny secret og ét nyt (bevidst smalt) endpoint. Det er lige så
+valgfrit som resten af laget: uden `ADMIN_EXPORT_TOKEN` sat, er
+`/admin/pairs` blot altid 401, og intet af det følgende har nogen effekt.
+
+### 9a. Hvad der tælles — og hvad der bevidst IKKE gør
+
+`worker/src/stats.ts` tæller hver forespørgsel der består validering OG
+kanonisering (samme kanoniske par+dom-nøgle som cachen, se afsnit 4b) —
+cache-hit, et nyt opstrømskald, et tilsluttet-i-gang-værende kald, ELLER et
+budget-afvist forsøg (429/503). Kun 400-afvisninger (ugyldig form/ukendt
+id) tæller ikke, fordi de aldrig når et kanonisk par+dom. Tællingen sker
+UBETINGET som en del af `coordinator.ts`s eksisterende, atomiske
+`decide()`-kald — den er altid aktiv, uanset om `ADMIN_EXPORT_TOKEN` er
+sat. Planlægges høstning aldrig brugt, er der intet at slå fra: posterne
+ligger blot urørte i Durable Object'ets storage og aldres væk af sig selv
+(afsnit 9e).
+
+Hver post (`PairStatsRecord`) er bevidst SMAL: `aId`, `bId`, `verdict`, tre
+tællere (`count`, `cacheHits`, `upstreamCalls`) og to tidsstempler
+(`firstSeen`, `lastSeen`) — **aldrig** en IP (hverken rå eller hashet),
+**aldrig** den genererede tekst, prompten eller noget model-relateret. Det
+er selve garantien bag "no raw IPs or generated text in stats/export".
+
+### 9b. `ADMIN_EXPORT_TOKEN` — obligatorisk hemmelighed, kun hvis høstning bruges
+
+Fra `worker/`:
+
+```bash
+npx wrangler secret put ADMIN_EXPORT_TOKEN
+```
+
+Samme "ingen hemmelighed = ingen adgang"-mønster som `IP_HASH_SALT`
+(afsnit 3): mangler den, fejler `/admin/pairs` LUKKET (401) for ALLE
+forsøg, uanset hvad et `Authorization`-headerfelt måtte indeholde — der
+er intet gættet standard-token at falde tilbage til. Vælg en tilfældig,
+lang værdi (fx `openssl rand -hex 32`), præcis som `IP_HASH_SALT`.
+
+Selve sammenligningen (`worker/src/admin.ts`s `isValidAdminToken`) hasher
+begge sider med SHA-256 og sammenligner de to faste 64-hex-tegns digests
+konstant-tids (en manuel XOR-akkumulering over HELE strengen) — samme
+begrundelse som IP-hashen i afsnit 3: en naiv `===`/substring-sammenligning
+ville kunne lække tokenets længde eller indhold via timing. Enhver
+afvisning (manglende token, forkert præfiks, forkert token, eller slet
+ingen konfigureret hemmelighed) giver samme generiske `401`, uden
+begrundelse — der er intet at lække ved et uheld.
+
+### 9c. `GET /admin/pairs` — selve eksport-endpointet
+
+Endpointet er BEVIDST IKKE en del af narrator-strømmen: det tjekkes i
+`index.ts`s `fetch()` FØR Origin/CORS-logikken (det er ikke ment til
+browserkald — se `tools/live_pair_export.mjs` — og sætter derfor aldrig en
+meningsfuld `Origin`), men kræver i stedet et bearer-token. Kun `GET`
+accepteres (`405` for alt andet); den kan ALDRIG nå modellen eller røre
+budgettet, uanset hvad en anmodning sender.
+
+```bash
+curl -i "https://<worker-adressen>/admin/pairs?limit=50" \
+  -H "authorization: Bearer <ADMIN_EXPORT_TOKEN-værdien>"
+```
+
+Ledningen: `index.ts` verificerer tokenet, fjerner den RÅ
+`Authorization`-header helt, og sætter i stedet en intern markørheader
+(`x-internal-admin-verified: 1`), FØR anmodningen videresendes til Durable
+Object'et — objektet ser derfor ALDRIG det rå token. Objektet stoler
+alligevel ikke blindt på markørens tilstedeværelse alene (forsvar i
+dybden): det anvender desuden den SAMME rate-limit-mekanisme som
+narrator-strømmen (`RATE_LIMIT_MAX`/`RATE_LIMIT_WINDOW_SECONDS`, afsnit 4),
+men med en fast intern nøgle (`"admin:pairs-export"`) der aldrig kan
+kollidere med en rigtig IP-hash — et for-ivrigt eksport-script kan derfor
+selv blive `429`'et, ligesom en almindelig klient.
+
+Svaret er en stabil, versioneret JSON (`schemaVersion`, `cacheNamespace`,
+`voiceProfileVersion`, `voiceProfileHash`, `generatedAt`, `total`,
+`entries`, `nextCursor`) — sorteret deterministisk (antal faldende, dernæst
+senest set faldende, dernæst par+dom stigende), sideinddelt med
+`?limit=`/`?cursor=` (standard 200 poster, hårdt loft 500 uanset hvad der
+bedes om). `nextCursor` er `null` på sidste side. Ingen IP-hash, intet
+tekstfelt, ingen hemmelighed optræder nogensinde i svaret.
+
+### 9d. `tools/live_pair_export.mjs` — CLI'en der henter og gemmer lokalt
+
+Fra repo-roden (ikke `worker/`):
+
+```bash
+LIVE_NARRATOR_ADMIN_URL="https://<worker-adressen>/admin/pairs" \
+LIVE_NARRATOR_ADMIN_TOKEN="<ADMIN_EXPORT_TOKEN-værdien>" \
+node tools/live_pair_export.mjs
+```
+
+(Der findes også `npm run pairs:export`, som blot kører samme kommando —
+miljøvariablerne skal stadig sættes af den, der kalder den.)
+
+Token og URL læses UDELUKKENDE fra miljøvariabler, ALDRIG fra
+kommandolinje-argumenter — et argument ville stå i klartekst i
+shell-historik og i enhver process-liste (`ps`), som enhver anden bruger på
+samme maskine kan læse. En valgfri tredje variabel,
+`LIVE_NARRATOR_ADMIN_LIMIT`, styrer sidestørrelsen (samme loft som
+afsnit 9c gælder stadig).
+
+CLI'en følger `nextCursor` automatisk til alle sider er hentet, validerer
+hver indgang mod BÅDE den kendte dom-liste OG den kanoniske element-liste
+(`content/elements.json` — uafhængigt af hvad workeren selv mener er
+gyldigt), og skriver derefter et lokalt, versioneret artefakt til
+`docs/design/live-pair-stats.json` — **uden noget token-felt**
+(`buildLocalArtifact` modtager strukturelt aldrig et token som parameter,
+så der ikke er noget at glemme at fjerne). Den fejler HØJLYDT (ikke-nul
+exitkode, tydelig besked på stderr, intet skrevet til disk) ved 401
+(forkert/manglende token) eller et uventet `schemaVersion` — en fremtidig,
+inkompatibel eksport-form bliver aldrig stiltiende fejltolket.
+
+### 9e. Brug eksporten i næste bagerunde
+
+```bash
+npm run pairs:prepare -- --live=docs/design/live-pair-stats.json --limit=50
+```
+
+Uden `--live` er `tools/prepare_pairs.ts`s opførsel PRÆCIS som før TASK-008
+(byte-identisk, verificeret ved diff mod den tidligere, ubagte adfærd) —
+dette er en tilføjelse, ikke en erstatning. Med `--live` slås det målte,
+simulerede signal (`docs/design/pair-frequency.json`) sammen med den
+rigtige, høstede trafik, og resultatet er en RANGERET liste over
+**ukurerede** par+dom-nøgler (dem der endnu ikke er bagt til netop den
+dom — se afsnit 4b's pointe om at et par kan være bagt til én dom, men
+ikke en anden). Uden `--write` skrives INTET til disk — kun en
+JSON-forhåndsvisning på stdout. Kun med `--write` (og et `--out=<sti>`, der
+selv vælger en NY undermappe adskilt fra de eksisterende, godkendte
+bage-batches) skrives et forslag til disk, sammen med en
+menneskelæsbar `harvest-preview.md` der eksplicit minder om: dette er et
+RÅT forslag, ikke en godkendt batch.
+
+**TASK-008 er en KILDE til håndskrivning, ALDRIG en erstatning for den:**
+et forslag herfra går stadig igennem den SAMME menneske-gennemgang,
+`check_pairs.py` og `assemble_pairs.py` som ethvert andet bage-forslag —
+intet live-modeltekst bliver nogensinde automatisk forfremmet til rigtigt
+indhold.
+
+### 9f. Opbevaring — lageret vokser ikke ubegrænset
+
+Samme daglige oprydningsalarm som afsnit 4c (`ensureCleanupScheduled`/
+`alarm()`) rydder også stats-poster, hvis `lastSeen` er mere end 90 dage
+gammel (`stats.ts`s `STATS_MAX_AGE_MS`) — baseret på SENEST set, ikke
+FØRST set, så et par der stadig aktivt bliver spurgt om aldrig rømmes,
+uanset hvor gammel dets første forekomst er. Ingen manuel handling
+nødvendig.
+
+### 9g. Ingen følsomme data, nogen steder i denne kæde
+
+Hverken tælleren (9a), eksport-endpointet (9c), CLI'en (9d) eller
+høste-tilstanden i `prepare_pairs.ts` (9e) håndterer på noget tidspunkt en
+IP (rå eller hashet), den genererede tekst, prompten eller
+`ADMIN_EXPORT_TOKEN`s værdi i noget skrevet artefakt. Det lokale artefakt
+under `docs/design/` indeholder udelukkende kanoniske id'er, domme,
+tællere og tidsstempler — det kan committes uden bekymring, præcis som
+`docs/design/pair-frequency.json` allerede gør for den simulerede side.
+
+## 10. Hvad denne opskrift bevidst IKKE dækker
 
 - Ingen priser eller token-forbrug — se OpenAI's og Cloudflares egne,
   aktuelle sider, hvis det skal indgå i TASK-006-beslutningen.
@@ -334,7 +492,7 @@ Durable Object'et eller dets lagrede tilstand.
 - Ingen ændring af `.github/workflows/deploy.yml` — at tænde laget i den
   rigtige build er selve TASK-006-beslutningen.
 
-## 10. Workerens egen CI (sikkerhedsrunde 2, punkt 6)
+## 11. Workerens egen CI (sikkerhedsrunde 2, punkt 6)
 
 Workeren har nu sin egen `package-lock.json` (checket ind i git, ligesom
 rodprojektets) og tre npm-scripts, kørt fra `worker/`:

@@ -11,6 +11,7 @@
 import type { UpstreamResult } from "./coordinator";
 import type { CanonicalBody, CanonicalThing } from "./catalog";
 import { cleanModelText } from "./clean";
+import { passesVoiceGate } from "./voice/gate";
 
 export interface ModelEnv {
   OPENAI_API_KEY: string;
@@ -236,5 +237,17 @@ export async function callUpstreamOpenAI(
   const raw = data.choices?.[0]?.message?.content;
   const text = cleanModelText(raw, body.a.name, body.b.name);
   if (!text) return { ok: false, status: 502, reason: "empty or rejected" };
+
+  // TASK-007: samme stemmepolitik som grammatikkens/de bagte pars statiske
+  // indhold allerede dømmes af (`tools/voice/judge.py`s `gate()`), nu også
+  // håndhævet på LIVE modeltekst FØR den må caches/vises — klientens egen
+  // navn-/længde-rensning (cleanModelText ovenfor) er nødvendig, men ikke
+  // tilstrækkelig (se planen). `source` er bevidst altid "grammar" — se
+  // `voice/scorer.ts`s `Source`-type. Reason er en KORT, generisk tag
+  // ("voice"), ALDRIG den afviste tekst eller dens specifikke
+  // hård-afvisnings-kategori: `coordinator-do.ts`s `responseFor()`
+  // videresender `reason` ordret til klienten.
+  if (!passesVoiceGate(text)) return { ok: false, status: 502, reason: "voice" };
+
   return { ok: true, text };
 }

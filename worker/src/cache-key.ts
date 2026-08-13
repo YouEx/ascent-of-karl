@@ -48,20 +48,34 @@ function fnv1a32(input: string): string {
  * Udleder et deterministisk, kort navnerum fra den FULDE prompt-kontrakt
  * (`promptContract` — i praksis `model.ts`s `PROMPT_VERSION_INPUT`: system-
  * prompt + dom-forklaringer + brugerprompt-skabelon, se filens top-
- * kommentar) og den konfigurerede model (sikkerhedsrunde 3, punkt 3,
- * udvidet i en opfølgning). Funktionen selv er ligeglad med HVAD
- * `promptContract` indeholder — den hasher blot en streng — så testene
- * herunder kan fodre den vilkårlige literaler uden at kende `model.ts`.
- * Et NUL-tegn adskiller de to inputs, så `model="a", contract="bc"` og
- * `model="ab", contract="c"` aldrig kan give samme hash ved simpel
- * sammenkædning.
+ * kommentar), den konfigurerede model (sikkerhedsrunde 3, punkt 3, udvidet
+ * i en opfølgning), og — siden TASK-007 — stemmedommerens profil-hash
+ * (`voiceProfileHash`, i praksis `voice/gate.ts`s `VOICE_PROFILE_HASH`,
+ * udledt af `worker/src/generated/voice-profile.json`). Funktionen selv er
+ * ligeglad med HVAD nogen af de tre inputs indeholder — den hasher blot tre
+ * strenge — så testene herunder kan fodre den vilkårlige literaler uden at
+ * kende `model.ts` eller `voice/gate.ts`.
+ *
+ * `voiceProfileHash` er VALGFRI (standard tom streng) udelukkende for at
+ * lade EKSISTERENDE to-argument-kald (denne fils egne ældre tests, samt
+ * `PROMPT_VERSION_INPUT`-sensitivitetstestene) forblive uændrede — de
+ * tester prompt/model-følsomhed, en ANDEN akse end stemmeprofilen, og skal
+ * ikke tvinges til at kende til TASK-007 for at blive ved med at bestå. Den
+ * RIGTIGE produktionskode (`coordinator-do.ts`s `getDeps()`) sender altid
+ * det tredje argument eksplicit — det er IKKE et løfte om at huske at
+ * bumpe noget, ligesom de to andre, det udledes automatisk af selve
+ * profil-artefaktet.
+ *
+ * NUL-tegn adskiller alle tre inputs, så ingen kombination af kortere/
+ * længere delstrenge kan give samme hash ved simpel sammenkædning.
  *
  * Kaldes ÉN gang pr. Durable Object-instans (`coordinator-do.ts`s
- * `getDeps()`), ikke pr. forespørgsel — prompt-kontrakten og modellen
- * ændrer sig kun ved en gendeploy, aldrig midt i en kørende instans.
+ * `getDeps()`), ikke pr. forespørgsel — prompt-kontrakten, modellen og
+ * stemmeprofilen ændrer sig kun ved en gendeploy, aldrig midt i en kørende
+ * instans.
  */
-export function promptNamespace(promptContract: string, model: string): string {
-  return fnv1a32(`${model}\u0000${promptContract}`);
+export function promptNamespace(promptContract: string, model: string, voiceProfileHash = ""): string {
+  return fnv1a32(`${model}\u0000${promptContract}\u0000${voiceProfileHash}`);
 }
 
 export function pairCacheKey(aId: string, bId: string, verdict: string, namespace: string): string {

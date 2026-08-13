@@ -554,6 +554,17 @@ def gate() -> list[str]:
     failures.extend(f"grammatik-samling: {p}" for p in check_grammar_assembly.check_grammar_assembly())
     failures.extend(f"par-samling: {p}" for p in check_pairs_assembly.check_pairs_assembly())
 
+    # Samme reproducerbarheds-idé for TASK-007's worker-artefakter: en
+    # forældet voice-profile.json eller voice-parity-fixture.json ville lade
+    # TS-porten stille dømme mod gårsdagens korpus/lexicon/kalibrering, mens
+    # `npm run validate` stadig var grøn. Lazy import (ikke modul-toppen) for
+    # at undgå en cirkulær afhængighed: export_worker_profile.py og
+    # export_voice_parity_fixture.py importerer selv FRA denne fil.
+    import export_voice_parity_fixture
+    import export_worker_profile
+    failures.extend(f"worker-profil: {p}" for p in export_worker_profile.check_profile_current())
+    failures.extend(f"paritetsfixture: {p}" for p in export_voice_parity_fixture.check_fixture_current())
+
     fingerprint = build_fingerprint()
     threshold = calibrated_threshold(fingerprint)
     corpus_vocab = set(fingerprint["vocabulary"]["frequency"])

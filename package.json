@@ -14,6 +14,8 @@
     "validate": "python3 tools/validate.py",
     "predicates": "python3 tools/predicate_report.py",
     "predicates:fixture": "python3 tools/parity_fixture.py",
+    "voice:profile": "python3 tools/voice/export_worker_profile.py",
+    "voice:parity-fixture": "python3 tools/voice/export_voice_parity_fixture.py",
     "verdicts": "vite-node tools/verdict_report.ts",
     "ux": "node tools/ux_audit.mjs",
     "art": "python3 tools/art/build_all.py",
@@ -27,6 +29,7 @@
     "judge:once": "node tools/judge/loop.mjs --max 1",
     "pairs": "vite-node tools/pair_frequency.ts",
     "pairs:prepare": "vite-node tools/prepare_pairs.ts",
+    "pairs:export": "node tools/live_pair_export.mjs",
     "pairs:assemble": "python3 tools/assemble_pairs.py",
     "coverage": "node tools/coverage_report.mjs",
     "bundle-budget": "node tools/bundle_budget.mjs"
