@@ -64,6 +64,29 @@ declare module "node:child_process" {
   ): ChildProcess;
 }
 
+declare module "node:http" {
+  interface IncomingMessage {
+    url?: string;
+    headers: Record<string, string | string[] | undefined>;
+  }
+
+  interface ServerResponse {
+    statusCode: number;
+    setHeader(name: string, value: string): void;
+    end(data?: string): void;
+  }
+
+  interface Server {
+    listen(port: number, host: string, listener: () => void): void;
+    address(): { port: number } | string | null;
+    close(listener: (error?: Error) => void): void;
+  }
+
+  export function createServer(
+    listener: (request: IncomingMessage, response: ServerResponse) => void,
+  ): Server;
+}
+
 declare const process: {
   execPath: string;
   kill(pid: number, signal?: number | string): boolean;

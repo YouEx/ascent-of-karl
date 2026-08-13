@@ -656,7 +656,84 @@ sorterede forældre,
 hashet IP, ingen prompt, intet token og ingen anden storage-post kan
 optræde.
 
-Dette er kun **server/export-halvdelen**. Der er ikke bygget et
-`tools/harvest.mjs`, ikke skrevet noget til
-`content/drafts/harvested.json`, og intet forfremmes automatisk. Faktisk
-trafik, høst og menneskelig kuratering er fortsat eksternt og åbent arbejde.
+Dette endpoint er server/export-halvdelen. Klienthalvdelen nedenfor kan nu
+skrive et lokalt review-udkast, men faktisk trafik, den første rigtige høst og
+menneskelig kuratering er fortsat eksternt arbejde; intet forfremmes
+automatisk.
+
+### 12e. Review-only høst — klienthalvdelen af TASK-029
+
+`tools/harvest.mjs` lukker kun transporten fra den autentificerede eksport til
+et lokalt review-udkast. Den gør **ikke** modeltekst til spilindhold.
+
+Produktion, fra repo-roden:
+
+```bash
+LIVE_NARRATOR_ADMIN_TOKEN="<ADMIN_EXPORT_TOKEN-værdien>" \
+npm run harvest -- \
+  --url "https://<worker-adressen>/admin/improvisations"
+```
+
+URL'en er et obligatorisk, eksplicit argument; der findes ingen produktions-
+standard. Tokenet kan ikke gives som CLI-argument og læses kun fra den
+allerede etablerede `LIVE_NARRATOR_ADMIN_TOKEN`-miljøvariabel. Hvis secretet
+opbevares i macOS Keychain, bruges samme Keychain→miljø-mønster som for andre
+lokale secrets: hent værdien med `security find-generic-password -w ...` i
+shellen og sæt den direkte som `LIVE_NARRATOR_ADMIN_TOKEN` for den ene
+kommando. Værktøjet kalder ikke Keychain selv og skriver, logger eller
+gentager aldrig tokenet i fejl.
+
+Offline audit og deterministiske tests bruger ingen token og intet netværk:
+
+```bash
+npm run harvest -- \
+  --input path/to/improvisations.fixture.json \
+  --output path/to/review.json \
+  --dry-run
+```
+
+En fixture er enten én eksakt eksportside, et array af eksakte sider, eller
+`{"pages": [...]}`. Hver side og række valideres med eksakt skema mod
+`content/elements.json`, samme akt- og copy-grænser som Workeren, sikre
+heltal/tidsstempler og faste lofter for body, sider og rækker. Cursor-cykler,
+ukendte eller usorterede forældre, ekstra felter (fx `solves`, `tags`,
+`sourceUrl`) og injektionsagtig tekst afvises højlydt.
+
+Uden `--output` er målet `content/drafts/harvested.json`. Filen skrives først,
+når alle sider er hentet og valideret, og udskiftes atomisk; en fejl efter
+side 1 efterlader en tidligere fil byte-identisk. `--dry-run` viser kun antal
+kandidater og skriver intet. Identisk input giver identiske bytes, fordi
+artefaktet ikke indeholder et kørsels-tidspunkt. Hver række er markeret
+`reviewStatus: "untrusted"`, artefaktet er `promotion: "manual-only"`, og der
+findes ingen `note`, `sourceUrl`, `solves`, `tags` eller automatisk
+forfremmelsessti.
+
+#### Reviewer-flow: kandidat → kurateret canon
+
+1. Læs kandidatens kanoniske forældre, akt, copy og observerede tællinger.
+   Tællingen prioriterer review; den beviser hverken historisk sandhed,
+   spilmekanik eller tekstkvalitet.
+2. Genskab parret i den relevante akt og afgør manuelt, om idéen fortjener
+   canon. Afvisning er et fuldt gyldigt resultat; rå model-copy må aldrig
+   flyttes ordret af automatik.
+3. Hvis idéen godkendes, skriv det kuraterede resultat i de normale
+   canonical-filer. Mekaniske felter (`id`, `kind`, `stuff`, `traits`,
+   `scale`, `parents`, `solves`) afgøres af de deterministiske regler og et
+   menneske — aldrig af harvest-filen.
+4. En ny historisk opdagelse skal have en håndredigeret, faktuel `note` og en
+   efterprøvbar `sourceUrl`, før den må landes i `content/elements.json`
+   (PRD §5 og `CLAUDE.md` regel 4). Historiske påstande uden kilde forbliver
+   udkast.
+5. Tilføj eller ret den håndskrevne kombination i `content/combos.json`, kør
+   de normale content-porte (`npm run validate`, relevante tests og
+   prædikatrapport), og gennemgå diffen. Der findes bevidst ingen
+   `promote`-kommando.
+
+Selve den første rigtige høst er stadig **eksternt blokeret** på alle tre:
+
+1. en Worker hvor improvisationsruten og `/admin/improvisations` er deployet,
+2. et konfigureret `ADMIN_EXPORT_TOKEN`, gjort tilgængeligt lokalt som
+   `LIVE_NARRATOR_ADMIN_TOKEN`,
+3. rigtig spillertrafik (ikke fabrikerede kald).
+
+Indtil da skal `content/drafts/harvested.json` ikke oprettes eller committes.
