@@ -52,8 +52,18 @@ const STYLE_FIELDS = [
   "paddingLeft", "gap", "display", "justifyContent", "alignItems",
 ];
 
-/** Bygger produktionsbundtet, som `startServer` derefter server (CON-004). */
-async function build() {
+/** Bygger produktionsbundtet, som `startServer` derefter server (CON-004).
+ *  Eksporteret så loop.mjs kan genbygge `dist/` MELLEM iterationer uden at
+ *  genstarte server eller browser: `vite preview` er en statisk filserver,
+ *  den hot-reloader ikke, men Vites indholds-hashede filnavne gør et
+ *  in-place-genbyg sikkert — en frisk sidenavigation henter altid det
+ *  `index.html`, der peger på den nyeste hash. Uden dette ville accept-
+ *  porten sammenligne to identiske optagelser hver eneste iteration, fordi
+ *  serveren blev ved med at servere den GAMLE tuning.css-tilstand. Bekræftet
+ *  empirisk 2026-08-12: genbyg ændrede `index-BMhE9eiG.css` til
+ *  `index-GPzA5hkr.css` uden serverneutstart, og den nye fil bar den
+ *  injicerede tokenværdi. */
+export async function build() {
   await new Promise((res, rej) => {
     const proc = spawn("npx", ["vite", "build"], {
       cwd: ROOT,

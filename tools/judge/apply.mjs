@@ -37,6 +37,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { DEFECTS, NEVER_TOKEN, safeCssValueErrors } from "./validate-finding.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const TUNING = path.join(ROOT, "src/ui/tuning.css");
@@ -46,16 +47,10 @@ const LEDGER = path.join(ROOT, ".judge/ledger.json");
 const BACKUP = path.join(ROOT, ".judge/tuning.prev.css");
 const REGISTRY = path.join(ROOT, "docs/design/reference/registry.json");
 
-const DEFECTS = new Set([
-  "size", "position", "spacing", "color", "weight", "font",
-  "radius", "shadow", "texture", "missing-asset",
-  "extra-element", "state-mismatch",
-]);
-
-/** Defekter der pr. definition ikke kan rettes med et token, uanset hvad
- *  dommeren foreslår. En dommer der foreslår `kind: "token"` for en manglende
- *  illustration, tager fejl — og skal overrules af ruteren, ikke adlydes. */
-const NEVER_TOKEN = new Set(["missing-asset", "extra-element", "state-mismatch"]);
+// DEFECTS og NEVER_TOKEN kommer nu fra validate-finding.mjs, som selv udleder
+// det lukkede ordforråd af finding.schema.json — ruteren og judge.mjs's
+// strenge validator kan derfor aldrig glide fra hinanden (se TASK-021's
+// revisionsnote om præcis den slags drift, dengang de var to håndkopier).
 
 const readJson = (p, fallback) =>
   fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf8")) : fallback;
@@ -81,6 +76,7 @@ function validate(doc, knownRegions) {
     if (fix.kind === "token") {
       if (!/^--[a-z0-9-]+$/.test(fix.token || "")) errs.push(`${at}.fix.token er ikke et token-navn`);
       if (typeof fix.to !== "string" || !fix.to) errs.push(`${at}.fix.to mangler`);
+      else for (const e of safeCssValueErrors(fix.to)) errs.push(`${at}.fix.to: ${e}`);
     } else if (fix.kind === "asset") {
       if (!/^[A-Z]+-[A-Za-z0-9-]+$/.test(fix.assetId || "")) errs.push(`${at}.fix.assetId er malformet`);
       if ((fix.spec || "").length < 20) errs.push(`${at}.fix.spec er for tynd`);
@@ -187,10 +183,15 @@ export function route(findings, ledger) {
   return out;
 }
 
-function writeTuning(tokens, iteration) {
-  const existing = fs.existsSync(TUNING) ? fs.readFileSync(TUNING, "utf8") : "";
-  fs.mkdirSync(path.dirname(BACKUP), { recursive: true });
-  fs.writeFileSync(BACKUP, existing); // så --revert altid kan komme tilbage
+/**
+ * Skriver de vindende tokens til tuning.css. `tuningPath`/`backupPath` er
+ * injicerbare (default: de rigtige stier), så loop.mjs's tests kan pege dem
+ * på en testmappe og ALDRIG røre den rigtige src/ui/tuning.css. Se REQ-004.
+ */
+export function writeTuning(tokens, iteration, { tuningPath = TUNING, backupPath = BACKUP } = {}) {
+  const existing = fs.existsSync(tuningPath) ? fs.readFileSync(tuningPath, "utf8") : "";
+  fs.mkdirSync(path.dirname(backupPath), { recursive: true });
+  fs.writeFileSync(backupPath, existing); // så --revert altid kan komme tilbage
 
   const prior = new Map();
   for (const m of existing.matchAll(/^\s*(--[a-z0-9-]+)\s*:\s*([^;]+);/gm)) prior.set(m[1], m[2].trim());
@@ -198,14 +199,24 @@ function writeTuning(tokens, iteration) {
   // (billigt, og gør writeTuning korrekt uanset om kalderen allerede har
   // dedupleret), så funktionen ikke er afhængig af at route() gjorde det.
   const winners = resolveTokenWinners(tokens);
-  for (const [token, t] of winners) prior.set(token, t.fix.to);
+  for (const [token, t] of winners) {
+    // Sidste værn FØR skrivning til disk. Selv hvis et opstrøms
+    // valideringstrin (judge.mjs's retry-gate, apply.mjs's egen validate())
+    // skulle glippe, skriver denne funktion ALDRIG en usikker værdi — den
+    // eneste fil sløjfen må røre, skal også være den sværeste at misbruge.
+    const unsafe = safeCssValueErrors(t.fix.to);
+    if (unsafe.length) {
+      throw new Error(`writeTuning: usikker værdi til ${token} afvist: ${unsafe.join("; ")}`);
+    }
+    prior.set(token, t.fix.to);
+  }
 
   const lines = [...prior.entries()].map(([k, v]) => {
     const t = winners.get(k);
     return t ? `  ${k}: ${v}; /* ${t.region}/${t.defect} — iter ${iteration} */` : `  ${k}: ${v};`;
   });
 
-  fs.writeFileSync(TUNING, [
+  fs.writeFileSync(tuningPath, [
     "/* Genereret af den visuelle sløjfe — rediger ikke i hånden.",
     " * Kun :root-tokenoverstyringer. Alt andet ruteres til asset-queue.json",
     " * eller human-queue.json. Se plan/architecture-visual-judge-1.md REQ-004.",
@@ -217,7 +228,7 @@ function writeTuning(tokens, iteration) {
   ].join("\n"));
 }
 
-function appendQueue(file, items, iteration) {
+export function appendQueue(file, items, iteration) {
   if (!items.length) return 0;
   const q = readJson(file, { version: 1, items: [] });
   const seen = new Set(q.items.map((i) => i.key));

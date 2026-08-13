@@ -1,0 +1,5 @@
+/* Fixture: en minimal tokens.css-facade til loadKnownTokens-testen. */
+:root {
+  --chronicle: #eee0cd;
+  --slot-fill: #111111;
+}

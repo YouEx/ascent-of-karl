@@ -39,7 +39,8 @@
         "evidence": {
           "type": "string",
           "minLength": 20,
-          "description": "Hvad der ses, med tal fra metrikkerne eller computed styles. Selvsikkerhed uden belæg afvises — det er den eneste værn mod en dommer, der gætter overbevisende."
+          "pattern": "[0-9]",
+          "description": "Hvad der ses, med tal fra metrikkerne eller computed styles. Selvsikkerhed uden belæg afvises — det er den eneste værn mod en dommer, der gætter overbevisende. Kravet om mindst ét ciffer er det, der gør 'talbelæg' til andet end en påstand i skemaet: 'ser lille ud' opfylder minLength men indeholder intet tal."
         },
         "fix": {
           "oneOf": [
