@@ -421,6 +421,18 @@ export class Coordinator {
       );
     }
 
+    const cursor = url.searchParams.get("cursor");
+    const requestedSnapshot = url.searchParams.get("snapshot");
+    if (cursor !== null && requestedSnapshot === null) {
+      return this.toHttpResponse(400, { error: "snapshot required with cursor" });
+    }
+    if (
+      requestedSnapshot !== null &&
+      !/^[0-9a-f]{64}$/.test(requestedSnapshot)
+    ) {
+      return this.toHttpResponse(400, { error: "invalid snapshot" });
+    }
+
     const improviseDeps = this.getImproviseDeps();
     const cachePrefix =
       IMPROVISE_CACHE_KEY_PREFIX + improviseDeps.config.cacheNamespace + ":";
@@ -430,12 +442,18 @@ export class Coordinator {
         prefix: IMPROVISE_STATS_KEY_PREFIX,
       }),
     ]);
-    const payload = buildImproviseExport(cachedEntries, statsEntries, {
+    const payload = await buildImproviseExport(cachedEntries, statsEntries, {
       promptNamespace: improviseDeps.config.cacheNamespace,
       now: improviseDeps.now(),
       limit: clampExportLimit(url.searchParams.get("limit")),
-      cursor: url.searchParams.get("cursor"),
+      cursor,
     });
+    if (
+      requestedSnapshot !== null &&
+      requestedSnapshot !== payload.snapshotVersion
+    ) {
+      return this.toHttpResponse(409, { error: "snapshot changed" });
+    }
     return this.toHttpResponse(200, payload);
   }
 

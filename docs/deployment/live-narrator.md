@@ -411,10 +411,9 @@ meningsfuld `Origin`), men kræver i stedet et bearer-token. Kun `GET`
 accepteres (`405` for alt andet); den kan ALDRIG nå modellen eller røre
 budgettet, uanset hvad en anmodning sender.
 
-```bash
-curl -i "https://<worker-adressen>/admin/pairs?limit=50" \
-  -H "authorization: Bearer <ADMIN_EXPORT_TOKEN-værdien>"
-```
+Brug eksport-CLI'en nedenfor. Et manuelt `curl`-headerargument ville blive
+udvidet til tokenværdien i proceslisten, selv hvis shell-historikken kun
+indeholdt et variabelnavn.
 
 Ledningen: `index.ts` verificerer tokenet, fjerner den RÅ
 `Authorization`-header helt, og sætter i stedet en intern markørheader
@@ -440,9 +439,12 @@ tekstfelt, ingen hemmelighed optræder nogensinde i svaret.
 Fra repo-roden (ikke `worker/`):
 
 ```bash
-LIVE_NARRATOR_ADMIN_URL="https://<worker-adressen>/admin/pairs" \
-LIVE_NARRATOR_ADMIN_TOKEN="<ADMIN_EXPORT_TOKEN-værdien>" \
+export LIVE_NARRATOR_ADMIN_URL="https://<worker-adressen>/admin/pairs"
+export LIVE_NARRATOR_ADMIN_TOKEN="$(
+  security find-generic-password -w -s LIVE_NARRATOR_ADMIN_TOKEN
+)"
 node tools/live_pair_export.mjs
+unset LIVE_NARRATOR_ADMIN_TOKEN
 ```
 
 (Der findes også `npm run pairs:export`, som blot kører samme kommando —
@@ -640,17 +642,19 @@ forældede pr.-IP-budgetposter og stats uden aktivitet i 90 dage.
 ### 12d. Autentificeret eksport — serverhalvdelen af TASK-029
 
 ```http
-GET /admin/improvisations?limit=200&cursor=...
+GET /admin/improvisations?limit=200&cursor=...&snapshot=...
 authorization: Bearer <ADMIN_EXPORT_TOKEN>
 ```
 
 Endpointet genbruger præcis samme fail-closed tokenkontrol og interne
 markørheader som `/admin/pairs`. Det eksporterer kun den aktuelle
 prompt-namespaces cachede improvisationer i stabil, leksikalsk
-`pair+act`-rækkefølge med en cursor-after-key. Ændringer i `count` eller
-`lastSeen` mellem sider kan derfor ikke flytte en allerede set række og
-skabe dubletter/huller. Hver række bevarer stadig de aktuelle,
-sorterede forældre,
+`pair+act`-rækkefølge med en cursor-after-key. Første side returnerer
+schemaVersion 3's `snapshotVersion`; hver fortsættelsesside SKAL sende både
+cursoren og den version tilbage. Workeren genberegner SHA-256-versionen over
+hele det sorterede eksportøjeblik. Manglende snapshot ved cursor giver 400,
+og enhver insertion, deletion eller tæller/copy-mutation giver 409 i stedet
+for en blandet eksport. Hver række bevarer de sorterede forældre,
 `name`/`flavor`, oprettelsestid og smalle tællinger (`count`,
 `cacheHits`, `upstreamCalls`, `firstSeen`, `lastSeen`). Ingen rå eller
 hashet IP, ingen prompt, intet token og ingen anden storage-post kan
@@ -669,19 +673,34 @@ et lokalt review-udkast. Den gør **ikke** modeltekst til spilindhold.
 Produktion, fra repo-roden:
 
 ```bash
-LIVE_NARRATOR_ADMIN_TOKEN="<ADMIN_EXPORT_TOKEN-værdien>" \
+export LIVE_NARRATOR_ADMIN_ORIGIN="https://<worker-origin>"
+
+# Anbefalet: Keychain → miljø; værdien skrives aldrig i kommandohistorikken.
+export LIVE_NARRATOR_ADMIN_TOKEN="$(
+  security find-generic-password -w -s LIVE_NARRATOR_ADMIN_TOKEN
+)"
+
 npm run harvest -- \
   --url "https://<worker-adressen>/admin/improvisations"
+
+unset LIVE_NARRATOR_ADMIN_TOKEN
 ```
 
 URL'en er et obligatorisk, eksplicit argument; der findes ingen produktions-
 standard. Tokenet kan ikke gives som CLI-argument og læses kun fra den
-allerede etablerede `LIVE_NARRATOR_ADMIN_TOKEN`-miljøvariabel. Hvis secretet
-opbevares i macOS Keychain, bruges samme Keychain→miljø-mønster som for andre
-lokale secrets: hent værdien med `security find-generic-password -w ...` i
-shellen og sæt den direkte som `LIVE_NARRATOR_ADMIN_TOKEN` for den ene
-kommando. Værktøjet kalder ikke Keychain selv og skriver, logger eller
-gentager aldrig tokenet i fejl.
+allerede etablerede `LIVE_NARRATOR_ADMIN_TOKEN`-miljøvariabel. Alternativt kan
+variablen fyldes uden ekko via `IFS= read -r -s
+LIVE_NARRATOR_ADMIN_TOKEN; export LIVE_NARRATOR_ADMIN_TOKEN`, før kommandoen
+køres. Der må aldrig stå en tokenværdi direkte på kommandolinjen.
+
+Som standard skal URL'ens origin matche
+`LIVE_NARRATOR_ADMIN_ORIGIN` **eksakt**, før Authorization-headeren bygges.
+En bevidst engangskørsel mod en anden origin kræver
+`--allow-origin "https://den-præcise-origin"`; acknowledgement og URL skal
+stadig matche eksakt. Et vilkårligt HTTPS-hostnavn er aldrig nok. Værktøjet
+kalder ikke Keychain selv og skriver, logger eller gentager aldrig tokenet i
+fejl. Hvis serveren ekkoer tokenet inde i et ellers gyldigt JSON-felt,
+afvises hele eksporten før artefaktbygning.
 
 Offline audit og deterministiske tests bruger ingen token og intet netværk:
 
@@ -696,8 +715,10 @@ En fixture er enten én eksakt eksportside, et array af eksakte sider, eller
 `{"pages": [...]}`. Hver side og række valideres med eksakt skema mod
 `content/elements.json`, samme akt- og copy-grænser som Workeren, sikre
 heltal/tidsstempler og faste lofter for body, sider og rækker. Cursor-cykler,
-ukendte eller usorterede forældre, ekstra felter (fx `solves`, `tags`,
-`sourceUrl`) og injektionsagtig tekst afvises højlydt.
+ukendte eller usorterede forældre, ikke-stigende pair+act-nøgler, ændret
+snapshot/total/tællinger, en trunkeret sidste side, ekstra felter (fx
+`solves`, `tags`, `sourceUrl`) og injektionsagtig tekst afvises højlydt.
+Input skal være én regulær fil; symlink, FIFO og devices åbnes aldrig.
 
 Uden `--output` er målet `content/drafts/harvested.json`. Filen skrives først,
 når alle sider er hentet og valideret, og udskiftes atomisk; en fejl efter
@@ -706,7 +727,10 @@ kandidater og skriver intet. Identisk input giver identiske bytes, fordi
 artefaktet ikke indeholder et kørsels-tidspunkt. Hver række er markeret
 `reviewStatus: "untrusted"`, artefaktet er `promotion: "manual-only"`, og der
 findes ingen `note`, `sourceUrl`, `solves`, `tags` eller automatisk
-forfremmelsessti.
+forfremmelsessti. Output og alle eksisterende forældre skal være
+symlink-frie. Inde i `content/` er kun den eksakte
+`content/drafts/harvested.json` tilladt; andre outputforældre skal eksistere
+på forhånd.
 
 #### Reviewer-flow: kandidat → kurateret canon
 

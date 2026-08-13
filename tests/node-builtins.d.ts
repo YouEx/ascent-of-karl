@@ -6,12 +6,43 @@
  * klarer sig uden. Denne fil dækker KUN de funktioner, der reelt bruges.
  */
 declare module "node:fs" {
+  interface Stats {
+    dev: number;
+    ino: number;
+    size: number;
+    mtimeMs: number;
+    ctimeMs: number;
+    isFile(): boolean;
+    isDirectory(): boolean;
+    isSymbolicLink(): boolean;
+  }
+
+  export const constants: {
+    O_NOFOLLOW?: number;
+    O_RDONLY: number;
+  };
+
+  export function appendFileSync(path: string, data: string): void;
+  export function closeSync(fd: number): void;
   export function existsSync(path: string): boolean;
+  export function fstatSync(fd: number): Stats;
+  export function lstatSync(path: string): Stats;
   export function mkdirSync(path: string, options?: { recursive?: boolean }): string | undefined;
   export function mkdtempSync(prefix: string): string;
+  export function openSync(path: string, flags: number): number;
   export function readFileSync(path: string, encoding: string): string;
+  export function readSync(
+    fd: number,
+    buffer: Uint8Array,
+    offset: number,
+    length: number,
+    position: number | null,
+  ): number;
   export function readdirSync(path: string): string[];
+  export function renameSync(oldPath: string, newPath: string): void;
   export function rmSync(path: string, options?: { recursive?: boolean; force?: boolean }): void;
+  export function statSync(path: string): Stats;
+  export function symlinkSync(target: string, path: string, type?: "dir" | "file"): void;
   export function writeFileSync(path: string, data: string): void;
 }
 

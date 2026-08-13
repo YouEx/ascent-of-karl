@@ -4,7 +4,7 @@ import type { ImproviseCopy } from "./improvise-output";
 
 export const IMPROVISE_STATS_KEY_PREFIX = "improv-stats:";
 export const IMPROVISE_STATS_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
-export const IMPROVISE_EXPORT_SCHEMA_VERSION = 2;
+export const IMPROVISE_EXPORT_SCHEMA_VERSION = 3;
 
 export type ImproviseStatsOutcome = "hit" | "upstream" | "other";
 
@@ -110,6 +110,7 @@ export interface ImproviseExportEntry {
 export interface ImproviseExportPayload {
   schemaVersion: number;
   promptNamespace: string;
+  snapshotVersion: string;
   generatedAt: number;
   total: number;
   counts: {
@@ -122,11 +123,28 @@ export interface ImproviseExportPayload {
   nextCursor: string | null;
 }
 
-export function buildImproviseExport(
+async function snapshotVersion(
+  promptNamespace: string,
+  all: ReadonlyArray<{ cursorKey: string; entry: ImproviseExportEntry }>,
+): Promise<string> {
+  const material = JSON.stringify({
+    schemaVersion: IMPROVISE_EXPORT_SCHEMA_VERSION,
+    promptNamespace,
+    entries: all.map(({ cursorKey, entry }) => ({ cursorKey, entry })),
+  });
+  const digest = new Uint8Array(
+    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(material)),
+  );
+  return [...digest]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+export async function buildImproviseExport(
   cachedEntries: ReadonlyMap<string, CachedImprovisation>,
   statsEntries: ReadonlyMap<string, ImproviseStatsRecord>,
   opts: { promptNamespace: string; now: number; limit: number; cursor: string | null },
-): ImproviseExportPayload {
+): Promise<ImproviseExportPayload> {
   const all = [...cachedEntries.values()]
     .map((cached) => {
       const stats = statsEntries.get(
@@ -162,6 +180,7 @@ export function buildImproviseExport(
   return {
     schemaVersion: IMPROVISE_EXPORT_SCHEMA_VERSION,
     promptNamespace: opts.promptNamespace,
+    snapshotVersion: await snapshotVersion(opts.promptNamespace, all),
     generatedAt: opts.now,
     total: all.length,
     counts: {

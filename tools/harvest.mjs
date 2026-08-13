@@ -3,28 +3,40 @@
  * TASK-029: høst cachede improvisationer som UBETROEDE review-kandidater.
  *
  * Værktøjet skriver aldrig kanonisk content. Produktion kræver en eksplicit
- * `--url` til GET /admin/improvisations og læser kun admin-tokenet fra
- * LIVE_NARRATOR_ADMIN_TOKEN. Offline audit bruger `--input <fixture.json>`.
+ * `--url` til GET /admin/improvisations, en eksakt betroet origin og læser
+ * kun admin-tokenet fra LIVE_NARRATOR_ADMIN_TOKEN. Offline audit bruger
+ * `--input <fixture.json>`.
  */
 
 import {
   closeSync,
+  constants as fsConstants,
+  fstatSync,
   fsyncSync,
+  lstatSync,
   mkdirSync,
   openSync,
-  readFileSync,
+  readSync,
+  realpathSync,
   renameSync,
-  statSync,
   unlinkSync,
   writeFileSync,
 } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { basename, dirname, isAbsolute, relative, resolve } from "node:path";
+import {
+  basename,
+  dirname,
+  isAbsolute,
+  join,
+  relative,
+  resolve,
+  sep,
+} from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 export const DEFAULT_OUTPUT_PATH = "content/drafts/harvested.json";
 export const HARVEST_LIMITS = Object.freeze({
-  exportSchemaVersion: 2,
+  exportSchemaVersion: 3,
   artifactSchemaVersion: 1,
   pageSize: 200,
   maxPages: 100,
@@ -39,11 +51,13 @@ export const HARVEST_LIMITS = Object.freeze({
   nameWords: 3,
   flavorChars: 240,
   promptNamespaceChars: 128,
+  snapshotVersionChars: 64,
   cursorChars: 256,
 });
 
 const SCRIPT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TOKEN_ENV = "LIVE_NARRATOR_ADMIN_TOKEN";
+const ORIGIN_ENV = "LIVE_NARRATOR_ADMIN_ORIGIN";
 const PAGE_FIELDS = [
   "counts",
   "entries",
@@ -51,6 +65,7 @@ const PAGE_FIELDS = [
   "nextCursor",
   "promptNamespace",
   "schemaVersion",
+  "snapshotVersion",
   "total",
 ];
 const COUNT_FIELDS = ["cacheHits", "cached", "requests", "upstreamCalls"];
@@ -69,6 +84,7 @@ const ROW_FIELDS = [
 ];
 const ID = /^[a-z0-9-]+$/;
 const NAMESPACE = /^[0-9a-f]+$/;
+const SNAPSHOT = /^[0-9a-f]{64}$/;
 const CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/;
 const QUOTES = /["'`“”‘’«»]/;
 const URL_LIKE =
@@ -234,6 +250,14 @@ export function validateExportPage(raw, canonicalElements) {
   if (!NAMESPACE.test(promptNamespace)) {
     throw new HarvestError("promptNamespace har ugyldig form");
   }
+  const snapshotVersion = requireBoundedString(
+    page.snapshotVersion,
+    HARVEST_LIMITS.snapshotVersionChars,
+    "snapshotVersion",
+  );
+  if (!SNAPSHOT.test(snapshotVersion)) {
+    throw new HarvestError("snapshotVersion har ugyldig form");
+  }
   const generatedAt = requireSafeInteger(page.generatedAt, "generatedAt");
   const total = requireSafeInteger(page.total, "total");
   if (total > HARVEST_LIMITS.maxRows) {
@@ -274,6 +298,11 @@ export function validateExportPage(raw, canonicalElements) {
   const entries = page.entries.map((entry, index) =>
     validateRow(entry, canonicalElements, index),
   );
+  for (let index = 1; index < entries.length; index += 1) {
+    if (cursorFor(entries[index - 1]) >= cursorFor(entries[index])) {
+      throw new HarvestError("eksportsidens pair+act-nøgler er ikke strengt stigende");
+    }
+  }
   const pageRequests = entries.reduce((sum, entry) => sum + entry.count, 0);
   const pageCacheHits = entries.reduce((sum, entry) => sum + entry.cacheHits, 0);
   const pageUpstreamCalls = entries.reduce(
@@ -306,6 +335,7 @@ export function validateExportPage(raw, canonicalElements) {
   return {
     schemaVersion: page.schemaVersion,
     promptNamespace,
+    snapshotVersion,
     generatedAt,
     total,
     counts: normalizedCounts,
@@ -357,6 +387,48 @@ function validateAdminUrl(raw) {
   return url;
 }
 
+function normalizeOrigin(raw, label) {
+  let url;
+  try {
+    url = new URL(raw);
+  } catch {
+    throw new HarvestError(`${label} skal være en gyldig origin`);
+  }
+  if (
+    url.username ||
+    url.password ||
+    url.pathname !== "/" ||
+    url.search ||
+    url.hash
+  ) {
+    throw new HarvestError(`${label} skal være en ren origin uden path eller query`);
+  }
+  const loopback = ["127.0.0.1", "::1", "[::1]", "localhost"].includes(
+    url.hostname,
+  );
+  if (url.protocol !== "https:" && !(url.protocol === "http:" && loopback)) {
+    throw new HarvestError(`${label} skal bruge HTTPS (HTTP tillades kun lokalt)`);
+  }
+  return url.origin;
+}
+
+function requireTrustedOrigin(endpoint, trustedOrigin, allowOrigin) {
+  const acknowledged =
+    allowOrigin !== null && allowOrigin !== undefined
+      ? normalizeOrigin(allowOrigin, "--allow-origin")
+      : trustedOrigin
+        ? normalizeOrigin(trustedOrigin, ORIGIN_ENV)
+        : null;
+  if (acknowledged === null) {
+    throw new HarvestError(
+      `${ORIGIN_ENV} mangler; brug kun --allow-origin som eksplicit acknowledgement`,
+    );
+  }
+  if (acknowledged !== endpoint.origin) {
+    throw new HarvestError("betroet origin matcher ikke --url origin eksakt");
+  }
+}
+
 async function readBoundedResponseText(response) {
   const contentLength = response.headers?.get?.("content-length");
   if (contentLength !== null && contentLength !== undefined) {
@@ -399,33 +471,80 @@ function parseJson(text, label) {
   }
 }
 
+function assertNoTokenEcho(value, token) {
+  if (typeof value === "string") {
+    if (value.includes(token)) {
+      throw new HarvestError("admin-svaret indeholder tokenmateriale og blev afvist");
+    }
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) assertNoTokenEcho(item, token);
+    return;
+  }
+  if (isPlainObject(value)) {
+    for (const item of Object.values(value)) assertNoTokenEcho(item, token);
+  }
+}
+
+function sameCounts(left, right) {
+  return (
+    left.cached === right.cached &&
+    left.requests === right.requests &&
+    left.cacheHits === right.cacheHits &&
+    left.upstreamCalls === right.upstreamCalls
+  );
+}
+
 function addPageToCollection(page, state) {
   assertCollectionBounds(state.pageCount + 1, state.entries.length + page.entries.length);
-  if (
-    state.promptNamespace !== null &&
-    state.promptNamespace !== page.promptNamespace
-  ) {
-    throw new HarvestError("promptNamespace ændrede sig mellem sider");
+  if (state.pageCount === 0) {
+    state.promptNamespace = page.promptNamespace;
+    state.snapshotVersion = page.snapshotVersion;
+    state.total = page.total;
+    state.counts = page.counts;
+  } else {
+    if (state.promptNamespace !== page.promptNamespace) {
+      throw new HarvestError("promptNamespace ændrede sig mellem sider");
+    }
+    if (state.snapshotVersion !== page.snapshotVersion) {
+      throw new HarvestError("snapshotVersion ændrede sig mellem sider");
+    }
+    if (state.total !== page.total) {
+      throw new HarvestError("total ændrede sig mellem sider");
+    }
+    if (!sameCounts(state.counts, page.counts)) {
+      throw new HarvestError("eksportens tællinger ændrede sig mellem sider");
+    }
   }
-  state.promptNamespace ??= page.promptNamespace;
   for (const entry of page.entries) {
     const key = cursorFor(entry);
+    if (state.lastKey !== null && key <= state.lastKey) {
+      throw new HarvestError("pair+act-nøgler er ikke strengt stigende mellem sider");
+    }
     if (state.identities.has(key)) {
       throw new HarvestError(`dublet i stabil pair+act-identitet: ${key}`);
     }
     state.identities.add(key);
     state.entries.push(entry);
+    state.lastKey = key;
   }
   state.pageCount += 1;
+  if (state.entries.length > state.total) {
+    throw new HarvestError("samlet rækkeantal overstiger snapshot-total");
+  }
 }
 
 export async function fetchAllPages({
   url,
   token,
+  trustedOrigin = null,
+  allowOrigin = null,
   fetchImpl = fetch,
   canonicalElements,
 }) {
   const endpoint = validateAdminUrl(url);
+  requireTrustedOrigin(endpoint, trustedOrigin, allowOrigin);
   if (typeof token !== "string" || token.length === 0) {
     throw new HarvestError(`${TOKEN_ENV} mangler`);
   }
@@ -433,8 +552,12 @@ export async function fetchAllPages({
   const state = {
     pageCount: 0,
     promptNamespace: null,
+    snapshotVersion: null,
+    total: null,
+    counts: null,
     entries: [],
     identities: new Set(),
+    lastKey: null,
   };
   const seenCursors = new Set();
   let cursor = null;
@@ -449,11 +572,15 @@ export async function fetchAllPages({
     const pageUrl = new URL(endpoint);
     pageUrl.searchParams.set("limit", String(HARVEST_LIMITS.pageSize));
     if (cursor !== null) pageUrl.searchParams.set("cursor", cursor);
+    if (state.snapshotVersion !== null) {
+      pageUrl.searchParams.set("snapshot", state.snapshotVersion);
+    }
 
     let response;
     try {
       response = await fetchImpl(pageUrl.toString(), {
         method: "GET",
+        redirect: "error",
         headers: { authorization: ["Bearer", token].join(" ") },
       });
     } catch {
@@ -474,10 +601,9 @@ export async function fetchAllPages({
       if (error instanceof HarvestError) throw error;
       throw new HarvestError("kunne ikke læse admin-eksportens body");
     }
-    const page = validateExportPage(
-      parseJson(body, "admin-eksportens body"),
-      canonicalElements,
-    );
+    const parsed = parseJson(body, "admin-eksportens body");
+    assertNoTokenEcho(parsed, token);
+    const page = validateExportPage(parsed, canonicalElements);
     if (
       page.nextCursor !== null &&
       seenCursors.has(page.nextCursor)
@@ -487,8 +613,14 @@ export async function fetchAllPages({
     addPageToCollection(page, state);
 
     if (page.nextCursor === null) {
+      if (state.entries.length !== state.total) {
+        throw new HarvestError(
+          "sidste side er ufuldstændig: samlet rækkeantal matcher ikke total",
+        );
+      }
       return {
         promptNamespace: state.promptNamespace,
+        snapshotVersion: state.snapshotVersion,
         entries: state.entries,
       };
     }
@@ -497,20 +629,100 @@ export async function fetchAllPages({
   }
 }
 
-function readBoundedFile(path, maxBytes, label) {
-  let size;
+const DEFAULT_FILE_OPS = {
+  constants: fsConstants,
+  lstatSync,
+  openSync,
+  fstatSync,
+  readSync,
+  closeSync,
+};
+
+export function readBoundedFile(
+  path,
+  maxBytes,
+  label,
+  ops = DEFAULT_FILE_OPS,
+) {
+  let descriptor;
   try {
-    size = statSync(path).size;
-  } catch {
-    throw new HarvestError(`${label} kunne ikke læses`);
-  }
-  if (size > maxBytes) {
-    throw new HarvestError(`${label} overskrider maksimum på ${maxBytes} bytes`);
-  }
-  try {
-    return readFileSync(path, "utf8");
-  } catch {
-    throw new HarvestError(`${label} kunne ikke læses`);
+    const beforePath = ops.lstatSync(path);
+    if (beforePath.isSymbolicLink()) {
+      throw new HarvestError(`${label} må ikke være et symbolsk link`);
+    }
+    if (!beforePath.isFile()) {
+      throw new HarvestError(`${label} skal være en regulær fil, ikke en specialfil`);
+    }
+    if (beforePath.size > maxBytes) {
+      throw new HarvestError(`${label} overskrider maksimum på ${maxBytes} bytes`);
+    }
+
+    const noFollow = ops.constants.O_NOFOLLOW ?? 0;
+    descriptor = ops.openSync(path, ops.constants.O_RDONLY | noFollow);
+    const opened = ops.fstatSync(descriptor);
+    if (
+      !opened.isFile() ||
+      opened.dev !== beforePath.dev ||
+      opened.ino !== beforePath.ino
+    ) {
+      throw new HarvestError(`${label} blev udskiftet før den sikre læsning`);
+    }
+
+    const chunks = [];
+    let total = 0;
+    while (true) {
+      const chunk = Buffer.allocUnsafe(
+        Math.min(64 * 1024, maxBytes - total + 1),
+      );
+      const bytes = ops.readSync(
+        descriptor,
+        chunk,
+        0,
+        chunk.length,
+        null,
+      );
+      if (bytes === 0) break;
+      total += bytes;
+      if (total > maxBytes) {
+        throw new HarvestError(`${label} overskrider maksimum på ${maxBytes} bytes`);
+      }
+      chunks.push(Buffer.from(chunk.subarray(0, bytes)));
+    }
+
+    const afterDescriptor = ops.fstatSync(descriptor);
+    const afterPath = ops.lstatSync(path);
+    if (afterPath.isSymbolicLink() || !afterPath.isFile()) {
+      throw new HarvestError(`${label} blev udskiftet med en specialfil`);
+    }
+    if (
+      afterPath.dev !== afterDescriptor.dev ||
+      afterPath.ino !== afterDescriptor.ino ||
+      beforePath.dev !== afterDescriptor.dev ||
+      beforePath.ino !== afterDescriptor.ino
+    ) {
+      throw new HarvestError(`${label} blev udskiftet under læsning`);
+    }
+    if (
+      beforePath.size !== afterDescriptor.size ||
+      afterDescriptor.size !== afterPath.size ||
+      total !== afterDescriptor.size ||
+      beforePath.mtimeMs !== afterDescriptor.mtimeMs ||
+      beforePath.ctimeMs !== afterDescriptor.ctimeMs
+    ) {
+      throw new HarvestError(`${label} ændrede størrelse eller metadata under læsning`);
+    }
+    return Buffer.concat(chunks, total).toString("utf8");
+  } catch (error) {
+    if (error instanceof HarvestError) throw error;
+    throw new HarvestError(`${label} kunne ikke læses sikkert`);
+  } finally {
+    if (descriptor !== undefined) {
+      try {
+        ops.closeSync(descriptor);
+      } catch {
+        // Descriptor-oprydning ændrer ikke den allerede afviste læsekontrakt.
+      }
+    }
   }
 }
 
@@ -532,8 +744,12 @@ function collectOfflinePages(pages, canonicalElements) {
   const state = {
     pageCount: 0,
     promptNamespace: null,
+    snapshotVersion: null,
+    total: null,
+    counts: null,
     entries: [],
     identities: new Set(),
+    lastKey: null,
   };
   const seenCursors = new Set();
 
@@ -558,8 +774,14 @@ function collectOfflinePages(pages, canonicalElements) {
     }
   });
 
+  if (state.entries.length !== state.total) {
+    throw new HarvestError(
+      "offline-fixturens sidste side er ufuldstændig: rækkeantal matcher ikke total",
+    );
+  }
   return {
     promptNamespace: state.promptNamespace,
+    snapshotVersion: state.snapshotVersion,
     entries: state.entries,
   };
 }
@@ -590,7 +812,11 @@ function loadCanonicalElements(root) {
   return catalog;
 }
 
-export function buildHarvestArtifact({ promptNamespace, entries }) {
+export function buildHarvestArtifact({
+  promptNamespace,
+  snapshotVersion,
+  entries,
+}) {
   const byIdentity = new Map();
   for (const entry of entries) {
     const key = cursorFor(entry);
@@ -646,56 +872,201 @@ export function buildHarvestArtifact({ promptNamespace, entries }) {
     trust: "untrusted",
     promotion: "manual-only",
     promptNamespace,
+    snapshotVersion,
     candidateCount: ranked.length,
     candidates: ranked.map(({ candidate }) => candidate),
   };
 }
 
-function atomicWrite(path, content) {
+function lstatIfExists(path) {
+  try {
+    return lstatSync(path);
+  } catch (error) {
+    if (error && error.code === "ENOENT") return null;
+    throw new HarvestError("output-stien kunne ikke inspiceres sikkert");
+  }
+}
+
+function assertNoSymlinkComponents(path) {
+  const components = [];
+  let current = path;
+  while (true) {
+    components.push(current);
+    const parent = dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+  for (const component of components.reverse()) {
+    const stat = lstatIfExists(component);
+    if (stat?.isSymbolicLink()) {
+      throw new HarvestError("output-stien må ikke indeholde symbolske links");
+    }
+  }
+}
+
+function nearestExistingAncestor(path) {
+  let current = path;
+  while (true) {
+    const stat = lstatIfExists(current);
+    if (stat !== null) return { path: current, stat };
+    const parent = dirname(current);
+    if (parent === current) {
+      throw new HarvestError("output-stien har ingen eksisterende forælder");
+    }
+    current = parent;
+  }
+}
+
+function isInside(root, candidate) {
+  const rel = relative(root, candidate);
+  return (
+    rel === "" ||
+    (rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel))
+  );
+}
+
+function inspectOutputDestination(root, path, requireParent = false) {
+  assertNoSymlinkComponents(path);
+  const targetStat = lstatIfExists(path);
+  if (targetStat?.isSymbolicLink()) {
+    throw new HarvestError("harvest-output må ikke være et symbolsk link");
+  }
+  if (targetStat !== null && !targetStat.isFile()) {
+    throw new HarvestError("harvest-output skal være en regulær fil");
+  }
+
   const parent = dirname(path);
-  mkdirSync(parent, { recursive: true });
-  const temporary = resolve(
+  const parentStat = lstatIfExists(parent);
+  let parentReal;
+  let resolvedDestination;
+  if (parentStat !== null) {
+    if (!parentStat.isDirectory()) {
+      throw new HarvestError("harvest-outputets forælder skal være en mappe");
+    }
+    parentReal = realpathSync(parent);
+    resolvedDestination = join(parentReal, basename(path));
+    if (targetStat !== null) {
+      const targetReal = realpathSync(path);
+      if (targetReal !== resolvedDestination) {
+        throw new HarvestError("harvest-outputets realpath matcher ikke forælderen");
+      }
+      resolvedDestination = targetReal;
+    }
+  } else {
+    if (requireParent) {
+      throw new HarvestError("harvest-outputets forældermappe findes ikke");
+    }
+    const nearest = nearestExistingAncestor(parent);
+    if (!nearest.stat.isDirectory()) {
+      throw new HarvestError("nærmeste output-forælder er ikke en mappe");
+    }
+    const nearestReal = realpathSync(nearest.path);
+    parentReal = join(nearestReal, relative(nearest.path, parent));
+    resolvedDestination = join(parentReal, basename(path));
+  }
+
+  const contentRoot = realpathSync(resolve(root, "content"));
+  const allowedHarvest = join(contentRoot, "drafts", "harvested.json");
+  if (
+    isInside(contentRoot, resolvedDestination) &&
+    resolvedDestination !== allowedHarvest
+  ) {
+    throw new HarvestError(
+      "kanonisk content er skrivebeskyttet; kun content/drafts/harvested.json er tilladt",
+    );
+  }
+  return {
+    path,
     parent,
+    parentReal,
+    parentStat,
+    resolvedDestination,
+    allowedHarvest,
+  };
+}
+
+function atomicWrite(path, content, root) {
+  let inspected = inspectOutputDestination(root, path);
+  if (inspected.parentStat === null) {
+    if (inspected.resolvedDestination !== inspected.allowedHarvest) {
+      throw new HarvestError(
+        "harvest-outputets forældermappe skal eksistere på forhånd",
+      );
+    }
+    try {
+      mkdirSync(inspected.parent);
+    } catch (error) {
+      if (!error || error.code !== "EEXIST") {
+        throw new HarvestError("kunne ikke oprette den tilladte drafts-mappe");
+      }
+    }
+    inspected = inspectOutputDestination(root, path, true);
+  }
+
+  const parentIdentity = lstatSync(inspected.parent);
+  const temporary = resolve(
+    inspected.parent,
     `.${basename(path)}.${process.pid}.${randomUUID()}.tmp`,
   );
   let descriptor;
+  let temporaryIdentity;
   try {
-    descriptor = openSync(temporary, "wx", 0o600);
+    const noFollow = fsConstants.O_NOFOLLOW ?? 0;
+    descriptor = openSync(
+      temporary,
+      fsConstants.O_WRONLY |
+        fsConstants.O_CREAT |
+        fsConstants.O_EXCL |
+        noFollow,
+      0o600,
+    );
+    temporaryIdentity = fstatSync(descriptor);
     writeFileSync(descriptor, content, "utf8");
     fsyncSync(descriptor);
     closeSync(descriptor);
     descriptor = undefined;
+
+    const beforeRename = inspectOutputDestination(root, path, true);
+    const currentParent = lstatSync(beforeRename.parent);
+    if (
+      beforeRename.parentReal !== inspected.parentReal ||
+      currentParent.dev !== parentIdentity.dev ||
+      currentParent.ino !== parentIdentity.ino
+    ) {
+      throw new HarvestError("output-forælderen blev udskiftet før rename");
+    }
+
     renameSync(temporary, path);
-  } catch {
+    const finalStat = lstatSync(path);
+    if (
+      finalStat.isSymbolicLink() ||
+      !finalStat.isFile() ||
+      finalStat.dev !== temporaryIdentity.dev ||
+      finalStat.ino !== temporaryIdentity.ino
+    ) {
+      throw new HarvestError("atomisk rename landede ikke på den validerede fil");
+    }
+  } catch (error) {
     if (descriptor !== undefined) {
       try {
         closeSync(descriptor);
       } catch {
-        // Kun oprydning; den oprindelige skrivefejl returneres nedenfor.
+        // Oprydning; den oprindelige fejl returneres.
       }
     }
     try {
       unlinkSync(temporary);
     } catch {
-      // Filen kan mangle, fx hvis rename allerede lykkedes.
+      // Temp-filen kan allerede være renamed eller fjernet.
     }
+    if (error instanceof HarvestError) throw error;
     throw new HarvestError("kunne ikke skrive harvest-output atomisk");
   }
 }
 
 function resolveOutputPath(root, output) {
   const path = isAbsolute(output) ? resolve(output) : resolve(root, output);
-  const contentRoot = resolve(root, "content");
-  const draftRoot = resolve(root, "content/drafts");
-  const insideContent =
-    path === contentRoot || (!relative(contentRoot, path).startsWith("..") && path !== contentRoot);
-  const insideDrafts =
-    path === draftRoot || (!relative(draftRoot, path).startsWith("..") && path !== draftRoot);
-  if (insideContent && !insideDrafts) {
-    throw new HarvestError(
-      "harvest-output må ikke pege på kanonisk content; brug content/drafts/ eller en ekstern sti",
-    );
-  }
+  inspectOutputDestination(root, path);
   return path;
 }
 
@@ -710,6 +1081,7 @@ function readValue(argv, index, flag) {
 export function parseCliArgs(argv) {
   let url = null;
   let input = null;
+  let allowOrigin = null;
   let output = DEFAULT_OUTPUT_PATH;
   let dryRun = false;
 
@@ -720,6 +1092,9 @@ export function parseCliArgs(argv) {
       index += 1;
     } else if (flag === "--input") {
       input = readValue(argv, index, flag);
+      index += 1;
+    } else if (flag === "--allow-origin") {
+      allowOrigin = normalizeOrigin(readValue(argv, index, flag), flag);
       index += 1;
     } else if (flag === "--output") {
       output = readValue(argv, index, flag);
@@ -734,9 +1109,12 @@ export function parseCliArgs(argv) {
   if ((url === null) === (input === null)) {
     throw new HarvestError("angiv enten --url eller --input, men ikke begge");
   }
+  if (input !== null && allowOrigin !== null) {
+    throw new HarvestError("--allow-origin kan kun bruges sammen med --url");
+  }
   if (url !== null) {
     validateAdminUrl(url);
-    return { mode: "production", url, output, dryRun };
+    return { mode: "production", url, allowOrigin, output, dryRun };
   }
   return { mode: "offline", input, output, dryRun };
 }
@@ -757,6 +1135,8 @@ export async function runHarvest({
     merged = await fetchAllPages({
       url: args.url,
       token,
+      trustedOrigin: env[ORIGIN_ENV],
+      allowOrigin: args.allowOrigin,
       fetchImpl,
       canonicalElements,
     });
@@ -785,7 +1165,7 @@ export async function runHarvest({
     };
   }
 
-  atomicWrite(outputPath, content);
+  atomicWrite(outputPath, content, root);
   log(`${artifact.candidateCount} kandidat(er) skrevet til ${args.output}.`);
   return {
     artifact,

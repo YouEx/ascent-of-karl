@@ -1,11 +1,22 @@
 import { createServer } from "node:http";
 import {
+  appendFileSync,
+  closeSync,
+  constants,
+  fstatSync,
+  lstatSync,
   mkdirSync,
   mkdtempSync,
+  openSync,
+  readSync,
   readFileSync,
+  renameSync,
   rmSync,
+  statSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -15,6 +26,8 @@ import { DEFAULT_OUTPUT_PATH, HARVEST_LIMITS, assertCollectionBounds, buildHarve
 const ROOT = resolve(fileURLToPath(import.meta.url), "../..");
 const SCRATCH_ROOT = join(ROOT, ".judge", "test-scratch");
 const SECRET = "test-hemmelighed-maa-aldrig-laekke";
+const SNAPSHOT = "a".repeat(64);
+const TRUSTED_ORIGIN = "https://worker.example";
 const elements = JSON.parse(
   readFileSync(join(ROOT, "content/elements.json"), "utf8"),
 ) as Array<{ id: string; act: number }>;
@@ -61,8 +74,9 @@ function page(
     0,
   );
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     promptNamespace: "abc123",
+    snapshotVersion: SNAPSHOT,
     generatedAt: 1_700_000_000_200,
     total: entries.length,
     counts: {
@@ -93,6 +107,7 @@ describe("harvest CLI-kontrakten", () => {
     expect(parseCliArgs(["--url", "https://worker.example/admin/improvisations"])).toMatchObject({
       mode: "production",
       url: "https://worker.example/admin/improvisations",
+      allowOrigin: null,
       output: DEFAULT_OUTPUT_PATH,
       dryRun: false,
     });
@@ -113,12 +128,69 @@ describe("harvest CLI-kontrakten", () => {
     expect(() => parseCliArgs(["--input", "fixture.json", "--url", "https://worker.example/admin/improvisations"]))
       .toThrow(/enten|ikke begge/i);
   });
+
+  it("læser en eksplicit --allow-origin acknowledgement uden at gøre den til en URL-standard", () => {
+    expect(
+      parseCliArgs([
+        "--url",
+        "https://review-worker.example/admin/improvisations",
+        "--allow-origin",
+        "https://review-worker.example",
+      ]),
+    ).toMatchObject({
+      mode: "production",
+      allowOrigin: "https://review-worker.example",
+    });
+  });
+
+  it("afviser en ondsindet HTTPS-host før tokenet sendes", async () => {
+    const fetchImpl = vi.fn();
+    await expect(
+      runHarvest({
+        args: parseCliArgs([
+          "--url",
+          "https://evil.example/admin/improvisations",
+          "--dry-run",
+        ]),
+        env: {
+          LIVE_NARRATOR_ADMIN_TOKEN: SECRET,
+          LIVE_NARRATOR_ADMIN_ORIGIN: TRUSTED_ORIGIN,
+        },
+        fetchImpl,
+        root: ROOT,
+      }),
+    ).rejects.toThrow(/origin|betroet|allow-origin/i);
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("kræver at --allow-origin matcher URL-origin eksakt", async () => {
+    const fetchImpl = vi.fn();
+    await expect(
+      runHarvest({
+        args: parseCliArgs([
+          "--url",
+          "https://evil.example/admin/improvisations",
+          "--allow-origin",
+          "https://worker.example",
+          "--dry-run",
+        ]),
+        env: {
+          LIVE_NARRATOR_ADMIN_TOKEN: SECRET,
+          LIVE_NARRATOR_ADMIN_ORIGIN: TRUSTED_ORIGIN,
+        },
+        fetchImpl,
+        root: ROOT,
+      }),
+    ).rejects.toThrow(/origin|matcher/i);
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
 });
 
 describe("hostil eksportvalidering", () => {
   it("accepterer kun det eksakte side- og rækkeskema", () => {
     expect(validateExportPage(page([row()]), canonicalElements)).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
+      snapshotVersion: SNAPSHOT,
       entries: [{ aId: "graes", bId: "vand" }],
     });
     expect(() =>
@@ -183,6 +255,7 @@ describe("hostil eksportvalidering", () => {
       fetchAllPages({
         url: "https://worker.example/admin/improvisations",
         token: SECRET,
+        trustedOrigin: TRUSTED_ORIGIN,
         fetchImpl,
         canonicalElements,
       }),
@@ -191,12 +264,17 @@ describe("hostil eksportvalidering", () => {
 });
 
 describe("produktionens stabile pagination", () => {
-  it("følger cursor-after-key trods muterende counts og sender bearer-token på hvert GET", async () => {
-    const seen: Array<{ cursor: string | null; authorization: string | undefined }> = [];
+  it("følger cursor-after-key i samme snapshot og sender snapshot+bearer-token på næste GET", async () => {
+    const seen: Array<{
+      cursor: string | null;
+      snapshot: string | null;
+      authorization: string | undefined;
+    }> = [];
     const server = createServer((request, response) => {
       const url = new URL(request.url ?? "/", "http://127.0.0.1");
       seen.push({
         cursor: url.searchParams.get("cursor"),
+        snapshot: url.searchParams.get("snapshot"),
         authorization:
           typeof request.headers.authorization === "string"
             ? request.headers.authorization
@@ -211,7 +289,7 @@ describe("produktionens stabile pagination", () => {
               "graes~vand~1",
               {
                 total: 2,
-                counts: { cached: 2, requests: 3, cacheHits: 1, upstreamCalls: 2 },
+                counts: { cached: 2, requests: 101, cacheHits: 91, upstreamCalls: 2 },
               },
             ),
           ),
@@ -246,12 +324,16 @@ describe("produktionens stabile pagination", () => {
     );
     const address = server.address();
     if (!address || typeof address === "string") throw new Error("testserver mangler port");
+    const fetchImpl = vi.fn(
+      (input: string | URL | Request, init?: RequestInit) => fetch(input, init),
+    );
 
     try {
       const merged = await fetchAllPages({
         url: `http://127.0.0.1:${address.port}/admin/improvisations`,
         token: SECRET,
-        fetchImpl: fetch,
+        trustedOrigin: `http://127.0.0.1:${address.port}`,
+        fetchImpl,
         canonicalElements,
       });
       expect(merged.entries.map((entry: { aId: string }) => entry.aId)).toEqual([
@@ -259,12 +341,20 @@ describe("produktionens stabile pagination", () => {
         "pind",
       ]);
       expect(seen).toEqual([
-        { cursor: null, authorization: ["Bearer", SECRET].join(" ") },
+        {
+          cursor: null,
+          snapshot: null,
+          authorization: ["Bearer", SECRET].join(" "),
+        },
         {
           cursor: "graes~vand~1",
+          snapshot: SNAPSHOT,
           authorization: ["Bearer", SECRET].join(" "),
         },
       ]);
+      for (const [, init] of fetchImpl.mock.calls) {
+        expect(init?.redirect).toBe("error");
+      }
     } finally {
       await new Promise<void>((resolveClose, rejectClose) =>
         server.close((error) => (error ? rejectClose(error) : resolveClose())),
@@ -283,6 +373,7 @@ describe("produktionens stabile pagination", () => {
       fetchAllPages({
         url: "https://worker.example/admin/improvisations",
         token: SECRET,
+        trustedOrigin: TRUSTED_ORIGIN,
         fetchImpl,
         canonicalElements,
       }),
@@ -301,6 +392,11 @@ describe("produktionens stabile pagination", () => {
         pairs.push([actOneIds[first]!, actOneIds[second]!]);
       }
     }
+    pairs.sort((left, right) => {
+      const leftKey = `${left[0]}~${left[1]}~1`;
+      const rightKey = `${right[0]}~${right[1]}~1`;
+      return leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0;
+    });
     const fetchImpl = vi.fn(async () => {
       const index = fetchImpl.mock.calls.length - 1;
       const [aId, bId] = pairs[index]!;
@@ -331,11 +427,214 @@ describe("produktionens stabile pagination", () => {
       fetchAllPages({
         url: "https://worker.example/admin/improvisations",
         token: SECRET,
+        trustedOrigin: TRUSTED_ORIGIN,
         fetchImpl,
         canonicalElements,
       }),
     ).rejects.toThrow(/maksimum.*sider/i);
     expect(fetchImpl).toHaveBeenCalledTimes(HARVEST_LIMITS.maxPages);
+  });
+
+  it("afviser insertion mellem sider via ændret snapshot/total", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify(
+            page([row()], "graes~vand~1", {
+              total: 2,
+              counts: { cached: 2, requests: 10, cacheHits: 7, upstreamCalls: 2 },
+            }),
+          ),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify(
+            page(
+              [
+                row({
+                  aId: "pind",
+                  bId: "sten",
+                  name: "Stone Handle",
+                  flavor: "Karl has attached confidence to a stick.",
+                  count: 3,
+                  cacheHits: 2,
+                }),
+                row({
+                  aId: "sten",
+                  bId: "sten",
+                  name: "Double Stone",
+                  flavor: "Karl has discovered that one stone can meet another.",
+                }),
+              ],
+              null,
+              {
+                snapshotVersion: "b".repeat(64),
+                total: 3,
+                counts: { cached: 3, requests: 17, cacheHits: 12, upstreamCalls: 3 },
+              },
+            ),
+          ),
+          { status: 200 },
+        ),
+      );
+
+    await expect(
+      fetchAllPages({
+        url: "https://worker.example/admin/improvisations",
+        token: SECRET,
+        trustedOrigin: TRUSTED_ORIGIN,
+        fetchImpl,
+        canonicalElements,
+      }),
+    ).rejects.toThrow(/snapshot|total.*ændrede/i);
+  });
+
+  it("afviser deletion mellem sider via ændret snapshot/total", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify(
+            page([row()], "graes~vand~1", {
+              total: 3,
+              counts: { cached: 3, requests: 17, cacheHits: 12, upstreamCalls: 3 },
+            }),
+          ),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify(
+            page(
+              [
+                row({
+                  aId: "pind",
+                  bId: "sten",
+                  name: "Stone Handle",
+                  flavor: "Karl has attached confidence to a stick.",
+                  count: 3,
+                  cacheHits: 2,
+                }),
+              ],
+              null,
+              {
+                snapshotVersion: "b".repeat(64),
+                total: 2,
+                counts: { cached: 2, requests: 10, cacheHits: 7, upstreamCalls: 2 },
+              },
+            ),
+          ),
+          { status: 200 },
+        ),
+      );
+
+    await expect(
+      fetchAllPages({
+        url: "https://worker.example/admin/improvisations",
+        token: SECRET,
+        trustedOrigin: TRUSTED_ORIGIN,
+        fetchImpl,
+        canonicalElements,
+      }),
+    ).rejects.toThrow(/snapshot|total.*ændrede/i);
+  });
+
+  it("afviser en trunkeret sidste side når samlet antal ikke matcher total", async () => {
+    const fetchImpl = vi.fn(async () =>
+      new Response(
+        JSON.stringify(
+          page([row()], null, {
+            total: 2,
+            counts: { cached: 2, requests: 7, cacheHits: 5, upstreamCalls: 1 },
+          }),
+        ),
+        { status: 200 },
+      ),
+    );
+
+    await expect(
+      fetchAllPages({
+        url: "https://worker.example/admin/improvisations",
+        token: SECRET,
+        trustedOrigin: TRUSTED_ORIGIN,
+        fetchImpl,
+        canonicalElements,
+      }),
+    ).rejects.toThrow(/total|ufuldstændig|trunkeret/i);
+  });
+
+  it("afviser ikke-stigende nøgler både på og mellem sider", async () => {
+    const later = row({
+      aId: "pind",
+      bId: "sten",
+      name: "Stone Handle",
+      flavor: "Karl has attached confidence to a stick.",
+    });
+    expect(() =>
+      validateExportPage(page([later, row()]), canonicalElements),
+    ).toThrow(/stigende|rækkefølge/i);
+
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify(
+            page([later], "pind~sten~1", {
+              total: 2,
+              counts: { cached: 2, requests: 14, cacheHits: 10, upstreamCalls: 2 },
+            }),
+          ),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify(
+            page([row()], null, {
+              total: 2,
+              counts: { cached: 2, requests: 14, cacheHits: 10, upstreamCalls: 2 },
+            }),
+          ),
+          { status: 200 },
+        ),
+      );
+    await expect(
+      fetchAllPages({
+        url: "https://worker.example/admin/improvisations",
+        token: SECRET,
+        trustedOrigin: TRUSTED_ORIGIN,
+        fetchImpl,
+        canonicalElements,
+      }),
+    ).rejects.toThrow(/stigende|rækkefølge/i);
+  });
+
+  it("afviser et svar der ekkoer hele eller dele af tokenet før noget kan persisteres", async () => {
+    const fetchImpl = vi.fn(async () =>
+      new Response(
+        JSON.stringify(
+          page([
+            row({
+              flavor: `Karl repeats ${SECRET} and should never reach a draft.`,
+            }),
+          ]),
+        ),
+        { status: 200 },
+      ),
+    );
+    const error = await fetchAllPages({
+      url: "https://worker.example/admin/improvisations",
+      token: SECRET,
+      trustedOrigin: TRUSTED_ORIGIN,
+      fetchImpl,
+      canonicalElements,
+    }).catch((caught: unknown) => caught as Error);
+    expect(error.message).toMatch(/token|hemmelig|svar/i);
+    expect(error.message).not.toContain(SECRET);
   });
 
   it("redigerer netværks- og authfejl så tokenet aldrig optræder i fejl", async () => {
@@ -345,6 +644,7 @@ describe("produktionens stabile pagination", () => {
     const error = await fetchAllPages({
       url: "https://worker.example/admin/improvisations",
       token: SECRET,
+      trustedOrigin: TRUSTED_ORIGIN,
       fetchImpl,
       canonicalElements,
     }).catch((caught: unknown) => caught as Error);
@@ -375,9 +675,14 @@ describe("review-only artefakt", () => {
         lastSeen: 40,
       }),
     ];
-    const first = buildHarvestArtifact({ promptNamespace: "abc123", entries });
+    const first = buildHarvestArtifact({
+      promptNamespace: "abc123",
+      snapshotVersion: SNAPSHOT,
+      entries,
+    });
     const second = buildHarvestArtifact({
       promptNamespace: "abc123",
+      snapshotVersion: SNAPSHOT,
       entries: [...entries].reverse(),
     });
 
@@ -394,6 +699,7 @@ describe("review-only artefakt", () => {
   it("markerer alle rækker som ubetroede kandidater og indeholder ingen kurateringsfelter", () => {
     const artifact = buildHarvestArtifact({
       promptNamespace: "abc123",
+      snapshotVersion: SNAPSHOT,
       entries: [row()],
     });
     const serialized = JSON.stringify(artifact);
@@ -410,16 +716,123 @@ describe("review-only artefakt", () => {
 
   it("repræsenterer tom trafik som et gyldigt, tomt review-artefakt", () => {
     expect(
-      buildHarvestArtifact({ promptNamespace: "abc123", entries: [] }),
+      buildHarvestArtifact({
+        promptNamespace: "abc123",
+        snapshotVersion: SNAPSHOT,
+        entries: [],
+      }),
     ).toEqual({
       schemaVersion: 1,
       kind: "improvisation-review-candidates",
       trust: "untrusted",
       promotion: "manual-only",
       promptNamespace: "abc123",
+      snapshotVersion: SNAPSHOT,
       candidateCount: 0,
       candidates: [],
     });
+  });
+});
+
+describe("bounded filer læses uden at følge specialfiler eller races", () => {
+  const realFileOps = {
+    constants,
+    lstatSync,
+    openSync,
+    fstatSync,
+    readSync,
+    closeSync,
+    statSync,
+  };
+
+  async function boundedReader(): Promise<
+    (path: string, maxBytes: number, label: string, ops?: unknown) => string
+  > {
+    // @ts-expect-error — værktøjet er ren ESM uden typedeklaration.
+    const harvest = await import("../tools/harvest.mjs");
+    expect(typeof harvest.readBoundedFile).toBe("function");
+    return harvest.readBoundedFile;
+  }
+
+  it("afviser symlink, FIFO og device før en blokerende læsning", async () => {
+    const readBoundedFile = await boundedReader();
+    const dir = scratchDir();
+    const target = join(dir, "target.json");
+    const link = join(dir, "fixture-link.json");
+    const fifo = join(dir, "fixture.fifo");
+    writeFileSync(target, "{}");
+    symlinkSync(target, link, "file");
+    execFileSync("mkfifo", [fifo]);
+
+    expect(() =>
+      readBoundedFile(link, HARVEST_LIMITS.maxInputBytes, "fixture"),
+    ).toThrow(/symlink|symbolsk/i);
+    expect(() =>
+      readBoundedFile(fifo, HARVEST_LIMITS.maxInputBytes, "fixture"),
+    ).toThrow(/regulær fil|specialfil/i);
+    expect(() =>
+      readBoundedFile("/dev/null", HARVEST_LIMITS.maxInputBytes, "fixture"),
+    ).toThrow(/regulær fil|specialfil/i);
+  });
+
+  it("afviser en fil der vokser under læsning", async () => {
+    const readBoundedFile = await boundedReader();
+    const dir = scratchDir();
+    const path = join(dir, "growing.json");
+    writeFileSync(path, "x".repeat(200_000));
+    let grown = false;
+    const ops = {
+      ...realFileOps,
+      readSync(
+        fd: number,
+        buffer: Uint8Array,
+        offset: number,
+        length: number,
+        position: number | null,
+      ): number {
+        const bytes = readSync(fd, buffer, offset, length, position);
+        if (!grown && bytes > 0) {
+          grown = true;
+          appendFileSync(path, "growth");
+        }
+        return bytes;
+      },
+    };
+
+    expect(() =>
+      readBoundedFile(path, HARVEST_LIMITS.maxInputBytes, "fixture", ops),
+    ).toThrow(/ændret|vokset|størrelse/i);
+  });
+
+  it("afviser en path-replacement mens den åbne descriptor læses", async () => {
+    const readBoundedFile = await boundedReader();
+    const dir = scratchDir();
+    const path = join(dir, "replaced.json");
+    const replacement = join(dir, "replacement.json");
+    writeFileSync(path, "x".repeat(200_000));
+    writeFileSync(replacement, "{\"replacement\":true}");
+    let replaced = false;
+    const ops = {
+      ...realFileOps,
+      readSync(
+        fd: number,
+        buffer: Uint8Array,
+        offset: number,
+        length: number,
+        position: number | null,
+      ): number {
+        const bytes = readSync(fd, buffer, offset, length, position);
+        if (!replaced && bytes > 0) {
+          replaced = true;
+          renameSync(replacement, path);
+        }
+        return bytes;
+      },
+    };
+
+    expect(() =>
+      readBoundedFile(path, HARVEST_LIMITS.maxInputBytes, "fixture", ops),
+    ).toThrow(/udskiftet|inode|ændret/i);
   });
 });
 
@@ -447,7 +860,10 @@ describe("atomisk og skrivebegrænset kørsel", () => {
           "--output",
           output,
         ]),
-        env: { LIVE_NARRATOR_ADMIN_TOKEN: SECRET },
+        env: {
+          LIVE_NARRATOR_ADMIN_TOKEN: SECRET,
+          LIVE_NARRATOR_ADMIN_ORIGIN: TRUSTED_ORIGIN,
+        },
         fetchImpl,
         root: ROOT,
       }),
@@ -522,5 +938,67 @@ describe("atomisk og skrivebegrænset kørsel", () => {
         log: () => undefined,
       }),
     ).rejects.toThrow(/kanonisk content|draft/i);
+  });
+
+  it("afviser en output-forælder der er et symlink ind i canonical content", async () => {
+    const dir = scratchDir();
+    const input = join(dir, "fixture.json");
+    const linkedContent = join(dir, "linked-content");
+    fixture(input, [page([row()])]);
+    symlinkSync(join(ROOT, "content"), linkedContent, "dir");
+
+    await expect(
+      runHarvest({
+        args: parseCliArgs([
+          "--input",
+          input,
+          "--output",
+          join(linkedContent, "drafts", "harvested.json"),
+        ]),
+        env: {},
+        root: ROOT,
+        log: () => undefined,
+      }),
+    ).rejects.toThrow(/symlink|symbolsk|kanonisk content/i);
+  });
+
+  it("afviser et eksisterende output der selv er et symlink", async () => {
+    const dir = scratchDir();
+    const input = join(dir, "fixture.json");
+    const target = join(dir, "target.json");
+    const output = join(dir, "harvested.json");
+    fixture(input, [page([row()])]);
+    writeFileSync(target, "BEVAR\n");
+    symlinkSync(target, output, "file");
+
+    await expect(
+      runHarvest({
+        args: parseCliArgs(["--input", input, "--output", output]),
+        env: {},
+        root: ROOT,
+        log: () => undefined,
+      }),
+    ).rejects.toThrow(/symlink|symbolsk/i);
+    expect(readFileSync(target, "utf8")).toBe("BEVAR\n");
+  });
+
+  it("tillader kun den eksakte harvest-fil under content/drafts", async () => {
+    const dir = scratchDir();
+    const input = join(dir, "fixture.json");
+    fixture(input, [page([row()])]);
+
+    await expect(
+      runHarvest({
+        args: parseCliArgs([
+          "--input",
+          input,
+          "--output",
+          join(ROOT, "content/drafts/andet.json"),
+        ]),
+        env: {},
+        root: ROOT,
+        log: () => undefined,
+      }),
+    ).rejects.toThrow(/eksakte|harvested\\.json|kanonisk content/i);
   });
 });
