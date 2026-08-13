@@ -4,13 +4,13 @@ version: 1.0
 date_created: 2026-08-12
 last_updated: 2026-08-13
 owner: Martin (YouEx)
-status: 'In progress'
+status: 'Completed'
 tags: [feature, narrative, infrastructure, security, cost]
 ---
 
 # Introduction
 
-![Status: In progress](https://img.shields.io/badge/status-In_progress-yellow)
+![Status: Completed](https://img.shields.io/badge/status-Completed-brightgreen)
 
 Denne plan beskriver et lag, der **allerede er bygget**. Det er skrevet i
 bagklogskabens lys, og det er med vilje: laget blev prototypet færdigt i én
@@ -26,6 +26,22 @@ TASK-026 viser, hvor lidt der reelt mangler."* TASK-026 har kørt. Målingen
 i `docs/design/narration-coverage.md` siger 72,4 % bagt, 27,6 % grammatik,
 0 % tavshed. Betingelsen er indfriet, og alternativet er dermed ikke
 længere et alternativ. Det er en beslutning, der skal skrives ned.
+
+## Beslutning 13-08-2026: klar, men slukket
+
+Laget **udrulles ikke nu**. Den gratis kæde er allerede komplet og målt:
+72,4 % af møderne får en bagt replik, grammatikken tager 27,6 %, og tavshed
+er 0 %. Der findes endnu ingen playtest- eller produktionsdata, der viser, at
+den præcise halevits fra et runtime-kald forbedrer oplevelsen nok til at
+retfærdiggøre en betalt, netværksafhængig driftsflade.
+
+Beslutningen er bevidst reversibel. Workeren, sikkerhedsgrænserne, cachen,
+stemmedommeren og høsteværktøjet bliver liggende som kold reserve, men der
+sættes ingen `OPENAI_API_KEY`, ingen `VITE_NARRATOR_URL`, og intet deployes.
+Sporet genåbnes kun, hvis tre fulde playtests eller senere spillerdata viser
+en konkret kvalitetskløft i grammatikhalen, som videre bagning mod N=600
+ikke lukker. Indtil da er den bedste live-fortæller den, der aldrig behøver
+et netværkskald.
 
 ## Hvorfor laget findes
 
@@ -151,7 +167,7 @@ grammatikken kun kender dommen.
 | TASK-003 | Dagligt UTC-udgiftsloft i samme Durable Object (`worker/src/budget.ts`): kun kald, der reserverer budget og når opstrøms (cache-misses), tæller — et cache-hit koster intet af loftet. Over grænsen svarer workeren 503 med `Retry-After` frem til næste UTC-midnat, og klienten slår laget fra indtil da uden at røre den almindelige afbryder. Loftet — 350/døgn — er udledt af den målte 95.-percentil af distinkte par+dom-nøgler pr. run, ganget med en udtrykkeligt antaget (ikke målt) travl-dag-trafik. **Sikkerhedsrunde 2:** tilføjet et ANDET, mindre loft — 165/døgn pr. IP-hash — så én spiller (eller angriber) aldrig alene kan opbruge hele det globale budget; ramt pr.-IP-loft svarer 429 (klient-specifik grænse), ramt globalt loft svarer stadig 503. **Sikkerhedsrunde 3:** oprydningsalarmen (`coordinator-do.ts`s `alarm()`) rydder nu også pr.-IP-budgetposter hvis gemte UTC-dato hverken er i dag eller i går — uden dette ville lageret vokse for evigt med én post pr. IP-hash der nogensinde har spurgt. Se "Fase 2 — målte tal". | ✅ | 2026-08-12 |
 | TASK-004 | Delt cache i Durable Object'ets egen storage (ikke KV — ét stateful binding er simplere end to), nøglet på sorteret par + dom + navnerum (`worker/src/cache-key.ts`). Målt FØR bygget: træfprocenten er beregnet til 96,9 % over 1.200 simulerede runs (langt over 20 %-grænsen), så cachen er bygget. Kun vellykket, renset modeltekst caches; fejl caches aldrig; samtidige misses på samme nøgle deles (`worker/src/concurrency.ts`), så en byge kun koster ét kald. **Sikkerhedsrunde 2:** anmodningen bærer nu KUN kanoniske id'er + dom (aldrig klient-oplyste navne/flavor/tags) — workeren genopbygger prompten fra det bundlede `content/elements.json`/`content/acts/*.json` (`worker/src/catalog.ts`); et ukendt id afvises 400 FØR budget/cache. **Sikkerhedsrunde 3:** cache-nøglens navnerum udledes nu AUTOMATISK (`cache-key.ts`s `promptNamespace()`, en deterministisk hash af selve prompten og modellen) i stedet for et manuelt versionstal (`CACHE_VERSION`), som en udvikler selv skulle huske at bumpe — en ændring i prompt ELLER model ændrer navnerummet af sig selv, uden et løfte om at huske noget. **Opfølgning:** navnerummet dækkede dér stadig kun `SYSTEM`+model — en efterfølgende gennemgang fandt at hverken dom-forklaringerne (`DOMME`) eller selve brugerprompt-skabelonen indgik, selvom begge former den genererede tekst lige så meget som `SYSTEM`. `model.ts`s nye `PROMPT_VERSION_INPUT` retter det: navnerummet dækker nu SYSTEM+DOMME+skabelon+model, stadig automatisk, stadig intet versionstal. Se "Fase 2 — målte tal" og "Fase 2 — sikkerhedsrunde 3, opfølgning" for hele udregningen. | ✅ | 2026-08-12 |
 | TASK-005 | Deployment dokumenteret i `docs/deployment/live-narrator.md` (Durable Object-migration/binding, `OPENAI_API_KEY` og `IP_HASH_SALT` som secrets, sikre `[vars]`, `wrangler deploy`, `VITE_NARRATOR_URL` ved build, sådan verificeres helbred/429/503, og den hurtige nødstop) med en kort henvisning fra `README.md`. **Sikkerhedsrunde 3:** afsnit 4b omskrevet — beskriver nu den automatiske navnerumsudledning frem for en manuel version-bump-procedure. **Opfølgning:** afsnit 4b uddybet igen med den PRÆCISE, fulde dækning (SYSTEM+DOMME+skabelon+model, ikke kun SYSTEM+model) og en udtrykkelig "hvad dækkes ikke"-linje. Ingen hemmelige værdier eller priser i dokumentet. | ✅ | 2026-08-12 |
-| TASK-006 | Beslut, om laget overhovedet skal udrulles. Det er **Martins beslutning**, ikke en implementeringsdetalje: laget koster penge pr. spiller, og spillet er målt komplet uden det. Alternativet — at bage videre mod N=600 og lade grammatikken tage resten — er gratis og allerede i gang. **Stadig åben** — fase 2 (inkl. sikkerhedsrunde 2 og 3's rettelser) gør laget klar til at blive slået til, den beslutter ikke, at det skal. | | |
+| TASK-006 | Beslut, om laget overhovedet skal udrulles. Det er **Martins beslutning**, ikke en implementeringsdetalje: laget koster penge pr. spiller, og spillet er målt komplet uden det. Alternativet — at bage videre mod N=600 og lade grammatikken tage resten — er gratis og allerede i gang. **Besluttet 13-08-2026: nej, ikke nu.** Laget forbliver klar, men slukket, fordi den gratis kæde allerede giver 72,4 % bagt / 27,6 % grammatik / 0 % tavshed, og der ikke findes målt efterspørgsel efter runtime-laget. Genåbnes kun på konkret playtest-/spillerdata. | ✅ | 2026-08-13 |
 
 #### Fase 2 — målte tal
 

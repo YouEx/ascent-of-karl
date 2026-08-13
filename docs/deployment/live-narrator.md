@@ -1,11 +1,15 @@
 # Udrulning af live-fortælleren
 
-Denne opskrift er **klar til brug, ikke en instruks om at bruge den**.
-TASK-006 (`plan/feature-live-narrator-1.md`) — beslutningen om laget
-overhovedet skal stå åbent for rigtige spillere — er Martins, ikke en del af
-denne fase, og er bevidst stadig ikke truffet. Ingen af trinene herunder er
-udført som en del af dette arbejde: der er ikke deployet noget, og der er
-ikke sat en rigtig `OPENAI_API_KEY` noget sted.
+Denne opskrift er **kold reserve, ikke en instruks om at bruge den**.
+TASK-006 (`plan/feature-live-narrator-1.md`) blev afgjort 13-08-2026:
+laget udrulles ikke nu. Den gratis fortællerkæde er allerede målt komplet
+(72,4 % bagt, 27,6 % grammatik, 0 % tavshed), og der findes ingen playtest-
+eller spillerdata, der retfærdiggør den ekstra betalte driftsflade.
+
+Ingen af trinene herunder er udført: der er ikke deployet noget, der er ikke
+sat en rigtig `OPENAI_API_KEY`, og buildet har ingen `VITE_NARRATOR_URL`.
+Runbooken bevares, fordi beslutningen er reversibel, hvis senere data viser
+en konkret kvalitetskløft i grammatikhalen.
 
 Spillet er **fuldstændig komplet uden dette lag** — uden en sat
 `VITE_NARRATOR_URL` gør hele klientmodulet ingenting, og fortælleren taler
