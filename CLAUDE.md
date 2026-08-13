@@ -18,27 +18,53 @@ npm run dev          # dev-server med hot reload
 npm test             # unit tests (vitest)
 npm run test:visual  # langsom, eksplicit visuel regression (rigtig browser)
 npm run validate     # indholdsvalidering (python3 tools/validate.py)
+npm run improvise:report        # regenerér balance-rapport til stdout
+npm run improvise:report:check  # byte/hash/cap/cost mod committed facit
+npm run playtest:evidence:check # verificér TASK-030-agentbevisets WebP/referencer
+npm run harvest -- --input path/to/fixture.json --dry-run # offline høsteaudit
 npm run build        # typecheck + produktion-build
 ```
+
+Produktionens `harvest` kræver en deployet Worker, en eksplicit betroet origin
+og et admin-token i miljøet; brug aldrig token som CLI-argument. Se
+`docs/deployment/live-narrator.md`.
 
 ## Arkitektur
 
 - `src/core/` — kombinationsmotor, flags, save/load. **Ren og deterministisk**:
   ingen DOM, ingen tilfældighed, ingen indholdskendskab.
+- `src/core/solves.ts` — ren evaluering af data-drevne løsningsprædikater.
+  Samme prædikat gælder canonical og improviserede elementer.
+- `src/core/improvise.ts` + `Engine.attempt()` — deterministisk tag/copy-gulv,
+  stabile ids, dybdeloft, cap 6 / én sommer og det atomiske flow, hvor en
+  canonical opskrift altid vinder før improvisation.
 - `src/narrator/` — trigger-prioritering (story > adfærd > flags > generisk),
-  tællere, hint-eskalering, no-repeat. Kender kun `Engine` og content-typerne.
+  tællere, hint-eskalering, no-repeat og narratorens dom over improvisation.
+  Kender kun `Engine` og content-typerne.
 - `src/ui/` — al DOM og præsentation. Kun UI må røre `document`/`localStorage`.
   `tokens.css` = designsystemets variabler, `style.css` = brugen af dem,
   `icons.ts` = stregikoner til krommet, `art.ts` = malet elementkunst (slår
   element-id op mod udskårne billeder i `src/assets/art/elements/`, falder
   tilbage til content-emoji hvis ingen findes), `playtest.ts` = logger
   blindgyder og afsluttede runs lokalt (`docs/playtest/`).
+  `improvise-flow.ts` ejer produktflagets seam, `improvise-client.ts` ejer
+  den valgfrie copy-prefetch, `improvise-view.ts` holder opfindelser ude af
+  den historiske tidslinje, og `improvise-playtest.ts` skriver det separate
+  `karl-playtest-improvisation-v2`-format.
 - `src/assets/` — skrifter og grafik Vite skal hashe. `public/` er for filer der
   skal have et forudsigeligt navn (lyd, manifest, `karl.webp`, delekort og ikoner).
 - `src/content.ts` — samler content-filerne. Eneste fil der importerer JSON.
 - `content/` — ALT indhold: elementer, kombinationer, akter, replikker.
   **Indhold må aldrig hardcodes i kode** (PRD §4.1).
 - `tools/validate.py` — indholdsvalidering, kører i CI.
+- `tools/improvise_report*.ts` — robust, deterministisk balance-rapport og
+  check af artifact/hash/produkt-defaults.
+- `tools/harvest.mjs` — sikker, review-only transport fra en autentificeret
+  Worker-snapshot eller offline fixture til et ubetroet draft. Intet
+  auto-promoveres.
+- `worker/` — én valgfri Cloudflare Worker med uafhængige modelruter.
+  `/improvise` returnerer kun valideret `{name, flavor}`; den ejer aldrig
+  gameplay-tags eller `solves`.
 - `tools/social/` — delekort og app-ikoner. Genereres, redigeres aldrig i hånden.
 - `tools/art/` — element- og kromkunst skåret ud af Martins referencebilleder
   i `docs/design/reference/`. `npm run art` kører de deterministiske scripts
@@ -99,6 +125,17 @@ npm run build        # typecheck + produktion-build
     capture/metrics-pipeline og fejler, hvis et regions-overall eller ét af de
     fem aspekter falder mere end 0,02. Den må aldrig flyttes ind i `npm test`s
     hurtige sti.
+11. **Kernen har aldrig netværk.** Samme state + input skal give samme id,
+    tags, løsning og turforbrug uden Worker. En model må kun forbedre
+    `name`/`flavor` via UI-laget; den må aldrig levere `kind`, `stuff`,
+    `traits`, `scale`, `solves`, flags, age-up eller ending.
+12. **Improvisation er production-off indtil ekstern gate.**
+    `.github/workflows/deploy.yml` må hverken sætte
+    `VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`, før 5–10
+    engelsktalende deltagere på tværs af crafting-game- og
+    low-game-experience-grupper har spillet uden forklaring, og evidensen er
+    dokumenteret. `VITE_IMPROVISE_URL` er copy-only, valgfri og uafhængig af
+    både produktflaget og `VITE_NARRATOR_URL`.
 
 ## Tone (til indholdsarbejde)
 

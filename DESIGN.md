@@ -329,6 +329,12 @@ blækstreg og den lille engelske markør _"Karl's invention"_. Stregen genbruger
 skal være synlig i grid, fundkort og bog uden at dominere elementnavnet. Et
 improviseret fund får ikke rarity-etiket, historisk note eller kildeikon: det er
 runets eget påfund, ikke en arkæologisk påstand.
+Den stiplede streg og okkerfarven må aldrig stå alene: den synlige tekstmarkør
+skal følge elementet, så oprindelsen også kan forstås uden farvesyn og uden at
+se kanten. Tilgængeligt navn og læserækkefølge skal indeholde både
+_"Karl's invention"_ og elementnavnet. Ingen mikrocopy må kalde det en
+_historical discovery_, og fraværet af note/kilde må ikke erstattes af et
+tomt noteikon, som kunne antyde en manglende historisk reference.
 Hele udvidelsens markup og stil ligger under root-attributten
 `data-improvise-enabled`; uden den er incumbent mobil- og desktoplayout
 beregningsmæssigt og visuelt uændret.
@@ -357,6 +363,16 @@ med titlen _"Karl's inventions"_. Dens tomme tilstand forklarer, at par uden ops
 kan ende her; den må aldrig lægge en improviseret node, note eller `sourceUrl` ind i
 tidslinjen. Netværks-copy har kun en lille inline-status ved værkstedet
 (loading/ready/fallback), blokerer aldrig Combine og åbner ingen ny modal.
+Sektionen har egen navngivet heading og tastaturknapper; den er ikke en visuel
+undergren af tidslinjen.
+
+**Status og toast.** Copy-status er en høflig live-region (`role="status"`,
+`aria-live="polite"`), og ordene skal gøre ikke-blokeringen eksplicit:
+_Combine works now_, _ready_ eller _offline wording_. Afvisninger, dybdeloft
+og cap vises som teksttoast med årsag og må ikke kommunikeres med farve eller
+animation alene. En story/challenge-replik må gerne vinde fortællerprioritet;
+toasten bærer stadig den mekaniske afvisning, mens sommertælleren viser
+forbruget.
 
 **Problem-chips.** Papirflade, tilstandsfarvet tekst og ikon (§2). Serif.
 

@@ -2,6 +2,27 @@
 
 *ROADMAP prioritet 2 · PRD Step 5 (fremrykket) · pakken skrevet 2026-08-10*
 
+## Aktuel gate for improvisation
+
+Improvisationskilden er **Source complete — external playtest pending**.
+Tre agent-QA-runs fandt ingen source-defekt, men tæller ikke med her:
+`task-030-improvisation-agent-qa-2026-08-13/`.
+
+Den eksterne gate er præcis **5–10 engelsktalende deltagere** på tværs af
+crafting-game- og low-game-experience-grupper, som spiller **uden
+forklaring**. Brug et lokalt feature-on build under en modereret session eller
+en særskilt ikke-produktions-preview. Den offentlige GitHub Pages-build er
+feature-off og må ikke bruges som bevis for improvisationsgaten.
+
+Lokal kandidat:
+
+```bash
+env -u VITE_IMPROVISE_URL VITE_IMPROVISE_ENABLED=true npm run dev
+```
+
+Produktionsflaget skal forblive usat, indtil observationer og logs fra denne
+runde er dokumenteret.
+
 ## Hvorfor denne runde findes
 
 Vi rykkede playtesten frem FØR art, voice og lyd-polish. Grunden er en enkelt
@@ -34,10 +55,10 @@ forskelligt:
 
 | Gruppe | Antal | Hvad de afslører |
 |---|---|---|
-| Spiller crafting-spil (Infinite Craft, Little Alchemy, Doodle God) | 3-5 | Om vores kombinationslogik holder mod genre-forventning |
-| Spiller stort set ingen spil | 2-5 | Om onboarding virker uden genre-viden — den hårde test |
+| Crafting-game experience (Infinite Craft, Little Alchemy, Doodle God) | 3-5 | Om vores kombinationslogik holder mod genre-forventning |
+| Low-game-experience | 2-5 | Om onboarding virker uden genre-viden — den hårde test |
 
-Krav: **engelskkyndige** (alt spillertekst er engelsk) og villige til at
+Krav: **engelsktalende** (alt spillertekst er engelsk) og villige til at
 blive set på mens de spiller. Undgå folk der allerede har hørt om projektet
 — de kender pointen og griner af høflighed.
 
@@ -51,7 +72,9 @@ blive set på mens de spiller. Undgå folk der allerede har hørt om projektet
 - **Hver tester spiller alene.** To personer sammen løser opgaven i
   fællesskab og skjuler præcis den forvirring vi leder efter.
 
-Link: <https://youex.github.io/ascent-of-karl/>
+Baseline-link: <https://youex.github.io/ascent-of-karl/>. Det offentlige link
+har improvisation slået fra. Brug feature-on-kandidaten ovenfor til den
+særskilte improvisationsgate.
 
 ## Dig selv som tester 0
 

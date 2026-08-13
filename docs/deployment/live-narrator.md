@@ -3,14 +3,15 @@
 Denne opskrift er **kold reserve, ikke en instruks om at bruge den**.
 TASK-006 (`plan/feature-live-narrator-1.md`) blev afgjort 13-08-2026:
 laget udrulles ikke nu. Den gratis fortællerkæde er allerede målt komplet
-(72,4 % bagt, 27,6 % grammatik, 0 % tavshed), og der findes ingen playtest-
+(71,2 % bagt, 28,8 % grammatik, 0 % tavshed), og der findes ingen playtest-
 eller spillerdata, der retfærdiggør den ekstra betalte driftsflade.
 
 Ingen af trinene herunder er udført: der er ikke deployet noget, der er ikke
 sat en rigtig `OPENAI_API_KEY`, og buildet har ingen `VITE_NARRATOR_URL`.
 Improvisationsruten, som nu ligger i samme kilde, er heller ikke deployet,
 og produktionen sætter hverken `VITE_IMPROVISE_ENABLED` eller
-`VITE_IMPROVISE_URL`. Klienten findes nu, men er derfor død kode i det
+`VITE_IMPROVISE_URL`. Der er ingen provisioneret improvisations-Worker-URL,
+secrets eller trafik. Klienten findes nu, men er derfor død kode i det
 udrullede spil.
 Runbooken bevares, fordi beslutningen er reversibel, hvis senere data viser
 en konkret kvalitetskløft i grammatikhalen.
@@ -248,7 +249,9 @@ bevidst uafhængige build-kontrakter:
 Ingen af de tre variabler står i `.github/workflows/deploy.yml`. Et lokalt
 offline-check kan derfor køres med `VITE_IMPROVISE_ENABLED=true npm run dev`;
 et lokalt Worker-check tilføjer desuden `VITE_IMPROVISE_URL`. At sætte dem i
-produktion er en separat beslutning efter TASK-019/TASK-027/TASK-028.
+produktion er en separat beslutning efter den eksterne gate: 5–10
+engelsktalende deltagere på tværs af crafting-game- og
+low-game-experience-grupper, uden forklaring.
 
 ## 7. Sådan verificeres opførslen efter et deploy
 
@@ -761,3 +764,107 @@ Selve den første rigtige høst er stadig **eksternt blokeret** på alle tre:
 3. rigtig spillertrafik (ikke fabrikerede kald).
 
 Indtil da skal `content/drafts/harvested.json` ikke oprettes eller committes.
+
+## 13. Sikker enablement og rollback for improvisation
+
+Dette er den bindende rækkefølge. Spring ikke direkte fra source-complete til
+et production-build med begge variabler.
+
+### 13a. Gate og ikke-produktionskandidat
+
+1. Kør source-portene:
+
+   ```bash
+   npm run improvise:report:check
+   npm run playtest:evidence:check
+   npm test
+   npm run validate
+   npm run build
+   ```
+
+2. Kør først den komplette offline-kandidat:
+
+   ```bash
+   env -u VITE_IMPROVISE_URL VITE_IMPROVISE_ENABLED=true npm run dev
+   ```
+
+3. Lad **5–10 engelsktalende deltagere** på tværs af crafting-game- og
+   low-game-experience-grupper spille uden forklaring. Brug modereret lokal
+   kandidat eller en særskilt ikke-produktions-preview. Agent-QA tæller ikke.
+   Dokumentér observationer og `karl-playtest-improvisation-v2`-logs.
+4. Stop her, hvis gaten ikke er gennemført. Production-deployet skal fortsat
+   have begge improvisationsvariabler usat.
+
+### 13b. Valgfri Worker-copy efter human gate
+
+Workeren er **ikke nødvendig** for featuret og er uafhængig af
+live-fortælleren. At aktivere `/improvise` kræver aldrig
+`VITE_NARRATOR_URL`, og live-fortælleren skal ikke aktiveres som sideeffekt.
+
+1. Brug et separat ikke-produktionsmiljø. Kør `npm ci`, typecheck og dry-run i
+   `worker/` som beskrevet i afsnit 11.
+2. Kontrollér `ALLOWED_ORIGINS` mod kandidatens præcise origin. Provisionér
+   `OPENAI_API_KEY` og `IP_HASH_SALT` interaktivt med `wrangler secret put`;
+   sæt kun `ADMIN_EXPORT_TOKEN`, hvis harvest faktisk skal bruges. Skriv
+   aldrig secret-værdier i filer, kommandoargumenter eller dokumentation.
+3. Deploy Workeren og verificér `/improvise` med en canonical `{a,b,act}`-
+   request, en afvist origin, et ukendt id, cache-hit og de dedikerede
+   improvisationskvoter. Verificér samtidig, at svaret kun har `name` og
+   `flavor`.
+4. Byg en ikke-produktions-preview med
+   `VITE_IMPROVISE_ENABLED=true` og den deployede `/improvise`-URL som
+   `VITE_IMPROVISE_URL`. Bekræft, at Combine aldrig venter på netværket, og
+   gentag testen med URL'en fjernet.
+
+### 13c. Production-enable i to adskilte trin
+
+Efter dokumenteret human acceptance:
+
+1. Lav en eksplicit, reviewet ændring af Pages-buildet, som først eksponerer
+   **kun** `VITE_IMPROVISE_ENABLED=true`. Lad `VITE_IMPROVISE_URL` være usat,
+   deploy og smoke-test canonical prioritet, offline-opfindelser, cap 6,
+   én-sommer-prisen, Chronicle-separation og save/resume.
+2. Kun hvis copy-Workeren er provisioneret og verificeret, lav et separat
+   reviewet deploy, der også eksponerer `VITE_IMPROVISE_URL`. URL'en er
+   offentlig build-konfiguration, ikke en secret. `VITE_NARRATOR_URL`
+   forbliver uafhængig og usat, medmindre live-fortælleren har sin egen
+   beslutning.
+
+Den nuværende `.github/workflows/deploy.yml` gør ingen af delene. Repository-
+eller environment-variabler bliver ikke automatisk synlige for Vite; et
+fremtidigt enable skal derfor wire dem eksplicit ind i build-trinnet og være
+synligt i review.
+
+### 13d. Rollback
+
+1. **Copy-problem:** fjern `VITE_IMPROVISE_URL` fra Pages-buildet og deploy
+   igen. Den deterministiske feature fortsætter uden adfærdsændring. Ved akut
+   Worker-stop kan `IMPROVISE_DAILY_MAX_UPSTREAM_CALLS` sættes til `0` og
+   Workeren gendeployes; cache-hits kan stadig svare.
+2. **Gameplay- eller UX-problem:** fjern også
+   `VITE_IMPROVISE_ENABLED` og deploy igen. UI'et går tilbage til det
+   eksisterende `Engine.combine()`-flow; Worker-ruten kan blive stående uden
+   trafik, fordi ingen klient-URL er bygget ind.
+3. Verificér efter rollback, at det nye `dist` ikke indeholder en aktiv
+   improvisationsklient, at canonical gameplay stadig kan gennemføres, og at
+   deploy-workflowet igen sætter ingen af variablerne.
+
+### 13e. Harvest-krav efter rigtig trafik
+
+Faktisk `npm run harvest` må først køres, når alle disse er sande:
+
+- `/admin/improvisations` er deployet i samme Worker/prompt-namespace som den
+  rigtige trafik;
+- `ADMIN_EXPORT_TOKEN` er provisioneret, og tokenet findes lokalt kun i
+  `LIVE_NARRATOR_ADMIN_TOKEN`;
+- eksport-URL'ens origin matcher
+  `LIVE_NARRATOR_ADMIN_ORIGIN` eksakt, eller den præcise engangs-origin er
+  bekræftet med `--allow-origin`;
+- der findes rigtig spillertrafik. Testkald eller konstruerede fixtures må
+  ikke præsenteres som harvest-resultat.
+
+De tre eksterne driftsblokeringer er dermed en deployet Worker, et
+admin-token og rigtig trafik.
+
+Indtil alle fire krav er opfyldt, findes der med vilje intet
+`content/drafts/harvested.json`.

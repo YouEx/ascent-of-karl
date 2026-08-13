@@ -133,6 +133,22 @@ falder derfor ærligt tilbage til tekst. Stemmedommeren ekspanderer hver variant
 to gange: en kort profil til fuld stemmescore og en konservativ 23-ords
 dybde-3-profil til de hårde ord-/sætningslofter — 218 runtime-linjer i alt.
 
+### Driftsstatus for improvisationsdommen
+
+Dommen er en del af den komplette offline-kæde. Motoren leverer det
+strukturerede udfald synkront; fortælleren vælger en håndskrevet,
+stemme-gated replik uden netværk. Den valgfrie `/improvise`-Worker kan kun
+forbedre opfindelsens `name`/`flavor` og er uafhængig af både dommen og
+live-fortællerens `VITE_NARRATOR_URL`.
+
+Kilden er færdig, men produktionen sætter hverken
+`VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`. Tre agent-QA-runs fandt
+ingen source-defekt; de er ikke ekstern-human evidens. Production-enable
+afventer 5–10 explanation-free engelsktalende deltagere på tværs af
+crafting-game- og low-game-experience-grupper. Se
+`docs/design/improvisation-balance.md` og
+`docs/playtest/task-030-improvisation-agent-qa-2026-08-13/README.md`.
+
 ## Trelagsmodellen (besluttet 2026-08-12, målt 2026-08-13)
 
 Fortælleren vælger sin replik i én prioriteret kæde (PRD §2.4). De øverste trin

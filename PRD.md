@@ -2,8 +2,59 @@
 ### Et story-drevet alchemy-spil med en sarkastisk fortæller
 
 **Version:** 0.1 (grundlag for udvikling)
-**Status:** Prototype af kapitel 1 gennemført og valideret konceptuelt
+**Status:** Historisk produktgrundlag med gældende beslutningstillæg pr. 2026-08-14
 **Format:** Dette dokument er skrevet til at ligge i roden af repoet som `PRD.md` og fungere som styrende reference for al udvikling i Claude Code.
+
+---
+
+## 0. Gældende beslutningstillæg: improviserede løsninger
+
+Dette afsnit er den aktuelle produktkontrakt. Det **ophæver kun modstridende
+detaljer** i de historiske afsnit nedenfor; visionen, kerneloopet og den
+kuraterede historiske rygrad består.
+
+### To elementklasser med forskellige rettigheder
+
+| Klasse | Oprindelse og rettigheder |
+|---|---|
+| **`canon`** | Kommer fra valideret content. En åben håndskrevet opskrift vinder altid. Canon kan have historisk `note`/`sourceUrl`, stå i den historiske tidslinje, sætte flags, udløse age-up og føre til en slutning. |
+| **`improvised`** | Skabes deterministisk i det aktuelle run med `origin`, ordnede `parents` og `depth`. Den kan løse problemer og challenges gennem de samme data-drevne prædikater, men kan aldrig sætte flags, udløse age-up eller slutninger eller låse skæbner op ved ren mængde. Den vises som *Karl's invention* adskilt fra den historiske tidslinje og får aldrig historisk note eller kilde. |
+
+### Magtdeling og offline-first flow
+
+Regelmotoren afgør deterministisk id, `kind`, `stuff`, `traits`, `scale`,
+forældre, dybde og om et prædikat løses. Fortælleren dømmer udfaldet. En
+valgfri model må **kun** forbedre `name` og `flavor`; modeloutput kan aldrig
+ændre tags, mekanik eller `solves`.
+
+`Engine.attempt()` udfører én atomisk, synkron state-transition: vælg først en
+åben canonical opskrift; ellers lad verdikt-porten acceptere kun `plausible`
+eller `absurd`, opret/genbrug elementet, afgør behov/challenge og afslut turen.
+Der er intet netværk i kernen. Med produktflaget slået til og uden Worker-URL
+er hele flowet derfor stadig komplet og deterministisk; Worker-ruten er et
+uafhængigt, copy-only tilvalg.
+
+### Pris, loft og release-gate
+
+- Ethvert ikke-canonical forsøg koster **én sommer**, også ved genbrug eller
+  afvisning.
+- Et run kan skabe højst **6 unikke improviserede elementer**. Genbrug er
+  fortsat tilladt; et syvende nyt element afvises og bruger stadig sommeren.
+- Beslutningen er valgt af den robuste, reproducerbare balancekørsel
+  `fnv1a32:fa873b0e`; se
+  `docs/design/improvisation-balance.md`.
+- Tre agentstyrede browser-runs fandt ingen source-defekt, men er **ikke**
+  ekstern-human evidens. Se
+  `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`.
+- Produktionsflaget forbliver slukket, indtil **5–10 engelsktalende
+  deltagere** på tværs af grupperne *crafting-game-experience* og
+  *low-game-experience* har spillet uden forklaring, og observationer/logs er
+  dokumenteret efter `docs/playtest/README.md`.
+
+**Produktionssandhed pr. 2026-08-14:** deployet sætter hverken
+`VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`. Der er ingen
+provisioneret improvisations-Worker-URL, secrets eller trafik. Kildekoden er
+færdig; næste produkttrin er den eksterne playtest, ikke mere implementering.
 
 ---
 
@@ -30,6 +81,10 @@
 ## 2. Core loop & spilmekanik
 
 ### 2.1 Loopet
+> **Historisk formulering, præciseret af §0:** en historisk note følger kun
+> canonical opdagelser. Et improviseret resultat mærkes i stedet som Karls
+> opfindelse.
+
 1. **Problem** præsenteres i historien ("Karl fryser")
 2. Spilleren **kombinerer** to elementer (tap/klik, ingen drag på mobil)
 3. **Resultat**: ny opdagelse (flavor-tekst + historisk note) / kendt element / ingenting
@@ -37,6 +92,9 @@
 5. Nøgleopdagelser **løser problemer** og driver historien; epoke-opdagelser udløser **age-up**
 
 ### 2.2 Regler
+> **Udvidet af §0:** et par uden åben opskrift kan, når featuret er slået til,
+> blive en deterministisk improvisation. Canon vinder altid først.
+
 - Hvert element kan kombineres med sig selv (sten + sten = gnister)
 - En kombination kan have flere gyldige løsninger på samme problem (hovedspor + komisk spor)
 - Valg sætter **flags** (fx `larver`, `stinker`) der refereres i senere dialog, tilgængelige kombinationer og slutninger
@@ -99,6 +157,9 @@ et nyt element ikke kræver en eneste ny replik — se `README.md`.
 *(Akt-detaljer designes i separate `acts/act-N.md` dokumenter, se §6)*
 
 ### 3.2 Indholdsmængde v1.0
+> **Historisk canonical scope:** kravet om historisk note gælder canonical
+> opdagelser. Improviserede elementer følger rettighederne i §0.
+
 - 150-250 elementer i alt
 - ~60-80 håndskrevne fortæller-replikker pr. akt (story + adfærd + flags)
 - 2-4 timers spilletid, én gennemspilning
@@ -106,6 +167,9 @@ et nyt element ikke kræver en eneste ny replik — se `README.md`.
 - Alle opdagelser har: navn, ikon/illustration, flavor-tekst (1-2 sætninger, komisk), historisk note (1 sætning, faktuel: hvornår/hvor/hvordan)
 
 ### 3.3 Tone & skrivestil
+> **Sprogbeslutningen er superseded:** al spillervendt tekst er nu engelsk;
+> se `docs/design/fortaelleren.md`.
+
 - Flavor: varm, tør humor — Karl er elskelig inkompetent
 - Fortæller: sarkastisk, teatralsk, aldrig ondskabsfuld; grin *med* spilleren
 - Historiske noter: faktuelt korrekte, kildechecket, formuleret som "sjov viden", aldrig belærende
@@ -116,12 +180,18 @@ et nyt element ikke kræver en eneste ny replik — se `README.md`.
 ## 4. Teknik
 
 ### 4.1 Stack (beslutning)
+> **Historisk stackbeslutning — ophævet af `CLAUDE.md`:** den implementerede
+> stack er TypeScript + Vite. De data-drevne principper nedenfor består.
+
 - **Engine: Godot 4** (GDScript) — gratis, let eksport til mobil + desktop + web, velegnet til 2D/UI-tunge spil, godt CLI-workflow til Claude Code
 - Alternativ hvis web-first prioriteres: TypeScript + React/PixiJS (prototypen kan genbruges). Beslut i Step 1.
 - Data-drevet design: ALT indhold (elementer, kombinationer, replikker, flags) ligger i JSON/CSV — aldrig hardcodet
 - Save-system: lokal fil (slots), autosave pr. opdagelse
 
 ### 4.2 Arkitektur (moduler)
+> **Historisk målstruktur — ophævet af den faktiske moduloversigt i
+> `CLAUDE.md`.**
+
 ```
 /game
   /core        # kombinationsmotor, flags, save/load
@@ -159,6 +229,10 @@ et nyt element ikke kræver en eneste ny replik — se `README.md`.
 ---
 
 ## 6. Udviklingsplan i steps
+
+> **Historisk masterplan:** beholdes som produktets oprindelige
+> beslutningshistorik. Aktuel sekvens og status står i `ROADMAP.md`; for
+> improvisation gælder §0.
 
 > Hvert step har en Definition of Done (DoD). Steps 1-3 er fundamentet — gå ikke videre før DoD er mødt.
 
@@ -243,6 +317,9 @@ et nyt element ikke kræver en eneste ny replik — se `README.md`.
 ---
 
 ## 9. Åbne spørgsmål (afklares i Step 0-1)
+> **Historisk liste:** 1 er afgjort til TypeScript/Vite, 2 er afgjort ja, og
+> 3 er afgjort til engelsk spillertekst. Punkterne bevares som historik.
+
 1. Godot vs. web-stack — afgøres af spike
 2. Skal Karl være synlig karakter på skærmen (reagerer visuelt på flags) eller kun i tekst? *(Anbefaling: synlig — flags som visuelt payoff er stærkt)*
 3. Fortæller på dansk med engelske undertekster som kunstnerisk valg, eller fuld engelsk dub? *(Afgør før Step 6)*
@@ -250,4 +327,6 @@ et nyt element ikke kræver en eneste ny replik — se `README.md`.
 
 ---
 
-*Næste handling i Claude Code: Step 0 — opret repo-strukturen, kopiér dette dokument ind som `PRD.md`, og kør stack-spiken.*
+*Historisk næste handling (superseded): Step 0 — opret repo-strukturen,
+kopiér dette dokument ind som `PRD.md`, og kør stack-spiken. Aktuel næste
+handling er den eksterne playtest-gate i §0.*

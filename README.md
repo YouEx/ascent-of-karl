@@ -16,12 +16,25 @@ Fortælleren kan valgfrit skrive replikker live via en model (se
 den. Er den nogensinde slået til, er opskriften
 [docs/deployment/live-narrator.md](docs/deployment/live-narrator.md).
 
-Spillerens improviserede løsninger er også **slået fra som default**.
-Kun et build med `VITE_IMPROVISE_ENABLED=true` ændrer Combine-flowet.
-`VITE_IMPROVISE_URL` er en uafhængig, valgfri copy-forbedring; uden URL virker
-den deterministiske offline-opfindelse fuldt ud. Deploy-workflowet sætter
-ingen af variablerne, og klienten vælger altid en canonical opskrift før
-improvisation. Se `plan/feature-improvised-solutions-1.md`.
+## Improvisation: Source Complete — External Playtest Pending
+
+Kilden er færdig: deterministiske offline-opfindelser, atomisk Engine-flow,
+canonical prioritet, cap **6**, pris **én sommer**, narrator-dom,
+feature-gated UI/Chronicle/playtest v2, valgfri copy-only Worker-rute, sikker
+snapshot-høst og robust balancecheck.
+
+**Produktion er ikke aktiveret.** Deploy-workflowet sætter hverken
+`VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`; Workeren har ingen
+provisioneret improvisations-URL/secrets/trafik. `VITE_IMPROVISE_URL` er kun
+en uafhængig copy-forbedring. Uden URL virker den deterministiske
+offline-opfindelse fuldt ud, og canonical opskrifter vinder altid først.
+
+Tre agent-QA-runs fandt ingen source-defekt, men tæller ikke som
+ekstern-human evidens. Næste handling er **5–10 engelsktalende deltagere**
+fra både crafting-game- og low-game-experience-grupper, som spiller uden
+forklaring. Produktionsflaget forbliver slukket indtil da. Se
+`plan/feature-improvised-solutions-1.md` og
+`docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`.
 
 ## Kom i gang
 
@@ -30,11 +43,22 @@ npm install
 npm run dev        # åbn den viste URL i browseren
 ```
 
+Improvisation kan prøves lokalt uden netværk:
+
+```bash
+env -u VITE_IMPROVISE_URL VITE_IMPROVISE_ENABLED=true npm run dev
+```
+
+Det er den komplette mekanik med deterministisk fallback-copy. En Worker-URL
+er ikke nødvendig for lokal produkt-QA.
+
 ## Udvikling
 
 ```bash
 npm test           # unit tests af motor + fortæller
 npm run validate   # indholdsvalidering (kræver python3)
+npm run improvise:report:check
+npm run playtest:evidence:check
 npm run build      # typecheck + produktion-build
 ```
 
@@ -77,7 +101,7 @@ ikke en forudsætning.
       ~9 MB) med manifest, ducking og autoplay-håndtering
       (`tools/generate_audio.py`)
 - [x] **Akt I komplet** (se `ROADMAP.md` + `docs/design/act-1.md`):
-      187 elementer, **225 kombinationer**, 15 skæbner, 770 fortæller-varianter
+      187 elementer, **409 canonical kombinationer** og 15 skæbner
 - [x] Skæbne-gate: slutninger kræver 14 opfindelser, så et første run ikke
       kan slutte efter fire kombinationer (`docs/design/act-1.md`)
 - [x] Research-superset: 14.913 opskrifter fra genren som idébank
@@ -87,4 +111,7 @@ ikke en forudsætning.
 - [x] Mobil-først UI (`docs/design/ui-mobile.md`): titelskærm, fast
       værksteds-dock i tommelfinger-zonen, bogen som sheet, søgning i
       griddet, frontier-tidslinje
+- [x] Improvisationens source-implementering og agent-QA; production-off
+- [ ] Ekstern improvisationsplaytest: 5–10 explanation-free engelsktalende
+      deltagere i de to krævede erfaringsgrupper
 - [ ] Step 4 — vertical slice: art, lyd, voice, polish (se `ROADMAP.md`)

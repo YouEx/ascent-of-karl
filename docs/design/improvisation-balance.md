@@ -13,9 +13,13 @@
 Recommend **1 summer per non-canonical attempt and at most 6 unique
 improvised inventions per run**.
 
-This is still a source recommendation, not a deployment decision.
-`VITE_IMPROVISE_ENABLED` remains unset in production. Browser playtesting and
-TASK-030 belong on the later playtest branch.
+This is a source decision, not a deployment decision.
+`VITE_IMPROVISE_ENABLED` remains unset in production. TASK-030's three
+agent-controlled browser runs are complete with no source defect, but they
+are not external-human evidence. The exact remaining gate is 5–10
+explanation-free English-speaking participants across crafting-game and
+low-game-experience groups. See the
+[agent-QA report](../playtest/task-030-improvisation-agent-qa-2026-08-13/README.md).
 
 The cap counts successful unique runtime inventions. Reuse remains legal. A
 new invention beyond the boundary returns `improvise-rejected: run-limit` and
@@ -147,7 +151,8 @@ robust, and checks production cost/cap constants. The existing
   challenge. It does not estimate novice failure or whether the sixth-invention
   boundary feels satisfying.
 - The simulation measures mechanics, not whether absurd-only play is funnier.
-  TASK-030 remains open.
+  TASK-030's agent-QA half is complete; external-human acceptance remains
+  open under the linked evidence report.
 - No network, voice playback, visual UI, production flag or deploy was
   exercised.
 

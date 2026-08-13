@@ -51,7 +51,9 @@ høflighed — og så måler du din egen invitation i stedet for spillet.
 >
 > Jeg svarer ikke på spørgsmål undervejs. Det er ikke fordi jeg er led.
 
-Link: <https://youex.github.io/ascent-of-karl/>
+Link: brug den aftalte feature-on kandidat til improvisationstesten. Den
+offentlige GitHub Pages-build er feature-off og må ikke bruges som
+improvisationsevidens.
 
 ---
 
@@ -60,7 +62,7 @@ Link: <https://youex.github.io/ascent-of-karl/>
 Kun hvis du ikke kan få dem på video. Du mister hvor de tøver, og det er
 halvdelen af udbyttet.
 
-> Spil det her i ~20 minutter: <https://youex.github.io/ascent-of-karl/>
+> Spil feature-on-kandidaten, du har fået tilsendt, i ~20 minutter.
 >
 > Når du er færdig (eller går død i det), så tryk **"Copy playtest log"** på
 > slutskærmen og send mig teksten. Og svar på de fem spørgsmål her:

@@ -2,75 +2,34 @@
 goal: Åbne løsningsrummet for problemer og challenges, så enhver kombination der kan klassificeres som en løsning tæller — og lade spilleren opfinde sine egne elementer, uden at spillets kuraterede rygrad falder fra hinanden
 version: 1.0
 date_created: 2026-08-12
-last_updated: 2026-08-13
+last_updated: 2026-08-14
 owner: Martin (YouEx)
-status: 'In progress'
+status: 'Source complete — external playtest pending'
 tags: [feature, architecture, engine, narrator, content, infrastructure]
 ---
 
 # Introduction
 
-![Status: In progress](https://img.shields.io/badge/status-In%20progress-yellow)
+![Status: Source complete — external playtest pending](https://img.shields.io/badge/status-Source%20complete%20%E2%80%94%20external%20playtest%20pending-yellow)
 
-> **Fase 1 er leveret** (2026-08-12). Alle otte opgaver er i drift. Løsning for
-> både problemer og challenges afgøres nu af `SolvePredicate`
-> (`src/core/types.ts`, med et ekstra `minDepth`-felt ud over specifikationen)
-> via `satisfies`/`solvesNeed` (`src/core/solves.ts`) i både `Engine.resolve`
-> og `challenge.resolves` — ikke af allowlister. `content/predicates.json`
-> dækker alle tre problemer, alle tre challenges og desuden de tre
-> akt-1-problemer denne plan aldrig nævnte (kedsomhed, ensomhed, mening).
-> Facittjekket (TASK-005) er leveret som `tools/predicate_report.py` i Python,
-> ikke som den planlagte `.mjs` — funktionelt ækvivalent, og krydstjekket mod
-> TypeScript-tvillingen af `tools/parity_fixture.py` + `tests/solves.test.ts`.
-> `npm run predicates` viser **0 falske negativer**. Allowlisten
-> (`challenge.solvedBy` → `alsoSolvedBy`, TASK-006) er nu en eksplicit
-> override for undtagelser, prædikatet ikke kan udtrykke —
-> `challenge.resolves()` slår op i prædikatet ELLER `alsoSolvedBy`, symmetrisk
-> med hvordan `combo.solves` allerede virkede. Alle 29 tidligere poster viste
-> sig at være dækket af prædikatet allerede (0 reelle undtagelser i dag), så
-> de tre lister er prunet til tomme; `tools/validate.py` advarer, hvis en
-> fremtidig post dér også fanges af prædikatet, og kræver mindst 5 reelle
-> løsninger pr. challenge (prædikat ELLER `alsoSolvedBy`) i stedet for en
-> minimumslængde på selve listen. Det historiske facit — alt der nogensinde
-> er bekræftet som en løsning — bor nu i
-> `docs/design/taxonomy-ground-truth.json`, ikke i `alsoSolvedBy`.
-> `combo.solves` (TASK-008) er wired som eksplicit override i
-> `Engine.resolve`, bevist af en regressionstest der fejler, hvis overriden
-> fjernes.
+> **Terminal source-status (2026-08-14):** TASK-001–029 og TASK-031 er
+> source-complete. Prædikater, deterministisk offline-improvisation,
+> `Engine.attempt()`s atomiske canon-first-flow, narrator-dom, feature-gated
+> UI/Chronicle/playtest v2, den uafhængige copy-only Worker-rute, sikker
+> snapshot-høst og robust balancecheck er leveret.
 >
-> **Fase 2's offline core er leveret** (2026-08-13).
-> TASK-009–014 er implementeret test-first i `src/core/improvise.ts`,
-> `Engine.improvise()` og det serialiserede `GameState`. TASK-022 og TASK-024
-> er nu også ført helt gennem fortællerforbrugeren: udfaldene får deres egen
-> prioriterede dom, og det rekursive prædikatbevis oversættes til spillertekst
-> uden rå tags/id'er. UI-halvdelene er fortsat åbne, og produktflaget er
-> fortsat slukket.
+> TASK-030 har en afsluttet **agent-QA-del**: tre friske browser-runs på
+> desktop og 390 px mobil fandt ingen source-defekt. Det er ikke
+> ekstern-human evidens. Acceptancedelen forbliver åben, indtil 5–10
+> engelsktalende deltagere på tværs af crafting-game- og
+> low-game-experience-grupper har spillet uden forklaring og fået
+> observationer/logs dokumenteret efter `docs/playtest/README.md`.
 >
-> **Arkitekturrecovery, der erstatter den stale modeldeling nedenfor:**
-> deterministiske regler ejer altid `kind`, `stuff`, `traits`, `scale`,
-> `parents`, `depth`, id og `solves`-afgørelsen. En fremtidig model må kun
-> forbedre `name` og `flavor`. Motoren opretter og anvender elementet atomisk,
-> synkront og uden netværk; der findes ikke længere et legitimt flow, hvor en
-> model klassificerer et element og fodrer gameplay-tags ind i motoren.
->
-> **Fase 3's server-copyhalvdel og klient er leveret som kilde, men slukket.**
-> `TASK-016`-`TASK-018` og `TASK-021` er leveret under den frosne
-> integrationskontrakt nedenfor; serverhalvdelen af `TASK-019` er leveret,
-> og `TASK-029` har nu både servereksport og et review-only høsteværktøj.
-> `TASK-015`, `TASK-020` og `TASK-025` er nu også leveret:
-> `Engine.attempt()` vælger canon før improvisation i én transition,
-> `src/ui/improvise-client.ts` prefetcher copy uden await, og bogen holder
-> Karls opfindelser ude af den historiske tidslinje. Hele spillerfladen er
-> fortsat gated af `VITE_IMPROVISE_ENABLED === "true"`; deploy-workflowet
-> sætter hverken det flag eller `VITE_IMPROVISE_URL`, så der er ingen trafik.
-> Fortællerens dom er leveret og stemme-gated. `TASK-019`'s klient-cap og
-> `TASK-027`/`TASK-028`'s balancering er nu leveret: 2.000 parrede runs i tre
-> seed-planer valgte én sommer og højst seks unikke opfindelser pr. run
-> (`docs/design/improvisation-balance.md`). Secrets, deploy, rigtig trafik og
-> TASK-030's tre browser-runs er gennemført som en agent-QA-pass på desktop og
-> 390 px mobil med offline fallback, men ekstern menneskelig playtest og
-> produktions-enable er fortsat åbne. Derfor findes der stadig ingen faktisk
-> høst: den afventer en deployet Worker, admin-token og rigtig spillertrafik.
+> **Produktion er off:** `.github/workflows/deploy.yml` sætter hverken
+> `VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`. Der er ingen
+> provisioneret improvisations-Worker-URL, secrets eller trafik. Faktisk
+> harvest-output findes ikke og må ikke fabrikeres; driftshøsten afventer en
+> deployet Worker, et admin-token og rigtig trafik.
 
 Spillets sjoveste indhold findes allerede: **mudderkage** (mudder + bær) mætter Karl, og **klyngen** (nabo + skind) holder ham varm. Begge er mærket `spor: "komisk"`. Ideen om at løse en alvorlig nød på en latterlig måde er ikke ny — den er spillets bedste greb. Den er bare begrænset til de absurditeter, forfatteren nåede at forestille sig på forhånd.
 
@@ -108,14 +67,22 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **REQ-007**: Spillet skal virke fuldt ud offline og uden proxy. Improvisation degraderer da til deterministiske regler; prædikaterne virker uændret.
 - **REQ-008**: Fortællerens afvisning skal være lige så sjov som hans godkendelse. At dømme *imod* spilleren er indhold, ikke en fejlmeddelelse.
 - **REQ-009**: Samme par skal give samme improviserede element for alle spillere, når proxyen er tilgængelig (via cache), så spillet kan tales om og deles.
-- **SEC-001**: Ingen API-nøgle i klientbundtet. Klassifikation sker bag en proxy, som ejer nøglen.
+- **SEC-001**: Ingen API-nøgle i klientbundtet. Klassifikationen sker
+  deterministisk i klientkernen; kun den valgfrie copy-forbedring går gennem
+  Workeren, som ejer modelnøglen.
 - **SEC-002**: Improviserede navne indgår i senere prompts og er dermed en langsom prompt-injektionskanal. Navne begrænses hårdt (≤ 3 ord, intet tegnsætningsvildnis, ingen URL'er, ingen citationstegn), og en fremtidig model må kun svare med struktureret `{name, flavor}`. Alt andet kasseres.
 - **SEC-003**: Rate limit pr. klient i proxyen, og et hårdt loft over improvisationer pr. run. Et spil på en statisk side må ikke kunne bruges som gratis LLM-endpoint.
-- **CON-001**: `Engine.combine`, `Engine.improvise` og deres state-transitioner forbliver **synkrone, rene og deterministiske** (CON-002 i narrationsplanen). En fremtidig async copy-forbedring må ligge udenfor motoren og må kun erstatte navn/flavor. Ingen netværkskald eller gameplay-tags kommer ind i motoren.
+- **CON-001**: `Engine.combine`, `Engine.improvise` og deres state-transitioner
+  forbliver **synkrone og deterministiske** (CON-002 i narrationsplanen).
+  Async copy ligger udenfor motoren og må kun erstatte navn/flavor. Ingen
+  netværkskald eller gameplay-tags kommer ind i motoren.
 - **CON-002**: `turnLimit` er 50. Den robuste måling 2026-08-13 fastholder én sommer pr. ikke-canonical forsøg og tilføjer et eksplicit loft på seks unikke improviserede elementer pr. run. Genbrug er tilladt; et syvende nyt element afvises og koster stadig forsøgets ene sommer.
 - **CON-003**: Improvisation forudsætter taksonomien fra narrationsplanens fase 1 (TASK-002 til TASK-005 dér). Denne plan kan ikke starte før.
 - **CON-004**: Krøniken og delekortet skal kunne vise et improviseret element uden at love, at det er historisk. De kuraterede elementers `note` og `sourceUrl` er spillets troværdighed og må ikke blandes sammen med spillerens påfund.
-- **GUD-001**: Vittigheden skal koste noget. En absurd løsning skal være sværere eller dyrere end den oplagte — ellers er absurditet ikke et valg, men den optimale strategi.
+- **GUD-001**: Vittigheden skal koste noget. Alle ikke-canonical forsøg bruger
+  én sommer, og runet kan skabe højst seks unikke opfindelser. Om den
+  oplevede pris er rigtig, afgøres af den eksterne playtest, ikke af flere
+  skrivebordstal.
 - **GUD-002**: Kuratering slår generering. Findes der en håndskrevet opskrift, bruges den. Improvisation er kun for det tomme rum.
 - **GUD-003**: Dansk i kode, kommentarer og commits. Al spillervendt tekst på engelsk.
 - **PAT-001**: Magtdeling: regler klassificerer, motoren afgør, og modellen skriver kun copy. Ingen tags, mekanik eller `solves` fra en sprogmodel, nogensinde.
@@ -173,7 +140,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-022 | Ny udfaldstype `improvised` i `CombineOutcome` med elementet, `reused`, løst problem/challenge og `needExplanations`. Core/type + fortællerforbruger er leveret; UI er fortsat uden for denne opgave. | ✅ | 2026-08-13 |
+| TASK-022 | Ny udfaldstype `improvised` i `CombineOutcome` med elementet, `reused`, løst problem/challenge og `needExplanations`. Core/type og fortællerforbruger er leveret; UI-renderingen ligger i TASK-015/TASK-025. | ✅ | 2026-08-13 |
 | TASK-023 | Skriv replikfamilien "dommen": accept (`{element} solves {problem}`), afvisning (elementet er nyt, men løser intet), og den bedste af dem alle — **den absurde accept**, hvor tingen faktisk opfylder prædikatet på en måde ingen havde tænkt. Sidstnævnte har 24 varianter mod 8 i hver almindelig succesfamilie. | ✅ | 2026-08-13 |
 | TASK-024 | Afvisning navngiver *hvorfor* fra `NeedExplanations`: atomare krav får spiller-vendte labels, mens `allOf`/`anyOf`/`not` bruger bredere, bevisligt sande formuleringer frem for gæt. `crafted` er eksplicit uopnåelig for runtime-opfindelser (`base: false`) og har ingen død tekstpulje. | ✅ | 2026-08-13 |
 | TASK-025 | **Leveret bag produktflaget:** bogen har en særskilt “Karl's inventions”-sektion med lærende tomtilstand, og slutskærmen viser et bounded resume. Den historiske `karl-playtest-v1`-shape er urørt feature-off; inventions/forsøg ligger separat i `karl-playtest-improvisation-v2` og logger par, accepted/rejected/reused, løst behov/challenge, copy-kilde og latency/timeout uden persondata. | ✅ | 2026-08-13 |
@@ -187,9 +154,9 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 |------|-------------|-----------|------|
 | TASK-027 | **Leveret robust:** `npm run improvise:report` bygger baseline-planer og replayer eksakt samme par i treatment. Værktøjet måler først no-cap-reference og afprøver derefter hvert heltalsloft 1..det samme run-sæts observerede maksimum (19 i denne måling), plus no-cap/2-sommer-reference, med 2.000 parrede runs i tre prædefinerede seed-planer. Rapporten dækker skæbne/slutning, problemer, challenges, somre, accept/genbrug/afvisning, absurd/plausibel, kredit, canonical displacement, dybde og percentiler. Artefakten `docs/design/improvisation-balance-results.json` og `fnv1a32:fa873b0e` blev reproduceret byte-identisk; `npm run improvise:report:check` holder artefakt, robust selection og produkt-defaults i sync i eksisterende CI. | ✅ | 2026-08-13 |
 | TASK-028 | **Leveret robust:** guard-band-grænser skal bestås i alle tre seed-planer, og gray-goo-reglen kræver created p95 ≤ 20 % af baseline canonical p50. Cap 6 var det højeste beståede loft; cap 7-19 og no-cap fejlede gray-goo-reglen i alle planer. Cap 6 gav 0,00pp fate-/required-delta, 100,01 % canonical retention, 0,0005 positiv displacement/run og 16,54 % improviseret andel af required solves. To somre/no-cap fejlede med 77,16 % retention og 7,293 displacement/run. Produktflaget forbliver slukket. | ✅ | 2026-08-13 |
-| TASK-029 | **Review-only stien er leveret som kode:** autentificeret schemaVersion 3 `GET /admin/improvisations` eksporterer én SHA-256-versioneret snapshot i stabil leksikalsk par+akt-rækkefølge med cursor-after-key og efterspørgsels-/hit-/upstream-tællinger; mutation mellem sider giver 409. `tools/harvest.mjs` kræver betroet origin før tokenafsendelse, kan hente alle sider eller læse en regulær offline fixture, validerer fjendtligt input/snapshot-komplethed og skriver med no-follow/symlink-værn atomisk til den eksakte `content/drafts/harvested.json`. Output er ubetroede, manuelt rangerede review-kandidater og kan aldrig forfremmes automatisk. **Faktisk høst er fortsat blokeret** på en deployet Worker, et admin-token og rigtig trafik; der committes derfor intet fabrikeret harvest-output. | ◐ | 2026-08-13 |
-| TASK-030 | **Agent-QA-pass gennemført:** tre friske browser-runs/seeds på desktop og 390 px mobil løste kulde og sult improviseret samt værktøj kanonisk, og dækkede canon-prioritet, absurd/plausibel accept, genbrug, afvisning, dybde 1→3, dybdeloft, cap 6, krønike, toast, slutresume og save/resume. Artefakter: `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`. Det er ikke ekstern-human evidens: humor/fun/onboarding og produktions-enable forbliver åbne, og deploy-flag/Worker-URL/secrets er fortsat urørte. | ◐ | 2026-08-13 |
-| TASK-031 | Opdatér `PRD.md` og `DESIGN.md` med magtdelingen (PAT-001) og de to elementklasser, så reglen overlever den næste, der rører systemet. | | |
+| TASK-029 | **Source-complete review-only sti:** autentificeret schemaVersion 3 `GET /admin/improvisations` eksporterer én SHA-256-versioneret snapshot i stabil leksikalsk par+akt-rækkefølge med cursor-after-key og efterspørgsels-/hit-/upstream-tællinger; mutation mellem sider giver 409. `tools/harvest.mjs` kræver betroet origin før tokenafsendelse, kan hente alle sider eller læse en regulær offline fixture, validerer fjendtligt input/snapshot-komplethed og skriver med no-follow/symlink-værn atomisk til den eksakte `content/drafts/harvested.json`. Output er ubetroede review-kandidater og kan aldrig forfremmes automatisk. **Driftskørsel er ikke en manglende source-opgave:** faktisk høst afventer deployet Worker, admin-token og rigtig trafik; intet fabrikeret output findes. | ✅ | 2026-08-13 |
+| TASK-030 | **Agent-QA ✅ / ekstern-human acceptance ☐:** tre friske browser-runs/seeds på desktop og 390 px mobil løste kulde og sult improviseret samt værktøj kanonisk, og dækkede canon-prioritet, absurd/plausibel accept, genbrug, afvisning, dybde 1→3, dybdeloft, cap 6, Chronicle, toast, slutresume og save/resume. Artefakter: `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`. Ingen source-defekt blev fundet. Accept kræver fortsat 5–10 explanation-free engelsktalende deltagere i begge erfaringsgrupper; production-enable forbliver åbent og deploy-flag/Worker-URL/secrets urørte. | Agent-QA ✅ / Human ☐ | 2026-08-13 |
+| TASK-031 | Opdatér `PRD.md` og `DESIGN.md` med magtdelingen (PAT-001) og de to elementklasser, så reglen overlever den næste, der rører systemet. | ✅ | 2026-08-14 |
 
 ## 3. Alternatives
 
@@ -201,10 +168,19 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 
 ## 4. Dependencies
 
-- **DEP-001**: `plan/architecture-procedural-narration-1.md` fase 1 (taksonomien) og fase 2 (verdikt-motoren). Denne plan er ikke mulig uden dem og bør planlægges umiddelbart efter.
-- **DEP-002**: Den eksisterende Cloudflare Worker + Durable Object storage. Ingen KV-binding.
-- **DEP-003**: Groq free tier eller tilsvarende, som allerede brugt i `tools/generate_lines.py`.
-- **DEP-004**: Stemmedommeren fra narrationsplanens fase 5 — gælder **kun** `TASK-026` (kør de nye dom-replikker gennem dommeren). Fase 1-4 her (`TASK-001` til `TASK-025`) afhænger ikke af narrationsplanens fase 5/6 (stemmedommer, turøkonomi) og skal ikke afvente dem — kun den ene opgave gør.
+- **DEP-001 — resolved:** taksonomien og verdikt-motoren fra
+  `plan/architecture-procedural-narration-1.md` er leveret og importeres af
+  den deterministiske core.
+- **DEP-002 — optional runtime:** den eksisterende Cloudflare Worker +
+  Durable Object storage bruges kun til copy og harvest. Offline-gameplay har
+  ingen Worker-, model- eller netværksafhængighed; ingen KV-binding findes.
+- **DEP-003 — optional provider:** en modeludbyder kræves kun, hvis den
+  copy-only Worker-rute senere provisioneres. Den er ikke en source- eller
+  release-afhængighed for mekanikken.
+- **DEP-004 — resolved:** stemmedommeren fra narrationsplanens fase 5 kører
+  som hård port via `npm run validate` for TASK-026.
+- **DEP-005 — open external gate:** 5–10 explanation-free engelsktalende
+  deltagere på tværs af crafting-game- og low-game-experience-grupper.
 
 ## 5. Files
 
@@ -213,12 +189,16 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **FILE-003**: `src/core/improvise.ts` *(ny)* — deterministisk tag-afledning og navngivning; gulvet der virker offline.
 - **FILE-004**: `src/ui/improvise-client.ts` — async prefetch/cache med 2,5 s timeout, strikt copy-svar og synkront `get()`.
 - **FILE-005**: `src/core/engine.ts` — løsning afgøres af prædikat; improviserede elementers rettigheder håndhæves.
-- **FILE-006**: `content/acts/act-1.json`, `content/challenges.json` — `solvedBy` bliver prædikat; allowlisten overlever som `alsoSolvedBy`.
+- **FILE-006**: `content/predicates.json`, `content/acts/act-1.json`,
+  `content/challenges.json` — prædikater og eksplicitte
+  `alsoSolvedBy`-overrides.
 - **FILE-007**: `content/narrator/act-1.json` +
   `content/narrator/improvisation-act-1.json` — dommens puljer/labels og de
   stemme-gatede kandidatvarianter.
 - **FILE-008**: `worker/src/improvise*.ts` + den eksisterende Worker/`Coordinator` — skema, model-copy, DO-cache, kvoter, oprydning og admin-eksport.
-- **FILE-009**: `tools/predicate_report.mjs` *(ny)* — prædikat mod allowlist, falske negativer er fejl.
+- **FILE-009**: `tools/predicate_report.py` + `tools/parity_fixture.py` —
+  prædikat mod historisk facit og Python/TypeScript-paritet; falske negativer
+  er fejl.
 - **FILE-010**: `tools/harvest.mjs` — review-only CLI med produktionspagination,
   offline fixture, hostile-data-validering og atomisk draft-output. Den udfører
   ingen automatisk kuratering; faktisk høst afventer deploy, admin-token og
@@ -227,6 +207,15 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **FILE-012**: `tools/validate.py` — prædikater valideres; `alsoSolvedBy`-overlap advares.
 - **FILE-013**: `tools/improvise_report.ts` + `tools/improvise_report_cli.ts` — parret, deterministisk balance-simulering og JSON/menneskerapport.
 - **FILE-014**: `docs/design/improvisation-balance.md` + `docs/design/improvisation-balance-results.json` — metode, tærskler, råt facit, anbefaling og menneskelig caveat.
+- **FILE-015**: `src/ui/improvise-flow.ts`,
+  `src/ui/improvise-client.ts`, `src/ui/improvise-view.ts` og
+  `src/ui/improvise-playtest.ts` — feature-seam, copy, visuel/semantisk
+  separation og playtest v2.
+- **FILE-016**:
+  `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/` —
+  verificerbart agent-QA-bevis, udtrykkeligt ikke human acceptance.
+- **FILE-017**: `tests/improvisation-docs.test.ts` — kontrakt for
+  terminal status, production-off, cap/hash/task-states og evidenslinks.
 
 ## 6. Testing
 
@@ -241,6 +230,9 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **TEST-009**: Workerens validering afviser navne over 3 ord, ekstra felter, URL'er, citationstegn, kontroltegn, tegnsætningsvildnis og for lang flavor; enhver mekanik modellen måtte finde på at sende er et ekstra felt og afvises.
 - **TEST-010**: Save/load med improviserede elementer i state; gamle saves uden feltet loader (CON-006 i narrationsplanen).
 - **TEST-011**: 2.000 parrede simulerede runs pr. seed-plan og konfiguration: skæbne-rate, problemer, challenges, somre, improvisationsudfald, canonical displacement, dybde og percentiler rapporteres. Testene beviser eksakt action-plan-symmetri, dynamisk kandidatinterval 1..observeret no-cap-maksimum, tre seed-planer, robust guard band, gray-goo-selection, reproducerbarhed, stale artefakt/default-drift og at en bevidst gratis/no-cap-konfiguration dømmes ude.
+- **TEST-012**: Dokumentationskontrakten fejler ved statusmodsigelser,
+  production-enable i deploy, cap/cost/hash-drift, stale TASK-029/030/031
+  eller manglende gensidige links mellem balance og agentbevis.
 
 ## 7. Risks & Assumptions
 
@@ -262,3 +254,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - `docs/design/challenges.md` — challenge-systemet, hvis `solvedBy`-lister er planens direkte anledning
 - `docs/research/raw/research-infinite-craft.md` — hvad der lånes, og hvad der ikke gør
 - `content/combos.json` — mudderkage (`mudder+baer`) og klyngen (`nabo+skind`); planens beviser på at grebet allerede virker
+- `docs/design/improvisation-balance.md` — robust cap/cost-beslutning og
+  reproducerbar hash
+- `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/README.md` —
+  agent-QA, begrænsninger og den præcise eksterne gate
