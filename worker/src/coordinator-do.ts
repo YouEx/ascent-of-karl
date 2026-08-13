@@ -32,12 +32,33 @@ import {
 import { toNonNegativeInt, toPositiveInt } from "./env";
 import { INTERNAL_IP_HASH_HEADER, isValidIpHash } from "./ip";
 import { findExpiredCacheKeys, findStaleIpBudgetKeys, findStaleRateLimitKeys } from "./cleanup";
-import { isBodyTooLarge } from "./validate";
+import { isBodyTooLarge, isJsonContentType } from "./validate";
 import { promptNamespace } from "./cache-key";
 import { callUpstreamOpenAI, DEFAULT_MODEL, PROMPT_VERSION_INPUT, type ModelEnv } from "./model";
 import { VOICE_PROFILE_HASH, VOICE_PROFILE_VERSION } from "./voice/gate";
 import { ADMIN_VERIFIED_HEADER } from "./admin";
 import { STATS_KEY_PREFIX, STATS_MAX_AGE_MS, buildStatsExport, clampExportLimit, findStaleStatsKeys, type PairStatsRecord } from "./stats";
+import {
+  createImproviseDeps,
+  decideImprovise,
+  reserveImproviseRateLimitSlot,
+  IMPROVISE_CACHE_KEY_PREFIX,
+  IMPROVISE_IP_BUDGET_KEY_PREFIX,
+  IMPROVISE_RATE_LIMIT_KEY_PREFIX,
+  type ImproviseDeps,
+  type ImproviseResponse,
+} from "./improvise";
+import {
+  callImproviseOpenAI,
+  IMPROVISE_PROMPT_VERSION_INPUT,
+} from "./improvise-model";
+import {
+  IMPROVISE_STATS_KEY_PREFIX,
+  buildImproviseExport,
+  findStaleImproviseStatsKeys,
+  type CachedImprovisation,
+  type ImproviseStatsRecord,
+} from "./improvise-stats";
 
 export interface CoordinatorEnv extends ModelEnv {
   /** Sekunder i det rullende vindue (TASK-002). Se wrangler.toml for den målte default. */
@@ -52,6 +73,11 @@ export interface CoordinatorEnv extends ModelEnv {
    * wrangler.toml for begrundelsen bag det målte tal.
    */
   DAILY_MAX_UPSTREAM_CALLS_PER_IP?: string;
+  /** Improvisation har egne kvoter og lager-nøgler, uafhængigt af fortælleren. */
+  IMPROVISE_RATE_LIMIT_WINDOW_SECONDS?: string;
+  IMPROVISE_RATE_LIMIT_MAX?: string;
+  IMPROVISE_DAILY_MAX_UPSTREAM_CALLS?: string;
+  IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP?: string;
 }
 
 // Konservative defaults, brugt hvis en var mangler i wrangler.toml. De
@@ -66,6 +92,10 @@ const DEFAULT_DAILY_MAX_UPSTREAM_CALLS = 350;
 // gennemspilninger for ÉN spiller på én dag — se wrangler.toml for hele
 // udregningen (sikkerhedsrunde 2, punkt 2 og 5).
 const DEFAULT_DAILY_MAX_UPSTREAM_CALLS_PER_IP = 165;
+const DEFAULT_IMPROVISE_RATE_LIMIT_WINDOW_SECONDS = 60;
+const DEFAULT_IMPROVISE_RATE_LIMIT_MAX = 10;
+const DEFAULT_IMPROVISE_DAILY_MAX_UPSTREAM_CALLS = 100;
+const DEFAULT_IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP = 25;
 
 /**
  * Hvor længe en cache-post må ligge, før oprydningen fjerner den
@@ -103,6 +133,7 @@ export const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000; // 1 døgn
  * streng er hverken 64 tegn lang eller ren hex.
  */
 const ADMIN_RATE_LIMIT_SENTINEL = "admin:pairs-export";
+const ADMIN_IMPROVISE_RATE_LIMIT_SENTINEL = "admin:improvisations-export";
 
 interface AdapterResponse {
   status: number;
@@ -131,8 +162,31 @@ function responseFor(result: CoordinatorResponse): AdapterResponse {
   return { status: 502, body: { error: "upstream", reason: result.reason } };
 }
 
+function responseForImprovise(result: ImproviseResponse): AdapterResponse {
+  if (result.status === 200) return { status: 200, body: result.value };
+  if (result.status === 400) {
+    return { status: 400, body: { error: "bad request", reason: result.reason } };
+  }
+  if (result.status === 429) {
+    return {
+      status: 429,
+      body: { error: "rate limited", reason: result.reason },
+      retryAfterSeconds: result.retryAfterSeconds,
+    };
+  }
+  if (result.status === 503) {
+    return {
+      status: 503,
+      body: { error: "daily budget exhausted", reason: result.reason },
+      retryAfterSeconds: result.retryAfterSeconds,
+    };
+  }
+  return { status: 502, body: { error: "upstream", reason: result.reason } };
+}
+
 export class Coordinator {
   private deps: CoordinatorDeps | undefined;
+  private improviseDeps: ImproviseDeps | undefined;
 
   constructor(
     private readonly state: DurableObjectState,
@@ -170,6 +224,40 @@ export class Coordinator {
     return this.deps;
   }
 
+  private getImproviseDeps(): ImproviseDeps {
+    if (!this.improviseDeps) {
+      const cacheNamespace = promptNamespace(
+        IMPROVISE_PROMPT_VERSION_INPUT,
+        this.env.MODEL ?? DEFAULT_MODEL,
+      );
+      this.improviseDeps = createImproviseDeps({
+        store: this.state.storage,
+        callUpstream: (body) => callImproviseOpenAI(body, this.env),
+        config: {
+          rateLimitWindowMs:
+            toPositiveInt(
+              this.env.IMPROVISE_RATE_LIMIT_WINDOW_SECONDS,
+              DEFAULT_IMPROVISE_RATE_LIMIT_WINDOW_SECONDS,
+            ) * 1000,
+          rateLimitMax: toPositiveInt(
+            this.env.IMPROVISE_RATE_LIMIT_MAX,
+            DEFAULT_IMPROVISE_RATE_LIMIT_MAX,
+          ),
+          dailyMax: toNonNegativeInt(
+            this.env.IMPROVISE_DAILY_MAX_UPSTREAM_CALLS,
+            DEFAULT_IMPROVISE_DAILY_MAX_UPSTREAM_CALLS,
+          ),
+          dailyMaxPerIp: toNonNegativeInt(
+            this.env.IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
+            DEFAULT_IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
+          ),
+          cacheNamespace,
+        },
+      });
+    }
+    return this.improviseDeps;
+  }
+
   /**
    * Sikrer at en oprydningsalarm er sat, uden at genplante en der allerede
    * tikker. Kaldes ved hver forespørgsel, men er selv-helbredende og billig
@@ -201,7 +289,14 @@ export class Coordinator {
     const deps = this.getDeps();
     const now = deps.now();
     try {
-      const rlEntries = await this.state.storage.list<number[]>({ prefix: RATE_LIMIT_KEY_PREFIX });
+      const allRateLimitEntries = await this.state.storage.list<number[]>({
+        prefix: RATE_LIMIT_KEY_PREFIX,
+      });
+      const rlEntries = new Map(
+        [...allRateLimitEntries].filter(
+          ([key]) => !key.startsWith(IMPROVISE_RATE_LIMIT_KEY_PREFIX),
+        ),
+      );
       for (const key of findStaleRateLimitKeys(rlEntries, now, deps.config.rateLimitWindowMs)) {
         await this.state.storage.delete(key);
       }
@@ -222,6 +317,41 @@ export class Coordinator {
       // spurgt om, aldrig forsvinder midt i en lang bagerundes gennemgang.
       const statsEntries = await this.state.storage.list<PairStatsRecord>({ prefix: STATS_KEY_PREFIX });
       for (const key of findStaleStatsKeys(statsEntries, now, STATS_MAX_AGE_MS)) {
+        await this.state.storage.delete(key);
+      }
+
+      const improviseDeps = this.getImproviseDeps();
+      const improviseRateEntries = await this.state.storage.list<number[]>({
+        prefix: IMPROVISE_RATE_LIMIT_KEY_PREFIX,
+      });
+      for (
+        const key of findStaleRateLimitKeys(
+          improviseRateEntries,
+          now,
+          improviseDeps.config.rateLimitWindowMs,
+        )
+      ) {
+        await this.state.storage.delete(key);
+      }
+
+      const improviseCacheEntries = await this.state.storage.list<CachedImprovisation>({
+        prefix: IMPROVISE_CACHE_KEY_PREFIX,
+      });
+      for (const key of findExpiredCacheKeys(improviseCacheEntries, now, CACHE_MAX_AGE_MS)) {
+        await this.state.storage.delete(key);
+      }
+
+      const improviseIpBudgets = await this.state.storage.list<{ date: string }>({
+        prefix: IMPROVISE_IP_BUDGET_KEY_PREFIX,
+      });
+      for (const key of findStaleIpBudgetKeys(improviseIpBudgets, now)) {
+        await this.state.storage.delete(key);
+      }
+
+      const improviseStats = await this.state.storage.list<ImproviseStatsRecord>({
+        prefix: IMPROVISE_STATS_KEY_PREFIX,
+      });
+      for (const key of findStaleImproviseStatsKeys(improviseStats, now)) {
         await this.state.storage.delete(key);
       }
     } finally {
@@ -270,6 +400,94 @@ export class Coordinator {
     return this.toHttpResponse(200, payload);
   }
 
+  private async handleAdminImproviseExport(req: Request, url: URL): Promise<Response> {
+    if (req.method !== "GET") {
+      return this.toHttpResponse(405, { error: "GET only" });
+    }
+    if (req.headers.get(ADMIN_VERIFIED_HEADER) !== "1") {
+      return this.toHttpResponse(401, { error: "unauthorized" });
+    }
+
+    const deps = this.getDeps();
+    const rateLimit = await reserveRateLimitSlot(
+      ADMIN_IMPROVISE_RATE_LIMIT_SENTINEL,
+      deps,
+    );
+    if (!rateLimit.allowed) {
+      return this.toHttpResponse(
+        429,
+        { error: "rate limited" },
+        rateLimit.retryAfterSeconds,
+      );
+    }
+
+    const improviseDeps = this.getImproviseDeps();
+    const cachePrefix =
+      IMPROVISE_CACHE_KEY_PREFIX + improviseDeps.config.cacheNamespace + ":";
+    const [cachedEntries, statsEntries] = await Promise.all([
+      this.state.storage.list<CachedImprovisation>({ prefix: cachePrefix }),
+      this.state.storage.list<ImproviseStatsRecord>({
+        prefix: IMPROVISE_STATS_KEY_PREFIX,
+      }),
+    ]);
+    const payload = buildImproviseExport(cachedEntries, statsEntries, {
+      promptNamespace: improviseDeps.config.cacheNamespace,
+      now: improviseDeps.now(),
+      limit: clampExportLimit(url.searchParams.get("limit")),
+      cursor: url.searchParams.get("cursor"),
+    });
+    return this.toHttpResponse(200, payload);
+  }
+
+  private async handleImprovise(req: Request): Promise<Response> {
+    if (req.method !== "POST") {
+      return this.toHttpResponse(405, { error: "POST only" });
+    }
+
+    const ipHash = req.headers.get(INTERNAL_IP_HASH_HEADER);
+    if (!isValidIpHash(ipHash)) {
+      return this.toHttpResponse(503, { error: "missing or invalid identity" });
+    }
+
+    const rateLimit = await reserveImproviseRateLimitSlot(
+      ipHash,
+      this.getImproviseDeps(),
+    );
+    if (!rateLimit.allowed) {
+      return this.toHttpResponse(
+        429,
+        { error: "rate limited", reason: "rate limit" },
+        rateLimit.retryAfterSeconds,
+      );
+    }
+
+    if (!isJsonContentType(req.headers.get("content-type"))) {
+      return this.toHttpResponse(415, {
+        error: "content type must be application/json",
+      });
+    }
+
+    const rawText = await req.text();
+    if (isBodyTooLarge(rawText)) {
+      return this.toHttpResponse(400, { error: "body too large" });
+    }
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch {
+      return this.toHttpResponse(400, { error: "bad json" });
+    }
+
+    const result = await decideImprovise(
+      parsed,
+      ipHash,
+      this.getImproviseDeps(),
+    );
+    const { status, body, retryAfterSeconds } = responseForImprovise(result);
+    return this.toHttpResponse(status, body, retryAfterSeconds);
+  }
+
   /** Bygger det færdige HTTP-svar — ét sted, så `fetch()`s tidlige
    * afvisninger (405/503/429 før kroppen overhovedet læses) og den sene,
    * `decide()`-afledte afvisning bygger deres `Response` PRÆCIS ens. */
@@ -289,6 +507,12 @@ export class Coordinator {
     const url = new URL(req.url);
     if (url.pathname === "/admin/pairs") {
       return this.handleAdminExport(req, url);
+    }
+    if (url.pathname === "/admin/improvisations") {
+      return this.handleAdminImproviseExport(req, url);
+    }
+    if (url.pathname === "/improvise") {
+      return this.handleImprovise(req);
     }
 
     if (req.method !== "POST") {
@@ -314,6 +538,12 @@ export class Coordinator {
     const rateLimit = await reserveRateLimitSlot(ipHash, this.getDeps());
     if (!rateLimit.allowed) {
       return this.toHttpResponse(429, { error: "rate limited", reason: "rate limit" }, rateLimit.retryAfterSeconds);
+    }
+
+    if (!isJsonContentType(req.headers.get("content-type"))) {
+      return this.toHttpResponse(415, {
+        error: "content type must be application/json",
+      });
     }
 
     // Størrelsen tjekkes på råteksten, FØR parsing — et kæmpe body skal

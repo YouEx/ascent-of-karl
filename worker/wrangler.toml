@@ -76,6 +76,15 @@ DAILY_MAX_UPSTREAM_CALLS = "350"
 # IKKE 503 (som er forbeholdt det GLOBALE loft) — se `worker/src/coordinator.ts`.
 DAILY_MAX_UPSTREAM_CALLS_PER_IP = "165"
 
+# --- Improvisation: egne serverkvoter, uafhængigt af fortælleren ---
+# Kilden er fortsat slukket og ikke deployet. Tallene er konservative
+# før-trafik-standarder, ikke produktionsmålinger: klientens senere run-cap
+# er UX/balance og må aldrig regnes som en sikkerhedsgrænse.
+IMPROVISE_RATE_LIMIT_WINDOW_SECONDS = "60"
+IMPROVISE_RATE_LIMIT_MAX = "10"
+IMPROVISE_DAILY_MAX_UPSTREAM_CALLS = "100"
+IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP = "25"
+
 # IP-hashens saltning (sikkerhedsrunde 2, punkt 1) — OBLIGATORISK, ingen
 # fallback. Uden salt er en SHA-256-hash af en IP i praksis en opslagstabel
 # væk fra at være "klar tekst": IPv4-rummet er lille nok til at regne alle

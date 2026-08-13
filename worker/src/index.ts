@@ -33,7 +33,9 @@
  * denne fil ALTID overskriver — uanset hvad en anmodning måtte indeholde af
  * den samme header i forvejen.
  *
- * TASK-008 tilføjer ÉT endpoint mere, `GET /admin/pairs` — den
+ * TASK-008 tilføjer `GET /admin/pairs`, og improvisationssporet genbruger
+ * samme autentificerede mønster til `GET /admin/improvisations`.
+ * `/admin/pairs` er den
  * høstede-efterspørgsel-eksport (se `stats.ts`). Det er BEVIDST IKKE en del
  * af narrator-strømmen ovenfor: det omgår oprindelsespolitikken (det er
  * ikke ment til browserkald — se `tools/live_pair_export.mjs` — og sætter
@@ -72,8 +74,8 @@ interface Env extends CoordinatorEnv {
    */
   IP_HASH_SALT?: string;
   /**
-   * Obligatorisk hemmelighed (Worker secret, TASK-008) for `GET
-   * /admin/pairs`. Mangler den, fejler `handleAdminExport` LUKKET (401) for
+   * Obligatorisk hemmelighed (Worker secret, TASK-008) for admin-
+   * eksporter. Mangler den, fejler `handleAdminExport` LUKKET (401) for
    * ALLE admin-forsøg — se `admin.ts`s `isValidAdminToken`. Sættes KUN hvis
    * høstningen er aktiveret, aldrig i klartekst i `wrangler.toml`:
    *   npx wrangler secret put ADMIN_EXPORT_TOKEN
@@ -83,7 +85,7 @@ interface Env extends CoordinatorEnv {
 }
 
 /**
- * `GET /admin/pairs` — den høstede-efterspørgsel-eksport (TASK-008). Egen,
+ * De høstede admin-eksporter. Egen,
  * lille funktion (ikke flettet ind i narrator-strømmen nedenfor): den har
  * en helt anden godkendelsesform (bearer-token, ikke oprindelse+IP-hash),
  * og skal ALDRIG kunne nå modellen eller røre budgettet, uanset hvad der
@@ -130,7 +132,10 @@ export default {
     // Admin-eksporten omgår oprindelsespolitikken MED VILJE (se
     // fil-kommentaren) — tjekkes FØR Origin/CORS, som slet ikke er
     // relevante for et bearer-token-beskyttet server-til-server-kald.
-    if (url.pathname === "/admin/pairs") {
+    if (
+      url.pathname === "/admin/pairs" ||
+      url.pathname === "/admin/improvisations"
+    ) {
       return handleAdminExport(req, env);
     }
 

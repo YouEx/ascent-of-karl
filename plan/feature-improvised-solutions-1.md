@@ -2,7 +2,7 @@
 goal: Åbne løsningsrummet for problemer og challenges, så enhver kombination der kan klassificeres som en løsning tæller — og lade spilleren opfinde sine egne elementer, uden at spillets kuraterede rygrad falder fra hinanden
 version: 1.0
 date_created: 2026-08-12
-last_updated: 2026-08-12
+last_updated: 2026-08-13
 owner: Martin (YouEx)
 status: 'In progress'
 tags: [feature, architecture, engine, narrator, content, infrastructure]
@@ -38,9 +38,13 @@ tags: [feature, architecture, engine, narrator, content, infrastructure]
 > `Engine.resolve`, bevist af en regressionstest der fejler, hvis overriden
 > fjernes.
 >
-> **Fase 2-5 er slet ikke bygget.** Improviserede elementer, LLM-proxyen,
-> fortællerens dom over dem og balanceringen (TASK-009 til TASK-031) mangler
-> alle. Kun `TASK-026` i fase 4 afhænger af narrationsplanens fase 5/6
+> **Fase 3's server-copyhalvdel er leveret som kilde, men er slukket.**
+> `TASK-016`-`TASK-018` og `TASK-021` er leveret under den frosne
+> integrationskontrakt nedenfor; serverhalvdelen af `TASK-019` og `TASK-029`
+> er leveret. Der er ingen client, ingen `VITE_IMPROVISE_URL`, ingen secrets,
+> intet deploy og ingen trafik. Fase 2, fortællerens dom over improviserede
+> resultater og balanceringen mangler fortsat. Kun `TASK-026` i fase 4
+> afhænger af narrationsplanens fase 5/6
 > (stemmedommer, turøkonomi, se DEP-004) — resten af fase 1-4 her gør ikke,
 > og skal ikke vente på dem.
 
@@ -51,13 +55,23 @@ Denne plan generaliserer grebet. Målet er formuleret af Martin: *"anything that
 Ombygningen har to halvdele, og **den første kræver ingen sprogmodel**:
 
 1. **Prædikater i stedet for lister.** I dag er `challenge.solvedBy` en håndholdt allowlist — ulvene besejres af `[ild, spyd, hund, bue, slynge, stenoekse, faelde, hytte, harpun, koelle]`. Det er begrebet *"et våben eller et ly"*, møjsommeligt opremset, og hvert nyt element kræver at nogen husker at føje det til hver relevant liste. Samme sygdom som fiaskoteksten, andet organ. Erstattes af et prædikat over taksonomien fra `plan/architecture-procedural-narration-1.md`.
-2. **Improviserede elementer.** Et par uden opskrift kan blive til spillerens egen opfindelse med navn, flavor og — vigtigst — **tags**. Prædikatet afgør så, om tingen løser noget.
+2. **Improviserede elementer.** Et par uden opskrift kan blive til spillerens
+   egen opfindelse. Den deterministiske klientkerne leverer klassifikationen;
+   den valgfrie Worker forbedrer kun navn og flavor. Prædikatet afgør derefter,
+   om den deterministiske klassifikation løser noget.
 
 Magtdelingen er planens kerne og dens vigtigste enkeltbeslutning:
 
-> **Fortælleren dømmer hvad tingen ER. Motoren dømmer om dét løser problemet.**
+> **Den deterministiske kerne dømmer hvad tingen ER. Motoren dømmer om dét
+> løser problemet. Modellen må kun skrive navn og flavor.**
 
-Sprogmodellen klassificerer (`{kind, stuff, traits, scale}`) og skriver navn og flavor. Den får aldrig lov at erklære `solves`. Uden den deling kan modellen tales til at godkende hvad som helst, sværhedsgraden flytter ud af Martins hænder, og spillet kan ikke balanceres. Med den deling er semantikken modellens og reglerne motorens — og reglerne er testbare.
+Den oprindelige version af planen lod sprogmodellen klassificere
+(`{kind, stuff, traits, scale}`). Den frosne integrationskontrakt fra
+2026-08-13 gør grænsen smallere: klassifikationen leveres separat af
+klientens deterministiske kerne; modellen returnerer strikt `{name, flavor}`.
+Den får aldrig lov at erklære `solves` eller kontrollere nogen mekanisk
+egenskab. Dermed forbliver både semantik og regler testbare og uden for
+promptens magt.
 
 En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, spiselige, og løser ikke sult.** Alle elleve sultløsninger er *fremstillede*. Reglen er altså ikke "spiseligt", men "spiseligt som Karl selv har lavet". Den stod allerede skrevet i indholdet; her får den bare et navn.
 
@@ -67,7 +81,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **REQ-002**: Ethvert element, der opfylder prædikatet, løser nøden — uanset om det er kurateret eller opfundet af spilleren i dette run.
 - **REQ-003**: Et nyt kurateret element skal automatisk tælle for de challenges, det logisk løser, uden at nogen redigerer en liste.
 - **REQ-004**: Sværhedsgraden skal bevares. Prædikatet skal pr. konstruktion udelukke starthånden: alle nuværende løsninger er fremstillede, og det skal `crafted: true` håndhæve.
-- **REQ-005**: Spilleren skal kunne improvisere et nyt element ud af et par uden opskrift, og få det navngivet, beskrevet og klassificeret.
+- **REQ-005**: Spilleren skal kunne improvisere et nyt element ud af et par uden opskrift, få det klassificeret deterministisk og valgfrit få navn/flavor forbedret af Workeren.
 - **REQ-006**: Improviserede elementer må **aldrig** kunne udløse akter, sætte flag, låse skæbner op ved ren mængde eller fortrænge kurateret indhold i krøniken.
 - **REQ-007**: Spillet skal virke fuldt ud offline og uden proxy. Improvisation degraderer da til deterministiske regler; prædikaterne virker uændret.
 - **REQ-008**: Fortællerens afvisning skal være lige så sjov som hans godkendelse. At dømme *imod* spilleren er indhold, ikke en fejlmeddelelse.
@@ -82,7 +96,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **GUD-001**: Vittigheden skal koste noget. En absurd løsning skal være sværere eller dyrere end den oplagte — ellers er absurditet ikke et valg, men den optimale strategi.
 - **GUD-002**: Kuratering slår generering. Findes der en håndskrevet opskrift, bruges den. Improvisation er kun for det tomme rum.
 - **GUD-003**: Dansk i kode, kommentarer og commits. Al spillervendt tekst på engelsk.
-- **PAT-001**: Magtdeling: model klassificerer, motor afgør. Ingen `solves` fra en sprogmodel, nogensinde.
+- **PAT-001**: Magtdeling: deterministisk klientkerne klassificerer, motor afgør, model skriver kun copy. Ingen mekanik eller `solves` fra en sprogmodel, nogensinde.
 - **PAT-002**: Verdikt-motoren fra narrationsplanen er **portvagt** for improvisation. Kun par, der dømmes `plausible` eller `absurd`, kan improviseres. Det er værnet mod Infinite Craft-slop: ikke alt bliver til noget.
 - **PAT-003**: To elementklasser med forskellige rettigheder — `canon` og `improvised` — frem for ét fladt rum.
 - **PAT-004**: Cachen er indhold. Et improviseret element, der er set af mange, er en kandidat til kuratering.
@@ -120,16 +134,16 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 
 ### Implementation Phase 3
 
-- GOAL-003: Sæt den rigtige dommer på. En sprogmodel bag en proxy klassificerer improviserede elementer og skriver deres navn og flavor — som en forbedring oven på et system, der virker uden.
+- GOAL-003: Sæt et valgfrit copy-lag på. Den eksisterende Worker skriver kun navn og flavor — som en forbedring oven på en deterministisk klassifikation, der virker uden.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-016 | Byg Cloudflare Worker `proxy/` med ét endpoint `POST /improvise`. Input: de to forældres id, navn, flavor og tags samt runets akt. Output: strikt JSON `{name, flavor, kind, stuff, traits[], scale}`. **Ingen `solves` i skemaet** (PAT-001). Nøglen bor i Workerens secrets (SEC-001). | | |
-| TASK-017 | KV-cache med nøgle `pairKey(a,b)`. Cache-hit returnerer uden modelkald. Det giver tre ting på én gang: determinisme på tværs af spillere (REQ-009), en omkostning der falder mod nul, og en liste over hvad spillerne faktisk opfinder. | | |
-| TASK-018 | Validér modellens svar i Workeren, ikke i klienten: skema, navnelængde ≤ 3 ord, tegnsætningsfilter, blokliste, tags skal være i de tilladte mængder. Ugyldigt svar → ét retry → derefter fald tilbage til den deterministiske regelmotor (SEC-002). | | |
-| TASK-019 | Rate limit pr. IP og et loft på improvisationer pr. run i klienten. Overskredet loft er ikke en fejlbesked, men en fortællerreplik: Karl er løbet tør for idéer i dag (SEC-003, REQ-008). | | |
+| TASK-016 | **Leveret under frosset kontrakt:** genbrug den EKSISTERENDE Worker og `Coordinator`; `POST /improvise` accepterer eksakt `{a,b,act}` med kanoniske id'er og returnerer offentligt kun `{name,flavor}`. Ingen `proxy/`, ingen KV, ingen mekaniske felter fra modellen. | ✅ | 2026-08-13 |
+| TASK-017 | **Leveret:** sorteret par+akt-cache i det eksisterende Durable Object storage, med automatisk navnerum fra den faktisk renderede promptkontrakt+model. Cache-hit undgår både modelkald og improvisationsbudget; samtidige misses coalesces kun inden for samme par+akt. | ✅ | 2026-08-13 |
+| TASK-018 | **Leveret under frosset kontrakt:** strikt modelskema `{name,flavor}` og servervalidering af eksakte felter, ≤3 ord, URL'er, citationstegn, kontroltegn, tegnsætningsvildnis og flavor-grænse. Ugyldigt svar giver eksplicit 502, caches aldrig og retries ikke automatisk; den senere klient ejer fallback. | ✅ | 2026-08-13 |
+| TASK-019 | **Serverhalvdel leveret:** egne rullende og daglige globalt/pr.-IP-kvoter med egne storage-nøgler, genbrugt IP-hash og alarmoprydning. Klientens fremtidige per-run-cap/fortællerreplik er stadig åben og er UX/balance — aldrig sikkerhedsgrænsen. | ◐ | 2026-08-13 |
 | TASK-020 | Klientlag `src/core/improviseClient.ts`: async, med timeout på 2,5 s og øjeblikkeligt fald tilbage til regelmotoren. Spillet må aldrig vente på nettet. Motoren forbliver synkron; det færdige element fodres ind (CON-001). | | |
-| TASK-021 | Prompten bygges af taksonomien og tre håndskrevne eksempler — inklusive **mudderkage**, som er den bedste beskrivelse af tonen der findes: alvorlig nød, latterlig løsning, ægte klassifikation. | | |
+| TASK-021 | Prompten bygges af serveropslåede kanoniske forældrenavne/flavor/taksonomi og tre håndskrevne toneeksempler — **mudderkage**, ristede larver og klyngen. | ✅ | 2026-08-13 |
 
 ### Implementation Phase 4
 
@@ -151,7 +165,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 |------|-------------|-----------|------|
 | TASK-027 | Simulér 2.000 runs med improvisation slået til: hvor mange nøder løses af improviserede elementer, hvor mange somre bruges, og hvor ofte når spilleren en skæbne? Sammenlign med baseline. Hvis improvisation gør spillet nemmere, skal den koste mere end én sommer (GUD-001). | | |
 | TASK-028 | Afgør prisen på improvisation ud fra TASK-027, ikke ud fra mavefornemmelse. Kandidater: 1 sommer (som i dag), 2 somre, eller 1 sommer men kun N gange pr. run. | | |
-| TASK-029 | Byg `tools/harvest.mjs`: hent de hyppigste cache-poster fra KV, sortér efter hvor mange runs der har set dem, og skriv dem til `content/drafts/harvested.json`. Martin gennemgår og forfremmer de bedste til kurateret indhold med rigtig `note` og `sourceUrl`. Spillerne bliver dermed spillets forfattere — via samme `drafts/`-port som alt andet (PRD §5). | | |
+| TASK-029 | **Server/export-halvdel leveret:** autentificeret `GET /admin/improvisations` eksporterer den aktuelle namespacede DO-cache i stabil leksikalsk par+akt-rækkefølge med cursor-after-key og efterspørgsels-/hit-/upstream-tællinger. Et eksternt høsteværktøj, faktisk trafik, skrivning til `content/drafts/harvested.json` og menneskelig forfremmelse er stadig åbne; intet høstes automatisk. | ◐ | 2026-08-13 |
 | TASK-030 | Playtest: spil tre runs hvor målet udelukkende er at løse de tre nøder så absurd som muligt. Hvis det ikke er sjovere end at spille normalt, er prædikaterne for løse eller fortællerens domme for tørre. | | |
 | TASK-031 | Opdatér `PRD.md` og `DESIGN.md` med magtdelingen (PAT-001) og de to elementklasser, så reglen overlever den næste, der rører systemet. | | |
 
@@ -166,7 +180,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 ## 4. Dependencies
 
 - **DEP-001**: `plan/architecture-procedural-narration-1.md` fase 1 (taksonomien) og fase 2 (verdikt-motoren). Denne plan er ikke mulig uden dem og bør planlægges umiddelbart efter.
-- **DEP-002**: Cloudflare Workers free tier + KV. Alternativt enhver funktion, der kan holde en nøgle og en cache.
+- **DEP-002**: Den eksisterende Cloudflare Worker + Durable Object storage. Ingen KV-binding.
 - **DEP-003**: Groq free tier eller tilsvarende, som allerede brugt i `tools/generate_lines.py`.
 - **DEP-004**: Stemmedommeren fra narrationsplanens fase 5 — gælder **kun** `TASK-026` (kør de nye dom-replikker gennem dommeren). Fase 1-4 her (`TASK-001` til `TASK-025`) afhænger ikke af narrationsplanens fase 5/6 (stemmedommer, turøkonomi) og skal ikke afvente dem — kun den ene opgave gør.
 
@@ -179,9 +193,9 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **FILE-005**: `src/core/engine.ts` — løsning afgøres af prædikat; improviserede elementers rettigheder håndhæves.
 - **FILE-006**: `content/acts/act-1.json`, `content/challenges.json` — `solvedBy` bliver prædikat; allowlisten overlever som `alsoSolvedBy`.
 - **FILE-007**: `content/narrator/act-1.json` — dommens replikfamilie.
-- **FILE-008**: `proxy/` *(ny)* — Cloudflare Worker, skema, KV-cache, rate limit.
+- **FILE-008**: `worker/src/improvise*.ts` + den eksisterende Worker/`Coordinator` — skema, model-copy, DO-cache, kvoter, oprydning og admin-eksport.
 - **FILE-009**: `tools/predicate_report.mjs` *(ny)* — prædikat mod allowlist, falske negativer er fejl.
-- **FILE-010**: `tools/harvest.mjs` *(ny)* — spillernes opfindelser tilbage til `drafts/`.
+- **FILE-010**: `tools/harvest.mjs` *(stadig åben)* — den leverede servereksport er inputtet; faktisk høst tilbage til `drafts/` er ekstern og ikke bygget.
 - **FILE-011**: `src/ui/book.ts` — krøniken skelner kurateret fra improviseret.
 - **FILE-012**: `tools/validate.py` — prædikater valideres; `alsoSolvedBy`-overlap advares.
 
@@ -195,7 +209,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **TEST-006**: Improvisationsdybde over 3 afvises.
 - **TEST-007**: Verdikt-portvagten: `near-miss` og `locked` improviseres aldrig (TASK-014).
 - **TEST-008**: Offline-tilstand: med proxyen slået fra er et helt run spilbart, alle nøder løselige, og udfaldet deterministisk for en given seed (REQ-007).
-- **TEST-009**: Workerens validering afviser navne over 3 ord, tags uden for mængden, manglende felter og ethvert `solves`-felt modellen måtte finde på at sende.
+- **TEST-009**: Workerens validering afviser navne over 3 ord, ekstra felter, URL'er, citationstegn, kontroltegn, tegnsætningsvildnis og for lang flavor; enhver mekanik modellen måtte finde på at sende er et ekstra felt og afvises.
 - **TEST-010**: Save/load med improviserede elementer i state; gamle saves uden feltet loader (CON-006 i narrationsplanen).
 - **TEST-011**: 2.000 simulerede runs med og uden improvisation: skæbne-rate og somreforbrug rapporteres, så TASK-028 kan træffes på tal.
 
@@ -210,7 +224,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **ASSUMPTION-001**: Taksonomien fra narrationsplanen er præcis nok til at bære prædikaterne. TASK-005 er prøven; hvis den fejler, er svaret flere traits, ikke flere lister.
 - **ASSUMPTION-002**: "Fremstillet" (`!base`) er den rigtige grænse for sværhedsgrad. Det er læst direkte af indholdet: alle 11 sultløsninger er fremstillede, og de spiselige base-elementer løser intet.
 - **ASSUMPTION-003**: Spillere vil hellere lede efter den mest absurde løsning end den hurtigste, når spillet belønner det. TASK-030 er prøven.
-- **ASSUMPTION-004**: En gratis models klassifikation er stabil nok, når den kun må svare med tags fra en fast mængde. Opgaven er bevidst gjort lille, netop derfor.
+- **ASSUMPTION-004**: En lille models copy er stabil nok til kun at forbedre navn/flavor. Klassifikationens stabilitet afhænger ikke længere af modellen.
 
 ## 8. Related Specifications / Further Reading
 
