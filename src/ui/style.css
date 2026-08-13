@@ -1109,7 +1109,7 @@ img.chip-glyph {
      stedet. 178vh holder 16:9 rammefri og begrænser sløret på ultrabredt.
      Rammen forsvinder af sig selv, den dag baggrunden er ét bredt maleri —
      se tools/art/build_scene_wide.py. */
-  --bar: max(0px, (100vw - 178vh) / 2);
+  --bar: max(0px, (100dvw - 178dvh) / 2);
   /* Under pladen: dalens mørkeste tone, så der aldrig blinker hvidt frem
      mens billedet henter, og så kanterne har noget at falde af mod. */
   background: var(--valley-dark);
@@ -1127,7 +1127,7 @@ img.chip-glyph {
      venstre kant, sløret vandret og strakt. Sløringen bevarer dalens lodrette
      lagdeling og opløser alt genkendeligt, så der hverken bliver et spejlbillede
      eller en anden Karl. Feltet ligger under pergamentarket. */
-  --seam: calc(100% - 90.4vh);
+  --seam: calc(100% - 90.4dvh);
   /* Pladen findes i tre bredder (897/640/448 px, samme beskæring). Under
      900 px rude vælges den, der faktisk matcher visningsstørrelsen, i
      stedet for altid at hente den bredeste — se media queries forneden.

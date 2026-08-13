@@ -284,6 +284,9 @@ describe("titlen bindes til den synlige mobilrude, ikke spilskærmens bredere la
     const rule = extractBlock(stripped, "#title-screen {");
     expect(rule).toMatch(/width:\s*100dvw/);
     expect(rule).toMatch(/height:\s*100dvh/);
+    expect(rule).toMatch(
+      /--bar:\s*max\(0px,\s*\(100dvw\s*-\s*178dvh\)\s*\/\s*2\)/,
+    );
   });
 
   it("de fuldskærmsmodaler titlen kan åbne bruger samme synlige rude", () => {
@@ -294,6 +297,12 @@ describe("titlen bindes til den synlige mobilrude, ikke spilskærmens bredere la
     );
     expect(rule).toMatch(/width:\s*100dvw/);
     expect(rule).toMatch(/height:\s*100dvh/);
+  });
+
+  it("scenens bredde og slørede samling følger dynamic viewport-højden", () => {
+    const stripped = stripComments(styles);
+    const rule = extractBlock(stripped, ".title-stage {");
+    expect(rule).toMatch(/--seam:\s*calc\(100%\s*-\s*90\.4dvh\)/);
   });
 });
 
