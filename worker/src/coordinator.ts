@@ -50,6 +50,18 @@
  * kan stadig få et svar. Og vigtigst: fejler pr.-IP-tjekket, er det GLOBALE
  * loft IKKE skrevet endnu (kun udregnet) — et afvist forsøg fra én IP må
  * aldrig kunne opbruge resten af verdens globale budget for dagen.
+ *
+ * TASK-008 tilføjer ÉT trin mere ved SAMME lejlighed: så snart trin 2
+ * (kanonisering) er lykkedes, er dette en "gyldig kanonisk par+dom-
+ * forespørgsel" — uanset om den ender som hit, miss, tilslutning til et
+ * kald i gang, eller budget-afvist. Alle fire tæller (`stats.ts`s
+ * `recordPairStats`), fordi selv et budget-afvist forsøg er ægte
+ * efterspørgsel — kun de to 400-afvisninger ovenfor (form/kanonisering)
+ * tæller IKKE, fordi de aldrig når frem til et kendt par+dom. Tællingen
+ * sker BEVIDST inde i samme `gate.run(...)` som resten af trin 3-4 — se
+ * `stats.ts`s fil-kommentar for hvorfor "upstream"-tællingen specifikt
+ * skal ske FØR `deps.inFlight.start(...)` kaldes, ikke inde i dens
+ * asynkrone fabrik.
  */
 
 import { checkRollingWindow } from "./limiter";
@@ -59,6 +71,7 @@ import { validateBody, type WireRequest } from "./validate";
 import { resolveCanonicalBody, type CanonicalBody, type CanonicalResult } from "./catalog";
 import { SerialGate, InFlightRegistry } from "./concurrency";
 import type { KeyValueStore } from "./store";
+import { recordPairStats } from "./stats";
 
 export interface CachedLine {
   text: string;
@@ -201,16 +214,29 @@ export async function decide(
       return { kind: "reject", response: { status: 400, reason: canonical.reason } };
     }
 
+    // Fra HER er dette en gyldig kanonisk par+dom-forespørgsel (TASK-008) —
+    // se fil-kommentaren ovenfor. `recordStats` er kun en lokal forkortelse
+    // for at undgå at gentage de samme fem argumenter ved hvert exit-punkt
+    // nedenfor; selve kaldet er `stats.ts`s `recordPairStats`, som aldrig
+    // kaster (statistik er hygiejne, ikke svaret).
+    const { a, b, verdict } = canonical.body;
+    const recordStats = (outcome: Parameters<typeof recordPairStats>[5]) =>
+      recordPairStats(deps.store, deps.now(), a.id, b.id, verdict, outcome);
+
     // 3. Delt cache — et hit koster intet budget.
-    const key = pairCacheKey(canonical.body.a.id, canonical.body.b.id, canonical.body.verdict, deps.config.cacheNamespace);
+    const key = pairCacheKey(a.id, b.id, verdict, deps.config.cacheNamespace);
     const cached = await deps.store.get<CachedLine>(CACHE_KEY_PREFIX + key);
     if (cached) {
+      await recordStats("hit");
       return { kind: "hit", text: cached.text };
     }
 
     // 4. Miss: tilslut en stime i gang, eller reservér og start selv.
     const existingInFlight = deps.inFlight.get(key);
     if (existingInFlight) {
+      // Tilslutter et kald ALLEREDE i gang — ikke et NYT opstrømskald, se
+      // `stats.ts`s `PairStatsOutcome`-dokumentation.
+      await recordStats("other");
       return { kind: "pending", promise: existingInFlight };
     }
 
@@ -218,6 +244,9 @@ export async function decide(
     const globalRecord = await deps.store.get<BudgetRecord>(BUDGET_KEY);
     const globalReservation = reserveBudget(globalRecord, deps.now(), deps.config.dailyMax);
     if (!globalReservation.ok) {
+      // Budget-afvist er STADIG ægte efterspørgsel (TASK-008) — tælles,
+      // selvom svaret til klienten er 503.
+      await recordStats("other");
       return {
         kind: "reject",
         response: {
@@ -237,6 +266,7 @@ export async function decide(
     const ipRecord = await deps.store.get<BudgetRecord>(ipBudgetKey);
     const ipReservation = reserveBudget(ipRecord, deps.now(), deps.config.dailyMaxPerIp);
     if (!ipReservation.ok) {
+      await recordStats("other");
       return {
         kind: "reject",
         response: {
@@ -251,6 +281,13 @@ export async function decide(
     // tæller, selv hvis opstrømskaldet bagefter fejler.
     await deps.store.put(BUDGET_KEY, globalReservation.record);
     await deps.store.put(ipBudgetKey, ipReservation.record);
+
+    // Et NYT opstrømskald — tælles HER, synkront inde i gate'en, FØR
+    // `inFlight.start()` kaldes (se `stats.ts`s fil-kommentar): kaldets
+    // fabrik kører for det meste UDEN for gate'en (med vilje, for aldrig
+    // at holde en global lås hen over netværkskaldet), så "et nyt
+    // opstrømskald blev startet" må registreres her, ikke derinde.
+    await recordStats("upstream");
 
     const body = canonical.body;
     const promise = deps.inFlight.start(key, async () => {
