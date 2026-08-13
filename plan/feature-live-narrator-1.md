@@ -2,7 +2,7 @@
 goal: Give fortælleren en fjerde kilde til ord — en model der skriver replikken til præcis de to ting spilleren lige prøvede — uden at spillet nogensinde venter, fejler synligt eller bliver afhængigt af den
 version: 1.0
 date_created: 2026-08-12
-last_updated: 2026-08-12
+last_updated: 2026-08-13
 owner: Martin (YouEx)
 status: 'In progress'
 tags: [feature, narrative, infrastructure, security, cost]
@@ -147,11 +147,11 @@ grammatikken kun kender dommen.
 
 | Opgave | Beskrivelse | Færdig | Dato |
 |--------|-------------|--------|------|
-| TASK-002 | Loft pr. klient i workeren: ét globalt Durable Object (`worker/src/coordinator-do.ts`) tæller kald pr. IP-hash i et rullende vindue (`worker/src/limiter.ts`) og svarer 429 med en sand `Retry-After`, når loftet er nået. Klienten (`src/narrator/live.ts`) behandler 429 som "intet svar": ingen tælling til den almindelige afbryder, og intet nyt forsøg før `Retry-After` er gået. Loftet — 20 kald/60 sek. — er udledt af det MÅLTE, hårde `turnLimit`-loft pr. run (50, bekræftet af simuleringen) og en fysisk-tids-udregning, ikke et gæt. **Sikkerhedsrunde 2:** IP'en fastslås nu KUN ved Cloudflare-kanten (`index.ts`, `cf-connecting-ip`, aldrig `X-Forwarded-For`) og hashes med en obligatorisk secret (`IP_HASH_SALT`) — Durable Object'et validerer blot en 64-hex-hash og fejler lukket (503) uden den. Se "Fase 2 — målte tal" og "Fase 2 — sikkerhedsrunde 2" nedenfor. | ✅ | 2026-08-12 |
-| TASK-003 | Dagligt UTC-udgiftsloft i samme Durable Object (`worker/src/budget.ts`): kun kald, der reserverer budget og når opstrøms (cache-misses), tæller — et cache-hit koster intet af loftet. Over grænsen svarer workeren 503 med `Retry-After` frem til næste UTC-midnat, og klienten slår laget fra indtil da uden at røre den almindelige afbryder. Loftet — 350/døgn — er udledt af den målte 95.-percentil af distinkte par+dom-nøgler pr. run, ganget med en udtrykkeligt antaget (ikke målt) travl-dag-trafik. **Sikkerhedsrunde 2:** tilføjet et ANDET, mindre loft — 165/døgn pr. IP-hash — så én spiller (eller angriber) aldrig alene kan opbruge hele det globale budget; ramt pr.-IP-loft svarer 429 (klient-specifik grænse), ramt globalt loft svarer stadig 503. Se "Fase 2 — målte tal". | ✅ | 2026-08-12 |
-| TASK-004 | Delt cache i Durable Object'ets egen storage (ikke KV — ét stateful binding er simplere end to), nøglet på sorteret par + dom + version (`worker/src/cache-key.ts`). Målt FØR bygget: træfprocenten er beregnet til 96,9 % over 1.200 simulerede runs (langt over 20 %-grænsen), så cachen er bygget. Kun vellykket, renset modeltekst caches; fejl caches aldrig; samtidige misses på samme nøgle deles (`worker/src/concurrency.ts`), så en byge kun koster ét kald. **Sikkerhedsrunde 2:** anmodningen bærer nu KUN kanoniske id'er + dom (aldrig klient-oplyste navne/flavor/tags) — workeren genopbygger prompten fra det bundlede `content/elements.json`/`content/acts/*.json` (`worker/src/catalog.ts`); et ukendt id afvises 400 FØR budget/cache. Cache-nøglen har fået et eksplicit version-præfiks, så en prompt-/modelændring kan gøre gamle linjer uopslåelige med det samme (se `cache-key.ts`). Se "Fase 2 — målte tal" for hele udregningen. | ✅ | 2026-08-12 |
-| TASK-005 | Deployment dokumenteret i `docs/deployment/live-narrator.md` (Durable Object-migration/binding, `OPENAI_API_KEY` og `IP_HASH_SALT` som secrets, sikre `[vars]`, `wrangler deploy`, `VITE_NARRATOR_URL` ved build, sådan verificeres helbred/429/503, og den hurtige nødstop) med en kort henvisning fra `README.md`. Ingen hemmelige værdier eller priser i dokumentet. | ✅ | 2026-08-12 |
-| TASK-006 | Beslut, om laget overhovedet skal udrulles. Det er **Martins beslutning**, ikke en implementeringsdetalje: laget koster penge pr. spiller, og spillet er målt komplet uden det. Alternativet — at bage videre mod N=600 og lade grammatikken tage resten — er gratis og allerede i gang. **Stadig åben** — fase 2 (inkl. sikkerhedsrunde 2's rettelser) gør laget klar til at blive slået til, den beslutter ikke, at det skal. | | |
+| TASK-002 | Loft pr. klient i workeren: ét globalt Durable Object (`worker/src/coordinator-do.ts`) tæller kald pr. IP-hash i et rullende vindue (`worker/src/limiter.ts`) og svarer 429 med en sand `Retry-After`, når loftet er nået. Klienten (`src/narrator/live.ts`) behandler 429 som "intet svar": ingen tælling til den almindelige afbryder, og intet nyt forsøg før `Retry-After` er gået. Loftet — 20 kald/60 sek. — er udledt af det MÅLTE, hårde `turnLimit`-loft pr. run (50, bekræftet af simuleringen) og en fysisk-tids-udregning, ikke et gæt. **Sikkerhedsrunde 2:** IP'en fastslås nu KUN ved Cloudflare-kanten (`index.ts`, `cf-connecting-ip`, aldrig `X-Forwarded-For`) og hashes med en obligatorisk secret (`IP_HASH_SALT`) — Durable Object'et validerer blot en 64-hex-hash og fejler lukket (503) uden den. **Sikkerhedsrunde 3:** rate-limit-reservationen (`coordinator.ts`s `reserveRateLimitSlot()`) er flyttet UD af selve beslutningskæden (`decide()`) og ind i `coordinator-do.ts`s `fetch()`, hvor den nu sker FØR anmodningens krop overhovedet læses/parses — ellers kunne en for stor eller misdannet krop undgå rate-limiten fuldstændig, fordi den blev afvist (400) længe før noget rate-limit-tjek så den. Se "Fase 2 — målte tal", "Fase 2 — sikkerhedsrunde 2" og "Fase 2 — sikkerhedsrunde 3" nedenfor. | ✅ | 2026-08-12 |
+| TASK-003 | Dagligt UTC-udgiftsloft i samme Durable Object (`worker/src/budget.ts`): kun kald, der reserverer budget og når opstrøms (cache-misses), tæller — et cache-hit koster intet af loftet. Over grænsen svarer workeren 503 med `Retry-After` frem til næste UTC-midnat, og klienten slår laget fra indtil da uden at røre den almindelige afbryder. Loftet — 350/døgn — er udledt af den målte 95.-percentil af distinkte par+dom-nøgler pr. run, ganget med en udtrykkeligt antaget (ikke målt) travl-dag-trafik. **Sikkerhedsrunde 2:** tilføjet et ANDET, mindre loft — 165/døgn pr. IP-hash — så én spiller (eller angriber) aldrig alene kan opbruge hele det globale budget; ramt pr.-IP-loft svarer 429 (klient-specifik grænse), ramt globalt loft svarer stadig 503. **Sikkerhedsrunde 3:** oprydningsalarmen (`coordinator-do.ts`s `alarm()`) rydder nu også pr.-IP-budgetposter hvis gemte UTC-dato hverken er i dag eller i går — uden dette ville lageret vokse for evigt med én post pr. IP-hash der nogensinde har spurgt. Se "Fase 2 — målte tal". | ✅ | 2026-08-12 |
+| TASK-004 | Delt cache i Durable Object'ets egen storage (ikke KV — ét stateful binding er simplere end to), nøglet på sorteret par + dom + navnerum (`worker/src/cache-key.ts`). Målt FØR bygget: træfprocenten er beregnet til 96,9 % over 1.200 simulerede runs (langt over 20 %-grænsen), så cachen er bygget. Kun vellykket, renset modeltekst caches; fejl caches aldrig; samtidige misses på samme nøgle deles (`worker/src/concurrency.ts`), så en byge kun koster ét kald. **Sikkerhedsrunde 2:** anmodningen bærer nu KUN kanoniske id'er + dom (aldrig klient-oplyste navne/flavor/tags) — workeren genopbygger prompten fra det bundlede `content/elements.json`/`content/acts/*.json` (`worker/src/catalog.ts`); et ukendt id afvises 400 FØR budget/cache. **Sikkerhedsrunde 3:** cache-nøglens navnerum udledes nu AUTOMATISK (`cache-key.ts`s `promptNamespace()`, en deterministisk hash af selve prompten og modellen) i stedet for et manuelt versionstal (`CACHE_VERSION`), som en udvikler selv skulle huske at bumpe — en ændring i prompt ELLER model ændrer navnerummet af sig selv, uden et løfte om at huske noget. Se "Fase 2 — målte tal" for hele udregningen. | ✅ | 2026-08-12 |
+| TASK-005 | Deployment dokumenteret i `docs/deployment/live-narrator.md` (Durable Object-migration/binding, `OPENAI_API_KEY` og `IP_HASH_SALT` som secrets, sikre `[vars]`, `wrangler deploy`, `VITE_NARRATOR_URL` ved build, sådan verificeres helbred/429/503, og den hurtige nødstop) med en kort henvisning fra `README.md`. **Sikkerhedsrunde 3:** afsnit 4b omskrevet — beskriver nu den automatiske navnerumsudledning frem for en manuel version-bump-procedure. Ingen hemmelige værdier eller priser i dokumentet. | ✅ | 2026-08-12 |
+| TASK-006 | Beslut, om laget overhovedet skal udrulles. Det er **Martins beslutning**, ikke en implementeringsdetalje: laget koster penge pr. spiller, og spillet er målt komplet uden det. Alternativet — at bage videre mod N=600 og lade grammatikken tage resten — er gratis og allerede i gang. **Stadig åben** — fase 2 (inkl. sikkerhedsrunde 2 og 3's rettelser) gør laget klar til at blive slået til, den beslutter ikke, at det skal. | | |
 
 #### Fase 2 — målte tal
 
@@ -269,11 +269,10 @@ er lukket:
    der er ældre end `CACHE_MAX_AGE_MS` (30 dage); `coordinator-do.ts`s
    `alarm()`-handler sletter dem og genplanlægger sig selv (én gang i
    døgnet, `CLEANUP_INTERVAL_MS`) via de rigtige Cloudflare-alarm-API'er
-   (`storage.getAlarm`/`setAlarm`, `cf-types.ts`). Cache-nøglen har fået et
-   eksplicit versionspræfiks (`CACHE_VERSION` i `cache-key.ts`, i dag
-   `"v1"`): bump den, når `model.ts`'s prompt eller `MODEL` i
-   `wrangler.toml` ændres på en måde der gør gamle linjer forkerte — gamle
-   nøgler bliver uopslåelige med det samme, uden migrering.
+   (`storage.getAlarm`/`setAlarm`, `cf-types.ts`). Cache-nøglen fik her et
+   eksplicit versionspræfiks (`CACHE_VERSION`), som skulle bumpes manuelt
+   ved en prompt-/modelændring — **sikkerhedsrunde 3 erstattede dette
+   manuelle løfte med en automatisk udledning, se nedenfor.**
 5. **Målingerne gjort reproducerbare.** `tools/pair_frequency.ts` udvidet
    til at emittere pr.-run distinkte par+dom-nøgler (gennemsnit/95.-
    percentil/maksimum) og selve cache-træf-udregningen som checked-in
@@ -305,6 +304,60 @@ er lukket:
 7. **Ægte UTF-8 byte-længde.** `validate.ts`s `isBodyTooLarge` bruger
    `TextEncoder().encode(...).length` (rigtige bytes), ikke JS' `.length`
    (UTF-16 code-units, som undervurderer multi-byte tegn som emoji/accenter).
+
+#### Fase 2 — sikkerhedsrunde 3 (tre resterende mangler)
+
+En TREDJE sikkerhedsgennemgang, efter runde 2's syv punkter var lukket,
+fandt tre resterende mangler — igen ingen nye TASK'er, alle hærdninger af
+TASK-002-005, leveret som nye commits (aldrig amendet). Alle tre er lukket:
+
+1. **Rate limit reserveres nu FØR kroppen læses/parses.** Rate-limit-tjekket
+   boede oprindeligt som trin 1 INDE i `coordinator.ts`s `decide()` — men
+   `coordinator-do.ts`s `fetch()` læste og størrelsestjekkede allerede hele
+   kroppen (`req.text()`, `isBodyTooLarge`) FØR den nogensinde kaldte
+   `decide()`. En for stor eller misdannet krop blev derfor afvist (400)
+   uden at røre rate-limiten overhovedet — en angriber kunne sende
+   ubegrænset mange sådanne uden at ramme noget loft. Løsningen: selve
+   reservationen er flyttet ud i en ny, eksporteret
+   `reserveRateLimitSlot(ipHash, deps)` i `coordinator.ts`; `fetch()`
+   kalder den FØR `req.text()` overhovedet køres. `decide()` selv laver
+   ikke længere noget rate-limit-tjek — det er nu udelukkende opkalderens
+   ansvar. Tjekket på selve UTF-8-byte-længden (fra sikkerhedsrunde 2,
+   punkt 7) er UÆNDRET — kun REKKEFØLGEN, hvornår rate-limiten rammes i
+   forhold til kropslæsning, er flyttet. Testet med både et rent
+   `reserveRateLimitSlot()`-tjek (`tests/worker-coordinator.test.ts`) og en
+   fuld adapter-test (20 for-store forespørgsler → 400 hver, den 21. → 429,
+   budgettet urørt hele vejen; samt at misdannet JSON kun tæller ét slot,
+   ikke to) i `tests/worker-edge.test.ts`.
+2. **Pr.-IP-budgetposter ryddes nu op.** `worker/src/cleanup.ts` fik en ny,
+   ren `findStaleIpBudgetKeys(entries, now)`, der følger samme mønster som
+   de to eksisterende oprydningsfunktioner: en post er stale, hvis dens
+   gemte UTC-dato hverken er I DAG eller I GÅR — "i dag eller i går", ikke
+   kun "i dag", er en bevidst tolerance for uret mellem hvornår en post
+   blev SKREVET og hvornår alarmen tilfældigvis KØRER (en post skrevet ét
+   sekund før UTC-midnat må ikke ryddes, blot fordi alarmen kører nogle
+   sekunder inde i den nye dag). `coordinator-do.ts`s `alarm()` har fået en
+   tredje oprydningsomgang, der lister `budget:ip:*` og sletter de stale.
+   Testet både som ren funktion (inkl. uret-tolerance-tilfældet) i
+   `tests/worker-security.test.ts`, og som en rigtig `Coordinator.alarm()`-
+   test der sår i-dag/i-går/for-gamle poster og bekræfter kun de
+   for-gamle bliver slettet, i `tests/worker-edge.test.ts`.
+3. **Cache-navnerummet udledes nu automatisk.** Den manuelle
+   `CACHE_VERSION`-konstant (sikkerhedsrunde 2, punkt 4) krævede at en
+   udvikler HUSKEDE at bumpe den ved enhver prompt- eller modelændring —
+   et løfte, ikke en garanti. `cache-key.ts` fik i stedet en ny,
+   eksporteret `promptNamespace(systemPrompt, model)`: en deterministisk,
+   IKKE-kryptografisk hash (FNV-1a, 32-bit, ingen ny afhængighed) af selve
+   prompten og modellen, udregnet ÉN gang pr. Durable Object-instans
+   (`coordinator-do.ts`s `getDeps()`, med `SYSTEM` fra `model.ts` og
+   `MODEL`-varen eller den nye eksporterede `DEFAULT_MODEL`-konstant som
+   fallback). En ændring i ENTEN prompten ELLER modellen ændrer
+   navnerummet af sig selv — ingen manuel handling, ingen risiko for at
+   glemme det. `pairCacheKey()` tager nu navnerummet som en eksplicit 4.
+   parameter i stedet for at kende `CACHE_VERSION` selv. Testet: samme
+   prompt+model giver altid samme navnerum; en ændret model ELLER en
+   ændret prompt giver et andet navnerum; navnerummet er kort og
+   nøgle-venligt (`tests/worker-security.test.ts`).
 
 ### Fase 3 — Kvalitet, når stemmedommeren findes
 
@@ -366,7 +419,7 @@ er lukket:
   længere en fri beskrivelsestekst.
 - **FILE-005**: `tests/live.test.ts` — leveret/udvidet med 429/503-tests og
   (sikkerhedsrunde 2) en test af den smalle ledningsform.
-- **FILE-006** (fase 2, udvidet i sikkerhedsrunde 2): `worker/src/{limiter,
+- **FILE-006** (fase 2, udvidet i sikkerhedsrunde 2 og 3): `worker/src/{limiter,
   budget,cache-key,origin,validate,clean,concurrency,ip,store,model,
   coordinator,coordinator-do,cf-types,env,catalog,cleanup}.ts` — de rene
   beslutningsmoduler plus den tynde Cloudflare-tilpasning. `cf-types.ts` er
@@ -382,23 +435,40 @@ er lukket:
   **Nye i sikkerhedsrunde 2:** `catalog.ts` (kanonisk id → indhold, punkt
   3) og `cleanup.ts` (rene oprydningsfunktioner til rate-limit/cache-
   livscyklus, punkt 4); `ip.ts` omskrevet til KUN at læse
-  `cf-connecting-ip` ved kanten (punkt 1).
-- **FILE-007** (fase 2, tal opdateret i sikkerhedsrunde 2):
-  `tests/worker-security.test.ts` (47 tests: rate limit, globalt+pr.-IP
-  budget, cache-nøgle+version, oprindelse, validering (inkl. ægte UTF-8
-  byte-længde), env-fortolkning, katalog-opslag, oprydning, IP-hash-form),
-  `tests/worker-coordinator.test.ts` (12 tests: cache/budget/stampede/
-  rækkefølge/kanonisering) og (nyt i sikkerhedsrunde 2)
-  `tests/worker-edge.test.ts` (11 tests: at `index.ts` altid overskriver et
-  forfalsket internt hash-header, at 503 kommer uden salt/troværdig IP, og
-  at oprydningsalarmen bliver planlagt) — alle kører i root-Vitest uden en
+  `cf-connecting-ip` ved kanten (punkt 1). **Ændret i sikkerhedsrunde 3:**
+  `coordinator.ts` fik en ny eksporteret `reserveRateLimitSlot()` (rate
+  limit flyttet ud af `decide()`, punkt 1) og en `cacheNamespace` i
+  `CoordinatorConfig`; `cache-key.ts` fik `promptNamespace()` og mistede
+  den manuelle `CACHE_VERSION`-konstant (punkt 3); `model.ts` fik en
+  eksporteret `DEFAULT_MODEL`; `cleanup.ts` fik `findStaleIpBudgetKeys()`
+  (punkt 2); `coordinator-do.ts`s `fetch()` kalder nu
+  `reserveRateLimitSlot()` FØR kroppen læses, og `alarm()` fik en tredje
+  oprydningsomgang for `budget:ip:*`.
+- **FILE-007** (fase 2, tal opdateret i sikkerhedsrunde 2 og 3):
+  `tests/worker-security.test.ts` (55 tests: rate limit, globalt+pr.-IP
+  budget, cache-nøgle+automatisk navnerum, oprindelse, validering (inkl.
+  ægte UTF-8 byte-længde), env-fortolkning, katalog-opslag, oprydning
+  (rate-limit/cache/pr.-IP-budget), IP-hash-form),
+  `tests/worker-coordinator.test.ts` (14 tests: cache/budget/stampede/
+  kanonisering, samt sikkerhedsrunde 3's `reserveRateLimitSlot()`-tjek og
+  beviset for at `decide()` ikke længere rate-limiter selv) og (nyt i
+  sikkerhedsrunde 2, udvidet i sikkerhedsrunde 3)
+  `tests/worker-edge.test.ts` (14 tests: at `index.ts` altid overskriver et
+  forfalsket internt hash-header, at 503 kommer uden salt/troværdig IP, at
+  oprydningsalarmen bliver planlagt og reelt rydder alle tre slags stale
+  poster, og — sikkerhedsrunde 3 — at 20 for-store/misdannede
+  forespørgsler tæller ét rate-limit-slot hver uden at røre budgettet, og
+  at den 21. rammer selve rate-limiten) — alle kører i root-Vitest uden en
   Cloudflare-testpool, jf. kravet om at holde adapteren tynd og de rene
   moduler importerbare.
-- **FILE-008** (fase 2, udvidet i sikkerhedsrunde 2):
+- **FILE-008** (fase 2, udvidet i sikkerhedsrunde 2 og 3):
   `docs/deployment/live-narrator.md` — TASK-005, udrulningsopskriften, med
   en kort henvisning fra `README.md`. Udvidet med: obligatorisk
-  `IP_HASH_SALT`, pr.-IP dagligt loft, cache-version-bump-proceduren,
-  korrigeret Origin-forbehold, og at indholdsændringer kræver gendeploy.
+  `IP_HASH_SALT`, pr.-IP dagligt loft, korrigeret Origin-forbehold, og at
+  indholdsændringer kræver gendeploy. **Sikkerhedsrunde 3:** afsnit 4b
+  omskrevet fra en manuel cache-version-bump-procedure til en beskrivelse
+  af den automatiske navnerumsudledning; afsnit 4c nævner nu også
+  oprydning af pr.-IP-budgetposter.
 - **FILE-009** (sikkerhedsrunde 2, punkt 5): `tools/pair_frequency.ts` —
   udvidet med pr.-run distinkte par+dom-nøgler (gennemsnit/95.-percentil/
   maksimum) og selve cache-træf-udregningen (to varianter: alle møder og
@@ -429,20 +499,27 @@ er lukket:
   slags tavshed frem til den UTC-nulstilling, workeren opgav — og laget
   taler helt normalt igen, så snart den er passeret, hvilket beviser at
   503 aldrig rørte den permanente afbryder (`tests/live.test.ts`).
-- **TEST-007** (fase 2, udvidet i sikkerhedsrunde 2): De rene worker-
+- **TEST-007** (fase 2, udvidet i sikkerhedsrunde 2 og 3): De rene worker-
   moduler — rullende vindue (tillader op til loftet, afviser det næste,
   tillader igen når det ældste tidsstempel er udløbet), globalt OG pr.-IP
   daglig budget-reservation under simuleret samtidighed, cache-nøglens
-  rækkefølge-uafhængighed, dom-følsomhed og versionspræfiks,
+  rækkefølge-uafhængighed, dom-følsomhed og navnerum (nu automatisk
+  udledt af prompt+model, sikkerhedsrunde 3 punkt 3 — se TEST-017),
   oprindelsespolitik, validering af misdannet/for stort input (ægte UTF-8
   byte-længde, ikke `.length`), kanonisk id-opslag (`catalog.ts`, ukendt id
-  afvises), og oprydningskandidater (`cleanup.ts`) — testet direkte, uden
-  en Cloudflare-runtime (`tests/worker-security.test.ts`).
-- **TEST-008** (fase 2): Koordinatorens sammenspil — cache-hit reserverer
-  ikke budget, fejl caches aldrig, samtidige misses på samme nøgle deles
-  til ét kald, rate-limit håndhæves før validering og cache, og
-  misdannet/for stort input afvises før budgettet røres
-  (`tests/worker-coordinator.test.ts`).
+  afvises), og oprydningskandidater for alle tre slags poster —
+  rate-limit, cache og (sikkerhedsrunde 3, punkt 2) pr.-IP-budget —
+  (`cleanup.ts`) — testet direkte, uden en Cloudflare-runtime
+  (`tests/worker-security.test.ts`).
+- **TEST-008** (fase 2, korrigeret i sikkerhedsrunde 3): Koordinatorens
+  sammenspil — cache-hit reserverer ikke budget, fejl caches aldrig,
+  samtidige misses på samme nøgle deles til ét kald, og misdannet/for
+  stort input afvises før budgettet røres (`tests/worker-coordinator.test.ts`).
+  **Rettet i sikkerhedsrunde 3:** denne testrække påstod tidligere at
+  `decide()` selv håndhævede rate limit "før validering og budget" — det
+  er ikke længere sandt (og var netop selve hullet, punkt 1 lukkede, se
+  TEST-015): rate limit er nu udelukkende opkalderens ansvar, og
+  `decide()` alene rate-limiter ikke.
 - **TEST-009** (fase 2): `env.ts`'s fortolkning af Wrangler-vars — herunder
   det eksplicitte tilfælde `toNonNegativeInt("0", …) === 0`, altså
   TASK-005's nødstop. Skrevet efter en reel selv-fundet fejl: en tidlig
@@ -470,20 +547,46 @@ er lukket:
   klient-oplyste navne/flavor-felter ind i den model-klare krop, fordi
   `WireRequest` slet ikke har feltet (`tests/worker-security.test.ts`,
   `catalog.ts`-testene).
-- **TEST-013** (sikkerhedsrunde 2, punkt 4): Rate-limit-poster hvor ALLE
-  tidsstempler er faldet ud af vinduet, og cache-poster ældre end
-  `CACHE_MAX_AGE_MS`, findes korrekt af de rene `cleanup.ts`-funktioner; en
-  frisk post (ét tidsstempel i vinduet, eller en ung cache-post) findes
-  ALDRIG som oprydningskandidat (`tests/worker-security.test.ts`). Selve
-  DO-forbindelsen — en oprydningsalarm bliver planlagt ved første
-  forespørgsel og ikke genplantet, og `alarm()` sletter reelt de døde
-  poster via de rigtige Cloudflare storage-API'er (`delete`/`list`/
-  `getAlarm`/`setAlarm`) — er testet separat i `tests/worker-edge.test.ts`.
+- **TEST-013** (sikkerhedsrunde 2, punkt 4; udvidet i sikkerhedsrunde 3,
+  punkt 2): Rate-limit-poster hvor ALLE tidsstempler er faldet ud af
+  vinduet, og cache-poster ældre end `CACHE_MAX_AGE_MS`, findes korrekt af
+  de rene `cleanup.ts`-funktioner; en frisk post (ét tidsstempel i
+  vinduet, eller en ung cache-post) findes ALDRIG som oprydningskandidat
+  (`tests/worker-security.test.ts`). Selve DO-forbindelsen — en
+  oprydningsalarm bliver planlagt ved første forespørgsel og ikke
+  genplantet, og `alarm()` sletter reelt de døde poster via de rigtige
+  Cloudflare storage-API'er (`delete`/`list`/`getAlarm`/`setAlarm`) — er
+  testet separat i `tests/worker-edge.test.ts`.
 - **TEST-014** (sikkerhedsrunde 2, punkt 7): Et body med en rå tekstlængde
   under `LIMITS.bodyBytes`, men en ÆGTE UTF-8-byte-længde derover (mange
   multi-byte tegn), afvises 400 — beviser at tjekket bruger
   `TextEncoder().encode(...).length`, ikke JS' `.length`
   (`tests/worker-security.test.ts`).
+- **TEST-015** (sikkerhedsrunde 3, punkt 1): `reserveRateLimitSlot()`
+  tillader op til grænsen for en given IP-hash og afviser derefter med en
+  sandfærdig `retryAfterSeconds`, uafhængigt for hver IP-hash
+  (`tests/worker-coordinator.test.ts`). Adapter-niveau (den rigtige
+  `Coordinator.fetch()`): 20 for-store forespørgsler fra samme IP-hash
+  afvises 400 hver, og tæller hver ét rate-limit-slot; den 21. forespørgsel
+  rammer selve rate-limiten (429) — og INTET af de 21 forsøg rørte
+  hverken det globale eller denne IP-hashs eget budget-lager. Misdannet
+  JSON tæller tilsvarende ét slot, ikke to (ingen dobbelt-reservation), og
+  en gyldig forespørgsel efter et for-stort forsøg deler samme vindue
+  (`tests/worker-edge.test.ts`).
+- **TEST-016** (sikkerhedsrunde 3, punkt 2): `findStaleIpBudgetKeys` finder
+  poster hvis gemte UTC-dato hverken er i dag eller i går, men lader en
+  post dateret i går overleve selv når alarmen kører kort inde i den nye
+  dag (uret-tolerance), og finder ingen falske positiver når alt er i dag
+  eller i går (`tests/worker-security.test.ts`). Den rigtige
+  `Coordinator.alarm()` rydder faktisk `budget:ip:*`-poster med en for
+  gammel dato, men lader dagens og gårsdagens stå, som del af samme
+  alarm-afvikling der også rydder rate-limit og cache
+  (`tests/worker-edge.test.ts`).
+- **TEST-017** (sikkerhedsrunde 3, punkt 3): `promptNamespace(prompt, model)`
+  giver samme navnerum for samme input (deterministisk), et andet
+  navnerum når MODELLEN ændres (uændret prompt), et andet navnerum når
+  PROMPTEN ændres (uændret model), og en kort, hex-formet streng uanset
+  promptens længde (`tests/worker-security.test.ts`).
 
 ## 7. Risks & Assumptions
 

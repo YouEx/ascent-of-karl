@@ -1,6 +1,6 @@
 /**
  * Selve beslutningen (TASK-002/003/004 + sikkerhedsrunde 2 punkt 2/3
- * samlet): rullende vindue → validering → kanonisering → delt cache →
+ * samlet): validering → kanonisering → delt cache →
  * (kun ved cache-miss) globalt+pr.-IP dagligt loft → opstrømskald.
  *
  * Ren nok til at teste uden Cloudflare: `deps.store` kan være Durable
@@ -9,26 +9,41 @@
  * beslutnings-/nøgle-/loft-hjælpere ud i workermoduler, så rod-Vitest kan
  * teste dem uden at installere en Cloudflare-testpool".
  *
- * Rækkefølgen er bevidst:
- *   1. Rate limit FØRST — også foran cachen, for et cache-hit koster stadig
- *      workerressourcer, og misbrug skal stoppes før noget som helst andet
- *      arbejde (kravet: "Apply the rate limit before serving even cached
- *      responses").
- *   2. Formvalidering (`validateBody`), uden at røre budgettet.
- *   3. Kanonisering (`resolveCanonical`): et ukendt aId/bId/needId afvises
+ * Rate-limiten er BEVIDST IKKE et trin i `decide()` her (sikkerhedsrunde 3,
+ * punkt 1). Den boede oprindeligt som trin 1 inde i denne funktion, men det
+ * betød at en for stor eller misdannet krop først blev afvist (400) INDE i
+ * `validateBody` — LÆNGE efter at `coordinator-do.ts`s `fetch()` allerede
+ * havde læst/parset hele kroppen, hvilket lod rate-limiten helt omgå: en
+ * angriber kunne sende ubegrænset mange for-store forespørgsler uden
+ * nogensinde at ramme et loft. Rate-limit-reservationen er derfor flyttet
+ * til den eksporterede `reserveRateLimitSlot()` nedenfor, som
+ * `coordinator-do.ts`s `fetch()` kalder FØR den overhovedet læser
+ * anmodningens krop (`req.text()`). `decide()` her forudsætter at den
+ * kaldende kode allerede har reserveret et rate-limit-slot for denne
+ * IP-hash — den laver ikke selv det tjek.
+ *
+ * Rækkefølgen herfra er bevidst:
+ *   1. Formvalidering (`validateBody`), uden at røre budgettet.
+ *   2. Kanonisering (`resolveCanonical`): et ukendt aId/bId/needId afvises
  *      her med 400 — FØR cache-opslag og budget, jf. sikkerhedsrunde 2's
  *      krav om at et opdigtet id ikke må koste noget som helst, og ikke må
  *      kunne skabe uendeligt mange unikke cache-nøgler.
- *   4. Cache-opslag — et hit reserverer ALDRIG budget.
- *   5. Kun ved miss: tilslut et kald allerede i luften, ELLER reservér
+ *   3. Cache-opslag — et hit reserverer ALDRIG budget.
+ *   4. Kun ved miss: tilslut et kald allerede i luften, ELLER reservér
  *      BÅDE det globale og pr.-IP daglige budget, og start selv
  *      opstrømskaldet.
  *
- * Låsen (`deps.gate`) holder kun trin 1-5 sammen — den slippes, FØR det
+ * Låsen (`deps.gate`) holder kun disse trin sammen — den slippes, FØR det
  * langsomme netværkskald til modellen afventes, jf. kravet om aldrig at
- * holde en global lås hen over opstrømskaldet.
+ * holde en global lås hen over opstrømskaldet. `reserveRateLimitSlot()`
+ * bruger sin EGEN, separate `gate.run(...)`-indpakning — at to forskellige
+ * `run()`-kald for samme forespørgsel (én i `fetch()` for rate limit, én
+ * her i `decide()` for cache/budget) kan blive afbrudt af ANDRE
+ * forespørgslers gate-kald ind imellem, ændrer intet ved korrektheden: hver
+ * enkelt mutation (rullende vindue, cache, budget) er stadig atomisk i sig
+ * selv, og det er alt serialiseringen garanterer.
  *
- * Budget-rækkefølgen i trin 5 er bevidst globalt-FØR-pr.-IP: er det
+ * Budget-rækkefølgen i sidste trin er bevidst globalt-FØR-pr.-IP: er det
  * GLOBALE loft allerede tømt, er 503 den rigtige besked uanset hvilken IP
  * der spørger — alle ville blive afvist lige nu. Er der derimod plads
  * globalt, men DENNE ips egen andel er brugt, er 429 rigtigt — andre IP'er
@@ -65,6 +80,13 @@ export interface CoordinatorConfig {
    * HELE dagens globale loft. Skal være meningsfuldt MINDRE end `dailyMax`.
    */
   dailyMaxPerIp: number;
+  /**
+   * Cache-navnerummet, udledt AUTOMATISK af selve promptteksten og modellen
+   * (sikkerhedsrunde 3, punkt 3 — se `cache-key.ts`s `promptNamespace()`).
+   * Udregnet ÉN gang af `coordinator-do.ts`s `getDeps()`, ikke pr.
+   * forespørgsel.
+   */
+  cacheNamespace: string;
 }
 
 export interface CoordinatorDeps {
@@ -93,10 +115,12 @@ export type CoordinatorResponse =
 
 // Eksporteret, så `coordinator-do.ts`s oprydningsalarm kan liste præcis de
 // samme præfikser — to steder der begge selv opfandt "rl:" ville før eller
-// siden drive fra hinanden.
+// siden drive fra hinanden. `BUDGET_KEY`/`IP_BUDGET_KEY_PREFIX` er
+// eksporteret af samme grund, plus så adapter-tests (`worker-edge.test.ts`)
+// kan bevise at et afvist forsøg aldrig rørte budget-lageret.
 export const RATE_LIMIT_KEY_PREFIX = "rl:";
-const BUDGET_KEY = "budget";
-const IP_BUDGET_KEY_PREFIX = "budget:ip:";
+export const BUDGET_KEY = "budget";
+export const IP_BUDGET_KEY_PREFIX = "budget:ip:";
 export const CACHE_KEY_PREFIX = "cache:";
 
 /** Bekvemmelighed: bygger de to samtidighedsobjekter, så kaldstedet ikke skal huske det. */
@@ -118,6 +142,39 @@ export function createCoordinatorDeps(partial: {
   };
 }
 
+export interface RateLimitDecision {
+  allowed: boolean;
+  retryAfterSeconds: number;
+}
+
+/**
+ * Reserverer ét rate-limit-slot for denne IP-hash i et rullende vindue
+ * (sikkerhedsrunde 3, punkt 1). Skal kaldes af `coordinator-do.ts`s
+ * `fetch()` FØR anmodningens krop læses/parses overhovedet — ikke som et
+ * trin inde i `decide()` — netop for at ingen krop, uanset størrelse eller
+ * form, kan undgå at tælle med i denne IP-hashs vindue.
+ */
+export async function reserveRateLimitSlot(
+  ipHash: string,
+  deps: Pick<CoordinatorDeps, "store" | "now" | "config" | "gate">,
+): Promise<RateLimitDecision> {
+  return deps.gate.run(async () => {
+    const rlKey = RATE_LIMIT_KEY_PREFIX + ipHash;
+    const existingTimestamps = (await deps.store.get<number[]>(rlKey)) ?? [];
+    const rl = checkRollingWindow(
+      existingTimestamps,
+      deps.now(),
+      deps.config.rateLimitWindowMs,
+      deps.config.rateLimitMax,
+    );
+    if (!rl.allowed) {
+      return { allowed: false, retryAfterSeconds: rl.retryAfterSeconds };
+    }
+    await deps.store.put(rlKey, rl.timestamps);
+    return { allowed: true, retryAfterSeconds: 0 };
+  });
+}
+
 type Decision =
   | { kind: "reject"; response: CoordinatorResponse }
   | { kind: "hit"; text: string }
@@ -129,30 +186,14 @@ export async function decide(
   deps: CoordinatorDeps,
 ): Promise<CoordinatorResponse> {
   const decision: Decision = await deps.gate.run(async () => {
-    // 1. Rullende vindue pr. IP-hash — før alt andet.
-    const rlKey = RATE_LIMIT_KEY_PREFIX + ipHash;
-    const existingTimestamps = (await deps.store.get<number[]>(rlKey)) ?? [];
-    const rl = checkRollingWindow(
-      existingTimestamps,
-      deps.now(),
-      deps.config.rateLimitWindowMs,
-      deps.config.rateLimitMax,
-    );
-    if (!rl.allowed) {
-      return {
-        kind: "reject",
-        response: { status: 429, retryAfterSeconds: rl.retryAfterSeconds, reason: "rate limit" },
-      };
-    }
-    await deps.store.put(rlKey, rl.timestamps);
-
-    // 2. Form og grænser — ingen budget rørt.
+    // 1. Form og grænser — ingen budget rørt. (Rate limit er allerede
+    // reserveret af opkalderen, se `reserveRateLimitSlot()` ovenfor.)
     const validated = validateBody(rawBody);
     if (!validated.ok) {
       return { kind: "reject", response: { status: 400, reason: validated.reason } };
     }
 
-    // 3. Kanoniser id'er til rigtigt indhold. Et ukendt id er enten en fejl
+    // 2. Kanoniser id'er til rigtigt indhold. Et ukendt id er enten en fejl
     // i klienten eller et forsøg på at proxye vilkårlig tekst/skabe
     // uendeligt mange cache-nøgler — begge afvises her, FØR budgettet.
     const canonical = deps.resolveCanonical(validated.body);
@@ -160,20 +201,20 @@ export async function decide(
       return { kind: "reject", response: { status: 400, reason: canonical.reason } };
     }
 
-    // 4. Delt cache — et hit koster intet budget.
-    const key = pairCacheKey(canonical.body.a.id, canonical.body.b.id, canonical.body.verdict);
+    // 3. Delt cache — et hit koster intet budget.
+    const key = pairCacheKey(canonical.body.a.id, canonical.body.b.id, canonical.body.verdict, deps.config.cacheNamespace);
     const cached = await deps.store.get<CachedLine>(CACHE_KEY_PREFIX + key);
     if (cached) {
       return { kind: "hit", text: cached.text };
     }
 
-    // 5. Miss: tilslut en stime i gang, eller reservér og start selv.
+    // 4. Miss: tilslut en stime i gang, eller reservér og start selv.
     const existingInFlight = deps.inFlight.get(key);
     if (existingInFlight) {
       return { kind: "pending", promise: existingInFlight };
     }
 
-    // 5a. Globalt UTC-døgnloft (TASK-003) — den deterministiske omkostningsloft.
+    // 4a. Globalt UTC-døgnloft (TASK-003) — den deterministiske omkostningsloft.
     const globalRecord = await deps.store.get<BudgetRecord>(BUDGET_KEY);
     const globalReservation = reserveBudget(globalRecord, deps.now(), deps.config.dailyMax);
     if (!globalReservation.ok) {
@@ -187,7 +228,7 @@ export async function decide(
       };
     }
 
-    // 5b. Denne IP-hashs egen andel af samme døgn (sikkerhedsrunde 2, punkt
+    // 4b. Denne IP-hashs egen andel af samme døgn (sikkerhedsrunde 2, punkt
     // 2). Tjekkes FØR noget skrives til lager: fejler dette, må det
     // (endnu kun UDREGNEDE, ikke skrevne) globale forsøg kasseres helt —
     // ellers kunne én afvist IP stadig dræne verdens fælles budget ved at

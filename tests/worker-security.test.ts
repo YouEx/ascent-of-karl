@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { checkRollingWindow, pruneWindow } from "../worker/src/limiter";
 import { reserveBudget, secondsUntilNextUtcMidnight, utcDateKey } from "../worker/src/budget";
-import { pairCacheKey, CACHE_VERSION } from "../worker/src/cache-key";
+import { pairCacheKey, promptNamespace } from "../worker/src/cache-key";
 import { corsHeaders, isOriginAllowed, parseAllowedOrigins } from "../worker/src/origin";
 import { isBodyTooLarge, validateBody, LIMITS } from "../worker/src/validate";
 import { toNonNegativeInt, toPositiveInt } from "../worker/src/env";
 import { clientIpFromRequest, hashClientIp, isValidIpHash, INTERNAL_IP_HASH_HEADER } from "../worker/src/ip";
 import { lookupElement, lookupNeed, resolveCanonicalBody } from "../worker/src/catalog";
-import { findStaleRateLimitKeys, findExpiredCacheKeys } from "../worker/src/cleanup";
+import { findStaleRateLimitKeys, findExpiredCacheKeys, findStaleIpBudgetKeys } from "../worker/src/cleanup";
 
 /**
  * De rene workermoduler bag koordinatoren (TASK-002/003/004), testet uden
@@ -98,17 +98,50 @@ describe("budget (dagligt UTC-loft, TASK-003)", () => {
 });
 
 describe("cache-key (delt cache, TASK-004)", () => {
+  const ns = "abc12345";
+
   it("er uafhængig af parrets rækkefølge", () => {
-    expect(pairCacheKey("baer", "ler", "inert")).toBe(pairCacheKey("ler", "baer", "inert"));
+    expect(pairCacheKey("baer", "ler", "inert", ns)).toBe(pairCacheKey("ler", "baer", "inert", ns));
   });
 
   it("er følsom over for dommen — samme par, forskellig dom, forskellig nøgle", () => {
-    expect(pairCacheKey("baer", "ler", "inert")).not.toBe(pairCacheKey("baer", "ler", "clash"));
+    expect(pairCacheKey("baer", "ler", "inert", ns)).not.toBe(pairCacheKey("baer", "ler", "clash", ns));
   });
 
-  it("bærer en eksplicit versionsprefiks, så en prompt/model-ændring kan gøre gamle nøgler uopslåelige (sikkerhedsrunde 2, punkt 4)", () => {
-    expect(pairCacheKey("baer", "ler", "inert")).toBe(`${CACHE_VERSION}:baer+ler:inert`);
-    expect(pairCacheKey("baer", "ler", "inert").startsWith(`${CACHE_VERSION}:`)).toBe(true);
+  it("bærer navnerummet som præfiks", () => {
+    expect(pairCacheKey("baer", "ler", "inert", ns)).toBe(`${ns}:baer+ler:inert`);
+  });
+
+  it("er følsom over for selve navnerummet — to forskellige navnerum for samme par+dom giver forskellig nøgle", () => {
+    expect(pairCacheKey("baer", "ler", "inert", "aaaaaaaa")).not.toBe(pairCacheKey("baer", "ler", "inert", "bbbbbbbb"));
+  });
+});
+
+describe("cache-key: navnerummet udledes AUTOMATISK af prompt+model, ikke et manuelt versionstal (sikkerhedsrunde 3, punkt 3)", () => {
+  it("samme prompt og samme model giver altid samme navnerum (deterministisk, stabilt)", () => {
+    const a = promptNamespace("Du er fortælleren.", "gpt-4o-mini");
+    const b = promptNamespace("Du er fortælleren.", "gpt-4o-mini");
+    expect(a).toBe(b);
+  });
+
+  it("skifter modellen, skifter navnerummet — selv med UÆNDRET prompt", () => {
+    const a = promptNamespace("Du er fortælleren.", "gpt-4o-mini");
+    const b = promptNamespace("Du er fortælleren.", "gpt-4o");
+    expect(a).not.toBe(b);
+  });
+
+  it("skifter selve promptteksten, skifter navnerummet — selv med UÆNDRET model", () => {
+    const a = promptNamespace("Du er fortælleren.", "gpt-4o-mini");
+    const b = promptNamespace("Du er fortælleren, en anelse ændret.", "gpt-4o-mini");
+    expect(a).not.toBe(b);
+  });
+
+  it("giver en kort, url-/nøgle-venlig streng (ikke hele prompten gentaget)", () => {
+    const langPrompt = "x".repeat(2000);
+    const navn = promptNamespace(langPrompt, "gpt-4o-mini");
+    expect(navn.length).toBeLessThanOrEqual(16);
+    expect(navn.length).toBeGreaterThan(0);
+    expect(/^[0-9a-f]+$/.test(navn)).toBe(true);
   });
 });
 
@@ -365,5 +398,34 @@ describe("cleanup (lager-livscyklus, sikkerhedsrunde 2 punkt 4)", () => {
       ["cache:v1:c+d:clash", { text: "gammel", createdAt: now - maxAgeMs - 1000 }],
     ]);
     expect(findExpiredCacheKeys(entries, now, maxAgeMs)).toEqual(["cache:v1:c+d:clash"]);
+  });
+
+  it("finder pr.-IP budgetposter hvis gemte UTC-dato hverken er i dag eller i går (sikkerhedsrunde 3, punkt 2)", () => {
+    const now = Date.UTC(2026, 5, 15, 12, 0, 0); // 2026-06-15 middag UTC
+    const entries = new Map<string, { date: string }>([
+      ["budget:ip:idag", { date: "2026-06-15" }],
+      ["budget:ip:igaar", { date: "2026-06-14" }],
+      ["budget:ip:foergaars", { date: "2026-06-13" }],
+      ["budget:ip:gammel", { date: "2026-05-01" }],
+    ]);
+    expect(findStaleIpBudgetKeys(entries, now).sort()).toEqual(["budget:ip:foergaars", "budget:ip:gammel"]);
+  });
+
+  it("tolererer en post skrevet lige før UTC-midnat: 'i går' overlever selv når alarmen kører kort inde i den nye dag", () => {
+    // Alarmen kører ved 00:00:05 UTC den 2026-06-15 — en post skrevet
+    // ét sekund før midnat (altså dateret 2026-06-14) må IKKE ryddes med
+    // det samme, for den er reelt kun sekunder gammel.
+    const alarmKørerVed = Date.UTC(2026, 5, 15, 0, 0, 5);
+    const entries = new Map<string, { date: string }>([["budget:ip:lige-foer-midnat", { date: "2026-06-14" }]]);
+    expect(findStaleIpBudgetKeys(entries, alarmKørerVed)).toEqual([]);
+  });
+
+  it("finder ingen stale pr.-IP-poster når alt er i dag eller i går", () => {
+    const now = Date.UTC(2026, 5, 15, 12, 0, 0);
+    const entries = new Map<string, { date: string }>([
+      ["budget:ip:a", { date: "2026-06-15" }],
+      ["budget:ip:b", { date: "2026-06-14" }],
+    ]);
+    expect(findStaleIpBudgetKeys(entries, now)).toEqual([]);
   });
 });

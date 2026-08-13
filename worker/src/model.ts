@@ -17,6 +17,15 @@ export interface ModelEnv {
   MODEL?: string;
 }
 
+/**
+ * Modellen, hvis `MODEL`-varen mangler i `wrangler.toml`. Eksporteret (ikke
+ * kun en streng-literal inde i `callUpstreamOpenAI`), så
+ * `coordinator-do.ts` kan udlede cache-navnerummet (sikkerhedsrunde 3,
+ * punkt 3, se `cache-key.ts`s `promptNamespace`) af PRÆCIS den samme
+ * effektive model — ét sted, der ikke kan drive fra det andet.
+ */
+export const DEFAULT_MODEL = "gpt-4o-mini";
+
 /** Hvad hver dom betyder. Ordret de samme definitioner som skribenterne fik. */
 export const DOMME: Record<string, string> = {
   plausible:
@@ -92,7 +101,7 @@ export async function callUpstreamOpenAI(
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: env.MODEL ?? "gpt-4o-mini",
+        model: env.MODEL ?? DEFAULT_MODEL,
         messages: [
           { role: "system", content: SYSTEM },
           { role: "user", content: buildUserPrompt(body) },

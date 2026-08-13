@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   createCoordinatorDeps,
   decide,
+  reserveRateLimitSlot,
   type UpstreamResult,
   type CoordinatorConfig,
   type CoordinatorDeps,
@@ -57,6 +58,7 @@ function ryddeligKonfiguration(overrides: Partial<CoordinatorConfig> = {}): Coor
     rateLimitMax: 1000,
     dailyMax: 1000,
     dailyMaxPerIp: 1000,
+    cacheNamespace: "test-namespace",
     ...overrides,
   };
 }
@@ -328,21 +330,66 @@ describe("koordinator: kanonisering afviser ukendte id'er FØR budget (sikkerhed
   });
 });
 
-describe("koordinator: rækkefølgen af kontroller", () => {
-  it("rate limit rammer FØR validering og budget nogensinde røres", async () => {
-    const callUpstream = vi.fn(async (): Promise<UpstreamResult> => ({ ok: true, text: "unused" }));
-    const deps = nyeDeps({ callUpstream, config: ryddeligKonfiguration({ rateLimitMax: 1 }) });
-    const sammeIp = ipN(13);
+describe("koordinator: rate limit reserveres FØR noget af kroppen læses (sikkerhedsrunde 3, punkt 1)", () => {
+  // Sikkerhedsrunde 3, punkt 1 flyttede selve rate-limit-reservationen UD af
+  // `decide()` og ind i `coordinator-do.ts`s `fetch()` — FØR anmodningens
+  // krop overhovedet læses/parses. Ellers kunne en for stor eller misdannet
+  // krop undgå rate-limiten fuldstændig, fordi den blev afvist (400) LÆNGE
+  // før `decide()`s (tidligere) interne rate-limit-tjek nogensinde så den.
+  // `decide()` selv laver derfor IKKE længere sit eget rate-limit-tjek —
+  // det er nu udelukkende `reserveRateLimitSlot()`s og opkalderens ansvar.
+  // Selve den fulde kæde (for-stort/misdannet body tæller ét slot, uden
+  // dobbelt-reservation) er testet på adapter-niveau i
+  // `tests/worker-edge.test.ts`, fordi det kræver den rigtige
+  // `Coordinator.fetch()`-rækkefølge, ikke kun `decide()` alene.
 
-    const first = await decide(nyBody(), sammeIp, deps);
-    expect(first.status).toBe(200);
+  it("reserveRateLimitSlot tillader op til grænsen for denne IP-hash, og afviser derefter med en sandfærdig retry-after", async () => {
+    const deps = nyeDeps({
+      callUpstream: vi.fn(async (): Promise<UpstreamResult> => ({ ok: true, text: "unused" })),
+      config: ryddeligKonfiguration({ rateLimitMax: 2 }),
+    });
+    const ip = ipN(20);
 
-    // Andet kald fra SAMME ip, selv med en fuldstændig ugyldig krop, skal
-    // stoppes af rate limit (429), ikke af validering (400).
-    const second = await decide({ not: "valid" }, sammeIp, deps);
-    expect(second.status).toBe(429);
+    const first = await reserveRateLimitSlot(ip, deps);
+    expect(first.allowed).toBe(true);
+    const second = await reserveRateLimitSlot(ip, deps);
+    expect(second.allowed).toBe(true);
+    const third = await reserveRateLimitSlot(ip, deps);
+    expect(third.allowed).toBe(false);
+    expect(third.retryAfterSeconds).toBeGreaterThan(0);
   });
 
+  it("reserveRateLimitSlot holder hver IP-hash i sin egen spand — en anden IP er upåvirket af at denne er brugt op", async () => {
+    const deps = nyeDeps({
+      callUpstream: vi.fn(async (): Promise<UpstreamResult> => ({ ok: true, text: "unused" })),
+      config: ryddeligKonfiguration({ rateLimitMax: 1 }),
+    });
+
+    const brugtOp = await reserveRateLimitSlot(ipN(22), deps);
+    const stadigAfvist = await reserveRateLimitSlot(ipN(22), deps);
+    const andenIp = await reserveRateLimitSlot(ipN(23), deps);
+    expect(brugtOp.allowed).toBe(true);
+    expect(stadigAfvist.allowed).toBe(false);
+    expect(andenIp.allowed).toBe(true);
+  });
+
+  it("decide() laver ikke længere sit eget rate-limit-tjek — det tjek er flyttet til opkalderen", async () => {
+    // Selv med et rateLimitMax på 1, tillader ÉT RENT decide()-kald (uden
+    // en forudgående reserveRateLimitSlot) mere end én forespørgsel fra
+    // samme IP — fordi rate-limiten nu udelukkende håndhæves FØR decide()
+    // kaldes (se `coordinator-do.ts`s `fetch()`).
+    const callUpstream = vi.fn(async (): Promise<UpstreamResult> => ({ ok: true, text: "unused" }));
+    const deps = nyeDeps({ callUpstream, config: ryddeligKonfiguration({ rateLimitMax: 1, dailyMax: 10 }) });
+    const ip = ipN(21);
+
+    const first = await decide(nyBody("inert", "a1", "b1"), ip, deps);
+    const second = await decide(nyBody("inert", "a2", "b2"), ip, deps);
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+  });
+});
+
+describe("koordinator: rækkefølgen af kontroller", () => {
   it("ugyldigt input afvises med 400 uden at røre det daglige budget", async () => {
     const callUpstream = vi.fn(async (): Promise<UpstreamResult> => ({ ok: true, text: "unused" }));
     const deps = nyeDeps({ callUpstream, config: ryddeligKonfiguration({ dailyMax: 1 }) });

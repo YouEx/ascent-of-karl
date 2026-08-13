@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import worker from "../worker/src/index";
 import { Coordinator, CACHE_MAX_AGE_MS, CLEANUP_INTERVAL_MS } from "../worker/src/coordinator-do";
-import { CACHE_KEY_PREFIX } from "../worker/src/coordinator";
-import { pairCacheKey } from "../worker/src/cache-key";
+import { BUDGET_KEY, CACHE_KEY_PREFIX, IP_BUDGET_KEY_PREFIX } from "../worker/src/coordinator";
+import { pairCacheKey, promptNamespace } from "../worker/src/cache-key";
+import { SYSTEM, DEFAULT_MODEL } from "../worker/src/model";
 import { INTERNAL_IP_HASH_HEADER, hashClientIp } from "../worker/src/ip";
 import type {
   DurableObjectId,
@@ -94,6 +95,15 @@ function nyCoordinator(env: Record<string, string | undefined> = {}) {
  * `callUpstreamOpenAI` ville gøre ved et cache-miss — ingen betalte/eksterne
  * kald må forekomme under test).
  */
+/**
+ * Navnerummet `Coordinator` selv vil udlede (sikkerhedsrunde 3, punkt 3):
+ * `nyCoordinator()` sætter ikke `MODEL`, så den rigtige koordinator falder
+ * tilbage til `DEFAULT_MODEL` — denne konstant skal matche PRÆCIS det, for
+ * at `saetCacheHit()` kan forudfylde en nøgle koordinatoren selv ville slå
+ * op under.
+ */
+const TEST_NAMESPACE = promptNamespace(SYSTEM, DEFAULT_MODEL);
+
 async function saetCacheHit(
   storage: FakeStorage,
   aId: string,
@@ -101,7 +111,7 @@ async function saetCacheHit(
   verdict: string,
   text: string,
 ): Promise<void> {
-  await storage.put(CACHE_KEY_PREFIX + pairCacheKey(aId, bId, verdict), { text, createdAt: Date.now() });
+  await storage.put(CACHE_KEY_PREFIX + pairCacheKey(aId, bId, verdict, TEST_NAMESPACE), { text, createdAt: Date.now() });
 }
 
 function lavAnmodning(headers: Record<string, string>, body?: unknown): Request {
@@ -315,16 +325,111 @@ describe("Coordinator: lager-livscyklus (sikkerhedsrunde 2, punkt 4 — 'no magi
     // En frisk cache-post.
     await storage.put("cache:v1:frisk+par:inert", { text: "frisk replik", createdAt: now });
 
+    // Pr.-IP-budgetposter (sikkerhedsrunde 3, punkt 2): en for-gammel post
+    // (hverken i dag eller i går) skal ryddes; dagens og gårsdagens skal stå.
+    const idagNøgle = `${IP_BUDGET_KEY_PREFIX}idag`;
+    const igårNøgle = `${IP_BUDGET_KEY_PREFIX}igaar`;
+    const gammelNøgle = `${IP_BUDGET_KEY_PREFIX}gammel`;
+    const iGaar = new Date(now - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const forLaengeSiden = new Date(now - 5 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    await storage.put(idagNøgle, { date: new Date(now).toISOString().slice(0, 10), count: 3 });
+    await storage.put(igårNøgle, { date: iGaar, count: 7 });
+    await storage.put(gammelNøgle, { date: forLaengeSiden, count: 1 });
+
     await coordinator.alarm();
 
     expect(await storage.get("rl:dødIp")).toBeUndefined();
     expect(await storage.get("rl:friskIp")).toBeDefined();
     expect(await storage.get("cache:v1:gammel+par:inert")).toBeUndefined();
     expect(await storage.get("cache:v1:frisk+par:inert")).toBeDefined();
+    expect(await storage.get(idagNøgle)).toBeDefined();
+    expect(await storage.get(igårNøgle)).toBeDefined();
+    expect(await storage.get(gammelNøgle)).toBeUndefined();
 
     const nyAlarm = await storage.getAlarm();
     expect(nyAlarm).not.toBeNull();
     expect(nyAlarm!).toBeGreaterThan(now);
     expect(nyAlarm!).toBeLessThanOrEqual(now + CLEANUP_INTERVAL_MS + 1000);
+  });
+});
+
+describe("Coordinator: rate limit reserveres FØR kroppen læses/parses (sikkerhedsrunde 3, punkt 1)", () => {
+  it("20 for-store forespørgsler tæller hver ét rate-limit-slot (400); den 21. rammer selve rate-limiten (429) — intet budget er rørt", async () => {
+    const { coordinator, storage } = nyCoordinator({ RATE_LIMIT_MAX: "20", DAILY_MAX_UPSTREAM_CALLS: "1000" });
+    const hash = "c".repeat(64);
+    // Rå tekst, ægte ASCII (1 byte/tegn): et body langt over LIMITS.bodyBytes
+    // (6000) i RIGTIGE bytes — ikke bare en påstået Content-Length.
+    const forStortBody = "x".repeat(7_000);
+    const lavForStorForespørgsel = () =>
+      new Request("https://internal/", {
+        method: "POST",
+        headers: { "content-type": "application/json", [INTERNAL_IP_HASH_HEADER]: hash },
+        body: forStortBody,
+      });
+
+    for (let i = 0; i < 20; i++) {
+      const res = await coordinator.fetch(lavForStorForespørgsel());
+      expect(res.status).toBe(400);
+    }
+
+    const rammerRateLimit = await coordinator.fetch(lavForStorForespørgsel());
+    expect(rammerRateLimit.status).toBe(429);
+    expect(rammerRateLimit.headers.get("retry-after")).toBeTruthy();
+
+    // Intet af de 21 forsøg nåede nogensinde frem til budget-trinnet —
+    // hverken det globale eller denne IP-hashs egen andel.
+    expect(await storage.get(BUDGET_KEY)).toBeUndefined();
+    expect(await storage.get(`${IP_BUDGET_KEY_PREFIX}${hash}`)).toBeUndefined();
+  });
+
+  it("misdannet JSON tæller ligeledes ét rate-limit-slot, ikke to — rate-limiten og 400'et deler samme forsøg", async () => {
+    const { coordinator, storage } = nyCoordinator({ RATE_LIMIT_MAX: "2" });
+    const hash = "d".repeat(64);
+    const lavMisdannetForespørgsel = () =>
+      new Request("https://internal/", {
+        method: "POST",
+        headers: { "content-type": "application/json", [INTERNAL_IP_HASH_HEADER]: hash },
+        body: "{ dette er ikke gyldig json",
+      });
+
+    const first = await coordinator.fetch(lavMisdannetForespørgsel());
+    const second = await coordinator.fetch(lavMisdannetForespørgsel());
+    expect(first.status).toBe(400);
+    expect(second.status).toBe(400);
+
+    // Tredje forsøg: rate-limit-vinduet (2) er brugt op af de to ovenstående
+    // — hvis de fejlagtigt IKKE havde talt (dobbelt-fritaget), ville dette
+    // stadig være et 400; i stedet er det 429, hvilket beviser at hvert
+    // misdannet forsøg talte som PRÆCIS ét slot.
+    const third = await coordinator.fetch(lavMisdannetForespørgsel());
+    expect(third.status).toBe(429);
+    expect(await storage.get(BUDGET_KEY)).toBeUndefined();
+  });
+
+  it("gyldige forespørgsler efter en for-stor forespørgsel deler stadig det SAMME rate-limit-vindue (ingen dobbelt-reservation)", async () => {
+    const { coordinator, storage } = nyCoordinator({ RATE_LIMIT_MAX: "2" });
+    const hash = "e".repeat(64);
+    await saetCacheHit(storage, "sten", "pind", "inert", "Karl frowns at the stone and the stick.");
+
+    const forStor = await coordinator.fetch(
+      new Request("https://internal/", {
+        method: "POST",
+        headers: { "content-type": "application/json", [INTERNAL_IP_HASH_HEADER]: hash },
+        body: "x".repeat(7_000),
+      }),
+    );
+    expect(forStor.status).toBe(400);
+
+    // Vinduet (2) har nu ét slot tilbage — hvis det for-store forsøg
+    // fejlagtigt havde talt to gange (én gang i decide(), én gang i den
+    // nye reservation), ville dette allerede være 429.
+    const gyldig = await coordinator.fetch(
+      new Request("https://internal/", {
+        method: "POST",
+        headers: { "content-type": "application/json", [INTERNAL_IP_HASH_HEADER]: hash },
+        body: JSON.stringify({ aId: "sten", bId: "pind", verdict: "inert" }),
+      }),
+    );
+    expect(gyldig.status).toBe(200);
   });
 });

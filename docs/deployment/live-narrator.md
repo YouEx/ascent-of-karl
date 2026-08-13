@@ -113,33 +113,49 @@ workeren gendeployes** (`npx wrangler deploy` igen, ingen ny migration
 nødvendig), ellers kender den gamle worker-instans ikke de nye id'er, eller
 serverer den gamle beskrivelse for et ændret element.
 
-### 4b. Cache-version — sådan bumpes den
+### 4b. Cache-navnerum — udledes automatisk, ingen manuel handling
 
-Cache-nøglen (`worker/src/cache-key.ts`) har et eksplicit versionspræfiks,
-`CACHE_VERSION` (i dag `"v1"`). Ret den (fx `"v1"` → `"v2"`) og gendeploy,
-når som helst:
+Cache-nøglen (`worker/src/cache-key.ts`) har et navnerum som præfiks.
+Siden sikkerhedsrunde 3 (punkt 3) udledes dette navnerum **automatisk** af
+`promptNamespace(SYSTEM, model)` — en deterministisk, ikke-kryptografisk
+hash af selve promptteksten (`worker/src/model.ts`s `SYSTEM`) og den
+konfigurerede model (`MODEL`-varen, eller `DEFAULT_MODEL` hvis den
+mangler). Der er intet versionstal at huske at bumpe:
 
-- prompten i `worker/src/model.ts` (`SYSTEM` eller `buildUserPrompt`)
-  ændres på en måde der gør gamle cachede linjer forkerte i tone eller
-  fakta, eller
-- `MODEL`-varen i `wrangler.toml` ændres til en anden model.
+- ændres prompten i `worker/src/model.ts` (`SYSTEM`), ændres navnerummet
+  af sig selv ved næste deploy;
+- ændres `MODEL`-varen i `wrangler.toml`, ændres navnerummet ligeledes af
+  sig selv;
+- er begge uændrede, er navnerummet stabilt, og eksisterende cache-poster
+  fortsætter med at blive ramt.
 
-Et bump gør ALLE gamle cache-nøgler uopslåelige med det samme — ingen
-migrering, intet eksplicit slet nødvendigt. De fysiske, nu-uopslåelige
-poster rømmes senere af den daglige oprydningsalarm (afsnit 4c), men er
-allerede uskadelige fra første forespørgsel efter bumpet. En version, der
-aldrig bumpes ved en prompt-/modelændring, er lige så forkert som en cache,
-der aldrig ryddes.
+En deploy skaber en FRISK Durable Object-instans (eller genstarter den
+eksisterende kode), så navnerummet genudregnes netop dér — gamle
+cache-nøgler under et andet navnerum bliver uopslåelige med det samme,
+uden migrering og uden at nogen skal huske at redigere en konstant. De
+fysiske, nu-uopslåelige poster rømmes senere af den daglige
+oprydningsalarm (afsnit 4c), men er allerede uskadelige fra første
+forespørgsel efter deploy.
 
 ### 4c. Lagerlivscyklus (oprydning)
 
 Durable Object storage har ingen indbygget TTL. `Coordinator` sætter selv
 en daglig alarm (`worker/src/coordinator-do.ts`s `ensureCleanupScheduled`/
-`alarm()`) der rydder: rate-limit-poster hvor ALLE tidsstempler er faldet
-ud af det rullende vindue, og cache-poster ældre end 30 dage
-(`CACHE_MAX_AGE_MS`). Dette kræver ingen handling ved deploy — alarmen
-planlægger sig selv ved første forespørgsel til objektet, og genplanlægger
-sig selv for evigt, uanset om en given omgang går helt godt.
+`alarm()`) der rydder tre ting:
+
+- rate-limit-poster hvor ALLE tidsstempler er faldet ud af det rullende
+  vindue;
+- cache-poster ældre end 30 dage (`CACHE_MAX_AGE_MS`);
+- pr.-IP-budgetposter (sikkerhedsrunde 2, punkt 2) hvis gemte UTC-dato
+  hverken er i dag eller i går (sikkerhedsrunde 3, punkt 2) — "i dag eller
+  i går" er en bevidst tolerance for uret mellem hvornår en post blev
+  skrevet og hvornår alarmen tilfældigvis kører, så en post skrevet få
+  sekunder før UTC-midnat ikke rømmes, blot fordi alarmen kører få
+  sekunder inde i den nye dag.
+
+Dette kræver ingen handling ved deploy — alarmen planlægger sig selv ved
+første forespørgsel til objektet, og genplanlægger sig selv for evigt,
+uanset om en given omgang går helt godt.
 
 ## 5. Deploy
 

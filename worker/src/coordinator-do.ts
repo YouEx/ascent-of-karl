@@ -21,17 +21,20 @@ import type { DurableObjectState } from "./cf-types";
 import {
   createCoordinatorDeps,
   decide,
+  reserveRateLimitSlot,
   RATE_LIMIT_KEY_PREFIX,
   CACHE_KEY_PREFIX,
+  IP_BUDGET_KEY_PREFIX,
   type CachedLine,
   type CoordinatorDeps,
   type CoordinatorResponse,
 } from "./coordinator";
 import { toNonNegativeInt, toPositiveInt } from "./env";
 import { INTERNAL_IP_HASH_HEADER, isValidIpHash } from "./ip";
-import { findExpiredCacheKeys, findStaleRateLimitKeys } from "./cleanup";
+import { findExpiredCacheKeys, findStaleIpBudgetKeys, findStaleRateLimitKeys } from "./cleanup";
 import { isBodyTooLarge } from "./validate";
-import { callUpstreamOpenAI, type ModelEnv } from "./model";
+import { promptNamespace } from "./cache-key";
+import { callUpstreamOpenAI, DEFAULT_MODEL, SYSTEM, type ModelEnv } from "./model";
 
 export interface CoordinatorEnv extends ModelEnv {
   /** Sekunder i det rullende vindue (TASK-002). Se wrangler.toml for den målte default. */
@@ -64,11 +67,13 @@ const DEFAULT_DAILY_MAX_UPSTREAM_CALLS_PER_IP = 165;
 /**
  * Hvor længe en cache-post må ligge, før oprydningen fjerner den
  * (sikkerhedsrunde 2, punkt 4). Indholdet BLIVER ikke forkert med tiden —
- * samme par+dom+version giver stadig samme kategori af fiasko — men et
+ * samme par+dom+navnerum giver stadig samme kategori af fiasko — men et
  * ubegrænset lager er en ubegrænset regning. En prompt- eller
- * modelændring rammes ikke af denne grænse; den håndteres i stedet ved at
- * bumpe `CACHE_VERSION` (se `cache-key.ts`), som gør gamle nøgler
- * uopslåelige med det samme, uden at vente på denne alder.
+ * modelændring rammes IKKE af denne grænse og behøver ikke vente på den:
+ * cache-navnerummet (sikkerhedsrunde 3, punkt 3, se `cache-key.ts`s
+ * `promptNamespace()`) udledes AUTOMATISK af selve prompten og modellen, så
+ * en ændring i den ene eller den anden gør gamle nøgler uopslåelige med det
+ * samme, uden at nogen skal huske at bumpe noget som helst.
  *
  * Eksporteret (ikke kun en modul-privat konstant), så tests kan sætte en
  * gammel post PRÆCIS uden for grænsen uden at gætte tallet.
@@ -119,6 +124,10 @@ export class Coordinator {
 
   private getDeps(): CoordinatorDeps {
     if (!this.deps) {
+      // Udledt ÉN gang pr. objekt-instans (ikke pr. forespørgsel) —
+      // prompten og modellen ændrer sig kun ved en gendeploy, som skaber en
+      // FRISK instans alligevel (sikkerhedsrunde 3, punkt 3).
+      const cacheNamespace = promptNamespace(SYSTEM, this.env.MODEL ?? DEFAULT_MODEL);
       this.deps = createCoordinatorDeps({
         store: this.state.storage,
         callUpstream: (body) => callUpstreamOpenAI(body, this.env),
@@ -131,6 +140,7 @@ export class Coordinator {
             this.env.DAILY_MAX_UPSTREAM_CALLS_PER_IP,
             DEFAULT_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
           ),
+          cacheNamespace,
         },
       });
     }
@@ -159,8 +169,10 @@ export class Coordinator {
    * Kaldes af Cloudflare, når den planlagte alarm ringer (sikkerhedsrunde
    * 2, punkt 4: "Durable Object storage has no magic TTL" — dette ER den
    * eksplicitte sletning/alarm, kravet beder om). Rydder døde
-   * rate-limit-poster og for gamle cache-poster, planlægger så næste
-   * omgang, uanset om denne omgang selv gik helt godt.
+   * rate-limit-poster, for gamle cache-poster, og (sikkerhedsrunde 3,
+   * punkt 2) pr.-IP-budgetposter hvis gemte UTC-dato hverken er i dag eller
+   * i går — planlægger så næste omgang, uanset om denne omgang selv gik
+   * helt godt.
    */
   async alarm(): Promise<void> {
     const deps = this.getDeps();
@@ -175,6 +187,11 @@ export class Coordinator {
       for (const key of findExpiredCacheKeys(cacheEntries, now, CACHE_MAX_AGE_MS)) {
         await this.state.storage.delete(key);
       }
+
+      const ipBudgetEntries = await this.state.storage.list<{ date: string }>({ prefix: IP_BUDGET_KEY_PREFIX });
+      for (const key of findStaleIpBudgetKeys(ipBudgetEntries, now)) {
+        await this.state.storage.delete(key);
+      }
     } finally {
       // Planlæg NÆSTE oprydning, selvom denne omgang fejlede halvvejs — én
       // dårlig omgang må ikke stoppe alle fremtidige for evigt.
@@ -182,14 +199,20 @@ export class Coordinator {
     }
   }
 
+  /** Bygger det færdige HTTP-svar — ét sted, så `fetch()`s tidlige
+   * afvisninger (405/503/429 før kroppen overhovedet læses) og den sene,
+   * `decide()`-afledte afvisning bygger deres `Response` PRÆCIS ens. */
+  private toHttpResponse(status: number, body: unknown, retryAfterSeconds?: number): Response {
+    const headers: Record<string, string> = { "content-type": "application/json" };
+    if (retryAfterSeconds !== undefined) headers["retry-after"] = String(retryAfterSeconds);
+    return new Response(JSON.stringify(body), { status, headers });
+  }
+
   async fetch(req: Request): Promise<Response> {
     await this.ensureCleanupScheduled();
 
     if (req.method !== "POST") {
-      return new Response(JSON.stringify({ error: "POST only" }), {
-        status: 405,
-        headers: { "content-type": "application/json" },
-      });
+      return this.toHttpResponse(405, { error: "POST only" });
     }
 
     // Identiteten er allerede fastslået ved kanten (`index.ts`) — her læses
@@ -199,38 +222,38 @@ export class Coordinator {
     // objektet gætter ALDRIG en identitet i stedet — det fejler lukket.
     const ipHash = req.headers.get(INTERNAL_IP_HASH_HEADER);
     if (!isValidIpHash(ipHash)) {
-      return new Response(JSON.stringify({ error: "missing or invalid identity" }), {
-        status: 503,
-        headers: { "content-type": "application/json" },
-      });
+      return this.toHttpResponse(503, { error: "missing or invalid identity" });
     }
 
-    // Størrelsen tjekkes på råteksten, FØR parsing — et kæmpe body skal ikke
-    // engang JSON.parse'es, endsige røre budgettet.
+    // Rate limit reserveres FØR noget som helst af kroppen læses/parses
+    // (sikkerhedsrunde 3, punkt 1). Ellers kunne en for stor eller
+    // misdannet krop undgå rate-limiten fuldstændig — den ville blive
+    // afvist (400) LÆNGE før noget rate-limit-tjek nogensinde så
+    // forespørgslen, og en angriber kunne sende ubegrænset mange sådanne
+    // uden at ramme noget loft. Se `coordinator.ts`s `reserveRateLimitSlot`.
+    const rateLimit = await reserveRateLimitSlot(ipHash, this.getDeps());
+    if (!rateLimit.allowed) {
+      return this.toHttpResponse(429, { error: "rate limited", reason: "rate limit" }, rateLimit.retryAfterSeconds);
+    }
+
+    // Størrelsen tjekkes på råteksten, FØR parsing — et kæmpe body skal
+    // ikke engang JSON.parse'es, endsige røre budgettet. Rate-limit-slottet
+    // ovenfor er ALLEREDE brugt af netop dette forsøg — der reserveres IKKE
+    // endnu et slot her eller længere nede, uanset hvad der sker herfra.
     const rawText = await req.text();
     if (isBodyTooLarge(rawText)) {
-      return new Response(JSON.stringify({ error: "body too large" }), {
-        status: 400,
-        headers: { "content-type": "application/json" },
-      });
+      return this.toHttpResponse(400, { error: "body too large" });
     }
 
     let parsed: unknown;
     try {
       parsed = JSON.parse(rawText);
     } catch {
-      return new Response(JSON.stringify({ error: "bad json" }), {
-        status: 400,
-        headers: { "content-type": "application/json" },
-      });
+      return this.toHttpResponse(400, { error: "bad json" });
     }
 
     const result = await decide(parsed, ipHash, this.getDeps());
     const { status, body, retryAfterSeconds } = responseFor(result);
-
-    const headers: Record<string, string> = { "content-type": "application/json" };
-    if (retryAfterSeconds !== undefined) headers["retry-after"] = String(retryAfterSeconds);
-
-    return new Response(JSON.stringify(body), { status, headers });
+    return this.toHttpResponse(status, body, retryAfterSeconds);
   }
 }
