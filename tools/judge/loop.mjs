@@ -269,14 +269,27 @@ export async function runJudgeLoop({
   }
 
   if (!ledger.stopReason) ledger.stopReason = STOP.MAX_ITERATIONS;
-  // 2. anmeldelse, blokerer 4: 12 ægte accepterede iterationer, der løber
-  // tør for loft, er IKKE et nederlag på linje med "intet virkede nogensinde"
-  // — det er et delvist resultat, der bevarede reel fremgang. Kun MAX_ITERATIONS
-  // med mindst én accept bliver "partial"; en no-accept-streak forbliver
-  // "defeat", selv efter en tidligere accept, fordi sløjfen reelt gik i stå.
+  // Udfalds-matrix (stopReason × mindst én accept?) → outcome. 2. anmeldelse,
+  // blokerer 4 + opfølgning:
+  //
+  //   SUCCESS                                       → "success"  (alle anmodede regioner bestod)
+  //   MAX_ITERATIONS        + acceptedCount ≥ 1      → "partial"  (loftet nået, men reel fremgang bevaret)
+  //   MAX_ITERATIONS        + acceptedCount = 0      → "defeat"   (loftet nået, intet virkede — kan kun ske ved --max < 3)
+  //   NO_ACTIONABLE_TOKENS  + acceptedCount ≥ 1       → "partial"  (blokeret af asset/struktur-fund, men reel fremgang bevaret)
+  //   NO_ACTIONABLE_TOKENS  + acceptedCount = 0       → "defeat"   (blokeret fra første iteration, intet nåede at virke)
+  //   NO_ACCEPT_STREAK      (uanset acceptedCount)    → ALTID "defeat" (tre afviste i træk er i sig selv beviset på,
+  //                                                                     at sløjfen sidder fast NU — en tidligere accept
+  //                                                                     ændrer ikke på det, jf. opgavens eksplicitte krav)
+  //   CRASHED                                        → "crashed"  (sat direkte i catch-blokken ovenfor, aldrig her)
+  //
+  // 12 ægte accepterede iterationer, der løber tør for loft, er IKKE et
+  // nederlag på linje med "intet virkede nogensinde" — det samme gælder en
+  // kørsel, der blev accepteret og BAGEFTER blokerede på kun-asset/struktur-
+  // fund. Begge bevarede reel fremgang og fortjener "partial", ikke "defeat".
   const acceptedCount = ledger.iterations.filter((i) => i.verdict === "accepted").length;
+  const stopsWithPartialCredit = ledger.stopReason === STOP.MAX_ITERATIONS || ledger.stopReason === STOP.NO_ACTIONABLE_TOKENS;
   ledger.outcome = ledger.stopReason === STOP.SUCCESS ? "success"
-    : (ledger.stopReason === STOP.MAX_ITERATIONS && acceptedCount > 0) ? "partial"
+    : (stopsWithPartialCredit && acceptedCount > 0) ? "partial"
     : "defeat";
   ledger.finishedAt = now();
   ledger.finalScores = scores;
@@ -340,7 +353,16 @@ export async function createCapture({
     }
 
     async function dispose() {
-      await browser.close();
+      // Opfølgning til 2. anmeldelse, blokerer 3: dette er den NORMALE
+      // oprydning efter en vellykket kørsel, ikke fejlstien ovenfor — men
+      // samme regel gælder. En fejlende browser.close() må ALDRIG forhindre
+      // server.kill() i at køre, og må ALDRIG selv boble videre: dispose()
+      // kaldes typisk fra main()s `finally`, og et kast dér ville overskrive
+      // en fejl, der allerede er undervejs ud af den tilsvarende `try`
+      // (JavaScripts finally-semantik — se safeDispose/tests for beviset).
+      await browser.close().catch((err) => {
+        console.error(`kunne ikke lukke browseren pænt under oprydning: ${err.message}`);
+      });
       server.kill();
     }
 
@@ -349,6 +371,25 @@ export async function createCapture({
     if (browser) await browser.close().catch(() => {}); // sekundær lukkefejl må ALDRIG skjule den oprindelige
     server.kill();
     throw err;
+  }
+}
+
+/**
+ * Kalder `disposeFn` (typisk `createCapture`s `dispose`) og sluger enhver
+ * fejl derfra — logger den, kaster den ALDRIG videre. Beregnet til at stå i
+ * `main()`s `finally`: et kast dér ville, uanset denne funktion, overskrive
+ * en fejl der allerede er undervejs ud af den tilsvarende `try` — det er
+ * selve JavaScript-sprogets semantik, ikke noget denne kode kan vælge om.
+ * Den eneste måde at undgå det på er at sikre, at selve oprydningen aldrig
+ * kaster (2. anmeldelse, opfølgning — se tests/judge-loop.test.ts's
+ * "safeDispose" for et bevis på nøjagtig den try/finally-interaktion).
+ */
+export async function safeDispose(disposeFn) {
+  if (!disposeFn) return;
+  try {
+    await disposeFn();
+  } catch (err) {
+    console.error(`oprydning efter kørslen fejlede: ${err.message}`);
   }
 }
 
@@ -396,7 +437,11 @@ async function main() {
     // nederlag (2. anmeldelse, blokerer 4). Kun "defeat" er en fejlkode.
     if (ledger.outcome === "defeat") process.exitCode = 1;
   } finally {
-    if (dispose) await dispose();
+    // safeDispose SLUGER enhver oprydningsfejl (logget, ikke kastet) —
+    // ellers ville et kast her, i en finally, overskrive en fejl der
+    // allerede er undervejs ud af try-blokken ovenfor (2. anmeldelse,
+    // opfølgning).
+    await safeDispose(dispose);
   }
 }
 

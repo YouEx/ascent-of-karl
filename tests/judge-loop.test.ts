@@ -6,7 +6,7 @@
 // Se plan/architecture-visual-judge-1.md TASK-024/025/026, CON-001/002/003.
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 // @ts-expect-error — værktøjet er ren JS uden typedeklaration.
-import { STOP, allRegionsPassing, resolveMaxIterations, decideStop, runJudgeLoop, createCapture } from "../tools/judge/loop.mjs";
+import { STOP, allRegionsPassing, resolveMaxIterations, decideStop, runJudgeLoop, createCapture, safeDispose } from "../tools/judge/loop.mjs";
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, readdirSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -283,6 +283,34 @@ describe("runJudgeLoop — fuld orkestrering, altid injicerede afhængigheder", 
     expect(q.items[0].fix.assetId).toBe("UI-chip-glow");
   });
 
+  it("delvist udfald, ikke nederlag: en tidligere accept bevares, selvom sløjfen BAGEFTER blokerer på kun-asset/struktur-fund (2. anmeldelse, opfølgning)", async () => {
+    const s0 = scoresFor("title", 0.7, { chip: region(0.7, 0.9) });
+    const sAcceptedUp = scoresFor("title", 0.8, { chip: region(0.8, 0.9) });
+    const captureAndScore = vi.fn()
+      .mockResolvedValueOnce(s0)           // baseline
+      .mockResolvedValueOnce(sAcceptedUp); // iter 1 → accepteret
+    let n = 0;
+    const getFindingsFn = vi.fn().mockImplementation(async () => {
+      n += 1;
+      // iter 1: et rigtigt token-fund, der accepteres. iter 2: kun et
+      // asset-fund — intet at anvende, sløjfen blokerer i stedet for at
+      // spinde. Modsat testen ovenfor er der her ALLEREDE reel fremgang.
+      if (n === 1) return { screen: "title", findings: [tokenFinding("--t1", 3)] };
+      return { screen: "title", findings: [assetFinding()] };
+    });
+
+    const ledger = await runJudgeLoop(baseOptions({ captureAndScore, getFindingsFn }));
+    expect(ledger.iterations.map((i: any) => i.verdict)).toEqual(["accepted", "blocked"]);
+    expect(ledger.stopReason).toBe(STOP.NO_ACTIONABLE_TOKENS);
+    // Kernen i denne test: NO_ACTIONABLE_TOKENS med mindst én accept er
+    // "partial", nøjagtig som MAX_ITERATIONS med mindst én accept — begge
+    // bevarede reel fremgang, og "defeat" ville skjule den bag samme dom
+    // som "intet virkede nogensinde" (se udfalds-matrixen i loop.mjs).
+    expect(ledger.outcome).toBe("partial");
+    // blokerer-iterationen genoptager ALDRIG — kun baseline + iter 1's after.
+    expect(captureAndScore).toHaveBeenCalledTimes(2);
+  });
+
   it("samme afviste fund foreslået igen næste iteration bliver sprunget over af ruteren og udløser no-actionable-tokens (den statiske fixture-vej)", async () => {
     const before = scoresFor("title", 0.7, { chip: region(0.7, 0.9) });
     const afterReject = scoresFor("title", 0.6, { chip: region(0.6, 0.9) }); // regression → afvist
@@ -498,5 +526,69 @@ describe("createCapture — opsætning og oprydning ved fejl (2. anmeldelse, blo
     await dispose();
     expect(closed).toHaveBeenCalledTimes(1);
     expect(killed).toHaveBeenCalledTimes(1);
+  });
+
+  it("dispose() på en VELLYKKET opsætning: en fejlende browser.close() logges, men dræber STADIG serveren og kaster ikke selv videre (2. anmeldelse, opfølgning)", async () => {
+    const killed = vi.fn();
+    const closeError = new Error("close fejlede under normal oprydning");
+    const startServerFn = vi.fn().mockResolvedValue({ kill: killed });
+    const launchBrowser = vi.fn().mockResolvedValue({ close: vi.fn().mockRejectedValue(closeError), newPage: vi.fn() });
+    const loadRegistryFn = vi.fn().mockResolvedValue({ screens: [{ id: "title", regions: [] }] });
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const { dispose } = await createCapture({ runDir: "x", screenIds: ["title"], startServerFn, launchBrowser, loadRegistryFn });
+    // dispose() SELV må aldrig afvise/kaste — ellers overskriver den en
+    // allerede undervejs-fejl, hvis den kaldes fra et finally (se
+    // safeDispose-testene nedenfor for selve den interaktion).
+    await expect(dispose()).resolves.toBeUndefined();
+    expect(killed).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+
+    consoleErrorSpy.mockRestore();
+  });
+});
+
+describe("safeDispose — main()s oprydning må ALDRIG overskrive kørslens egen fejl (2. anmeldelse, opfølgning)", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("kalder disposeFn og sluger dens fejl stille (logget, ikke kastet videre)", async () => {
+    const disposeFn = vi.fn().mockRejectedValue(new Error("luk-fejl"));
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(safeDispose(disposeFn)).resolves.toBeUndefined();
+    expect(disposeFn).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("er et no-op uden fejl, når disposeFn lykkes", async () => {
+    const disposeFn = vi.fn().mockResolvedValue(undefined);
+    await expect(safeDispose(disposeFn)).resolves.toBeUndefined();
+    expect(disposeFn).toHaveBeenCalledTimes(1);
+  });
+
+  it("er et no-op, når der slet ingen disposeFn er (opsætningen fejlede, før dispose blev tildelt)", async () => {
+    await expect(safeDispose(undefined)).resolves.toBeUndefined();
+  });
+
+  it("bevarer den OPRINDELIGE fejl fra en kørsel, selvom oprydningen bagefter OGSÅ fejler — nøjagtig samme try/finally-mønster som main()", async () => {
+    const disposeFn = vi.fn().mockRejectedValue(new Error("oprydningsfejl"));
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    // Dette ER main()s mønster (let dispose; try { … } finally { await
+    // safeDispose(dispose); }) — et kast i en finally-blok overskriver
+    // ellers ubetinget et kast fra selve try-blokken i JavaScript.
+    async function simulerMain() {
+      try {
+        throw new Error("kørselsfejl");
+      } finally {
+        await safeDispose(disposeFn);
+      }
+    }
+
+    await expect(simulerMain()).rejects.toThrow("kørselsfejl");
+    expect(disposeFn).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
   });
 });
