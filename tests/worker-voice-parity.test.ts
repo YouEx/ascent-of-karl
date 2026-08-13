@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import fixture from "./fixtures/voice-parity-fixture.json";
+import fixtureSource from "./fixtures/voice-parity-fixture.json?raw";
 import voiceProfile from "../worker/src/generated/voice-profile.json";
 import { createScorer, type VoiceProfile, type Source } from "../worker/src/voice/scorer";
 
@@ -62,6 +63,27 @@ describe("stemmedommer-paritet: Python facit vs. TS-port (TASK-007)", () => {
         typedFixture.counts.pairs +
         typedFixture.counts.synthetic,
     );
+  });
+
+  it("serialiserer kontinuerte dimensioner kanonisk på tværs af Python-versioner", () => {
+    const dimensions = [
+      "wordLength",
+      "sentenceCount",
+      "wordCount",
+      "vocabulary",
+      "presentTense",
+      "punctuation",
+    ].join("|");
+    const values = [
+      ...fixtureSource.matchAll(
+        new RegExp(`"(?:${dimensions})":\\s*-?\\d+(?:\\.(\\d+))?`, "g"),
+      ),
+    ];
+    expect(values.length).toBeGreaterThan(0);
+    const longestFraction = Math.max(
+      ...values.map((match) => match[1]?.length ?? 0),
+    );
+    expect(longestFraction).toBeLessThanOrEqual(12);
   });
 
   it("matcher hardRejects og overall (±1e-4) for HVER eneste case i fixturen", () => {

@@ -58,6 +58,7 @@ from judge import (  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "tests" / "fixtures" / "voice-parity-fixture.json"
+FIXTURE_DECIMALS = 12
 
 
 def _entry(id_: str, text: str, *, source: str, fingerprint: dict[str, Any]) -> dict[str, Any]:
@@ -67,7 +68,15 @@ def _entry(id_: str, text: str, *, source: str, fingerprint: dict[str, Any]) -> 
         "source": source,
         "text": result["text"],
         "hardRejects": result["hardRejects"],
-        "dimensions": result["dimensions"],
+        # Python-versioner kan repræsentere den samme IEEE-754-beregning med
+        # forskel i sidste bit (fx ...5313 vs. ...5314). Fixturen sammenlignes
+        # byte-for-byte i validate.py, mens TS-pariteten kun kræver 1e-4.
+        # Tolv decimaler bevarer derfor langt mere præcision end testen bruger
+        # og gør samtidig eksporten kanonisk på tværs af Python 3.9/3.12.
+        "dimensions": {
+            name: round(value, FIXTURE_DECIMALS)
+            for name, value in result["dimensions"].items()
+        },
         "overall": result["overall"],
         "presentShareDecidable": result["presentShareDecidable"],
     }
