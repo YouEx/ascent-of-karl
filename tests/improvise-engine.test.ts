@@ -11,10 +11,23 @@ import { loadContent } from "../src/content";
 import type {
   ActDef,
   ChallengeDef,
+  CombineOutcome,
   ContentBundle,
   ElementDef,
   ProblemDef,
 } from "../src/core/types";
+
+type AttemptCapableEngine = Engine & {
+  attempt?: (
+    a: string,
+    b: string,
+    copy?: { name: string; flavor: string },
+  ) => CombineOutcome;
+  enhanceImprovisedCopy?: (
+    id: string,
+    copy: { name: string; flavor: string },
+  ) => ElementDef | undefined;
+};
 
 function element(
   id: string,
@@ -207,6 +220,114 @@ describe("Engine.improvise — atomisk tur", () => {
     expect(engine.getState().flags).toEqual([]);
     expect(engine.getState().act).toBe(1);
     expect(engine.getState().ended).toBeNull();
+  });
+
+  describe("Engine.attempt — canonical først, ellers improvisation", () => {
+    it("vælger en tilgængelig canonical opskrift og bruger præcis ét forsøg", () => {
+      const engine = new Engine(loadContent()) as AttemptCapableEngine;
+
+      expect(typeof engine.attempt).toBe("function");
+      if (!engine.attempt) return;
+      const outcome = engine.attempt("sten", "sten", {
+        name: "Must be ignored",
+        flavor: "Network copy must never replace a canonical discovery.",
+      });
+
+      expect(outcome).toMatchObject({
+        kind: "discovery",
+        element: { id: "gnister", origin: "canon" },
+      });
+      expect(engine.getState().attempts).toBe(1);
+      expect(engine.getState().improvisedElements).toEqual([]);
+    });
+
+    it("opretter deterministisk fallback med valgfri copy-override i samme ene tur", () => {
+      const engine = new Engine(testContent(false)) as AttemptCapableEngine;
+      const fallback = buildFallbackElement(fire, berries);
+
+      expect(typeof engine.attempt).toBe("function");
+      if (!engine.attempt) return;
+      const outcome = engine.attempt("fire", "berries", {
+        name: "Ember berries",
+        flavor: "Karl warms the berries and calls the result a method.",
+      });
+
+      expect(outcome.kind).toBe("improvised");
+      if (outcome.kind !== "improvised") return;
+      expect(outcome.element).toEqual({
+        ...fallback,
+        name: "Ember berries",
+        flavor: "Karl warms the berries and calls the result a method.",
+      });
+      expect(engine.getState().attempts).toBe(1);
+      expect(engine.getState().improvisedElements).toEqual([outcome.element]);
+    });
+  });
+
+  describe("Engine.enhanceImprovisedCopy — sen copy er kun copy", () => {
+    it("opdaterer det stabile element uden at ændre mekanik eller duplikere id", () => {
+      const engine = new Engine(testContent(false)) as AttemptCapableEngine;
+      const made = engine.improvise("fire", "berries");
+      expect(made.kind).toBe("improvised");
+      if (made.kind !== "improvised") return;
+      const before = engine.getState().improvisedElements[0]!;
+      const mechanicsBefore = {
+        ...before,
+        name: undefined,
+        flavor: undefined,
+      };
+
+      expect(typeof engine.enhanceImprovisedCopy).toBe("function");
+      if (!engine.enhanceImprovisedCopy) return;
+      const enhanced = engine.enhanceImprovisedCopy(before.id, {
+        name: "Ember berries",
+        flavor: "Karl warms the berries and calls the result a method.",
+      });
+
+      expect(enhanced?.id).toBe(before.id);
+      expect(enhanced?.name).toBe("Ember berries");
+      expect(enhanced?.flavor).toContain("warms the berries");
+      expect({
+        ...enhanced,
+        name: undefined,
+        flavor: undefined,
+      }).toEqual(mechanicsBefore);
+      expect(engine.getState().improvisedElements).toHaveLength(1);
+      expect(engine.availableElements().filter((entry) => entry.id === before.id)).toHaveLength(1);
+    });
+
+    it("bevarer forbedret copy gennem save/load og rører aldrig canonical elementer", () => {
+      const engine = new Engine(testContent(false)) as AttemptCapableEngine;
+      const made = engine.improvise("fire", "berries");
+      expect(made.kind).toBe("improvised");
+      if (made.kind !== "improvised") return;
+      expect(typeof engine.enhanceImprovisedCopy).toBe("function");
+      if (!engine.enhanceImprovisedCopy) return;
+
+      engine.enhanceImprovisedCopy(made.element.id, {
+        name: "Ember berries",
+        flavor: "Karl warms the berries and calls the result a method.",
+      });
+      expect(
+        engine.enhanceImprovisedCopy("fire", {
+          name: "Forged fire",
+          flavor: "This must never replace canonical content.",
+        }),
+      ).toBeUndefined();
+
+      const restored = new Engine(
+        testContent(false),
+        deserialize(serialize(engine.getState(), "2026-08-13T14:00:00Z")),
+      );
+      expect(restored.element(made.element.id)).toMatchObject({
+        id: made.element.id,
+        name: "Ember berries",
+        flavor: "Karl warms the berries and calls the result a method.",
+        kind: made.element.kind,
+        traits: made.element.traits,
+      });
+      expect(restored.element("fire").name).toBe("fire");
+    });
   });
 
   describe("Engine — challenge-kredit før endingvalg", () => {

@@ -675,6 +675,20 @@ img.problem-icon {
               inset 0 0 0 4px var(--tile-groove),
               inset 0 0 0 1px var(--ochre), var(--shadow-paper);
 }
+.element.is-improvised {
+  outline: 1px dashed var(--ochre-ink);
+  outline-offset: -7px;
+}
+.element.is-improvised.is-selected {
+  outline-style: solid;
+}
+.invention-tag {
+  color: var(--ochre-ink);
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  font-weight: 600;
+  line-height: 1;
+}
 /* Samme element i begge slots (sten + sten) */
 .element.is-selected-twice::before {
   content: "×2";
@@ -748,6 +762,50 @@ img.problem-icon {
 #grid-empty {
   color: var(--ink-soft); text-align: center;
   font-family: var(--font-display); font-style: italic;
+}
+
+/* Copy er et ikke-blokerende lag: status ligger ved værkstedet, ikke i en modal. */
+#improvise-status-host {
+  position: fixed;
+  left: 0;
+  bottom: calc(var(--dock-h) + var(--safe-b) + 0.35rem);
+  z-index: 29;
+  width: 100dvw;
+  padding-inline: var(--pad);
+  pointer-events: none;
+}
+.improvise-status {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.38rem 0.65rem;
+  color: var(--ink-warm-soft);
+  background: var(--parchment);
+  border: 1px dashed var(--dashed);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-paper);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  text-align: center;
+}
+.improvise-status[hidden] { display: none; }
+.improvise-status.is-loading::before {
+  content: "";
+  display: inline-block;
+  width: 1.8rem;
+  margin-right: 0.45rem;
+  border-top: 1px dashed var(--ochre-ink);
+  vertical-align: middle;
+  transform-origin: left;
+  animation: invention-ink var(--dur-celebrate) var(--ease-out) infinite alternate;
+}
+.improvise-status.is-ready,
+.improvise-status.is-accepted { color: var(--ochre-ink); }
+.improvise-status.is-fallback,
+.improvise-status.is-rejected { border-color: var(--ink-warm-soft); }
+@keyframes invention-ink {
+  from { transform: scaleX(0.35); opacity: 0.45; }
+  to { transform: scaleX(1); opacity: 1; }
 }
 
 /* ---------- Dock: værkstedet i tommelfinger-zonen ---------- */
@@ -1033,6 +1091,89 @@ img.chip-glyph {
   display: block;
   max-width: 26px; max-height: 26px; width: auto; height: auto;
   object-fit: contain;
+}
+
+.book-inventions {
+  margin: 0 1rem 0.65rem;
+  padding: 0.75rem 0 0;
+  border-top: 1px dashed var(--dashed);
+}
+.inventions-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.inventions-heading h3 {
+  margin: 0;
+  color: var(--ink-warm);
+  font-size: 1rem;
+}
+.inventions-heading > span {
+  color: var(--label-ink);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+.invention-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.45rem;
+}
+.invention-chip {
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.6rem;
+  color: var(--ink-warm);
+  background: var(--tile);
+  border: 1px dashed var(--dashed);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  cursor: pointer;
+}
+.invention-chip:hover,
+.invention-chip.active {
+  border-color: var(--ochre-ink);
+  background: var(--ochre-tint);
+}
+.invention-chip > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  font-family: var(--font-display);
+}
+.invention-chip small,
+.invention-label {
+  color: var(--ochre-ink);
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.invention-glyph {
+  flex: none;
+  max-width: 30px;
+  max-height: 30px;
+}
+.inventions-empty {
+  max-width: var(--measure);
+  margin: 0;
+  color: var(--ink-warm-soft);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+.invention-entry {
+  padding: 0.55rem;
+  border: 1px dashed var(--dashed);
+  border-radius: var(--radius-sm);
+}
+.invention-entry .invention-label {
+  margin: 0 0 0.15rem;
 }
 
 #timeline-toggle {
@@ -1761,7 +1902,7 @@ body.overlay-open { overflow: hidden; }
 }
 .card-emoji {
   font-size: 3.6rem; position: relative; z-index: 2;
-  animation: pop var(--dur-celebrate) var(--ease-spring);
+  animation: pop var(--dur-celebrate) var(--ease-spring); /* impeccable-disable-line bounce-easing: DESIGN.md §6 kræver fjederfølelse til fund */
 }
 /* Belønningskortet viser genstanden stort. Kilden er 128 px, så den skaleres
    op her — det bærer et malet motiv med bløde kanter, men ikke meget mere. */
@@ -1842,6 +1983,16 @@ img.card-glyph {
   50% { box-shadow: 0 0 0 3px var(--ochre-tint), var(--shadow-lift); }
 }
 .card-flavor { margin: 0.35rem 0 0.6rem; font-family: var(--font-display); }
+.invention-card {
+  border-style: dashed;
+  border-color: var(--ochre-ink);
+}
+.invention-card .invention-stage {
+  border-block: 1px dashed var(--dashed);
+}
+.invention-card .card-kicker {
+  color: var(--ochre-ink);
+}
 
 @keyframes pop {
   0% { transform: scale(0.3); opacity: 0; }
@@ -1858,6 +2009,7 @@ img.card-glyph {
 @media (prefers-reduced-motion: reduce) {
   .card-emoji, .card-rays, .card-burst i, .card-halo,
   .tier-unique, .title-art img, .ribbons path { animation: none; }
+  .improvise-status.is-loading::before { animation: none; transform: none; }
   .card-burst { display: none; }
   /* Sjældenheden skal stadig kunne aflæses — bare uden bevægelse */
   .tier-unique { box-shadow: 0 0 0 3px var(--ochre-tint), var(--shadow-lift); }
@@ -1945,6 +2097,101 @@ img.card-glyph {
 .trophy.locked { opacity: 0.45; }
 .trophy small { color: var(--ink-soft); }
 
+/* ---------- Mobil: én visuel rude, kompakt værksted ---------- */
+@media (max-width: 819px) {
+  header {
+    flex-wrap: wrap;
+    column-gap: 0.5rem;
+    row-gap: 0.2rem;
+    padding-inline: var(--pad);
+  }
+  header .mark {
+    width: 56px;
+    height: 48px;
+  }
+  header h1 {
+    flex: 1 1 8rem;
+  }
+  #age {
+    margin-right: 0;
+    font-size: 1.1rem;
+    gap: 0.35rem;
+  }
+  #age::before {
+    width: 16px;
+    height: 17px;
+  }
+  .header-actions {
+    flex: 1 0 100%;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  .header-actions .icon-btn {
+    width: var(--tap);
+    height: var(--tap);
+  }
+  #narrator {
+    top: 7rem;
+  }
+  #tools {
+    height: auto;
+    flex-wrap: wrap;
+  }
+  #search {
+    flex: 1 0 100%;
+    min-width: 0;
+  }
+  .chip-btn {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-width: 0;
+    padding-inline: 2.6rem 0.75rem;
+    background-position: 1rem center, 0 0;
+    font-size: 1rem;
+  }
+  #dock {
+    width: 100dvw;
+    max-width: 100dvw;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr) 118px;
+    gap: 0.25rem;
+    padding-inline: 0.35rem;
+  }
+  .slot {
+    min-width: 0;
+    min-height: 68px;
+    padding: 0.3rem;
+    justify-content: center;
+    text-align: center;
+  }
+  .slot.filled {
+    padding-left: 0.3rem;
+  }
+  .slot-empty {
+    align-items: center;
+  }
+  .slot-empty b {
+    font-size: 0.78rem;
+  }
+  .slot-empty i {
+    display: none;
+  }
+  .plus {
+    width: 40px;
+    height: 68px;
+  }
+  #combine {
+    width: 118px;
+    height: 72px;
+    font-size: 1.05rem;
+  }
+  #improvise-status-host {
+    bottom: calc(var(--dock-h) + var(--safe-b) + 0.35rem);
+  }
+  #book-panel {
+    width: 100dvw;
+    max-width: 100dvw;
+  }
+}
 
 /* ---------- Desktop: bogen inline, dock i flow ---------- */
 @media (min-width: 820px) {
@@ -1973,7 +2220,15 @@ img.card-glyph {
   #book-panel { order: 3; margin-top: 17px; }
   #problems { order: 4; margin-top: 18px; }
   #dock { order: 5; margin-top: 12.5px; }  /* 15 - 2,5: de udskårne problemikoner gjorde chip-rækken 3,5 px højere */
-  #tools { order: 6; position: static; margin-top: 21px; }  /* 21 - 5: kontrollen fylder nu hele rammens 54 px og skal starte på y=708 */
+  #improvise-status-host {
+    order: 6;
+    position: static;
+    width: auto;
+    padding: 0;
+    margin-top: 0.45rem;
+    transform: none;
+  }
+  #tools { order: 7; position: static; margin-top: 21px; }  /* 21 - 5: kontrollen fylder nu hele rammens 54 px og skal starte på y=708 */
   /* Målt kortpitch i referencen: søjlerne begynder på 2, 148, 292, 441, 588,
      736 og 882 — altså 146,7 px pitch med 129 px kort. Vores var 141/119, og
      forskellen stablede sig til 31 px på syvende søjle, en tredjedel af et
@@ -1981,7 +2236,7 @@ img.card-glyph {
      flade måler 86 px mod de øvriges 112), og det skal vores også være:
      7x129 + 6x17,7 = 1009 px i en 978 px bred region. */
   #grid {
-    order: 7; margin-top: 23px;
+    order: 8; margin-top: 23px;
     grid-template-columns: repeat(7, var(--element-card-width));
     column-gap: 17.7px;
     row-gap: 17px;
@@ -1998,7 +2253,7 @@ img.card-glyph {
     flex: 1;
     min-height: 0;
   }
-  #grid-empty { order: 8; }
+  #grid-empty { order: 9; }
 
   /* Målt i referencen: versalhøjden er 28 px mod vores 17 ved 1.5rem.
      Titlen er skærmens største typografiske element og bar en fjerdedel af

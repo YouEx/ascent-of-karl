@@ -4,6 +4,11 @@ import type { TimelineNode } from "../core/timeline";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import type { RarityInfo } from "../core/rarity";
 import { artUrl, glyphHTML } from "./art";
+import {
+  partitionChronicleEntries,
+  renderInventionEntry,
+  renderInventionsSection,
+} from "./improvise-view";
 import { activeScenario } from "./scenario";
 import { scenarioTimelineOpen } from "./scenario-config";
 
@@ -41,6 +46,7 @@ export class BookView {
   constructor(
     private engine: Engine,
     private container: HTMLElement,
+    private readonly improvisationsEnabled = false,
   ) {
     this.rarity = computeRarity(engine.content);
     this.selectedAct = engine.currentAct().act;
@@ -49,6 +55,7 @@ export class BookView {
       <div id="book-tabs"></div>
       <div id="book-entry"></div>
       <div id="book-chips"></div>
+      ${improvisationsEnabled ? '<div id="book-inventions"></div>' : ""}
       <button id="timeline-toggle" aria-expanded="false"></button>
       <div id="timeline-wrap" hidden></div>`;
     container
@@ -75,12 +82,18 @@ export class BookView {
       // Åbn bogen på nyeste opdagelse i akten, hvis der er en
       const discoveredInAct = this.engine
         .availableElements()
-        .filter((e) => !e.base && e.act === this.selectedAct);
+        .filter(
+          (e) =>
+            !e.base &&
+            e.act === this.selectedAct &&
+            e.origin !== "improvised",
+        );
       this.selectedNode = discoveredInAct.at(-1)?.id ?? null;
     }
     this.renderTabs(currentAct);
     this.renderEntry();
     this.renderChips();
+    this.renderInventions();
     this.renderTimelineSection();
   }
 
@@ -106,10 +119,11 @@ export class BookView {
     const chips = this.container.querySelector<HTMLElement>("#book-chips")!;
     chips.innerHTML = "";
     if (activeScenario()?.blankChronicle) return;
-    const discovered = this.engine
-      .availableElements()
-      .filter((e) => !e.base && e.act === this.selectedAct);
-    for (const def of discovered) {
+    const { canonical } = partitionChronicleEntries(
+      this.engine.availableElements(),
+      this.selectedAct,
+    );
+    for (const def of canonical) {
       const btn = document.createElement("button");
       btn.className = `chip ${def.id === this.selectedNode ? "active" : ""}`;
       btn.title = def.name;
@@ -145,6 +159,10 @@ export class BookView {
       return;
     }
     const def = this.engine.element(this.selectedNode);
+    if (def.origin === "improvised") {
+      entry.innerHTML = renderInventionEntry(def);
+      return;
+    }
     const mood = def.karlMood ? MOOD_LABELS[def.karlMood] : undefined;
     // Sjældenheden skal kunne genfindes senere, ikke kun ses i fundets øjeblik
     const tier = this.rarity.get(def.id)?.tier ?? "common";
@@ -157,6 +175,27 @@ export class BookView {
         ${mood ? `<p class="mood">${mood}</p>` : ""}
       </div>
     </div>`;
+  }
+
+  private renderInventions(): void {
+    if (!this.improvisationsEnabled) return;
+    const host =
+      this.container.querySelector<HTMLElement>("#book-inventions");
+    if (!host) return;
+    host.innerHTML = renderInventionsSection(
+      this.engine.availableElements(),
+      this.selectedNode,
+      true,
+      this.selectedAct,
+    );
+    for (const button of host.querySelectorAll<HTMLButtonElement>(
+      "[data-invention-id]",
+    )) {
+      button.addEventListener("click", () => {
+        this.selectedNode = button.dataset.inventionId ?? null;
+        this.render();
+      });
+    }
   }
 
   private renderTimelineSection(): void {
@@ -238,7 +277,7 @@ export class BookView {
         }
         const def = this.engine.element(n.id);
         const url = artUrl(def.id);
-        // glyphHTML() returnerer <img>/<span> — ugyldigt i SVG. Samme
+        // glyphHTML() returnerer HTML-billede/span — ugyldigt i SVG. Samme
         // fallback-logik, egen markup: <image> når malet, ellers <text>.
         const glyph = url
           ? `<image class="glyph-art" href="${url}"

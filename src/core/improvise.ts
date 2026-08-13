@@ -8,6 +8,12 @@ import type {
 
 export const MAX_IMPROVISED_DEPTH = 3;
 
+/** Den eneste del et valgfrit copy-lag må ændre. */
+export interface ImproviseCopy {
+  name: string;
+  flavor: string;
+}
+
 const TRAIT_ORDER: readonly ElementTrait[] = [
   "hard",
   "soft",
@@ -348,5 +354,17 @@ export function buildFallbackElement(
     terminal: depth === MAX_IMPROVISED_DEPTH,
     ...deriveTags(a, b),
     flavor,
+  };
+}
+
+/** Copy-override uden adgang til id, taxonomy, progression eller rettigheder. */
+export function withImprovisedCopy(
+  element: ElementDef,
+  copy: ImproviseCopy,
+): ElementDef {
+  return {
+    ...element,
+    name: copy.name,
+    flavor: copy.flavor,
   };
 }

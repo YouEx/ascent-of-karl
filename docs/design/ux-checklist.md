@@ -97,6 +97,10 @@ kontrollerer for hver især:
 | `focus-restore` | Fokus vender tilbage til udløseren |
 | `aria` | `role="dialog"` + `aria-modal` + tilgængeligt navn |
 | `scroll-lock` | Baggrunden scroller ikke |
+| `no-horizontal-scroll` | Spillets mobilrude udvider aldrig layoutet ud over visual viewport |
+| `dock-in-viewport` | Det faste værksted holder sig inden for mobilruden |
+| `copy-status-in-viewport` | Den valgfrie improvisationsstatus er læsbar i mobilruden |
+| `copy-status-above-dock` | Status ligger over værkstedet og spærrer ikke slots/Combine |
 
 Terminale overlejringer (slutskærmen) undtages fra lukke-checks, men skal
 stadig bestå fokus- og aria-checks.

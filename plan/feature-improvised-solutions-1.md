@@ -51,12 +51,17 @@ tags: [feature, architecture, engine, narrator, content, infrastructure]
 > synkront og uden netværk; der findes ikke længere et legitimt flow, hvor en
 > model klassificerer et element og fodrer gameplay-tags ind i motoren.
 >
-> **Fase 3's server-copyhalvdel er leveret som kilde, men er slukket.**
+> **Fase 3's server-copyhalvdel og klient er leveret som kilde, men slukket.**
 > `TASK-016`-`TASK-018` og `TASK-021` er leveret under den frosne
 > integrationskontrakt nedenfor; serverhalvdelen af `TASK-019` og `TASK-029`
-> er leveret. Der er ingen klient, ingen `VITE_IMPROVISE_URL`, ingen secrets,
-> intet deploy og ingen trafik. Fortællerens dom, UI og balanceringen mangler
-> fortsat. Kun `TASK-026` i fase 4 afhænger af narrationsplanens fase 5/6
+> er leveret. `TASK-015`, `TASK-020` og `TASK-025` er nu også leveret:
+> `Engine.attempt()` vælger canon før improvisation i én transition,
+> `src/ui/improvise-client.ts` prefetcher copy uden await, og bogen holder
+> Karls opfindelser ude af den historiske tidslinje. Hele spillerfladen er
+> fortsat gated af `VITE_IMPROVISE_ENABLED === "true"`; deploy-workflowet
+> sætter hverken det flag eller `VITE_IMPROVISE_URL`, så der er ingen trafik.
+> `TASK-019`'s klient-cap, fortællerens domme og balanceringen er fortsat åbne.
+> Kun `TASK-026` i fase 4 afhænger af narrationsplanens fase 5/6
 > (stemmedommer, turøkonomi, se DEP-004).
 
 Spillets sjoveste indhold findes allerede: **mudderkage** (mudder + bær) mætter Karl, og **klyngen** (nabo + skind) holder ham varm. Begge er mærket `spor: "komisk"`. Ideen om at løse en alvorlig nød på en latterlig måde er ikke ny — den er spillets bedste greb. Den er bare begrænset til de absurditeter, forfatteren nåede at forestille sig på forhånd.
@@ -139,7 +144,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 | TASK-012 | Deterministisk engelsk fallback-copy pr. regel plus stabilt, kollisionsfrit og rækkefølgeuafhængigt id af det ordnede forældrepar. | ✅ | 2026-08-13 |
 | TASK-013 | Improvisationsdybde er præcist `max(parent.depth)+1`. Dybde 3 eksisterer og markeres terminal; et forsøg på dybde 4 afvises efter præcis én tur. | ✅ | 2026-08-13 |
 | TASK-014 | `Engine.improvise()` bruger verdikt-motoren som portvagt: kun `plausible` og `absurd` fortsætter. Canon-opskrifter, `near-miss`, `locked`, `inert`, `self` og `clash` afvises. Improviserede forældre er ikke længere `inert` alene, fordi de mangler i den kanoniske opskriftsindex. | ✅ | 2026-08-13 |
-| TASK-015 | Vis improviserede elementer i krøniken visuelt adskilt, uden `note`/`sourceUrl`, med en markør der siger at dette er Karls eget påfund (CON-004). | | |
+| TASK-015 | **Leveret bag produktflaget:** grid, fundkort og en separat sektion i bogen bruger markøren “Karl's invention” og stiplet blæk. Improviserede poster renderer aldrig `note`/`sourceUrl` og indsættes ikke i den canonical tidslinje. | ✅ | 2026-08-13 |
 
 ### Implementation Phase 3
 
@@ -151,7 +156,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 | TASK-017 | **Leveret:** sorteret par+akt-cache i det eksisterende Durable Object storage, med automatisk navnerum fra den faktisk renderede promptkontrakt+model. Cache-hit undgår både modelkald og improvisationsbudget; samtidige misses coalesces kun inden for samme par+akt. | ✅ | 2026-08-13 |
 | TASK-018 | **Leveret under frosset kontrakt:** strikt modelskema `{name,flavor}` og servervalidering af eksakte felter, ≤3 ord, URL'er, citationstegn, kontroltegn, tegnsætningsvildnis og flavor-grænse. Ugyldigt svar giver eksplicit 502, caches aldrig og retries ikke automatisk; den senere klient ejer fallback. | ✅ | 2026-08-13 |
 | TASK-019 | **Serverhalvdel leveret:** egne rullende og daglige globalt/pr.-IP-kvoter med egne storage-nøgler, genbrugt IP-hash og alarmoprydning. Klientens fremtidige per-run-cap/fortællerreplik er stadig åben og er UX/balance — aldrig sikkerhedsgrænsen. | ◐ | 2026-08-13 |
-| TASK-020 | Klientlag `src/core/improviseClient.ts`: async, med timeout på 2,5 s og øjeblikkeligt fald tilbage til regelmotoren. Spillet må aldrig vente på nettet. Motoren forbliver synkron; det færdige element fodres ind (CON-001). | | |
+| TASK-020 | **Leveret som `src/ui/improvise-client.ts` (ikke den stale core-sti):** prefetch starter ved andet valg, sender eksakt `{a,b,act}` for canonical forældre, har 2,5 s timeout og strikt `{name,flavor}`-validering. Combine læser kun allerede-klar copy synkront og venter aldrig; sen copy bruger motorens copy-only enhancement på det stabile id. URL'en er valgfri og uafhængig af live-fortælleren. | ✅ | 2026-08-13 |
 | TASK-021 | Prompten bygges af serveropslåede kanoniske forældrenavne/flavor/taksonomi og tre håndskrevne toneeksempler — **mudderkage**, ristede larver og klyngen. | ✅ | 2026-08-13 |
 
 ### Implementation Phase 4
@@ -163,7 +168,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 | TASK-022 | Ny udfaldstype `improvised` i `CombineOutcome` med elementet, `reused`, løst problem/challenge og `needExplanations`. **Core/type-halvdelen er leveret; fortællerforbrugeren er åben.** | 🟡 core | 2026-08-13 |
 | TASK-023 | Skriv replikfamilien "dommen": accept (`{element} solves {problem}`), afvisning (elementet er nyt, men løser intet), og den bedste af dem alle — **den absurde accept**, hvor tingen faktisk opfylder prædikatet på en måde ingen havde tænkt. Sidstnævnte skal have flest varianter. | | |
 | TASK-024 | Afvisning skal navngive *hvorfor* ud fra tags. `explainSatisfaction()` leverer nu et rent, rekursivt og serialiserbart bevis for atomare krav samt `allOf`/`anyOf`/`not`; fortællerreplikkerne er fortsat åbne. | 🟡 evidence | 2026-08-13 |
-| TASK-025 | Krønikeindførsel for improviserede løsninger med spillerens egen opfindelse fremhævet — det er runets historie, og den skal kunne deles. | | |
+| TASK-025 | **Leveret bag produktflaget:** bogen har en særskilt “Karl's inventions”-sektion med lærende tomtilstand, slutskærmen viser et bounded resume, og playtest-payloaden gemmer højst fem navne plus totalen. Forsøg logger par, accepted/rejected/reused, løst behov/challenge, copy-kilde og latency/timeout uden persondata. | ✅ | 2026-08-13 |
 | TASK-026 | Kør alle nye replikker gennem stemmedommeren fra narrationsplanens fase 5. Ingen undtagelse, fordi teksten er genereret. | | |
 
 ### Implementation Phase 5
@@ -198,7 +203,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 - **FILE-001**: `src/core/types.ts` — `SolvePredicate`, `origin`, `parents`, `depth`, udfaldstypen `improvised`.
 - **FILE-002**: `src/core/solves.ts` *(ny)* — prædikat-evaluering. Ren og fuldt testbar.
 - **FILE-003**: `src/core/improvise.ts` *(ny)* — deterministisk tag-afledning og navngivning; gulvet der virker offline.
-- **FILE-004**: `src/core/improviseClient.ts` *(ny)* — async proxy-kald med timeout og fallback.
+- **FILE-004**: `src/ui/improvise-client.ts` — async prefetch/cache med 2,5 s timeout, strikt copy-svar og synkront `get()`.
 - **FILE-005**: `src/core/engine.ts` — løsning afgøres af prædikat; improviserede elementers rettigheder håndhæves.
 - **FILE-006**: `content/acts/act-1.json`, `content/challenges.json` — `solvedBy` bliver prædikat; allowlisten overlever som `alsoSolvedBy`.
 - **FILE-007**: `content/narrator/act-1.json` — dommens replikfamilie.

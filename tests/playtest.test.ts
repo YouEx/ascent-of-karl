@@ -1,5 +1,33 @@
 import { describe, expect, it } from "vitest";
-import { PlaytestLog, type LogStorage } from "../src/ui/playtest";
+import {
+  PlaytestLog,
+  type LogStorage,
+  type RunRecord,
+} from "../src/ui/playtest";
+
+type ImprovisationCapableLog = PlaytestLog & {
+  improvisation?: (record: {
+    a: string;
+    b: string;
+    act: number;
+    summer: number;
+    outcome: "accepted" | "rejected" | "reused";
+    solvedNeed: string | null;
+    solvedChallenge: string | null;
+    source: "fallback" | "worker-copy";
+    latencyMs: number | null;
+    timeout: boolean;
+  }) => void;
+  improvisationNetwork?: (
+    a: string,
+    b: string,
+    act: number,
+    summer: number,
+    network: { latencyMs: number; timeout: boolean },
+  ) => void;
+};
+
+const noInventions = { total: 0, names: [] };
 
 /** Hukommelses-storage, så testene ikke kræver en browser. */
 function fakeStorage(seed: Record<string, string> = {}): LogStorage {
@@ -45,9 +73,9 @@ describe("PlaytestLog", () => {
     const storage = fakeStorage();
     const log = new PlaytestLog(storage);
     log.miss("ild", "vand", 3);
-    log.run({ ending: "alderdom", summers: 50, discoveries: 20, minutes: 18, solved: [], flags: [] });
+    log.run({ ending: "alderdom", summers: 50, discoveries: 20, minutes: 18, solved: [], flags: [], inventions: noInventions });
     log.miss("sten", "sten", 2);
-    log.run({ ending: "ulve", summers: 31, discoveries: 12, minutes: 9, solved: ["ulve"], flags: ["ram"] });
+    log.run({ ending: "ulve", summers: 31, discoveries: 12, minutes: 9, solved: ["ulve"], flags: ["ram"], inventions: noInventions });
 
     const out = log.read();
     expect(out.runs.map((r) => r.ending)).toEqual(["alderdom", "ulve"]);
@@ -87,5 +115,106 @@ describe("PlaytestLog", () => {
     };
 
     expect(() => new PlaytestLog(storage).miss("ild", "vand", 1)).not.toThrow();
+  });
+
+  it("logger improvisationsforsøget i et fast, persondatafrit skema", () => {
+    const log = new PlaytestLog(fakeStorage()) as ImprovisationCapableLog;
+    expect(typeof log.improvisation).toBe("function");
+    expect(typeof log.improvisationNetwork).toBe("function");
+    if (!log.improvisation || !log.improvisationNetwork) return;
+
+    log.improvisation({
+      a: "ler",
+      b: "baer",
+      act: 1,
+      summer: 3,
+      outcome: "accepted",
+      solvedNeed: "sult",
+      solvedChallenge: "ulve",
+      source: "fallback",
+      latencyMs: null,
+      timeout: false,
+    });
+    log.improvisationNetwork("baer", "ler", 1, 3, {
+      latencyMs: 2500,
+      timeout: true,
+    });
+    log.run({
+      ending: "alderdom",
+      summers: 50,
+      discoveries: 20,
+      minutes: 18,
+      solved: ["sult"],
+      flags: [],
+      inventions: { total: 1, names: ["Clay berries"] },
+    } as Omit<RunRecord, "misses" | "improvisations">);
+
+    const record = log.read().runs[0]!.improvisations[0]!;
+    expect(record).toEqual({
+      pair: "baer+ler",
+      act: 1,
+      summer: 3,
+      outcome: "accepted",
+      solvedNeed: "sult",
+      solvedChallenge: "ulve",
+      source: "fallback",
+      latencyMs: 2500,
+      timeout: true,
+    });
+    expect(Object.keys(record).sort()).toEqual([
+      "act",
+      "latencyMs",
+      "outcome",
+      "pair",
+      "solvedChallenge",
+      "solvedNeed",
+      "source",
+      "summer",
+      "timeout",
+    ]);
+    expect(log.read().runs[0]!.inventions).toEqual({
+      total: 1,
+      names: ["Clay berries"],
+    });
+  });
+
+  it("bevarer accepted/rejected/reused og worker-copy som lukkede værdier", () => {
+    const log = new PlaytestLog(fakeStorage()) as ImprovisationCapableLog;
+    expect(typeof log.improvisation).toBe("function");
+    if (!log.improvisation) return;
+    for (const [index, outcome] of [
+      "accepted",
+      "rejected",
+      "reused",
+    ].entries()) {
+      log.improvisation({
+        a: "a",
+        b: `b-${index}`,
+        act: 1,
+        summer: index + 1,
+        outcome: outcome as "accepted" | "rejected" | "reused",
+        solvedNeed: null,
+        solvedChallenge: null,
+        source: index === 0 ? "worker-copy" : "fallback",
+        latencyMs: index === 0 ? 80 : null,
+        timeout: false,
+      });
+    }
+    log.run({
+      ending: "alderdom",
+      summers: 50,
+      discoveries: 20,
+      minutes: 18,
+      solved: [],
+      flags: [],
+      inventions: noInventions,
+    } as Omit<RunRecord, "misses" | "improvisations">);
+
+    expect(log.read().runs[0]!.improvisations.map((entry) => entry.outcome)).toEqual([
+      "accepted",
+      "rejected",
+      "reused",
+    ]);
+    expect(log.read().runs[0]!.improvisations[0]!.source).toBe("worker-copy");
   });
 });

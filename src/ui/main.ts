@@ -1,4 +1,5 @@
 import { Engine } from "../core/engine";
+import { improvisedElementId } from "../core/improvise";
 import { judgePair } from "../core/verdict";
 import { deserialize, serialize } from "../core/save";
 import { Narrator, freshNarratorState } from "../narrator/narrator";
@@ -14,6 +15,23 @@ import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
 import { glyphHTML, problemGlyphHTML } from "./art";
 import { PlaytestLog } from "./playtest";
+import {
+  IMPROVISE_ENABLED,
+  performPlayerAttempt,
+} from "./improvise-flow";
+import {
+  elementOriginClass,
+  renderCopyStatus,
+  renderInventionCard,
+} from "./improvise-view";
+import {
+  ImproviseClient,
+  type ImproviseCopyState,
+} from "./improvise-client";
+import {
+  inventionSummaryText,
+  summarizeInventions,
+} from "./run-summary";
 import {
   activeScenario,
   bootSeed,
@@ -58,6 +76,10 @@ const pairsReady = loadPairs(engine.currentAct().act).then((data) => {
 // afhængighed, og spillet skal kunne spilles offline uden at mangle noget.
 const live = new LiveNarrator();
 if (live.enabled) narrator.attachLive(live);
+
+// Produktflag og endpoint er to uafhængige kontrakter. Flaget åbner den
+// deterministiske feature; URL'en forbedrer kun copy, hvis den findes.
+const improviseClient = IMPROVISE_ENABLED ? new ImproviseClient() : null;
 
 // --- Save/load (autosave pr. opdagelse, PRD §4.1) ---
 function save(): void {
@@ -150,6 +172,7 @@ app.innerHTML = `
     <div class="slot" id="slot-b"></div>
     <button id="combine" disabled>Combine</button>
   </div>
+  ${IMPROVISE_ENABLED ? '<div id="improvise-status-host"></div>' : ""}
 
   <aside id="book-panel" aria-label="The chronicle of mankind">
     <button id="book-close" class="icon-btn" aria-label="Close the chronicle">${icons.close}</button>
@@ -178,6 +201,7 @@ const el = {
   slotA: document.getElementById("slot-a")!,
   slotB: document.getElementById("slot-b")!,
   combineBtn: document.getElementById("combine") as HTMLButtonElement,
+  improviseStatus: document.getElementById("improvise-status-host"),
   bookPanel: document.getElementById("book-panel")!,
   bookBtn: document.getElementById("book-btn")!,
   bookBadge: document.getElementById("book-badge")!,
@@ -194,7 +218,11 @@ const el = {
 // Sjældenhed udledes én gang af indholdet — den kan ikke ændre sig i et run
 const rarity = computeRarity(content);
 
-const book = new BookView(engine, document.getElementById("book")!);
+const book = new BookView(
+  engine,
+  document.getElementById("book")!,
+  IMPROVISE_ENABLED,
+);
 
 let selected: [string | null, string | null] = [null, null];
 let typewriterTimer: ReturnType<typeof setInterval> | undefined;
@@ -217,6 +245,12 @@ let onlyNew = false;
 let hideDone = false;
 /** Opdaget i denne session — får en okker prik, så de er til at finde i et stort grid */
 const freshFinds = new Set<string>();
+/** Status der skal overleve, når slots ryddes efter selve forsøget. */
+let settledImproviseStatus: { text: string; cls: string } | null = null;
+/** Et prefetch observeres kun én gang, selv om renderSlots() kaldes igen. */
+const observedCopyKeys = new Set<string>();
+/** Forsøg der brugte fallback, mens copy stadig var i luften. */
+const pendingCopySummers = new Map<string, number[]>();
 
 // --- Fortæller ---
 /**
@@ -365,6 +399,110 @@ const EMPTY_SLOT =
   '<i>Choose from below</i>' +
   "</span>";
 
+function copyKey(a: string, b: string, act: number): string {
+  return `${[a, b].sort().join("+")}:act:${act}`;
+}
+
+function renderImproviseState(state: ImproviseCopyState): void {
+  if (!el.improviseStatus) return;
+  el.improviseStatus.innerHTML = renderCopyStatus(state);
+}
+
+function renderSettledImproviseStatus(): void {
+  if (!el.improviseStatus) return;
+  if (!settledImproviseStatus) {
+    el.improviseStatus.innerHTML = renderCopyStatus({ status: "idle" });
+    return;
+  }
+  const status = document.createElement("p");
+  status.className = `improvise-status ${settledImproviseStatus.cls}`;
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  status.textContent = settledImproviseStatus.text;
+  el.improviseStatus.replaceChildren(status);
+}
+
+function settleImproviseStatus(text: string, cls: string): void {
+  settledImproviseStatus = { text, cls };
+  renderSettledImproviseStatus();
+}
+
+function applyLateCopy(
+  a: string,
+  b: string,
+  state: Extract<ImproviseCopyState, { status: "ready" }>,
+): void {
+  const id = improvisedElementId(a, b);
+  const enhanced = engine.enhanceImprovisedCopy(id, state.copy);
+  if (!enhanced) return;
+  save();
+  renderGrid();
+  renderBookBadge();
+  book.render(enhanced.id);
+  if (selected.includes(enhanced.id)) renderSlots();
+  if (!el.card.hidden && el.card.dataset.elementId === enhanced.id) {
+    const title = el.card.querySelector("h2");
+    const flavor = el.card.querySelector(".card-flavor");
+    if (title) title.textContent = enhanced.name;
+    if (flavor) flavor.textContent = enhanced.flavor ?? "";
+    el.card.setAttribute("aria-label", `Karl invented: ${enhanced.name}`);
+  }
+}
+
+function prefetchImprovisedCopy(a: string, b: string): void {
+  if (!IMPROVISE_ENABLED || !improviseClient) return;
+  if (engine.matchCombo(a, b)) {
+    renderImproviseState({ status: "idle" });
+    return;
+  }
+  const first = engine.element(a);
+  const second = engine.element(b);
+  const judgment = judgePair(engine, first, second);
+  if (judgment.verdict !== "plausible" && judgment.verdict !== "absurd") {
+    renderImproviseState({ status: "idle" });
+    return;
+  }
+  if (first.origin === "improvised" || second.origin === "improvised") {
+    renderImproviseState({
+      status: "fallback",
+      reason: "noncanonical",
+      timeout: false,
+    });
+    return;
+  }
+
+  const act = engine.currentAct().act;
+  const request = { a, b, act };
+  const key = copyKey(a, b, act);
+  const pending = improviseClient.prefetch(request);
+  renderImproviseState(improviseClient.state(a, b, act));
+  if (observedCopyKeys.has(key)) return;
+  observedCopyKeys.add(key);
+  void pending.then((state) => {
+    if (state.status === "ready") applyLateCopy(a, b, state);
+    if (
+      (state.status === "ready" || state.status === "fallback") &&
+      state.latencyMs !== undefined
+    ) {
+      for (const summer of pendingCopySummers.get(key) ?? []) {
+        playtest.improvisationNetwork(a, b, act, summer, {
+          latencyMs: state.latencyMs,
+          timeout: state.status === "fallback" && state.timeout,
+        });
+      }
+      pendingCopySummers.delete(key);
+    }
+    const [selectedA, selectedB] = selected;
+    if (
+      selectedA &&
+      selectedB &&
+      copyKey(selectedA, selectedB, engine.currentAct().act) === key
+    ) {
+      renderImproviseState(state);
+    }
+  });
+}
+
 function renderSlots(): void {
   const [a, b] = selected;
   // innerHTML frem for textContent: brikken kan være et maleri, ikke et tegn.
@@ -377,8 +515,29 @@ function renderSlots(): void {
     : EMPTY_SLOT;
   el.slotA.classList.toggle("filled", !!a);
   el.slotB.classList.toggle("filled", !!b);
+  for (const [slot, id] of [[el.slotA, a], [el.slotB, b]] as const) {
+    if (id) {
+      slot.setAttribute("role", "button");
+      slot.setAttribute("tabindex", "0");
+      slot.setAttribute(
+        "aria-label",
+        `Remove ${engine.element(id).name} from the combination`,
+      );
+    } else {
+      slot.removeAttribute("role");
+      slot.removeAttribute("tabindex");
+      slot.removeAttribute("aria-label");
+    }
+  }
   el.combineBtn.disabled = !(a && b);
-  if (a && b) prefetchLine(a, b);
+  if (a && b) {
+    prefetchLine(a, b);
+    prefetchImprovisedCopy(a, b);
+  } else if (!a && !b) {
+    renderSettledImproviseStatus();
+  } else {
+    renderImproviseState({ status: "idle" });
+  }
   renderSelection();
 }
 
@@ -443,12 +602,16 @@ function renderGrid(): void {
   el.grid.innerHTML = "";
   for (const def of visible) {
     const btn = document.createElement("button");
-    btn.className = `element ${freshFinds.has(def.id) ? "is-new" : ""} ${
-      def.terminal ? "is-done" : ""
-    }`;
+    btn.className = `element ${elementOriginClass(def)} ${
+      freshFinds.has(def.id) ? "is-new" : ""
+    } ${def.terminal ? "is-done" : ""}`;
     btn.dataset.id = def.id;
     if (def.terminal) btn.title = `${def.name} — finished. Nothing combines with it.`;
-    btn.innerHTML = `${glyphHTML(def.id, def.emoji)}<span class="name">${def.name}</span>`;
+    btn.innerHTML = `${glyphHTML(def.id, def.emoji)}<span class="name">${def.name}</span>${
+      def.origin === "improvised"
+        ? '<span class="invention-tag">Karl&#039;s invention</span>'
+        : ""
+    }`;
     attachSelect(btn, def);
     el.grid.appendChild(btn);
   }
@@ -536,11 +699,35 @@ function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" 
       ${outcome.solved ? `<p class="solved-badge">✓ Problem solved: ${outcome.solved.name}</p>` : ""}
       <button id="card-close">Nice</button>
     </div>`;
+  el.card.dataset.elementId = d.id;
   el.card.hidden = false;
   openOverlay(el.card, {
     label: `Discovered: ${d.name}`,
     // Combine-knappen deaktiveres når slots ryddes, så den kan ikke tage
     // fokus tilbage. Bogen er det naturlige næste sted efter en opdagelse.
+    fallbackFocus: () => el.bookBtn,
+    onClose: () => {
+      el.card.hidden = true;
+    },
+  });
+  document
+    .getElementById("card-close")!
+    .addEventListener("click", () => closeTopOverlay());
+}
+
+function showInventionCard(
+  outcome: Extract<CombineOutcome, { kind: "improvised" }>,
+): void {
+  const invention = outcome.element;
+  el.card.innerHTML = renderInventionCard(
+    invention,
+    glyphHTML(invention.id, invention.emoji, "card-glyph"),
+    outcome.solved,
+  );
+  el.card.dataset.elementId = invention.id;
+  el.card.hidden = false;
+  openOverlay(el.card, {
+    label: `Karl invented: ${invention.name}`,
     fallbackFocus: () => el.bookBtn,
     onClose: () => {
       el.card.hidden = true;
@@ -619,6 +806,7 @@ function showEndingScreen(): void {
   // Ved 3 %-stigende-til-15 % sker det i under 1 % af alle runs.
   const lucky = engine.neverChallenged() && unlockAchievement("carl-the-lucky");
   const state = engine.getState();
+  const inventionSummary = summarizeInventions(state.improvisedElements);
   document.body.classList.add("run-over");
   closeBook();
   el.ending.innerHTML = `
@@ -627,6 +815,11 @@ function showEndingScreen(): void {
       <h2>${ending.title}</h2>
       <p class="ending-line">${lastLineText}</p>
       <p class="ending-stats">${state.attempts} summers lived · ${state.discovered.length} discoveries · ${state.flags.length} quirks</p>
+      ${
+        inventionSummary.total > 0
+          ? `<p class="ending-inventions">${inventionSummaryText(inventionSummary)}</p>`
+          : ""
+      }
       ${isNew
         ? `<p class="achievement">Achievement unlocked: <strong>${ending.achievement}</strong></p>`
         : `<p class="achievement known">${ending.achievement}</p>`}
@@ -680,7 +873,22 @@ function performCombine(a: string, b: string): void {
   const elapsedMs = lastAttemptAt === null ? undefined : now - lastAttemptAt;
   lastAttemptAt = now;
 
-  const outcome = engine.combine(a, b);
+  const actAtAttempt = engine.currentAct().act;
+  const attemptedImprovisation =
+    IMPROVISE_ENABLED && !engine.matchCombo(a, b);
+  const copyState = attemptedImprovisation
+    ? improviseClient?.state(a, b, actAtAttempt)
+    : undefined;
+  const readyCopy = copyState?.status === "ready"
+    ? copyState.copy
+    : undefined;
+  const outcome = performPlayerAttempt(
+    engine,
+    a,
+    b,
+    IMPROVISE_ENABLED,
+    readyCopy,
+  );
   const line = narrator.react(a, b, outcome, elapsedMs);
   const ending = engine.activeEnding();
   // Beregnes FØR save() nedenfor: followUp() bogfører hvad fortælleren bad
@@ -691,7 +899,49 @@ function performCombine(a: string, b: string): void {
   // Blindgyden er det eneste datapunkt der ikke kan rekonstrueres bagefter
   if (outcome.kind === "nofuse") playtest.miss(a, b, engine.getState().attempts);
 
+  if (
+    attemptedImprovisation &&
+    (outcome.kind === "improvised" ||
+      outcome.kind === "improvise-rejected")
+  ) {
+    const summer = engine.getState().attempts;
+    const solvedChallenge =
+      outcome.challenge?.kind === "solved"
+        ? outcome.challenge.def.id
+        : null;
+    playtest.improvisation({
+      a,
+      b,
+      act: actAtAttempt,
+      summer,
+      outcome:
+        outcome.kind === "improvise-rejected"
+          ? "rejected"
+          : outcome.reused
+            ? "reused"
+            : "accepted",
+      solvedNeed:
+        outcome.kind === "improvised" ? outcome.solved?.id ?? null : null,
+      solvedChallenge,
+      source: readyCopy ? "worker-copy" : "fallback",
+      latencyMs:
+        copyState?.status === "ready" ||
+        copyState?.status === "fallback"
+          ? copyState.latencyMs ?? null
+          : null,
+      timeout:
+        copyState?.status === "fallback" ? copyState.timeout : false,
+    });
+    if (copyState?.status === "loading") {
+      const key = copyKey(a, b, actAtAttempt);
+      const summers = pendingCopySummers.get(key) ?? [];
+      summers.push(summer);
+      pendingCopySummers.set(key, summers);
+    }
+  }
+
   if (outcome.kind === "discovery") {
+    settledImproviseStatus = null;
     freshFinds.add(outcome.element.id);
     if (!ending) showDiscoveryCard(outcome);
     renderGrid();
@@ -700,6 +950,27 @@ function performCombine(a: string, b: string): void {
     book.render(outcome.element.id);
     save();
     if (outcome.ageUp) showAgeUpBanner();
+  }
+  if (outcome.kind === "improvised") {
+    if (!outcome.reused) freshFinds.add(outcome.element.id);
+    if (!outcome.reused && !ending) showInventionCard(outcome);
+    renderGrid();
+    renderProblems();
+    renderBookBadge();
+    book.render(outcome.element.id);
+    save();
+    settleImproviseStatus(
+      outcome.reused
+        ? `Karl has already invented ${outcome.element.name}.`
+        : `${outcome.element.name} joined Karl's inventions.`,
+      outcome.reused ? "is-ready" : "is-accepted",
+    );
+  }
+  if (outcome.kind === "improvise-rejected") {
+    const message = outcome.reason === "depth-limit"
+      ? "That invention cannot be taken any further."
+      : "Karl could not make that idea hold together.";
+    settleImproviseStatus(message, "is-rejected");
   }
   if (line) say(line);
   // Anden takt: fortælleren peger videre — eller bemærker at han lige blev
@@ -718,6 +989,9 @@ function performCombine(a: string, b: string): void {
       solved: engine.getState().solvedProblems,
       flags: engine.getState().flags,
       minutes: Math.round((performance.now() - runStartedAt) / 60000),
+      inventions: summarizeInventions(
+        engine.getState().improvisedElements,
+      ),
     });
     save();
     showEndingScreen();
@@ -736,6 +1010,7 @@ function performCombine(a: string, b: string): void {
  * noget op. Tap-tap kan begge dele uden at slås om den samme bevægelse.
  */
 function selectElement(def: ElementDef): void {
+  settledImproviseStatus = null;
   if (!selected[0]) selected[0] = def.id;
   else if (!selected[1]) selected[1] = def.id;
   else selected = [def.id, null];
@@ -757,9 +1032,15 @@ el.combineBtn.addEventListener("click", () => {
 
 // Tryk på en fyldt slot for at tømme den
 for (const [slot, index] of [[el.slotA, 0], [el.slotB, 1]] as const) {
-  slot.addEventListener("click", () => {
+  const clearSlot = () => {
     selected[index] = null;
     renderSlots();
+  };
+  slot.addEventListener("click", clearSlot);
+  slot.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    clearSlot();
   });
 }
 

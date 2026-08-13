@@ -16,6 +16,13 @@ Fortælleren kan valgfrit skrive replikker live via en model (se
 den. Er den nogensinde slået til, er opskriften
 [docs/deployment/live-narrator.md](docs/deployment/live-narrator.md).
 
+Spillerens improviserede løsninger er også **slået fra som default**.
+Kun et build med `VITE_IMPROVISE_ENABLED=true` ændrer Combine-flowet.
+`VITE_IMPROVISE_URL` er en uafhængig, valgfri copy-forbedring; uden URL virker
+den deterministiske offline-opfindelse fuldt ud. Deploy-workflowet sætter
+ingen af variablerne, og klienten vælger altid en canonical opskrift før
+improvisation. Se `plan/feature-improvised-solutions-1.md`.
+
 ## Kom i gang
 
 ```bash
