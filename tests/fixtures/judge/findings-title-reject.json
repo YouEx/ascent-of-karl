@@ -1,0 +1,26 @@
+{
+  "screen": "title",
+  "findings": [
+    {
+      "region": "tools",
+      "defect": "color",
+      "severity": 4,
+      "evidence": "ΔE 11.11 mellem knappernes --chronicle-baggrund (rgb(238, 224, 205) / #eee0cd) og referencens malede flade i samme boks (ca. #ab9279).",
+      "fix": { "kind": "token", "token": "--chronicle", "from": "#eee0cd", "to": "#2a1f16" }
+    },
+    {
+      "region": "chip",
+      "defect": "color",
+      "severity": 4,
+      "evidence": "ΔE 10.55 mellem chip-baggrunden (backgroundColor rgb(238, 224, 205)) og referencens ca. #c4aa8f i samme boks.",
+      "fix": { "kind": "token", "token": "--chronicle", "from": "#eee0cd", "to": "#2a1f16" }
+    },
+    {
+      "region": "tip-card",
+      "defect": "color",
+      "severity": 3,
+      "evidence": "ΔE 8.58 mellem tip-kortets --chronicle-baggrund og referencens ca. #cfb79c — samme token som chip og tools, så én rettelse dækker alle tre.",
+      "fix": { "kind": "token", "token": "--chronicle", "from": "#eee0cd", "to": "#2a1f16" }
+    }
+  ]
+}

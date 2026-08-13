@@ -1,0 +1,5 @@
+/* Fixture: en tuning.css-facade der overskygger --chronicle, som den
+ * rigtige tuning.css ville gøre efter en accepteret iteration. */
+:root {
+  --chronicle: #123456;
+}

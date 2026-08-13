@@ -99,6 +99,15 @@ def build(run: Path) -> dict:
             side_by_side(ref_crop, rnd_crop).save(
                 run / "overlay" / sid / f"{region['id']}.png"
             )
+            # Fire rene enkeltbilleder pr. region, ud over triptykonet ovenfor.
+            # judge.mjs er ren Node uden noget billedbibliotek — den kan ikke
+            # selv klippe et udsnit ud af triptykonet, så vision-modellen skal
+            # have hvert billede for sig, allerede beskåret og på samme mål.
+            rnd_for_diff = rnd_crop.resize(ref_crop.size, Image.LANCZOS) if rnd_crop.size != ref_crop.size else rnd_crop
+            ref_crop.convert("RGB").save(run / "overlay" / sid / f"{region['id']}-ref.png")
+            rnd_crop.convert("RGB").save(run / "overlay" / sid / f"{region['id']}-render.png")
+            blend(ref_crop, rnd_for_diff).save(run / "overlay" / sid / f"{region['id']}-blend.png")
+            heatmap(ref_crop, rnd_for_diff).save(run / "overlay" / sid / f"{region['id']}-heat.png")
     return scores
 
 

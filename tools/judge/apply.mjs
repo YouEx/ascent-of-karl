@@ -30,13 +30,16 @@
  * Kør:
  *   node tools/judge/apply.mjs --findings <fil.json>       # ruter + anvender
  *   node tools/judge/apply.mjs --findings <fil.json> --dry # kun ruter, skriv intet
- *   node tools/judge/apply.mjs --revert                    # rul sidste tokenskrivning tilbage
+ *   node tools/judge/apply.mjs --revert                    # rul den globale sidste skrivning tilbage
+ *   node tools/judge/apply.mjs --revert --run .judge/<kørsel>   # rul PRÆCIS den kørsels backup tilbage
+ *   node tools/judge/apply.mjs --revert --backup <sti>     # rul en eksplicit backupfil tilbage
  *
  * Se plan/architecture-visual-judge-1.md REQ-004, REQ-005, CON-002, CON-003.
  */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { DEFECTS, NEVER_TOKEN, safeCssValueErrors } from "./validate-finding.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const TUNING = path.join(ROOT, "src/ui/tuning.css");
@@ -46,16 +49,10 @@ const LEDGER = path.join(ROOT, ".judge/ledger.json");
 const BACKUP = path.join(ROOT, ".judge/tuning.prev.css");
 const REGISTRY = path.join(ROOT, "docs/design/reference/registry.json");
 
-const DEFECTS = new Set([
-  "size", "position", "spacing", "color", "weight", "font",
-  "radius", "shadow", "texture", "missing-asset",
-  "extra-element", "state-mismatch",
-]);
-
-/** Defekter der pr. definition ikke kan rettes med et token, uanset hvad
- *  dommeren foreslår. En dommer der foreslår `kind: "token"` for en manglende
- *  illustration, tager fejl — og skal overrules af ruteren, ikke adlydes. */
-const NEVER_TOKEN = new Set(["missing-asset", "extra-element", "state-mismatch"]);
+// DEFECTS og NEVER_TOKEN kommer nu fra validate-finding.mjs, som selv udleder
+// det lukkede ordforråd af finding.schema.json — ruteren og judge.mjs's
+// strenge validator kan derfor aldrig glide fra hinanden (se TASK-021's
+// revisionsnote om præcis den slags drift, dengang de var to håndkopier).
 
 const readJson = (p, fallback) =>
   fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf8")) : fallback;
@@ -81,6 +78,7 @@ function validate(doc, knownRegions) {
     if (fix.kind === "token") {
       if (!/^--[a-z0-9-]+$/.test(fix.token || "")) errs.push(`${at}.fix.token er ikke et token-navn`);
       if (typeof fix.to !== "string" || !fix.to) errs.push(`${at}.fix.to mangler`);
+      else for (const e of safeCssValueErrors(fix.to)) errs.push(`${at}.fix.to: ${e}`);
     } else if (fix.kind === "asset") {
       if (!/^[A-Z]+-[A-Za-z0-9-]+$/.test(fix.assetId || "")) errs.push(`${at}.fix.assetId er malformet`);
       if ((fix.spec || "").length < 20) errs.push(`${at}.fix.spec er for tynd`);
@@ -187,10 +185,15 @@ export function route(findings, ledger) {
   return out;
 }
 
-function writeTuning(tokens, iteration) {
-  const existing = fs.existsSync(TUNING) ? fs.readFileSync(TUNING, "utf8") : "";
-  fs.mkdirSync(path.dirname(BACKUP), { recursive: true });
-  fs.writeFileSync(BACKUP, existing); // så --revert altid kan komme tilbage
+/**
+ * Skriver de vindende tokens til tuning.css. `tuningPath`/`backupPath` er
+ * injicerbare (default: de rigtige stier), så loop.mjs's tests kan pege dem
+ * på en testmappe og ALDRIG røre den rigtige src/ui/tuning.css. Se REQ-004.
+ */
+export function writeTuning(tokens, iteration, { tuningPath = TUNING, backupPath = BACKUP } = {}) {
+  const existing = fs.existsSync(tuningPath) ? fs.readFileSync(tuningPath, "utf8") : "";
+  fs.mkdirSync(path.dirname(backupPath), { recursive: true });
+  fs.writeFileSync(backupPath, existing); // så --revert altid kan komme tilbage
 
   const prior = new Map();
   for (const m of existing.matchAll(/^\s*(--[a-z0-9-]+)\s*:\s*([^;]+);/gm)) prior.set(m[1], m[2].trim());
@@ -198,14 +201,24 @@ function writeTuning(tokens, iteration) {
   // (billigt, og gør writeTuning korrekt uanset om kalderen allerede har
   // dedupleret), så funktionen ikke er afhængig af at route() gjorde det.
   const winners = resolveTokenWinners(tokens);
-  for (const [token, t] of winners) prior.set(token, t.fix.to);
+  for (const [token, t] of winners) {
+    // Sidste værn FØR skrivning til disk. Selv hvis et opstrøms
+    // valideringstrin (judge.mjs's retry-gate, apply.mjs's egen validate())
+    // skulle glippe, skriver denne funktion ALDRIG en usikker værdi — den
+    // eneste fil sløjfen må røre, skal også være den sværeste at misbruge.
+    const unsafe = safeCssValueErrors(t.fix.to);
+    if (unsafe.length) {
+      throw new Error(`writeTuning: usikker værdi til ${token} afvist: ${unsafe.join("; ")}`);
+    }
+    prior.set(token, t.fix.to);
+  }
 
   const lines = [...prior.entries()].map(([k, v]) => {
     const t = winners.get(k);
     return t ? `  ${k}: ${v}; /* ${t.region}/${t.defect} — iter ${iteration} */` : `  ${k}: ${v};`;
   });
 
-  fs.writeFileSync(TUNING, [
+  fs.writeFileSync(tuningPath, [
     "/* Genereret af den visuelle sløjfe — rediger ikke i hånden.",
     " * Kun :root-tokenoverstyringer. Alt andet ruteres til asset-queue.json",
     " * eller human-queue.json. Se plan/architecture-visual-judge-1.md REQ-004.",
@@ -217,7 +230,7 @@ function writeTuning(tokens, iteration) {
   ].join("\n"));
 }
 
-function appendQueue(file, items, iteration) {
+export function appendQueue(file, items, iteration) {
   if (!items.length) return 0;
   const q = readJson(file, { version: 1, items: [] });
   const seen = new Set(q.items.map((i) => i.key));
@@ -238,14 +251,47 @@ function appendQueue(file, items, iteration) {
 }
 
 /**
+ * Samme regionsantal-vægtede formel som metrics.py's globale `overall`-felt
+ * (se metrics.py's main()), men afgrænset til de EFTERSPURGTE skærme.
+ *
+ * Hvorfor den findes (2. anmeldelse, blokerer 1): metrics.py scorer ALLE
+ * registry-skærme hver kørsel, også dem der slet ikke blev optaget denne
+ * gang (deres regioner får `missing:true`, overall 0). Det globale felt
+ * vejer med REGIONSANTAL, ikke hvilke skærme der reelt blev bedt om — så en
+ * ægte forbedring på ÉN skærm bliver fortyndet af de andre skærmes uændrede
+ * nul-stubbe. Et `--screen title`-kørsel, der reelt forbedrer title markant,
+ * kan derfor blive afvist af accept-porten, fordi game (aldrig optaget)
+ * tæller med i nævneren. Denne funktion genskaber metrics.py's formel, men
+ * kun over de skærme, sløjfen faktisk bad om denne kørsel.
+ */
+export function scopedOverall(scores, screenIds) {
+  let weighted = 0;
+  let weight = 0;
+  for (const sid of screenIds) {
+    const s = scores?.screens?.[sid];
+    if (!s) continue; // efterspurgt skærm findes slet ikke i scores — spring stille over
+    const regionCount = Object.keys(s.regions ?? {}).length;
+    weighted += s.overall * regionCount;
+    weight += regionCount;
+  }
+  return weight > 0 ? weighted / weight : 0;
+}
+
+/**
  * Accept-porten (CON-002). To betingelser, ikke én:
  *   1. samlet score skal stige (mere end støjgulvet)
  *   2. INGEN region må falde mere end 0,02
  * Betingelse 2 er den, folk glemmer: uden den kan sløjfen ofre kombinations-
  * knappen for at hæve gennemsnittet med et gitter-tweak, og nettoresultatet
  * ser ud som fremskridt, mens skærmen bliver værre at se på.
+ *
+ * `screenIds` (2. anmeldelse, blokerer 1, valgfri): når sløjfen kun kørte
+ * ÉN skærm denne iteration, skal hverken gevinsten eller regressionsscanet
+ * lade sig fortynde/forurene af de andre registry-skærmes uoptagne nul-
+ * stubbe. Udeladt `screenIds` bevarer den gamle, globale opførsel uændret —
+ * eksisterende kaldere, der scorer alle skærme, skal ikke ændre adfærd.
  */
-export function acceptGate(before, after, { epsilon = 0.002, maxDrop = 0.02 } = {}) {
+export function acceptGate(before, after, { epsilon = 0.002, maxDrop = 0.02, screenIds = null } = {}) {
   // Fejl højlydt frem for at kaste TypeError midt i en sløjfe. En port, der
   // brækker i stedet for at fælde dom, lader ændringen passere uset.
   for (const [navn, v] of [["before", before], ["after", after]]) {
@@ -253,9 +299,12 @@ export function acceptGate(before, after, { epsilon = 0.002, maxDrop = 0.02 } = 
       throw new Error(`acceptGate: ${navn}.overall mangler — scores.json er fra en ældre metrics.py`);
     }
   }
-  const gain = +(after.overall - before.overall).toFixed(4);
+  const gain = screenIds
+    ? +(scopedOverall(after, screenIds) - scopedOverall(before, screenIds)).toFixed(4)
+    : +(after.overall - before.overall).toFixed(4);
   const regressions = [];
   for (const [sid, s] of Object.entries(after.screens ?? {})) {
+    if (screenIds && !screenIds.includes(sid)) continue; // uden for denne kørsels skærme — hverken rapporteret eller dømt
     for (const [rid, r] of Object.entries(s.regions ?? {})) {
       const b = before.screens?.[sid]?.regions?.[rid];
       if (!b) continue;
@@ -276,16 +325,32 @@ export function acceptGate(before, after, { epsilon = 0.002, maxDrop = 0.02 } = 
   };
 }
 
-export function revert() {
-  if (!fs.existsSync(BACKUP)) return false;
-  fs.writeFileSync(TUNING, fs.readFileSync(BACKUP, "utf8"));
+/**
+ * Genskaber tuning.css fra dens backup. `tuningPath`/`backupPath` er
+ * injicerbare (default: de gamle globale filer, for bagudkompatibilitet),
+ * så både loop.mjs's krak-sikring og CLI'ens `--run`/`--backup`-flag kan
+ * pege den på PRÆCIS den kørsels backup, og aldrig en løsrevet global fil.
+ * Se REQ-004 og 2. anmeldelse, blokerer 2.
+ */
+export function revert({ tuningPath = TUNING, backupPath = BACKUP } = {}) {
+  if (!fs.existsSync(backupPath)) return false;
+  fs.writeFileSync(tuningPath, fs.readFileSync(backupPath, "utf8"));
   return true;
 }
 
 function main() {
   const argv = process.argv.slice(2);
   if (argv.includes("--revert")) {
-    console.log(revert() ? "tuning.css rullet tilbage" : "ingen backup at rulle tilbage til");
+    // 2. anmeldelse, blokerer 2: løkken skriver PR-KØRSEL-backups
+    // (<runDir>/tuning.prev.css), aldrig den gamle globale .judge/tuning.prev.css.
+    // Uden disse flag ville --revert gendanne en løsrevet, forældet fil, der
+    // intet har med den seneste kørsel at gøre.
+    const runIdx = argv.indexOf("--run");
+    const backupIdx = argv.indexOf("--backup");
+    const opts = {};
+    if (runIdx !== -1) opts.backupPath = path.resolve(ROOT, argv[runIdx + 1], "tuning.prev.css");
+    if (backupIdx !== -1) opts.backupPath = path.resolve(argv[backupIdx + 1]); // eksplicit sti vinder over --run
+    console.log(revert(opts) ? "tuning.css rullet tilbage" : "ingen backup at rulle tilbage til");
     return;
   }
   const fIdx = argv.indexOf("--findings");
