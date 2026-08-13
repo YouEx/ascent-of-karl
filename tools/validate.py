@@ -185,6 +185,7 @@ def main() -> int:
         if gz > 60 * 1024:
             err(f"{p.name}: {gz / 1024:.1f} KB gzip — over bundtbudgettet på 60 KB (CON-003)")
     endings = load(CONTENT / "endings.json") or []
+    challenges = load(CONTENT / "challenges.json") or []
     config = load(CONTENT / "config.json") or {}
 
     element_ids = {e["id"] for e in elements}
@@ -436,7 +437,6 @@ def main() -> int:
                 "stuff",
                 "traits",
                 "scale",
-                "crafted",
                 "minDepth",
                 "anyOf",
                 "allOf",
@@ -473,12 +473,29 @@ def main() -> int:
                     f"{sorted(rejection_keys)}"
                 )
             rejected_pools = {
-                key: check_improv_pool(
-                    rejected.get(key),
-                    f"improvisation.rejected.{key}",
-                )
-                for key in sorted(rejection_keys)
+                "canonicalRecipe": check_improv_pool(
+                    rejected.get("canonicalRecipe"),
+                    "improvisation.rejected.canonicalRecipe",
+                ),
+                "depthLimit": check_improv_pool(
+                    rejected.get("depthLimit"),
+                    "improvisation.rejected.depthLimit",
+                ),
             }
+            verdict_rejected = rejected.get("verdict")
+            if not isinstance(verdict_rejected, dict) or set(verdict_rejected) != {
+                "locked", "other"
+            }:
+                err(
+                    f"Akt {act['act']}: improvisation.rejected.verdict skal have "
+                    "præcis locked/other"
+                )
+                verdict_rejected = {}
+            for key in ("locked", "other"):
+                rejected_pools[f"verdict.{key}"] = check_improv_pool(
+                    verdict_rejected.get(key),
+                    f"improvisation.rejected.verdict.{key}",
+                )
 
             labels = improvisation.get("labels")
             taxonomy_for_labels = load(CONTENT / "taxonomy.json") or {}
@@ -491,6 +508,25 @@ def main() -> int:
             if not isinstance(labels, dict):
                 err(f"Akt {act['act']}: improvisation.labels skal være et objekt")
                 labels = {}
+            need_labels = labels.get("needs")
+            expected_need_ids = {
+                problem["id"] for problem in act.get("problems", [])
+            } | {challenge["id"] for challenge in challenges}
+            if not isinstance(need_labels, dict) or set(need_labels) != expected_need_ids:
+                err(
+                    f"Akt {act['act']}: improvisation.labels.needs skal dække "
+                    "alle aktens problemer og challenges præcist"
+                )
+            elif any(
+                not isinstance(value, str)
+                or not value.strip()
+                or re.match(r"^Karl (is|needs|wonders)\b", value)
+                for value in need_labels.values()
+            ):
+                err(
+                    f"Akt {act['act']}: improvisation.labels.needs skal være "
+                    "ikke-tomme navneordfraser, ikke hele ProblemDef.name-sætninger"
+                )
             for group, expected_keys in expected_labels.items():
                 mapping = labels.get(group)
                 if not isinstance(mapping, dict) or set(mapping) != expected_keys:
@@ -537,7 +573,7 @@ def main() -> int:
                 )
 
             improv_placeholders = {
-                "a", "b", "element", "need", "actual", "expected", "missing"
+                "a", "b", "element", "need", "Need", "actual", "expected", "missing"
             }
             for ref in configured_ids:
                 line = lines_by_id.get(ref)
@@ -556,7 +592,9 @@ def main() -> int:
             for key in ("problemSolved", "challengeSolved", "absurdSolved"):
                 for ref in primary_pools.get(key, []):
                     for text in lines_by_id.get(ref, {}).get("variants", []):
-                        if "{element}" not in text or "{need}" not in text:
+                        if "{element}" not in text or (
+                            "{need}" not in text and "{Need}" not in text
+                        ):
                             err(
                                 f"{ref}: {key}-varianter skal nævne både "
                                 "{element} og {need}"
@@ -564,10 +602,10 @@ def main() -> int:
             for key, refs in evidence_pools.items():
                 for ref in refs:
                     for text in lines_by_id.get(ref, {}).get("variants", []):
-                        if "{element}" not in text or "{need}" not in text:
+                        if "{need}" not in text and "{Need}" not in text:
                             err(
-                                f"{ref}: noSolution-varianter skal nævne både "
-                                "{element} og {need}"
+                                f"{ref}: noSolution-varianter skal nævne {need}; "
+                                "elementnavnet står allerede på opfindelseskortet"
                             )
                 required_placeholders = {
                     "kind": {"actual", "expected"},
@@ -805,7 +843,7 @@ def main() -> int:
             triggered.add(c["ending"])
         if "cost" in c and (not isinstance(c["cost"], int) or c["cost"] < 1):
             err(f"Kombination {c['pair'][0]}+{c['pair'][1]}: cost skal være et heltal ≥ 1")
-    challenges = load(CONTENT / "challenges.json") or []
+
     challenge_endings = {c["failEnding"] for c in challenges}
     for e in endings:
         if e.get("automatic") or e.get("viaChallenge"):
@@ -1038,9 +1076,13 @@ def main() -> int:
     for failure in voice_failures:
         err(f"stemme: {failure}")
     if not voice_failures:
+        improv_expansions = voice_judge.expand_improvisation()
+        improv_profiles = len(voice_judge.improvisation_filler_profiles())
+        improv_variants = len(improv_expansions) // max(improv_profiles, 1)
         info(
             f"Stemmedommer: {len(voice_judge.expand_grammar())} grammatikvarianter "
-            f"+ {len(voice_judge.expand_improvisation())} improvisationsvarianter "
+            f"+ {improv_variants} improvisationsvarianter i "
+            f"{len(improv_expansions)} runtime-ekspansioner "
             f"og {len(voice_judge.expand_pairs())} bagte par består"
         )
 

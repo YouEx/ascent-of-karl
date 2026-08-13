@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { freshChallengeState } from "../src/core/challenge";
 import { Engine } from "../src/core/engine";
+import { buildFallbackElement } from "../src/core/improvise";
+import { satisfies } from "../src/core/solves";
 import { judgePair } from "../src/core/verdict";
 import type {
   ActDef,
@@ -14,6 +16,7 @@ import type {
   PredicateFailure,
   ProblemDef,
   SolvePredicate,
+  Verdict,
 } from "../src/core/types";
 import { loadContent } from "../src/content";
 import { Narrator, freshNarratorState } from "../src/narrator/narrator";
@@ -96,6 +99,11 @@ function testContent(
   challenges: ChallengeDef[] = [],
 ): ContentBundle {
   const act: ActDef = { act: 1, name: "Test act", problems };
+  const narrator = structuredClone(productionNarrator);
+  narrator.improvisation!.labels.needs = Object.fromEntries([
+    ...problems.map((entry) => [entry.id, entry.name]),
+    ...challenges.map((entry) => [entry.id, entry.title]),
+  ]);
   return {
     elements: [
       fire,
@@ -114,7 +122,7 @@ function testContent(
       { pair: [stone.id, stonePartner.id], result: stoneResult.id },
     ],
     acts: [act],
-    narrator: [productionNarrator],
+    narrator: [narrator],
     endings: [],
     challenges,
     decisions: [],
@@ -148,6 +156,41 @@ function pool(name: keyof NonNullable<typeof productionNarrator.improvisation>):
   const value = productionNarrator.improvisation![name];
   if (!Array.isArray(value)) throw new Error(`${String(name)} er ikke en pulje`);
   return value;
+}
+
+function productionSolverPair(needId: string): [string, string] {
+  const predicate = production.predicates[needId];
+  if (!predicate) throw new Error(`mangler prædikat for ${needId}`);
+  const search = new Engine(production);
+  const candidates = production.elements.filter(
+    (entry) => entry.act === 1 && (entry.depth ?? 0) <= 2,
+  );
+  search.loadState({
+    ...search.getState(),
+    discovered: production.elements
+      .filter((entry) => entry.act === 1)
+      .map((entry) => entry.id),
+    solvedProblems: search.currentActProblems().map((entry) => entry.id),
+  });
+  const canonicalPairs = new Set(
+    production.combos.map((combo) => [...combo.pair].sort().join("+")),
+  );
+  const canonicalIds = new Set(production.elements.map((entry) => entry.id));
+
+  for (let left = 0; left < candidates.length; left++) {
+    for (let right = left + 1; right < candidates.length; right++) {
+      const a = candidates[left]!;
+      const b = candidates[right]!;
+      if (canonicalPairs.has([a.id, b.id].sort().join("+"))) continue;
+      if (Math.max(a.depth ?? 0, b.depth ?? 0) + 1 > 3) continue;
+      const verdict = judgePair(search, a, b).verdict;
+      if (verdict !== "plausible" && verdict !== "absurd") continue;
+      const invented = buildFallbackElement(a, b);
+      if (canonicalIds.has(invented.id)) continue;
+      if (satisfies(invented, predicate)) return [a.id, b.id];
+    }
+  }
+  throw new Error(`fandt ingen improviseret løsning til ${needId}`);
 }
 
 describe("Narrator: improviserede udfald er egne story-beats", () => {
@@ -279,8 +322,161 @@ describe("Narrator: improviserede udfald er egne story-beats", () => {
   });
 });
 
+describe("Narrator: need-labels er grammatiske for alle rigtige behov", () => {
+  const act = production.acts.find((entry) => entry.act === 1)!;
+
+  it.each(act.problems)("bruger en indholdsphrase for problemet $id", (need) => {
+    const label =
+      productionNarrator.improvisation!.labels.needs[need.id];
+    expect(label).toBeTruthy();
+    if (!label) throw new Error(`mangler need-label for ${need.id}`);
+    let engine: Engine;
+    let pair: [string, string];
+    if (need.id === "ensomhed") {
+      const content = testContent(
+        [need],
+        { [need.id]: production.predicates[need.id]! },
+      );
+      const companion = element("companion-seed", {
+        name: "quiet companion",
+        base: true,
+        kind: "person",
+        stuff: "flesh",
+        traits: ["alive"],
+      });
+      const companionPartner = element("companion-partner");
+      const companionResult = element("companion-result");
+      content.elements.push(companion, companionPartner, companionResult);
+      content.combos.push({
+        pair: [companion.id, companionPartner.id],
+        result: companionResult.id,
+      });
+      content.narrator[0]!.improvisation!.labels.needs[need.id] = label;
+      engine = new Engine(content);
+      pair = [companion.id, stone.id];
+    } else {
+      pair = productionSolverPair(need.id);
+      engine = new Engine(production);
+      engine.loadState({
+        ...engine.getState(),
+        discovered: production.elements
+          .filter((entry) => entry.act === 1)
+          .map((entry) => entry.id),
+        solvedProblems: act.problems
+          .filter((entry) => entry.id !== need.id)
+          .map((entry) => entry.id),
+      });
+    }
+    const narrator = new Narrator(engine, freshNarratorState(17));
+
+    const { outcome, line } = improviseAndReact(
+      engine,
+      narrator,
+      pair[0],
+      pair[1],
+    );
+    expect(outcome).toMatchObject({
+      kind: "improvised",
+      solved: { id: need.id },
+    });
+    expect(label).not.toBe(need.name);
+    expect(label).not.toMatch(/^Karl (is|needs|wonders)\b/);
+    expect(line?.text.toLowerCase()).toContain(label.toLowerCase());
+    expect(line?.text.toLowerCase()).not.toContain(need.name.toLowerCase());
+  });
+
+  it.each(production.challenges)(
+    "bruger en indholdsphrase for challenget $id",
+    (need) => {
+      const pair = productionSolverPair(need.id);
+      const engine = new Engine(production);
+      engine.loadState({
+        ...engine.getState(),
+        discovered: production.elements
+          .filter((entry) => entry.act === 1)
+          .map((entry) => entry.id),
+        solvedProblems: act.problems.map((entry) => entry.id),
+        challenges: {
+          ...freshChallengeState(),
+          active: { id: need.id, startedAtPage: 1, turnsLeft: 2 },
+          seen: [need.id],
+          everSpawned: true,
+        },
+      });
+      const narrator = new Narrator(engine, freshNarratorState(19));
+
+      const { outcome, line } = improviseAndReact(
+        engine,
+        narrator,
+        pair[0],
+        pair[1],
+      );
+      const label =
+        productionNarrator.improvisation!.labels.needs[need.id];
+      expect(label).toBeTruthy();
+      if (!label) throw new Error(`mangler need-label for ${need.id}`);
+
+      expect(outcome.challenge).toMatchObject({
+        kind: "solved",
+        def: { id: need.id },
+      });
+      expect(label).not.toBe(need.title);
+      expect(line?.text.toLowerCase()).toContain(label.toLowerCase());
+      expect(line?.text.toLowerCase()).not.toContain(need.title.toLowerCase());
+    },
+  );
+});
+
+describe("Narrator: improvisation følger opdagelses- og fiaskotællerne", () => {
+  it("en ny improviseret opfindelse nulstiller en eksisterende fiaskorække", () => {
+    const content = testContent([], {});
+    const { engine, narrator } = narrated(content);
+
+    for (let index = 0; index < 3; index++) {
+      const outcome = engine.combine(fire.id, stone.id);
+      expect(outcome.kind).toBe("nofuse");
+      narrator.react(fire.id, stone.id, outcome);
+    }
+    expect(narrator.getState()).toMatchObject({
+      failStreak: 3,
+      failsSinceDiscovery: 3,
+    });
+
+    const success = engine.improvise(fire.id, berries.id);
+    expect(success).toMatchObject({ kind: "improvised", reused: false });
+    narrator.react(fire.id, berries.id, success);
+
+    expect(narrator.getState()).toMatchObject({
+      failStreak: 0,
+      failsSinceDiscovery: 0,
+    });
+  });
+
+  it("afviste improvisationer bygger den samme fiaskorække som nofuse", () => {
+    const engine = new Engine(production);
+    const narrator = new Narrator(engine);
+
+    for (let index = 0; index < 2; index++) {
+      const outcome = engine.improvise("sten", "sten");
+      expect(outcome).toMatchObject({
+        kind: "improvise-rejected",
+        reason: "canonical-recipe",
+      });
+      narrator.react("sten", "sten", outcome);
+    }
+
+    expect(narrator.getState()).toMatchObject({
+      failStreak: 2,
+      failsSinceDiscovery: 2,
+    });
+  });
+});
+
 describe("Narrator: NeedExplanations bliver sand spillertekst", () => {
-  const cases: Array<[PredicateFailure["requirement"], SolvePredicate]> = [
+  const cases: Array<[
+    Exclude<PredicateFailure["requirement"], "crafted">,
+    SolvePredicate,
+  ]> = [
     ["kind", { kind: ["structure"] }],
     ["stuff", { stuff: ["metal"] }],
     ["traits", { traits: ["healing"] }],
@@ -307,32 +503,45 @@ describe("Narrator: NeedExplanations bliver sand spillertekst", () => {
     expect(line?.text).not.toContain("{");
   });
 
-  it("har en sand, bred fallback for crafted-beviset, som runtime-improvisationer normalt ikke kan fejle", () => {
-    const need = problem("secret-crafted-id", "Karl needs something made");
-    const content = testContent([need], { [need.id]: { kind: ["structure"] } });
+  it("klassificerer crafted som uopnåelig for rigtige improviserede elementer", () => {
+    const need = problem("secret-crafted-id", "something Karl made");
+    const content = testContent(
+      [need],
+      { [need.id]: { kind: ["structure"], crafted: true } },
+    );
     const { engine, narrator } = narrated(content, 9);
-    const real = engine.improvise(fire.id, berries.id);
-    expect(real.kind).toBe("improvised");
-    if (real.kind !== "improvised") return;
-    const craftedFailure: PredicateFailure = {
-      requirement: "crafted",
-      expected: true,
-      actual: false,
-    };
-    const outcome: CombineOutcome = {
-      ...real,
-      solved: undefined,
-      needExplanations: {
-        [need.id]: { satisfied: false, failures: [craftedFailure] },
-      },
-    };
 
-    const line = narrator.react(fire.id, berries.id, outcome);
+    const { outcome, line } = improviseAndReact(
+      engine,
+      narrator,
+      fire.id,
+      berries.id,
+    );
 
-    expect(productionNarrator.improvisation!.noSolution.crafted).toContain(line?.id);
-    expect(line?.text).toContain(need.name);
-    expect(line?.text).not.toContain("crafted");
-    expect(line?.text).not.toContain(need.id);
+    expect(outcome.kind).toBe("improvised");
+    if (outcome.kind !== "improvised") return;
+    const failures = outcome.needExplanations[need.id]?.failures ?? [];
+    expect(failures.map((failure) => failure.requirement)).toEqual(["kind"]);
+    expect(productionNarrator.improvisation!.noSolution).not.toHaveProperty(
+      "crafted",
+    );
+    expect(productionNarrator.improvisation!.noSolution.kind).toContain(line?.id);
+  });
+
+  it("bruger den brede no-current-need fallback med et ægte Engine.improvise-udfald", () => {
+    const content = testContent([], {});
+    const { engine, narrator } = narrated(content, 11);
+
+    const { outcome, line } = improviseAndReact(
+      engine,
+      narrator,
+      fire.id,
+      berries.id,
+    );
+
+    expect(outcome).toMatchObject({ kind: "improvised", reused: false });
+    expect(outcome.kind === "improvised" && outcome.needExplanations).toEqual({});
+    expect(pool("noCurrentNeed")).toContain(line?.id);
   });
 });
 
@@ -380,11 +589,95 @@ describe("Narrator: genbrug, afvisning og serialiseret variation", () => {
       reason: "verdict",
       verdict: "near-miss",
     });
-    expect(productionNarrator.improvisation!.rejected.verdict).toContain(
+    expect(productionNarrator.improvisation!.rejected.verdict.other).toContain(
       verdict.line?.id,
     );
     expect(verdict.line?.id).not.toMatch(/^(g-|gf-|pair-)/);
   });
+
+  it("giver locked sin egen sandfærdige afvisning", () => {
+    const engine = new Engine(production);
+    const state = engine.getState();
+    engine.loadState({
+      ...state,
+      discovered: [...state.discovered, "larver"],
+    });
+    const narrator = new Narrator(engine);
+
+    const { outcome, line } = improviseAndReact(
+      engine,
+      narrator,
+      "larver",
+      "ler",
+    );
+
+    expect(outcome).toMatchObject({
+      kind: "improvise-rejected",
+      reason: "verdict",
+      verdict: "locked",
+    });
+    expect(
+      productionNarrator.improvisation!.rejected.verdict.locked,
+    ).toContain(line?.id);
+    expect(line?.text.toLowerCase()).not.toContain("empty space");
+    expect(line?.text.toLowerCase()).toMatch(/already|answer|known|correct|right/);
+  });
+
+  it.each(["near-miss", "inert", "self", "clash"] as const)(
+    "holder den øvrige verdikt-afvisning bred og sand for %s",
+    (targetVerdict) => {
+      let engine: Engine;
+      let pair: [string, string];
+      if (targetVerdict === "near-miss") {
+        engine = new Engine(production);
+        pair = ["sten", "graes"];
+      } else if (targetVerdict === "self") {
+        engine = new Engine(production);
+        pair = ["ler", "ler"];
+      } else if (targetVerdict === "inert") {
+        const content = testContent([], {});
+        const first = element("inert-a", { name: "idle stone", base: true });
+        const second = element("inert-b", { name: "idle bone", base: true });
+        content.elements.push(first, second);
+        engine = new Engine(content);
+        pair = [first.id, second.id];
+      } else {
+        const content = testContent([], {});
+        const wet = element("wet-test", {
+          name: "wet bundle",
+          base: true,
+          stuff: "none",
+          traits: ["wet"],
+        });
+        const wetPartner = element("wet-partner");
+        const wetResult = element("wet-result");
+        content.elements.push(wet, wetPartner, wetResult);
+        content.combos.push({
+          pair: [wet.id, wetPartner.id],
+          result: wetResult.id,
+        });
+        engine = new Engine(content);
+        pair = [fire.id, wet.id];
+      }
+      const narrator = new Narrator(engine);
+      const { outcome, line } = improviseAndReact(
+        engine,
+        narrator,
+        pair![0],
+        pair![1],
+      );
+
+      expect(outcome).toMatchObject({
+        kind: "improvise-rejected",
+        reason: "verdict",
+        verdict: targetVerdict,
+      });
+      expect(
+        productionNarrator.improvisation!.rejected.verdict.other,
+      ).toContain(line?.id);
+      expect(line?.text).not.toContain("{");
+    },
+  );
 
   it("kanonisk afvisning lover ikke en konkret opskrift, fordi et kurateret id også kan eje udfaldet", () => {
     for (const id of productionNarrator.improvisation!.rejected.canonicalRecipe) {
@@ -497,6 +790,65 @@ function runPython(
   });
 }
 
+function realLongDepthThreeInvention(): ElementDef {
+  const stuffs: ElementDef["stuff"][] = [
+    "none",
+    "plant",
+    "flesh",
+    "fibre",
+    "bone",
+    "wood",
+    "stone",
+    "metal",
+  ];
+  const bases = stuffs.map((stuff, index) =>
+    element(`long-base-${index}`, {
+      name: `Ancient object${index}`,
+      base: true,
+      stuff,
+    }),
+  );
+  const dummies = stuffs.map((stuff, index) =>
+    element(`long-dummy-${index}`, { stuff }),
+  );
+  const results = stuffs.map((stuff, index) =>
+    element(`long-result-${index}`, { stuff }),
+  );
+  const content: ContentBundle = {
+    elements: [...bases, ...dummies, ...results],
+    combos: bases.map((base, index) => ({
+      pair: [base.id, dummies[index]!.id],
+      result: results[index]!.id,
+    })),
+    acts: [{ act: 1, name: "Long-name test", problems: [] }],
+    narrator: [structuredClone(productionNarrator)],
+    endings: [],
+    challenges: [],
+    decisions: [],
+    predicates: {},
+    config: { turnLimit: 99, endingsUnlockAt: 99 },
+  };
+  const engine = new Engine(content);
+  const make = (a: string, b: string): ElementDef => {
+    const outcome = engine.improvise(a, b);
+    expect(outcome.kind).toBe("improvised");
+    if (outcome.kind !== "improvised") throw new Error("forventede opfindelse");
+    return outcome.element;
+  };
+
+  const depthOne = [
+    make(bases[0]!.id, bases[1]!.id),
+    make(bases[2]!.id, bases[3]!.id),
+    make(bases[4]!.id, bases[5]!.id),
+    make(bases[6]!.id, bases[7]!.id),
+  ];
+  const depthTwo = [
+    make(depthOne[0]!.id, depthOne[1]!.id),
+    make(depthOne[2]!.id, depthOne[3]!.id),
+  ];
+  return make(depthTwo[0]!.id, depthTwo[1]!.id);
+}
+
 describe("Stemmedommer: improvisationsfamilier", () => {
   it("ekspanderer alle nye varianter uden rå pladsholdere", async () => {
     const result = await runPython(`
@@ -514,6 +866,41 @@ print(json.dumps({
     expect(parsed.count).toBeGreaterThan(60);
     expect(parsed.unfilled).toEqual([]);
   });
+
+  it("gater hver familie med et konservativt navn mindst så langt som en ægte dybde-3-opfindelse", async () => {
+    const real = realLongDepthThreeInvention();
+    expect(real.depth).toBe(3);
+    const result = await runPython(`
+import json
+from tools.voice import judge
+real_name = ${JSON.stringify(real.name)}
+fillers = judge.improvisation_element_fillers()
+expanded = judge.expand_improvisation()
+short_ids = sorted({label.split(":")[2].split("#")[0] for label, _ in expanded if label.startswith("improvisation:short:")})
+max_ids = sorted({label.split(":")[2].split("#")[0] for label, _ in expanded if label.startswith("improvisation:max:")})
+failures = [f for f in judge.gate() if "improvisation:max:" in f]
+print(json.dumps({
+  "realWords": len(judge.tokenize_words(real_name)),
+  "maxWords": max(len(judge.tokenize_words(name)) for name in fillers),
+  "shortIds": short_ids,
+  "maxIds": max_ids,
+  "failures": failures,
+}))
+`);
+
+    expect(result.code, result.stderr).toBe(0);
+    const parsed = JSON.parse(result.stdout) as {
+      realWords: number;
+      maxWords: number;
+      shortIds: string[];
+      maxIds: string[];
+      failures: string[];
+    };
+    expect(parsed.realWords).toBeGreaterThan(10);
+    expect(parsed.maxWords).toBeGreaterThanOrEqual(parsed.realWords);
+    expect(parsed.maxIds).toEqual(parsed.shortIds);
+    expect(parsed.failures).toEqual([]);
+  }, 20_000);
 
   it("afviser en lav-stemme improvisationsvariant gennem den samme gate som validate", async () => {
     const result = await runPython(`

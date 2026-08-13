@@ -4,252 +4,260 @@
     {
       "id": "improv-problem-1",
       "variants": [
-        "The problem was simple: {need}. The answer is {element}, which is where simplicity leaves us.",
-        "If the chapter heading is '{need}', Karl has just crossed it out with {element}. I object only editorially.",
-        "Against every prepared solution, {element} settles this: {need}. Karl proceeds as if this were obvious.",
-        "Mark it solved: {need}. Mark the cause as {element}. Mark my expression as restrained."
+        "{element} solves {need}. History adjusts.",
+        "{Need}, solved by {element}. Unexpectedly.",
+        "{element} answers {need}. Karl beams.",
+        "{Need} yields to {element}. I object."
       ]
     },
     {
       "id": "improv-problem-2",
       "variants": [
-        "History required an answer to '{need}'. Karl supplied {element}. Both facts are now regrettably permanent.",
-        "{need}, until now. Then came {element}, and the problem left before dignity could.",
-        "Karl presents {element}; the condition formerly known as '{need}' ends. I am revising the chapter.",
-        "The need was '{need}'. The solution was {element}. I have narrated cleaner equations."
+        "{element} ends {need}. The book sighs.",
+        "{Need} meets {element} and loses.",
+        "{element}: the answer to {need}. Apparently.",
+        "{Need}, courtesy of {element}. Against advice."
       ]
     },
     {
       "id": "improv-challenge-1",
       "variants": [
-        "The threat was {need}. Then Karl raised {element}, and the threat reconsidered.",
-        "Against {need}, Karl deploys {element}. It works. I will allow the silence to record my surprise.",
-        "{need} meets {element} and decides Karl may continue living. A sensible decision, reached strangely.",
-        "Karl survives {need} by means of {element}. That sentence is now history's problem, not mine."
+        "{element} defeats {need}. Karl survives.",
+        "{Need} retreats from {element}. Sensibly.",
+        "{element} answers {need}. The danger leaves.",
+        "{Need}, ended by {element}. History continues."
       ]
     },
     {
       "id": "improv-challenge-2",
       "variants": [
-        "{element}, of all things, carries Karl past {need}. The chronicle objects. The chronicle records it anyway.",
-        "{need} is over. {element} did it. I have no further questions that I expect answered.",
-        "Karl survives {need} by means of {element}. Civilization continues, though not along any route I prepared.",
-        "The danger called itself {need}. Karl answered with {element}. The danger has withdrawn its complaint."
+        "{element} carries Karl past {need}. I object.",
+        "{Need} loses to {element}. Karl remains.",
+        "Somehow, {element} settles {need}. History continues.",
+        "{Need}, survived by means of {element}. Somehow."
       ]
     },
     {
       "id": "improv-absurd-1",
       "variants": [
-        "No. Absolutely not. {element} has solved {need}. I watched it happen and remain opposed.",
-        "The answer to '{need}' is {element}. That is true, which is much worse than merely being ridiculous.",
-        "{element} works. {need} does not survive the encounter. Neither does my confidence in orderly history.",
-        "I prepared for ingenuity. I did not prepare for {element} defeating {need}. The book has begun laughing at me.",
-        "By every sensible route, this should be nonsense. Instead, {element} solves {need}. Karl accepts the apology I did not offer.",
-        "The impossible becomes embarrassing: {element} answers {need}. Karl smiles. I revise my standards."
+        "No. {element} solves {need}. I remain opposed.",
+        "{element} defeats {need}. That is absurdly true.",
+        "{Need}, conquered by {element}. Reason leaves.",
+        "{element} answers {need}. The book laughs.",
+        "Impossible, yet effective: {element} solves {need}.",
+        "{Need} loses to {element}. Karl accepts applause."
       ]
     },
     {
       "id": "improv-absurd-2",
       "variants": [
-        "Let the record show: {need}, conquered by {element}. Future scholars will call this disputed because future scholars have standards.",
-        "A new principle of history: when faced with {need}, apparently one may apply {element}. I resign from prediction.",
-        "Here lies reason, defeated by evidence. {element} has answered {need}, and Karl is unbearably pleased.",
-        "The method was indefensible. The result is not. {element} solves {need}. I dislike this distinction.",
-        "History asked for a solution to {need}. Karl handed it {element}. History, against advice, accepted.",
-        "I would call this cheating if the rules had not just applauded: {element} defeats {need}."
+        "{element} works on {need}. I resent evidence.",
+        "{Need}, beaten by {element}. Ridiculous. Effective.",
+        "{element} settles {need}. History protests.",
+        "{Need} falls to {element}. Prediction resigns.",
+        "{element} solves {need}. My notes object.",
+        "{Need}, solved by {element}. Standards collapse."
       ]
     },
     {
       "id": "improv-absurd-3",
       "variants": [
-        "Karl holds up {element}. {need} ends. He looks at me with the confidence of a man who cannot hear objections.",
-        "He made {element}, pointed it at {need}, and somehow the problem blinked first. Karl will be impossible after this.",
-        "Of course Karl celebrates. {element} has solved {need}. The fact that nobody planned it only improves his dance.",
-        "Karl's expression says he knew {element} would answer {need}. Karl's expression has lied before, but not today.",
-        "He has solved {need} with {element}. Not by wisdom. By the more dangerous force known as being right once.",
-        "Karl invents {element}; {need} retreats. He accepts this as confirmation of every idea he has ever had."
+        "Karl raises {element}. {Need} retreats.",
+        "{element} defeats {need}. Karl becomes unbearable.",
+        "{Need} blinked first. {element} wins.",
+        "{element} solves {need}. Karl claims foresight.",
+        "{Need} meets {element}. Karl celebrates.",
+        "{element} works. {Need} does not. Karl grins."
       ]
     },
     {
       "id": "improv-absurd-4",
       "variants": [
-        "I objected to {element}. I objected to using it on {need}. I was wrong twice, which feels excessive.",
-        "Very well. {element} solves {need}. I am not impressed. I am, however, taking unusually careful notes.",
-        "Against judgment, taste, and my prepared narration, {element} answers {need}. Fine work, Karl. Regrettably fine.",
-        "There are moments a narrator must admit defeat. {element} solving {need} is several of them at once.",
-        "I have narrated cleverer men achieving less. {element} has settled {need}. Karl may keep the grin.",
-        "That was absurd, effective, and entirely Karl's. {element} defeats {need}. I withdraw one previous sigh."
+        "{element} solves {need}. I was wrong.",
+        "{Need} yields to {element}. Regrettably impressive.",
+        "{element} answers {need}. Fine work, Karl.",
+        "{Need}, defeated by {element}. I concede.",
+        "{element} settles {need}. My doubts retire.",
+        "Absurd, effective, final: {element} defeats {need}."
       ]
     },
     {
       "id": "improv-none-kind",
       "variants": [
-        "{element} is the wrong sort of thing for {need}: it is {actual}, while the need accepts {expected}.",
-        "New, yes. Suitable, no. {element} is {actual}; {need} calls for {expected}.",
-        "Classification has spoken: {element} is {actual}. {need} requires {expected}. Even Karl cannot argue those facts into friendship."
+        "{actual}, not {expected}. {Need} remains.",
+        "{Need} accepts {expected}, not {actual}.",
+        "Wrong kind: {actual}. {Need} needs {expected}."
       ]
     },
     {
       "id": "improv-none-stuff",
       "variants": [
-        "{element} is chiefly {actual}. {need} calls for {expected}. Materials remain stubbornly relevant.",
-        "Karl has made the wrong substance beautifully. {element} is {actual}; {need} needs {expected}.",
-        "The shape of {element} may be new, but the material is still {actual}. {need} accepts {expected}, and no amount of naming changes that."
+        "{actual}, not {expected}. {Need} remains.",
+        "{Need} needs {expected}; this is {actual}.",
+        "Wrong material: {actual}. {Need} calls for {expected}."
       ]
     },
     {
       "id": "improv-none-traits",
       "variants": [
-        "{element} does not provide {missing}, which {need} still requires. Karl has invented around the problem, not through it.",
-        "Promising shape, wrong properties: without {missing}, {element} does nothing for {need}.",
-        "New object, missing qualification. {element} offers no {missing}; {need} remains."
+        "Missing {missing}. {Need} remains.",
+        "{Need} requires {missing}. It is absent.",
+        "Without {missing}, {need} stays unsolved."
       ]
     },
     {
       "id": "improv-none-scale",
       "variants": [
-        "{element} operates at {actual} scale. {need} needs {expected}. Karl has brought the right confidence to the wrong size.",
-        "Scale matters. {element} is {actual}; {need} calls for {expected}. The invention is simply too much, or not nearly enough.",
-        "Karl has solved a differently sized problem. {element} works at {actual} scale, while {need} requires {expected}."
-      ]
-    },
-    {
-      "id": "improv-none-crafted",
-      "variants": [
-        "{element} was found, not made. {need} requires Karl to do at least some of the work.",
-        "Karl cannot claim {element} as an answer to {need}; this need demands something he actually made.",
-        "Simply holding {element} does not satisfy {need}. This one demands an invention, not an acquisition."
+        "{actual}, not {expected}. {Need} remains.",
+        "{Need} needs {expected}, not {actual}.",
+        "Wrong scale: {actual}. {Need} calls for {expected}."
       ]
     },
     {
       "id": "improv-none-depth",
       "variants": [
-        "{element} is only {actual} from the ground. {need} requires at least {expected}. Karl has stopped one idea too early.",
-        "The ancestry is too short. {element} took {actual}; {need} demands {expected} before it will be impressed.",
-        "Karl reached {element} in {actual}. For {need}, the rules require {expected}. Even invention has prerequisites."
+        "{actual}, not {expected}. {Need} remains.",
+        "{Need} requires {expected}; this took {actual}.",
+        "Too shallow: {actual}. {Need} needs {expected}."
       ]
     },
     {
       "id": "improv-none-any",
       "variants": [
-        "{element} misses every route {need} permits. A broad failure, impressively achieved.",
-        "Several kinds of answer could settle {need}. {element} is none of them.",
-        "The rules gave Karl options for {need}. {element} manages to fit none."
+        "No permitted route fits. {Need} remains.",
+        "Several routes were offered. {Need} accepts none.",
+        "Every route misses. {Need} survives."
       ]
     },
     {
       "id": "improv-none-all",
       "variants": [
-        "{element} does not meet the full set of conditions for {need}. One missing part is enough.",
-        "The test for {need} is cumulative. {element} fails at least one required part.",
-        "{need} demands every condition together. {element} does not bring the complete set."
+        "At least one condition fails. {Need} remains.",
+        "{Need} requires the full set. It is incomplete.",
+        "The complete test fails. {Need} remains."
       ]
     },
     {
       "id": "improv-none-not",
       "variants": [
-        "{element} matches a condition {need} explicitly excludes. An invention can be impressive and disqualified at once.",
-        "The obstacle is a forbidden match: {element} satisfies something {need} rules out.",
-        "{need} rules out a condition {element} meets. For once, satisfying more is the problem."
+        "{Need} rejects a condition present here.",
+        "One present condition disqualifies this from {need}.",
+        "Something present is forbidden by {need}."
       ]
     },
     {
       "id": "improv-none-broad",
       "variants": [
-        "{element} is new. It still fails the stated test for {need}. Novelty and usefulness remain separate departments.",
-        "The invention exists; the answer does not. {element} leaves {need} exactly where Karl found it.",
-        "{element} enters history, while {need} remains unsolved. Both developments are now my responsibility.",
-        "New object, old problem. {element} does not satisfy what {need} asks of it."
+        "The test fails. {Need} remains.",
+        "New object, old problem: {need}.",
+        "{Need} is still unsolved.",
+        "Novelty does not answer {need}."
       ]
     },
     {
       "id": "improv-none-fallback",
       "variants": [
-        "The evidence clears {element} of usefulness here: {need} remains. I will not invent a more precise accusation.",
-        "{element} does not meet the recorded conditions for {need}. Beyond that, the book refuses to guess.",
-        "The verdict is broad because the evidence is broad: {element} does not solve {need}."
+        "The evidence is broad. {Need} remains.",
+        "No precise claim, only this: {need} remains.",
+        "The conditions fail. {Need} survives."
       ]
     },
     {
       "id": "improv-none-current-1",
       "variants": [
-        "{element} exists. None of Karl's current troubles accept responsibility for needing it.",
-        "A new invention, unattached to any present problem. {element} joins history as optional luggage.",
-        "{element} solves nothing currently before us. Karl is pleased by the independence."
+        "{element} exists. No current problem needs it.",
+        "Karl makes {element}. It is new, stable, and presently useless.",
+        "{element} solves nothing before us. Karl approves."
       ]
     },
     {
       "id": "improv-none-current-2",
       "variants": [
-        "Karl has invented {element}. The list of solved problems remains exactly as long as before.",
-        "{element} enters the world without a job. Many respectable inventions begin this way; this one may not.",
-        "New, stable, and presently useless: {element}. I record all three qualities with equal care."
+        "Karl made {element}. The problem list did not move.",
+        "{element} arrives without a job.",
+        "Karl presents {element}. No current problem claims it."
       ]
     },
     {
       "id": "improv-reused-1",
       "variants": [
-        "Yes, that is still {element}. Reintroducing it does not make it newly invented.",
-        "Karl has made {element} again. History declines to count the same surprise twice.",
-        "{element}, once more. The invention is stable. The applause is not.",
-        "We already have {element}. Karl appears to be checking whether repetition creates originality."
+        "Still {element}. Still not new.",
+        "{element}, again. History counts once.",
+        "Same {element}. No second discovery.",
+        "{element} returns. The applause does not."
       ]
     },
     {
       "id": "improv-reused-2",
       "variants": [
-        "The workshop produces another {element}. The first one sends no congratulations.",
-        "Same parents, same {element}. Determinism has arrived before Karl has a word for it.",
-        "Another {element}: useful, perhaps, but not new. The book keeps only one entry.",
-        "Karl recreates {element} exactly. I admire the consistency and reject the novelty."
+        "Karl has made {element} before. History keeps one entry.",
+        "Same parents, same {element}.",
+        "Karl makes {element} again. The book refuses a second entry.",
+        "Karl remakes {element}. I recognise it, regrettably."
       ]
     },
     {
       "id": "improv-reject-canonical-1",
       "variants": [
-        "History already recognises an established outcome for {a} and {b}. Karl does not get to rename it as improvisation.",
-        "{a} and {b} are already accounted for. I will not pretend their established answer is a new invention.",
-        "{a} and {b} already lead somewhere known. Invention is not an escape from memory."
+        "{a} and {b} already have an answer.",
+        "{a} with {b}: already accounted for.",
+        "History already knows {a} and {b}."
       ]
     },
     {
       "id": "improv-reject-canonical-2",
       "variants": [
-        "The book already has an answer assigned to {a} and {b}. I am not opening a second page because Karl feels inventive.",
-        "{a} with {b} is not unexplored territory. The road exists. Karl is merely standing beside it.",
-        "History recognises this pair already. {a} and {b} have an answer, and improvisation does not erase it."
+        "{a} and {b} are not unexplored.",
+        "The book already owns {a} and {b}.",
+        "{a} plus {b}: an established answer."
+      ]
+    },
+    {
+      "id": "improv-reject-locked-1",
+      "variants": [
+        "{a} and {b}: correct, but not yet.",
+        "{a} with {b}: the answer is locked away.",
+        "The path exists for {a} and {b}, later."
+      ]
+    },
+    {
+      "id": "improv-reject-locked-2",
+      "variants": [
+        "Correct pair, wrong moment: {a} and {b}.",
+        "History knows {a} and {b}; Karl does not.",
+        "{a} with {b}: right pair, wrong moment."
       ]
     },
     {
       "id": "improv-reject-verdict-1",
       "variants": [
-        "The invention gate stays closed. {a} and {b} do not justify a new thing, however confidently Karl introduces them.",
-        "Not every empty space in the recipe book deserves filling. {a} and {b} have demonstrated one.",
-        "{a} and {b} remain two things. The rules permit imagination, not amnesty."
+        "{a} and {b} do not justify invention.",
+        "{a} with {b}: no third thing.",
+        "{a} and {b} remain themselves."
       ]
     },
     {
       "id": "improv-reject-verdict-2",
       "variants": [
-        "No invention from {a} and {b}. The attempt may be bold; the connection is not.",
-        "Karl proposes a new object from {a} and {b}. The world asks for a better argument.",
-        "{a} and {b} have failed the right to become a third thing. They remain themselves, with some relief."
+        "No invention from {a} and {b}.",
+        "{a} and {b}: bold, but unsupported.",
+        "{a} with {b} proves nothing new."
       ]
     },
     {
       "id": "improv-reject-depth-1",
       "variants": [
-        "Three generations of invention are enough. Building again from {a} and {b} would leave history describing fog.",
-        "That family tree stops here. {a} and {b} would produce an invention too far removed from anything Karl found.",
-        "Even nonsense needs ancestry. This branch has reached its limit with {a} and {b}."
+        "{a} and {b} end this family tree.",
+        "No further branch from {a} and {b}.",
+        "{a} with {b}: ancestry stops here."
       ]
     },
     {
       "id": "improv-reject-depth-2",
       "variants": [
-        "No further down this branch. {a} and {b} are already descendants of descendants, and the book has lost sight of the ground.",
-        "Karl has built invention upon invention upon invention. With {a} and {b}, the ladder ends.",
-        "The chain is long enough. Another thing from {a} and {b} would be related to reality only by rumour."
+        "{a} and {b} are one generation too far.",
+        "The chain ends at {a} and {b}.",
+        "{a} plus {b}: too far from the ground."
       ]
     }
   ]

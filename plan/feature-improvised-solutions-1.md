@@ -163,9 +163,9 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 |------|-------------|-----------|------|
 | TASK-022 | Ny udfaldstype `improvised` i `CombineOutcome` med elementet, `reused`, løst problem/challenge og `needExplanations`. Core/type + fortællerforbruger er leveret; UI er fortsat uden for denne opgave. | ✅ | 2026-08-13 |
 | TASK-023 | Skriv replikfamilien "dommen": accept (`{element} solves {problem}`), afvisning (elementet er nyt, men løser intet), og den bedste af dem alle — **den absurde accept**, hvor tingen faktisk opfylder prædikatet på en måde ingen havde tænkt. Sidstnævnte har 24 varianter mod 8 i hver almindelig succesfamilie. | ✅ | 2026-08-13 |
-| TASK-024 | Afvisning navngiver *hvorfor* fra `NeedExplanations`: atomare krav får spiller-vendte labels, mens `allOf`/`anyOf`/`not` bruger bredere, bevisligt sande formuleringer frem for gæt. | ✅ | 2026-08-13 |
+| TASK-024 | Afvisning navngiver *hvorfor* fra `NeedExplanations`: atomare krav får spiller-vendte labels, mens `allOf`/`anyOf`/`not` bruger bredere, bevisligt sande formuleringer frem for gæt. `crafted` er eksplicit uopnåelig for runtime-opfindelser (`base: false`) og har ingen død tekstpulje. | ✅ | 2026-08-13 |
 | TASK-025 | Krønikeindførsel for improviserede løsninger med spillerens egen opfindelse fremhævet — det er runets historie, og den skal kunne deles. | | |
-| TASK-026 | Alle 106 nye varianter ekspanderes som runtime og køres som kandidattekst gennem `voice_judge.gate()` fra `npm run validate`; en injiceret lav-stemme variant beviser afvisningsvejen. | ✅ | 2026-08-13 |
+| TASK-026 | Alle 109 nye varianter køres gennem `voice_judge.gate()` fra `npm run validate`: fuld stemmescore med kort navn plus hårde ord-/sætningslofter med konservativt 23-ords dybde-3-navn (218 runtime-ekspansioner). En injiceret lav-stemme variant beviser afvisningsvejen. | ✅ | 2026-08-13 |
 
 ### Implementation Phase 5
 

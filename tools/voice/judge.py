@@ -118,11 +118,11 @@ GRAMMAR_FILLERS = {
     "shared": "hot",
 }
 
-IMPROVISATION_FILLERS = {
+IMPROVISATION_SHORT_FILLERS = {
     "a": "stone",
     "b": "dry grass",
     "element": "fire-touched berries",
-    "need": "Karl is hungry",
+    "need": "the cold",
     "actual": "food",
     "expected": "a structure or a tool",
     "missing": "heat and an edge",
@@ -135,10 +135,82 @@ def fill_grammar_placeholders(text: str) -> str:
     return text
 
 
-def fill_improvisation_placeholders(text: str) -> str:
-    for key, val in IMPROVISATION_FILLERS.items():
+def fill_improvisation_placeholders(
+    text: str,
+    fillers: dict[str, str] | None = None,
+) -> str:
+    values = fillers or IMPROVISATION_SHORT_FILLERS
+    need = values.get("need", "")
+    text = text.replace("{Need}", need[:1].upper() + need[1:])
+    for key, val in values.items():
         text = text.replace("{" + key + "}", val)
     return text
+
+
+def improvisation_element_fillers() -> list[str]:
+    """Kort runtime-eksempel + konservativt dybde-3-navn.
+
+    Den lange fixture følger buildFallbackElement()s mest voksende lovlige
+    navneform, ``left-right contraption``, tre rekursive niveauer. Begge frø
+    bruger akt-1-basenavnenes målte maksimumsordtal; dermed er den et bevidst
+    overmål af en gyldig offline-navnekæde, ikke en håndskrevet tilfældig
+    streng.
+    """
+    elements = json.loads((CONTENT / "elements.json").read_text(encoding="utf-8"))
+    base_names = sorted(
+        (
+            element["name"]
+            for element in elements
+            if element.get("base") and element.get("act") == 1
+        ),
+        key=lambda name: (len(tokenize_words(name)), len(name)),
+        reverse=True,
+    )
+    # Brug maksimumslængden på BEGGE sider. Det er bevidst konservativt:
+    # to forskellige baseting kan have samme maksimale ordtal, også når det
+    # aktuelle akt-1-content kun har én repræsentant i den længdeklasse.
+    left = base_names[0]
+    right = base_names[0]
+    for _ in range(3):
+        left, right = (
+            f"{left}-{right} contraption",
+            f"{right}-{left} contraption",
+        )
+    longest = max((left, right), key=lambda name: len(tokenize_words(name)))
+    return [IMPROVISATION_SHORT_FILLERS["element"], longest]
+
+
+def improvisation_filler_profiles() -> list[tuple[str, dict[str, str]]]:
+    act = json.loads(
+        (CONTENT / "narrator" / "act-1.json").read_text(encoding="utf-8")
+    )
+    needs = act["improvisation"]["labels"]["needs"].values()
+    longest_need = max(needs, key=lambda value: len(tokenize_words(value)))
+    short_name, max_name = improvisation_element_fillers()
+    base_names = [
+        element["name"].lower()
+        for element in json.loads(
+            (CONTENT / "elements.json").read_text(encoding="utf-8")
+        )
+        if element.get("base") and element.get("act") == 1
+    ]
+    longest_base = max(
+        base_names,
+        key=lambda value: (len(tokenize_words(value)), len(value)),
+    )
+    return [
+        ("short", dict(IMPROVISATION_SHORT_FILLERS)),
+        (
+            "max",
+            {
+                **IMPROVISATION_SHORT_FILLERS,
+                "a": max_name,
+                "b": longest_base,
+                "element": max_name,
+                "need": longest_need,
+            },
+        ),
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -462,7 +534,9 @@ def expand_improvisation() -> list[tuple[str, str]]:
 
     De bor adskilt fra det håndskrevne fingeraftryk, fordi TASK-026 kræver at
     de dømmes SOM kandidater i stedet for stiltiende at flytte den reference,
-    de selv skal måles imod.
+    de selv skal måles imod. Hver variant får en short-profil til fuld
+    stemmescore og en max-profil med konservativt dybde-3-navn til de hårde
+    runtime-lofter.
     """
     data = json.loads(
         (CONTENT / "narrator" / "improvisation-act-1.json").read_text(
@@ -470,14 +544,15 @@ def expand_improvisation() -> list[tuple[str, str]]:
         )
     )
     out: list[tuple[str, str]] = []
-    for line in data["lines"]:
-        for index, variant in enumerate(line["variants"]):
-            out.append(
-                (
-                    f"improvisation:{line['id']}#{index}",
-                    fill_improvisation_placeholders(variant),
+    for profile, fillers in improvisation_filler_profiles():
+        for line in data["lines"]:
+            for index, variant in enumerate(line["variants"]):
+                out.append(
+                    (
+                        f"improvisation:{profile}:{line['id']}#{index}",
+                        fill_improvisation_placeholders(variant, fillers),
+                    )
                 )
-            )
     return out
 
 
@@ -634,6 +709,12 @@ def gate(
             rejects = hard_reject(text, fingerprint, source=source)
             if rejects:
                 failures.append(f"{label}: hård afvisning — {'; '.join(rejects)} — {text!r}")
+                continue
+            # Den kontinuerlige stemmescore skal dømme den SKREVNE prosa, ikke
+            # et 23-ords deterministisk egennavn. Max-profilen findes kun for
+            # at bevise de fulde runtime-linjers hårde ord-/sætningslofter;
+            # samme variant scores allerede med short-profilen lige ovenfor.
+            if label.startswith("improvisation:max:"):
                 continue
             result = score(text, fingerprint, corpus_vocab, dom_vocab, source=source, pairs_band=pairs_band)
             if result["overall"] < threshold:

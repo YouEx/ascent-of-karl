@@ -296,7 +296,8 @@ export interface ActDef {
  * gennemspilninger ikke lyder ens. Tekst-first; audioId kobles på i Step 4.
  * Varianter kan bruge pladsholdere: {a}, {b} (parrets navne), {element}
  * (sweep/opfindelsens navn) samt improvisationsbevisets spiller-vendte
- * {need}/{actual}/{expected}/{missing}.
+ * {need}/{Need}/{actual}/{expected}/{missing}; {Need} er samme frase med
+ * stort begyndelsesbogstav, når den åbner en sætning.
  */
 export interface NarratorLineDef {
   id: string;
@@ -325,7 +326,7 @@ export interface NarratorLineDef {
 }
 
 export type ImprovisationEvidenceRequirement =
-  | PredicateFailure["requirement"]
+  | Exclude<PredicateFailure["requirement"], "crafted">
   | "fallback";
 
 export interface NarratorImprovisationDef {
@@ -344,7 +345,10 @@ export interface NarratorImprovisationDef {
   /** Improvisationen blev stoppet før et element blev oprettet. */
   rejected: {
     canonicalRecipe: string[];
-    verdict: string[];
+    verdict: {
+      locked: string[];
+      other: string[];
+    };
     depthLimit: string[];
   };
   /**
@@ -352,6 +356,8 @@ export interface NarratorImprovisationDef {
    * gætte en forklaring; den oversætter kun bevisets kendte værdier herfra.
    */
   labels: {
+    /** Grammatiske navneordfraser pr. problem/challenge-id. */
+    needs: Record<string, string>;
     kind: Record<ElementKind, string>;
     stuff: Record<ElementStuff, string>;
     traits: Record<ElementTrait, string>;

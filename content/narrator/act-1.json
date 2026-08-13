@@ -1907,10 +1907,6 @@
         "improv-none-scale",
         "improv-none-broad"
       ],
-      "crafted": [
-        "improv-none-crafted",
-        "improv-none-broad"
-      ],
       "minDepth": [
         "improv-none-depth",
         "improv-none-broad"
@@ -1945,16 +1941,33 @@
         "improv-reject-canonical-1",
         "improv-reject-canonical-2"
       ],
-      "verdict": [
-        "improv-reject-verdict-1",
-        "improv-reject-verdict-2"
-      ],
+      "verdict": {
+        "locked": [
+          "improv-reject-locked-1",
+          "improv-reject-locked-2"
+        ],
+        "other": [
+          "improv-reject-verdict-1",
+          "improv-reject-verdict-2"
+        ]
+      },
       "depthLimit": [
         "improv-reject-depth-1",
         "improv-reject-depth-2"
       ]
     },
     "labels": {
+      "needs": {
+        "kulde": "the cold",
+        "vaerktoej": "the tool shortage",
+        "sult": "Karl's hunger",
+        "kedsomhed": "Karl's boredom",
+        "ensomhed": "Karl's loneliness",
+        "mening": "Karl's search for meaning",
+        "ulve": "the wolves",
+        "toerke": "the drought",
+        "sygdom": "Karl's fever"
+      },
       "kind": {
         "material": "material",
         "tool": "tool",

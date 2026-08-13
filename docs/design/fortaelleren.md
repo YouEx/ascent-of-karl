@@ -99,7 +99,7 @@ og at en akt med træk ikke mangler trods-kortet helt.
 ## Dommen over improvisationer (besluttet 2026-08-13)
 
 `Engine.improvise()` giver fortælleren et struktureret udfald, ikke en løs
-tekststreng. Dommen ligger i `content/narrator/act-1.json`, mens de 106
+tekststreng. Dommen ligger i `content/narrator/act-1.json`, mens de 109
 kandidatvarianter ligger separat i
 `content/narrator/improvisation-act-1.json`, så stemmefingeraftrykket ikke
 kalibreres på de linjer, det selv skal dømme.
@@ -111,17 +111,27 @@ Prioriteten ændres kun dér, hvor en mere specifik sandhed findes:
   improvisationsdom challengets generiske `successLine`;
 - løser den et problem, står dommen efter challenge-beats, men før en generisk
   opdagelsesreplik;
+- en ny opfindelse nulstiller opdagelsens fiasko-/hinttællere; en afvist
+  improvisation tæller som en fiasko, mens genbrug ikke foregiver at være nyt;
 - løser den intet, bruges `NeedExplanations`; `kind`, `stuff`, `traits`,
-  `scale`, `crafted` og `minDepth` kan forklares præcist via spiller-vendte
-  labels, mens `allOf`, `anyOf` og `not` bruger bredere sande linjer;
-- genbrug og de tre afvisninger (kanonisk opskrift, verdikt-port, dybdeloft)
-  har egne puljer.
+  `scale` og `minDepth` kan forklares præcist via spiller-vendte labels, mens
+  `allOf`, `anyOf` og `not` bruger bredere sande linjer. `crafted` kan ikke
+  fejle for et runtime-improviseret element (`base: false`) og har derfor
+  ingen død replikpulje;
+- problem/challenge-id'er oversættes til grammatiske navneordfraser
+  (`Karl's hunger`, `the wolves`) i content i stedet for at indsætte hele
+  `ProblemDef.name`-sætninger;
+- genbrug og de tre afvisninger (kanonisk udfald, verdikt-port, dybdeloft)
+  har egne puljer; `locked` er skilt fra de øvrige verdikter, fordi svaret
+  findes, men endnu ikke er tilgængeligt.
 
 Den absurde løsning er produktets payoff og har derfor den største enkelte
 pulje: 24 varianter mod 8 i hver almindelig succesfamilie. Alle puljer har
 mindst to replik-id'er, så den eksisterende globale id-no-repeat virker; RNG,
 variant-hukommelse og save/load er uændret. Linjerne har ingen `audioId` og
-falder derfor ærligt tilbage til tekst.
+falder derfor ærligt tilbage til tekst. Stemmedommeren ekspanderer hver variant
+to gange: en kort profil til fuld stemmescore og en konservativ 23-ords
+dybde-3-profil til de hårde ord-/sætningslofter — 218 runtime-linjer i alt.
 
 ## Trelagsmodellen (besluttet 2026-08-12, målt 2026-08-13)
 

@@ -144,6 +144,16 @@ def main() -> int:
     hw = J.handwritten_variants(fp)
     gram = J.expand_grammar()
     improvisation = J.expand_improvisation()
+    improvisation_short = [
+        item
+        for item in improvisation
+        if item[0].startswith("improvisation:short:")
+    ]
+    improvisation_max = [
+        item
+        for item in improvisation
+        if item[0].startswith("improvisation:max:")
+    ]
     pairs = J.expand_pairs()
     pairs_band = J.pairs_wordcount_band()  # FROSSET facit — se judge.py's docstring
     pairs_band_live = J.recompute_pairs_wordcount_band(pairs)  # kun til rapportens skreds-tjek
@@ -151,7 +161,7 @@ def main() -> int:
     hw_scored = _score_all(hw, fp, corpus_vocab, dom_vocab)
     gram_scored = _score_all(gram, fp, corpus_vocab, dom_vocab, source="grammar")
     improvisation_scored = _score_all(
-        improvisation,
+        improvisation_short,
         fp,
         corpus_vocab,
         dom_vocab,
@@ -166,6 +176,11 @@ def main() -> int:
     gram_reject = _hard_reject_breakdown(gram, fp, source="grammar")
     improvisation_reject = _hard_reject_breakdown(
         improvisation,
+        fp,
+        source="grammar",
+    )
+    improvisation_max_reject = _hard_reject_breakdown(
+        improvisation_max,
         fp,
         source="grammar",
     )
@@ -271,15 +286,19 @@ def main() -> int:
     md.append("\n## Improvisationsdommen som kandidatkorpus (2026-08-13)\n\n")
     md.append(
         f"`content/narrator/improvisation-act-1.json` indeholder "
-        f"**{len(improvisation)}** nye varianter. De flettes ind i runtime-"
+        f"**{len(improvisation_short)}** nye varianter. De flettes ind i runtime-"
         "`lines`, men ikke i det håndskrevne fingeraftryk ovenfor: TASK-026 "
         "kræver, at de dømmes som kandidattekst, ikke at de flytter den "
         "reference de selv måles imod. `expand_improvisation()` udfylder "
         "`{a}`, `{b}`, `{element}`, `{need}`, `{actual}`, `{expected}` og "
-        "`{missing}` som spillet gør; `gate()` kører derefter alle varianter "
-        "med `source=\"grammar\"`-politikken. Den aktuelle mængde har "
-        f"{improvisation_reject['any']} hårde afvisninger og "
-        f"{improvisation_below_threshold} scorer under tærsklen.\n"
+        "`{missing}` som spillet gør. Hver variant ekspanderes i to profiler "
+        f"({len(improvisation)} runtime-linjer i alt): `short` får den fulde "
+        "stemme-score, mens `max` bruger et konservativt 23-ords dybde-3-navn "
+        "og håndhæver de fulde linjers hårde ord-/sætningslofter. Egennavnet "
+        "selv indgår ikke en ekstra gang i den kontinuerlige stemmescore. Den "
+        f"aktuelle mængde har {improvisation_reject['any']} hårde afvisninger "
+        f"({improvisation_max_reject['any']} i max-profilen) og "
+        f"{improvisation_below_threshold} short-scorer under tærsklen.\n"
     )
 
     md.append("\n## Fingeraftrykket — nøgletal\n\n")
@@ -747,7 +766,8 @@ def main() -> int:
         "`err()` lægger dem oveni de eksisterende fejl, så `python3 tools/validate.py` "
         "fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv "
         "kilde-sammensætningen internt (se \"Politik: kilde-sammensatte gates\" "
-        f"ovenfor) — grammatik og de {len(improvisation)} improvisationsvarianter "
+        f"ovenfor) — grammatik og de {len(improvisation_short)} "
+        f"improvisationsvarianter ({len(improvisation)} runtime-ekspansioner) "
         "bruger kandidat-"
         "kontrakten, mens bagte par scores mod deres egen kontrakt, uden at koblingen "
         "behøver filtrere labels efter præfiks. Samlingskontrollerne bruger "
@@ -768,7 +788,8 @@ def main() -> int:
     print(f"Grammatik:   n={gram_dist['n']} median={gram_dist['median']:.3f} "
           f"hård-afvist={gram_reject['any']}/{gram_reject['n']}")
     print(
-        f"Improvisation: n={len(improvisation)} "
+        f"Improvisation: varianter={len(improvisation_short)} "
+        f"ekspansioner={len(improvisation)} "
         f"hård-afvist={improvisation_reject['any']} "
         f"under-tærskel={improvisation_below_threshold}"
     )

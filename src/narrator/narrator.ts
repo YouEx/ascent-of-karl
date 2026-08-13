@@ -326,6 +326,10 @@ export class Narrator {
     // {element} peger normalt på det element spilleren fejer med; ved en
     // opdagelse er det i stedet det netop opfundne, som ctx leverer direkte.
     const element = ctx?.element?.toLowerCase() ?? name(this.state.sweepElement);
+    const need = ctx?.need ?? "";
+    const needCap = need
+      ? need[0]!.toUpperCase() + need.slice(1)
+      : "";
     // {shared} og {trait} er ikke elementer men ord fra taksonomien ("plant",
     // "hot"). De skrives som de er — grammatikken skal kunne sige "both of
     // them grow" uden at slå noget op.
@@ -341,7 +345,8 @@ export class Narrator {
       .replaceAll("{trait}", ctx?.trait ?? "")
       .replaceAll("{trait2}", ctx?.trait2 ?? "")
       .replaceAll("{element}", element)
-      .replaceAll("{need}", ctx?.need ?? "")
+      .replaceAll("{Need}", needCap)
+      .replaceAll("{need}", need)
       .replaceAll("{actual}", ctx?.actual ?? "")
       .replaceAll("{expected}", ctx?.expected ?? "")
       .replaceAll("{missing}", ctx?.missing ?? "");
@@ -448,10 +453,16 @@ export class Narrator {
     if (elapsedMs !== undefined && elapsedMs <= FAST_MS) this.state.fastStreak++;
     else this.state.fastStreak = 0;
 
-    if (outcome.kind === "nofuse") {
+    if (
+      outcome.kind === "nofuse" ||
+      outcome.kind === "improvise-rejected"
+    ) {
       this.state.failStreak++;
       this.state.failsSinceDiscovery++;
-    } else if (outcome.kind === "discovery") {
+    } else if (
+      outcome.kind === "discovery" ||
+      (outcome.kind === "improvised" && !outcome.reused)
+    ) {
       this.state.failStreak = 0;
       this.state.failsSinceDiscovery = 0;
     }
@@ -594,10 +605,16 @@ export class Narrator {
       outcome.challenge.by.id === outcome.element.id
         ? outcome.challenge
         : undefined;
-    const need =
+    const needId =
       target === "challenge"
+        ? solvedChallenge?.def.id
+        : outcome.solved?.id;
+    if (!needId) return undefined;
+    const need =
+      improvisation.labels.needs[needId] ??
+      (target === "challenge"
         ? solvedChallenge?.def.title
-        : outcome.solved?.name;
+        : outcome.solved?.name);
     if (!need) return undefined;
 
     const verdict = judgePair(
@@ -628,23 +645,51 @@ export class Narrator {
     const active = this.engine.activeChallenge();
     if (active) {
       const explanation = failed(active.def.id);
-      if (explanation) return { name: active.def.title, explanation };
+      if (explanation) {
+        return {
+          name:
+            this.content().improvisation?.labels.needs[active.def.id] ??
+            active.def.title,
+          explanation,
+        };
+      }
     }
 
     const pulled = this.state.pulledProblem;
     if (pulled) {
       const problem = outcome.act.problems.find((entry) => entry.id === pulled);
       const explanation = problem && failed(problem.id);
-      if (problem && explanation) return { name: problem.name, explanation };
+      if (problem && explanation) {
+        return {
+          name:
+            this.content().improvisation?.labels.needs[problem.id] ??
+            problem.name,
+          explanation,
+        };
+      }
     }
 
     for (const problem of outcome.act.problems) {
       const explanation = failed(problem.id);
-      if (explanation) return { name: problem.name, explanation };
+      if (explanation) {
+        return {
+          name:
+            this.content().improvisation?.labels.needs[problem.id] ??
+            problem.name,
+          explanation,
+        };
+      }
     }
     for (const challenge of this.engine.content.challenges) {
       const explanation = failed(challenge.id);
-      if (explanation) return { name: challenge.title, explanation };
+      if (explanation) {
+        return {
+          name:
+            this.content().improvisation?.labels.needs[challenge.id] ??
+            challenge.title,
+          explanation,
+        };
+      }
     }
     return undefined;
   }
@@ -734,6 +779,12 @@ export class Narrator {
       }
       return { requirement: "minDepth", context: { actual, expected } };
     }
+    // Runtime-improvisationer er altid fremstillede (`base: false`), så et
+    // crafted-bevis kan ikke opstå fra Engine.improvise. Hold fallbacken
+    // defensiv uden at bære en død spillertekst-pulje.
+    if (failure.requirement === "crafted") {
+      return { requirement: "fallback", context: {} };
+    }
     return { requirement: failure.requirement, context: {} };
   }
 
@@ -801,7 +852,9 @@ export class Narrator {
         ? rejected.canonicalRecipe
         : outcome.reason === "depth-limit"
           ? rejected.depthLimit
-          : rejected.verdict;
+          : outcome.verdict === "locked"
+            ? rejected.verdict.locked
+            : rejected.verdict.other;
     const id = this.poolLine(pool);
     return id ? this.speak(id, { a: outcome.a.id, b: outcome.b.id }) : undefined;
   }

@@ -14,7 +14,7 @@ Fingeraftrykket i dette dokument er bygget af et FJERDE, bevidst bredere tal: **
 
 ## Improvisationsdommen som kandidatkorpus (2026-08-13)
 
-`content/narrator/improvisation-act-1.json` indeholder **106** nye varianter. De flettes ind i runtime-`lines`, men ikke i det håndskrevne fingeraftryk ovenfor: TASK-026 kræver, at de dømmes som kandidattekst, ikke at de flytter den reference de selv måles imod. `expand_improvisation()` udfylder `{a}`, `{b}`, `{element}`, `{need}`, `{actual}`, `{expected}` og `{missing}` som spillet gør; `gate()` kører derefter alle varianter med `source="grammar"`-politikken. Den aktuelle mængde har 0 hårde afvisninger og 0 scorer under tærsklen.
+`content/narrator/improvisation-act-1.json` indeholder **109** nye varianter. De flettes ind i runtime-`lines`, men ikke i det håndskrevne fingeraftryk ovenfor: TASK-026 kræver, at de dømmes som kandidattekst, ikke at de flytter den reference de selv måles imod. `expand_improvisation()` udfylder `{a}`, `{b}`, `{element}`, `{need}`, `{actual}`, `{expected}` og `{missing}` som spillet gør. Hver variant ekspanderes i to profiler (218 runtime-linjer i alt): `short` får den fulde stemme-score, mens `max` bruger et konservativt 23-ords dybde-3-navn og håndhæver de fulde linjers hårde ord-/sætningslofter. Egennavnet selv indgår ikke en ekstra gang i den kontinuerlige stemmescore. Den aktuelle mængde har 0 hårde afvisninger (0 i max-profilen) og 0 short-scorer under tærsklen.
 
 ## Fingeraftrykket — nøgletal
 
@@ -311,7 +311,7 @@ Ingen — se forklaringen ovenfor.
         err(f"stemme: {failure}")
 ```
 
-`voice_judge` importeres fra `tools/voice` ved modulstart. Porten returnerer menneskelæsbare, danske fejlstrenge (streng pr. kandidat-linje der enten rammer en hård afvisning eller scorer under den kalibrerede tærskel, PLUS en streng pr. facit-fil der ikke er reproducerbar fra sine drafts) — `err()` lægger dem oveni de eksisterende fejl, så `python3 tools/validate.py` fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv kilde-sammensætningen internt (se "Politik: kilde-sammensatte gates" ovenfor) — grammatik og de 106 improvisationsvarianter bruger kandidat-kontrakten, mens bagte par scores mod deres egen kontrakt, uden at koblingen behøver filtrere labels efter præfiks. Samlingskontrollerne bruger en unik midlertidig mappe pr. kørsel, så samtidige `validate`/gate-kørsler ikke kan slette hinandens scratch-filer.
+`voice_judge` importeres fra `tools/voice` ved modulstart. Porten returnerer menneskelæsbare, danske fejlstrenge (streng pr. kandidat-linje der enten rammer en hård afvisning eller scorer under den kalibrerede tærskel, PLUS en streng pr. facit-fil der ikke er reproducerbar fra sine drafts) — `err()` lægger dem oveni de eksisterende fejl, så `python3 tools/validate.py` fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv kilde-sammensætningen internt (se "Politik: kilde-sammensatte gates" ovenfor) — grammatik og de 109 improvisationsvarianter (218 runtime-ekspansioner) bruger kandidat-kontrakten, mens bagte par scores mod deres egen kontrakt, uden at koblingen behøver filtrere labels efter præfiks. Samlingskontrollerne bruger en unik midlertidig mappe pr. kørsel, så samtidige `validate`/gate-kørsler ikke kan slette hinandens scratch-filer.
 
 ---
 _Genereret af `python3 tools/voice/calibrate.py`. Regenerér efter enhver ændring i `content/narrator/*.json`, `tools/voice/lexicon.json`, `tools/voice/metrics.py` eller `tools/voice/judge.py`._
