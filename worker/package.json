@@ -3,9 +3,13 @@
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "dry-run": "wrangler deploy --dry-run",
+    "types": "wrangler types"
   },
   "devDependencies": {
+    "typescript": "^5.6.0",
     "wrangler": "^3.90.0"
   }
 }

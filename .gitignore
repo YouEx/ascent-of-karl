@@ -3,6 +3,17 @@ dist/
 *.local
 .DS_Store
 
+# Wrangler's egen lokale build-/runtime-cache (oprettet af `wrangler dev`
+# og `wrangler deploy --dry-run` inde i worker/) — rent lokalt maskinstøj,
+# aldrig en del af selve workeren.
+.wrangler/
+
+# `npm run types` (i worker/) genererer denne til at sammenligne med
+# håndskrevne worker/src/cf-types.ts — se evalueringen i
+# docs/deployment/live-narrator.md. Vi har bevidst IKKE overtaget den som
+# autoritativ kilde, så den skal aldrig committes.
+worker-configuration.d.ts
+
 # Dommerens arbejdsmappe: skærmbilleder, overlejringer, scores, hovedbog.
 # Regenereres af `npm run judge`. Køerne under docs/design/ er derimod
 # versionerede — de er systemets hukommelse på tværs af sessioner.

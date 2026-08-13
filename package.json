@@ -6,7 +6,8 @@
   "description": "Story-drevet alchemy-spil med en sarkastisk fortæller",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && node tools/bundle_budget.mjs",
+    "build": "tsc --noEmit && npm run typecheck:worker && vite build && node tools/bundle_budget.mjs",
+    "typecheck:worker": "tsc --noEmit -p worker/tsconfig.json",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
