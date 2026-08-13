@@ -25,14 +25,6 @@
       ]
     },
     {
-      "key": "larver+mudder",
-      "verdict": "plausible",
-      "variants": [
-        "The grubs vanished into the mud the moment they touched it, matched exactly in colour and give. By rights that should have counted for something.",
-        "Karl watched the grubs sink into the mud with the same fond patience he watches everything wriggle. The world owed this pairing an invention and has yet to pay up."
-      ]
-    },
-    {
       "key": "boomerang+dyr",
       "verdict": "near-miss",
       "variants": [
@@ -62,14 +54,6 @@
       "variants": [
         "Karl brought the clay to the wrestling match, hoping it might referee better than the boar. The clay declared no winner, offered no opinion, and stayed exactly where it was placed.",
         "A wrestling match needs an opponent with opinions. The clay offered none, which is one difference between a rival and a soft grey lump."
-      ]
-    },
-    {
-      "key": "froe+graes",
-      "verdict": "near-miss",
-      "variants": [
-        "Karl pressed the seeds into the dry grass like he was tucking them in for the night. The {right} was going to want that bed eventually. The seeds, patient as they are, will keep.",
-        "The dry grass held the seeds well enough, dry and patient as ever. I know exactly what the {right} still needed from that bed, and I am not telling."
       ]
     },
     {

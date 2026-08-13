@@ -99,17 +99,21 @@ og at en akt med træk ikke mangler trods-kortet helt.
 ## Trelagsmodellen (besluttet 2026-08-12, målt 2026-08-13)
 
 Fortælleren vælger sin replik i én prioriteret kæde (PRD §2.4). De øverste trin
-er håndskrevne øjeblikke. De nederste fire er **fiaskokæden**, og de er tre
-kilder til den samme replik, rangeret efter hvor meget de ved om parret:
+er håndskrevne øjeblikke. Uden live-tilvalget er de nederste trin en komplet
+**offline-trelagsmodel** til den samme fiaskoreplik, rangeret efter hvor meget
+de ved om parret:
 
 | Lag | Ved om parret | Skrevet af | Andel af møder |
 |---|---|---|---:|
-| **Bagt** (`pairs-act-1.json`) | begge navne, begge flavors, karlMood, den målte dominerende dom | et menneske, på forhånd | **72,4 %** |
-| **Live** (`src/narrator/live.ts`) | det samme, men i øjeblikket | en model, mens spilleren vælger | tilvalg, se nedenfor |
-| **Grammatik** (`grammar-act-1.json`) | motorens dom og elementernes taksonomi — ikke navnenes betydning | et menneske, som regler | **27,6 %** |
+| **Bagt** (`pairs-act-1.json`) | begge navne, begge flavors, karlMood, den målte dominerende dom | et menneske, på forhånd | **71.2 %** |
+| **Grammatik** (`grammar-act-1.json`) | motorens dom og elementernes taksonomi — ikke navnenes betydning | et menneske, som regler | **28.8 %** |
 | **Generisk** (`genericFailure`) | intet | et menneske, som pulje | **0 %** |
 
-Målt over 1200 gennemspilninger med 1015 forskellige par mødt
+**Live** (`src/narrator/live.ts`) er et valgfrit indskud mellem bagt og
+grammatik: en model kan kende begge elementer i øjeblikket, men hvis svaret ikke
+er klar, fortsætter den komplette offline-kæde uden forskel for spilleren.
+
+Målt over 1200 gennemspilninger med 1005 forskellige par mødt
 (`docs/design/narration-coverage.md`, genereret af `tools/coverage_report.mjs`).
 Den generiske pulje er dermed blevet en **nødudgang, der i praksis aldrig nås** —
 den findes for at intet forsøg kan mødes med tavshed, ikke for at blive hørt.
@@ -120,8 +124,10 @@ efter det bagte af samme grund — men før grammatikken, fordi den til gengæld
 ved præcis, hvad de to ting *er*, hvor grammatikken kun kender dommen.
 
 **Prisen for laget.** Bagte replikker koster plads, ikke tid: de lazy-loades pr.
-akt med en dynamisk `import()` og fylder 58,3 KB gzip for Akt I. Budgettet er
-60 KB pr. akt og bevogtes af `tools/validate.py`, ikke af build-loggen.
+akt med en dynamisk `import()`. Akt I har nu 420 opslag / 940 varianter og
+fylder 60.918 bytes = 59.5 KiB gzip. Budgettet er 60 KiB pr. akt og bevogtes af
+`tools/validate.py`, ikke af build-loggen; der er 522 bytes tilbage, så næste
+bagebatch kræver kompression eller en eksplicit budgetbeslutning.
 Opslags-id'et *udledes* fra parret frem for at blive gemt — den udledning findes
 tre steder (`pairLineId()` i `src/narrator/pairs.ts`, `line_id()` i
 `tools/assemble_pairs.py`, og inline i `validate.py`) og skal holdes i sync.

@@ -49,6 +49,21 @@ describe("Bagte par-replikker: formen", () => {
     }
     expect(impossible.slice(0, 5)).toEqual([]);
   });
+
+  it("ingen bagt fiaskereplik er blevet overhalet af en ubetinget opskrift", () => {
+    const content = loadContent();
+    const openRecipes = new Set(
+      content.combos
+        .filter((combo) => !combo.requiresFlags?.length && !combo.blockedByFlags?.length)
+        .map((combo) => [...combo.pair].sort().join("+")),
+    );
+    const stale = pairs.pairs.filter((lookup) => {
+      const [pair, verdict] = lookup.split(":");
+      return verdict !== "locked" && openRecipes.has(pair!);
+    });
+
+    expect(stale).toEqual([]);
+  });
 });
 
 describe("Bagte par-replikker: motoren", () => {

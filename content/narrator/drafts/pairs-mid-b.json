@@ -113,35 +113,11 @@
       ]
     },
     {
-      "key": "honning+nabo",
-      "verdict": "inert",
-      "variants": [
-        "Karl offered his neighbour a taste of honey, delighted with himself for thinking of it. Ugh grunted — approvingly, Karl believes, though Ugh's disappointed grunt and his approving grunt remain, to this day, indistinguishable.",
-        "Honey is sticky. A neighbour is not, as a rule, a surface that benefits from that. Ugh went home exactly as unstuck as he arrived."
-      ]
-    },
-    {
-      "key": "lerfigur+nabo",
-      "verdict": "inert",
-      "variants": [
-        "Karl held the clay figurine beside his neighbour for comparison. Ugh, flattered by the resemblance, gave his one grunt of approval for the week. The figurine, as ever, gave nothing back — not unkindness, just clay.",
-        "A sacred clay figurine and a disappointed neighbour make, on reflection, an unusually well-matched pair of statues. Only one of them moves, and even that is a low bar Ugh clears by accident."
-      ]
-    },
-    {
       "key": "baer+tamsvin",
       "verdict": "near-miss",
       "variants": [
         "Karl fed the pet boar a handful of berries as a loyalty test. Dino ate them without complaint. The {right} never needed this particular test at all.",
         "Berries pass the bird test — if the bird survives, it's lunch. There is no pet boar test, though the {right} could have passed a very different one today."
-      ]
-    },
-    {
-      "key": "baer+honning",
-      "verdict": "near-miss",
-      "variants": [
-        "Berries and honey, both edible, both sweet — Karl felt certain this was the one. The {right} very nearly matched it. The {wrong} just came along for the taste.",
-        "Karl dipped the berries in honey and declared the result delicious, which it was. Delicious and correct parted ways today, and the {right} knew the difference long before Karl did."
       ]
     },
     {

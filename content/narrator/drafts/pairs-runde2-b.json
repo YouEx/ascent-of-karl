@@ -65,14 +65,6 @@
       ]
     },
     {
-      "key": "haandkile+pind",
-      "verdict": "near-miss",
-      "variants": [
-        "Karl held the hand axe against the stick, half-expecting contact alone to spark some third, better tool into existence. He was still holding exactly two separate objects a full minute later. The {right} was waiting on a different combination entirely.",
-        "The hand axe returned from this meeting exactly as sharp as it arrived; the stick returned exactly as straight. Between them, they conjured nothing sharper than mild disappointment. The {right} had a truer match somewhere else."
-      ]
-    },
-    {
       "key": "faelde+reb",
       "verdict": "near-miss",
       "variants": [
@@ -102,14 +94,6 @@
       "variants": [
         "Karl wedged the stone axe's blade against the wheel, hoping to give it something to roll toward. It rolled off in its usual direction instead, and Karl chased it across the valley for a third time. The {right} had a job that had nothing to do with rolling.",
         "The wheel has one trick, and performs it constantly, usually downhill and away from Karl. The stone axe has one trick too, performed standing perfectly still, and neither trick transferred when Karl introduced them. The {right} still had its own trick to finish elsewhere."
-      ]
-    },
-    {
-      "key": "hammer+sten",
-      "verdict": "near-miss",
-      "variants": [
-        "Karl tapped the hammer against the stone, the way you'd knock on a door you already know is home. The stone made the same flat sound it always makes, and offered no more conversation than usual. The {right} had somewhere else to be struck, carried, or used today.",
-        "The stone is, by Karl's own account, his best friend and most frequent conversation partner. The hammer, by design, is made partly of that very same stone, and introducing the two today changed nothing about either relationship. The {right} was needed for a task this reunion couldn't provide."
       ]
     },
     {
@@ -302,14 +286,6 @@
       "variants": [
         "Karl held the stick up next to the stone-tipped spear, as if proximity alone might transfer a little of the spear's obvious competence. It stayed a stick, plain and exceptional and entirely undecorated. The spear did not seem to notice the comparison.",
         "A stone-tipped spear was a stick once, before Karl gave it a point and opinions to match. This new stick watched the whole transformation happen again, from a safe distance, and came away with neither."
-      ]
-    },
-    {
-      "key": "spydspids+vand",
-      "verdict": "near-miss",
-      "variants": [
-        "Karl dipped the stone-tipped spear into the water and swirled it, half-hoping it might learn something new. It came out just as sharp, just as opinionated, and just as dry within a minute. The {right} had a use for water that had nothing to do with this.",
-        "The stone-tipped spear carries an opinion about nearly everything Karl introduces it to, and its opinion of the water was indifference. The {right} was hoping for rather more than indifference today."
       ]
     }
   ]

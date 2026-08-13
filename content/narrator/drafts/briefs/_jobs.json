@@ -473,16 +473,6 @@
       "share": 81
     },
     {
-      "key": "haandkile+pind",
-      "a": "haandkile",
-      "b": "pind",
-      "verdict": "near-miss",
-      "variants": 2,
-      "rank": 48,
-      "met": 48,
-      "share": 98
-    },
-    {
       "key": "faelde+reb",
       "a": "faelde",
       "b": "reb",
@@ -521,16 +511,6 @@
       "rank": 52,
       "met": 42,
       "share": 100
-    },
-    {
-      "key": "hammer+sten",
-      "a": "hammer",
-      "b": "sten",
-      "verdict": "near-miss",
-      "variants": 2,
-      "rank": 53,
-      "met": 41,
-      "share": 78
     },
     {
       "key": "baer+hammer",
@@ -771,16 +751,6 @@
       "rank": 77,
       "met": 16,
       "share": 94
-    },
-    {
-      "key": "spydspids+vand",
-      "a": "spydspids",
-      "b": "vand",
-      "verdict": "near-miss",
-      "variants": 2,
-      "rank": 78,
-      "met": 15,
-      "share": 73
     },
     {
       "key": "haandkile+reb",
@@ -1573,16 +1543,6 @@
       "share": 0
     },
     {
-      "key": "graes+saft",
-      "a": "graes",
-      "b": "saft",
-      "verdict": "near-miss",
-      "variants": 2,
-      "rank": 0,
-      "met": 0,
-      "share": 0
-    },
-    {
       "key": "reb+vand",
       "a": "reb",
       "b": "vand",
@@ -2183,39 +2143,9 @@
       "share": 0
     },
     {
-      "key": "honning+nabo",
-      "a": "honning",
-      "b": "nabo",
-      "verdict": "inert",
-      "variants": 2,
-      "rank": 0,
-      "met": 0,
-      "share": 0
-    },
-    {
-      "key": "lerfigur+nabo",
-      "a": "lerfigur",
-      "b": "nabo",
-      "verdict": "inert",
-      "variants": 2,
-      "rank": 0,
-      "met": 0,
-      "share": 0
-    },
-    {
       "key": "baer+tamsvin",
       "a": "baer",
       "b": "tamsvin",
-      "verdict": "near-miss",
-      "variants": 2,
-      "rank": 0,
-      "met": 0,
-      "share": 0
-    },
-    {
-      "key": "baer+honning",
-      "a": "baer",
-      "b": "honning",
       "verdict": "near-miss",
       "variants": 2,
       "rank": 0,
@@ -3073,16 +3003,6 @@
       "share": 0
     },
     {
-      "key": "larver+mudder",
-      "a": "larver",
-      "b": "mudder",
-      "verdict": "plausible",
-      "variants": 2,
-      "rank": 0,
-      "met": 0,
-      "share": 0
-    },
-    {
       "key": "boomerang+dyr",
       "a": "boomerang",
       "b": "dyr",
@@ -3117,16 +3037,6 @@
       "a": "brydekamp",
       "b": "ler",
       "verdict": "absurd",
-      "variants": 2,
-      "rank": 0,
-      "met": 0,
-      "share": 0
-    },
-    {
-      "key": "froe+graes",
-      "a": "froe",
-      "b": "graes",
-      "verdict": "near-miss",
       "variants": 2,
       "rank": 0,
       "met": 0,
@@ -4041,6 +3951,256 @@
       "rank": 0,
       "met": 0,
       "share": 0
+    },
+    {
+      "key": "rullesten+spyd",
+      "a": "rullesten",
+      "b": "spyd",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 237,
+      "met": 26,
+      "share": 96
+    },
+    {
+      "key": "stenspil+vand",
+      "a": "stenspil",
+      "b": "vand",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 239,
+      "met": 26,
+      "share": 100
+    },
+    {
+      "key": "malm+saft",
+      "a": "malm",
+      "b": "saft",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 246,
+      "met": 23,
+      "share": 100
+    },
+    {
+      "key": "hammer+stenoekse",
+      "a": "hammer",
+      "b": "stenoekse",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 248,
+      "met": 23,
+      "share": 96
+    },
+    {
+      "key": "bautasten+mursten",
+      "a": "bautasten",
+      "b": "mursten",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 249,
+      "met": 23,
+      "share": 100
+    },
+    {
+      "key": "hulemaleri+malm",
+      "a": "hulemaleri",
+      "b": "malm",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 250,
+      "met": 23,
+      "share": 100
+    },
+    {
+      "key": "hulemaleri+spyd",
+      "a": "hulemaleri",
+      "b": "spyd",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 251,
+      "met": 22,
+      "share": 100
+    },
+    {
+      "key": "gnister+haandkile",
+      "a": "gnister",
+      "b": "haandkile",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 254,
+      "met": 21,
+      "share": 100
+    },
+    {
+      "key": "fisk+spyd",
+      "a": "fisk",
+      "b": "spyd",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 255,
+      "met": 21,
+      "share": 100
+    },
+    {
+      "key": "reb+spyd",
+      "a": "reb",
+      "b": "spyd",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 256,
+      "met": 21,
+      "share": 71
+    },
+    {
+      "key": "pind+stenspil",
+      "a": "pind",
+      "b": "stenspil",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 257,
+      "met": 21,
+      "share": 100
+    },
+    {
+      "key": "hammer+hammer",
+      "a": "hammer",
+      "b": "hammer",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 258,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "ild+stenoekse",
+      "a": "ild",
+      "b": "stenoekse",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 259,
+      "met": 20,
+      "share": 80
+    },
+    {
+      "key": "boomerang+spyd",
+      "a": "boomerang",
+      "b": "spyd",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 261,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "stenspil+stenspil",
+      "a": "stenspil",
+      "b": "stenspil",
+      "verdict": "self",
+      "variants": 2,
+      "rank": 262,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "galleri+rullesten",
+      "a": "galleri",
+      "b": "rullesten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 263,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "hulemaleri+ild",
+      "a": "hulemaleri",
+      "b": "ild",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 264,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "gravestok+ler",
+      "a": "gravestok",
+      "b": "ler",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 265,
+      "met": 20,
+      "share": 100
+    },
+    {
+      "key": "faelde+saft",
+      "a": "faelde",
+      "b": "saft",
+      "verdict": "absurd",
+      "variants": 2,
+      "rank": 267,
+      "met": 19,
+      "share": 100
+    },
+    {
+      "key": "froe+haandkile",
+      "a": "froe",
+      "b": "haandkile",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 268,
+      "met": 19,
+      "share": 74
+    },
+    {
+      "key": "hjul+spyd",
+      "a": "hjul",
+      "b": "spyd",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 269,
+      "met": 19,
+      "share": 95
+    },
+    {
+      "key": "ild+rullesten",
+      "a": "ild",
+      "b": "rullesten",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 271,
+      "met": 19,
+      "share": 63
+    },
+    {
+      "key": "ild+saft",
+      "a": "ild",
+      "b": "saft",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 272,
+      "met": 19,
+      "share": 58
+    },
+    {
+      "key": "hjul+mudder",
+      "a": "hjul",
+      "b": "mudder",
+      "verdict": "near-miss",
+      "variants": 2,
+      "rank": 273,
+      "met": 19,
+      "share": 79
+    },
+    {
+      "key": "mursten+rullesten",
+      "a": "mursten",
+      "b": "rullesten",
+      "verdict": "plausible",
+      "variants": 2,
+      "rank": 274,
+      "met": 19,
+      "share": 100
     }
   ]
 }

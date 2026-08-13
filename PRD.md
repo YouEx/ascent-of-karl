@@ -67,12 +67,15 @@ forsøg aldrig mødes med tavshed:
 7. **Grammatik**: en replik der nævner begge ting, valgt ud fra motorens dom
 8. **Generiske fiaskoer**: roterende pulje — nødudgangen, der i praksis aldrig nås
 
-**Trelagsmodellen.** Trin 5–8 er tre kilder til den samme replik, rangeret efter
-hvor meget de ved om parret. Det bagte lag er skrevet af et menneske om netop de
-to elementer. Grammatikken kender kun motorens dom og elementernes taksonomi, og
-kan derfor tale om et hvilket som helst par, også ét der blev til i går. Den
-generiske pulje ved intet. Målt over 1200 gennemspilninger falder 72,4 % af
-møderne på det bagte lag, 27,6 % på grammatikken og 0 % på tavshed
+**Offline-trelagsmodellen.** Uden live-tilvalget er trin 5, 7 og 8 tre komplette
+lag til den samme replik: bagt → grammatik → generisk nødudgang. Det bagte lag
+er skrevet af et menneske om netop de to elementer. Grammatikken kender kun
+motorens dom og elementernes taksonomi, og kan derfor tale om et hvilket som
+helst par, også ét der blev til i går. Den generiske pulje ved intet og nås kun,
+hvis grammatikken er defekt. Live-replikken i trin 6 er et valgfrit indskud
+mellem bagt og grammatik, aldrig en forudsætning for den komplette offline-kæde.
+Målt over 1200 gennemspilninger falder 71.2 % af møderne på det bagte lag,
+28.8 % på grammatikken og 0 % på tavshed
 (`docs/design/narration-coverage.md`). Konsekvensen for indholdsarbejdet er, at
 et nyt element ikke kræver en eneste ny replik — se `README.md`.
 

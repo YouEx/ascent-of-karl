@@ -62,10 +62,22 @@ def _combo_in_act(combo, act, elements) -> bool:
     return any(e["id"] == combo["result"] and e["act"] == act["act"] for e in elements)
 
 
+def _combo_is_open(combo: dict) -> bool:
+    """Ingen manglende og ingen spærrende flag — opskriften er ubetinget tilgængelig."""
+    return not combo.get("requiresFlags") and not combo.get("blockedByFlags")
+
+
 def main() -> int:
     elements = load(CONTENT / "elements.json") or []
     combos = load(CONTENT / "combos.json") or []
     acts = [a for p in sorted((CONTENT / "acts").glob("*.json")) if (a := load(p))]
+    # RISK-005: en bagt fiaskoreplik forældes, hvis parret senere får en åben
+    # opskrift — så par-nøglen i frozenset-form, kun til den kontrol.
+    combos_by_pair_raw: dict[frozenset, list] = {}
+    for c in combos:
+        pair = c.get("pair")
+        if pair and len(pair) == 2:
+            combos_by_pair_raw.setdefault(frozenset(pair), []).append(c)
     narrator = [
         n
         for p in sorted((CONTENT / "narrator").glob("*.json"))
@@ -102,6 +114,20 @@ def main() -> int:
             derived = "pair-" + key.replace("+", "-") + "-" + verdict
             if derived not in ids:
                 err(f"{p.name}: opslaget {lookup} peger på ukendt replik {derived}")
+            # RISK-005: en bagt fiaskoreplik om et par, der siden fik en
+            # ubetinget åben opskrift, er en løgn — spilleren vil aldrig se
+            # den, fordi motoren finder opskriften FØR den spørger dommen.
+            # `locked` er undtaget: den dom FORUDSÆTTER netop en opskrift.
+            if verdict != "locked":
+                a_id, _, b_id = key.partition("+")
+                for combo in combos_by_pair_raw.get(frozenset((a_id, b_id)), []):
+                    if _combo_is_open(combo):
+                        err(
+                            f"{p.name}: opslaget {lookup} er forældet — "
+                            f"{a_id}+{b_id} har nu en ubetinget åben opskrift "
+                            f"({combo.get('result')}), så replikken kan aldrig høres (RISK-005)"
+                        )
+                        break
         # CON-003: den dovent hentede bagte tekst må fylde 60 KB gzip pr. akt.
         # Grænsen bevogtes her frem for i build-loggen, fordi den kun brydes
         # når nogen bager en ny batch — og det er præcis dér, ingen kigger på

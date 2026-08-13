@@ -33,11 +33,12 @@ npm run build      # typecheck + produktion-build
 
 ## Tilføj et element uden at skrive en replik
 
-Fortælleren har tre lag under de håndskrevne øjeblikke, og det nederste
-brugbare lag er en **grammatik, der taler ud fra taksonomien** frem for ud fra
-elementnavne (`docs/design/fortaelleren.md`, "Trelagsmodellen"). Derfor kan et
-nyt element få kommentarer fra dag ét, uden at nogen skriver en linje tekst til
-det.
+Fortælleren har en komplet offline-trelagsmodel under de håndskrevne øjeblikke:
+bagt replik → grammatik → generisk nødudgang. Det nederste brugbare lag er en
+**grammatik, der taler ud fra taksonomien** frem for ud fra elementnavne
+(`docs/design/fortaelleren.md`, "Trelagsmodellen"). Derfor kan et nyt element få
+kommentarer fra dag ét, uden at nogen skriver en linje tekst til det. Det
+valgfrie live-lag kan lægges mellem bagt og grammatik, men ændrer ikke workflowet.
 
 1. Tilføj elementet i `content/elements.json` med `kind`, `stuff`, `scale` og
    mindst ét `trait` — alle fire skal findes i `content/taxonomy.json`. Skriv

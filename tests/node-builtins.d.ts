@@ -24,3 +24,21 @@ declare module "node:path" {
 declare module "node:url" {
   export function fileURLToPath(url: string): string;
 }
+
+declare module "node:child_process" {
+  interface TextStream {
+    setEncoding(encoding: string): void;
+    on(event: "data", listener: (chunk: string) => void): void;
+  }
+
+  interface ChildProcess {
+    stderr: TextStream;
+    on(event: "close", listener: (code: number | null) => void): void;
+  }
+
+  export function spawn(
+    command: string,
+    args: string[],
+    options?: { cwd?: string },
+  ): ChildProcess;
+}
