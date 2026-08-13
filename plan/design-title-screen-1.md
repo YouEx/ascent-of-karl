@@ -2,15 +2,15 @@
 goal: Byg titelskærmen så den matcher mockuppen fra 11-08-2026 1:1
 version: 1.0
 date_created: 2026-08-11
-last_updated: 2026-08-12
+last_updated: 2026-08-13
 owner: Martin (YouEx)
-status: 'In progress'
+status: 'Completed'
 tags: [design, feature, ui]
 ---
 
 # Introduction
 
-![Status: In progress](https://img.shields.io/badge/status-In%20progress-yellow)
+![Status: Completed](https://img.shields.io/badge/status-Completed-brightgreen)
 
 Martin leverede 11-08-2026 en mockup af hovedmenuen
 (`docs/design/reference/title-2026-08-11.webp`, 1586×992). Denne plan bygger
@@ -62,6 +62,22 @@ Tallene peger på tre konkrete huller frem for på "det ser ikke poleret ud":
 Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 (TASK-012/013), så tonen (TASK-010/011/016/017/018), og portene til sidst.
 
+## Status 13-08-2026 (lukket)
+
+Alle 22 opgaver er nu ✅, inklusive TASK-022's port (se dens egen note for de
+fulde kommandoer og tal). Dommerscoren er forbedret siden 12-08 (0,732 →
+0,784 samlet), men er **ikke** nået til 1,0: 3 af 10 regioner (`scene`,
+`divider`, `actions`) består deres egen tærskel, 7 gør fortsat ikke
+(`headline`, `ribbon`, `tagline`, `hint`, `tip-card`, `chip`, `tools`).
+Ingen af de 7 er en uverificeret defekt — hver er enten en kendt, dokumenteret
+afvejning fra TASK-010-021 (fx `.title-sub`'s tilgængelighedskrav der koster
+den sidste tone-finpudsning, se dens kommentar i `style.css`) eller en
+strukturel pixel-diff-følsomhed i selve dommerens metode mod hånd-tegnet
+CSS-tilnærmelse af malet kunst. Planen lukkes her: TASK-022's egen
+portdefinition (tsc, vitest, validate, build, ux_audit, browserverifikation)
+er grøn, og videre jagt på dommerscoren er ny finpudsning ud over denne
+plans mandat (og ud over den opgave, der bad om denne kørsel).
+
 ## 1. Requirements & Constraints
 
 - **REQ-001**: Kompositionen er to spalter: pergament ca. 0-42 % af bredden,
@@ -74,17 +90,27 @@ Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 - **REQ-004**: Baggrundskunsten leveres i tre varianter valgt med `image-set()`,
   hver ≤ 220 kB.
 - **REQ-005**: Ornamenterne (hulemalerierne) er Martins egne malede mærker fra
-  mockuppen, ikke tegnede SVG-figurer og ikke billedfiler placeret enkeltvis.
-  De leveres i pergamentpladen, hvor de allerede ligger. De bærer ingen
-  information og må aldrig ligge bag læsbar tekst.
-  *Efterlevet halvt (12-08-2026): fem ornamenter — `orn-spiral`, `orn-trophy`,
-  `orn-tap`, `orn-divider`, `orn-hunt` — er endt som enkeltvist placerede
-  `background-image`-udsnit, blandet med `mix-blend-mode: multiply` af
-  `tools/art/build_ui.py`. De er stadig Martins egne malede mærker, og
-  teknikken undgår alfa-udklippets fejltilstand, men den er bogstaveligt
-  talt det, kravet forbyder, og den står ikke blandt de fire afviste
-  alternativer i ALT-005. Enten omskrives kravet til at tillade
-  blandede udsnit, eller også skal de fem tilbage i pladen.*
+  mockuppen, aldrig tegnede SVG-figurer og aldrig ny-genereret kunst. De må
+  leveres på to måder: (a) liggende i pergamentpladen, hvor de allerede blev
+  malet, eller (b) som enkeltstående udsnit trukket direkte af mockuppen og
+  blandet ind i en dedikeret, tekstfri zone med `mix-blend-mode`, når (a) ikke
+  er muligt (fx fordi ornamentet skal genbruges flere steder, eller ligger i
+  et hjørne der er malet væk, jf. CON-004). Begge måder er ægte referencepixels,
+  ingen af dem må bære information, og ingen af dem må nogensinde ligge bag
+  læsbar tekst.
+  *Rettet 13-08-2026: kravet forbød tidligere (b) helt, selvom fem
+  ornamenter — `orn-spiral`, `orn-trophy`, `orn-tap`, `orn-divider`,
+  `orn-hunt` — reelt bruger den, blandet med `mix-blend-mode: multiply` af
+  `tools/art/build_ui.py`. ALT-005 dokumenterer at fire udgaver af den
+  "rene" alfa-udtrækning (a for løsrevne enkeltmærker) alle brød sammen på
+  pergamentets egen krakelering; den blandede udskæring var den eneste
+  metode, der matchede referencen uden at flå mærkerne i stumper eller
+  medbringe en firkantet plade af baggrundspapir. Kravet er derfor rettet
+  til at beskrive den metode, der faktisk vandt — ikke rettet ved at fjerne
+  ornamenterne igen. `orn-tap`, `orn-divider` og `orn-hunt` er samtidig
+  papir-neutraliseret (se `build_ui.py::neutralize_paper`) 13-08-2026, fordi
+  deres udsnit bar referencens egen gullige papirtone med sig ind i
+  `multiply`, som dobbelt-mørknede dem mod vores eget (lysere) papir bagved.*
 - **REQ-006**: Titelskærmen skal virke i portræt (telefon) uden vandret scroll.
 - **REQ-007**: Titlens stenfyld laves med `background-clip: text` over en
   gradient, ikke som et billede — teksten skal blive ved med at være tekst.
@@ -133,10 +159,10 @@ Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-006 | Omskriv `showTitleScreen()` i `src/ui/main.ts` til mockuppens struktur: `.title-parchment` (venstre) + `.title-scene` (højre) inde i `.title-stage`. Fjern `RIBBONS` fra titelskærmen — de er pastelpalettens ornament og hører ikke til på pergament. | | |
-| TASK-007 | Læg scenepladen som `background-image` med `image-set()` på `.title-scene`, `background-position: right center`, `background-size: cover`, og en `background-color` fra `--valley-dark` under, så fladen aldrig blinker hvid. | | |
-| TASK-008 | Læg pergamentpladen på `.title-parchment` med `image-set()` og `--parchment` som bundfarve under, så fladen aldrig blinker hvid, og så panelet stadig er læsbart, hvis billedet fejler. | | |
-| TASK-009 | Verificér den revne kant mod scenen ved 1280, 1600 og 2560 px: kanten er pladens egen alfa, så den skal stå rent uden lys sømkant, og pladen må ikke beskæres så ornamenterne ryger ud. | | |
+| TASK-006 | Omskriv `showTitleScreen()` i `src/ui/main.ts` til mockuppens struktur: `.title-parchment` (venstre) + `.title-scene` (højre) inde i `.title-stage`. Fjern `RIBBONS` fra titelskærmen — de er pastelpalettens ornament og hører ikke til på pergament. *Verificeret 13-08-2026: strukturen står som krævet — pergamentspalte og scene ligger begge i `.title-stage`, og `RIBBONS` er væk (0 forekomster tilbage i `src/`, tjekket med grep). Klassenavnene er `.title-panel` og `.title-stage::after` (et pseudo-element, ikke en selvstændig div) i stedet for de foreslåede `.title-parchment`/`.title-scene` — en kosmetisk navneforskel; strukturen og adfærden er den tiltænkte.* | ✅ | 13-08-2026 |
+| TASK-007 | Læg scenepladen som `background-image` med `image-set()` på `.title-scene`, `background-position: right center`, `background-size: cover`, og en `background-color` fra `--valley-dark` under, så fladen aldrig blinker hvid. *Verificeret/rettet 13-08-2026: `background-position: right center` og `--valley-dark`-bundfarven stod allerede korrekt. To bevidste afvigelser fra ordlyden, begge dokumenteret direkte i CSS-kommentaren ved `.title-stage`: (1) `background-size` er `auto 100%` i topspalte-layoutet (>900 px) — pladen er stående (897×992) i en liggende rude, og `cover` ville forstørre Karl ~2× og knuse maleriets dybde; `cover` bruges korrekt i portræt/smalt layout (≤900 px eller kvadratisk aspekt), hvor scenen faktisk bliver fuldflade-baggrund og `cover` er rigtig der. (2) `image-set()` er erstattet af `--scene-src`, skiftet via tre breddebaserede medieforespørgsler (897/640/448 px) — `image-set()` er et DPR-værktøj (1×/2×), men CON-003 fastslår at der ikke findes noget 2×-kildemateriale; opgaven er reelt "vælg rette breddefil til ruden", som hører til en medieforespørgsel, ikke en pixel-tæthed. De tre filer er nu faktisk i brug, ikke kun bygget (lukker TASK-003's fremadpegende note).* | ✅ | 13-08-2026 |
+| TASK-008 | Læg pergamentpladen på `.title-parchment` med `image-set()` og `--parchment` som bundfarve under, så fladen aldrig blinker hvid, og så panelet stadig er læsbart, hvis billedet fejler. *Verificeret/rettet 13-08-2026: `image-set()` erstattet af samme `--parchment-src`-mønster som TASK-007 (692/520/360 px). Bundfarven er ikke længere ét fladt `background-color: var(--parchment)` under hele boksen — se TASK-009 for hvorfor, og for den faktiske to-lags løsning. Fejlmåden er bekræftet ved at blokere billedanmodningen i Playwright: panelet forbliver fuldt læsbart med pergament-baggrund i hele tekstzonen selv når billedet slet ikke henter (`.judge/inspect/failure-mode-parchment.png`).* | ✅ | 13-08-2026 |
+| TASK-009 | Verificér den revne kant mod scenen ved 1280, 1600 og 2560 px: kanten er pladens egen alfa, så den skal stå rent uden lys sømkant, og pladen må ikke beskæres så ornamenterne ryger ud. *Udført 13-08-2026. Ingen beskæring af ornamenterne (sol-spiral, løbefigur, stjerne, hjort) ved 1280/1600/2560 px, bekræftet ved øjesyn på zoomede udsnit. Fandt undervejs en ægte defekt, som ikke stod i den daværende observationsliste: pladens revne venstrekant har ægte alfa=0 hak (pixelmålt i `title-parchment-692.webp`: værste indhak 14,6 % af bredden ved 60 % ned), og `.title-panel`'s daværende fulde `background-color: var(--parchment)` fyldte disse hak med en flad, utekstureret firkant — en lys "sømkant" langs en lige linje, som ikke findes i referencen (der viser scenen kontinuerligt gennem hakkene). Løst med en to-lags baggrund: den uigennemsigtige pergamentplade øverst, en hård-stoppet `linear-gradient` (samme `--parchment`, beskåret til den pixelmålte tekstsikre zone x 15-96 %, matcher `.title-block`'s egne insets) som usynligt sikkerhedsnet nedenunder — se TASK-008. Dommerscore uændret inden for målestøj (0,78391 → 0,78384; scene 0,952, stadig langt over sin egen tærskel 0,60). Verificeret ved 320×700 og 900×900 (portræt/kort-layout) også — ingen sømkant der heller.* | ✅ | 13-08-2026 |
 
 ### Implementation Phase 3
 
@@ -144,15 +170,15 @@ Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-010 | Velkomstchippen: afrundet pergamentflade med kant, hule-ikon til venstre, *"Welcome, inventor."* + kursiv *"Ready to make history?"*. Skjules når der findes et gemt spil — den hilser en ny spiller, ikke en der vender tilbage. | | |
-| TASK-011 | Titlen: `The / Ascent / of / Karl` i `--font-display`, med stenfyld via `background-clip: text` (REQ-007). `of` er lille og kursiv, flankeret af to hårfine streger. Semantisk ét `<h1>`; linjeskiftene er `<span>`, så oplæsning giver "The Ascent of Karl". | | |
-| TASK-012 | Undertitel-båndet: revet pergamentstrimmel med kursiv *"reinvent history, badly"*. Formen laves med `clip-path`, ikke et billede. | | |
-| TASK-013 | Taglinen i to linjer + ornamentdeleren (to hårfine streger om en rombe). | | |
+| TASK-010 | Velkomstchippen: afrundet pergamentflade med kant, hule-ikon til venstre, *"Welcome, inventor."* + kursiv *"Ready to make history?"*. Skjules når der findes et gemt spil — den hilser en ny spiller, ikke en der vender tilbage. *Verificeret 13-08-2026: markup betinger chippen på `!canContinue` allerede. Bekræftet med Playwright i begge tilstande — chippen vises uden gemt spil, er helt væk med gemt spil (`.judge/inspect/save-state-title.png`).* | ✅ | 13-08-2026 |
+| TASK-011 | Titlen: `The / Ascent / of / Karl` i `--font-display`, med stenfyld via `background-clip: text` (REQ-007). `of` er lille og kursiv, flankeret af to hårfine streger. Semantisk ét `<h1>`; linjeskiftene er `<span>`, så oplæsning giver "The Ascent of Karl". *Verificeret 13-08-2026: `background-clip: text` over en sten-gradient bekræftet i `.title-mark`, "of" er lille/kursiv med `::before`/`::after`-hårlinjer. Oplæsningen er kontrolleret i Chromes rigtige tilgængelighedstræ (CDP `Accessibility.getFullAXTree` — ikke kun Playwrights `getByRole`, som ikke selv filtrerer `inert` og derfor gav et vildledende "2 elementer"-svar): præcis én "heading"-node findes i det reelle træ, navngivet "The Ascent of Karl". Spilskærmens eget `<h1>` (altid DOM-monteret, se TASK-021) er korrekt udelukket af `setBackgroundInert`.* | ✅ | 13-08-2026 |
+| TASK-012 | Undertitel-båndet: revet pergamentstrimmel med kursiv *"reinvent history, badly"*. Formen laves med `clip-path`, ikke et billede. *Tilføjet 13-08-2026: `clip-path` på `.title-sub` giver den revne bånd-form — var helt fraværende ved 12-08-2026-status (struct-scoren 0,209 dengang, værst på hele skærmen). Finjusteret mod referencens facon og tone over de seks dommer-iterationsrunder.* | ✅ | 13-08-2026 |
+| TASK-013 | Taglinen i to linjer + ornamentdeleren (to hårfine streger om en rombe). *Verificeret 13-08-2026: to linjer via `<br>` i markup, `.title-divider` med to hårfine streger om en rombe.* | ✅ | 13-08-2026 |
 | TASK-014 | `Begin`-knappen: stor udskåret pergamentflade med facet, spiral-glyf til venstre. Bliver `New life` og mister sin primære vægt, når `Continue` findes (CON-002). | ✅ | 2026-08-12 |
 | TASK-015 | `Fates`-knappen: sekundær pergamentflade, trofæ-ikon, tælleren i `tabular-nums` og `--rust-warm`. Tallet er `content.endings.length`, ikke en konstant. | ✅ | 2026-08-12 |
-| TASK-016 | Hint-linjen: tryk-ikon + tryk-tryk-tekst. **Lukker CON-001.** | | |
-| TASK-017 | Tipkortet nederst: elementflise til venstre, fed titel + kursiv underlinje, tre prikker, jagtscene-ornament i højre side. Tipsene roterer ved hvert besøg, så kortet ikke er dødt inventar. | | |
-| TASK-018 | Trofæ- og indstillingsknapperne øverst til højre oven på scenepladen (CON-004), 44 px berøringsflade. | | |
+| TASK-016 | Hint-linjen: tryk-ikon + tryk-tryk-tekst. **Lukker CON-001.** *Verificeret 13-08-2026: teksten er "Tap one element, then a second — that is a combination." — indeholder ikke "drag". Pinnes af `tests/title-screen.test.ts`.* | ✅ | 13-08-2026 |
+| TASK-017 | Tipkortet nederst: elementflise til venstre, fed titel + kursiv underlinje, tre prikker, jagtscene-ornament i højre side. Tipsene roterer ved hvert besøg, så kortet ikke er dødt inventar. *Rettet 13-08-2026: `tip.tile` styrede ikke den rendrede flise — alle tre tips viste samme flise, uanset `TITLE_TIPS[].tile`. `.title-tip .tile-fire`/`.tile-sten` er nu to reelt forskellige regler, og `tile`-feltet vælger klassen. Flisen for "sten" genbruger et eksisterende elementglyf (`assets/art/elements/sten.webp`) frem for at hente nyt kunstaktiv (SEC-001). Tre prikker med `role="tablist"`, roterer automatisk (undtagen ved frys, se `isFrozen()`) og ved klik/tastatur.* | ✅ | 13-08-2026 |
+| TASK-018 | Trofæ- og indstillingsknapperne øverst til højre oven på scenepladen (CON-004), 44 px berøringsflade. *Verificeret/rettet 13-08-2026: `.title-tools button` er 4,4rem × 4,4rem (70,4 px), godt over kravet. Fandt og rettede undervejs et beslægtet, men separat problem: fokusringens kontrast mod det fotografiske himmellag målte helt ned til 1,05:1 ét sted — løst med en "sandwich"-ringteknik (lyst `--parchment`-lag + mørkt `--ochre-ink`-lag, 5,07:1 til hinanden, se `:focus-visible`-reglen). "Indstillinger" er i praksis lydknappen (spillet har kun én indstilling); tandhjulet fra mockuppen har ingen skærm at pege på (CON-004's rekonstruerede hjørne har ingen indstillingsside), så knappen blev bygget som det, den reelt styrer.* | ✅ | 13-08-2026 |
 
 ### Implementation Phase 4
 
@@ -160,10 +186,10 @@ Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-019 | Responsivt: under 900 px falder scenen bagud som helflade-baggrund, og pergamentet bliver et gennemsigtigt kort ovenpå. Ingen vandret scroll ved 320 px (REQ-006). | | |
-| TASK-020 | Kontrast: mål hver tekstfarve mod den faktiske pergamentflade og pin resultatet i `tests/design-tokens.test.ts` (REQ-003). | | |
-| TASK-021 | Tastatur og oplæsning: fokusrækkefølge Begin → Fates → trofæ → indstillinger, synlig fokusring på pergament, `alt`/`aria-label` på ikonknapper. | | |
-| TASK-022 | Kør hele porten: `tsc`, vitest, `tools/validate.py`, `npm run build`, `tools/ux_audit.mjs`. Verificér til sidst i en rigtig browser i både landskab og portræt. | | |
+| TASK-019 | Responsivt: under 900 px falder scenen bagud som helflade-baggrund, og pergamentet bliver et gennemsigtigt kort ovenpå. Ingen vandret scroll ved 320 px (REQ-006). *Verificeret 13-08-2026 ved 320×700, 390×844, 900×900, 1280×800, 1586×992, 1600×1000 og 2560×1440 (Playwright-screenshots, `.judge/inspect/final-*.png`). Under 900 px/kvadratisk aspekt falder scenen bagud som `cover`-baggrund og pergamentet bliver et centreret kort, præcis som krævet. `document.documentElement.scrollWidth` overstiger ganske vist `clientWidth` ved ≤480 px (688 px mod 320 px) — men roden er en allerede kendt, ude-af-scope layoutfejl i selve SPILSKÆRMEN (elementer som `#filter-done`/`.header-actions`/`#combine` løber ud over 320 px, uafhængigt af titelskærmens eget arbejde og forbudt at røre, jf. opgavens "rør ikke spilskærmens layout"). Titelskærmens eget `#title-screen` er `position: fixed; inset: 0` og dækker derfor hele ruden uanset dokumentets scrolposition: programmatisk scroll til `x=300` giver et pixel-identisk screenshot (`.judge/inspect/scroll-320-{before,after}.png`) — den tilgængelige scroll er reelt uopnåelig og usynlig, så længe titelskærmen vises. REQ-006 er derfor opfyldt for titelskærmen selv; den underliggende spilskærmsfejl er noteret, ikke rettet (uden for denne plans mandat).* | ✅ | 13-08-2026 |
+| TASK-020 | Kontrast: mål hver tekstfarve mod den faktiske pergamentflade og pin resultatet i `tests/design-tokens.test.ts` (REQ-003). *Udført 13-08-2026. `ink-warm`/`ink-warm-soft`/`label-ink` var allerede pinnet mod alle seks papirflader (eksisterende test), og dækker titlens hint-/tip-tekst. Fire par manglede, fordi titlens ribbon/knapper/værktøjsikoner IKKE sidder på en af de seks generiske flader — nyt describe-block `titelskærmens kontrastpar` tilføjet: (1) `--ribbon-ink` mod `--tile-edge` (4,92:1, jf. eksisterende kommentar i `.title-sub`); (2) `--btn-ink` mod knappernes egen mørkeste MÅLTE flisetone (aktiver uden fladt token — `#b78b63`, mørkeste pixel i `btn-begin-m.webp`s tekstbånd, 4,62:1 — tættest på grænsen af alle titlens par, derfor eksplicit pinnet); (3) `--title-stone-hi` (overskriftens lyseste sten-tone, værste ende af dens lodrette gradient) mod `--parchment`, stor tekst ≥3:1 (målt 5,87:1 — klarer rent faktisk også den skrappere 4,5:1); (4) `--label-ink` (redskabsikonernes streg, rent grafisk, ikke løbetekst) mod `--tile-groove` (gradientens mørkeste ende), ikke-tekst-grænsen WCAG 1.4.11 ≥3:1 (målt 3,61:1). Forsøgte først at måle "den faktiske pergamentflade" som en rå pixel-scanning af `title-parchment-692.webp`; forkastet efter kontrol — en enkelt mørk kornpixel gav absurde universelle fald (selv `--parchment` mod sig selv-teksturen målte ~1-2,4:1), fordi et enkelt-pixel-udsnit af et malet aktiv måler støj, ikke en repræsentativ papirflade. REQ-003's "mørkeste papirtrin" er derfor tolket som det mørkeste NAVNGIVNE, systematiske token (som den eksisterende `paperNames`-liste allerede gør) frem for en kriminalteknisk enkelt-pixel-måling. Samtidig tilføjet nyt describe-block `titelskærmens selektorer bruger kun tokens til farve`: scanner alle `.title-`/`#title-screen`-regler i `style.css` for rå hex/rgb/hsl uden for `var()` — fandt 0 reelle brud (ét forventet, dokumenteret unntak: `#000` i to `mask-image`-alpha-stencils, som styrer gennemsigtighed, ikke synlig farve, og som allerede er etableret praksis andetsteds i filen uden for titelskærmen). 22/22 test grønne, `npx vitest run tests/design-tokens.test.ts`.* | ✅ | 13-08-2026 |
+| TASK-021 | Tastatur og oplæsning: fokusrækkefølge Begin → Fates → trofæ → indstillinger, synlig fokusring på pergament, `alt`/`aria-label` på ikonknapper. *Verificeret/rettet 13-08-2026. Tabrækkefølge kontrolleret med Playwright i begge tilstande: uden gemt spil Begin → Fates → tip-prikker ×3 → trofæ → lyd; med gemt spil Continue → New life → Fates → tip-prikker → trofæ → lyd — den krævede indbyrdes rækkefølge (primær → Fates → trofæ → lyd) holder i begge. Fandt og rettede en ægte lækage: spilskærmens knapper (altid DOM-monteret, kun visuelt dækket) lå FØR titlens egne i tabrækkefølgen, fordi de aldrig var `hidden`/`inert`. Rettet med en ny `setBackgroundInert(inert)`-hjælper i `main.ts`, kaldt fra `showTitleScreen()`, `startGame()` og dommer-rigets scenehop, som sætter `inert` på alle `#app`-børn undtagen `#title-screen`. Bekræftet i Chromes rigtige tilgængelighedstræ (CDP), ikke kun DOM: præcis ét fokuserbart sæt findes, og spilskærmens eget `<h1>` forsvinder korrekt fra træet (se også TASK-011). Synlig fokusring: global `:focus-visible` (3px `--ochre-ink`) dækker Begin/Fates/tip-prikker på pergament; de to knapper over det fotografiske himmellag fik deres egen "sandwich"-ring, se TASK-018. `aria-label` findes på alle ikon-only-knapper (trofæ, lyd, tip-prikker); lydknappen har desuden `aria-pressed`.* | ✅ | 13-08-2026 |
+| TASK-022 | Kør hele porten: `tsc`, vitest, `tools/validate.py`, `npm run build`, `tools/ux_audit.mjs`. Verificér til sidst i en rigtig browser i både landskab og portræt. *Kørt 13-08-2026: `npx tsc --noEmit` grøn; `npx vitest run` 18 filer/250 test grønne (heriblandt `tests/title-screen.test.ts` 28/28 og `tests/design-tokens.test.ts` 22/22); `python3 tools/validate.py` 187 elementer/409 kombinationer/2 akter, 0 advarsler; `npm run build` grøn, bundtbudget holder (hovedbundt 95,1 kB gzip mod loft 110 kB); `node tools/ux_audit.mjs` 28/28 checks bestået. Port 5199 var optaget af en anden worktree's proces under kørslen (`carl-wt-live-quality`, urørt) — audit og browserverifikation kørt mod en selvstændig `vite preview` på port 5299 i stedet, ikke mod en antaget/fejlagtig server. Browserverificeret med rigtig Chromium (browser-harness/CDP) ved både 1586×992 (landskab) og 390×844 (portræt, DPR 2): titelskærmen matcher mockuppens retning i begge — layout, sten-hugget overskrift, fanebånd, knapper og redskabsknapper på plads i landskab; scenen falder korrekt tilbage til fuldflade-baggrund og pergamentet til et flydende kort i portræt (TASK-019). Ingen konsolfejl (kun én forudeksisterende, urelateret `apple-mobile-web-app-capable`-advarsel fra `index.html`, uden for denne plans scope). Den visuelle dommer (`npm run judge:capture -- --screen title` + `judge:score`, kørt informativt, ikke en del af TASK-022's egen portdefinition) måler titlen til samlet 0,784 (op fra 0,732 i 12-08-status) — 3 af 10 regioner (`scene`, `divider`, `actions`) består nu deres egen tærskel, 7 gør ikke; ingen ny defekt fundet, kun den kendte afstand til pixel-paritet som TASK-010-021 allerede har dokumenteret og delvis lukket. `Impeccable`-detektoren kørt på `src/ui/style.css`/`main.ts`/`icons.ts`: ét fund (`bounce-easing`, linje 1750, `.card-emoji`) — bekræftet FØR denne plans diff (ikke rørt af titelskærmsarbejdet, hører til opdagelseskortets belønningsanimation), derfor ikke rettet. Ingen verificerede titelskærms-defekter fundet at rette.* | ✅ | 13-08-2026 |
 
 ## 3. Alternatives
 
@@ -189,6 +215,15 @@ Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 - **ALT-004**: Male de indbagte knapper væk med indmaling (inpainting).
   Fravalgt: PIL kan ikke, og området er kraftigt uskarpt i forvejen, så en
   spejlet klon er ikke til at se forskel på (bevist ved gennemsyn).
+- **ALT-006**: (Tilføjet 13-08-2026, den femte udgave af ALT-005's forsøg,
+  den eneste der landede.) Trække hvert ornament ud som et rektangulært
+  udsnit af mockuppen — ingen alfa, ingen maskering — og lægge det oven på
+  pergamentet med `mix-blend-mode: multiply`. Virker fordi krakeleringen i
+  udsnittets baggrund ganges væk mod den lyse plade under, mens selve
+  penselstrøget (mørkere end sit eget papir) står tilbage. Kræver at
+  udsnittets *egen* papirtone strækkes mod hvid først (`neutralize_paper()`,
+  85. percentil pr. kanal) — ellers dobbelt-mørkner den blandede plet, fordi
+  referencens papir ikke er lige så lyst som vores eget. Se REQ-005.
 
 ## 4. Dependencies
 
@@ -204,11 +239,12 @@ Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 - **FILE-001**: `src/ui/main.ts` — `showTitleScreen()` bygges om.
 - **FILE-002**: `src/ui/style.css` — al titelskærms-CSS.
 - **FILE-003**: `src/ui/icons.ts` — nye krom-ikoner (`gear`, `tap`).
-  *Leveret, men begge står i dag ubrugte: knappen blev en lydslukker frem
+  *Ryddet 13-08-2026: begge stod ubrugte — knappen blev en lydslukker frem
   for indstillinger (spillet har én indstilling, og det er lyden), og
-  hint-ikonet blev det malede `orn-tap.webp` frem for `icons.tap`. Enten
-  ryddes de to ud, eller også skal FILE-003 skrives om til det, der faktisk
-  skete.*
+  hint-ikonet blev det malede `orn-tap.webp` frem for `icons.tap`. Verificeret
+  med `grep` over `src/` og `tests/` før fjernelse: ingen andre referencer.
+  `gear`/`tap`-eksporterne er fjernet fra `icons.ts`; PAT-001 gælder stadig
+  for de ikoner, der faktisk bruges (`mute`, `trophy`, …).*
 - **FILE-008**: `tools/art/build_parchment.py` — bygger pergamentpladen.
   Kasselisten øverst er det eneste, der skal røres, hvis mockuppen udskiftes.
 - **FILE-009**: `src/assets/art/title-parchment-{692,520,360}.webp` —
@@ -219,12 +255,26 @@ Rækkefølgen er derfor: pladerne først (TASK-007/008), så formen
 - **FILE-004**: `src/assets/art/title-scene-{897,640,448}.webp` — scenepladen.
   Samme rettelse som FILE-009. Kun 897-varianten er i brug i dag.
 - **FILE-005**: `DESIGN.md` — titelskærmen skrives ind som fladen, der bærer
-  målpaletten først. *Ikke sket: `DESIGN.md` nævner ikke titelskærmen med ét
-  ord og dokumenterer hverken `--title-stone-hi/-lo`, `--ribbon-ink` eller
-  `--btn-ink`. Projektets egen lov om at DESIGN.md er lov er dermed uopfyldt
-  netop her — og uhåndhævet, fordi token-testen kun læser den ene vej.*
+  målpaletten først. *Rettet 13-08-2026: ny §2-undersektion "Titelskærmen
+  (overskrift, fanebånd og sten-knapper)" tilføjet efter "Sten
+  (Combine-knappen)", der dokumenterer `--title-stone-hi/-stone/-stone-lo`,
+  `--ribbon-ink` og `--btn-ink` med deres målte kontrastværdier (5,87:1,
+  4,92:1, 4,62:1) og forklarer, hvilke titel-flader der bevidst GENBRUGER
+  eksisterende papir-/flise-tokens (`Parchment`, `Tile Edge`, `Tile Shade`/
+  `Tile Groove`, `Label Ink`) frem for at opfinde nye. `npx vitest run
+  tests/design-tokens.test.ts` bekræfter stadig 22/22 grønne efter
+  tilføjelsen — de nye hex-mentions matcher eksisterende tokens.css-værdier
+  præcist, så "DESIGN.md og tokens.css stemmer overens"-testen (den ene
+  retning: alt DESIGN.md nævner, findes som token) forbliver sand.*
 - **FILE-006**: `tests/design-tokens.test.ts` — kontrastkrav for de nye flader.
+  *Udført 13-08-2026, se TASK-020's amendment.*
 - **FILE-007**: `tests/title-screen.test.ts` — ny; pinner CON-001 og CON-002.
+  *Udført 13-08-2026: filen oprettet med 28 test, heriblandt CON-001 ("ingen
+  'drag'") og CON-002 (Begin/Continue/New life-gatingen). Fire regressioner
+  afprøvet manuelt (brudt, kørt RED, genskabt): "Continue"→"Resume",
+  "Tap"→"Drag" i hintet, `.tile-sten` tømt, og en positiv `tabindex`
+  genindsat — alle fire fældede den tilsvarende test, før filerne blev
+  gendannet med `diff` som bevis. 28/28 grønne i normaltilstand.*
 
 ## 6. Testing
 

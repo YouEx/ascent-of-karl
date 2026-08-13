@@ -224,6 +224,118 @@ describe("kontrastkrav fra DESIGN.md §2", () => {
   });
 });
 
+describe("titelskærmens kontrastpar (overflader uden for de seks generiske papirer)", () => {
+  // Ribbon, sten-knapper og redskabsikoner sidder ikke på en af de seks
+  // generiske papirflader ovenfor: båndet har sin egen flade, knapperne er
+  // malede aktiver uden fladt token, og værktøjsknappen blander sig ned i
+  // en gradient. Parrene skrives eksplicit ind her, så en fremtidig
+  // tokenændring, der umærkeligt sænker en af dem, fældes af testen — ikke
+  // først opdaget ved næste visuelle gennemgang.
+
+  it("--ribbon-ink mod fanebåndets egen flade (--tile-edge) klarer AA (4.5:1)", () => {
+    // .title-sub i style.css: --tile-groove målte kun 4,19:1 og blev
+    // forkastet til fordel for --tile-edge, der holder 4,92:1.
+    expect(
+      contrast(token("ribbon-ink"), token("tile-edge")),
+    ).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("--btn-ink mod stenknappens mørkeste målte flisetone klarer AA (4.5:1)", () => {
+    // btn-begin-m.webp/btn-quiet-m.webp er malede aktiver uden et fladt
+    // token — label-teksten ("Begin"/"Continue"/"Fates") sidder direkte på
+    // pixels, ikke på en CSS-farve. Målt: mørkeste pixel i den vandrette
+    // midterbånd (35-75% højde, hvor .title-actions buttons egen
+    // align-items:center reelt centrerer teksten) af btn-begin-m.webp er
+    // #b78b63 — btn-quiet-m.webp er lysere overalt (mørkeste #dcc3a5,
+    // 8,32:1) og er derfor ikke den bindende flade. Værdien er en frosset
+    // måling af et statisk aktiv, ikke et token — ændrer aktivet sig, skal
+    // tallet genmåles med samme metode.
+    const BTN_FACE_DARKEST = "b78b63";
+    expect(
+      contrast(token("btn-ink"), BTN_FACE_DARKEST),
+    ).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("--title-stone-hi (overskriftens lyseste sten-tone) mod --parchment klarer stor tekst (3:1)", () => {
+    // .title-mark er en lodret gradient fra --title-stone-hi (top) til
+    // --title-stone-lo (bund) via background-clip:text — værste tilfælde
+    // for kontrast er den LYSESTE ende, tættest på det lyse papir.
+    // Overskriften er stor tekst og kræver derfor kun 3:1, ikke normal
+    // teksts 4,5:1 (WCAG 2.1 SC 1.4.3).
+    expect(
+      contrast(token("title-stone-hi"), token("parchment")),
+    ).toBeGreaterThanOrEqual(3);
+  });
+
+  it("--label-ink (redskabsikonernes streg) mod værktøjsknappens mørkeste tone klarer ikke-tekst-grænsen (3:1)", () => {
+    // .title-tools button rummer et rent SVG-ikon (trofæ/lyd), ikke
+    // løbetekst — WCAG 2.1 SC 1.4.11 (ikke-tekst-kontrast) kræver 3:1, ikke
+    // §1.4.3's 4,5:1 for tekst. Fladen er en lodret gradient fra
+    // --tile-shade til --tile-groove; den mørkeste ende (--tile-groove) er
+    // værste tilfælde.
+    expect(
+      contrast(token("label-ink"), token("tile-groove")),
+    ).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("titelskærmens selektorer bruger kun tokens til farve", () => {
+  // Brief (TASK-007/008/REQ-002): "scan title selectors in style.css for
+  // raw hex/rgb/hsl color literals (allow only var()/transparent/
+  // currentColor)". Denne test er adskilt fra "DESIGN.md og tokens.css
+  // stemmer overens" ovenfor — den ser kun på style.css' egne regler for
+  // titelskærmens selektorer, uafhængigt af hvad DESIGN.md nævner.
+
+  /** Splitter style.css fladt i (selector, body)-par — filen har ingen
+   * CSS-nesting (intet `&`), så selv @media-ramte regler matches korrekt:
+   * @media-linjen selv indgår aldrig i noget match, kun de rigtige regler
+   * indeni gør. */
+  function titleRuleBodies(): { selector: string; body: string }[] {
+    const css = stripComments(styles);
+    const re = /([^{}]+)\{([^{}]*)\}/g;
+    const rules: { selector: string; body: string }[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(css))) {
+      const selector = m[1]!.trim();
+      if (!/[.#]title\b/i.test(selector)) continue;
+      rules.push({ selector, body: m[2]! });
+    }
+    return rules;
+  }
+
+  it("har fundet titelskærmens regler (selvtjek af scanneren)", () => {
+    // Falder dette til nul, måler resten af testen ingenting og består af
+    // den forkerte grund — samme fælde som "testen læser rent faktisk
+    // filerne" øverst i denne fil.
+    expect(titleRuleBodies().length).toBeGreaterThan(20);
+  });
+
+  it("har ingen rå hex/rgb/hsl-farver i titelskærmens selektorer", () => {
+    const offenders: string[] = [];
+    for (const { selector, body } of titleRuleBodies()) {
+      // mask-image/-webkit-mask-image er alpha-stencils, ikke synlig farve:
+      // #000 her styrer kun hvor masken er uigennemsigtig (samme etablerede
+      // mønster som spillets øvrige mask-image uden for titelskærmen) og
+      // er reelt identisk med nøgleordet `black` — ikke et farvevalg.
+      // Linjen ekskluderes eksplicit, så en NY farve andetsteds i samme
+      // regel stadig fanges.
+      const withoutMasks = body
+        .split(";")
+        .filter((decl) => !/^\s*(-webkit-)?mask-image\s*:/.test(decl))
+        .join(";");
+      const withoutVar = withoutMasks.replace(/var\([^)]*\)/g, "");
+      const hex = withoutVar.match(/#[0-9a-fA-F]{3,8}\b/g) ?? [];
+      const rgbHsl = withoutVar.match(/\b(?:rgb|rgba|hsl|hsla)\(/g) ?? [];
+      if (hex.length || rgbHsl.length) {
+        offenders.push(
+          `${selector.replace(/\s+/g, " ")} -> ${[...hex, ...rgbHsl].join(", ")}`,
+        );
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe("anti-mønstre er ikke sluppet ind i tokens", () => {
   it("bruger ikke ren sort", () => {
     expect(tokens).not.toMatch(/#000000\b/);
