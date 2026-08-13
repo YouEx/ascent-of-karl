@@ -32,6 +32,7 @@ declare module "node:child_process" {
   }
 
   interface ChildProcess {
+    stdout: TextStream;
     stderr: TextStream;
     on(event: "close", listener: (code: number | null) => void): void;
   }

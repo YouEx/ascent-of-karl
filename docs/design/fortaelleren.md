@@ -125,8 +125,8 @@ ved præcis, hvad de to ting *er*, hvor grammatikken kun kender dommen.
 
 **Prisen for laget.** Bagte replikker koster plads, ikke tid: de lazy-loades pr.
 akt med en dynamisk `import()`. Akt I har nu 420 opslag / 940 varianter og
-fylder 60.918 bytes = 59.5 KiB gzip. Budgettet er 60 KiB pr. akt og bevogtes af
-`tools/validate.py`, ikke af build-loggen; der er 522 bytes tilbage, så næste
+fylder 60.833 bytes = 59.4 KiB gzip. Budgettet er 60 KiB pr. akt og bevogtes af
+`tools/validate.py`, ikke af build-loggen; der er 607 bytes tilbage, så næste
 bagebatch kræver kompression eller en eksplicit budgetbeslutning.
 Opslags-id'et *udledes* fra parret frem for at blive gemt — den udledning findes
 tre steder (`pairLineId()` i `src/narrator/pairs.ts`, `line_id()` i

@@ -3291,8 +3291,8 @@
     {
       "id": "pair-rullesten-spyd-near-miss",
       "variants": [
-        "Karl pressed the round stone into the spear, hoping proximity might count for something. It didn't. The {right} was made for a life spent rolling, not resting against something so pointy.",
-        "Between the round stone and the spear, only one of them was ever going to roll home tonight. The {right} keeps that appointment; the spear was simply standing nearby when it happened."
+        "Karl pressed the round stone into the spear, hoping proximity might count for something. It did not. The {right} belongs with the {partner}; this meeting was merely in the way.",
+        "The round stone rolled, the spear pointed, and neither talent helped the other. Somewhere else, the {partner} can actually use the {right}. History recommends they meet there."
       ]
     },
     {
@@ -3312,8 +3312,8 @@
     {
       "id": "pair-hammer-stenoekse-near-miss",
       "variants": [
-        "Karl swung the hammer at the stone axe, hunting for the axe hidden inside it. The {right} had already finished that job once, back when the stone axe was still just a stone.",
-        "The stone axe in Karl's hand used to be raw stone before the {right} did its work. Introducing the finished axe to the hammer again taught it nothing it didn't already know."
+        "Karl struck the stone axe with the hammer, hoping one finished tool might improve the other. It did not. The {right} belongs with the {partner}; this was only tools comparing handles.",
+        "The hammer and the stone axe met as two professionals forced into the same meeting. Somewhere else, the {partner} has legitimate work for the {right}. The other brought opinions."
       ]
     },
     {
@@ -3354,8 +3354,8 @@
     {
       "id": "pair-reb-spyd-near-miss",
       "variants": [
-        "Karl looped the rope around the spear, waiting for something clever to happen. Nothing did. The {right} was meant for a stick, twisted patiently into something that catches instead of throws.",
-        "Between the rope and the spear, one of them already has better plans elsewhere. The {right} keeps them, quietly, tied around a stick that isn't this one."
+        "Karl looped the rope around the spear and waited for cleverness. The knot held; history did not. The {right} belongs with the {partner}, not today's volunteer.",
+        "The rope and the spear produced a very secure version of nothing. Somewhere else, the {partner} can make proper use of the {right}. This pairing merely tied up the afternoon."
       ]
     },
     {
@@ -3375,8 +3375,8 @@
     {
       "id": "pair-ild-stenoekse-near-miss",
       "variants": [
-        "Karl held the fire near the stone axe, expecting an edge sharp enough to matter. The {right} makes something colder and sharper than this, out of plain stone that never got the chance today.",
-        "Fire turns raw stone into something colder and sharper, no axe required — that's the {right}'s real trick. The stone axe, already finished, had nothing left for it to improve."
+        "Karl held the fire near the stone axe, expecting heat to improve an edge already proud of itself. It did not. The {right} belongs with the {partner}; the other only got warm.",
+        "Fire met the stone axe and discovered that finished tools are poor raw material. Somewhere else, the {partner} can still do useful work with the {right}. Here, nothing changed."
       ]
     },
     {
@@ -3396,8 +3396,8 @@
     {
       "id": "pair-galleri-rullesten-near-miss",
       "variants": [
-        "Karl set the round stone beside the cave gallery, hoping it might pass for art. It did not. The {right} has a sharper future waiting, made from a plainer stone than this one.",
-        "The cave gallery holds only what Karl paints on purpose, and a polished round stone standing beside it counts as neither art nor argument. The {right} belongs somewhere with an edge, not a wall."
+        "Karl set the round stone beside the cave gallery, hoping placement alone might make it art. It did not. The {right} belongs with the {partner}; the other can wait outside the exhibition.",
+        "The cave gallery considered the round stone for a full second and declined the submission. Somewhere else, the {partner} has actual business with the {right}. This arrangement did not."
       ]
     },
     {
@@ -3431,29 +3431,29 @@
     {
       "id": "pair-hjul-spyd-near-miss",
       "variants": [
-        "Karl rolled the wheel past the spear, admiring the roll and ignoring the spear entirely, which was rather the problem. The {right} was waiting on a plain stone tip it hasn't received yet.",
-        "The spear has a sharper future waiting, built from a stone tip it hasn't received yet, and none of that future involves a wheel rolling past it. Today's meeting did not bring the {right} any closer to it."
+        "Karl rolled the wheel past the spear, admiring one motion and the other's point. Together, they invented traffic. The {right} belongs with the {partner}; this crossing was merely inconvenient.",
+        "The wheel and the spear each arrived with a perfectly respectable purpose, neither involving the other. Somewhere else, the {partner} has a working future with the {right}. Today's meeting was a scheduling error."
       ]
     },
     {
       "id": "pair-ild-rullesten-near-miss",
       "variants": [
-        "Karl held the fire close to the round stone, hoping heat alone might do what a proper strike is meant to do. The {right} needs a plainer stone than this one, and a sharper edge than heat can give it.",
-        "The round stone was polished smooth by the river long before Karl found it, and smooth is exactly the wrong shape for what fire is actually good for making. The {right} waits on rougher material."
+        "Karl held the fire close to the round stone, hoping heat might persuade polish into progress. It did not. The {right} belongs with the {partner}; the other remained decorative.",
+        "The round stone warmed up. The fire used fire. Civilisation remained exactly where it was. Somewhere else, the {partner} has better work for the {right}, away from this lukewarm summit."
       ]
     },
     {
       "id": "pair-ild-saft-near-miss",
       "variants": [
-        "Karl poured the berry juice near the fire, expecting steam or spectacle or something. It only hissed once and stopped. The {right} has a better trick waiting, one that needs dry grass instead of juice.",
-        "There's a version of the fire that turns dry grass into something that drifts and lingers, and berry juice was never going to be a substitute for that. The {right} kept waiting regardless."
+        "Karl poured the berry juice near the fire, expecting steam or spectacle. It hissed once and stopped. The {right} belongs with the {partner}; the other was only dampening the mood.",
+        "Fire and berry juice held a brief meeting about heat, sweetness, and neither one's actual job. Somewhere else, the {partner} has useful plans for the {right}. This was refreshments."
       ]
     },
     {
       "id": "pair-hjul-mudder-near-miss",
       "variants": [
-        "Karl rolled the wheel through the mud, expecting the mud to hold a shape worth keeping. It just splattered. The {right} needs dry grass mixed in before it holds anything at all.",
-        "The mud has a sturdier future waiting, one built from dry grass pressed in and dried hard, and a wheel rolling through it only makes more mess. The {right} kept its plans regardless."
+        "Karl rolled the wheel through the mud, expecting the track to become an invention. It became a track. The {right} belongs with the {partner}; this route went nowhere.",
+        "The mud clung to the wheel with real commitment and no useful result. Somewhere else, the {partner} has a working future with the {right}. The other merely needs cleaning."
       ]
     },
     {

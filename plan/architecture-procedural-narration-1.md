@@ -20,13 +20,14 @@ tags: [architecture, engine, narrator, content, tooling, feature]
 > håndhævet af `tests/grammar.test.ts`, ikke af skøn.
 >
 > **Fase 4 er ført frem til bundtloftet** (2026-08-13). Ni bagte fiasker blev
-> fjernet, fordi parrene siden fik en ubetinget åben opskrift; validatoren og
-> `tests/pairs.test.ts` bevogter nu RISK-005. Derefter tilføjede runde 3 de
+> fjernet, fordi parrene siden fik en opskrift; validatoren og
+> `tests/pairs.test.ts` bevogter nu RISK-005 mod både betingede, ubetingede og
+> blandede opskrifter. Derefter tilføjede runde 3 de
 > næste 25 målte par. Facittet har **420 opslag / 940 varianter**; 294 af de
 > 1.005 målte par har mindst én bagt dom, og de dækker **71.2 %** af alle
 > fiasko-møder over 1.200 gennemspilninger. Grammatikken tager 28.8 %;
-> tavshed tager 0. Filen lazy-loades og vejer **60.918 bytes = 59.5 KiB gzip**
-> mod CON-003's loft på 60 KiB. Der er 522 bytes tilbage. TASK-022 er derfor
+> tavshed tager 0. Filen lazy-loades og vejer **60.833 bytes = 59.4 KiB gzip**
+> mod CON-003's loft på 60 KiB. Der er 607 bytes tilbage. TASK-022 er derfor
 > stadig åben: 304 af den målte top-600 er bagt, og næste batch kræver
 > kompression eller en eksplicit budgetbeslutning — loftet hæves ikke stiltiende.
 
@@ -131,9 +132,9 @@ pr. run i TEST-007's 2.000 runs, og nødudgangen forbliver på 0 hits.
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
 | TASK-021 | Byg pipelinen der skriver par-replikker: `tools/prepare_pairs.ts` udskriver batch-briefs med begge navne, flavor, karlMood, den målte dominerende dom, evidensen og de grammatikreplikker udkastet skal slå. Udkast lander i `content/narrator/drafts/pairs-*.json`. (Blev briefs til en skribent frem for et direkte modelkald — samme opgave, men udkastet kan læses og afvises af et menneske, jf. CON-005.) | ✅ | 2026-08-12 |
-| TASK-022 | Fastlæg N ud fra måling, ikke mavefornemmelse: N=500 dækker 96 % af møderne, N=1000 dækker 99,3 %. Start ved N=600 og udvid, hvis TEST-007 viser, at gulvet høres for ofte. **Status 2026-08-13: 420 opslag / 940 varianter; 294 målte par og 71.2 % vægtet dækning. 304 af top-600 er bagt. Runde 3 nåede 59.5 KiB af 60 KiB-loftet (522 bytes tilbage), så N=600 er ikke bevist nået og opgaven forbliver åben, indtil indholdet komprimeres eller budgettet besluttes på ny.** | | |
+| TASK-022 | Fastlæg N ud fra måling, ikke mavefornemmelse: N=500 dækker 96 % af møderne, N=1000 dækker 99,3 %. Start ved N=600 og udvid, hvis TEST-007 viser, at gulvet høres for ofte. **Status 2026-08-13: 420 opslag / 940 varianter; 294 målte par og 71.2 % vægtet dækning. 304 af top-600 er bagt. Runde 3 nåede 59.4 KiB af 60 KiB-loftet (607 bytes tilbage), så N=600 er ikke bevist nået og opgaven forbliver åben, indtil indholdet komprimeres eller budgettet besluttes på ny.** | | |
 | TASK-023 | Menneskelig gennemgang af udkastene. Afvis frem for at rette: en middelmådig bagt replik er værre end grammatikken, fordi den optager pladsen. Godkendte replikker flyttes til `content/narrator/pairs-act-1.json`. (`tools/check_pairs.py` er porten, og `assemble_pairs.py` kører den igen ved fletning — tillid er ikke en kontrol.) | ✅ | 2026-08-12 |
-| TASK-024 | Lazy-load de bagte replikker pr. akt med en dynamisk `import()`, så de ikke ligger i første bundt (CON-003). Mål den faktiske gzip-størrelse og skriv den i planens statusnote. **Målt efter runde 3: 60.918 bytes = 59.5 KiB gzip.** Budgettet bevogtes af `tools/validate.py`, ikke af build-loggen. | ✅ | 2026-08-12 |
+| TASK-024 | Lazy-load de bagte replikker pr. akt med en dynamisk `import()`, så de ikke ligger i første bundt (CON-003). Mål den faktiske gzip-størrelse og skriv den i planens statusnote. **Målt efter integrationsrettelsen: 60.833 bytes = 59.4 KiB gzip.** Budgettet bevogtes af `tools/validate.py`, ikke af build-loggen. | ✅ | 2026-08-12 |
 | TASK-025 | Slå bagte replikker op som første trin i fiaskokæden: bagt → grammatik → nødudgang. Opslaget sker på `pairKey`, så rækkefølgen af de to elementer er ligegyldig. | ✅ | 2026-08-12 |
 | TASK-026 | Byg `tools/coverage_report.mjs`: hvor stor en andel af den *vægtede* mødefordeling har en bagt replik? Rapportér tallet i `docs/design/narration-coverage.md` og opdatér ved hver bagning. Dette er projektets ledestjerne-tal. | ✅ | 2026-08-12 |
 
