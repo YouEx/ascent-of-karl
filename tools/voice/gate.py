@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """Stemme-porten — TASK-030.
 
-Selvstændigt kørbart script omkring judge.py's gate(). Findes som egen fil
-fordi tools/validate.py ejes af en anden agent lige nu og ikke må røres her
-(se docs/design/narration-voice.md, "Wiring into validate", for den
-fem-linjers snippet der kobler judge.gate() ind i validate.py, når den
-anden agents arbejde er flettet).
+Selvstændigt kørbart script omkring judge.py's gate(). Samme funktion kaldes
+direkte af tools/validate.py, så CLI'en og den obligatoriske content-port
+dømmer nøjagtig samme kandidater.
 
 Dømmer al statisk kandidattekst i repoet — grammatikkens ekspanderede
-linjer og de bagte par, BÅDE mod stemme-fingeraftrykket OG mod par-kontrakten
+linjer, improvisationsdommene og de bagte par, BÅDE mod stemme-fingeraftrykket
+OG mod par-kontrakten
 (check_pairs.py, importeret og kørt her, ikke bare antaget kørt separat af et
 menneske), OG at begge facit-filer (grammar-act-1.json, pairs-act-1.json)
 rent faktisk er reproducerbare fra deres egne drafts (check_grammar_assembly.py
@@ -31,7 +30,10 @@ import judge as J  # noqa: E402
 def main() -> int:
     failures = J.gate()
     if not failures:
-        print("✅ stemmedommer: alt kandidatindhold (grammatik + bagte par + par-kontrakt) består.")
+        print(
+            "✅ stemmedommer: alt kandidatindhold "
+            "(grammatik + improvisation + bagte par + par-kontrakt) består."
+        )
         return 0
 
     for f in failures:

@@ -4,6 +4,7 @@ import act1 from "../content/acts/act-1.json";
 import act2 from "../content/acts/act-2.json";
 import narrator1 from "../content/narrator/act-1.json";
 import grammar1 from "../content/narrator/grammar-act-1.json";
+import improvisation1 from "../content/narrator/improvisation-act-1.json";
 import narrator2 from "../content/narrator/act-2.json";
 import endings from "../content/endings.json";
 import challenges from "../content/challenges.json";
@@ -25,10 +26,21 @@ import { computeDepths } from "./core/timeline";
  * samme `lines`-pulje får de fortællerens varianthukommelse, lydopslag og
  * validering gratis, uden en eneste særregel.
  */
-function mergeGrammar(act: unknown, grammar: unknown) {
+function mergeNarratorContent(
+  act: unknown,
+  grammar: unknown,
+  extensions: unknown[] = [],
+) {
   const a = act as { lines: unknown[] };
   const g = grammar as { lines: unknown[]; grammar: Record<string, string[]> };
-  return { ...a, lines: [...a.lines, ...g.lines], grammar: g.grammar };
+  const extensionLines = extensions.flatMap(
+    (extension) => (extension as { lines?: unknown[] }).lines ?? [],
+  );
+  return {
+    ...a,
+    lines: [...a.lines, ...g.lines, ...extensionLines],
+    grammar: g.grammar,
+  };
 }
 
 export function loadContent(): ContentBundle {
@@ -72,7 +84,10 @@ export function loadContent(): ContentBundle {
     elements: elementsWithDepth,
     combos,
     acts: [act1, act2],
-    narrator: [mergeGrammar(narrator1, grammar1), narrator2],
+    narrator: [
+      mergeNarratorContent(narrator1, grammar1, [improvisation1]),
+      narrator2,
+    ],
     endings,
     challenges,
     decisions,

@@ -118,9 +118,25 @@ GRAMMAR_FILLERS = {
     "shared": "hot",
 }
 
+IMPROVISATION_FILLERS = {
+    "a": "stone",
+    "b": "dry grass",
+    "element": "fire-touched berries",
+    "need": "Karl is hungry",
+    "actual": "food",
+    "expected": "a structure or a tool",
+    "missing": "heat and an edge",
+}
+
 
 def fill_grammar_placeholders(text: str) -> str:
     for key, val in GRAMMAR_FILLERS.items():
+        text = text.replace("{" + key + "}", val)
+    return text
+
+
+def fill_improvisation_placeholders(text: str) -> str:
+    for key, val in IMPROVISATION_FILLERS.items():
         text = text.replace("{" + key + "}", val)
     return text
 
@@ -414,7 +430,7 @@ def judge(text: str, fingerprint: dict[str, Any] | None = None, *, source: str =
 
 
 # ---------------------------------------------------------------------------
-# Ekspansion af grammatik og bagte par "sådan som spillet gør det" — se
+# Ekspansion af grammatik, improvisationsdom og bagte par "sådan som spillet gør det" — se
 # mergeGrammar() i src/content.ts og grammarPool()/pickGrammarLine() i
 # src/narrator/grammar.ts. Delt mellem calibrate.py (TASK-029) og gate()
 # (TASK-030), så de aldrig kan komme i utakt med hinanden.
@@ -438,6 +454,30 @@ def expand_grammar() -> list[tuple[str, str]]:
                 continue
             for i, variant in enumerate(line_def["variants"]):
                 out.append((f"grammar:{verdict}:{line_id}#{i}", fill_grammar_placeholders(variant)))
+    return out
+
+
+def expand_improvisation() -> list[tuple[str, str]]:
+    """Alle statiske dom-varianter, udfyldt som Narrator.fill() ville vise dem.
+
+    De bor adskilt fra det håndskrevne fingeraftryk, fordi TASK-026 kræver at
+    de dømmes SOM kandidater i stedet for stiltiende at flytte den reference,
+    de selv skal måles imod.
+    """
+    data = json.loads(
+        (CONTENT / "narrator" / "improvisation-act-1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    out: list[tuple[str, str]] = []
+    for line in data["lines"]:
+        for index, variant in enumerate(line["variants"]):
+            out.append(
+                (
+                    f"improvisation:{line['id']}#{index}",
+                    fill_improvisation_placeholders(variant),
+                )
+            )
     return out
 
 
@@ -517,10 +557,14 @@ def calibrated_threshold(fingerprint: dict[str, Any], percentile: str = "p5") ->
     return scores[k]
 
 
-def gate() -> list[str]:
+def gate(
+    *,
+    extra_candidates: list[tuple[str, str]] | None = None,
+) -> list[str]:
     """TASK-030's importable indgang. Dømmer ALT kandidatindhold der findes
-    som statisk indhold i repoet: grammatikkens ekspanderede linjer, de bagte
-    par (stemme + register), de bagte pars strukturelle kontrakt (navn, dom,
+    som statisk indhold i repoet: grammatikkens ekspanderede linjer,
+    improvisationsdommene, de bagte par (stemme + register), de bagte pars
+    strukturelle kontrakt (navn, dom,
     dublet, længde — check_pairs.py, TASK-023), OG at BEGGE assemblerede
     facit-filer rent faktisk er reproducerbare fra deres egne drafts
     (check_grammar_assembly.py / check_pairs_assembly.py, kodegennemgang
@@ -573,7 +617,14 @@ def gate() -> list[str]:
     # Kildemærket, så hard_reject() ved om sætnings-/ordloftet gælder (kun
     # grammatik — se hard_reject()'s docstring for den fulde begrundelse).
     sourced: list[tuple[str, list[tuple[str, str]]]] = [
-        ("grammar", expand_grammar()),
+        (
+            "grammar",
+            [
+                *expand_grammar(),
+                *expand_improvisation(),
+                *(extra_candidates or []),
+            ],
+        ),
         ("pairs", expand_pairs()),
     ]
     pairs_band = pairs_wordcount_band()  # frosset facit, se pairs_wordcount_band()'s docstring
@@ -816,7 +867,10 @@ def main() -> int:
             print("❌", f)
         print(f"\n{len(failures)} kandidat-replikker dømt ude.")
         return 1
-    print("✅ Alt kandidatindhold (grammatik + bagte par) består stemmedommeren.")
+    print(
+        "✅ Alt kandidatindhold "
+        "(grammatik + improvisation + bagte par) består stemmedommeren."
+    )
     return 0
 
 

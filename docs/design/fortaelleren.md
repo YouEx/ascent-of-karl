@@ -96,6 +96,33 @@ Validatoren håndhæver, at hvert obligatorisk problem har et træk med mindst f
 varianter (det høres hver gang historien rykker), at trods-replikkerne findes,
 og at en akt med træk ikke mangler trods-kortet helt.
 
+## Dommen over improvisationer (besluttet 2026-08-13)
+
+`Engine.improvise()` giver fortælleren et struktureret udfald, ikke en løs
+tekststreng. Dommen ligger i `content/narrator/act-1.json`, mens de 106
+kandidatvarianter ligger separat i
+`content/narrator/improvisation-act-1.json`, så stemmefingeraftrykket ikke
+kalibreres på de linjer, det selv skal dømme.
+
+Prioriteten ændres kun dér, hvor en mere specifik sandhed findes:
+
+- slutninger samt nye/akutte challenges beholder deres eksisterende plads;
+- løser opfindelsen det aktive challenge, erstatter den specifikke
+  improvisationsdom challengets generiske `successLine`;
+- løser den et problem, står dommen efter challenge-beats, men før en generisk
+  opdagelsesreplik;
+- løser den intet, bruges `NeedExplanations`; `kind`, `stuff`, `traits`,
+  `scale`, `crafted` og `minDepth` kan forklares præcist via spiller-vendte
+  labels, mens `allOf`, `anyOf` og `not` bruger bredere sande linjer;
+- genbrug og de tre afvisninger (kanonisk opskrift, verdikt-port, dybdeloft)
+  har egne puljer.
+
+Den absurde løsning er produktets payoff og har derfor den største enkelte
+pulje: 24 varianter mod 8 i hver almindelig succesfamilie. Alle puljer har
+mindst to replik-id'er, så den eksisterende globale id-no-repeat virker; RNG,
+variant-hukommelse og save/load er uændret. Linjerne har ingen `audioId` og
+falder derfor ærligt tilbage til tekst.
+
 ## Trelagsmodellen (besluttet 2026-08-12, målt 2026-08-13)
 
 Fortælleren vælger sin replik i én prioriteret kæde (PRD §2.4). De øverste trin
