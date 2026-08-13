@@ -63,6 +63,15 @@ export function hasArt(id: string): boolean {
 }
 
 /**
+ * Rå URL til elementets maleri, eller intet. Til de steder glyphHTML()s faste
+ * valg mellem `<img>` og `<span>` ikke passer ind — SVG'en i bogens tidslinje
+ * kan ikke rumme et `<img>`, den skal selv bygge et `<image>`.
+ */
+export function artUrl(id: string): string | undefined {
+  return art.get(id);
+}
+
+/**
  * Brikkens ansigt som HTML. Maleriet er dekoration — navnet står ved siden af
  * og bærer betydningen — så alt-teksten er tom og billedet skjules for
  * skærmlæsere frem for at blive læst op to gange.

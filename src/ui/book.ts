@@ -3,6 +3,7 @@ import { buildTimeline } from "../core/timeline";
 import type { TimelineNode } from "../core/timeline";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import type { RarityInfo } from "../core/rarity";
+import { artUrl, glyphHTML } from "./art";
 
 /**
  * Bogen: leksikonet er den primære flade — det åbne opslag viser den valgte
@@ -13,6 +14,10 @@ import type { RarityInfo } from "../core/rarity";
 const COL_W = 108;
 const ROW_H = 72;
 const RADIUS = 24;
+// Malet motiv i tidslinjeknuden: mindre end knudens fulde diameter (2×RADIUS),
+// så det ikke rammer ring-strøget. font-size:20px på emojien (style.css) fylder
+// tilsvarende mindre end cirklen — 34px giver samme luft til et billede.
+const GLYPH_SIZE = 34;
 
 const TIMELINE_OPEN_KEY = "kolde-karl-timeline-open";
 
@@ -102,7 +107,7 @@ export class BookView {
       const btn = document.createElement("button");
       btn.className = `chip ${def.id === this.selectedNode ? "active" : ""}`;
       btn.title = def.name;
-      btn.textContent = def.emoji;
+      btn.innerHTML = glyphHTML(def.id, def.emoji, "chip-glyph");
       btn.addEventListener("click", () => {
         this.selectedNode = def.id;
         this.render();
@@ -138,7 +143,7 @@ export class BookView {
     // Sjældenheden skal kunne genfindes senere, ikke kun ses i fundets øjeblik
     const tier = this.rarity.get(def.id)?.tier ?? "common";
     entry.innerHTML = `<div class="entry">
-      <div class="entry-emoji">${def.emoji}</div>
+      <div class="entry-emoji">${glyphHTML(def.id, def.emoji, "entry-glyph")}</div>
       <div class="entry-body">
         <h3>${def.name} <span class="rarity rarity-${tier}">${RARITY_LABEL[tier]}</span></h3>
         <p>${def.flavor ?? ""}</p>
@@ -223,9 +228,17 @@ export class BookView {
           </g>`;
         }
         const def = this.engine.element(n.id);
+        const url = artUrl(def.id);
+        // glyphHTML() returnerer <img>/<span> — ugyldigt i SVG. Samme
+        // fallback-logik, egen markup: <image> når malet, ellers <text>.
+        const glyph = url
+          ? `<image class="glyph-art" href="${url}"
+              x="${-GLYPH_SIZE / 2}" y="${-GLYPH_SIZE / 2}"
+              width="${GLYPH_SIZE}" height="${GLYPH_SIZE}" />`
+          : `<text class="glyph">${def.emoji}</text>`;
         return `<g class="node discovered ${n.komisk ? "komisk" : ""} ${sel}" data-id="${n.id}" transform="translate(${p.x},${p.y})">
           <circle r="${RADIUS}" />
-          <text class="glyph">${def.emoji}</text>
+          ${glyph}
           <text class="label" y="${RADIUS + 13}">${def.name}</text>
         </g>`;
       })

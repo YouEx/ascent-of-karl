@@ -15,6 +15,7 @@
     "predicates:fixture": "python3 tools/parity_fixture.py",
     "verdicts": "vite-node tools/verdict_report.ts",
     "ux": "node tools/ux_audit.mjs",
+    "art": "python3 tools/art/build_all.py",
     "social": "node tools/social/render.mjs",
     "judge:capture": "node tools/judge/capture.mjs",
     "judge:score": "python3 tools/judge/metrics.py",

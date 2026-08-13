@@ -128,9 +128,15 @@ enkeltændring, der flytter mest.
 - **Ochre Ink** `#7A531F` — alt der er tekst eller fokusfelt.
 - **Ochre Tint** `rgba(169, 114, 43, 0.12)` — svag fyld bag valgt tilstand
 
-**Navy** `#22384E` er ny og er paletten eneste kølige farve. Den bærer **akt-badgen**
-og intet andet: den er den visuelle markør for _hvor i historien vi er_. Pergament på
-navy giver **8,96:1**. Bruges navy til andet, holder den op med at betyde noget.
+**Akt-badgen** bæres af `--act-badge` `#1D3145` med `--act-badge-ink` `#F8EBEC` som
+tekst — paletten eneste kølige flade, og intet andet må bære den: den er den visuelle
+markør for _hvor i historien vi er_. `--act-badge-ink` på `--act-badge` giver
+**11,46:1**. Bruges den til andet, holder den op med at betyde noget.
+
+`--navy` `#22384E` var det oprindelige gæt på samme flade; badgen blev sidenhen
+genmålt direkte i referencebilledet og fik sine egne, mere præcise tokens (11-08-2026).
+`--navy` står tilbage i `tokens.css`, ubrugt — den er ikke et alias, farverne ligger
+12 enheder fra hinanden i RGB. Brug `--act-badge`/`--act-badge-ink`, ikke `--navy`.
 
 Referencens egen CTA er stadig tilbageholdende — **tilbageholdenhed er accenten**.
 En knap bliver ikke okker, fordi den er vigtig; den bliver okker, fordi den er aktiv.
@@ -250,7 +256,7 @@ den er ren mekanik: den er knappen der får maskinen til at køre.
 
 **Appvinduet.** Hele spillet ligger i ét afrundet vindue der svæver over landskabet:
 radius `--radius-xl`, hårfin `Frame`-kant, stor blød skygge, let gennemsigtigt
-pergament. Under 768px falder rammen væk og pergamentet går til fuld bredde — et
+pergament. Under 820px falder rammen væk og pergamentet går til fuld bredde — et
 vindue med margin på en telefon er spildt plads.
 
 **Pergamenttekstur.** Papirfladerne er ikke flade. Én sømløs fiber-tekstur lægges med
@@ -285,8 +291,8 @@ plustegn. Teksten er _"Select an element"_ + _"Choose from below"_ — **aldrig
 scroll i et langt grid. Referencebilledet siger "Drag or choose from below"; det er
 en fælde, og teksten må ikke kopieres.
 
-**Akt-badgen.** `Navy`-flade, pergamentfarvet tekst, lille radius, siddende halvt
-ud over krønikekortets øverste kant. Det eneste sted navy må optræde.
+**Akt-badgen.** `--act-badge`-flade, `--act-badge-ink`-tekst, lille radius, siddende
+halvt ud over krønikekortets øverste kant. Det eneste sted den flade må optræde.
 
 **Fortællerboblen.** Pergament med revet kant og jægerglyffen i venstre side.
 Kursiv Fraunces. Mutet tilstand: 55 % opacitet og stiplet kant — stadig læsbar,
@@ -321,7 +327,7 @@ Karl checked twice."), aldrig "Ingen resultater".
   se. Appvinduet må dække hvad som helst af det på en lille skærm.
 - Fuld højde er altid `100dvh` — aldrig `100vh` (iOS Safari springer).
 - Indholdsbredde begrænses: spil 960px (appvinduet), hero 1240px.
-- **Mobil-først kollaps under 768px:** alt bliver én spalte. Ingen vandret scroll
+- **Mobil-først kollaps under 820px:** alt bliver én spalte. Ingen vandret scroll
   nogensinde — det er en kritisk fejl, ikke en skønhedsfejl.
 - Handlingsknapper bliver i tommelfinger-zonen på mobil (docken), jf.
   `docs/design/ui-mobile.md`.
@@ -396,8 +402,9 @@ slags fejl med en anden farve.
   ser beskidt ud på tan papir. Blæk er varmt nu.
 - ❌ Inter, Georgia, Times New Roman og system-serif
 - ❌ Neon, ydre glød, farvede skygger, gradient-tekst
-- ❌ `Navy` til andet end akt-badgen. Bruges den bredt, holder den op med at betyde
-  _hvor i historien vi er_
+- ❌ `--act-badge`/`--act-badge-ink` til andet end akt-badgen. Bruges de bredt,
+  holder de op med at betyde _hvor i historien vi er_
+- ❌ `--navy` — afløst af `--act-badge` (§2), ubrugt, må ikke genoplives
 - ❌ Centreret hero
 - ❌ Overlappende elementer og absolut-positioneret tekst oven på illustration
 - ❌ **Ornament bag læsbar tekst.** Dyrefrisen og jægeren skal have deres eget rum.
@@ -427,8 +434,6 @@ slags fejl med en anden farve.
   eksplicit. Ikonerne har ikke samme mål (23×24, 27×30, 28×29) — en fælles `max-height`
   ville flade den forskel ud. Emoji i `content/*.json` overlever kun som **fallback**
   når et motiv endnu ikke er skåret.
-  **Kendt brud pr. 11-08-2026:** `⏳` i titellinjens sommertæller
-  (`src/ui/main.ts`, `renderAge()`) er krom og skal erstattes af et rigtigt ikon.
 
 ---
 
@@ -466,9 +471,11 @@ billeder — derfor står den her og ikke i et script.
 
 ### Levering
 
-- **Additivt og valgfrit pr. element.** Findes `public/art/<element-id>.webp`,
-  vises den; ellers vises elementets emoji. **Ingen kodeændring pr. billede.**
-  Spillet skal kunne gå live uden en eneste illustration.
+- **Additivt og valgfrit pr. element.** Findes `src/assets/art/elements/<element-id>.webp`,
+  vises den; ellers vises elementets emoji. **Ingen kodeændring pr. billede** —
+  `src/ui/art.ts` finder filerne selv via `import.meta.glob` og eksponerer dem
+  som `glyphHTML()`/`hasArt()`. Spillet skal kunne gå live uden en eneste
+  illustration.
 - **Format:** WebP, kvadratisk, 256×256 (@2x for 128px-fliser).
 - **Vægt:** ≤ 10 kB pr. element. 187 × 10 kB ≈ 1,9 MB — derfor hentes kun de
   **13 base-elementer** ved start; resten dovent (`loading="lazy"`).
@@ -485,5 +492,6 @@ billeder — derfor står den her og ikke i et script.
 | Dato       | Ændring                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 12-08-2026 | §8: emoji er ikke længere illustrationssproget. Ikoner skæres ud af referencen (`tools/art/build_*.py` + `sizes.json` + eksplicit `width`/`height`); emoji er kun fallback. Metoden bag: når en flades struktur, blæk og materialitet alle er lave, skæres HELE fladen ud af referencen og CSS'ens `border`, `--grain` og `box-shadow` slettes — ellers påføres krommet to gange. Brugt på krøniken, fortælleren, dokkens felter og elementfliserne. |
+| 12-08-2026 | §2/§4/§8: akt-badgen dokumenteret med sine egne tokens `--act-badge`/`--act-badge-ink` (#1D3145/#F8EBEC, 11,46:1) i stedet for 11-08-2026-rækkens `navy`-gæt (`--navy`, pergament-på-navy 8,96:1), som aldrig blev den flade, der faktisk kom i brug. `--navy` står urørt men ubrugt i `tokens.css`. Token-dækningstesten udvidet til at kræve begge de rigtige hexer i dette dokument. |
 | 11-08-2026 | Målbilledet flyttet til `target-2026-08-11.webp`: malet landskab som lærred, tan pergament, varmt blæk, navy akt-badge, hulemaleri-ornamenter, elementkunst (§9). Typografireglen omskrevet til "serif taler, sans betjener". Rettet to kontrastfejl i referencen (etiketbrun 3,21:1 og Combine-knap 2,18:1). |
 | 10-08-2026 | Første version afledt af pastelreferencen. Ophævede den midlertidige mørke hulemaleri-æstetik.                                                                                                                                                                                                                |

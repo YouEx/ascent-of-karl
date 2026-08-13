@@ -90,6 +90,20 @@ function contrast(a: string, b: string): number {
   return (hi! + 0.05) / (lo! + 0.05);
 }
 
+/**
+ * Værdien LÆSES ud af tokens.css. Skrev vi den af som literal her, ville
+ * testen måle en frossen kopi og blive ved at bestå, selv om et token senere
+ * blev ændret til noget der dumper — altså præcis den slags grøn test den er
+ * sat i verden for at forhindre. Modulscope så både kontrast- og
+ * dækningstests kan bruge den samme opslagslogik.
+ */
+function token(name: string): string {
+  const code = tokens.replace(/\/\*[\s\S]*?\*\//g, "");
+  const found = new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})\\s*;`).exec(code);
+  if (!found?.[1]) throw new Error(`token --${name} findes ikke i tokens.css`);
+  return found[1].slice(1).toLowerCase();
+}
+
 describe("testen læser rent faktisk filerne", () => {
   // Vitest stubber CSS til tom streng uden `css: true` i vite.config.ts.
   // Sker det, ville alle kontroller herunder bestå ved at måle ingenting.
@@ -126,22 +140,24 @@ describe("DESIGN.md og tokens.css stemmer overens", () => {
       expect(rgbasIn(styles).has(value), `${value} i style.css`).toBe(true);
     }
   });
+
+  it("nævner akt-badgens tokens i DESIGN.md, ikke kun i tokens.css", () => {
+    // Testen ovenfor ("har hver eneste farve...") dækker kun én retning:
+    // alt DESIGN.md nævner, skal være et token. Det modsatte hul er hvad der
+    // ramte --act-badge/--act-badge-ink i første omgang (commit 36a6752,
+    // 11-08-2026): de blev tokens og kom i brug (.book-tab.active), men stod
+    // aldrig i DESIGN.md, og ingen test opdagede det. Denne test lukker
+    // hullet specifikt for akt-badgens to tokens — ikke som en generel regel,
+    // for tokens.css har bevidst en del udokumenterede
+    // implementeringsdetaljer (skygger, afledte varianter), og en blanket
+    // omvendt test ville fejle på dem alle.
+    const documented = hexesInDesign();
+    expect(documented).toContain(token("act-badge"));
+    expect(documented).toContain(token("act-badge-ink"));
+  });
 });
 
 describe("kontrastkrav fra DESIGN.md §2", () => {
-  /**
-   * Værdierne LÆSES ud af tokens.css. Skrev vi dem af som literaler her, ville
-   * testen måle en frossen kopi og blive ved at bestå, selv om et token senere
-   * blev ændret til noget der dumper — altså præcis den slags grøn test den er
-   * sat i verden for at forhindre.
-   */
-  function token(name: string): string {
-    const code = tokens.replace(/\/\*[\s\S]*?\*\//g, "");
-    const found = new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})\\s*;`).exec(code);
-    if (!found?.[1]) throw new Error(`token --${name} findes ikke i tokens.css`);
-    return found[1].slice(1).toLowerCase();
-  }
-
   // DESIGN.md: en tekstfarve måles mod det MØRKESTE papir den kan lande på.
   const paperNames = [
     "chronicle",
@@ -171,10 +187,12 @@ describe("kontrastkrav fra DESIGN.md §2", () => {
     );
   });
 
-  it("har pergamenttekst på akt-badgens navy over AA", () => {
-    expect(contrast(token("parchment"), token("navy"))).toBeGreaterThanOrEqual(
-      4.5,
-    );
+  it("har akt-badge-ink på akt-badge over AA", () => {
+    // Testen målte tidligere parchment-på-navy, et par der aldrig var live —
+    // .book-tab.active bruger --act-badge/--act-badge-ink (DESIGN.md §2, §4).
+    expect(
+      contrast(token("act-badge-ink"), token("act-badge")),
+    ).toBeGreaterThanOrEqual(4.5);
   });
 
   it("har tilstandsfarverne over AA på de flader de bruges på", () => {

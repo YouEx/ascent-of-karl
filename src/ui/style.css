@@ -98,6 +98,28 @@ body {
   padding-bottom: calc(var(--dock-h) + var(--safe-b) + 0.5rem);
 }
 
+/* DESIGN.md §4: "Under 820px falder rammen væk og pergamentet går til fuld
+   bredde — et vindue med margin på en telefon er spildt plads." Margin,
+   kant og hjørneradius er alle del af det svævende vindue, så alle tre
+   forsvinder samlet. min-height mister sin "- 8px": de otte pixel var
+   margins egne (4 top + 4 bund), og uden margin skal rammen selv nå
+   præcis 100dvh, ellers står der en unødig stribe tilbage forneden.
+
+   820px, ikke 768px: grænsen skal matche #dock's egen fixed/static-grænse
+   (@media min-width: 820px nedenfor, docs/design/ui-mobile.md), for det ER
+   layoutets reelle mobil/desktop-skel. Stod rammen ved 768 og dokken ved
+   820, ville 768-819 stå i et mellemrum med desktop-ramme (margin/kant/
+   radius tilbage) men mobil-dock (stadig fixed) — to kilder til sandhed,
+   der er uenige i et helt vindue af bredder. */
+@media (max-width: 819px) {
+  #app {
+    margin: 0;
+    min-height: 100dvh;
+    border: none;
+    border-radius: 0;
+  }
+}
+
 /* ---------- Header ---------- */
 /* Klæbende flader ligger på et gennemsigtigt papir-slør, ikke på en flad
    farve — ellers skærer de en firkant ud af gradienten når man ruller. */
@@ -962,6 +984,13 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
 /* Målt: referencens tekstblok begynder 10 px længere ude end vores. */
 .entry { display: flex; gap: 1.52rem; align-items: flex-start; }
 .entry .entry-emoji { font-size: 4.2rem; line-height: 1; }
+/* Samme opskrift som img.card-glyph: kilden er 128 px og skal skaleres til
+   opslagets størrelse, ikke stå i emojiens 4.2rem-fodaftryk. */
+img.entry-glyph {
+  display: block;
+  max-width: 84px; max-height: 84px; width: auto; height: auto;
+  object-fit: contain;
+}
 /* Referencens krønike åbnes af en MALET opslået bog i brunt læder, ikke af
    📖 — en blå-hvid emoji der er det eneste kolde element på hele skærmen.
    Målt 95x74. */
@@ -998,6 +1027,13 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   font-size: 1.2rem; min-width: 42px; min-height: 42px; cursor: pointer;
 }
 .chip.active { border-color: var(--bronze); box-shadow: 0 0 0 1px var(--bronze); }
+/* Chippen er en 42 px rund knap — billedet skal blive inden i den, ikke
+   presse den i stykker. */
+img.chip-glyph {
+  display: block;
+  max-width: 26px; max-height: 26px; width: auto; height: auto;
+  object-fit: contain;
+}
 
 #timeline-toggle {
   display: flex; align-items: center; gap: 12px;
@@ -1011,7 +1047,7 @@ body.run-over #grid, body.run-over #dock, body.run-over #tools {
   padding: 0.4rem 1rem; cursor: pointer;
   min-height: 0;
 }
-#timeline-toggle strong { font-weight: 600; }
+#timeline-toggle strong { font-weight: 600; font-variant-numeric: tabular-nums; }
 /* Messinguret, skåret ud af referencen. Målt 30x34. */
 .timeline-watch {
   flex: 0 0 auto;
@@ -1682,7 +1718,7 @@ img.card-glyph {
   font-family: var(--font-display); font-size: var(--step-title);
   font-weight: 600; font-variation-settings: "WONK" 1;
 }
-.modal-sub { color: var(--ink-soft); font-size: 0.85rem; margin-top: 0; }
+.modal-sub { color: var(--ink-soft); font-size: 0.85rem; margin-top: 0; font-variant-numeric: tabular-nums; }
 .trophy {
   display: flex; gap: 0.75rem; align-items: center;
   padding: 0.5rem 0; border-bottom: 1px solid var(--rule);
@@ -1698,6 +1734,14 @@ img.card-glyph {
     padding-bottom: 1rem;
     display: flex;
     flex-direction: column;
+    /* min-height: auto herfra er FJERNET igen (var forsøgt 2026-08-12): at
+       lade rammen krympe om indholdet virkede kun på papiret — på en høj
+       eller bred skærm (1440x1900, 1920x1080) stopper #app da langt før
+       viewport-bunden, og resten af siden viser bg-wide bag et svævende
+       kort. Referencens ramme skal netop nå ned til samme 4 px margin forneden
+       som foroven (se #app's basisregel), så min-height arves uændret. Det
+       rigtige sted at optage overskydende højde er #grid, ikke #app selv:
+       se `flex: 1` nedenfor. */
   }
   /* Referencens lodrette rytme er IKKE ensartet: 20, 18, 18, 13, 21, 23 px.
      Vi kørte 20 px hele vejen, og de tre for store mellemrum stablede sig
@@ -1724,6 +1768,17 @@ img.card-glyph {
     column-gap: 17.7px;
     row-gap: 17px;
     overflow: hidden;
+    /* Den eneste child med flex-grow: griddet er det naturlige sted at
+       optage rammens overskydende højde (nyt indhold vokser nedad her i
+       forvejen), og align-content:start (basisreglen) holder rækkerne
+       oppe mod loftet, så den optagede plads lander UNDER sidste række —
+       samme sted den før stod som uklaimet flex-rum, nu bare inden for
+       griddets egen boks i stedet for i et anonymt hul mellem #grid og
+       paddingen. min-height:0 er nødvendig, ellers regner flexbox griddets
+       auto-min-size ud fra 7x129 kolonnerne og nægter at krympe under det
+       på en lav skærm. */
+    flex: 1;
+    min-height: 0;
   }
   #grid-empty { order: 8; }
 
