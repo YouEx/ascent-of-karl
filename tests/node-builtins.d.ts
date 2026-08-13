@@ -55,4 +55,5 @@ declare module "node:child_process" {
 
 declare const process: {
   execPath: string;
+  kill(pid: number, signal?: number | string): boolean;
 };

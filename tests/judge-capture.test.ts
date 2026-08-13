@@ -1,7 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
 import { spawn } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
 import { runCapture, stopServer } from "../tools/judge/capture.mjs";
+// @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
+import { runProcessGroup } from "../tools/judge/process-group.mjs";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const SCRATCH_ROOT = join(HERE, "..", ".judge", "test-scratch");
+mkdirSync(SCRATCH_ROOT, { recursive: true });
 
 const registry = {
   screens: [
@@ -83,5 +92,72 @@ describe("capture.mjs — selvstændig ressourcelevetid", () => {
 
     expect(child.killed).toBe(true);
     expect(child.exitCode !== null || child.signalCode !== null).toBe(true);
+  });
+});
+
+function processAlive(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function waitForDead(pid: number): Promise<void> {
+  const deadline = Date.now() + 2_000;
+  while (Date.now() < deadline) {
+    if (!processAlive(pid)) return;
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+  expect(processAlive(pid), `proces ${pid} lever stadig`).toBe(false);
+}
+
+const TREE_SCRIPT = `
+const { spawn } = require("node:child_process");
+const { writeFileSync } = require("node:fs");
+const pidPath = process.argv[1];
+const mode = process.argv[2];
+const grandchild = spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" });
+writeFileSync(pidPath, JSON.stringify({ parent: process.pid, grandchild: grandchild.pid }));
+if (mode === "error") setTimeout(() => process.exit(7), 100);
+else setInterval(() => {}, 1000);
+`;
+
+describe("process-group — timeout/error efterlader ingen efterkommere", () => {
+  it("dræber både barn og barnebarn ved timeout uden pkill/killall", async () => {
+    const dir = mkdtempSync(join(SCRATCH_ROOT, "process-timeout-"));
+    const pidPath = join(dir, "pids.json");
+    try {
+      await expect(
+        runProcessGroup(process.execPath, ["-e", TREE_SCRIPT, pidPath, "timeout"], {
+          timeoutMs: 500,
+        }),
+      ).rejects.toThrow(/timeout/i);
+      expect(existsSync(pidPath)).toBe(true);
+      const pids = JSON.parse(readFileSync(pidPath, "utf8"));
+      await waitForDead(pids.parent);
+      await waitForDead(pids.grandchild);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("dræber barnebarnet, når barnet afslutter med fejl", async () => {
+    const dir = mkdtempSync(join(SCRATCH_ROOT, "process-error-"));
+    const pidPath = join(dir, "pids.json");
+    try {
+      await expect(
+        runProcessGroup(process.execPath, ["-e", TREE_SCRIPT, pidPath, "error"], {
+          timeoutMs: 2_000,
+        }),
+      ).rejects.toThrow(/kode 7/i);
+      expect(existsSync(pidPath)).toBe(true);
+      const pids = JSON.parse(readFileSync(pidPath, "utf8"));
+      await waitForDead(pids.parent);
+      await waitForDead(pids.grandchild);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

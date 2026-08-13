@@ -100,21 +100,21 @@
           "rect": [150, 130, 545, 320],
           "anchor": ".title-mark",
           "weight": 4,
-          "threshold": 0.73
+          "threshold": 0.732
         },
         {
           "id": "ribbon",
           "rect": [155, 462, 500, 52],
           "anchor": ".title-sub",
           "weight": 3,
-          "threshold": 0.72
+          "threshold": 0.7252
         },
         {
           "id": "tagline",
           "rect": [190, 535, 440, 60],
           "anchor": ".title-tagline",
           "weight": 2,
-          "threshold": 0.71
+          "threshold": 0.7152
         },
         {
           "id": "divider",
@@ -135,28 +135,28 @@
           "rect": [200, 765, 420, 32],
           "anchor": ".title-hint",
           "weight": 1,
-          "threshold": 0.71
+          "threshold": 0.7163
         },
         {
           "id": "tip-card",
           "rect": [95, 830, 570, 125],
           "anchor": "#t-tip",
           "weight": 2,
-          "threshold": 0.74
+          "threshold": 0.7442
         },
         {
           "id": "chip",
           "rect": [20, 25, 340, 65],
           "anchor": ".title-chip",
           "weight": 1,
-          "threshold": 0.73
+          "threshold": 0.7343
         },
         {
           "id": "tools",
           "rect": [1385, 20, 180, 70],
           "anchor": ".title-tools",
           "weight": 1,
-          "threshold": 0.71
+          "threshold": 0.7169
         },
         {
           "id": "scene",

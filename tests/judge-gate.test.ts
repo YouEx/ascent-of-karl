@@ -76,6 +76,37 @@ describe("accept-porten", () => {
     expect(acceptGate(mk(0.4, { a: 0.5 }), mk(0.45, { a: 0.479 })).accepted).toBe(false);
   });
 
+  it("afviser en aspektregression, selv når regionens overall og den samlede score stiger", () => {
+    const before = {
+      overall: 0.4,
+      screens: {
+        game: {
+          regions: {
+            a: { overall: 0.5, structure: 0.5, tone: 0.8, ink: 0.5, geometry: 0.5, materiality: 0.5 },
+          },
+        },
+      },
+    };
+    const after = {
+      overall: 0.45,
+      screens: {
+        game: {
+          regions: {
+            a: { overall: 0.51, structure: 0.53, tone: 0.779, ink: 0.51, geometry: 0.51, materiality: 0.51 },
+          },
+        },
+      },
+    };
+
+    const result = acceptGate(before, after);
+    expect(result.accepted).toBe(false);
+    expect(result.regressions).toContainEqual({
+      region: "game/a/tone",
+      aspect: "tone",
+      drop: 0.021,
+    });
+  });
+
   it("tæller en helt ny region som fremgang, ikke som regression", () => {
     // En region kan dukke op, når et manglende anker endelig bliver tegnet.
     expect(acceptGate(mk(0.4, { a: 0.4 }), mk(0.45, { a: 0.45, ny: 0.1 })).accepted).toBe(true);

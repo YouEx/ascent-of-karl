@@ -95,8 +95,9 @@ npm run build        # typecheck + produktion-build
     `tests/visual-baseline.json` er en commit-identificeret, accepteret
     måling; den må kun opdateres efter en ny rigtig kørsel og menneskeligt
     gennemsyn. `npm run test:visual` er langsom og opt-in, bruger den rigtige
-    capture/metrics-pipeline og fejler, hvis én region falder mere end 0,02.
-    Den må aldrig flyttes ind i `npm test`s hurtige sti.
+    capture/metrics-pipeline og fejler, hvis et regions-overall eller ét af de
+    fem aspekter falder mere end 0,02. Den må aldrig flyttes ind i `npm test`s
+    hurtige sti.
 
 ## Tone (til indholdsarbejde)
 

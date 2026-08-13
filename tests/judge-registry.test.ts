@@ -28,7 +28,9 @@ import { fileURLToPath } from "node:url";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const REGISTRY_PATH = join(ROOT, "docs/design/reference/registry.json");
+const BASELINE_PATH = join(ROOT, "tests/visual-baseline.json");
 const MAIN_TS_PATH = join(ROOT, "src/ui/main.ts");
+const SCORE_ASPECTS = ["structure", "tone", "ink", "geometry", "materiality"] as const;
 
 function loadRegistry() {
   return JSON.parse(readFileSync(REGISTRY_PATH, "utf8"));
@@ -41,19 +43,12 @@ function titleRegions(registry: any): Record<string, any> {
   return out;
 }
 
-// De evidensbaserede lofter fra .judge/close-01 (commit 739a0ab), afrundet
-// ned med samme 0,02-margin som accept-portens maxDrop, så tærsklen stadig
-// fanger en EGENTLIG regression uden at markere den kendte, uopnåelige
-// afstand som en fejl hver eneste kørsel.
-const STRUCTURE_CEILINGS: Record<string, number> = {
-  headline: 0.752,
-  ribbon: 0.745,
-  tagline: 0.735,
-  hint: 0.736,
-  "tip-card": 0.764,
-  chip: 0.754,
-};
-const CONTENT_CEILING: Record<string, number> = { tools: 0.737 };
+// De evidensbaserede lofter fra .judge/close-01 (commit 739a0ab), normaliseret
+// til baselinefilens fire decimaler. Registry-tærsklen må ligge fra loft
+// minus 0,02 og OP til loftet — aldrig lavere, for så kan den skjule et fald
+// større end den samme maxDrop, som accept-porten og regressionstesten bruger.
+const STRUCTURE_REGION_IDS = ["headline", "ribbon", "tagline", "hint", "tip-card", "chip"];
+const CONTENT_REGION_IDS = ["tools"];
 const MARGIN = 0.02;
 
 describe("registry.json — dokumenterede afvigelser for titelskærmen (TASK-032)", () => {
@@ -63,7 +58,7 @@ describe("registry.json — dokumenterede afvigelser for titelskærmen (TASK-032
       (d) => d.aspect === "structure" && Array.isArray(d.regions) && d.regions.includes("headline"),
     );
     expect(dev, "forventede en structure-afvigelse, der nævner headline").toBeTruthy();
-    expect(new Set(dev.regions)).toEqual(new Set(Object.keys(STRUCTURE_CEILINGS)));
+    expect(new Set(dev.regions)).toEqual(new Set(STRUCTURE_REGION_IDS));
     expect(dev.reason).toMatch(/malet|carved|painted/i);
     expect(dev.authority).toMatch(/RISK-003/);
   });
@@ -77,18 +72,40 @@ describe("registry.json — dokumenterede afvigelser for titelskærmen (TASK-032
     expect(dev.reason).toMatch(/lyd|sound/i);
   });
 
-  it("sætter hver berørt regions tærskel på eller under dens evidensmålte loft minus 0,02-margin", () => {
+  it("sætter hver berørt regions tærskel mellem evidensloftet minus 0,02 og selve loftet", () => {
     const regions = titleRegions(loadRegistry());
-    const ceilings = { ...STRUCTURE_CEILINGS, ...CONTENT_CEILING };
-    for (const [id, ceiling] of Object.entries(ceilings)) {
+    const baseline = JSON.parse(readFileSync(BASELINE_PATH, "utf8"));
+    for (const id of [...STRUCTURE_REGION_IDS, ...CONTENT_REGION_IDS]) {
+      const ceiling = baseline.screens.title.regions[id].overall;
       expect(regions[id], `region ${id} skal findes i registry.json`).toBeTruthy();
       expect(
         regions[id].threshold,
-        `${id}: tærsklen skal være <= ${ceiling} - ${MARGIN} (evidensloft minus samme margin som accept-portens maxDrop)`,
-      ).toBeLessThanOrEqual(ceiling - MARGIN + 1e-9);
-      // Ingen skal sænkes urimeligt langt under loftet — det ville skjule en
-      // ægte fremtidig regression, ikke kun den kendte, uopnåelige afstand.
-      expect(regions[id].threshold).toBeGreaterThan(ceiling - 0.15);
+        `${id}: tærsklen må ikke ligge under ${ceiling} - ${MARGIN}`,
+      ).toBeGreaterThanOrEqual(ceiling - MARGIN - 1e-9);
+      expect(regions[id].threshold, `${id}: tærsklen må ikke overstige det målte loft`).toBeLessThanOrEqual(ceiling);
+    }
+  });
+
+  it("pinner alle fem mål for hver region med en allowedDeviation, så andre aspekter ikke kan falde bag et aggregate", () => {
+    const registry = loadRegistry();
+    const baseline = JSON.parse(readFileSync(BASELINE_PATH, "utf8"));
+    expect(baseline.aspects).toEqual(["overall", ...SCORE_ASPECTS]);
+    for (const deviation of registry.allowedDeviations as any[]) {
+      expect(
+        SCORE_ASPECTS.includes(deviation.aspect) || deviation.aspect === "content",
+        `ukendt allowedDeviations.aspect: ${deviation.aspect}`,
+      ).toBe(true);
+      for (const regionId of deviation.regions) {
+        const screen = registry.screens.find((candidate: any) =>
+          candidate.regions.some((region: any) => region.id === regionId),
+        );
+        const regionBaseline = baseline.screens[screen.id].regions[regionId];
+        expect(regionBaseline, `${screen.id}/${regionId} mangler baseline`).toBeTruthy();
+        expect(typeof regionBaseline.overall, `${screen.id}/${regionId}.overall`).toBe("number");
+        for (const aspect of SCORE_ASPECTS) {
+          expect(typeof regionBaseline[aspect], `${screen.id}/${regionId}.${aspect}`).toBe("number");
+        }
+      }
     }
   });
 

@@ -40,6 +40,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFECTS, NEVER_TOKEN, safeCssValueErrors } from "./validate-finding.mjs";
+import { collectScoreRegressions, normalizedDrop } from "./score-tolerance.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const TUNING = path.join(ROOT, "src/ui/tuning.css");
@@ -280,10 +281,9 @@ export function scopedOverall(scores, screenIds) {
 /**
  * Accept-porten (CON-002). To betingelser, ikke én:
  *   1. samlet score skal stige (mere end støjgulvet)
- *   2. INGEN region må falde mere end 0,02
- * Betingelse 2 er den, folk glemmer: uden den kan sløjfen ofre kombinations-
- * knappen for at hæve gennemsnittet med et gitter-tweak, og nettoresultatet
- * ser ud som fremskridt, mens skærmen bliver værre at se på.
+ *   2. INGEN regions overall ELLER enkeltaspekt må falde mere end 0,02
+ * Betingelse 2 er den, folk glemmer: uden per-aspekt-kontrollen kan sløjfen
+ * ofre tone for struktur i SAMME region, mens aggregate-tallet skjuler det.
  *
  * `screenIds` (2. anmeldelse, blokerer 1, valgfri): når sløjfen kun kørte
  * ÉN skærm denne iteration, skal hverken gevinsten eller regressionsscanet
@@ -300,22 +300,9 @@ export function acceptGate(before, after, { epsilon = 0.002, maxDrop = 0.02, scr
     }
   }
   const gain = screenIds
-    ? +(scopedOverall(after, screenIds) - scopedOverall(before, screenIds)).toFixed(4)
-    : +(after.overall - before.overall).toFixed(4);
-  const regressions = [];
-  for (const [sid, s] of Object.entries(after.screens ?? {})) {
-    if (screenIds && !screenIds.includes(sid)) continue; // uden for denne kørsels skærme — hverken rapporteret eller dømt
-    for (const [rid, r] of Object.entries(s.regions ?? {})) {
-      const b = before.screens?.[sid]?.regions?.[rid];
-      if (!b) continue;
-      // Afrund FØR sammenligningen. 0,5 − 0,48 giver 0,020000000000000018 i
-      // binær flydende komma, så et fald præcis på grænsen ville blive afvist
-      // — og om det sker, afhænger af de konkrete tal. En port, hvis dom
-      // svinger med repræsentationsstøj, er ikke en port.
-      const drop = +(b.overall - r.overall).toFixed(4);
-      if (drop > maxDrop) regressions.push({ region: `${sid}/${rid}`, drop });
-    }
-  }
+    ? -normalizedDrop(scopedOverall(before, screenIds), scopedOverall(after, screenIds))
+    : -normalizedDrop(before.overall, after.overall);
+  const regressions = collectScoreRegressions(before, after, { maxDrop, screenIds });
   const accepted = gain > epsilon && regressions.length === 0;
   return {
     accepted, gain, regressions,

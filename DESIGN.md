@@ -543,7 +543,8 @@ en løs "ser bedre ud"-vurdering.
    reference, render, 50/50-blend og heatmap. De billeder skal ses med øjnene;
    en score uden billedgennemsyn er ikke en accept.
 5. Dommersløjfen må kun ændre tokens i `src/ui/tuning.css`. Et forslag
-   beholdes kun ved samlet fremgang og højst 0,02 fald i enhver region.
+   beholdes kun ved samlet fremgang og højst 0,02 fald i både regions-overall
+   og hvert af de fem aspekter.
    Malet kunst og strukturelle fund køes i `docs/design/asset-queue.json` og
    `docs/design/human-queue.json` i stedet for at blive CSS-efterlignet.
 
@@ -551,8 +552,9 @@ Den accepterede regressionslinje ligger i `tests/visual-baseline.json` og
 identificerer den commit, som tallene blev optaget på. En baseline må kun
 ændres efter en frisk capture + måling ved registrets native viewports og
 inspektion af overlays. `npm run test:visual` genkører den rigtige browser- og
-målepipeline og fejler ved et regionsfald over 0,02; den er bevidst langsom og
-opt-in og må ikke belaste `npm test`.
+målepipeline og fejler ved et fald over 0,02 i overall, structure, tone, ink,
+geometry eller materiality; den er bevidst langsom og opt-in og må ikke belaste
+`npm test`.
 
 Praktisk lukkerunde:
 
