@@ -186,6 +186,18 @@ describe("titelskærmens egen h1 er den ENESTE, en skærmlæser møder (TASK-011
       /child\.toggleAttribute\("inert", inert\)/,
     );
   });
+
+  // Regression: titlens Fates-knap åbner #trophy-modal — en søskende til
+  // #title-screen inde i #app, ramt af samme inert-loop som resten af
+  // baggrunden. Var den ikke undtaget, ville modalen ses (CSS løfter den med
+  // z-index), men hverken kunne fokuseres, læses op eller lukkes med musen:
+  // synlig, men en blindgyde. Se tools/ux_audit.mjs's "Titlens Fates"-tjek
+  // for den rigtige browser-verifikation af selve konsekvensen.
+  it("setBackgroundInert skåner OGSÅ #trophy-modal, som titlens Fates-knap kan åbne", () => {
+    expect(setBackgroundInertBody).toMatch(
+      /child\.id === "title-screen" \|\| child\.id === "trophy-modal"/,
+    );
+  });
 });
 
 describe("fokuserbare kontroller har labels, og ingen positiv tabindex snyder DOM-rækkefølgen", () => {

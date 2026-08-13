@@ -816,10 +816,19 @@ function renderTip(): void {
  * trofæ → lyd) kan ikke holde, hvis ti skjulte knapper kommer først.
  * `inert` fjerner baggrunden fra fokus og tilgængelighedstræet uden at røre
  * dens layout eller synlige tilstand.
+ *
+ * #trophy-modal er undtaget: den er ganske vist en søskende til
+ * #title-screen inde i #app, men titlens EGEN Fates-knap åbner den samme
+ * modal (renderTrophyModal, se el.trophiesBtn) — CSS'ens z-index løfter den
+ * allerede over titlen for netop den sti. Var den også inert, ville modalen
+ * ses, men hverken kunne fokuseres, læses op eller lukkes med musen: synlig,
+ * men en blindgyde. Så længe den er #trophy-modal[hidden], fjerner det alene
+ * den fra fokus og tilgængelighedstræet — undtagelsen har derfor ingen
+ * virkning før den rent faktisk vises.
  */
 function setBackgroundInert(inert: boolean): void {
   for (const child of Array.from(app.children)) {
-    if (child.id === "title-screen") continue;
+    if (child.id === "title-screen" || child.id === "trophy-modal") continue;
     child.toggleAttribute("inert", inert);
   }
 }
