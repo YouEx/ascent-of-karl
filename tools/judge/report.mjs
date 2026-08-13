@@ -59,7 +59,18 @@ function badgeColour(verdict) {
   if (verdict === "accepted") return "#7fae6a";
   if (verdict === "rejected") return "#c97a6a";
   if (verdict === "blocked") return "#c9a24a";
+  if (verdict === "crashed") return "#8b3a5c"; // 2. anmeldelse, blokerer 2: eget signal, ikke bare "afvist" eller den generiske ukendt-farve
   return "#8a7d6e";
+}
+
+/** Farvekoder de tre mulige udfald tydeligt forskelligt — særligt "partial"
+ *  MÅ ikke se ud som "defeat": det er bevaret, ægte fremgang der løb tør
+ *  for loft, ikke et tegn på at intet virkede (2. anmeldelse, blokerer 4). */
+function outcomeColour(outcome) {
+  if (outcome === "success") return "#7fae6a";
+  if (outcome === "partial") return "#d9a54a";
+  if (outcome === "crashed") return "#8b3a5c";
+  return "#c97a6a"; // "defeat" og alt ukendt — læses konservativt som det værste
 }
 
 /** Regionens tærskelstatus for ÉN skærm — bruges af scoretabellen. */
@@ -164,7 +175,10 @@ function renderDeltaTable(before, after) {
 
 function renderIteration(iter) {
   const applied = iter.applied ?? iter.attempted ?? [];
-  const appliedLabel = iter.verdict === "accepted" ? "anvendt" : iter.verdict === "rejected" ? "forsøgt (rullet tilbage)" : "ingen";
+  const appliedLabel = iter.verdict === "accepted" ? "anvendt"
+    : iter.verdict === "rejected" ? "forsøgt (rullet tilbage)"
+    : iter.verdict === "crashed" ? "forsøgt (rullet tilbage ved nedbrud)"
+    : "ingen";
   const regressionsHtml = iter.regressions?.length
     ? `<p class="regressions">regression: ${iter.regressions.map((r) => `${escapeHtml(r.region)} (${fmtSigned(-r.drop)})`).join(", ")}</p>`
     : "";
@@ -256,7 +270,7 @@ export function renderReport({ run, ledger, registry, scores, assetQueue, humanQ
 
   const summary = ledger
     ? `<div class="summary">
-        <span>udfald: <b>${escapeHtml(ledger.outcome)}</b></span>
+        <span>udfald: <b style="color:${outcomeColour(ledger.outcome)}">${escapeHtml(ledger.outcome)}</b></span>
         <span>stop: <b>${escapeHtml(ledger.stopReason)}</b></span>
         <span>iterationer: <b>${escapeHtml(ledger.iterations?.length ?? 0)}</b></span>
         <span>startet: ${escapeHtml(ledger.startedAt)}</span>
@@ -303,6 +317,21 @@ function valueOf(args, flag) {
   return i >= 0 ? args[i + 1] : undefined;
 }
 
+/**
+ * Vælger platformens åbne-kommando UDEN selv at åbne noget — ren funktion,
+ * enhedstestet direkte (2. anmeldelse, blokerer 5). `start` er cmd.exe's
+ * EGET indbyggede kommando, ikke en selvstændig eksekverbar — at give
+ * execFile("start", …) direkte fejler stille, fordi der ikke findes noget
+ * program ved navn "start" at starte. Den tomme titel ("") er nødvendig,
+ * fordi `start`, når første argument er i citationstegn, tolker det som
+ * vinduestitel — uden den tomme titel ville stien selv blive læst sådan.
+ */
+export function resolveOpenCommand(filePath, platform = process.platform) {
+  if (platform === "darwin") return { cmd: "open", args: [filePath] };
+  if (platform === "win32") return { cmd: "cmd.exe", args: ["/c", "start", "", filePath] };
+  return { cmd: "xdg-open", args: [filePath] };
+}
+
 function main() {
   const args = process.argv.slice(2);
   const run = path.resolve(ROOT, valueOf(args, "--run") ?? ".judge/latest");
@@ -322,8 +351,14 @@ function main() {
   // Uden --open udskrives KUN stien — CI/headless-sikkert (opgavens krav).
   console.log(`→ ${outPath}`);
   if (open) {
-    const opener = process.platform === "darwin" ? "open" : process.platform === "win32" ? "start" : "xdg-open";
-    execFile(opener, [outPath], () => {});
+    const { cmd, args: openArgs } = resolveOpenCommand(outPath);
+    // 2. anmeldelse, blokerer 5: en fejlende åbning må ALDRIG sluges stille
+    // — --open er en bekvemmelighed, ikke selve kørslens resultat, så vi
+    // logger fejlen og fortsætter frem for at lade den forsvinde i en
+    // tom callback.
+    execFile(cmd, openArgs, (err) => {
+      if (err) console.error(`kunne ikke åbne rapporten automatisk (${cmd}): ${err.message}`);
+    });
   }
 }
 

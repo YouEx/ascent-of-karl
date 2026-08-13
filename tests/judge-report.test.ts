@@ -6,7 +6,7 @@
 // Se plan/architecture-visual-judge-1.md TASK-028.
 import { describe, expect, it } from "vitest";
 // @ts-expect-error — værktøjet er ren JS uden typedeklaration.
-import { escapeHtml, renderReport } from "../tools/judge/report.mjs";
+import { escapeHtml, renderReport, resolveOpenCommand } from "../tools/judge/report.mjs";
 
 const REGISTRY = {
   screens: [{ id: "title", regions: [{ id: "chip", rect: [0, 0, 1, 1], weight: 1, threshold: 0.9, note: "vigtig chip" }] }],
@@ -202,5 +202,83 @@ describe("renderReport", () => {
   it("er selvstændig — ingen http(s):// eller CDN-referencer i output", () => {
     const html = renderReport({ run: ".judge/x", ledger, registry: REGISTRY, scores: afterAccept });
     expect(html).not.toMatch(/https?:\/\//);
+  });
+
+  it("gengiver en KRAKKET iteration (2. anmeldelse, blokerer 2) med sit eget badge og forsøgte-men-rullet-tilbage tokens, uden at krakke selve rapporten", () => {
+    const crashedLedger = {
+      ...ledger,
+      stopReason: "crashed", outcome: "crashed", finalScores: baseline,
+      iterations: [{
+        n: 1, at: "2026-08-13T00:01:00.000Z", verdict: "crashed",
+        reason: "optagelsen styrtede efter writeTuning",
+        before: baseline,
+        findings: [{ region: "chip", defect: "color", severity: 3, evidence: "tone 0.6 mod tærskel 0.9, målt", fix: { kind: "token", token: "--chronicle", from: "#eee0cd", to: "#d8ba9b" } }],
+        attempted: [{ key: "chip:color:--chronicle", region: "chip", defect: "color", severity: 3, fix: { kind: "token", token: "--chronicle", from: "#eee0cd", to: "#d8ba9b" } }],
+        queuedAssets: 0, queuedHuman: 0,
+      }],
+    };
+    expect(() => renderReport({ run: ".judge/x", ledger: crashedLedger, registry: REGISTRY, scores: baseline })).not.toThrow();
+    const html = renderReport({ run: ".judge/x", ledger: crashedLedger, registry: REGISTRY, scores: baseline });
+    expect(html).toContain("crashed");
+    expect(html).toContain("optagelsen styrtede efter writeTuning");
+    expect(html).toContain("--chronicle");
+    // Krak skal ikke se ud som "ingen ændring" (den fælles fallback for
+    // ukendte verdikter) — den forsøgte noget og fik det rullet tilbage.
+    expect(html).toMatch(/rullet tilbage|afbrudt/);
+    // Og badgen skal have sin EGEN farve, ikke bare falde tilbage til den
+    // generiske "ukendt verdikt"-farve som fx et helt ukendt ord ville.
+    const badgeColourOf = (html2: string, verdict: string) => html2.match(new RegExp(`class="badge" style="background:(#[0-9a-f]+)">${verdict}<`))?.[1];
+    const crashedColour = badgeColourOf(html, "crashed");
+    const unknownHtml = renderReport({ run: ".judge/x", ledger: { ...crashedLedger, iterations: [{ ...crashedLedger.iterations[0], verdict: "helt-ukendt-ord" }] }, registry: REGISTRY, scores: baseline });
+    const unknownColour = badgeColourOf(unknownHtml, "helt-ukendt-ord");
+    expect(crashedColour).toBeTruthy();
+    expect(unknownColour).toBeTruthy();
+    expect(crashedColour).not.toBe(unknownColour);
+  });
+
+  it("gengiver udfaldet 'partial' tydeligt forskelligt fra 'defeat' (2. anmeldelse, blokerer 4)", () => {
+    const partialLedger = { ...ledger, outcome: "partial", stopReason: "max-iterations" };
+    const defeatLedger = { ...ledger, outcome: "defeat", stopReason: "max-iterations" };
+    const partialHtml = renderReport({ run: ".judge/x", ledger: partialLedger, registry: REGISTRY, scores: afterAccept });
+    const defeatHtml = renderReport({ run: ".judge/x", ledger: defeatLedger, registry: REGISTRY, scores: afterAccept });
+    expect(partialHtml).toContain("partial");
+    expect(defeatHtml).toContain("defeat");
+    // Ikke bare samme tekst i to farver ved et tilfælde — udtræk den
+    // farvekodede <b>, der bærer selve udfaldsordet, og kræv at de to
+    // udfald reelt får FORSKELLIGE farver.
+    const colourOf = (html: string, word: string) => html.match(new RegExp(`<b style="color:(#[0-9a-f]+)">${word}</b>`))?.[1];
+    const partialColour = colourOf(partialHtml, "partial");
+    const defeatColour = colourOf(defeatHtml, "defeat");
+    expect(partialColour).toBeTruthy();
+    expect(defeatColour).toBeTruthy();
+    expect(partialColour).not.toBe(defeatColour);
+  });
+});
+
+describe("resolveOpenCommand (2. anmeldelse, blokerer 5) — vælger platformens åbne-kommando UDEN nogensinde at åbne noget", () => {
+  it("bruger `open` på darwin", () => {
+    expect(resolveOpenCommand(".judge/20260813-000000/report.html", "darwin")).toEqual({
+      cmd: "open", args: [".judge/20260813-000000/report.html"],
+    });
+  });
+
+  it("bruger cmd.exe /c start med en TOM titel på win32 — `start` er cmd-internt, ikke en selvstændig eksekverbar, og uden den tomme titel tolkes stien selv som vinduestitel", () => {
+    expect(resolveOpenCommand("C:\\kørsel\\report.html", "win32")).toEqual({
+      cmd: "cmd.exe", args: ["/c", "start", "", "C:\\kørsel\\report.html"],
+    });
+  });
+
+  it("bruger xdg-open på linux og alt andet", () => {
+    expect(resolveOpenCommand(".judge/x/report.html", "linux")).toEqual({
+      cmd: "xdg-open", args: [".judge/x/report.html"],
+    });
+    expect(resolveOpenCommand(".judge/x/report.html", "sunos")).toEqual({
+      cmd: "xdg-open", args: [".judge/x/report.html"],
+    });
+  });
+
+  it("bruger process.platform som standard, når intet platformargument gives", () => {
+    const r = resolveOpenCommand(".judge/x/report.html");
+    expect(["open", "cmd.exe", "xdg-open"]).toContain(r.cmd);
   });
 });

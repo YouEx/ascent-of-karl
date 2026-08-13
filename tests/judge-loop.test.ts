@@ -6,7 +6,7 @@
 // Se plan/architecture-visual-judge-1.md TASK-024/025/026, CON-001/002/003.
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 // @ts-expect-error — værktøjet er ren JS uden typedeklaration.
-import { STOP, allRegionsPassing, resolveMaxIterations, decideStop, runJudgeLoop } from "../tools/judge/loop.mjs";
+import { STOP, allRegionsPassing, resolveMaxIterations, decideStop, runJudgeLoop, createCapture } from "../tools/judge/loop.mjs";
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, readdirSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -20,6 +20,27 @@ mkdirSync(SCRATCH_ROOT, { recursive: true });
 
 function scoresFor(screenId: string, overall: number, regions: any) {
   return { overall, screens: { [screenId]: { screen: screenId, overall, regions } } };
+}
+
+/** Flerskærms-udgave til blokerer 1 (fortynding): `topOverall` er det, en
+ *  ægte metrics.py ville have sat i det GLOBALE topniveau-felt — vægtet af
+ *  regionsantal pr. skærm, ikke af regionernes egne værdier. Bruges til at
+ *  reproducere, at en ikke-optaget skærms nul-stub fortynder en ægte
+ *  forbedring, medmindre accept-porten scopes til de efterspurgte skærme. */
+function scoresForScreens(topOverall: number, screens: Record<string, { overall: number; regions: any }>) {
+  return {
+    overall: topOverall,
+    screens: Object.fromEntries(
+      Object.entries(screens).map(([sid, s]) => [sid, { screen: sid, overall: s.overall, regions: s.regions }]),
+    ),
+  };
+}
+
+/** metrics.py's stub for en skærm, denne kørsel slet ikke optog: hver region
+ *  får overall 0 og missing:true, men tæller stadig med i det globale
+ *  regionsantal (og dermed i den globale overall's nævner). */
+function missingRegion(weight = 1, threshold = 0.9) {
+  return { structure: 0, tone: 0, ink: 0, geometry: 0, materiality: 0, overall: 0, missing: true, raw: {}, weight, threshold };
 }
 
 function region(overall: number, threshold: number) {
@@ -239,7 +260,10 @@ describe("runJudgeLoop — fuld orkestrering, altid injicerede afhængigheder", 
     expect(ledger.iterations).toHaveLength(12);
     expect(ledger.iterations.every((i: any) => i.verdict === "accepted")).toBe(true);
     expect(ledger.stopReason).toBe(STOP.MAX_ITERATIONS);
-    expect(ledger.outcome).toBe("defeat");
+    // 2. anmeldelse, blokerer 4: 12 ÆGTE fremskridt, der løber tør for loft,
+    // er IKKE et nederlag — det er et delvist udfald. "defeat" her ville
+    // skjule reel, bevaret fremgang bag samme dom som "intet virkede".
+    expect(ledger.outcome).toBe("partial");
   });
 
   it("blokerer i stedet for at spinde når en iteration kun har asset/struktur-fund (ingen anvendelige tokens)", async () => {
@@ -317,5 +341,162 @@ describe("runJudgeLoop — fuld orkestrering, altid injicerede afhængigheder", 
     await expect(runJudgeLoop(baseOptions({ captureAndScore, getFindingsFn }))).rejects.toThrow();
     // tuning.css skal stadig være urørt, fordi writeTuning kastede FØR skrivning.
     expect(readFileSync(tuningPath, "utf8")).toBe(":root {\n  --chronicle: #eee0cd;\n}\n");
+  });
+
+  it("scoper accept-gevinsten til de efterspurgte skærme (2. anmeldelse, blokerer 1) — game's uoptagne nul-stub fortynder IKKE en ægte title-forbedring", async () => {
+    // Nøjagtig samme konstruktion som defekt 1's reproduktion i judge-gate.test.ts:
+    // title (1 region) forbedres ægte +0,006 — langt over epsilon 0,002 —
+    // men game (4 regioner, ALDRIG i baseOptions().screens=["title"]) sidder
+    // uændret på overall 0 i begge scores og tæller stadig med i det globale
+    // topniveau-felt. Uden scoping ville gevinsten fortyndes ned til
+    // epsilon-grænsen (0,002) og afvises.
+    const gameStub = { a: missingRegion(), b: missingRegion(), c: missingRegion(), d: missingRegion() };
+    const before = scoresForScreens(1.4 / 6, {
+      title: { overall: 0.7, regions: { chip: region(0.7, 0.9) } },
+      game: { overall: 0, regions: gameStub },
+    });
+    const after = scoresForScreens(1.412 / 6, {
+      title: { overall: 0.706, regions: { chip: region(0.706, 0.9) } },
+      game: { overall: 0, regions: gameStub },
+    });
+    const captureAndScore = vi.fn().mockResolvedValueOnce(before).mockResolvedValueOnce(after);
+    const getFindingsFn = vi.fn().mockResolvedValue({ screen: "title", findings: [tokenFinding()] });
+
+    const ledger = await runJudgeLoop(baseOptions({ captureAndScore, getFindingsFn, maxIterations: 1 }));
+    expect(ledger.iterations[0].verdict).toBe("accepted");
+    expect(ledger.iterations[0].gain).toBeCloseTo(0.006, 4);
+  });
+
+  describe("nedbrud EFTER tuning.css er skrevet (2. anmeldelse, blokerer 2) — ALDRIG en fil, ingen har dømt", () => {
+    it("genskaber tuning.css byte-for-byte, journalfører nedbruddet, og lader den oprindelige fejl boble videre, når genoptagelsen styrter", async () => {
+      const pristine = readFileSync(tuningPath, "utf8");
+      const before = scoresFor("title", 0.7, { chip: region(0.7, 0.9) });
+      const captureAndScore = vi.fn()
+        .mockResolvedValueOnce(before) // baseline
+        .mockRejectedValueOnce(new Error("optagelsen styrtede efter writeTuning")); // genoptagelse
+      const getFindingsFn = vi.fn().mockResolvedValue({ screen: "title", findings: [tokenFinding()] });
+
+      await expect(
+        runJudgeLoop(baseOptions({ captureAndScore, getFindingsFn, maxIterations: 1, ledgerPath })),
+      ).rejects.toThrow("optagelsen styrtede efter writeTuning");
+
+      expect(readFileSync(tuningPath, "utf8")).toBe(pristine);
+      const persisted = JSON.parse(readFileSync(ledgerPath, "utf8"));
+      expect(persisted.iterations).toHaveLength(1);
+      expect(persisted.iterations[0].verdict).toBe("crashed");
+      expect(persisted.iterations[0].reason).toContain("optagelsen styrtede");
+      expect(persisted.stopReason).toBe(STOP.CRASHED);
+      expect(persisted.outcome).toBe("crashed");
+    });
+
+    it("genskaber og kaster videre, når accept-porten selv fejler EFTER en lykkedes genoptagelse (dækker HELE vinduet, ikke kun capture)", async () => {
+      const pristine = readFileSync(tuningPath, "utf8");
+      const before = scoresFor("title", 0.7, { chip: region(0.7, 0.9) });
+      // Mangler et topniveau .overall-felt → acceptGate selv kaster.
+      const malformedAfter = { screens: { title: { screen: "title", overall: 0.9, regions: { chip: region(0.9, 0.9) } } } };
+      const captureAndScore = vi.fn().mockResolvedValueOnce(before).mockResolvedValueOnce(malformedAfter);
+      const getFindingsFn = vi.fn().mockResolvedValue({ screen: "title", findings: [tokenFinding()] });
+
+      await expect(
+        runJudgeLoop(baseOptions({ captureAndScore, getFindingsFn, maxIterations: 1 })),
+      ).rejects.toThrow(/overall mangler/);
+      expect(readFileSync(tuningPath, "utf8")).toBe(pristine);
+    });
+
+    it("journalfører stadig nedbruddet og kaster den oprindelige fejl videre, selvom ledgerPath IKKE er givet", async () => {
+      const pristine = readFileSync(tuningPath, "utf8");
+      const before = scoresFor("title", 0.7, { chip: region(0.7, 0.9) });
+      const captureAndScore = vi.fn().mockResolvedValueOnce(before).mockRejectedValueOnce(new Error("uden ledgerPath"));
+      const getFindingsFn = vi.fn().mockResolvedValue({ screen: "title", findings: [tokenFinding()] });
+
+      await expect(
+        runJudgeLoop(baseOptions({ captureAndScore, getFindingsFn, maxIterations: 1, ledgerPath: undefined })),
+      ).rejects.toThrow("uden ledgerPath");
+      expect(readFileSync(tuningPath, "utf8")).toBe(pristine);
+    });
+  });
+
+  it("skelner et delvist udfald fra nederlag (2. anmeldelse, blokerer 4): --max 1 der ACCEPTERER er 'partial', ikke 'defeat'", async () => {
+    const before = scoresFor("title", 0.7, { chip: region(0.7, 0.9) });
+    const after = scoresFor("title", 0.8, { chip: region(0.8, 0.9) }); // ægte fremgang, men chip er stadig under 0,9 → ikke success
+    const captureAndScore = vi.fn().mockResolvedValueOnce(before).mockResolvedValueOnce(after);
+    const getFindingsFn = vi.fn().mockResolvedValue({ screen: "title", findings: [tokenFinding()] });
+
+    const ledger = await runJudgeLoop(baseOptions({ captureAndScore, getFindingsFn, maxIterations: 1 }));
+    expect(ledger.iterations.map((i: any) => i.verdict)).toEqual(["accepted"]);
+    expect(ledger.stopReason).toBe(STOP.MAX_ITERATIONS);
+    expect(ledger.outcome).toBe("partial");
+  });
+
+  it("nul accepterede iterationer forbliver 'defeat', selv når loftet er nået (kontrasten til 'partial')", async () => {
+    const scoresAt = (v: number) => scoresFor("title", v, { chip: region(v, 0.9) });
+    const s0 = scoresAt(0.7);
+    const captureAndScore = vi.fn().mockResolvedValueOnce(s0).mockResolvedValue(scoresAt(0.7)); // aldrig fremgang
+    let n = 0;
+    const getFindingsFn = vi.fn().mockImplementation(async () => {
+      n += 1;
+      return { screen: "title", findings: [tokenFinding(`--t${n}`, 3, `chip:color:--t${n}`)] };
+    });
+
+    const ledger = await runJudgeLoop(baseOptions({ captureAndScore, getFindingsFn, maxIterations: 2 }));
+    expect(ledger.iterations.every((i: any) => i.verdict === "rejected")).toBe(true);
+    expect(ledger.stopReason).toBe(STOP.MAX_ITERATIONS);
+    expect(ledger.outcome).toBe("defeat");
+  });
+});
+
+describe("createCapture — opsætning og oprydning ved fejl (2. anmeldelse, blokerer 3)", () => {
+  it("dræber allerede-startet server, hvis browser-opstart fejler EFTER serveren allerede er startet", async () => {
+    const killed = vi.fn();
+    const startServerFn = vi.fn().mockResolvedValue({ kill: killed });
+    const launchBrowser = vi.fn().mockRejectedValue(new Error("browseren kunne ikke starte"));
+    const loadRegistryFn = vi.fn();
+
+    await expect(
+      createCapture({ runDir: "x", screenIds: ["title"], startServerFn, launchBrowser, loadRegistryFn }),
+    ).rejects.toThrow("browseren kunne ikke starte");
+    expect(killed).toHaveBeenCalledTimes(1);
+    expect(loadRegistryFn).not.toHaveBeenCalled();
+  });
+
+  it("lukker browseren OG dræber serveren, hvis registry-indlæsning fejler EFTER browseren allerede er åbnet", async () => {
+    const killed = vi.fn();
+    const closed = vi.fn().mockResolvedValue(undefined);
+    const startServerFn = vi.fn().mockResolvedValue({ kill: killed });
+    const launchBrowser = vi.fn().mockResolvedValue({ close: closed });
+    const loadRegistryFn = vi.fn().mockRejectedValue(new Error("registry.json ugyldig"));
+
+    await expect(
+      createCapture({ runDir: "x", screenIds: ["title"], startServerFn, launchBrowser, loadRegistryFn }),
+    ).rejects.toThrow("registry.json ugyldig");
+    expect(closed).toHaveBeenCalledTimes(1);
+    expect(killed).toHaveBeenCalledTimes(1);
+  });
+
+  it("en fejlende browser.close() under oprydning sluger IKKE den oprindelige registry-fejl", async () => {
+    const killed = vi.fn();
+    const startServerFn = vi.fn().mockResolvedValue({ kill: killed });
+    const launchBrowser = vi.fn().mockResolvedValue({ close: vi.fn().mockRejectedValue(new Error("close fejlede også")) });
+    const loadRegistryFn = vi.fn().mockRejectedValue(new Error("registry.json ugyldig"));
+
+    await expect(
+      createCapture({ runDir: "x", screenIds: ["title"], startServerFn, launchBrowser, loadRegistryFn }),
+    ).rejects.toThrow("registry.json ugyldig");
+    expect(killed).toHaveBeenCalledTimes(1);
+  });
+
+  it("lykkes opsætningen normalt: dispose() lukker browseren og dræber serveren præcis én gang hver", async () => {
+    const killed = vi.fn();
+    const closed = vi.fn().mockResolvedValue(undefined);
+    const startServerFn = vi.fn().mockResolvedValue({ kill: killed });
+    const launchBrowser = vi.fn().mockResolvedValue({ close: closed, newPage: vi.fn() });
+    const loadRegistryFn = vi.fn().mockResolvedValue({ screens: [{ id: "title", regions: [] }] });
+
+    const { dispose } = await createCapture({ runDir: "x", screenIds: ["title"], startServerFn, launchBrowser, loadRegistryFn });
+    expect(killed).not.toHaveBeenCalled();
+    expect(closed).not.toHaveBeenCalled();
+    await dispose();
+    expect(closed).toHaveBeenCalledTimes(1);
+    expect(killed).toHaveBeenCalledTimes(1);
   });
 });

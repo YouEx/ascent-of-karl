@@ -50,13 +50,17 @@ const HUMAN_QUEUE = path.join(ROOT, "docs/design/human-queue.json");
 const HARD_MAX_ITERATIONS = 12;
 const NO_ACCEPT_STREAK_LIMIT = 3;
 
-/** De fire stopkoder (TASK-026). Kun SUCCESS er en sejr — de tre andre er
- *  et rapporteret nederlag (CON-001), aldrig en stille afslutning. */
+/** De fem stopkoder (TASK-026). Kun SUCCESS er en sejr — de andre er et
+ *  rapporteret nederlag (CON-001), aldrig en stille afslutning. CRASHED
+ *  (2. anmeldelse, blokerer 2) er ikke et bevidst stop, men den kode
+ *  journalen får skrevet PÅ, når en iteration nedbrød efter tuning.css blev
+ *  rørt — den ledsager altid en videre-kastet fejl, aldrig en rolig retur. */
 export const STOP = Object.freeze({
   SUCCESS: "success",
   NO_ACTIONABLE_TOKENS: "no-actionable-tokens",
   NO_ACCEPT_STREAK: "no-accept-streak",
   MAX_ITERATIONS: "max-iterations",
+  CRASHED: "crashed",
 });
 
 /**
@@ -192,46 +196,88 @@ export async function runJudgeLoop({
     // succes), så vi lader fejlen boble op uden at forsøge en gendannelse,
     // der ikke er nødvendig.
     writeTuning(routed.tokens, iteration, { tuningPath, backupPath });
-    const after = await captureAndScore(`iter-${iteration}`);
-    const verdict = acceptGate(before, after);
 
-    if (verdict.accepted) {
-      noAcceptStreak = 0;
-      scores = after;
-      ledger.bestScores = after;
-      ledger.bestTuning = fs.readFileSync(tuningPath, "utf8");
-      ledger.iterations.push({
-        n: iteration, at: now(), verdict: "accepted",
-        before, after, findings: allFindings,
-        applied: routed.tokens.map((t) => ({ key: t.key, region: t.region, defect: t.defect, severity: t.severity, fix: t.fix })),
-        queuedAssets: qa, queuedHuman: qh,
-        gain: verdict.gain, reason: verdict.why,
-      });
-    } else {
-      noAcceptStreak += 1;
-      // Byte-for-byte gendannelse — ALDRIG git reset/checkout. Kun et rent
-      // strengsnapshot af selve filen, taget lige før writeTuning ovenfor.
-      fs.writeFileSync(tuningPath, beforeTuning);
-      for (const t of routed.tokens) {
-        ledger.rejected.push({
-          key: t.key, region: t.region, defect: t.defect, fix: t.fix,
-          consolidatedFrom: t.consolidatedFrom ?? [], iteration,
+    // 2. anmeldelse, blokerer 2: FRA HER er tuning.css muteret. Enhver fejl
+    // i genoptagelse, scoring, accept-porten ELLER journalskrivningen
+    // herunder skal derfor genskabe tuning.css byte-for-byte, journalføre
+    // nedbruddet (hvis journalen kan skrives) og kaste den OPRINDELIGE fejl
+    // videre uændret — aldrig lade en muteret, udømt fil overleve, og aldrig
+    // sluge fejlen bag et stille resultat.
+    try {
+      const after = await captureAndScore(`iter-${iteration}`);
+      // screenIds scoper både gevinsten og regressionsscanet til DENNE
+      // kørsels skærme (2. anmeldelse, blokerer 1) — uden det fortynder
+      // andre registry-skærmes uoptagne nul-stubbe en ægte forbedring.
+      const verdict = acceptGate(before, after, { screenIds: screens });
+
+      if (verdict.accepted) {
+        noAcceptStreak = 0;
+        scores = after;
+        ledger.bestScores = after;
+        ledger.bestTuning = fs.readFileSync(tuningPath, "utf8");
+        ledger.iterations.push({
+          n: iteration, at: now(), verdict: "accepted",
+          before, after, findings: allFindings,
+          applied: routed.tokens.map((t) => ({ key: t.key, region: t.region, defect: t.defect, severity: t.severity, fix: t.fix })),
+          queuedAssets: qa, queuedHuman: qh,
+          gain: verdict.gain, reason: verdict.why,
         });
+      } else {
+        noAcceptStreak += 1;
+        // Byte-for-byte gendannelse — ALDRIG git reset/checkout. Kun et rent
+        // strengsnapshot af selve filen, taget lige før writeTuning ovenfor.
+        fs.writeFileSync(tuningPath, beforeTuning);
+        for (const t of routed.tokens) {
+          ledger.rejected.push({
+            key: t.key, region: t.region, defect: t.defect, fix: t.fix,
+            consolidatedFrom: t.consolidatedFrom ?? [], iteration,
+          });
+        }
+        ledger.iterations.push({
+          n: iteration, at: now(), verdict: "rejected",
+          before, after, findings: allFindings,
+          attempted: routed.tokens.map((t) => ({ key: t.key, region: t.region, defect: t.defect, severity: t.severity, fix: t.fix })),
+          queuedAssets: qa, queuedHuman: qh,
+          gain: verdict.gain, regressions: verdict.regressions, reason: verdict.why,
+        });
+        // scores forbliver uændret — tuning.css blev lige rullet tilbage, så
+        // den visuelle tilstand er byte-for-byte identisk med `before` igen.
       }
+    } catch (err) {
+      fs.writeFileSync(tuningPath, beforeTuning);
       ledger.iterations.push({
-        n: iteration, at: now(), verdict: "rejected",
-        before, after, findings: allFindings,
+        n: iteration, at: now(), verdict: "crashed",
+        reason: `nedbrud efter tuning.css blev skrevet, tuning.css genskabt: ${err.message}`,
+        before, findings: allFindings,
         attempted: routed.tokens.map((t) => ({ key: t.key, region: t.region, defect: t.defect, severity: t.severity, fix: t.fix })),
         queuedAssets: qa, queuedHuman: qh,
-        gain: verdict.gain, regressions: verdict.regressions, reason: verdict.why,
       });
-      // scores forbliver uændret — tuning.css blev lige rullet tilbage, så
-      // den visuelle tilstand er byte-for-byte identisk med `before` igen.
+      ledger.stopReason = STOP.CRASHED;
+      ledger.outcome = "crashed";
+      ledger.finishedAt = now();
+      if (ledgerPath) {
+        try {
+          fs.mkdirSync(path.dirname(ledgerPath), { recursive: true });
+          fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2) + "\n");
+        } catch {
+          // En sekundær I/O-fejl her må ALDRIG skjule den oprindelige fejl —
+          // den er allerede den vigtigste besked, og den kastes uændret nedenfor.
+        }
+      }
+      throw err;
     }
   }
 
   if (!ledger.stopReason) ledger.stopReason = STOP.MAX_ITERATIONS;
-  ledger.outcome = ledger.stopReason === STOP.SUCCESS ? "success" : "defeat";
+  // 2. anmeldelse, blokerer 4: 12 ægte accepterede iterationer, der løber
+  // tør for loft, er IKKE et nederlag på linje med "intet virkede nogensinde"
+  // — det er et delvist resultat, der bevarede reel fremgang. Kun MAX_ITERATIONS
+  // med mindst én accept bliver "partial"; en no-accept-streak forbliver
+  // "defeat", selv efter en tidligere accept, fordi sløjfen reelt gik i stå.
+  const acceptedCount = ledger.iterations.filter((i) => i.verdict === "accepted").length;
+  ledger.outcome = ledger.stopReason === STOP.SUCCESS ? "success"
+    : (ledger.stopReason === STOP.MAX_ITERATIONS && acceptedCount > 0) ? "partial"
+    : "defeat";
   ledger.finishedAt = now();
   ledger.finalScores = scores;
 
@@ -252,35 +298,58 @@ export async function runJudgeLoop({
  * som underprocesser, synkront, så en fejl i dem stopper sløjfen med det
  * samme frem for at score på et halvfærdigt scores.json.
  *
- * Ikke enhedstestet direkte (kræver en rigtig browser) — afprøvet end-to-
- * end via de rigtige fixture-drevne verifikationskørsler.
+ * `startServerFn`/`launchBrowser`/`loadRegistryFn` er injicerbare (default:
+ * de rigtige implementeringer), så opsætningens FEJLSTIER kan enhedstestes
+ * uden en rigtig browser eller server — se tests/judge-loop.test.ts's
+ * "createCapture — opsætning og oprydning ved fejl". Selve `captureAndScore`
+ * er stadig ikke enhedstestet direkte (kræver en rigtig browser) — afprøvet
+ * end-to-end via de rigtige fixture-drevne verifikationskørsler.
+ *
+ * 2. anmeldelse, blokerer 3: opsætningen sker i to trin (server, så browser,
+ * så registry), og et senere trins fejl må ALDRIG efterlade et tidligere
+ * trins ressource kørende. Rækkefølgen på oprydning er omvendt af
+ * opstarten: luk browseren (hvis den nåede at åbne), dræb derefter serveren
+ * — og en fejlende browser.close() under oprydning må ALDRIG skjule den
+ * oprindelige fejl, der udløste oprydningen.
  */
-export async function createCapture({ runDir, screenIds }) {
-  const server = await startServer();
-  const browser = await chromium.launch();
-  const registry = await loadRegistry();
-  const screensToCapture = registry.screens.filter((s) => screenIds.includes(s.id));
+export async function createCapture({
+  runDir, screenIds,
+  startServerFn = startServer,
+  launchBrowser = () => chromium.launch(),
+  loadRegistryFn = loadRegistry,
+}) {
+  const server = await startServerFn();
+  let browser;
+  try {
+    browser = await launchBrowser();
+    const registry = await loadRegistryFn();
+    const screensToCapture = registry.screens.filter((s) => screenIds.includes(s.id));
 
-  async function captureAndScore() {
-    await build();
-    for (const screen of screensToCapture) {
-      await captureScreen(browser, screen, runDir);
+    async function captureAndScore() {
+      await build();
+      for (const screen of screensToCapture) {
+        await captureScreen(browser, screen, runDir);
+      }
+      execFileSync("python3", ["tools/judge/metrics.py", "--run", runDir, "--json"], {
+        cwd: ROOT, stdio: ["ignore", "ignore", "pipe"],
+      });
+      execFileSync("python3", ["tools/judge/overlay.py", "--run", runDir], {
+        cwd: ROOT, stdio: ["ignore", "ignore", "pipe"],
+      });
+      return JSON.parse(fs.readFileSync(path.join(runDir, "scores.json"), "utf8"));
     }
-    execFileSync("python3", ["tools/judge/metrics.py", "--run", runDir, "--json"], {
-      cwd: ROOT, stdio: ["ignore", "ignore", "pipe"],
-    });
-    execFileSync("python3", ["tools/judge/overlay.py", "--run", runDir], {
-      cwd: ROOT, stdio: ["ignore", "ignore", "pipe"],
-    });
-    return JSON.parse(fs.readFileSync(path.join(runDir, "scores.json"), "utf8"));
-  }
 
-  async function dispose() {
-    await browser.close();
+    async function dispose() {
+      await browser.close();
+      server.kill();
+    }
+
+    return { captureAndScore, dispose };
+  } catch (err) {
+    if (browser) await browser.close().catch(() => {}); // sekundær lukkefejl må ALDRIG skjule den oprindelige
     server.kill();
+    throw err;
   }
-
-  return { captureAndScore, dispose };
 }
 
 function defaultRunDir() {
@@ -308,17 +377,26 @@ async function main() {
   const screens = screenArg ? [screenArg] : registry.screens.map((s) => s.id);
 
   fs.mkdirSync(runDir, { recursive: true });
-  const { captureAndScore, dispose } = await createCapture({ runDir, screenIds: screens });
+  // 2. anmeldelse, blokerer 3: createCapture ligger NU inde i den beskyttede
+  // levetid, med et hejst `dispose`, der kun kaldes hvis opsætningen reelt
+  // lykkedes. createCapture rydder allerede op efter sig selv, hvis DEN
+  // fejler (se ovenfor) — dette er et ekstra lag, der gør levetiden korrekt,
+  // selv hvis nogen senere føjer kode ind mellem opsætning og sløjfe.
+  let dispose;
   try {
+    const created = await createCapture({ runDir, screenIds: screens });
+    dispose = created.dispose;
     const ledger = await runJudgeLoop({
-      runDir, screens, registry, maxIterations, fixture, captureAndScore,
+      runDir, screens, registry, maxIterations, fixture, captureAndScore: created.captureAndScore,
       ledgerPath: path.join(runDir, "ledger.json"),
     });
     console.log(`→ ${runDir}`);
     console.log(`  udfald: ${ledger.outcome} · stop: ${ledger.stopReason} · iterationer: ${ledger.iterations.length}`);
-    if (ledger.outcome !== "success") process.exitCode = 1;
+    // "partial" er reel, bevaret fremgang der løb tør for loft — ikke et
+    // nederlag (2. anmeldelse, blokerer 4). Kun "defeat" er en fejlkode.
+    if (ledger.outcome === "defeat") process.exitCode = 1;
   } finally {
-    await dispose();
+    if (dispose) await dispose();
   }
 }
 
