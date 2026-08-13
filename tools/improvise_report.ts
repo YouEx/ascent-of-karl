@@ -1,10 +1,9 @@
 /**
  * Kausal balancerapport for runtime-improvisation.
  *
- * Hver konfiguration spiller de samme seeds to gange med den samme spiller-
- * politik: én gang med almindelig `combine`, én gang hvor tomme par går gennem
- * improvisation. Det er derfor parrede kontrafaktiske runs, ikke to uafhængige
- * stikprøver.
+ * Baseline bygger først én 50-pars handlingsplan. Hver treatment replayer
+ * derefter præcis den plan, indtil dens eget run slutter. Det er parrede
+ * kontrafaktiske runs uden treatment-afhængigt parvalg.
  *
  * Politik, fast før resultaterne læses:
  * - 60 % målrettet: vælg den bedste åbne canonical opskrift, prioriteret som
@@ -13,8 +12,9 @@
  *   seks nyeste fund og et endnu uprøvet par.
  * - 15 % blind: vælg det første af de samme 12 seedede par.
  *
- * Der trækkes altid samme antal tilfældige tal pr. sommer. Feature-flaget er
- * ikke en del af politikken; det ændrer kun motorens svar på det valgte par.
+ * Tre prædefinerede seed-planer × 2.000 runs beskytter mod ét heldigt
+ * seed-udsnit. Selection bruger guard-band-grænser og en separat gray-goo-
+ * regel; no-cap er kun stress-reference.
  *
  * Kør:
  *   npm run improvise:report
@@ -39,7 +39,7 @@ const POLICY_SAMPLE_SIZE = 12;
 const POLICY_GOAL_SHARE = 0.6;
 const POLICY_RECENT_SHARE = 0.25;
 const POLICY_RECENT_COUNT = 6;
-const REPORT_SCHEMA_VERSION = 1;
+const REPORT_SCHEMA_VERSION = 2;
 
 export interface ImproviseBalanceConfiguration {
   id: string;
@@ -59,6 +59,31 @@ export interface BalanceThresholds {
   maxImprovisedRequiredSolveShare: number;
 }
 
+export interface SeedSchedule {
+  id: string;
+  formula: string;
+  seedFor(index: number): number;
+}
+
+export const SEED_SCHEDULES: SeedSchedule[] = [
+  {
+    id: "linear-7919",
+    formula: "seed = runIndex * 7919 + 13",
+    seedFor: (index) => index * 7919 + 13,
+  },
+  {
+    id: "linear-104729",
+    formula: "seed = runIndex * 104729 + 97",
+    seedFor: (index) => index * 104729 + 97,
+  },
+  {
+    id: "multiplicative-32",
+    formula: "seed = uint32((runIndex + 1) * 2654435761 + 1013904223)",
+    seedFor: (index) =>
+      (Math.imul(index + 1, 2654435761) + 1013904223) >>> 0,
+  },
+];
+
 export const DEFAULT_BALANCE_THRESHOLDS: BalanceThresholds = {
   maxFateRateIncreasePoints: 2,
   maxAllRequiredRateIncreasePoints: 5,
@@ -68,44 +93,48 @@ export const DEFAULT_BALANCE_THRESHOLDS: BalanceThresholds = {
   maxImprovisedRequiredSolveShare: 0.2,
 };
 
-export const DEFAULT_BALANCE_CONFIGURATIONS: ImproviseBalanceConfiguration[] = [
-  {
-    id: "one-summer-no-cap",
-    label: "1 summer / no cap",
-    summerCost: 1,
-    runCap: null,
-  },
-  {
-    id: "one-summer-cap-1",
-    label: "1 summer / cap 1",
-    summerCost: 1,
-    runCap: 1,
-  },
-  {
-    id: "one-summer-cap-2",
-    label: "1 summer / cap 2",
-    summerCost: 1,
-    runCap: 2,
-  },
-  {
-    id: "one-summer-cap-3",
-    label: "1 summer / cap 3",
-    summerCost: 1,
-    runCap: 3,
-  },
-  {
-    id: "one-summer-cap-5",
-    label: "1 summer / cap 5",
-    summerCost: 1,
-    runCap: 5,
-  },
-  {
-    id: "two-summer-no-cap",
-    label: "2 summers / no cap",
-    summerCost: 2,
-    runCap: null,
-  },
-];
+export const ROBUST_BALANCE_THRESHOLDS: BalanceThresholds = {
+  maxFateRateIncreasePoints: 1.5,
+  maxAllRequiredRateIncreasePoints: 4,
+  minCanonicalDiscoveryRetention: 0.96,
+  maxMeanPositiveCanonicalDisplacement: 0.8,
+  maxImprovisedCreditedShare: 0.18,
+  maxImprovisedRequiredSolveShare: 0.18,
+};
+
+export const GRAY_GOO_CANONICAL_RATIO = 0.2;
+
+const ONE_SUMMER_NO_CAP: ImproviseBalanceConfiguration = {
+  id: "one-summer-no-cap",
+  label: "1 summer / no cap",
+  summerCost: 1,
+  runCap: null,
+};
+
+const TWO_SUMMER_NO_CAP: ImproviseBalanceConfiguration = {
+  id: "two-summer-no-cap",
+  label: "2 summers / no cap",
+  summerCost: 2,
+  runCap: null,
+};
+
+export function buildCapCandidateConfigurations(
+  observedNoCapMax: number,
+): ImproviseBalanceConfiguration[] {
+  if (!Number.isInteger(observedNoCapMax) || observedNoCapMax < 1) {
+    throw new Error("observeret no-cap-maksimum skal være et positivt heltal");
+  }
+  return [
+    ...Array.from({ length: observedNoCapMax }, (_, index) => ({
+      id: `one-summer-cap-${index + 1}`,
+      label: `1 summer / cap ${index + 1}`,
+      summerCost: 1,
+      runCap: index + 1,
+    })),
+    ONE_SUMMER_NO_CAP,
+    TWO_SUMMER_NO_CAP,
+  ];
+}
 
 interface RunResult {
   seed: number;
@@ -132,6 +161,7 @@ interface RunResult {
   requiredSolves: number;
   canonicalDiscoveries: number;
   depthDistribution: Record<string, number>;
+  actionKeys: string[];
 }
 
 export interface DistributionSummary {
@@ -215,6 +245,30 @@ export interface ConfigurationComparison {
     p95: number;
   };
   safety: ConfigurationSafety;
+  schedules: ScheduleComparison[];
+  robust: {
+    passed: boolean;
+    failures: string[];
+  };
+}
+
+export interface ScheduleComparison {
+  scheduleId: string;
+  baseline: ModeSummary;
+  improvisation: ModeSummary;
+  canonicalDiscoveriesDisplaced: {
+    netMean: number;
+    positiveMean: number;
+    p50: number;
+    p90: number;
+    p95: number;
+  };
+  safety: ConfigurationSafety;
+  grayGoo: {
+    limit: number;
+    observedP95: number;
+    passed: boolean;
+  };
 }
 
 export interface ImproviseBalanceReport {
@@ -222,7 +276,7 @@ export interface ImproviseBalanceReport {
   methodology: {
     runsPerMode: number;
     matchedSeeds: true;
-    seedFormula: string;
+    seedSchedules: Array<{ id: string; formula: string }>;
     playerPolicy: {
       goalDirectedShare: number;
       recentCuriosityShare: number;
@@ -234,8 +288,22 @@ export interface ImproviseBalanceReport {
     costSemantics: string;
     capSemantics: string;
     thresholds: BalanceThresholds;
+    robustThresholds: BalanceThresholds;
+    grayGooGuard: {
+      canonicalRatio: number;
+      rule: string;
+    };
+    exactActionReplay: true;
+    candidateRange: {
+      observedNoCapMax: number;
+      rule: string;
+    };
   };
   configurations: ConfigurationComparison[];
+  selection: {
+    recommended: ImproviseBalanceConfiguration | null;
+    rule: string;
+  };
 }
 
 export interface BuildReportOptions {
@@ -243,6 +311,7 @@ export interface BuildReportOptions {
   configurations?: ImproviseBalanceConfiguration[];
   thresholds?: BalanceThresholds;
   content?: ContentBundle;
+  seedSchedules?: SeedSchedule[];
 }
 
 function rng(seed: number): () => number {
@@ -251,10 +320,6 @@ function rng(seed: number): () => number {
     state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
     return state / 4294967296;
   };
-}
-
-function seedForRun(index: number): number {
-  return index * 7919 + 13;
 }
 
 function fnv1a(text: string): string {
@@ -277,7 +342,27 @@ function stableValue(value: unknown): unknown {
 }
 
 export function stableReportJson(report: ImproviseBalanceReport): string {
-  return `${JSON.stringify(stableValue(report))}\n`;
+  const compact = {
+    schemaVersion: report.schemaVersion,
+    methodology: report.methodology,
+    selection: report.selection,
+    baseline: report.configurations[0]?.baseline ?? null,
+    configurations: report.configurations.map((comparison) => ({
+      configuration: comparison.configuration,
+      matchedPairs: comparison.matchedPairs,
+      improvisation: comparison.improvisation,
+      canonicalDiscoveriesDisplaced:
+        comparison.canonicalDiscoveriesDisplaced,
+      safety: comparison.safety,
+      robust: comparison.robust,
+      schedules: comparison.schedules.map((schedule) => ({
+        scheduleId: schedule.scheduleId,
+        safety: schedule.safety,
+        grayGoo: schedule.grayGoo,
+      })),
+    })),
+  };
+  return `${JSON.stringify(stableValue(compact))}\n`;
 }
 
 export function reportDigest(report: ImproviseBalanceReport): string {
@@ -366,8 +451,28 @@ function sampledPairScore(
   let score = 0;
   if (recent.has(pair[0]) || recent.has(pair[1])) score += 4;
   if (!tried.has(pairKey(pair[0], pair[1]))) score += 2;
-  if (!engine.matchCombo(pair[0], pair[1])) score += 1;
   return score;
+}
+
+function buildActionPlan(
+  content: ContentBundle,
+  seed: number,
+): Array<[string, string]> {
+  const engine = new Engine(content);
+  engine.loadState({ ...engine.getState(), seed });
+  const random = rng(seed ^ 0x9e3779b9);
+  const tried = new Set<string>();
+  const actions: Array<[string, string]> = [];
+  for (let action = 0; action < content.config.turnLimit; action++) {
+    if (engine.getState().ended) {
+      engine.loadState({ ...engine.getState(), ended: null });
+    }
+    const pair = choosePair(engine, content, random, tried);
+    tried.add(pairKey(pair[0], pair[1]));
+    actions.push(pair);
+    engine.combine(pair[0], pair[1]);
+  }
+  return actions;
 }
 
 function choosePair(
@@ -424,14 +529,13 @@ function simulateRun(
   seed: number,
   configuration: ImproviseBalanceConfiguration,
   improvisationEnabled: boolean,
+  actionPlan = buildActionPlan(content, seed),
 ): RunResult {
   const engine = new Engine(content, undefined, {
     improvisationRunCap: configuration.runCap,
     improvisationSummerCost: configuration.summerCost,
   });
   engine.loadState({ ...engine.getState(), seed });
-  const random = rng(seed ^ 0x9e3779b9);
-  const tried = new Set<string>();
   const requiredIds = new Set(
     content.acts
       .flatMap((act) => act.problems)
@@ -463,12 +567,12 @@ function simulateRun(
     requiredSolves: 0,
     canonicalDiscoveries: 0,
     depthDistribution: {},
+    actionKeys: [],
   };
 
-  for (let action = 0; action < content.config.turnLimit * 3; action++) {
+  for (const [a, b] of actionPlan) {
     if (engine.getState().ended) break;
-    const [a, b] = choosePair(engine, content, random, tried);
-    tried.add(pairKey(a, b));
+    metrics.actionKeys.push(pairKey(a, b));
     const canonical = engine.matchCombo(a, b);
     let outcome: CombineOutcome;
     let attemptedVerdict: Verdict | undefined;
@@ -532,6 +636,57 @@ function simulateRun(
     return element.origin !== "improvised" && !element.base;
   }).length;
   return metrics;
+}
+
+export function traceMatchedActions(options: {
+  seed: number;
+  configuration: ImproviseBalanceConfiguration;
+  content?: ContentBundle;
+}): { plan: string[]; baseline: string[]; improvisation: string[] } {
+  const content = options.content ?? loadContent();
+  const plan = buildActionPlan(content, options.seed);
+  return {
+    plan: plan.map(([a, b]) => pairKey(a, b)),
+    baseline: simulateRun(
+      content,
+      options.seed,
+      options.configuration,
+      false,
+      plan,
+    ).actionKeys,
+    improvisation: simulateRun(
+      content,
+      options.seed,
+      options.configuration,
+      true,
+      plan,
+    ).actionKeys,
+  };
+}
+
+export function selectRecommendedConfiguration(
+  candidates: Array<{
+    configuration: ImproviseBalanceConfiguration;
+    schedulePasses: boolean[];
+    grayGooPasses: boolean[];
+  }>,
+): ImproviseBalanceConfiguration | null {
+  const passing = candidates
+    .filter(
+      (candidate) =>
+        candidate.configuration.summerCost === 1 &&
+        candidate.configuration.runCap !== null &&
+        candidate.schedulePasses.length > 0 &&
+        candidate.schedulePasses.every(Boolean) &&
+        candidate.grayGooPasses.length > 0 &&
+        candidate.grayGooPasses.every(Boolean),
+    )
+    .sort(
+      (left, right) =>
+        (right.configuration.runCap ?? -1) -
+        (left.configuration.runCap ?? -1),
+    );
+  return passing[0]?.configuration ?? null;
 }
 
 function summarize(runs: RunResult[]): ModeSummary {
@@ -649,6 +804,7 @@ function summarize(runs: RunResult[]): ModeSummary {
 }
 
 function safetyFor(
+  configuration: ImproviseBalanceConfiguration,
   baseline: ModeSummary,
   improvisation: ModeSummary,
   positiveDisplacementMean: number,
@@ -678,6 +834,9 @@ function safetyFor(
       improvisation.requiredProblems.improvisedShare,
   };
   const failures: string[] = [];
+  if (configuration.summerCost < 1) {
+    failures.push("improvisation cost must be at least one summer");
+  }
   if (
     observed.fateRateIncreasePoints >
     thresholds.maxFateRateIncreasePoints
@@ -729,65 +888,187 @@ function safetyFor(
   return { passed: failures.length === 0, failures, observed };
 }
 
+function compareRunSets(
+  configuration: ImproviseBalanceConfiguration,
+  baselineRuns: RunResult[],
+  improvisationRuns: RunResult[],
+  thresholds: BalanceThresholds,
+): {
+  baseline: ModeSummary;
+  improvisation: ModeSummary;
+  displaced: ConfigurationComparison["canonicalDiscoveriesDisplaced"];
+  safety: ConfigurationSafety;
+} {
+  const baseline = summarize(baselineRuns);
+  const improvisation = summarize(improvisationRuns);
+  const displacement = baselineRuns.map((run, index) => {
+    const treatment = improvisationRuns[index]!;
+    return run.canonicalDiscoveries - treatment.canonicalDiscoveries;
+  });
+  const positive = displacement.map((value) => Math.max(0, value));
+  const netMean =
+    displacement.reduce((sum, value) => sum + value, 0) /
+    Math.max(1, displacement.length);
+  const positiveMean =
+    positive.reduce((sum, value) => sum + value, 0) /
+    Math.max(1, positive.length);
+  const displaced = {
+    netMean: round(netMean),
+    positiveMean: round(positiveMean),
+    p50: percentile(positive, 0.5),
+    p90: percentile(positive, 0.9),
+    p95: percentile(positive, 0.95),
+  };
+  return {
+    baseline,
+    improvisation,
+    displaced,
+    safety: safetyFor(
+      configuration,
+      baseline,
+      improvisation,
+      positiveMean,
+      thresholds,
+    ),
+  };
+}
+
 export function buildImproviseBalanceReport(
   options: BuildReportOptions = {},
 ): ImproviseBalanceReport {
   const content = options.content ?? loadContent();
   const runsPerMode = options.runsPerMode ?? 2000;
-  const configurations =
-    options.configurations ?? DEFAULT_BALANCE_CONFIGURATIONS;
   const thresholds = options.thresholds ?? DEFAULT_BALANCE_THRESHOLDS;
+  const seedSchedules = options.seedSchedules ?? SEED_SCHEDULES;
   const comparisons: ConfigurationComparison[] = [];
 
-  for (const configuration of configurations) {
+  const prepared = seedSchedules.map((schedule) => {
+    const plans: Array<Array<[string, string]>> = [];
     const baselineRuns: RunResult[] = [];
-    const improvisationRuns: RunResult[] = [];
     for (let index = 0; index < runsPerMode; index++) {
-      const seed = seedForRun(index);
-      baselineRuns.push(simulateRun(content, seed, configuration, false));
-      improvisationRuns.push(simulateRun(content, seed, configuration, true));
+      const seed = schedule.seedFor(index);
+      const plan = buildActionPlan(content, seed);
+      plans.push(plan);
+      baselineRuns.push(
+        simulateRun(content, seed, ONE_SUMMER_NO_CAP, false, plan),
+      );
     }
-    const baseline = summarize(baselineRuns);
-    const improvisation = summarize(improvisationRuns);
-    const displacement = baselineRuns.map((run, index) => {
-      const treatment = improvisationRuns[index]!;
-      return run.canonicalDiscoveries - treatment.canonicalDiscoveries;
-    });
-    const positive = displacement.map((value) => Math.max(0, value));
-    const netMean =
-      displacement.reduce((sum, value) => sum + value, 0) /
-      Math.max(1, displacement.length);
-    const positiveMean =
-      positive.reduce((sum, value) => sum + value, 0) /
-      Math.max(1, positive.length);
-    const displaced = {
-      netMean: round(netMean),
-      positiveMean: round(positiveMean),
-      p50: percentile(positive, 0.5),
-      p90: percentile(positive, 0.9),
-      p95: percentile(positive, 0.95),
-    };
+    return { schedule, plans, baselineRuns };
+  });
+
+  const noCapBySchedule = new Map<string, RunResult[]>();
+  let observedNoCapMax = 0;
+  if (!options.configurations) {
+    for (const entry of prepared) {
+      const runs = entry.plans.map((plan, index) =>
+        simulateRun(
+          content,
+          entry.schedule.seedFor(index),
+          ONE_SUMMER_NO_CAP,
+          true,
+          plan,
+        ),
+      );
+      noCapBySchedule.set(entry.schedule.id, runs);
+      observedNoCapMax = Math.max(
+        observedNoCapMax,
+        ...runs.map((run) => run.inventionsCreated),
+      );
+    }
+  }
+  const configurations =
+    options.configurations ??
+    buildCapCandidateConfigurations(observedNoCapMax);
+
+  for (const configuration of configurations) {
+    const scheduleComparisons: ScheduleComparison[] = [];
+    const allBaselineRuns: RunResult[] = [];
+    const allImprovisationRuns: RunResult[] = [];
+    for (const entry of prepared) {
+      const improvisationRuns =
+        configuration.id === ONE_SUMMER_NO_CAP.id &&
+        noCapBySchedule.has(entry.schedule.id)
+          ? noCapBySchedule.get(entry.schedule.id)!
+          : entry.plans.map((plan, index) => {
+              const seed = entry.schedule.seedFor(index);
+              return simulateRun(content, seed, configuration, true, plan);
+            });
+      const compared = compareRunSets(
+        configuration,
+        entry.baselineRuns,
+        improvisationRuns,
+        ROBUST_BALANCE_THRESHOLDS,
+      );
+      const grayGooLimit = Math.floor(
+        compared.baseline.canonicalDiscoveries.p50 *
+          GRAY_GOO_CANONICAL_RATIO,
+      );
+      const observedP95 =
+        compared.improvisation.improvisations.perRunCreated.p95;
+      scheduleComparisons.push({
+        scheduleId: entry.schedule.id,
+        baseline: compared.baseline,
+        improvisation: compared.improvisation,
+        canonicalDiscoveriesDisplaced: compared.displaced,
+        safety: compared.safety,
+        grayGoo: {
+          limit: grayGooLimit,
+          observedP95,
+          passed: observedP95 <= grayGooLimit,
+        },
+      });
+      allBaselineRuns.push(...entry.baselineRuns);
+      allImprovisationRuns.push(...improvisationRuns);
+    }
+    const aggregate = compareRunSets(
+      configuration,
+      allBaselineRuns,
+      allImprovisationRuns,
+      thresholds,
+    );
+    const robustFailures = scheduleComparisons.flatMap((schedule) => [
+      ...schedule.safety.failures.map(
+        (failure) => `${schedule.scheduleId}: ${failure}`,
+      ),
+      ...(schedule.grayGoo.passed
+        ? []
+        : [
+            `${schedule.scheduleId}: gray-goo p95 ${schedule.grayGoo.observedP95} > ${schedule.grayGoo.limit}`,
+          ]),
+    ]);
     comparisons.push({
       configuration,
-      matchedPairs: runsPerMode,
-      baseline,
-      improvisation,
-      canonicalDiscoveriesDisplaced: displaced,
-      safety: safetyFor(
-        baseline,
-        improvisation,
-        positiveMean,
-        thresholds,
-      ),
+      matchedPairs: allBaselineRuns.length,
+      baseline: aggregate.baseline,
+      improvisation: aggregate.improvisation,
+      canonicalDiscoveriesDisplaced: aggregate.displaced,
+      safety: aggregate.safety,
+      schedules: scheduleComparisons,
+      robust: {
+        passed: robustFailures.length === 0,
+        failures: robustFailures,
+      },
     });
   }
+
+  const recommended = selectRecommendedConfiguration(
+    comparisons.map((comparison) => ({
+      configuration: comparison.configuration,
+      schedulePasses: comparison.schedules.map(
+        (schedule) => schedule.safety.passed,
+      ),
+      grayGooPasses: comparison.schedules.map(
+        (schedule) => schedule.grayGoo.passed,
+      ),
+    })),
+  );
 
   return {
     schemaVersion: REPORT_SCHEMA_VERSION,
     methodology: {
       runsPerMode,
       matchedSeeds: true,
-      seedFormula: "seed = runIndex * 7919 + 13",
+      seedSchedules: seedSchedules.map(({ id, formula }) => ({ id, formula })),
       playerPolicy: {
         goalDirectedShare: POLICY_GOAL_SHARE,
         recentCuriosityShare: POLICY_RECENT_SHARE,
@@ -803,8 +1084,32 @@ export function buildImproviseBalanceReport(
       capSemantics:
         "The cap counts unique successful runtime inventions. Reuse remains legal; a new no-recipe pair at the boundary is rejected and still consumes its configured cost.",
       thresholds,
+      robustThresholds: ROBUST_BALANCE_THRESHOLDS,
+      grayGooGuard: {
+        canonicalRatio: GRAY_GOO_CANONICAL_RATIO,
+        rule:
+          "Per-run created inventions p95 must not exceed 20% of baseline canonical-discovery p50 in any seed schedule.",
+      },
+      exactActionReplay: true,
+      candidateRange: {
+        observedNoCapMax:
+          options.configurations === undefined
+            ? observedNoCapMax
+            : Math.max(
+                0,
+                ...configurations
+                  .map((configuration) => configuration.runCap ?? 0),
+              ),
+        rule:
+          "Measure the same-run one-summer/no-cap reference first, then test every integer cap from 1 through its observed per-run invention maximum.",
+      },
     },
     configurations: comparisons,
+    selection: {
+      recommended,
+      rule:
+        "Choose the highest finite one-summer integer cap that passes robust thresholds and the gray-goo guard in every schedule; no-cap is a non-selectable stress reference.",
+    },
   };
 }
 
@@ -814,10 +1119,11 @@ function percent(value: number): string {
 
 export function humanReport(report: ImproviseBalanceReport): string {
   const lines = [
-    `Improvisation balance · ${report.methodology.runsPerMode} matched seeds per mode`,
+    `Improvisation balance · ${report.methodology.runsPerMode} matched seeds × ${report.methodology.seedSchedules.length} schedules per mode`,
     `hash ${reportDigest(report)}`,
+    `selected: ${report.selection.recommended?.id ?? "none"}`,
     "",
-    "configuration          fate Δ   required Δ  canon kept  displaced  credited  verdict     safe",
+    "configuration          fate Δ   required Δ  canon kept  displaced  credited  verdict    robust",
   ];
   for (const entry of report.configurations) {
     const observed = entry.safety.observed;
@@ -833,7 +1139,7 @@ export function humanReport(report: ImproviseBalanceReport): string {
         observed.meanPositiveCanonicalDisplacement.toFixed(2).padStart(10),
         percent(observed.improvisedCreditedShare).padStart(9),
         verdict.padStart(9),
-        (entry.safety.passed ? "PASS" : "FAIL").padStart(6),
+        (entry.robust.passed ? "ROBUST" : "FAIL").padStart(7),
       ].join(" "),
     );
   }

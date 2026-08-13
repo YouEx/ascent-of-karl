@@ -33,6 +33,8 @@ jobs:
       - run: npm ci
       - name: Unit tests
         run: npm test
+      - name: Kontrollér improvisationsbalance
+        run: npm run improvise:report:check
       - name: Typecheck + build
         run: npm run build
 

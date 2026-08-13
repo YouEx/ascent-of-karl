@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import styles from "../src/ui/style.css?raw";
 import { Engine } from "../src/core/engine";
-import { improvisedElementId } from "../src/core/improvise";
+import { freshChallengeState } from "../src/core/challenge";
+import {
+  IMPROVISE_RUN_CAP,
+  improvisedElementId,
+} from "../src/core/improvise";
+import { deserialize, serialize } from "../src/core/save";
 import { judgePair } from "../src/core/verdict";
 import { loadContent } from "../src/content";
 import type { ElementDef, ProblemDef } from "../src/core/types";
@@ -114,7 +119,7 @@ describe("feature-off parity", () => {
       },
     });
 
-    for (let made = 0; made < 5; made++) {
+    for (let made = 0; made < IMPROVISE_RUN_CAP; made++) {
       const known = new Set(
         engine.getState().improvisedElements.map((entry) => entry.id),
       );
@@ -191,6 +196,76 @@ describe("feature-off parity", () => {
         limit: 7,
       }),
     ).toContain("7");
+  });
+
+  it("gemmer feature-on-afvisningens sommer og challenge-tick gennem reload", () => {
+    const shouldPersist = (
+      improviseFlowModule as typeof improviseFlowModule & {
+        shouldPersistAttemptState?: (
+          enabled: boolean,
+          outcome: ReturnType<Engine["attempt"]>,
+        ) => boolean;
+      }
+    ).shouldPersistAttemptState;
+    expect(typeof shouldPersist).toBe("function");
+    if (!shouldPersist) return;
+
+    const content = loadContent();
+    const engine = new Engine(content);
+    const state = engine.getState();
+    engine.loadState({
+      ...state,
+      challenges: {
+        ...freshChallengeState(),
+        active: { id: "ulve", startedAtPage: 0, turnsLeft: 3 },
+        seen: ["ulve"],
+        everSpawned: true,
+      },
+    });
+    const outcome = engine.attempt("sten", "graes");
+
+    expect(outcome).toMatchObject({
+      kind: "improvise-rejected",
+      reason: "verdict",
+      verdict: "near-miss",
+      challenge: { kind: "ticking", turnsLeft: 2 },
+    });
+    expect(shouldPersist(true, outcome)).toBe(true);
+
+    const restored = new Engine(
+      content,
+      deserialize(serialize(engine.getState(), "2026-08-13T20:30:00Z")),
+    );
+    expect(restored.getState().attempts).toBe(1);
+    expect(restored.getState().challenges.active?.turnsLeft).toBe(2);
+  });
+
+  it("gemmer alle rejection-grunde feature-on, men ændrer intet feature-off", () => {
+    const shouldPersist = (
+      improviseFlowModule as typeof improviseFlowModule & {
+        shouldPersistAttemptState?: (
+          enabled: boolean,
+          outcome: ReturnType<Engine["attempt"]>,
+        ) => boolean;
+      }
+    ).shouldPersistAttemptState;
+    expect(typeof shouldPersist).toBe("function");
+    if (!shouldPersist) return;
+    const engine = new Engine(loadContent());
+    const base = {
+      kind: "improvise-rejected" as const,
+      a: engine.element("sten"),
+      b: engine.element("graes"),
+    };
+
+    for (const outcome of [
+      { ...base, reason: "verdict" as const, verdict: "near-miss" as const },
+      { ...base, reason: "depth-limit" as const, attemptedDepth: 4 },
+      { ...base, reason: "run-limit" as const, limit: 5 },
+    ]) {
+      expect(shouldPersist(true, outcome)).toBe(true);
+      expect(shouldPersist(false, outcome)).toBe(false);
+    }
   });
 });
 

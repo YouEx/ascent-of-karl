@@ -20,6 +20,7 @@ import {
   improvisationRejectionStatus,
   performPlayerAttempt,
   shouldPrefetchImprovisedCopy,
+  shouldPersistAttemptState,
 } from "./improvise-flow";
 import {
   renderElementTileContent,
@@ -992,6 +993,7 @@ function performCombine(a: string, b: string): void {
   if (outcome.kind === "improvise-rejected") {
     settleImproviseStatus(improvisationRejectionStatus(outcome), "is-rejected");
   }
+  if (shouldPersistAttemptState(IMPROVISE_ENABLED, outcome)) save();
   if (line) say(line);
   // Anden takt: fortælleren peger videre — eller bemærker at han lige blev
   // ignoreret. Køes bag historiereplikken, så den ikke overskriver sin optakt.

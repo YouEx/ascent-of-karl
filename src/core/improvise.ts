@@ -9,11 +9,11 @@ import type {
 export const MAX_IMPROVISED_DEPTH = 3;
 
 /**
- * Målt i tools/improvise_report.ts, 2.000 parrede seeds pr. konfiguration.
- * Fem er det mest rummelige 1-sommer-loft, der bestod alle prædefinerede
- * kildebeskyttelsesgrænser. Se docs/design/improvisation-balance.md.
+ * Målt i tools/improvise_report.ts, 2.000 parrede runs × tre seed-planer.
+ * Seks er det højeste 1-sommer-loft, der bestod alle guard-band-grænser og
+ * gray-goo-reglen i tre seed-planer. Se docs/design/improvisation-balance.md.
  */
-export const IMPROVISE_RUN_CAP = 5;
+export const IMPROVISE_RUN_CAP = 6;
 export const IMPROVISE_SUMMER_COST = 1;
 
 /** Den eneste del et valgfrit copy-lag må ændre. */

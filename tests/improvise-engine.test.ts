@@ -582,12 +582,12 @@ describe("Engine.improvise — målt run-loft og pris", () => {
     }
   ).IMPROVISE_SUMMER_COST;
 
-  it("fryser den målte default til fem opfindelser à én sommer", () => {
-    expect(measuredCap).toBe(5);
+  it("fryser den robuste default til seks opfindelser à én sommer", () => {
+    expect(measuredCap).toBe(6);
     expect(measuredCost).toBe(1);
   });
 
-  it("accepterer præcis fem nye opfindelser og afviser nummer seks på én sommer", () => {
+  it("accepterer præcis loftet og afviser den næste opfindelse på én sommer", () => {
     const engine = balanceEngine() as AttemptCapableEngine;
     expect(typeof engine.improvisationsRemaining).toBe("function");
     if (!engine.improvisationsRemaining || measuredCap === undefined) return;
@@ -607,7 +607,7 @@ describe("Engine.improvise — målt run-loft og pris", () => {
     expect(engine.getState().attempts - before).toBe(measuredCost);
   });
 
-  it("bevarer loftet gennem save/load og lader ikke sen copy skabe nummer seks", () => {
+  it("bevarer loftet gennem save/load og lader ikke sen copy skabe én ekstra", () => {
     const engine = balanceEngine() as AttemptCapableEngine;
     if (measuredCap === undefined) return;
     fillImprovisationCap(engine, measuredCap);

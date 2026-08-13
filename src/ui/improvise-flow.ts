@@ -39,3 +39,19 @@ export function improvisationRejectionStatus(
   }
   return "Karl could not make that idea hold together.";
 }
+
+/**
+ * Discovery og improvisation gemmes allerede i deres render-grene. Når
+ * featuret er slået til, muterer alle øvrige udfald stadig sommer/challenge
+ * og skal derfor have den manglende autosave. Feature-off forbliver urørt.
+ */
+export function shouldPersistAttemptState(
+  enabled: boolean,
+  outcome: CombineOutcome,
+): boolean {
+  return (
+    enabled &&
+    outcome.kind !== "discovery" &&
+    outcome.kind !== "improvised"
+  );
+}
