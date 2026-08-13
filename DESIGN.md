@@ -256,7 +256,7 @@ den er ren mekanik: den er knappen der får maskinen til at køre.
 
 **Appvinduet.** Hele spillet ligger i ét afrundet vindue der svæver over landskabet:
 radius `--radius-xl`, hårfin `Frame`-kant, stor blød skygge, let gennemsigtigt
-pergament. Under 768px falder rammen væk og pergamentet går til fuld bredde — et
+pergament. Under 820px falder rammen væk og pergamentet går til fuld bredde — et
 vindue med margin på en telefon er spildt plads.
 
 **Pergamenttekstur.** Papirfladerne er ikke flade. Én sømløs fiber-tekstur lægges med
@@ -327,7 +327,7 @@ Karl checked twice."), aldrig "Ingen resultater".
   se. Appvinduet må dække hvad som helst af det på en lille skærm.
 - Fuld højde er altid `100dvh` — aldrig `100vh` (iOS Safari springer).
 - Indholdsbredde begrænses: spil 960px (appvinduet), hero 1240px.
-- **Mobil-først kollaps under 768px:** alt bliver én spalte. Ingen vandret scroll
+- **Mobil-først kollaps under 820px:** alt bliver én spalte. Ingen vandret scroll
   nogensinde — det er en kritisk fejl, ikke en skønhedsfejl.
 - Handlingsknapper bliver i tommelfinger-zonen på mobil (docken), jf.
   `docs/design/ui-mobile.md`.
