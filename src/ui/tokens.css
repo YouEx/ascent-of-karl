@@ -160,6 +160,21 @@
   --dashed: #cbb19e;
   --frame: #ccadab;
 
+  /* --- Elementgrid og kontaktark ---------------------------------------
+     Samme mål bruges af spillets fliser og tools/art/contact_sheet.py.
+     Kontaktarket må ikke have en parallel, hardkodet kopi af det spilleren
+     faktisk ser. ------------------------------------------------------ */
+  --element-card-width: 129px;
+  --element-card-height: 121px;
+  --element-art-max-width: 91px;
+  --element-art-max-height: 67px;
+  --contact-sheet-gutter: 12px;
+  --contact-sheet-label-height: 22px;
+  --contact-sheet-header-height: 56px;
+  --contact-sheet-margin: 16px;
+  --contact-sheet-header-font-size: 15px;
+  --contact-sheet-label-font-size: 12px;
+
   /* --- Blæk: VARMT. Koldt blæk på tan pergament ser beskidt ud. -------- */
   --ink-warm: #1a120e;
   --ink-warm-soft: #4a3d35;

@@ -42,9 +42,10 @@ npm run build        # typecheck + produktion-build
 - `tools/social/` — delekort og app-ikoner. Genereres, redigeres aldrig i hånden.
 - `tools/art/` — element- og kromkunst skåret ud af Martins referencebilleder
   i `docs/design/reference/`. `npm run art` kører de deterministiske scripts
-  i rigtig rækkefølge (se `build_all.py`'s docstring for hvilke der er
-  udeladt og hvorfor). Genereres, redigeres aldrig i hånden — ret referencen
-  eller udskæringen i scriptet, aldrig den udskrevne webp.
+  i rigtig rækkefølge, regenererer elementernes batchmanifest og bygger det
+  lokale kontaktark til review (se `build_all.py`'s docstring for hvilke trin
+  der er udeladt og hvorfor). Genereres, redigeres aldrig i hånden — ret
+  referencen eller udskæringen i scriptet, aldrig den udskrevne webp.
 - `tools/judge/` — den visuelle tilbagekobling: deterministisk scenarie,
   produktions-`vite preview`, Playwright-optagelse, fem regionsmetrikker,
   50/50-overlejringer, fund/rutning og accept/fortryd. Sløjfen må kun skrive

@@ -1,4 +1,5 @@
-node_modules
+node_modules/
+/node_modules
 dist/
 *.local
 .DS_Store
@@ -23,3 +24,14 @@ worker-configuration.d.ts
 # gensamlet grammar-act-1.json der kun bruges til at diffes mod facittet,
 # aldrig til at overskrive det. Ryddes selv efter hver kørsel.
 tools/voice/.tmp/
+
+# Kontaktarkets lokale gennemsynsrum — genereret af
+# tools/art/contact_sheet.py, altid reproducerbart fra kilderne, aldrig
+# selve facit-kilden. Se DESIGN.md §9's "kontrol før commit".
+tools/art/.review/
+
+# Rå billedmodel-output og mellemleverancer er input til review/indtagelse,
+# ikke reproducerbare facitfiler. Kun scripts, reviewede manifester og de
+# normaliserede outputs må versionsstyres.
+tools/art/raw/
+tools/art/model-output/

@@ -2,7 +2,7 @@
 goal: Gøre The Ascent of Karl visuelt identisk med referencebilledet af 10-08-2026 — malet pergament-æstetik, illustrerede elementer, hulemaleri-motiver
 version: 1.0
 date_created: 2026-08-11
-last_updated: 2026-08-12
+last_updated: 2026-08-13
 owner: Martin (YouEx)
 status: 'In progress'
 tags: [design, assets, refactor, architecture]
@@ -209,10 +209,10 @@ bagefter uden en eneste kodeændring.
 | TASK-031 | Tilføj `src/ui/art.ts`: ét opslag `artFor(element)` der returnerer `<img>` når `public/art/<id>.webp` findes i det genererede manifest, ellers emojien. De 6 render-steder i REQ-006 kaldes om til at bruge det. **Leveret anderledes, verificeret 2026-08-12:** kunsten ligger i `src/assets/art/elements/`, opslaget (`glyphHTML`/`hasArt`/`artUrl`) bruger `import.meta.glob` i stedet for et genereret `manifest.json` — filsystemet ER manifestet. **Bogføring rettet 2026-08-12 efter review:** alle 6 render-steder i REQ-006 (`main.ts`: grid, slots, opdagelseskort; `book.ts`: fanerækken, opslaget, tidslinje-SVG'en) er koblet til opslaget — verificeret ved `grep -n "\.emoji\b" src/ui/main.ts src/ui/book.ts`: 7 af de 10 træf sender `.emoji` ind i `glyphHTML(id, emoji, …)` som fallback-parameter (de 6 REQ-006-steder, hvoraf slot-rendering er ét sted udtrykt i to symmetriske linjer for slot A/B); de resterende 3 (linje 578, 621, 938 i `main.ts`) interpolerer emojien råt uden om opslaget — det er netop trofæ, slutskærm og challenge-banner. Disse tre er bevidst UDENFOR REQ-006's omfang (se REQ-008) — de viser slutnings-/challenge-kunst fra et andet id-rum, ikke elementkunst, og forbliver på rå emoji indtil TASK-039/040 leverer illustrationer og et separat `endingArt`/`challengeArt`-opslag bygges. ✅ er derfor 6/6 af den opgave REQ-006 faktisk beskriver, ikke "3 af 8" som den tidligere, bredere formulering gav indtryk af. | ✅ | 2026-08-12 |
 | TASK-032 | Tilføj `public/art/manifest.json` genereret af scriptet — koden må ikke gætte på filers eksistens med `onerror`-fallback, da det giver et synligt glimt af en brudt billed-ikon. **Ikke leveret:** intet manifest.json findes (`import.meta.glob` gør det overflødigt, se TASK-031), og REQ-007's dovne indlæsning er heller ikke implementeret — `art.ts` bruger `eager: true` begge steder, så alle elementbilleder hentes ved opstart, ikke kun de 13 base-elementer. Uden for denne prøvelses omfang (eager-vs-lazy er en afvejning, ikke en fejl med ét rigtigt svar). | | |
 | TASK-033 | Byg `tools/art/generate.mjs`: læser stilkontrakten fra `DESIGN.md` §9, bygger én prompt pr. element ud fra `name` + `flavor`, kalder billedmodellen, gemmer råfilen i `tools/art/raw/`. Rå filer committes **ikke**. Ikke leveret — ingen automatiseret billedmodel-pipeline findes. De 13 leverede elementer er malet/udskåret manuelt fra `elements-sheet.png`/referencen (`build_elements.py`, `build_element_art.py`), ikke genereret pr. element fra en prompt. | | |
-| TASK-034 | Byg `tools/art/normalise.mjs` — det er her konsistensen skabes, ikke i prompten: beskær til synligt indhold, centrér på kvadratisk lærred med fast luft, skalér til 256px, farvegradér mod pergamentpaletten, fjern indbagte skygger, skriv WebP q80. Deterministisk og idempotent. **Leveret som Python, ikke `.mjs`:** `build_elements.py`/`build_element_art.py` gør præcis dette (alfa fra baggrundsafstand, fast luft, WebP-output) — verificeret deterministisk 2026-08-12 ved at køre `npm run art` to gange og se `git status` give 0 ændrede filer begge gange. Kvadratisk lærred er dog fravalgt bevidst (kasse ~91×67, ikke kvadrat — se `build_elements.py`s docstring). | ✅ | 2026-08-12 |
-| TASK-035 | Byg `tools/art/contact-sheet.mjs`: alle leverede illustrationer på ét ark i flisestørrelse. Konsistens kan kun bedømmes ved at se dem **ved siden af hinanden i den størrelse de vises**, aldrig én ad gangen i fuld opløsning. Ikke fundet nogen steder i repoet — ikke leveret. | | |
+| TASK-034 | Byg `tools/art/normalise.mjs` — det er her konsistensen skabes, ikke i prompten: beskær til synligt indhold, centrér på kvadratisk lærred med fast luft, skalér til 256px, farvegradér mod pergamentpaletten, fjern indbagte skygger, skriv WebP q80. Deterministisk og idempotent. **Leveret som Python, ikke `.mjs`:** den fælles motor i `tools/art/sheet_ingest.py` udfører baggrundssampling, fremspringsdetektion, alfa, fast luft og skalering; `build_elements.py` og den reviewede `ingest_sheet.py apply` bruger samme aritmetik og WebP-parametre. `test_build_elements_regression.py` låser de 13 eksisterende filer byte-for-byte, og de syntetiske tests låser gentagen indtagelse. Kvadratisk lærred er fravalgt bevidst (kasse ~91×67, ikke kvadrat — se `build_elements.py`s docstring). | ✅ | 2026-08-12 |
+| TASK-035 | Byg `tools/art/contact-sheet.mjs`: alle leverede illustrationer på ét ark i flisestørrelse. Konsistens kan kun bedømmes ved at se dem **ved siden af hinanden i den størrelse de vises**, aldrig én ad gangen i fuld opløsning. **Leveret som `tools/art/contact_sheet.py`:** bygger PNG + deterministisk SHA-sidecar i `tools/art/.review/`, læser kortmål, kunstfelt, luft og farver fra `tokens.css`, og kører som sidste trin i `npm run art`. Review-outputtet er lokalt og ignoreret; kilden og testen er versioneret. | ✅ | 2026-08-13 |
 | TASK-036 | Levér de 13 base-elementer først (`sten`, `pind`, `graes`, `vand`, `ler`, `baer`, `larver`, `dyr`, `traestamme`, `nabo`, `fugl` m.fl.) — det er dem der bestemmer førstehåndsindtrykket og dem playtesterne ser. Verificeret 2026-08-12: alle 13 filer findes i `src/assets/art/elements/` (`baer, dyr, fugl, graes, korn, larver, ler, nabo, okse, pind, stamme, sten, vand`). | ✅ | 2026-08-12 |
-| TASK-037 | Tilføj `npm run art` og dokumentér i CLAUDE.md's arkitekturliste, som `tools/social/` er det. **Scriptet fandtes ikke — tilføjet 2026-08-12** som `tools/art/build_all.py`, en orkestrator der kører 16 af de 19 `build_*.py`-scripts i den rigtige rækkefølge (to reelle afhængigheder: `build_bg_wide.py` før `build_app_texture.py`, og `build_elements.py` før `build_element_art.py`, som forfiner 11 af de 13 grundelementer). Fire scripts er bevidst udeladt (kræver netværkskald til en billedmodel eller et fra `npm run judge:capture`, som ikke findes på en frisk clone) — se `build_all.py`s docstring. `CLAUDE.md` er opdateret med `art.ts` og en ny `tools/art/`-linje. | ✅ | 2026-08-12 |
+| TASK-037 | Tilføj `npm run art` og dokumentér i CLAUDE.md's arkitekturliste, som `tools/social/` er det. **Scriptet fandtes ikke — tilføjet 2026-08-12** som `tools/art/build_all.py`, en orkestrator der kører 16 deterministiske `build_*.py`-producenter i den rigtige rækkefølge (to reelle afhængigheder: `build_bg_wide.py` før `build_app_texture.py`, og `build_elements.py` før `build_element_art.py`, som forfiner 11 af de 13 grundelementer). **Udvidet 2026-08-13** med to deterministiske sluttrin: batchmanifest og kontaktark. Fire manuelle scripts er bevidst udeladt (kræver netværkskald til en billedmodel eller et output fra `npm run judge:capture`, som ikke findes på en frisk clone) — se `build_all.py`s docstring. `CLAUDE.md` beskriver nu hele kæden. | ✅ | 2026-08-12 |
 
 ### Implementation Phase 7
 
@@ -220,7 +220,7 @@ bagefter uden en eneste kodeændring.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-038 | Akt 1's resterende 172 elementer i tematiske bunker (sten/træ/mad/dyr/værktøj/ild/samfund) — samme bunke i samme kørsel giver indbyrdes konsistens. | | |
+| TASK-038 | Akt 1's resterende **174** elementer i tematiske bunker (sten/træ/mad/dyr/værktøj/ild/samfund) — samme bunke i samme kørsel giver indbyrdes konsistens. **Kun produktionsgrundlaget er leveret 2026-08-13, ikke illustrationerne:** `build_batch_manifest.py` regenererer `docs/design/element-batches.json` fra de 187 content-elementer minus de 13 leverede; `ingest_sheet.py detect/apply` låser et reviewet kildeark med SHA-256 og skærer det gennem samme motor som grundelementerne. Manifestet viser 174 resterende Akt 1-id'er i præcis én bunke hver. Alle 174 billeder er fortsat åbne. | | |
 | TASK-039 | 15 skæbne-illustrationer til slutskærmen. | | |
 | TASK-040 | 3 challenge-illustrationer (`ulve`, `toerke`, `sygdom`). | | |
 | TASK-041 | Akt 2's 2 elementer (stub i dag — udvides når akt 2 skrives). Verificeret 2026-08-12: `korn.webp` og `okse.webp` findes og er koblet (samme opslag som akt 1). | ✅ | 2026-08-12 |
@@ -284,10 +284,11 @@ bagefter uden en eneste kodeændring.
   Dækker i dag både elementer (`glyphHTML`/`hasArt`/`artUrl`) og problemer
   (`problemGlyphHTML`) — to parallelle kort, fordi id-rummene kan kollidere.
 - **FILE-008**: `tools/art/generate.mjs`, `normalise.mjs`, `contact-sheet.mjs` — **nye.**
-  **Ingen af de tre findes.** Udskæring og normalisering sker i stedet i 19
-  Python-scripts (`tools/art/build_*.py`), ét pr. motiv, hver med sin egen
-  `main()`. Der er intet automatiseret generate-trin (TASK-033, ikke leveret)
-  og intet kontaktark-script (TASK-035, ikke leveret).
+  **Leveret i en anden form:** der er fortsat intet billedmodel-`generate`-trin
+  (TASK-033 er åbent). Normalisering og indtagelse er Python:
+  `sheet_ingest.py` er den fælles motor, `ingest_sheet.py` er
+  detect/review/apply, og `contact_sheet.py` bygger review-arket. De eksisterende
+  motivspecifikke `build_*.py` beholder hver sin `main()`.
 - **FILE-009**: `public/art/*.webp` + `manifest.json` — **nye**, genereret.
   **Reelt:** `src/assets/art/elements/*.webp` og `src/assets/art/problems/*.webp`
   (plus `src/assets/art/ui/` til krom) — Vite-hashet via `import.meta.glob`,
@@ -306,8 +307,10 @@ bagefter uden en eneste kodeændring.
 
 - **TEST-001**: Enhedstest af `artFor()`: element med kunst i manifestet giver
   `<img>`; element uden giver emojien; ukendt id kaster ikke.
-- **TEST-002**: `normalise.mjs` er idempotent — samme input to gange giver
-  byte-identisk output.
+- **TEST-002**: Normaliseringen er idempotent — samme input to gange giver
+  byte-identisk output. Leveret i Python og dækket både syntetisk i
+  `test_sheet_ingest.py`/`test_ingest_sheet.py` og mod de 13 committede filer i
+  `test_build_elements_regression.py`.
 - **TEST-003**: Alle filer i `public/art/` har præcis samme dimensioner og
   farverum efter normalisering. Kører i CI som et hårdt gate.
   **Ikke leveret** — stien er `src/assets/art/elements/`, og der er intet
@@ -321,7 +324,9 @@ bagefter uden en eneste kodeændring.
 - **TEST-006**: Visuel QA i browser ved mockuppens egen opløsning (1448×1086) plus
   390×844 mobil. Skærmbilleder **ses igennem af mig selv**, ikke af Martin.
 - **TEST-007**: Kontaktark for elementkunsten gennemses ved flisestørrelse efter
-  hver bølge — det er den eneste gyldige konsistenstest.
+  hver bølge — det er den eneste gyldige konsistenstest. Selve PNG'en og dens
+  SHA-sidecar bygges nu deterministisk af `npm run art`; menneskelig visuel
+  godkendelse er stadig nødvendig og automatiseres ikke væk.
 - **TEST-008**: Ydelse: førstevisning må ikke hente mere end de 13 base-illustrationer.
   Verificeres ved at tælle netværksforespørgsler til `/art/` på en frisk indlæsning.
 - **TEST-009**: Baggrundsmaleriet må ikke give vandret scroll eller layout-hop på
@@ -369,6 +374,11 @@ bagefter uden en eneste kodeændring.
   }
   await browser.close();
   ```
+
+- **TEST-011**: `python3 -m pytest tools/art/tests -q` dækker batchmanifestets
+  fuldstændighed, den fælles crop-/alfamotor, SHA-låst detect/apply,
+  kontaktarkets tokenkobling og determinisme samt byte-identisk genbygning af de
+  13 committede elementfiler.
 
 ## 7. Risks & Assumptions
 

@@ -1,0 +1,1248 @@
+{
+  "note": "Foreslaaet klassifikation, ikke en redigering af plan/design-visual-target-1.md. To fortolkninger kraever Martins godkendelse: (1) 'vaerktoej' vinder over 'sten'/'trae' for elementer der er redskaber af det materiale (fx stenoekse havner i vaerktoej, ikke sten). (2) 'ild'-bunken er udvidet til vejrfaenomener (regn/sky/lyn/sne/damp/roeg/oversvoemmelse/den lange vinter), ikke kun bogstavelig ild - dette staar ikke eksplicit i planteksten.",
+  "deliveredCount": 13,
+  "remainingCount": 174,
+  "bucketCounts": {
+    "sten": 13,
+    "trae": 7,
+    "mad": 17,
+    "dyr": 7,
+    "vaerktoej": 31,
+    "ild": 10,
+    "samfund": 89
+  },
+  "buckets": {
+    "sten": [
+      {
+        "id": "malm",
+        "name": "Ore",
+        "act": 1,
+        "kind": "material",
+        "stuff": "stone"
+      },
+      {
+        "id": "rullesten",
+        "name": "Round stone",
+        "act": 1,
+        "kind": "material",
+        "stuff": "stone"
+      },
+      {
+        "id": "hjul",
+        "name": "Wheel",
+        "act": 1,
+        "kind": "material",
+        "stuff": "stone"
+      },
+      {
+        "id": "bautasten",
+        "name": "Standing stone",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "stone"
+      },
+      {
+        "id": "stenkreds",
+        "name": "Stone circle",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "stone"
+      },
+      {
+        "id": "helligsted",
+        "name": "Shrine",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "stone"
+      },
+      {
+        "id": "galleri",
+        "name": "Cave gallery",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "stone"
+      },
+      {
+        "id": "fossil",
+        "name": "Fossil",
+        "act": 1,
+        "kind": "material",
+        "stuff": "stone"
+      },
+      {
+        "id": "rav",
+        "name": "Amber",
+        "act": 1,
+        "kind": "material",
+        "stuff": "stone"
+      },
+      {
+        "id": "myg-i-rav",
+        "name": "Insect in amber",
+        "act": 1,
+        "kind": "material",
+        "stuff": "stone"
+      },
+      {
+        "id": "monolit",
+        "name": "The Monolith",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "stone"
+      },
+      {
+        "id": "kro",
+        "name": "The Tavern",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "stone"
+      },
+      {
+        "id": "faeldegrav",
+        "name": "Booby trap",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "stone"
+      }
+    ],
+    "trae": [
+      {
+        "id": "planker",
+        "name": "Planks",
+        "act": 1,
+        "kind": "material",
+        "stuff": "wood"
+      },
+      {
+        "id": "tromme",
+        "name": "Drum",
+        "act": 1,
+        "kind": "material",
+        "stuff": "wood"
+      },
+      {
+        "id": "larvebod",
+        "name": "Grub stand",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "wood"
+      },
+      {
+        "id": "nedbraendt-hytte",
+        "name": "Burnt-down hut",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "wood"
+      },
+      {
+        "id": "kul",
+        "name": "Charcoal",
+        "act": 1,
+        "kind": "material",
+        "stuff": "wood"
+      },
+      {
+        "id": "garage",
+        "name": "Garage",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "wood"
+      },
+      {
+        "id": "sunkne-by",
+        "name": "The Sunken Village",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "wood"
+      }
+    ],
+    "mad": [
+      {
+        "id": "stegt-koed",
+        "name": "Roast meat",
+        "act": 1,
+        "kind": "food",
+        "stuff": "flesh"
+      },
+      {
+        "id": "ristede-larver",
+        "name": "Roasted grubs",
+        "act": 1,
+        "kind": "food",
+        "stuff": "flesh"
+      },
+      {
+        "id": "grottebryg",
+        "name": "Cave brew",
+        "act": 1,
+        "kind": "food",
+        "stuff": "plant"
+      },
+      {
+        "id": "roeget-koed",
+        "name": "Smoked meat",
+        "act": 1,
+        "kind": "food",
+        "stuff": "flesh"
+      },
+      {
+        "id": "saft",
+        "name": "Berry juice",
+        "act": 1,
+        "kind": "food",
+        "stuff": "plant"
+      },
+      {
+        "id": "mudderkage",
+        "name": "Mud pie",
+        "act": 1,
+        "kind": "food",
+        "stuff": "clay"
+      },
+      {
+        "id": "surf-n-turf",
+        "name": "Surf 'n' turf",
+        "act": 1,
+        "kind": "food",
+        "stuff": "flesh"
+      },
+      {
+        "id": "medicin",
+        "name": "Herbal remedy",
+        "act": 1,
+        "kind": "food",
+        "stuff": "plant"
+      },
+      {
+        "id": "sidste-maaltid",
+        "name": "The Last Supper",
+        "act": 1,
+        "kind": "food",
+        "stuff": "clay"
+      },
+      {
+        "id": "fangst",
+        "name": "Great catch",
+        "act": 1,
+        "kind": "food",
+        "stuff": "flesh"
+      },
+      {
+        "id": "hoest",
+        "name": "Harvest",
+        "act": 1,
+        "kind": "food",
+        "stuff": "plant"
+      },
+      {
+        "id": "broed",
+        "name": "Bread",
+        "act": 1,
+        "kind": "food",
+        "stuff": "plant"
+      },
+      {
+        "id": "agerngroed",
+        "name": "Acorn mush",
+        "act": 1,
+        "kind": "food",
+        "stuff": "plant"
+      },
+      {
+        "id": "honning",
+        "name": "Honey",
+        "act": 1,
+        "kind": "food",
+        "stuff": "plant"
+      },
+      {
+        "id": "flaesk",
+        "name": "Roast pork",
+        "act": 1,
+        "kind": "food",
+        "stuff": "flesh"
+      },
+      {
+        "id": "oesters",
+        "name": "Shellfish",
+        "act": 1,
+        "kind": "food",
+        "stuff": "flesh"
+      },
+      {
+        "id": "baalstegt-aeg",
+        "name": "Fire-baked egg",
+        "act": 1,
+        "kind": "food",
+        "stuff": "flesh"
+      }
+    ],
+    "dyr": [
+      {
+        "id": "tamsvin",
+        "name": "Pet boar",
+        "act": 1,
+        "kind": "creature",
+        "stuff": "flesh"
+      },
+      {
+        "id": "foenix",
+        "name": "Phoenix?",
+        "act": 1,
+        "kind": "creature",
+        "stuff": "flesh"
+      },
+      {
+        "id": "ulv",
+        "name": "Wolf",
+        "act": 1,
+        "kind": "creature",
+        "stuff": "flesh"
+      },
+      {
+        "id": "hund",
+        "name": "Dog",
+        "act": 1,
+        "kind": "creature",
+        "stuff": "flesh"
+      },
+      {
+        "id": "mammut",
+        "name": "Mammoth",
+        "act": 1,
+        "kind": "creature",
+        "stuff": "flesh"
+      },
+      {
+        "id": "soeuhyre",
+        "name": "Lake monster",
+        "act": 1,
+        "kind": "creature",
+        "stuff": "flesh"
+      },
+      {
+        "id": "skovmand",
+        "name": "The Hairy One",
+        "act": 1,
+        "kind": "creature",
+        "stuff": "flesh"
+      }
+    ],
+    "vaerktoej": [
+      {
+        "id": "stenoekse",
+        "name": "Stone axe",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "stone"
+      },
+      {
+        "id": "spyd",
+        "name": "Spear",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "keramik",
+        "name": "Pottery",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "clay"
+      },
+      {
+        "id": "arbejdsbord",
+        "name": "Crafting table",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "vogn",
+        "name": "Cart",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "flintmobil",
+        "name": "Footmobile",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "ven",
+        "name": "Pot friend",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "clay"
+      },
+      {
+        "id": "boomerang",
+        "name": "Boomerang",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "toemmerflaade",
+        "name": "Raft",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "baad",
+        "name": "Canoe",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "koelle",
+        "name": "Club",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "bone"
+      },
+      {
+        "id": "kaelk",
+        "name": "Sledge",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "ski",
+        "name": "Skis",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "net",
+        "name": "Net",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "fibre"
+      },
+      {
+        "id": "faelde",
+        "name": "Snare",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "fibre"
+      },
+      {
+        "id": "bue",
+        "name": "Bow",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "pil",
+        "name": "Arrow",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "naal",
+        "name": "Bone needle",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "bone"
+      },
+      {
+        "id": "splint",
+        "name": "Splint",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "helligkrukke",
+        "name": "The Sacred Pot",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "clay"
+      },
+      {
+        "id": "taellekaep",
+        "name": "Tally stick",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "benkniv",
+        "name": "Bone knife",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "bone"
+      },
+      {
+        "id": "gravestok",
+        "name": "Digging stick",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "wood"
+      },
+      {
+        "id": "hammer",
+        "name": "Hammer",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "stone"
+      },
+      {
+        "id": "haandkile",
+        "name": "Hand axe",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "stone"
+      },
+      {
+        "id": "skraber",
+        "name": "Hide scraper",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "stone"
+      },
+      {
+        "id": "slynge",
+        "name": "Sling",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "fibre"
+      },
+      {
+        "id": "harpun",
+        "name": "Harpoon",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "bone"
+      },
+      {
+        "id": "flint",
+        "name": "Heat-treated flint",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "stone"
+      },
+      {
+        "id": "spydspids",
+        "name": "Stone-tipped spear",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "stone"
+      },
+      {
+        "id": "morter",
+        "name": "Mortar and pestle",
+        "act": 1,
+        "kind": "tool",
+        "stuff": "stone"
+      }
+    ],
+    "ild": [
+      {
+        "id": "gnister",
+        "name": "Sparks",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "ild",
+        "name": "Fire",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "damp",
+        "name": "Steam",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "roeg",
+        "name": "Smoke",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "sky",
+        "name": "Cloud",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "regn",
+        "name": "Rain",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "lyn",
+        "name": "Lightning",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "sne",
+        "name": "Snow",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "den-lange-vinter",
+        "name": "The Long Winter",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "oversvoemmelse",
+        "name": "The Flood",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      }
+    ],
+    "samfund": [
+      {
+        "id": "koed",
+        "name": "Meat",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "mudder",
+        "name": "Mud",
+        "act": 1,
+        "kind": "material",
+        "stuff": "clay"
+      },
+      {
+        "id": "mudderbad",
+        "name": "Mud bath",
+        "act": 1,
+        "kind": "material",
+        "stuff": "clay"
+      },
+      {
+        "id": "kobber",
+        "name": "Copper",
+        "act": 1,
+        "kind": "material",
+        "stuff": "metal"
+      },
+      {
+        "id": "bronze",
+        "name": "Bronze",
+        "act": 1,
+        "kind": "material",
+        "stuff": "metal"
+      },
+      {
+        "id": "larvefarm",
+        "name": "Grub farm",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "clay"
+      },
+      {
+        "id": "fisk",
+        "name": "Fish",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "skind",
+        "name": "Hide cloak",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "hulemaleri",
+        "name": "Cave painting",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "rockband",
+        "name": "Rock band",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "stenalderfest",
+        "name": "Stone age party",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "mursten",
+        "name": "Mud brick",
+        "act": 1,
+        "kind": "material",
+        "stuff": "clay"
+      },
+      {
+        "id": "hytte",
+        "name": "Hut",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "clay"
+      },
+      {
+        "id": "landsby",
+        "name": "Village",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "clay"
+      },
+      {
+        "id": "roegsignaler",
+        "name": "Smoke signals",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "shaman",
+        "name": "Shaman Ugh",
+        "act": 1,
+        "kind": "person",
+        "stuff": "flesh"
+      },
+      {
+        "id": "syner",
+        "name": "Visions",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "knogle",
+        "name": "Bone",
+        "act": 1,
+        "kind": "material",
+        "stuff": "bone"
+      },
+      {
+        "id": "slagsmaal",
+        "name": "First argument",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "knoglekast",
+        "name": "Bone toss",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "fjer",
+        "name": "Feather",
+        "act": 1,
+        "kind": "material",
+        "stuff": "fibre"
+      },
+      {
+        "id": "floejte",
+        "name": "Bone flute",
+        "act": 1,
+        "kind": "material",
+        "stuff": "bone"
+      },
+      {
+        "id": "farvet-skind",
+        "name": "Dyed hide",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "festdragt",
+        "name": "Feather cloak",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "modeshow",
+        "name": "Fashion show",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "lerfigur",
+        "name": "Clay figurine",
+        "act": 1,
+        "kind": "material",
+        "stuff": "clay"
+      },
+      {
+        "id": "haandaftryk",
+        "name": "Handprint wall",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "stenkoncert",
+        "name": "Stonehenge gig",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "trommesolo",
+        "name": "Drum solo",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "drive-in",
+        "name": "Drive-in",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "trafikprop",
+        "name": "Traffic jam",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "stenspil",
+        "name": "Boules",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "brydekamp",
+        "name": "Wrestling match",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "toemmermaend",
+        "name": "Hangover",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "vinger",
+        "name": "Wings",
+        "act": 1,
+        "kind": "material",
+        "stuff": "fibre"
+      },
+      {
+        "id": "kroning",
+        "name": "Coronation",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "legende",
+        "name": "The Legend",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "ind-i-maleriet",
+        "name": "Into the painting",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "flyveforsoeg",
+        "name": "The Flight",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "krig",
+        "name": "The War",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "helbredelse",
+        "name": "The Healing",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "is",
+        "name": "Ice",
+        "act": 1,
+        "kind": "material",
+        "stuff": "water"
+      },
+      {
+        "id": "reb",
+        "name": "Rope",
+        "act": 1,
+        "kind": "material",
+        "stuff": "fibre"
+      },
+      {
+        "id": "romance",
+        "name": "Romance",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "familie",
+        "name": "Family",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "stammefolk",
+        "name": "Tribe",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "grav",
+        "name": "Burial",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "eftermaele",
+        "name": "Legacy",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "gave",
+        "name": "Gift",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "handel",
+        "name": "Trade",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "skal",
+        "name": "Shell",
+        "act": 1,
+        "kind": "material",
+        "stuff": "bone"
+      },
+      {
+        "id": "penge",
+        "name": "Shell money",
+        "act": 1,
+        "kind": "material",
+        "stuff": "bone"
+      },
+      {
+        "id": "marked",
+        "name": "Market",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "hoevding",
+        "name": "Chief",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "lov",
+        "name": "The first law",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "ritual",
+        "name": "Ritual",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "aand",
+        "name": "Ancestor spirit",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "myte",
+        "name": "Myth",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "solgud",
+        "name": "Sun god",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "maske",
+        "name": "Mask",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "dans",
+        "name": "Ritual dance",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "toej",
+        "name": "Sewn clothes",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "tatovering",
+        "name": "Tattoo",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "spejl",
+        "name": "Reflection",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "haarklip",
+        "name": "Haircut",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "froe",
+        "name": "Seeds",
+        "act": 1,
+        "kind": "material",
+        "stuff": "plant"
+      },
+      {
+        "id": "have",
+        "name": "Garden",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "plant"
+      },
+      {
+        "id": "levende-gud",
+        "name": "The Living God",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "jagtfoelge",
+        "name": "Hunting party",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "besoegende",
+        "name": "The Visitors",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "agern",
+        "name": "Acorn",
+        "act": 1,
+        "kind": "material",
+        "stuff": "plant"
+      },
+      {
+        "id": "mammuthus",
+        "name": "Mammoth-bone hut",
+        "act": 1,
+        "kind": "structure",
+        "stuff": "bone"
+      },
+      {
+        "id": "mel",
+        "name": "Flour",
+        "act": 1,
+        "kind": "material",
+        "stuff": "plant"
+      },
+      {
+        "id": "dej",
+        "name": "Dough",
+        "act": 1,
+        "kind": "material",
+        "stuff": "plant"
+      },
+      {
+        "id": "traening",
+        "name": "Training montage",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "mester",
+        "name": "The Champion",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "idol",
+        "name": "Golden idol",
+        "act": 1,
+        "kind": "material",
+        "stuff": "metal"
+      },
+      {
+        "id": "regnskab",
+        "name": "Accounts",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "symbol",
+        "name": "Symbol",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "skrift",
+        "name": "Writing",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "kort",
+        "name": "Map",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "kalender",
+        "name": "Calendar",
+        "act": 1,
+        "kind": "abstract",
+        "stuff": "none"
+      },
+      {
+        "id": "havrejsen",
+        "name": "The Voyage",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "smykke",
+        "name": "Necklace",
+        "act": 1,
+        "kind": "material",
+        "stuff": "bone"
+      },
+      {
+        "id": "aeg",
+        "name": "Egg",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "sengeleje",
+        "name": "Grass bedding",
+        "act": 1,
+        "kind": "material",
+        "stuff": "plant"
+      },
+      {
+        "id": "dunkappe",
+        "name": "Down cloak",
+        "act": 1,
+        "kind": "material",
+        "stuff": "flesh"
+      },
+      {
+        "id": "klyngen",
+        "name": "The huddle",
+        "act": 1,
+        "kind": "phenomenon",
+        "stuff": "none"
+      },
+      {
+        "id": "mudderlag",
+        "name": "Mud coat",
+        "act": 1,
+        "kind": "material",
+        "stuff": "clay"
+      }
+    ]
+  }
+}

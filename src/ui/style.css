@@ -613,9 +613,8 @@ img.problem-icon {
   align-content: start;
 }
 .element {
-  /* Målt om: kortet er 129 x 118 med 146,7 px vandret og 136 px lodret
-     pitch. Bredden sættes af griddet, højden her. */
-  min-height: 121px;
+  /* Bredden sættes af griddet, højden af det fælles art-token. */
+  min-height: var(--element-card-height);
   background-color: var(--tile-shade);
   background-image: var(--grain),
                     linear-gradient(to bottom, var(--tile-lit), var(--tile-shade));
@@ -688,7 +687,8 @@ img.problem-icon {
    vildsvin og nabo. max- frem for faste mål: genstandene har hvert sit
    format, og de skal fylde kassen ud, ikke rette sig ind efter et kvadrat. */
 .element .emoji-art {
-  max-width: 91px; max-height: 67px;
+  max-width: var(--element-art-max-width);
+  max-height: var(--element-art-max-height);
   width: auto; height: auto;
   object-fit: contain;
   filter: drop-shadow(0 1px 1px rgb(58 44 30 / 0.16));
@@ -1982,7 +1982,7 @@ img.card-glyph {
      7x129 + 6x17,7 = 1009 px i en 978 px bred region. */
   #grid {
     order: 7; margin-top: 23px;
-    grid-template-columns: repeat(7, 129px);
+    grid-template-columns: repeat(7, var(--element-card-width));
     column-gap: 17.7px;
     row-gap: 17px;
     overflow: hidden;
