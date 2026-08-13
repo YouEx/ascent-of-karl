@@ -188,8 +188,8 @@ fem er direkte årsag til et delsystem i denne plan.
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
 | TASK-018 | Definér fund-skemaet i `tools/judge/finding.schema.json`: `{ region, defect, severity: 1-5, evidence, fix: { kind: "token"\|"asset"\|"structure", ... } }` med `defect` bundet til listen i REQ-006. Ugyldig JSON afvises og genforespørges én gang. | ✅ | 2026-08-11 |
-| TASK-019 | Byg `tools/judge/judge.mjs`: sender pr. region referenceudsnit, renderudsnit, overlejring, de fem metrikker, DOM-computed-styles og regionens `allowedDeviations` til vision-modellen, og validerer svaret mod skemaet. | | |
-| TASK-020 | Skriv dommerens systemprompt eksplicit anti-prosa: den skal svare med den mindste ændring der lukker afstanden, angive `from`/`to` med enheder, og hellere sige `missing-asset` end at foreslå en CSS-efterligning af malet kunst. Selvsikkerhed uden `evidence` afvises. | | |
+| TASK-019 | Byg `tools/judge/judge.mjs`: sender pr. region referenceudsnit, renderudsnit, overlejring, de fem metrikker, DOM-computed-styles og regionens `allowedDeviations` til vision-modellen, og validerer svaret mod skemaet. **Implementeret 2026-08-13**: CLI (`node tools/judge/judge.mjs --run <dir> --screen <id> [--fixture …]`) og importerbar kerne (`buildRegionPayload`, `buildPrompt`, `getFindings`). Pakker referenceudsnit, renderudsnit, blend og varmekort som base64, DOM-box/computed styles fra capture-metrikkerne, registryets rect/weight/threshold/note, relevante `allowedDeviations` og forrige kørsels afviste nøgler/fund. Udbyderkald bruger native `fetch` (ingen ny afhængighed) og kræver eksplicit `VISUAL_JUDGE_API_KEY`/`VISUAL_JUDGE_MODEL` — fejler tydeligt uden dem, intet rigtigt kald i test eller verifikation. Ugyldigt JSON/skema genforespørges præcis én gang med valideringsfejlene vedlagt, herefter fejler processen højlydt (aldrig et tomt success-fald). Valideringen (`validate-finding.mjs`) tjekker både skemaform og runtime-fakta: kendt token, `from` matcher nuværende værdi (hex/rgb-normaliseret), `to` er en sikker CSS-værdi. 19 tests i `tests/judge-vision.test.ts`. | ✅ | 2026-08-13 |
+| TASK-020 | Skriv dommerens systemprompt eksplicit anti-prosa: den skal svare med den mindste ændring der lukker afstanden, angive `from`/`to` med enheder, og hellere sige `missing-asset` end at foreslå en CSS-efterligning af malet kunst. Selvsikkerhed uden `evidence` afvises. **Implementeret 2026-08-13**: `SYSTEM_PROMPT` i `judge.mjs` — kode/kommentarer på dansk, selve modelinstruktionen på engelsk for pålidelighed. Kræver rent JSON, mindste ændring, numerisk `evidence` og `from`/`to` med enheder, `missing-asset` frem for CSS-efterligning, DESIGN.md/`allowedDeviations` som autoritet hvor de tillader afvigelse, ingen prosa, ingen ændringer uden for tokens for automatiske rettelser. Dækket af `tests/judge-vision.test.ts`. | ✅ | 2026-08-13 |
 | TASK-021 | Dedupér fund på tværs af regioner: samme token foreslået fra to regioner samles til ét fund med den højeste `severity`, så sløjfen ikke skriver samme variabel to gange i én iteration og tilskriver den anden skrivning æren. **Revideret 2026-08-12**: `writeTuning()` gjorde det modsatte — fund itereres i faldende `severity`, og et senere `Map.set` overskrev et tidligere, så den LAVESTE severity vandt (og kommentar-tilskrivningen pegede stadig på den højeste). Rettet med `resolveTokenWinners()` (rækkefølge-uafhængig, højeste severity vinder) og `consolidateTokens()` (denne opgaves regionstværgående samling, med `consolidatedFrom`-herkomst). | ✅ | 2026-08-12 |
 
 ### Implementation Phase 5
@@ -199,13 +199,13 @@ fem er direkte årsag til et delsystem i denne plan.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-022 | Opret `src/ui/tuning.css` (importeret sidst i `style.css`, kun `:root`-overrides) og gør den til sløjfens **eneste** skrivemål. REQ-004. | | |
+| TASK-022 | Opret `src/ui/tuning.css` (importeret sidst i `style.css`, kun `:root`-overrides) og gør den til sløjfens **eneste** skrivemål. REQ-004. **Bekræftet 2026-08-13**: arkitekturen var allerede på plads (filen findes, importeres sidst, indeholder kun `:root`), men opgaven var aldrig afkrydset eller bevist med en dedikeret test. `tests/judge-tuning-contract.test.ts` beviser nu både den statiske kontrakt og at `writeTuning()` strukturelt (hardcodet linjeskabelon) aldrig kan producere andet end én `:root`-blok, uanset input. | ✅ | 2026-08-13 |
 | TASK-023 | Byg ruteren i `tools/judge/apply.mjs`: `token`→ skriv til `tuning.css`; `asset`→ tilføj til `docs/design/asset-queue.json` med spec og stop; `structure`→ skriv til arbejdskøen, anvend aldrig (CON-003). Landede i `apply.mjs`, ikke det oprindeligt planlagte `loop.mjs` (se FILE-006) — implementeret, bare aldrig afkrydset. | ✅ | 2026-08-12 |
-| TASK-024 | Implementér accept-porten: efter hver anvendelse køres optagelse + måling igen. Accepteres kun ved samlet forbedring **og** ingen region under −0,02 (CON-002). Ellers rulles `tuning.css` tilbage, og fundet markeres `rejected`. | | |
-| TASK-025 | Implementér journalen `.judge/<run>/ledger.json`: pr. iteration gemmes fund, anvendt ændring, før/efter-scorer, accepteret/fortrudt. Afviste fund fodres tilbage til dommeren som "dette er prøvet og gjorde det værre". Dette er hukommelsen fra punkt 5 i indledningen. | | |
-| TASK-026 | Implementér stopbetingelser: alle regioner over tærsklen, eller tre iterationer i træk uden accept, eller 12 iterationer (CON-001). Sidste to rapporteres som nederlag med den bedste opnåede tilstand og de blokerende fund. | | |
-| TASK-027 | Tilføj `.judge/` til `.gitignore`, men gør `docs/design/asset-queue.json` **versioneret** — arbejdskøen er et projektartefakt, ikke et kørselsartefakt. | | |
-| TASK-028 | Tilføj `npm run judge` (fuld sløjfe) og `npm run judge:report` (åbner sidste kørsels HTML-rapport med overlejringer og scorer side om side). | | |
+| TASK-024 | Implementér accept-porten: efter hver anvendelse køres optagelse + måling igen. Accepteres kun ved samlet forbedring **og** ingen region under −0,02 (CON-002). Ellers rulles `tuning.css` tilbage, og fundet markeres `rejected`. **Implementeret 2026-08-13** i `tools/judge/loop.mjs`s `acceptGate(before, after, {epsilon, maxDrop})`: accept kræver samlet fremgang > 0,002 og ingen region falder mere end 0,02. Ved afvisning genskrives `tuning.css` fra et in-memory råt strengsnapshot taget FØR anvendelse — aldrig `git reset`/`checkout` (det kunne ramme urelateret arbejde i en delt worktree). Bevist enhedstestet OG med en rigtig fixture-kørsel: en reelt målt titel-regression (chip −0,181, tools −0,105, tip-card −0,069) blev korrekt afvist, og `tuning.css` var byte-for-byte gendannet bagefter. | ✅ | 2026-08-13 |
+| TASK-025 | Implementér journalen `.judge/<run>/ledger.json`: pr. iteration gemmes fund, anvendt ændring, før/efter-scorer, accepteret/fortrudt. Afviste fund fodres tilbage til dommeren som "dette er prøvet og gjorde det værre". Dette er hukommelsen fra punkt 5 i indledningen. **Implementeret 2026-08-13**: journalen ligger pr. kørsel, ikke i en global fil. Hver iteration gemmer fulde før/efter-scorer, fund, anvendte/forsøgte tokens, kø-resultater, herkomst (`consolidatedFrom`), verdikt, årsag og tidsstempler. Afviste nøgler samles i `ledger.rejected` og sendes med til dommerens næste prompt. Bevist med en rigtig accept-kørsel (gevinst +0,0035) og en rigtig afvist kørsel (samme værktøj, modsat token-værdi, fald −0,0125 globalt) — se verifikationsafsnittet. | ✅ | 2026-08-13 |
+| TASK-026 | Implementér stopbetingelser: alle regioner over tærsklen, eller tre iterationer i træk uden accept, eller 12 iterationer (CON-001). Sidste to rapporteres som nederlag med den bedste opnåede tilstand og de blokerende fund. **Implementeret 2026-08-13**: `decideStop()`/`resolveMaxIterations()` i `loop.mjs` — success når alle anmodede regioner er over tærsklen, nederlag ved tre på hinanden følgende afviste iterationer (nulstillet af en accept), ved det hårde loft på 12 (eller et eksplicit `--max`), eller når der ingen anvendelige token-fund er (kun asset/struktur-fund i kø, for at undgå at sløjfen spinder uden mål). Hvert nederlag rapporteres med den bedste opnåede tilstand (`bestTuning`/`bestScores`) og de blokerende fund. 22 tests i `tests/judge-loop.test.ts`, inklusive begge fixture-kørsler. | ✅ | 2026-08-13 |
+| TASK-027 | Tilføj `.judge/` til `.gitignore`, men gør `docs/design/asset-queue.json` **versioneret** — arbejdskøen er et projektartefakt, ikke et kørselsartefakt. **Bekræftet 2026-08-13**: `.judge/` var allerede i `.gitignore`, og `docs/design/asset-queue.json`/`human-queue.json` var allerede versionerede uden for `.judge/`. `tests/judge-tuning-contract.test.ts` beviser nu kontrakten (linjematch mod `.gitignore`, filernes placering, gyldig `items`-array-JSON) i stedet for at være en ukontrolleret antagelse. | ✅ | 2026-08-13 |
+| TASK-028 | Tilføj `npm run judge` (fuld sløjfe) og `npm run judge:report` (åbner sidste kørsels HTML-rapport med overlejringer og scorer side om side). **Implementeret 2026-08-13**: `npm run judge` kører den fulde sløjfe (`loop.mjs`), og `npm run judge:report` genererer en selvstændig `.judge/<run>/report.html` (`tools/judge/report.mjs`) — ingen CDN/netværksafhængighed, al modeltekst escapes før indsættelse. **Afviger bevidst fra planteksten**: rapporten åbner ikke længere automatisk — kun med eksplicit `--open` — den printer stien og returnerer, af hensyn til CI/headless-sikkerhed. Rapporten viser skærme, seneste reference/render/overlay/diff-billeder, scoretabel, tærskelstatus, hver iterations fund/ruter/før-efter-delta/verdikt/årsag, afvist hukommelse, køede blokeringer og stopårsag. 17 tests i `tests/judge-report.test.ts`, plus rigtige rapporter genereret og inspiceret fra begge fixture-kørsler. | ✅ | 2026-08-13 |
 
 ### Implementation Phase 6
 
@@ -267,8 +267,7 @@ fem er direkte årsag til et delsystem i denne plan.
 - **FILE-006**: `tools/judge/capture.mjs`, `metrics.py`, `overlay.py`,
   `apply.mjs`, `finding.schema.json` — nye (rute + anvend landede i
   `apply.mjs`, ikke i de oprindeligt planlagte `judge.mjs`/`loop.mjs`).
-  `judge.mjs` (vision-kald, TASK-019) og `loop.mjs` (efterprøv-sløjfe,
-  TASK-024–026) er endnu ikke bygget.
+  `judge.mjs` og `loop.mjs` er nu bygget, se FILE-011.
 - **FILE-007**: `docs/design/asset-queue.json` — ny, versioneret. Ruterens
   udgang for `asset`-fund.
 - **FILE-008**: `tests/visual-baseline.json`, `tests/visual.test.ts` — nye.
@@ -281,6 +280,28 @@ fem er direkte årsag til et delsystem i denne plan.
   parametre flyttet fra hardkodede konstanter og en død CSS-token
   (`--grain-opacity`) til én kildefil, som både bagningen og et
   `--check`-tjek (dimensioner, ikke gen-rendering, se TASK-006) læser.
+- **FILE-011** (2026-08-13): `tools/judge/judge.mjs` (vision-kald, TASK-019/020),
+  `tools/judge/loop.mjs` (efterprøv-sløjfe, accept-port, journal, stopregler,
+  TASK-024–026), `tools/judge/report.mjs` (selvstændig HTML-rapport, TASK-028),
+  `tools/judge/validate-finding.mjs` (streng fund-validering, delt mellem
+  `judge.mjs` og `apply.mjs` så de aldrig kan glide fra hinanden) — nye.
+  `tools/judge/apply.mjs` — `writeTuning`/`appendQueue` eksporteret med
+  injicerbare stier (så `loop.mjs` og dets tests aldrig rører de rigtige
+  `src/ui/tuning.css`/kø-filer), plus et sidste forsvarslag
+  (`safeCssValueErrors`) lige før skrivning. `tools/judge/capture.mjs` —
+  `build()` eksporteret, så `loop.mjs` kan genbygge `dist/` mellem
+  iterationer uden server-/browser-genstart. `tools/judge/overlay.py` — fire
+  ekstra enkeltbilleder pr. region (`-ref`/`-render`/`-blend`/`-heat`), som
+  `judge.mjs` pakker til vision-modellen. `tests/judge-vision.test.ts`,
+  `tests/judge-loop.test.ts`, `tests/judge-report.test.ts`,
+  `tests/judge-tuning-contract.test.ts`, `tests/judge-validate.test.ts`,
+  `tests/node-builtins.d.ts` (minimale ambient node:fs/path/url-typer, samme
+  filosofi som `tests/raw.d.ts` — intet `@types/node`) — nye.
+  `tests/fixtures/judge/findings-title-accept.json`,
+  `findings-title-reject.json` — nye, virkelige (målt, ikke opdigtede)
+  fixture-fund brugt til den fixture-drevne accept-/afvis-verifikation.
+  `npm run judge` peger nu på `loop.mjs` (fuld sløjfe), `judge:report` på
+  `report.mjs`; nyt script `judge:once` (`loop.mjs --max 1`).
 
 ## 6. Testing
 
