@@ -403,7 +403,7 @@ function prefetchLine(a: string, b: string): void {
     a: ea,
     b: eb,
     verdict,
-    need: problems[0]?.description,
+    needId: problems[0]?.id,
     summer: engine.getState().attempts,
   });
 }

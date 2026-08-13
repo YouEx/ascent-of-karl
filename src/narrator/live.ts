@@ -44,8 +44,12 @@ export interface LiveRequest {
   a: ElementDef;
   b: ElementDef;
   verdict: string;
-  /** Hvad Karl mangler lige nu — giver replikken noget at spille op imod. */
-  need?: string;
+  /**
+   * Kanonisk id for hvad Karl mangler lige nu, IKKE fritekst-beskrivelsen
+   * (sikkerhedsrunde 2, punkt 3) — workeren slår selv navnet op i sit eget
+   * indhold. Giver replikken noget at spille op imod.
+   */
+  needId?: string;
   /** Sommer nummer, så en replik kan lyde ung eller træt. */
   summer?: number;
 }
@@ -158,10 +162,15 @@ export class LiveNarrator {
         headers: { "content-type": "application/json" },
         signal: ctrl.signal,
         body: JSON.stringify({
-          a: describe(req.a),
-          b: describe(req.b),
+          // Kun kanoniske id'er og dom (sikkerhedsrunde 2, punkt 3): workeren
+          // slår selv navn/kind/stuff/traits/flavor op i sit eget indhold
+          // (catalog.ts). At sende beskrivende felter herfra var netop
+          // vejen ind for en forfalsket beskrivelse (prompt-injektion) og
+          // for uendeligt mange unikke cache-nøgler fra opdigtede tekster.
+          aId: req.a.id,
+          bId: req.b.id,
           verdict: req.verdict,
-          need: req.need,
+          needId: req.needId,
           summer: req.summer,
         }),
       });
@@ -191,20 +200,6 @@ function retryAfterMs(res: Response): number {
   const raw = res.headers.get("retry-after");
   const secs = raw ? Number(raw) : NaN;
   return Number.isFinite(secs) && secs > 0 ? secs * 1000 : DEFAULT_QUIET_MS;
-}
-
-/** Det modellen får at vide om en ting. Samme felter som skribenterne fik. */
-function describe(e: ElementDef) {
-  return {
-    id: e.id,
-    name: e.name,
-    kind: e.kind,
-    stuff: e.stuff,
-    scale: e.scale,
-    traits: e.traits ?? [],
-    flavor: e.flavor,
-    karlMood: e.karlMood,
-  };
 }
 
 /**

@@ -49,19 +49,43 @@ RATE_LIMIT_MAX = "20"
 # også dem der har en bagt replik og derfor aldrig bruger svaret — for den
 # tjekker kun `matchCombo`, ikke om linjen allerede er bagt. Derfor tæller
 # udregningen ALLE nofuse-par, ikke kun de ubagte. Distinkte par+dom-nøgler
-# pr. run (tools/pair_frequency.ts, 1.200 simulerede runs) har gennemsnit
-# ~25,4 og 95.-percentil ~33. Antaget (IKKE målt — der findes endnu ingen
-# rigtig trafik): op til ~10 fulde gennemspilninger på den travleste
+# pr. run (tools/pair_frequency.ts, 1.200 simulerede runs, genmålt for
+# sikkerhedsrunde 2 efter rebase mod main — samme facit) har gennemsnit
+# ~25,4 og 95.-percentil 33 (se `perRunDistinctPairVerdictKeys` i
+# docs/design/pair-frequency.json). Antaget (IKKE målt — der findes endnu
+# ingen rigtig trafik): op til ~10 fulde gennemspilninger på den travleste
 # realistiske dag for et lille, ikke-viralt spil. 10 × 33 ≈ 330, uden
 # fradrag for genbrug på tværs af de 10 runs samme dag (et bevidst
 # konservativt, for-højt skøn). 350 runder det op med lidt margin.
 DAILY_MAX_UPSTREAM_CALLS = "350"
 
-# IP-hashens saltning. Valgfri: koden har en fast fallback
-# ("karl-live-narrator"), så dette behøver IKKE sættes for at hashingen
-# virker (RISK-001: rå IP gemmes aldrig, uanset salt). Sæt den kun som
-# ekstra dybde, og i så fald som secret, ikke her:
+# --- Én IP-hashs egen andel af samme døgn (sikkerhedsrunde 2, punkt 2) ---
+# Uden dette kan én spiller (eller angriber) alene opbruge HELE det globale
+# loft og lukke laget ned for alle andre resten af døgnet. Grundlaget er det
+# SAMME målte tal som ovenfor — 95.-percentilen af distinkte par+dom-nøgler
+# pr. run, altså 33 — men ganget med et LILLE, eksplicit antaget antal fulde
+# gennemspilninger for ÉN spiller på én dag, ikke for hele spillerbasen:
+# 33 × 5 ≈ 165. Fem er bevidst rigeligt (en almindelig spiller gennemfører
+# spillet højst én eller to gange; selv en meget ihærdig tester på 5 fulde
+# runs samme dag er en yderst usædvanlig, men stadig ærlig, brugsprofil).
+# 165 er samtidig meningsfuldt UNDER halvdelen af det globale loft (350):
+# én IP kan aldrig alene opbruge mere end knap halvdelen af døgnets
+# samlede budget, uanset hvor ihærdig eller ondsindet den er — resten af
+# spillerbasen kan altid stadig få svar. Rammes dette loft, svarer
+# koordinatoren 429 (en klient-specifik grænse, ligesom rate-limit-vinduet),
+# IKKE 503 (som er forbeholdt det GLOBALE loft) — se `worker/src/coordinator.ts`.
+DAILY_MAX_UPSTREAM_CALLS_PER_IP = "165"
+
+# IP-hashens saltning (sikkerhedsrunde 2, punkt 1) — OBLIGATORISK, ingen
+# fallback. Uden salt er en SHA-256-hash af en IP i praksis en opslagstabel
+# væk fra at være "klar tekst": IPv4-rummet er lille nok til at regne alle
+# ca. 4 milliarder hashes ud på forhånd og slå den rå IP op igen. Sættes
+# som secret, ALDRIG som en almindelig var her (hemmeligheden må ikke stå i
+# klartekst i denne fil, og slet ikke i git-historikken):
 #   npx wrangler secret put IP_HASH_SALT
+# Mangler den ved runtime, fejler `worker/src/index.ts` LUKKET (503) for
+# ALLE forespørgsler, i stedet for at hashe med et gættet standard-salt —
+# se `index.ts`s `Env.IP_HASH_SALT`-dokumentation.
 
 # Nøglen sættes som secret, aldrig i denne fil:
 #   npx wrangler secret put OPENAI_API_KEY

@@ -13,6 +13,14 @@
 export interface DurableObjectStorage {
   get<T = unknown>(key: string): Promise<T | undefined>;
   put<T = unknown>(key: string, value: T): Promise<void>;
+  /** Sikkerhedsrunde 2, punkt 4: oprydning kræver at kunne slette en post. */
+  delete(key: string): Promise<boolean>;
+  /** Alle poster under et præfiks — sådan finder oprydningen sine kandidater. */
+  list<T = unknown>(options?: { prefix?: string }): Promise<Map<string, T>>;
+  /** Hvornår næste alarm er sat til at ringe, eller `null` hvis ingen er sat. */
+  getAlarm(): Promise<number | null>;
+  /** Beder Durable Object'et om at kalde `alarm()` på dette tidspunkt. */
+  setAlarm(scheduledTime: number | Date): Promise<void>;
 }
 
 export interface DurableObjectState {

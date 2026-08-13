@@ -102,6 +102,26 @@ describe("live-fortælleren", () => {
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
   });
 
+  it("sender KUN kanoniske id'er over nettet — aldrig navn/kind/stuff/traits/flavor (sikkerhedsrunde 2, punkt 3)", async () => {
+    const live = nyLive("The clay sat there while the berries did nothing at all.");
+    await live.prefetch({
+      a: content.elements.find((e) => e.id === A)!,
+      b: content.elements.find((e) => e.id === B)!,
+      verdict: "inert",
+      needId: "varme",
+      summer: 4,
+    });
+
+    expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
+    const [, init] = vi.mocked(fetch).mock.calls[0]!;
+    const sendt = JSON.parse(init!.body as string) as Record<string, unknown>;
+    // Workeren slår selv navn/kind/stuff/traits/flavor op i sit eget indhold
+    // (catalog.ts) — klienten må aldrig sende den slags, for det var netop
+    // vejen ind for en forfalsket beskrivelse (prompt-injektion) og for
+    // uendeligt mange unikke cache-nøgler fra opdigtede tekster.
+    expect(sendt).toEqual({ aId: A, bId: B, verdict: "inert", needId: "varme", summer: 4 });
+  });
+
   it("afviser en replik der ikke nævner begge ting", async () => {
     const live = nyLive("Nothing happened, as is so often the case.");
     await live.prefetch({

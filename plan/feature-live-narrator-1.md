@@ -98,14 +98,24 @@ grammatikken kun kender dommen.
   (`npx wrangler secret put OPENAI_API_KEY`), aldrig i `wrangler.toml`.
 - **SEC-002**: Workeren svarer kun spillets egen adresse.
   `ALLOWED_ORIGINS` er sat til `https://youex.github.io`. Tom værdi betyder
-  alle og må kun bruges lokalt.
-- **SEC-003**: **Løst (fase 2, 2026-08-12).** Et enkelt globalt, navngivet
-  Durable Object (`worker/src/coordinator-do.ts`) er nu den ene atomare
-  koordinator for begge grænser: et rullende vindue pr. IP-hash (TASK-002)
-  og et dagligt UTC-loft over kald, der når opstrøms (TASK-003). IP'en
-  hashes (SHA-256) før den nogensinde rører lager — den rå IP gemmes
-  aldrig. Se afsnittet "Fase 2 — målte tal" nedenfor for de præcise,
-  målte tærskler og udregningen bag dem.
+  alle og må kun bruges lokalt. Håndhævet som en rigtig 403 i
+  `worker/src/index.ts`, FØR koordinatoren nås — men `Origin` er en
+  klient-sat header, som en angriber (fx `curl`) kan forfalske lige så let
+  som en browser aldrig ville gøre frivilligt. Denne kontrol er derfor
+  forsvar-i-dybden VED SIDEN AF kvoterne (TASK-002/003), ikke en erstatning
+  for dem — se RISK-001.
+- **SEC-003**: **Løst (fase 2, 2026-08-12; hærdet i sikkerhedsrunde 2,
+  2026-08-12).** Et enkelt globalt, navngivet Durable Object
+  (`worker/src/coordinator-do.ts`) er den ene atomare koordinator for
+  begge grænser: et rullende vindue pr. IP-hash (TASK-002) og et dagligt
+  UTC-loft over kald, der når opstrøms — nu i to lag, et globalt og et
+  pr.-IP (TASK-003). IP'en fastslås og hashes (SHA-256, saltet med en
+  OBLIGATORISK secret) ved selve Cloudflare-kanten (`worker/src/index.ts`,
+  `ip.ts`) — IKKE inde i Durable Object'et, som kun læser en allerede
+  formvalideret hash og ALDRIG en rå IP eller en klient-oplyst header. Den
+  rå IP gemmes aldrig, noget sted. Se afsnittet "Fase 2 — målte tal" og
+  "Fase 2 — sikkerhedsrunde 2" nedenfor for de præcise, målte tærskler og
+  udregningen bag dem.
 - **CON-001**: Modellen er `gpt-4o-mini`, valgt fordi replikken er kort og
   skal være billig nok til at være ligegyldig. Skifter den, skal
   stemmedommeren køre igen — en dyrere model er ikke automatisk en bedre
@@ -137,15 +147,17 @@ grammatikken kun kender dommen.
 
 | Opgave | Beskrivelse | Færdig | Dato |
 |--------|-------------|--------|------|
-| TASK-002 | Loft pr. klient i workeren: ét globalt Durable Object (`worker/src/coordinator-do.ts`) tæller kald pr. IP-hash i et rullende vindue (`worker/src/limiter.ts`) og svarer 429 med en sand `Retry-After`, når loftet er nået. Klienten (`src/narrator/live.ts`) behandler 429 som "intet svar": ingen tælling til den almindelige afbryder, og intet nyt forsøg før `Retry-After` er gået. Loftet — 20 kald/60 sek. — er udledt af det MÅLTE, hårde `turnLimit`-loft pr. run (50, bekræftet af simuleringen) og en fysisk-tids-udregning, ikke et gæt. Se "Fase 2 — målte tal" nedenfor. | ✅ | 2026-08-12 |
-| TASK-003 | Dagligt UTC-udgiftsloft i samme Durable Object (`worker/src/budget.ts`): kun kald, der reserverer budget og når opstrøms (cache-misses), tæller — et cache-hit koster intet af loftet. Over grænsen svarer workeren 503 med `Retry-After` frem til næste UTC-midnat, og klienten slår laget fra indtil da uden at røre den almindelige afbryder. Loftet — 350/døgn — er udledt af den målte 95.-percentil af distinkte par+dom-nøgler pr. run, ganget med en udtrykkeligt antaget (ikke målt) travl-dag-trafik. Se "Fase 2 — målte tal". | ✅ | 2026-08-12 |
-| TASK-004 | Delt cache i Durable Object'ets egen storage (ikke KV — ét stateful binding er simplere end to), nøglet på sorteret par + dom (`worker/src/cache-key.ts`). Målt FØR bygget: træfprocenten er beregnet til 96,9 % over 1.200 simulerede runs (langt over 20 %-grænsen), så cachen er bygget. Kun vellykket, renset modeltekst caches; fejl caches aldrig; samtidige misses på samme nøgle deles (`worker/src/concurrency.ts`), så en byge kun koster ét kald. Se "Fase 2 — målte tal" for hele udregningen. | ✅ | 2026-08-12 |
-| TASK-005 | Deployment dokumenteret i `docs/deployment/live-narrator.md` (Durable Object-migration/binding, `OPENAI_API_KEY` som secret, sikre `[vars]`, `wrangler deploy`, `VITE_NARRATOR_URL` ved build, sådan verificeres helbred/429/503, og den hurtige nødstop) med en kort henvisning fra `README.md`. Ingen hemmelige værdier eller priser i dokumentet. | ✅ | 2026-08-12 |
-| TASK-006 | Beslut, om laget overhovedet skal udrulles. Det er **Martins beslutning**, ikke en implementeringsdetalje: laget koster penge pr. spiller, og spillet er målt komplet uden det. Alternativet — at bage videre mod N=600 og lade grammatikken tage resten — er gratis og allerede i gang. **Stadig åben** — fase 2 gør laget klar til at blive slået til, den beslutter ikke, at det skal. | | |
+| TASK-002 | Loft pr. klient i workeren: ét globalt Durable Object (`worker/src/coordinator-do.ts`) tæller kald pr. IP-hash i et rullende vindue (`worker/src/limiter.ts`) og svarer 429 med en sand `Retry-After`, når loftet er nået. Klienten (`src/narrator/live.ts`) behandler 429 som "intet svar": ingen tælling til den almindelige afbryder, og intet nyt forsøg før `Retry-After` er gået. Loftet — 20 kald/60 sek. — er udledt af det MÅLTE, hårde `turnLimit`-loft pr. run (50, bekræftet af simuleringen) og en fysisk-tids-udregning, ikke et gæt. **Sikkerhedsrunde 2:** IP'en fastslås nu KUN ved Cloudflare-kanten (`index.ts`, `cf-connecting-ip`, aldrig `X-Forwarded-For`) og hashes med en obligatorisk secret (`IP_HASH_SALT`) — Durable Object'et validerer blot en 64-hex-hash og fejler lukket (503) uden den. Se "Fase 2 — målte tal" og "Fase 2 — sikkerhedsrunde 2" nedenfor. | ✅ | 2026-08-12 |
+| TASK-003 | Dagligt UTC-udgiftsloft i samme Durable Object (`worker/src/budget.ts`): kun kald, der reserverer budget og når opstrøms (cache-misses), tæller — et cache-hit koster intet af loftet. Over grænsen svarer workeren 503 med `Retry-After` frem til næste UTC-midnat, og klienten slår laget fra indtil da uden at røre den almindelige afbryder. Loftet — 350/døgn — er udledt af den målte 95.-percentil af distinkte par+dom-nøgler pr. run, ganget med en udtrykkeligt antaget (ikke målt) travl-dag-trafik. **Sikkerhedsrunde 2:** tilføjet et ANDET, mindre loft — 165/døgn pr. IP-hash — så én spiller (eller angriber) aldrig alene kan opbruge hele det globale budget; ramt pr.-IP-loft svarer 429 (klient-specifik grænse), ramt globalt loft svarer stadig 503. Se "Fase 2 — målte tal". | ✅ | 2026-08-12 |
+| TASK-004 | Delt cache i Durable Object'ets egen storage (ikke KV — ét stateful binding er simplere end to), nøglet på sorteret par + dom + version (`worker/src/cache-key.ts`). Målt FØR bygget: træfprocenten er beregnet til 96,9 % over 1.200 simulerede runs (langt over 20 %-grænsen), så cachen er bygget. Kun vellykket, renset modeltekst caches; fejl caches aldrig; samtidige misses på samme nøgle deles (`worker/src/concurrency.ts`), så en byge kun koster ét kald. **Sikkerhedsrunde 2:** anmodningen bærer nu KUN kanoniske id'er + dom (aldrig klient-oplyste navne/flavor/tags) — workeren genopbygger prompten fra det bundlede `content/elements.json`/`content/acts/*.json` (`worker/src/catalog.ts`); et ukendt id afvises 400 FØR budget/cache. Cache-nøglen har fået et eksplicit version-præfiks, så en prompt-/modelændring kan gøre gamle linjer uopslåelige med det samme (se `cache-key.ts`). Se "Fase 2 — målte tal" for hele udregningen. | ✅ | 2026-08-12 |
+| TASK-005 | Deployment dokumenteret i `docs/deployment/live-narrator.md` (Durable Object-migration/binding, `OPENAI_API_KEY` og `IP_HASH_SALT` som secrets, sikre `[vars]`, `wrangler deploy`, `VITE_NARRATOR_URL` ved build, sådan verificeres helbred/429/503, og den hurtige nødstop) med en kort henvisning fra `README.md`. Ingen hemmelige værdier eller priser i dokumentet. | ✅ | 2026-08-12 |
+| TASK-006 | Beslut, om laget overhovedet skal udrulles. Det er **Martins beslutning**, ikke en implementeringsdetalje: laget koster penge pr. spiller, og spillet er målt komplet uden det. Alternativet — at bage videre mod N=600 og lade grammatikken tage resten — er gratis og allerede i gang. **Stadig åben** — fase 2 (inkl. sikkerhedsrunde 2's rettelser) gør laget klar til at blive slået til, den beslutter ikke, at det skal. | | |
 
 #### Fase 2 — målte tal
 
-Alle tre tærskler er udledt af data, ikke gættet. Sådan:
+Alle tærskler er udledt af data, ikke gættet. Sådan (genmålt for
+sikkerhedsrunde 2 efter rebase mod main — se `docs/design/pair-frequency.json`
+og "Fase 2 — sikkerhedsrunde 2" nedenfor for selve genmålingen):
 
 - **Cache-træfprocent (TASK-004), 96,9 %.** `docs/design/pair-frequency.json`
   (produceret af `tools/pair_frequency.ts` over 1.200 simulerede runs, tre
@@ -154,16 +166,18 @@ Alle tre tærskler er udledt af data, ikke gættet. Sådan:
   (`src/ui/main.ts`) spørger workeren for **alle** disse par — også dem der
   har en bagt replik og derfor aldrig bruger svaret — for den tjekker kun
   `engine.matchCombo()`, ikke om linjen allerede er bagt. Cache-regnestykket
-  bruger derfor ALLE nofuse-møder, ikke kun de ubagte: 40.802 møder i alt,
-  fordelt på 1.245 distinkte par+dom-nøgler. Træfprocent for en delt
+  bruger derfor ALLE nofuse-møder, ikke kun de ubagte: 40.624 møder i alt,
+  fordelt på 1.253 distinkte par+dom-nøgler. Træfprocent for en delt
   server-cache (hvor "træf" betyder: en tidligere spillers kald har allerede
   fyldt netop denne nøgle, og denne forespørgsel får svaret gratis) er
-  derfor `(40802 − 1245) / 40802 ≈ 0,969`. Da 96,9 % ≥ 20 %-grænsen, er
+  derfor `(40624 − 1253) / 40624 ≈ 0,969`. Da 96,9 % ≥ 20 %-grænsen, er
   cachen bygget (modsat en afvisning, hvis den havde ligget under). Et
-  snævrere regnestykke, der kun tæller par UDEN en bagt linje (11.244 møder,
-  942 distinkte nøgler), giver 91,6 % — stadig langt over grænsen, og nævnt
+  snævrere regnestykke, der kun tæller par UDEN en bagt linje (12.177 møder,
+  984 distinkte nøgler), giver 91,9 % — stadig langt over grænsen, og nævnt
   her for at vise, at konklusionen ikke afhænger af, hvilket af de to man
-  bruger.
+  bruger. (Begge tal er genmålt efter rebase mod main for sikkerhedsrunde 2;
+  indholdet har flyttet sig en anelse siden fase 2's oprindelige måling —
+  se nedenfor — men konklusionen er uændret.)
 - **Rullende rate-limit-vindue (TASK-002), 20 kald / 60 sek.** Simuleringen
   måler PAR PR. RUN, ikke forløbet tid mellem klik, og kan derfor ikke
   alene sætte et 60-sekunders vindue. Udregningen kombinerer to målte/kendte
@@ -174,18 +188,33 @@ Alle tre tærskler er udledt af data, ikke gættet. Sådan:
   næppe gøre dette hurtigere end ca. hvert 1.-2. sekund i træk — så et helt
   50-parrers run kan fysisk ikke gennemføres på under ca. 50-100 sekunder.
   20/60 sek. ligger dermed komfortabelt under halvdelen af et helt runs
-  loft inden for ethvert givent minut. Se kommentaren i
-  `worker/wrangler.toml` for den fulde udregning.
-- **Dagligt opstrømsloft (TASK-003), 350 kald/UTC-døgn.** Distinkte
-  par+dom-nøgler pr. run (samme ALLE-nofuse-grundlag som cache-tallet
-  ovenfor, altså inklusive bagte par, fordi de også udløser et rigtigt
-  worker-kald) har gennemsnit ~25,4 og 95.-percentil ~33 over de 1.200
-  runs. Ganget med en udtrykkeligt ANTAGET (ikke målt — der findes ingen
-  rigtig trafik endnu) travleste-dag-belastning på ~10 fulde
-  gennemspilninger: 10 × 33 ≈ 330, uden fradrag for genbrug på tværs af de
-  10 runs samme dag (et bevidst for-højt, konservativt skøn, fordi cachen i
-  virkeligheden ville dække en del af overlappet allerede samme dag). 350
-  runder det op med en smule margin.
+  loft inden for ethvert givent minut. `turnLimit` er stadig 50 efter
+  rebase mod main, så denne udregning står ved magt uændret. Se
+  kommentaren i `worker/wrangler.toml` for den fulde udregning.
+- **Dagligt opstrømsloft (TASK-003), 350 kald/UTC-døgn globalt + 165
+  kald/UTC-døgn pr. IP-hash (sidstnævnte tilføjet i sikkerhedsrunde 2,
+  punkt 2).** Distinkte par+dom-nøgler PR. RUN (samme ALLE-nofuse-grundlag
+  som cache-tallet ovenfor, altså inklusive bagte par, fordi de også
+  udløser et rigtigt worker-kald) har gennemsnit 25,35 (~25,4), 95.-
+  percentil 33 og maksimum 37 over de 1.200 runs
+  (`perRunDistinctPairVerdictKeys` i `docs/design/pair-frequency.json`).
+  Det **globale** loft ganger 95.-percentilen med en udtrykkeligt ANTAGET
+  (ikke målt — der findes ingen rigtig trafik endnu) travleste-dag-
+  belastning på ~10 fulde gennemspilninger, PÅ TVÆRS AF ALLE spillere:
+  10 × 33 ≈ 330, uden fradrag for genbrug på tværs af de 10 runs samme dag
+  (et bevidst for-højt, konservativt skøn, fordi cachen i virkeligheden
+  ville dække en del af overlappet allerede samme dag). 350 runder det op
+  med en smule margin. Det **pr.-IP** loft bruger SAMME 95.-percentil (33),
+  men ganger med et langt mindre antaget antal fulde gennemspilninger for
+  ÉN ENKELT spiller på én dag — 5, bevidst rigeligt for selv en meget
+  ihærdig tester: 33 × 5 ≈ 165. 165 er samtidig meningsfuldt UNDER
+  halvdelen af det globale loft (350): én IP kan aldrig alene opbruge mere
+  end knap halvdelen af døgnets samlede budget. Rammes pr.-IP-loftet (men
+  det globale har stadig plads), svarer koordinatoren 429 (en
+  klient-specifik grænse, ligesom rate-limit-vinduet) — rammes det GLOBALE
+  loft, svarer den 503, uanset hvilken IP der spørger. Se kommentarerne i
+  `worker/wrangler.toml` og `worker/src/coordinator.ts` for hele
+  udregningen og rækkefølgen mellem de to tjek.
 - **Metode og forbehold.** Tallene kommer fra en deterministisk simulering
   af motoren (`src/core/engine.ts` + `src/narrator/narrator.ts`), ikke fra
   rigtig produktionstrafik — der findes ingen endnu, laget er ikke
@@ -198,6 +227,84 @@ Alle tre tærskler er udledt af data, ikke gættet. Sådan:
   antagelser er skrevet ud, så de kan efterprøves og justeres, når rigtig
   trafik findes — loftet er sat som en Wrangler-var netop for at gøre det
   let.
+
+#### Fase 2 — sikkerhedsrunde 2 (rettelser før laget må stå åbent)
+
+En sikkerhedsgennemgang af fase 2's første udgave fandt syv konkrete
+mangler — ingen af dem nye TASK'er, alle er hærdninger af TASK-002-005
+ovenfor, leveret som nye commits på samme gren (aldrig amendet). Alle syv
+er lukket:
+
+1. **IP-identitet flyttet til kanten.** `worker/src/index.ts` (kører på
+   selve Cloudflares netværkskant) læser KUN `cf-connecting-ip` — aldrig
+   `X-Forwarded-For`, som en klient frit kan sætte — og hasher den med en
+   OBLIGATORISK secret (`IP_HASH_SALT`, ingen fallback). Durable Object'et
+   (`coordinator-do.ts`) ser aldrig en rå IP: det læser og formvaliderer
+   (64 hex-tegn, `ip.ts`s `isValidIpHash`) en intern header, som `index.ts`
+   ALTID overskriver — uanset hvad en indkommende anmodning selv måtte
+   indeholde af samme header. Mangler den troværdige IP eller saltet,
+   fejler `index.ts` LUKKET (503), i stedet for at gætte en identitet.
+   Testet i `tests/worker-edge.test.ts` (bl.a. at et forfalsket internt
+   header-forsøg bliver overskrevet, og at 503 kommer uden salt).
+2. **Pr.-IP dagligt loft (165/døgn) ved siden af det globale (350/døgn).**
+   Se "Fase 2 — målte tal" ovenfor for selve udregningen og 429-vs-503-
+   præcedensen. Testet med simuleret samtidighed i
+   `tests/worker-security.test.ts`/`worker-coordinator.test.ts`.
+3. **Kanoniske id'er erstatter fri tekst.** `WireRequest` (`validate.ts`)
+   har kun `aId`/`bId`/`verdict`/`needId?`/`summer?` — intet navn, kind,
+   stuff, traits eller flavor. `worker/src/catalog.ts` slår id'erne op i
+   det BUNDLEDE `content/elements.json`/`content/acts/*.json`; et ukendt
+   id afvises 400 FØR cache-opslag og budget. Dette lukker både
+   prompt-injektion gennem beskrivende felter og risikoen for uendeligt
+   mange unikke cache-nøgler fra opdigtede id'er. **Vigtigt driftsforhold:**
+   ændres spillets indhold (`content/elements.json`, `content/acts/*.json`),
+   skal workeren GENDEPLOYES for at kende de nye id'er — indholdet bundles
+   ind ved deploy, det læses ikke live. Klientsiden er tilsvarende
+   indskrænket: `src/narrator/live.ts` sender kun
+   `{aId, bId, verdict, needId?, summer?}` over nettet (se
+   `tests/live.test.ts`, "sender KUN kanoniske id'er over nettet").
+4. **Lagerlivscyklus.** Durable Object storage har ingen indbygget TTL.
+   `worker/src/cleanup.ts` finder (rent, testbart) hvilke rate-limit-poster
+   der ikke længere har et tidsstempel i vinduet, og hvilke cache-poster
+   der er ældre end `CACHE_MAX_AGE_MS` (30 dage); `coordinator-do.ts`s
+   `alarm()`-handler sletter dem og genplanlægger sig selv (én gang i
+   døgnet, `CLEANUP_INTERVAL_MS`) via de rigtige Cloudflare-alarm-API'er
+   (`storage.getAlarm`/`setAlarm`, `cf-types.ts`). Cache-nøglen har fået et
+   eksplicit versionspræfiks (`CACHE_VERSION` i `cache-key.ts`, i dag
+   `"v1"`): bump den, når `model.ts`'s prompt eller `MODEL` i
+   `wrangler.toml` ændres på en måde der gør gamle linjer forkerte — gamle
+   nøgler bliver uopslåelige med det samme, uden migrering.
+5. **Målingerne gjort reproducerbare.** `tools/pair_frequency.ts` udvidet
+   til at emittere pr.-run distinkte par+dom-nøgler (gennemsnit/95.-
+   percentil/maksimum) og selve cache-træf-udregningen som checked-in
+   JSON-felter (`perRunDistinctPairVerdictKeys`, `cacheHitRate` i
+   `docs/design/pair-frequency.json`) — ikke kun tal skrevet i denne plan.
+   Genkørt efter rebase mod main (`npm run pairs`); tallene er opdateret
+   ovenfor til den nye kørsel (96,9 %/91,9 % cache-træf, 25,35/33/37
+   pr.-run distinkte nøgler).
+6. **Den rigtige Cloudflare-adapter øves nu i CI.** `worker/package.json`
+   har fået `typecheck` (`tsc --noEmit`) og `dry-run`
+   (`wrangler deploy --dry-run` — bygger og validerer bundlet, INGEN
+   deploy, intet Cloudflare-login krævet) samt et checked-in
+   `worker/package-lock.json` (`wrangler ^3.90.0`, ingen versions-hop).
+   `.github/workflows/ci.yml` har en ny `worker-typecheck`-job: egen
+   `npm ci` i `worker/`, egen typecheck, egen dry-run — adskilt fra rodens
+   `test-and-build`-job og fra `deploy.yml` (uændret, rører aldrig denne
+   gren). Rodens `npm run build` typjekker nu OGSÅ `worker/` (nyt
+   `typecheck:worker`-script, kører `tsc --noEmit -p worker/tsconfig.json`
+   med rodens EGEN installerede TypeScript — kræver ikke
+   `worker/node_modules`, fordi `worker/tsconfig.json` ikke har nogen
+   eksterne npm-afhængigheder at typjekke imod). `wrangler types` blev
+   afprøvet (genererer kun `Env`-bindings-grænsefladen, med snævre
+   streng-literaler bundet til den AKTUELLE `wrangler.toml`, og dækker
+   slet ikke `DurableObject`/`Request`/`Response`-typerne) — vurderet IKKE
+   at være en gevinst over de håndskrevne, minimale typer i `cf-types.ts`
+   (som allerede kun dækker de fem grænseflader, workeren rent faktisk
+   bruger), så de er bevaret uændret. Se
+   `docs/deployment/live-narrator.md` for detaljerne.
+7. **Ægte UTF-8 byte-længde.** `validate.ts`s `isBodyTooLarge` bruger
+   `TextEncoder().encode(...).length` (rigtige bytes), ikke JS' `.length`
+   (UTF-16 code-units, som undervurderer multi-byte tegn som emoji/accenter).
 
 ### Fase 3 — Kvalitet, når stemmedommeren findes
 
@@ -240,34 +347,70 @@ Alle tre tærskler er udledt af data, ikke gættet. Sådan:
 ## 5. Files
 
 - **FILE-001**: `src/narrator/live.ts` — leveret. Klienten. Fase 2 tilføjede
-  429/503-håndtering (`quietUntil`) og `id` i `describe()`-payloaden, så
-  workeren kan bygge cache-nøglen.
-- **FILE-002**: `worker/src/index.ts` (tynd oprindelses-gate + DO-routing),
-  `worker/wrangler.toml` (Durable Object-binding/migration + `[vars]`),
-  `worker/package.json` — leveret/opdateret. Proxyen.
+  429/503-håndtering (`quietUntil`). **Sikkerhedsrunde 2:** `describe()`
+  (fuld tekstbeskrivelse af elementet) er FJERNET; `fetchLine()` sender nu
+  udelukkende `{aId, bId, verdict, needId?, summer?}` over nettet — samme
+  smalle form som `WireRequest` (`worker/src/validate.ts`) kræver. Testet i
+  `tests/live.test.ts` ("sender KUN kanoniske id'er over nettet").
+- **FILE-002**: `worker/src/index.ts` (tynd oprindelses-gate, IP-hashing
+  ved kanten + DO-routing), `worker/wrangler.toml` (Durable Object-binding/
+  migration + `[vars]`, inkl. det nye `DAILY_MAX_UPSTREAM_CALLS_PER_IP`),
+  `worker/package.json` (nu med `typecheck`/`dry-run`/`types`-scripts og
+  `worker/package-lock.json`, sikkerhedsrunde 2 punkt 6) — leveret/
+  opdateret. Proxyen.
 - **FILE-003**: `src/narrator/narrator.ts` — ændret: `attachLive()`,
   `liveLine()`, kæden udvidet fra fem til seks trin.
 - **FILE-004**: `src/ui/main.ts` — ændret: `prefetchLine()` kaldt fra
-  `renderSlots()`, når begge felter er fyldt.
-- **FILE-005**: `tests/live.test.ts` — leveret/udvidet med 429/503-tests.
-- **FILE-006** (fase 2): `worker/src/{limiter,budget,cache-key,origin,
-  validate,clean,concurrency,ip,store,model,coordinator,coordinator-do,
-  cf-types,env}.ts` — de rene beslutningsmoduler plus den tynde
-  Cloudflare-tilpasning. `cf-types.ts` er håndskrevne, minimale typer i
-  stedet for en ny `@cloudflare/workers-types`-afhængighed. `env.ts` er
-  fortolkningen af Wrangler-vars (streng → tal med fallback), trukket ud
-  for sig selv, fordi en fejl her ellers ville være usynlig: et første
-  udkast brugte samme "positivt heltal"-regel til det daglige loft som
-  til rate-limit-vinduet, hvilket ville have gjort TASK-005's nødstop
+  `renderSlots()`, når begge felter er fyldt. **Sikkerhedsrunde 2:**
+  `live.prefetch()`-kaldet sender `needId` (et akt-problems id), ikke
+  længere en fri beskrivelsestekst.
+- **FILE-005**: `tests/live.test.ts` — leveret/udvidet med 429/503-tests og
+  (sikkerhedsrunde 2) en test af den smalle ledningsform.
+- **FILE-006** (fase 2, udvidet i sikkerhedsrunde 2): `worker/src/{limiter,
+  budget,cache-key,origin,validate,clean,concurrency,ip,store,model,
+  coordinator,coordinator-do,cf-types,env,catalog,cleanup}.ts` — de rene
+  beslutningsmoduler plus den tynde Cloudflare-tilpasning. `cf-types.ts` er
+  håndskrevne, minimale typer i stedet for en ny
+  `@cloudflare/workers-types`-afhængighed (afprøvet mod `wrangler types` i
+  sikkerhedsrunde 2, punkt 6 — se "Fase 2 — sikkerhedsrunde 2" ovenfor).
+  `env.ts` er fortolkningen af Wrangler-vars (streng → tal med fallback),
+  trukket ud for sig selv, fordi en fejl her ellers ville være usynlig: et
+  første udkast brugte samme "positivt heltal"-regel til det daglige loft
+  som til rate-limit-vinduet, hvilket ville have gjort TASK-005's nødstop
   ("sæt dagligt loft til 0") virkningsløst — `"0"` ville stille og
   roligt være faldet tilbage til defaulten. Fanget og rettet, se TEST-007.
-- **FILE-007** (fase 2): `tests/worker-security.test.ts` (23 tests: rate
-  limit, budget, cache-nøgle, oprindelse, validering, env-fortolkning) og
-  `tests/worker-coordinator.test.ts` (7 tests: cache/budget/stampede/
-  rækkefølge) — kører i root-Vitest uden en Cloudflare-testpool, jf.
-  kravet om at holde adapteren tynd og de rene moduler importerbare.
-- **FILE-008** (fase 2): `docs/deployment/live-narrator.md` — TASK-005,
-  udrulningsopskriften, med en kort henvisning fra `README.md`.
+  **Nye i sikkerhedsrunde 2:** `catalog.ts` (kanonisk id → indhold, punkt
+  3) og `cleanup.ts` (rene oprydningsfunktioner til rate-limit/cache-
+  livscyklus, punkt 4); `ip.ts` omskrevet til KUN at læse
+  `cf-connecting-ip` ved kanten (punkt 1).
+- **FILE-007** (fase 2, tal opdateret i sikkerhedsrunde 2):
+  `tests/worker-security.test.ts` (47 tests: rate limit, globalt+pr.-IP
+  budget, cache-nøgle+version, oprindelse, validering (inkl. ægte UTF-8
+  byte-længde), env-fortolkning, katalog-opslag, oprydning, IP-hash-form),
+  `tests/worker-coordinator.test.ts` (12 tests: cache/budget/stampede/
+  rækkefølge/kanonisering) og (nyt i sikkerhedsrunde 2)
+  `tests/worker-edge.test.ts` (11 tests: at `index.ts` altid overskriver et
+  forfalsket internt hash-header, at 503 kommer uden salt/troværdig IP, og
+  at oprydningsalarmen bliver planlagt) — alle kører i root-Vitest uden en
+  Cloudflare-testpool, jf. kravet om at holde adapteren tynd og de rene
+  moduler importerbare.
+- **FILE-008** (fase 2, udvidet i sikkerhedsrunde 2):
+  `docs/deployment/live-narrator.md` — TASK-005, udrulningsopskriften, med
+  en kort henvisning fra `README.md`. Udvidet med: obligatorisk
+  `IP_HASH_SALT`, pr.-IP dagligt loft, cache-version-bump-proceduren,
+  korrigeret Origin-forbehold, og at indholdsændringer kræver gendeploy.
+- **FILE-009** (sikkerhedsrunde 2, punkt 5): `tools/pair_frequency.ts` —
+  udvidet med pr.-run distinkte par+dom-nøgler (gennemsnit/95.-percentil/
+  maksimum) og selve cache-træf-udregningen (to varianter: alle møder og
+  kun ubagte) som nye, checked-in felter i
+  `docs/design/pair-frequency.json` (`perRunDistinctPairVerdictKeys`,
+  `cacheHitRate`) — gør målingerne bag TASK-002/003/004's tal
+  efterprøvelige uden at læse denne plan.
+- **FILE-010** (sikkerhedsrunde 2, punkt 6): `package.json` (rod) — nyt
+  `typecheck:worker`-script, kørt som del af `build`.
+  `.github/workflows/ci.yml` — ny `worker-typecheck`-job (egen `npm ci` i
+  `worker/`, typecheck, `wrangler deploy --dry-run`), adskilt fra
+  `test-and-build` og fra `.github/workflows/deploy.yml` (uændret).
 
 ## 6. Testing
 
@@ -286,13 +429,15 @@ Alle tre tærskler er udledt af data, ikke gættet. Sådan:
   slags tavshed frem til den UTC-nulstilling, workeren opgav — og laget
   taler helt normalt igen, så snart den er passeret, hvilket beviser at
   503 aldrig rørte den permanente afbryder (`tests/live.test.ts`).
-- **TEST-007** (fase 2): De rene worker-moduler — rullende vindue
-  (tillader op til loftet, afviser det næste, tillader igen når det
-  ældste tidsstempel er udløbet), daglig budget-reservation under
-  simuleret samtidighed, cache-nøglens rækkefølge-uafhængighed og
-  dom-følsomhed, oprindelsespolitik, og validering af misdannet/for stort
-  input — testet direkte, uden en Cloudflare-runtime
-  (`tests/worker-security.test.ts`).
+- **TEST-007** (fase 2, udvidet i sikkerhedsrunde 2): De rene worker-
+  moduler — rullende vindue (tillader op til loftet, afviser det næste,
+  tillader igen når det ældste tidsstempel er udløbet), globalt OG pr.-IP
+  daglig budget-reservation under simuleret samtidighed, cache-nøglens
+  rækkefølge-uafhængighed, dom-følsomhed og versionspræfiks,
+  oprindelsespolitik, validering af misdannet/for stort input (ægte UTF-8
+  byte-længde, ikke `.length`), kanonisk id-opslag (`catalog.ts`, ukendt id
+  afvises), og oprydningskandidater (`cleanup.ts`) — testet direkte, uden
+  en Cloudflare-runtime (`tests/worker-security.test.ts`).
 - **TEST-008** (fase 2): Koordinatorens sammenspil — cache-hit reserverer
   ikke budget, fejl caches aldrig, samtidige misses på samme nøgle deles
   til ét kald, rate-limit håndhæves før validering og cache, og
@@ -306,17 +451,57 @@ Alle tre tærskler er udledt af data, ikke gættet. Sådan:
   defaulten). Testen blev bekræftet RØD med den gamle regel genindsat,
   derefter GRØN igen efter rettelsen — se commit-historikken
   (`tests/worker-security.test.ts`).
+- **TEST-010** (sikkerhedsrunde 2, punkt 1): `index.ts` overskriver
+  BETINGELSESLØST et indkommende, forfalsket internt hash-header — en
+  anmodning der selv sætter `x-internal-ip-hash` til en vilkårlig værdi
+  får den overskrevet med den rigtige, kant-udregnede hash, aldrig sin
+  egen. 503 uden troværdig `cf-connecting-ip` eller uden `IP_HASH_SALT`.
+  Durable Object'et afviser en manglende/forkert formet hash (ikke 64
+  hex-tegn) med 503, uanset hvor den kom fra (`tests/worker-edge.test.ts`).
+- **TEST-011** (sikkerhedsrunde 2, punkt 2): Pr.-IP dagligt loft under
+  simuleret samtidighed reserverer aldrig mere end loftet for én IP-hash;
+  rammes det (men det globale har plads), er svaret 429, ikke 503; rammes
+  det GLOBALE loft først, er svaret 503, uanset hvilken IP der spørger; et
+  afvist pr.-IP-forsøg dræner ikke det globale budget
+  (`tests/worker-coordinator.test.ts`).
+- **TEST-012** (sikkerhedsrunde 2, punkt 3): Et ukendt `aId`/`bId`/`needId`
+  afvises 400 FØR cache-opslag og budget (bevist ved at budgettællingen
+  ikke ændrer sig efter et afvist kald); en klient kan ikke få
+  klient-oplyste navne/flavor-felter ind i den model-klare krop, fordi
+  `WireRequest` slet ikke har feltet (`tests/worker-security.test.ts`,
+  `catalog.ts`-testene).
+- **TEST-013** (sikkerhedsrunde 2, punkt 4): Rate-limit-poster hvor ALLE
+  tidsstempler er faldet ud af vinduet, og cache-poster ældre end
+  `CACHE_MAX_AGE_MS`, findes korrekt af de rene `cleanup.ts`-funktioner; en
+  frisk post (ét tidsstempel i vinduet, eller en ung cache-post) findes
+  ALDRIG som oprydningskandidat (`tests/worker-security.test.ts`). Selve
+  DO-forbindelsen — en oprydningsalarm bliver planlagt ved første
+  forespørgsel og ikke genplantet, og `alarm()` sletter reelt de døde
+  poster via de rigtige Cloudflare storage-API'er (`delete`/`list`/
+  `getAlarm`/`setAlarm`) — er testet separat i `tests/worker-edge.test.ts`.
+- **TEST-014** (sikkerhedsrunde 2, punkt 7): Et body med en rå tekstlængde
+  under `LIMITS.bodyBytes`, men en ÆGTE UTF-8-byte-længde derover (mange
+  multi-byte tegn), afvises 400 — beviser at tjekket bruger
+  `TextEncoder().encode(...).length`, ikke JS' `.length`
+  (`tests/worker-security.test.ts`).
 
 ## 7. Risks & Assumptions
 
-- **RISK-001**: **Regningen.** **Delvist afværget (fase 2, 2026-08-12.)**
-  En åben proxy mod en betalt model kan koste vilkårligt meget, hvis nogen
-  finder endpointet. `ALLOWED_ORIGINS` er nu håndhævet som en RIGTIG 403
+- **RISK-001**: **Regningen.** **Delvist afværget (fase 2, 2026-08-12;
+  IP-identiteten yderligere hærdet i sikkerhedsrunde 2, s.d.)** En åben
+  proxy mod en betalt model kan koste vilkårligt meget, hvis nogen finder
+  endpointet. `ALLOWED_ORIGINS` er nu håndhævet som en RIGTIG 403
   (`worker/src/index.ts`), ikke kun en CORS-header — CORS er en
   browserregel og stopper aldrig `curl` alene. TASK-002 (rate limit pr.
-  IP-hash) og TASK-003 (dagligt UTC-loft over opstrømskald) er begge
-  leveret og er det egentlige modtræk, fordi Origin kan forfalskes; loftet
-  kan ikke. **Observation, ikke rettet her:** `prefetchLine()`
+  IP-hash) og TASK-003 (globalt + pr.-IP dagligt UTC-loft over
+  opstrømskald) er begge leveret og er det egentlige modtræk, fordi Origin
+  kan forfalskes; loftet kan ikke. Sikkerhedsrunde 2 lukkede et beslægtet
+  hul: IP-identiteten (grundlaget for BÅDE rate limit og pr.-IP-loftet)
+  fastslås nu udelukkende ved Cloudflares egen kant af en obligatorisk,
+  saltet hash — en klient kan hverken forfalske sin egen IP (kun
+  `cf-connecting-ip` bruges, aldrig en klient-sat header) eller en andens
+  (den interne header overskrives altid). **Observation, ikke rettet her:**
+  `prefetchLine()`
   (`src/ui/main.ts`, fase 1) spørger workeren for ethvert ikke-opskrift-par
   — også par der allerede har en bagt replik og derfor aldrig bruger
   svaret, fordi den kun tjekker `matchCombo`, ikke bagt-status. Det er

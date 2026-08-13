@@ -9,7 +9,7 @@
  */
 
 import type { UpstreamResult } from "./coordinator";
-import type { ValidatedBody, ValidatedThing } from "./validate";
+import type { CanonicalBody, CanonicalThing } from "./catalog";
 import { cleanModelText } from "./clean";
 
 export interface ModelEnv {
@@ -50,7 +50,7 @@ HARD RULES:
 
 Answer with the line and nothing else.`;
 
-function beskriv(t: ValidatedThing): string {
+function beskriv(t: CanonicalThing): string {
   const dele = [t.kind, t.stuff, t.scale].filter(Boolean).join(", ");
   const traits = t.traits.length ? ` — ${t.traits.join(", ")}` : "";
   const flavor = t.flavor ? `\n  Its entry reads: "${t.flavor}"` : "";
@@ -58,7 +58,7 @@ function beskriv(t: ValidatedThing): string {
   return `${t.name} (${dele}${traits})${flavor}${mood}`;
 }
 
-function buildUserPrompt(body: ValidatedBody): string {
+function buildUserPrompt(body: CanonicalBody): string {
   const dom = DOMME[body.verdict] ?? DOMME.inert!;
   return [
     `Karl put these two together and nothing came of it.`,
@@ -80,7 +80,7 @@ function buildUserPrompt(body: ValidatedBody): string {
  * catch omkring dette kald, kun for at aflæse `ok`.
  */
 export async function callUpstreamOpenAI(
-  body: ValidatedBody,
+  body: CanonicalBody,
   env: ModelEnv,
 ): Promise<UpstreamResult> {
   let svar: Response;
