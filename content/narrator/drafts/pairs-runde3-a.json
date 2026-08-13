@@ -1,0 +1,204 @@
+{
+  "pairs": [
+    {
+      "key": "rullesten+spyd",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl pressed the round stone into the spear, hoping proximity might count for something. It did not. The {right} belongs with the {partner}; this meeting was merely in the way.",
+        "The round stone rolled, the spear pointed, and neither talent helped the other. Somewhere else, the {partner} can actually use the {right}. History recommends they meet there."
+      ]
+    },
+    {
+      "key": "stenspil+vand",
+      "verdict": "absurd",
+      "variants": [
+        "Karl rolled the water toward the boules court, expecting a splash to count as a legal throw. Nobody agreed, least of all the boules, which do not get wet on principle.",
+        "There is no rule in boules that rewards proximity to the water, and Karl checked twice before accepting that his afternoon's strategy did not exist."
+      ]
+    },
+    {
+      "key": "malm+saft",
+      "verdict": "absurd",
+      "variants": [
+        "Karl dipped the ore in the berry juice, waiting for a shine that never arrived. Rock does not drink, and rock especially does not drink fruit.",
+        "The ore sat in a puddle of berry juice for the length of an entire afternoon, gaining nothing but a faint purple tinge Karl mistook for progress."
+      ]
+    },
+    {
+      "key": "hammer+stenoekse",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl struck the stone axe with the hammer, hoping one finished tool might improve the other. It did not. The {right} belongs with the {partner}; this was only tools comparing handles.",
+        "The hammer and the stone axe met as two professionals forced into the same meeting. Somewhere else, the {partner} has legitimate work for the {right}. The other brought opinions."
+      ]
+    },
+    {
+      "key": "bautasten+mursten",
+      "verdict": "absurd",
+      "variants": [
+        "Karl leaned the mud brick against the standing stone like an offering, unsure which of them was meant to be impressed.",
+        "The standing stone has stood, unmoved and unimpressed, since before Karl learned to stack mud bricks. It remained exactly that unimpressed today."
+      ]
+    },
+    {
+      "key": "hulemaleri+malm",
+      "verdict": "absurd",
+      "variants": [
+        "Karl held a lump of ore up to the cave painting, checking if the glitter matched anything already drawn. It matched nothing; the painting had never once depicted rocks.",
+        "The cave painting depicts a boar, a sunset, or possibly Ugh, depending entirely on who is asked. Ore was never a candidate, and today's introduction did not change that."
+      ]
+    },
+    {
+      "key": "hulemaleri+spyd",
+      "verdict": "absurd",
+      "variants": [
+        "Karl pointed the spear at the cave painting as though scoring a very slow hit. The painting did not flinch, being made of stone and mineral pigment, not boar.",
+        "There is a version of the cave painting where the spear appears, and Karl has not painted it yet. Holding the actual spear up to the actual painting changed nothing about that."
+      ]
+    },
+    {
+      "key": "gnister+haandkile",
+      "verdict": "absurd",
+      "variants": [
+        "Karl struck the hand axe against nothing in particular, hoping the sparks might improve its edge. The edge stayed exactly as sharp, and exactly as unimproved by fire it never touched.",
+        "Sparks live for half a second and then are gone; the hand axe has outlasted several of Karl's other tools by years. Introducing the two taught neither of them anything about the other."
+      ]
+    },
+    {
+      "key": "fisk+spyd",
+      "verdict": "plausible",
+      "variants": [
+        "The spear is built for exactly this: something fast, wet, and worth catching. Karl held it over the fish for a long moment, certain a recipe was one thrust away.",
+        "Every instinct Karl has says the spear and the fish belong together, one hunting the other in some obvious way he can't yet name. The moment came and went without becoming anything."
+      ]
+    },
+    {
+      "key": "reb+spyd",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl looped the rope around the spear and waited for cleverness. The knot held; history did not. The {right} belongs with the {partner}, not today's volunteer.",
+        "The rope and the spear produced a very secure version of nothing. Somewhere else, the {partner} can make proper use of the {right}. This pairing merely tied up the afternoon."
+      ]
+    },
+    {
+      "key": "pind+stenspil",
+      "verdict": "absurd",
+      "variants": [
+        "Karl offered the stick to the boules court as a replacement rule, on the grounds that sticks are sometimes involved in games. They are not involved in this one.",
+        "There is a stick at the center of every boules match, the one Ugh throws for, and it is never the stick Karl happened to be holding. Today's stick was no exception."
+      ]
+    },
+    {
+      "key": "hammer+hammer",
+      "verdict": "self",
+      "variants": [
+        "Karl held up two hammers side by side, checking whether one had grown sharper out of sheer jealousy. Neither had. They remain, stubbornly, the same hammer twice.",
+        "Two hammers, introduced to each other with great ceremony, discovered they had absolutely nothing new to say. Karl's arm, already upgraded once by the hammer, did not get a second upgrade."
+      ]
+    },
+    {
+      "key": "ild+stenoekse",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl held the fire near the stone axe, expecting heat to improve an edge already proud of itself. It did not. The {right} belongs with the {partner}; the other only got warm.",
+        "Fire met the stone axe and discovered that finished tools are poor raw material. Somewhere else, the {partner} can still do useful work with the {right}. Here, nothing changed."
+      ]
+    },
+    {
+      "key": "boomerang+spyd",
+      "verdict": "plausible",
+      "variants": [
+        "The boomerang and the spear are cut from the same reliable wood, and Karl felt sure that shared material meant a shared future. It didn't, not yet.",
+        "Karl weighed the boomerang against the spear, both wood, both familiar in his hand, and waited for the obvious idea to finish forming. It never quite did."
+      ]
+    },
+    {
+      "key": "stenspil+stenspil",
+      "verdict": "self",
+      "variants": [
+        "Karl set up two boules courts side by side, hoping a rematch might change eleven straight losses. It changed nothing; the boules stayed exactly as merciless as before.",
+        "There is only one set of boules Karl actually owns, and introducing it to itself did not produce a second, easier opponent. Ugh remains undefeated either way."
+      ]
+    },
+    {
+      "key": "galleri+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl set the round stone beside the cave gallery, hoping placement alone might make it art. It did not. The {right} belongs with the {partner}; the other can wait outside the exhibition.",
+        "The cave gallery considered the round stone for a full second and declined the submission. Somewhere else, the {partner} has actual business with the {right}. This arrangement did not."
+      ]
+    },
+    {
+      "key": "hulemaleri+ild",
+      "verdict": "absurd",
+      "variants": [
+        "Karl held the fire close to the cave painting to see it better, then remembered what fire does to things that took him all afternoon to draw and stepped back immediately.",
+        "The cave painting has survived every previous evening by staying far from the fire, and tonight was not the night that policy changed."
+      ]
+    },
+    {
+      "key": "gravestok+ler",
+      "verdict": "plausible",
+      "variants": [
+        "The digging stick is built for exactly one job — turning ground into something workable — and the clay underneath it is about as workable as ground ever gets. Karl felt the idea arrive and then, somehow, leave again.",
+        "Karl pressed the digging stick into the clay, certain that a tool this good and a material this soft owed each other something more than a hole. Nothing more arrived today."
+      ]
+    },
+    {
+      "key": "faelde+saft",
+      "verdict": "absurd",
+      "variants": [
+        "Karl baited the snare with berry juice, on the theory that anything sticky counts as bait. The snare caught nothing but a faint purple stain and Karl's own optimism.",
+        "A snare hunts quietly while Karl sleeps; berry juice does nothing while anyone sleeps. Combining the two taught the snare nothing about patience it didn't already have."
+      ]
+    },
+    {
+      "key": "froe+haandkile",
+      "verdict": "plausible",
+      "variants": [
+        "The hand axe can shape almost anything Karl hands it, and seeds turned out to be the smallest, least cooperative thing he's tried so far. Something should come of that eventually.",
+        "Karl set the hand axe next to a small pile of seeds, waiting for shape to happen to something that doesn't hold still. Seeds, it turns out, do not hold still for good reasons."
+      ]
+    },
+    {
+      "key": "hjul+spyd",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl rolled the wheel past the spear, admiring one motion and the other's point. Together, they invented traffic. The {right} belongs with the {partner}; this crossing was merely inconvenient.",
+        "The wheel and the spear each arrived with a perfectly respectable purpose, neither involving the other. Somewhere else, the {partner} has a working future with the {right}. Today's meeting was a scheduling error."
+      ]
+    },
+    {
+      "key": "ild+rullesten",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl held the fire close to the round stone, hoping heat might persuade polish into progress. It did not. The {right} belongs with the {partner}; the other remained decorative.",
+        "The round stone warmed up. The fire used fire. Civilisation remained exactly where it was. Somewhere else, the {partner} has better work for the {right}, away from this lukewarm summit."
+      ]
+    },
+    {
+      "key": "ild+saft",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl poured the berry juice near the fire, expecting steam or spectacle. It hissed once and stopped. The {right} belongs with the {partner}; the other was only dampening the mood.",
+        "Fire and berry juice held a brief meeting about heat, sweetness, and neither one's actual job. Somewhere else, the {partner} has useful plans for the {right}. This was refreshments."
+      ]
+    },
+    {
+      "key": "hjul+mudder",
+      "verdict": "near-miss",
+      "variants": [
+        "Karl rolled the wheel through the mud, expecting the track to become an invention. It became a track. The {right} belongs with the {partner}; this route went nowhere.",
+        "The mud clung to the wheel with real commitment and no useful result. Somewhere else, the {partner} has a working future with the {right}. The other merely needs cleaning."
+      ]
+    },
+    {
+      "key": "mursten+rullesten",
+      "verdict": "plausible",
+      "variants": [
+        "The mud brick and the round stone are both hard, both stubborn, both convinced they belong in a wall somewhere. Karl held them together and waited for the wall to agree.",
+        "Karl stacked the round stone on top of the mud brick, testing whether hard-and-heavy and hard-and-dry might finally add up to something standing. Not today, but the idea has legs."
+      ]
+    }
+  ]
+}

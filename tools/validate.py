@@ -62,10 +62,53 @@ def _combo_in_act(combo, act, elements) -> bool:
     return any(e["id"] == combo["result"] and e["act"] == act["act"] for e in elements)
 
 
+def _combo_available(combo: dict, flags: set[str]) -> bool:
+    """Samme flagregel som Engine.flagsAllow()."""
+    return (
+        all(flag in flags for flag in combo.get("requiresFlags", []))
+        and all(flag not in flags for flag in combo.get("blockedByFlags", []))
+    )
+
+
+def _locked_is_reachable(combos: list[dict]) -> bool:
+    """Kan der findes en flagtilstand hvor ALLE opskrifter for parret er spærret?"""
+    if not combos:
+        return False
+    flag_names = sorted({
+        flag
+        for combo in combos
+        for field in ("requiresFlags", "blockedByFlags")
+        for flag in combo.get(field, [])
+    })
+    for mask in range(1 << len(flag_names)):
+        flags = {
+            flag
+            for index, flag in enumerate(flag_names)
+            if mask & (1 << index)
+        }
+        if not any(_combo_available(combo, flags) for combo in combos):
+            return True
+    return False
+
+
+def _baked_lookup_reachable(verdict: str, combos: list[dict]) -> bool:
+    """Engine giver kun nofuse uden opskrift; med opskrift kan fiaskoen kun være locked."""
+    if verdict == "locked":
+        return _locked_is_reachable(combos)
+    return not combos
+
+
 def main() -> int:
     elements = load(CONTENT / "elements.json") or []
     combos = load(CONTENT / "combos.json") or []
     acts = [a for p in sorted((CONTENT / "acts").glob("*.json")) if (a := load(p))]
+    # RISK-005: en bagt fiaskoreplik forældes, hvis parret senere får en åben
+    # opskrift — så par-nøglen i frozenset-form, kun til den kontrol.
+    combos_by_pair_raw: dict[frozenset, list] = {}
+    for c in combos:
+        pair = c.get("pair")
+        if pair and len(pair) == 2:
+            combos_by_pair_raw.setdefault(frozenset(pair), []).append(c)
     narrator = [
         n
         for p in sorted((CONTENT / "narrator").glob("*.json"))
@@ -102,6 +145,20 @@ def main() -> int:
             derived = "pair-" + key.replace("+", "-") + "-" + verdict
             if derived not in ids:
                 err(f"{p.name}: opslaget {lookup} peger på ukendt replik {derived}")
+            # RISK-005: præcis samme reachability som Engine.matchCombo +
+            # judgePair. Findes en opskrift, kan en fiasko kun være `locked`;
+            # er mindst én opskrift tilgængelig i alle flagtilstande, kan selv
+            # `locked` aldrig høres.
+            a_id, _, b_id = key.partition("+")
+            pair_combos = combos_by_pair_raw.get(frozenset((a_id, b_id)), [])
+            if not _baked_lookup_reachable(verdict, pair_combos):
+                if verdict == "locked" and not pair_combos:
+                    why = "parret har ingen opskrift, så dommen locked kan aldrig opstå"
+                elif verdict == "locked":
+                    why = "mindst én opskrift er tilgængelig i enhver flagtilstand"
+                else:
+                    why = "parret har en opskrift; fiasko er derfor locked eller slet ingen fiasko"
+                err(f"{p.name}: opslaget {lookup} er forældet — {why} (RISK-005)")
         # CON-003: den dovent hentede bagte tekst må fylde 60 KB gzip pr. akt.
         # Grænsen bevogtes her frem for i build-loggen, fordi den kun brydes
         # når nogen bager en ny batch — og det er præcis dér, ingen kigger på

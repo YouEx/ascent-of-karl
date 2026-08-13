@@ -19,13 +19,17 @@ tags: [architecture, engine, narrator, content, tooling, feature]
 > slutninger, som alle er mere presserende. `genericFailure` nås aldrig —
 > håndhævet af `tests/grammar.test.ts`, ikke af skøn.
 >
-> **Fase 4 står på gulvet nu** (2026-08-12). 303 par har en bagt replik —
-> 404 opslag, 908 varianter — og de dækker **72,4 %** af alle fiasko-møder
-> målt over 1.200 gennemspilninger. Grammatikken tager de sidste 27,6 %;
-> tavshed tager 0. Filen lazy-loades og vejer **58,3 KB gzip** mod CON-003's
-> loft på 60, efter at opslagslisten holdt op med at skrive hvert replik-id
-> ud to gange. Loftet er nu en test (`tests/pairs.test.ts`), ikke en linje i
-> build-loggen som ingen læser. Næste batch fortsætter mod N=600.
+> **Fase 4 er ført frem til bundtloftet** (2026-08-13). Ni bagte fiasker blev
+> fjernet, fordi parrene siden fik en opskrift; validatoren og
+> `tests/pairs.test.ts` bevogter nu RISK-005 mod både betingede, ubetingede og
+> blandede opskrifter. Derefter tilføjede runde 3 de
+> næste 25 målte par. Facittet har **420 opslag / 940 varianter**; 294 af de
+> 1.005 målte par har mindst én bagt dom, og de dækker **71.2 %** af alle
+> fiasko-møder over 1.200 gennemspilninger. Grammatikken tager 28.8 %;
+> tavshed tager 0. Filen lazy-loades og vejer **60.833 bytes = 59.4 KiB gzip**
+> mod CON-003's loft på 60 KiB. Der er 607 bytes tilbage. TASK-022 er derfor
+> stadig åben: 304 af den målte top-600 er bagt, og næste batch kræver
+> kompression eller en eksplicit budgetbeslutning — loftet hæves ikke stiltiende.
 
 Ved planens start havde spillet 187 elementer og 225 opskrifter: 17.578
 mulige uordnede par (inklusive selv-par), hvor 17.353 faldt tilbage på otte
@@ -128,9 +132,9 @@ pr. run i TEST-007's 2.000 runs, og nødudgangen forbliver på 0 hits.
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
 | TASK-021 | Byg pipelinen der skriver par-replikker: `tools/prepare_pairs.ts` udskriver batch-briefs med begge navne, flavor, karlMood, den målte dominerende dom, evidensen og de grammatikreplikker udkastet skal slå. Udkast lander i `content/narrator/drafts/pairs-*.json`. (Blev briefs til en skribent frem for et direkte modelkald — samme opgave, men udkastet kan læses og afvises af et menneske, jf. CON-005.) | ✅ | 2026-08-12 |
-| TASK-022 | Fastlæg N ud fra måling, ikke mavefornemmelse: N=500 dækker 96 % af møderne, N=1000 dækker 99,3 %. Start ved N=600 og udvid, hvis TEST-007 viser, at gulvet høres for ofte. **Status: 404 opslag på 303 par bagt = 72,4 % vægtet dækning. Næste batch fra `_jobs.json` fortsætter mod N=600.** | | |
+| TASK-022 | Fastlæg N ud fra måling, ikke mavefornemmelse: N=500 dækker 96 % af møderne, N=1000 dækker 99,3 %. Start ved N=600 og udvid, hvis TEST-007 viser, at gulvet høres for ofte. **Status 2026-08-13: 420 opslag / 940 varianter; 294 målte par og 71.2 % vægtet dækning. 304 af top-600 er bagt. Runde 3 nåede 59.4 KiB af 60 KiB-loftet (607 bytes tilbage), så N=600 er ikke bevist nået og opgaven forbliver åben, indtil indholdet komprimeres eller budgettet besluttes på ny.** | | |
 | TASK-023 | Menneskelig gennemgang af udkastene. Afvis frem for at rette: en middelmådig bagt replik er værre end grammatikken, fordi den optager pladsen. Godkendte replikker flyttes til `content/narrator/pairs-act-1.json`. (`tools/check_pairs.py` er porten, og `assemble_pairs.py` kører den igen ved fletning — tillid er ikke en kontrol.) | ✅ | 2026-08-12 |
-| TASK-024 | Lazy-load de bagte replikker pr. akt med en dynamisk `import()`, så de ikke ligger i første bundt (CON-003). Mål den faktiske gzip-størrelse og skriv den i planens statusnote. **Målt: 58,3 KB gzip.** Budgettet bevogtes nu af `tests/pairs.test.ts`, ikke af build-loggen. | ✅ | 2026-08-12 |
+| TASK-024 | Lazy-load de bagte replikker pr. akt med en dynamisk `import()`, så de ikke ligger i første bundt (CON-003). Mål den faktiske gzip-størrelse og skriv den i planens statusnote. **Målt efter integrationsrettelsen: 60.833 bytes = 59.4 KiB gzip.** Budgettet bevogtes af `tools/validate.py`, ikke af build-loggen. | ✅ | 2026-08-12 |
 | TASK-025 | Slå bagte replikker op som første trin i fiaskokæden: bagt → grammatik → nødudgang. Opslaget sker på `pairKey`, så rækkefølgen af de to elementer er ligegyldig. | ✅ | 2026-08-12 |
 | TASK-026 | Byg `tools/coverage_report.mjs`: hvor stor en andel af den *vægtede* mødefordeling har en bagt replik? Rapportér tallet i `docs/design/narration-coverage.md` og opdatér ved hver bagning. Dette er projektets ledestjerne-tal. | ✅ | 2026-08-12 |
 
@@ -142,7 +146,7 @@ pr. run i TEST-007's 2.000 runs, og nødudgangen forbliver på 0 hits.
 |------|-------------|-----------|------|
 | TASK-027 | Byg `tools/voice/metrics.py`: udled et stemmefingeraftryk fra de håndskrevne replikker — ordlængdefordeling, sætninger pr. replik, andel af present tense, tegnsætningsrytme, ordforråd uden for korpus, forekomst af de faste figurer (Karl, vildsvinet, "Grub Man"). **71 var det oprindelige arbejdsskøn for `narratorLine`, ikke det rigtige korpusmål: dagens indhold har 74 referencer til 61 unikke tekster, mens stemmekorpusset er 173 håndskrevne linjedefinitioner / 866 varianter. Fingeraftrykket ligger diffbart i `docs/design/narration-voice-fingerprint.json`.** | ✅ | 2026-08-13 |
 | TASK-028 | Byg `tools/voice/judge.py`: score enhver kandidatreplik mod fingeraftrykket, 0–1 pr. dimension. Afvis på: over 3 sætninger, over 32 ord, forbudte konstruktioner, moderne ordforråd og genbrug af en punchline. **Leveret med kilde-sammensatte porte: 3/32 er generatorgrænsen for grammatik/live; menneskegodkendte par beholder `check_pairs.py`'s 320-tegnskontrakt og et frosset ordtal-bånd. Kun 14 dokumenterede, generiske lukninger er undtaget fra punchline-genbrug.** | ✅ | 2026-08-13 |
-| TASK-029 | Kør dommeren over hele grammatikken (alle regler × alle varianter) og over de bagte replikker. Sæt tærsklen ud fra de håndskrevne replikkers egen score, ikke ud fra et ønsketal. **Tærsklen er håndskrevet p5 = 0,8871. 312 grammatikvarianter og 908 bagte varianter passerer efter 34 målte omskrivninger. `calibrate.py` regenererer rapporten; parrenes ordtal-baseline er frosset og flyttes kun eksplicit.** | ✅ | 2026-08-13 |
+| TASK-029 | Kør dommeren over hele grammatikken (alle regler × alle varianter) og over de bagte replikker. Sæt tærsklen ud fra de håndskrevne replikkers egen score, ikke ud fra et ønsketal. **Tærsklen er håndskrevet p5 = 0,8871. 312 grammatikvarianter og nu 940 bagte varianter passerer; `calibrate.py` regenererer rapporten, mens parrenes godkendte 908-variant-ordtal-baseline forbliver frosset og kun flyttes eksplicit.** | ✅ | 2026-08-13 |
 | TASK-030 | Sæt dommeren i `npm run validate` som hård port. Ingen replik kommer i `content/` uden at bestå. Uenigheder mellem dommer og menneske logges i `docs/design/human-queue.json` efter dens eksisterende skema. **`tools/validate.py` kalder nu den ene samlede port, som også beviser byte-for-byte reproducerbarhed fra både grammatik- og par-drafts samt parrenes strukturelle kontrakt.** | ✅ | 2026-08-13 |
 | TASK-031 | Byg regressionstesten: simulér mindst 200 runs, opsaml hver afgivet replik, og fejl hvis nogen replik optræder mere end 3 gange pr. run, eller hvis andelen af nødudgangsreplikker er over 0. **Bygget i `tests/narrator-regression.test.ts` og skærpet til 2.000 runs. Nødudgang: 0 hits. Gentagelsesloft: 3 efter at testen fandt og drev rettelsen af TASK-018.** | ✅ | 2026-08-12 |
 
@@ -155,7 +159,7 @@ pr. run i TEST-007's 2.000 runs, og nødudgangen forbliver på 0 hits.
 | TASK-032 | Afgør turøkonomien. Når fiasko bliver sjovt, bliver 50 somre en straf for at lege. Tre muligheder at måle på: (a) uændret, (b) `plausible`- og `near-miss`-fiaskoer koster en halv sommer, (c) turLimit hæves til 60. Beslutning træffes på playtest, ikke på skrivebordet. Dette er en designbeslutning til Martin, ikke en implementeringsdetalje. | | |
 | TASK-033 | Playtest i browseren: spil tre fulde runs, log hver replik, og læs dem som en samlet tekst. Illusionen holder eller falder på helheden, ikke på den enkelte linje. | | |
 | TASK-034 | Fjern den deprecated `"nothing"`-alias fra `types.ts` og de 14 generiske replikker fra `content/narrator/act-1.json`, når TEST-004 har været grøn i to udrulninger. | | |
-| TASK-035 | Opdatér `PRD.md` §2.4 og `docs/design/fortaelleren.md` med den nye trelagsmodel, og skriv en note i `README.md` om, hvordan man tilføjer et element uden at skrive en eneste replik. | | |
+| TASK-035 | Opdatér `PRD.md` §2.4 og `docs/design/fortaelleren.md` med den nye trelagsmodel, og skriv en note i `README.md` om, hvordan man tilføjer et element uden at skrive en eneste replik. **Leveret som en komplet offline-kæde (bagt → grammatik → nødudgang) med live tydeligt markeret som valgfrit indskud; README beskriver det data-drevne add-element-workflow.** | ✅ | 2026-08-13 |
 
 ## 3. Alternatives
 

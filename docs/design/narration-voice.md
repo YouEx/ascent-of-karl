@@ -44,15 +44,15 @@ Frosset version 2, 2026-08-13, fra commit `0cb91b78469c` (404 par, 908 varianter
 | | median | p10 | p90 | n |
 |---|---:|---:|---:|---:|
 | Frosset (bruges af gate()) | 32 | 24 | 43 | 908 |
-| Live genberegnet lige nu | 32 | 24 | 43 | 908 |
+| Live genberegnet lige nu | 32 | 24 | 43 | 940 |
 
-Frosset og live matcher fuldstændigt — ingen indholdsskred siden frysningen.
+**Frosset og live afviger** — bagte par-indholdet har ændret sig siden frysningen. Ikke nødvendigvis et problem (kan være legitimt nyt indhold), men bør vurderes af et menneske: er afvigelsen forventet vækst, eller skred? Se `docs/design/human-queue.json`.
 
 **Drift-beviset (samme tal som selftesten i `judge.py`, her mod det faktiske aktuelle indhold i stedet for en fixture):**
 
-- Rigtige par mod det frosne bånd: gennemsnitlig ordtal-score **0.958**.
-- De SAMME par, hver oppustet med 40 fyldord, mod det SAMME frosne bånd: **0.079** — skredet fanges.
-- De oppustede par mod et bånd genberegnet FRA den oppustede mængde selv: **0.958** — ville set normalt ud, hvis båndet ikke var frosset. Det er præcis den blindhed frysningen forhindrer.
+- Rigtige par mod det frosne bånd: gennemsnitlig ordtal-score **0.960**.
+- De SAMME par, hver oppustet med 40 fyldord, mod det SAMME frosne bånd: **0.080** — skredet fanges.
+- De oppustede par mod et bånd genberegnet FRA den oppustede mængde selv: **0.960** — ville set normalt ud, hvis båndet ikke var frosset. Det er præcis den blindhed frysningen forhindrer.
 
 ## Rettede replikker denne runde (34 stk., audit trail)
 
@@ -174,7 +174,7 @@ Data-kilde: `calibration_history.json` (dateret 2026-08-12) — den ENESTE stati
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Håndskrevet (mod eget fingeraftryk) | 866 | 0.727 | 0.814 | 0.887 | 0.912 | 0.992 | 0.972 | 1.000 |
 | Grammatik (ekspanderet) | 312 | 0.890 | 0.904 | 0.922 | 0.946 | 0.998 | 0.983 | 1.000 |
-| Bagte par (ekspanderet) | 908 | 0.888 | 0.898 | 0.922 | 0.949 | 0.992 | 0.984 | 1.000 |
+| Bagte par (ekspanderet) | 940 | 0.888 | 0.898 | 0.923 | 0.953 | 0.992 | 0.985 | 1.000 |
 
 ## Hårde afvisninger
 
@@ -185,9 +185,9 @@ Pr.-kandidat optælling (én kandidat kan ramme flere kategorier, men tælles ku
 | korpus | n | mindst én | >3 sætninger (håndhævet) | >32 ord (håndhævet) | fejlmeddelelse | moderne ordforråd | genbrugt punchline |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Grammatik | 312 | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) |
-| Bagte par | 908 | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) |
+| Bagte par | 940 | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) | 0 (0.0 %) |
 
-**Bagte par, til orientering (IKKE håndhævet — kun beskrivende længde): 34/908 ville overskride 3-sætnings-loftet og 445/908 (49.0 %) ville overskride 32-ords-loftet, HVIS grammatikkens loft blev anvendt bogstaveligt på dem.** Det er præcis den observation der begrundede politikbeslutningen 2026-08-12: bagte par er en strukturelt længere indholdstype under sin egen, allerede godkendte 320-tegns-kontrakt (TASK-023), og at måle dem mod grammatikkens korte skabelonloft ville straffe allerede godkendt indhold for en regel der aldrig var skrevet til dem. Se "Politik" ovenfor og "Uoverensstemmelser med planen" nedenfor for den fulde historik.
+**Bagte par, til orientering (IKKE håndhævet — kun beskrivende længde): 35/940 ville overskride 3-sætnings-loftet og 441/940 (46.9 %) ville overskride 32-ords-loftet, HVIS grammatikkens loft blev anvendt bogstaveligt på dem.** Det er præcis den observation der begrundede politikbeslutningen 2026-08-12: bagte par er en strukturelt længere indholdstype under sin egen, allerede godkendte 320-tegns-kontrakt (TASK-023), og at måle dem mod grammatikkens korte skabelonloft ville straffe allerede godkendt indhold for en regel der aldrig var skrevet til dem. Se "Politik" ovenfor og "Uoverensstemmelser med planen" nedenfor for den fulde historik.
 
 ## Tærskel: valg og begrundelse
 
@@ -195,9 +195,9 @@ Tærsklen er en percentil af det håndskrevne korpus' EGEN scorefordeling — al
 
 | percentil | tærskel | grammatik fejler | bagte par fejler |
 |---|---:|---:|---:|
-| p1 | 0.8135 | 0/312 (0.0 %) | 0/908 (0.0 %) |
-| p5 | 0.8871 | 0/312 (0.0 %) | 0/908 (0.0 %) |
-| p10 | 0.9121 | 11/312 (3.5 %) | 24/908 (2.6 %) |
+| p1 | 0.8135 | 0/312 (0.0 %) | 0/940 (0.0 %) |
+| p5 | 0.8871 | 0/312 (0.0 %) | 0/940 (0.0 %) |
+| p10 | 0.9121 | 11/312 (3.5 %) | 23/940 (2.4 %) |
 
 **Valgt: p5 = 0.8871.**
 
@@ -279,13 +279,13 @@ Ingen — se forklaringen ovenfor.
 
 1. **71 vs. 74 vs. 61 håndskrevne replikker.** Planen (TASK-015/027) siger 71. Det virkelige tal afhænger af hvad man tæller: 74 `narratorLine`-referencer i `combos.json`, som peger på kun 61 unikke tekster (flere kombinationer deler samme skrevne replik). Ingen af de tre er forkerte — de svarer bare på forskellige spørgsmål. Fingeraftrykket her bruger et fjerde, bevidst bredere tal (866 varianter over 173 replik-definitioner) — se "Korpus" ovenfor.
 
-2. **Det hårde 32-ords-loft passer ikke til bagte par — løst denne runde ved eksplicit brugerbeslutning (2026-08-12).** TASK-028's tekst specificerede "over 32 ord" som en generel hård afvisning for "enhver kandidat-replik". Men `tools/check_pairs.py` — den EKSISTERENDE, allerede kørte port for bagte par (TASK-023, ✅ færdig) — håndhæver i stedet et loft på **320 tegn** (`if len(v) > 320`). Alle 908 bagte varianter overholder det loft præcist (målt max: 306 tegn) — de var allerede godkendt af et menneske under TASK-023's gennemgang. En bogstavelig anvendelse af TASK-028's ordtal-regel på bagte par gav oprindeligt 445/908 (49.0 %) afvisninger af allerede godkendte replikker — en hård port der fælder 488 godkendte linjer kunne ikke lukke opgaven. **Besluttet og implementeret denne runde**: det hårde 32-ords-/3-sætnings-loft gælder KUN `source="grammar"` (grammatik og fremtidig live-genereret tekst); bagte par bruger deres eget, allerede godkendte 320-tegns-kontraktloft via `check_pairs.py` i stedet — se "Politik: kilde-sammensatte gates" ovenfor for den fulde begrundelse og talrækken. Dette er en sammensætning af to gates efter kildetype, ikke en svækkelse af nogen af dem: stemmescore, moderne/fejlmeddelelses-register og meningsfuld punchline-genbrug gælder fortsat for bagte par uændret. Målt: håndskrevne replikker har median 17 ord (p90 26, max 37); bagte par har median 32 ord (p90 43, max 53) — cirka dobbelt så langt i den typiske replik, og det er den etablerede norm for denne kildetype, ikke en fejl.
+2. **Det hårde 32-ords-loft passer ikke til bagte par — løst denne runde ved eksplicit brugerbeslutning (2026-08-12).** TASK-028's tekst specificerede "over 32 ord" som en generel hård afvisning for "enhver kandidat-replik". Men `tools/check_pairs.py` — den EKSISTERENDE, allerede kørte port for bagte par (TASK-023, ✅ færdig) — håndhæver i stedet et loft på **320 tegn** (`if len(v) > 320`). Alle 940 bagte varianter overholder det loft præcist (målt max: 306 tegn) — de var allerede godkendt af et menneske under TASK-023's gennemgang. En bogstavelig anvendelse af TASK-028's ordtal-regel på bagte par gav oprindeligt 441/940 (46.9 %) afvisninger af allerede godkendte replikker — en hård port der fælder 488 godkendte linjer kunne ikke lukke opgaven. **Besluttet og implementeret denne runde**: det hårde 32-ords-/3-sætnings-loft gælder KUN `source="grammar"` (grammatik og fremtidig live-genereret tekst); bagte par bruger deres eget, allerede godkendte 320-tegns-kontraktloft via `check_pairs.py` i stedet — se "Politik: kilde-sammensatte gates" ovenfor for den fulde begrundelse og talrækken. Dette er en sammensætning af to gates efter kildetype, ikke en svækkelse af nogen af dem: stemmescore, moderne/fejlmeddelelses-register og meningsfuld punchline-genbrug gælder fortsat for bagte par uændret. Målt: håndskrevne replikker har median 17 ord (p90 26, max 37); bagte par har median 32 ord (p90 43, max 53) — cirka dobbelt så langt i den typiske replik, og det er den etablerede norm for denne kildetype, ikke en fejl.
 
 3. **Grammatikkens tag-specialiseringer findes ikke i indholdet.** TASK-020 er markeret ✅ færdig (2026-08-12) og påstår "tag-specialiseringer for de 12 hyppigste `stuff`-par" er skrevet. Men `content/narrator/grammar-act-1.json`'s `grammar`-kort har KUN 7 nøgler — de bare domme (`locked`, `near-miss`, `self`, `inert`, `clash`, `plausible`, `absurd`) — ingen `"dom:stuff+stuff"`- eller `"dom:stuff"`-nøgler overhovedet. `src/narrator/grammar.ts`'s `grammarKeys()` prøver netop disse to mere specifikke nøgleformer FØR den falder tilbage til den bare dom (kildekoden bekræfter formatet: `${verdict}:${pair[0]}+${pair[1]}` og `${verdict}:${stuff}`) — så med indholdet som det er nu, rammer `grammarPool()` ALTID den generiske pulje, uanset hvilke to `stuff`-typer der indgår. Tag-specialiseringen er markeret færdig i planen, men findes ikke i det leverede indhold.
 
 4. **Planen siger "otte domme", koden og indholdet har syv.** TASK-020's tekst nævner "de otte domme" — men `src/core/types.ts`'s `Verdict`-type har netop 7 værdier (`locked`, `near-miss`, `self`, `inert`, `clash`, `plausible`, `absurd`), og `grammar-act-1.json` har konsekvent også kun disse 7. Formentlig en efterladt tekst fra en tidligere designfase snarere end et reelt indholdshul — nævnt for fuldstændighedens skyld, i samme ånd som 71-vs-74-fundet.
 
-5. **Planens bogstavelige eksempelord for "fejlmeddelelses-register" er selv falske positiver.** TASK-028's tekst nævner "cannot", "invalid", "try again" som eksempler. Testet ordret som blokerede enkeltord/-fraser mod alle 866 håndskrevne varianter: "cannot" gav 9 reelle hit i ægte, ikke-fejlmeddelelses-brug ("The pose cannot."), "can't" gav 6, "unable to" gav 1. Ordene er eksempler på REGISTERET (softwarefejl-tonefaldet), ikke en ordret liste der kan slås op som understrenge — en bogstavelig implementering ville have underkendt ægte, godkendt fortæller-tekst. `lexicon.json` bruger i stedet mere specifikke, stadig repræsentative fraser ("please try again", "invalid input/selection", …) der rammer samme register uden falske positiver (verificeret: 0 hit i 866 håndskrevne + 312 grammatik- + 908 par-varianter). Se `_forbiddenConstructionsKommentar` i `lexicon.json`.
+5. **Planens bogstavelige eksempelord for "fejlmeddelelses-register" er selv falske positiver.** TASK-028's tekst nævner "cannot", "invalid", "try again" som eksempler. Testet ordret som blokerede enkeltord/-fraser mod alle 866 håndskrevne varianter: "cannot" gav 9 reelle hit i ægte, ikke-fejlmeddelelses-brug ("The pose cannot."), "can't" gav 6, "unable to" gav 1. Ordene er eksempler på REGISTERET (softwarefejl-tonefaldet), ikke en ordret liste der kan slås op som understrenge — en bogstavelig implementering ville have underkendt ægte, godkendt fortæller-tekst. `lexicon.json` bruger i stedet mere specifikke, stadig repræsentative fraser ("please try again", "invalid input/selection", …) der rammer samme register uden falske positiver (verificeret: 0 hit i 866 håndskrevne + 312 grammatik- + 940 par-varianter). Se `_forbiddenConstructionsKommentar` i `lexicon.json`.
 
 6. **"car" er en etableret joke i korpus, ikke et stemmebrud.** Testet som moderne ordforråd, gav "car" 7 hit — men alle i en gentaget, tilsigtet anakronisme-joke (`story-flintmobil`, `mem-bilist`, `story-drive-in`: Karl opfinder bilen for tidligt). Fjernet fra `modernVocabulary`; øvrige moderne tech-ord (tv, mikroovn, internet, …) beholdes, da de ikke har samme etablerede kanon-status.
 
@@ -293,23 +293,21 @@ Ingen — se forklaringen ovenfor.
 
 8. **`genericPunchlineExemptions`-listens 14 konkrete ord er min egen klassificering, ikke brugerens.** Brugeren gav tre sædfrø-eksempler ("not today", "it is not", "not that") og et princip ("1-3-ords generisk lukning er ikke en punchline"). De øvrige 11 (`it does not`, `it wasn't`, `neither did we`, `there is none`, `no`, `he did not`, `you shouldn't`, `why not`, `and yet`, `but still`, `the end`) er fundet ved selv at læse alle 819 håndskrevne punchlines' FULDE oprindelseslinjer og afgøre hvilke der er rent sproglige mønstre versus fortællerens distinkte stemme-teknik (se `lexicon.json`'s kommentar for hvorfor fx `down`/`one`/`unfortunately` bevidst IKKE er på listen, selvom de er lige så korte). Flagget i `human-queue.json` til menneskelig sanity-check — rubrikken er stram og dokumenteret, men den endelige liste er en tolkning, ikke et objektivt udledt tal som fx tærsklen.
 
-9. **`gate()` komponerer nu `check_pairs.py` — en udvidelse af TASK-030's scope, ikke en bogstavelig instruks.** Den oprindelige opgavetekst bad om at "give judge.py en ren indgang" for STEMME-scoring; kodegennemgang bad specifikt om at `gate()` også skulle bevise par-KONTRAKTEN (navn, dom, dublet, længde) i stedet for at antage et menneske huskede at køre `check_pairs.py` separat. Implementeret ved import (ikke subprocess) af en ny, ren `check_pairs_data()`/`check_pairs_file()`-kerne udtrukket af den eksisterende fil — `main()`'s CLI-adfærd er verificeret uændret (samme udskrift, samme returkode på alle 10 udkast-batches). Ikke en judgment call i samme forstand som punkt 7/8 (brugeren bad eksplicit om præcis dette), men nævnt her fordi det udvider hvad `gate()` dømmer ud over den oprindelige opgavetekst.
+9. **`gate()` komponerer nu `check_pairs.py` — en udvidelse af TASK-030's scope, ikke en bogstavelig instruks.** Den oprindelige opgavetekst bad om at "give judge.py en ren indgang" for STEMME-scoring; kodegennemgang bad specifikt om at `gate()` også skulle bevise par-KONTRAKTEN (navn, dom, dublet, længde) i stedet for at antage et menneske huskede at køre `check_pairs.py` separat. Implementeret ved import (ikke subprocess) af en ny, ren `check_pairs_data()`/`check_pairs_file()`-kerne udtrukket af den eksisterende fil — `main()`'s CLI-adfærd er verificeret uændret (samme udskrift, samme returkode på alle 11 udkast-batches). Ikke en judgment call i samme forstand som punkt 7/8 (brugeren bad eksplicit om præcis dette), men nævnt her fordi det udvider hvad `gate()` dømmer ud over den oprindelige opgavetekst.
 
 10. **`gate()` komponerer nu OGSÅ begge facit-filers reproducerbarhed fra drafts — sidste blokerende kodegennemgang-punkt (2026-08-13), ikke en bogstavelig instruks.** `tools/voice/check_grammar_assembly.py` (forrige runde) og `tools/voice/check_pairs_assembly.py` (denne runde) beviser hver især at `content/narrator/{grammar,pairs}-act-1.json` er byte-for-byte reproducerbare fra deres egne drafts under `content/narrator/drafts/`. Begge var tidligere kun selvstændigt kørbare filer — kodegennemgang påpegede at et menneske der glemmer at køre dem separat efterlader præcis det hul der tidligere lod grammatikkens facit gå ud af trit med sine drafts. Begge er nu refaktoreret til et importerbart kerneindgangspunkt (`check_grammar_assembly(real_out=...)`/`check_pairs_assembly(real_out=...)` → liste af problemer, tom = bestået) som `gate()` kalder direkte, FØR den dømmer noget indhold — bevist ved to niveauer i `judge.py`'s selftest: kontrolfunktionen alene, og den FULDE `gate()`, fanger begge et bevidst injiceret, afdrevet facit via en midlertidig sti (aldrig det rigtige indhold). Samtidig blev `hardCap`/`overHardCap` fjernet fra det frosne par-ordtalsbånd (`pairs_baseline.json`, version 1→2, se "Frosset ordtal-bånd" ovenfor) — de beskriver et 32-ords GENERATOR-loft (grammatik) som bagte par aldrig har haft; deres reelle grænse er check_pairs.py's 320-tegns kontrakt. Ingen af fordelingstallene (mean/median/stdev/percentiler) ændrede sig ved fjernelsen, kun de to meningsløse nøgler forsvandt.
 
-## Wiring into validate
+## Kobling til validate
 
-`tools/validate.py` ejes af en anden agent lige nu og røres ikke her. Sådan kobles stemmedommeren ind, når den anden agents arbejde er flettet — indsæt lige før den afsluttende rapportering (før `for note in notes:` nederst i `main()`, efter tjekket af "Flags der kræves men aldrig sættes"):
+`tools/validate.py` har nu `voice_judge.gate()` koblet direkte ind efter indholds- og flagkontrollerne og før den afsluttende rapportering:
 
 ```python
-    # Stemmedommer (tools/voice/) — TASK-030.
-    sys.path.insert(0, str(ROOT / "tools" / "voice"))
-    import judge as voice_judge
-    for f in voice_judge.gate():
-        err(f"stemme: {f}")
+    voice_failures = voice_judge.gate()
+    for failure in voice_failures:
+        err(f"stemme: {failure}")
 ```
 
-Fem linjer, ét anker-punkt. `voice_judge.gate()` returnerer allerede menneskelæsbare, danske fejlstrenge (streng pr. kandidat-linje der enten rammer en hård afvisning eller scorer under den kalibrerede tærskel, PLUS en streng pr. facit-fil der ikke er reproducerbar fra sine drafts) — `err()` lægger dem oveni de eksisterende fejl, så `python3 tools/validate.py` fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv kilde-sammensætningen internt (se "Politik: kilde-sammensatte gates" ovenfor) — grammatik og bagte par scores hver mod deres egen kontrakt, uden at wiring'en her behøver filtrere labels efter præfiks. Verificeret: `python3 tools/voice/gate.py` slutter med exit 0 på det nuværende indhold (0 grammatik-fejl, 0 par-fejl, begge facit-filer reproducerbare fra drafts), så denne snippet kan indsættes direkte uden at gøre `npm run validate` rød.
+`voice_judge` importeres fra `tools/voice` ved modulstart. Porten returnerer menneskelæsbare, danske fejlstrenge (streng pr. kandidat-linje der enten rammer en hård afvisning eller scorer under den kalibrerede tærskel, PLUS en streng pr. facit-fil der ikke er reproducerbar fra sine drafts) — `err()` lægger dem oveni de eksisterende fejl, så `python3 tools/validate.py` fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv kilde-sammensætningen internt (se "Politik: kilde-sammensatte gates" ovenfor) — grammatik og bagte par scores hver mod deres egen kontrakt, uden at koblingen behøver filtrere labels efter præfiks. Samlingskontrollerne bruger en unik midlertidig mappe pr. kørsel, så samtidige `validate`/gate-kørsler ikke kan slette hinandens scratch-filer.
 
 ---
 _Genereret af `python3 tools/voice/calibrate.py`. Regenerér efter enhver ændring i `content/narrator/*.json`, `tools/voice/lexicon.json`, `tools/voice/metrics.py` eller `tools/voice/judge.py`._

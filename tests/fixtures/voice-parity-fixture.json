@@ -3,7 +3,7 @@
   "counts": {
     "handwritten": 866,
     "grammar": 312,
-    "pairs": 908,
+    "pairs": 940,
     "synthetic": 15
   },
   "cases": [
@@ -23960,38 +23960,6 @@
       "presentShareDecidable": true
     },
     {
-      "id": "pairs:pairs:graes+saft:near-miss#0",
-      "source": "pairs",
-      "text": "Karl poured berry juice over the dry grass, and the grass just got heavier, and sadder. I know what the dry grass was actually waiting for. It was not this.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 1.0
-      },
-      "overall": 1.0,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:graes+saft:near-miss#1",
-      "source": "pairs",
-      "text": "The dry grass has exactly one future in mind, and drowning slowly in berry juice was never part of the plan. Close, though — the dry grass belonged with something else entirely.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.893372584956
-      },
-      "overall": 0.9822,
-      "presentShareDecidable": true
-    },
-    {
       "id": "pairs:pairs:reb+vand:clash#0",
       "source": "pairs",
       "text": "Karl dropped the rope in the water to see if it would still hold. It held onto being wet remarkably well. Everything else about it gave up.",
@@ -25912,70 +25880,6 @@
       "presentShareDecidable": true
     },
     {
-      "id": "pairs:pairs:honning+nabo:inert#0",
-      "source": "pairs",
-      "text": "Karl offered his neighbour a taste of honey, delighted with himself for thinking of it. Ugh grunted — approvingly, Karl believes, though Ugh's disappointed grunt and his approving grunt remain, to this day, indistinguishable.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 0.713119082636,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.876673403488
-      },
-      "overall": 0.9316,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:honning+nabo:inert#1",
-      "source": "pairs",
-      "text": "Honey is sticky. A neighbour is not, as a rule, a surface that benefits from that. Ugh went home exactly as unstuck as he arrived.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 1.0
-      },
-      "overall": 1.0,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:lerfigur+nabo:inert#0",
-      "source": "pairs",
-      "text": "Karl held the clay figurine beside his neighbour for comparison. Ugh, flattered by the resemblance, gave his one grunt of approval for the week. The figurine, as ever, gave nothing back — not unkindness, just clay.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.937816874573
-      },
-      "overall": 0.9896,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:lerfigur+nabo:inert#1",
-      "source": "pairs",
-      "text": "A sacred clay figurine and a disappointed neighbour make, on reflection, an unusually well-matched pair of statues. Only one of them moves, and even that is a low bar Ugh clears by accident.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.951792228635
-      },
-      "overall": 0.992,
-      "presentShareDecidable": true
-    },
-    {
       "id": "pairs:pairs:baer+tamsvin:near-miss#0",
       "source": "pairs",
       "text": "Karl fed the pet boar a handful of berries as a loyalty test. Dino ate them without complaint. The berries never needed this particular test at all.",
@@ -26005,38 +25909,6 @@
         "punctuation": 0.90119075529
       },
       "overall": 0.9835,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:baer+honning:near-miss#0",
-      "source": "pairs",
-      "text": "Berries and honey, both edible, both sweet — Karl felt certain this was the one. The berries very nearly matched it. The honey just came along for the taste.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.927077379937
-      },
-      "overall": 0.9878,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:baer+honning:near-miss#1",
-      "source": "pairs",
-      "text": "Karl dipped the berries in honey and declared the result delicious, which it was. Delicious and correct parted ways today, and the berries knew the difference long before Karl did.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.965121152831
-      },
-      "overall": 0.9942,
       "presentShareDecidable": true
     },
     {
@@ -28760,38 +28632,6 @@
       "presentShareDecidable": true
     },
     {
-      "id": "pairs:pairs:larver+mudder:plausible#0",
-      "source": "pairs",
-      "text": "The grubs vanished into the mud the moment they touched it, matched exactly in colour and give. By rights that should have counted for something.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.992228226947
-      },
-      "overall": 0.9987,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:larver+mudder:plausible#1",
-      "source": "pairs",
-      "text": "Karl watched the grubs sink into the mud with the same fond patience he watches everything wriggle. The world owed this pairing an invention and has yet to pay up.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.965121152831
-      },
-      "overall": 0.9942,
-      "presentShareDecidable": true
-    },
-    {
       "id": "pairs:pairs:boomerang+dyr:near-miss#0",
       "source": "pairs",
       "text": "Karl threw the boomerang at the wild boar, who did not so much as blink before it came back to his hand. Something would have impressed that boar. The boomerang was closer to it than this.",
@@ -28917,38 +28757,6 @@
         "punctuation": 1.0
       },
       "overall": 1.0,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:froe+graes:near-miss#0",
-      "source": "pairs",
-      "text": "Karl pressed the seeds into the dry grass like he was tucking them in for the night. The seeds was going to want that bed eventually. The seeds, patient as they are, will keep.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 1.0
-      },
-      "overall": 1.0,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:froe+graes:near-miss#1",
-      "source": "pairs",
-      "text": "The dry grass held the seeds well enough, dry and patient as ever. I know exactly what the seeds still needed from that bed, and I am not telling.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.969372473044
-      },
-      "overall": 0.9949,
       "presentShareDecidable": true
     },
     {
@@ -31768,38 +31576,6 @@
       "presentShareDecidable": true
     },
     {
-      "id": "pairs:pairs:haandkile+pind:near-miss#0",
-      "source": "pairs",
-      "text": "Karl held the hand axe against the stick, half-expecting contact alone to spark some third, better tool into existence. He was still holding exactly two separate objects a full minute later. The hand axe was waiting on a different combination entirely.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.974113375354
-      },
-      "overall": 0.9957,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:haandkile+pind:near-miss#1",
-      "source": "pairs",
-      "text": "The hand axe returned from this meeting exactly as sharp as it arrived; the stick returned exactly as straight. Between them, they conjured nothing sharper than mild disappointment. The hand axe had a truer match somewhere else.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.915863230856
-      },
-      "overall": 0.986,
-      "presentShareDecidable": true
-    },
-    {
       "id": "pairs:pairs:faelde+reb:near-miss#0",
       "source": "pairs",
       "text": "Karl looped a second length of rope around the snare, hoping doubling up might somehow double the number of employees. The snare caught nothing extra; it just looked, if possible, slightly more tied up than before. The snare had a job waiting that had nothing to do with hunting.",
@@ -31925,38 +31701,6 @@
         "punctuation": 0.967904678188
       },
       "overall": 0.9802,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:hammer+sten:near-miss#0",
-      "source": "pairs",
-      "text": "Karl tapped the hammer against the stone, the way you'd knock on a door you already know is home. The stone made the same flat sound it always makes, and offered no more conversation than usual. The hammer had somewhere else to be struck, carried, or used today.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 0.63473641894,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.957821885591
-      },
-      "overall": 0.9321,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:hammer+sten:near-miss#1",
-      "source": "pairs",
-      "text": "The stone is, by Karl's own account, his best friend and most frequent conversation partner. The hammer, by design, is made partly of that very same stone, and introducing the two today changed nothing about either relationship. The hammer was needed for a task this reunion couldn't provide.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 0.63473641894,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.957821885591
-      },
-      "overall": 0.9321,
       "presentShareDecidable": true
     },
     {
@@ -32725,38 +32469,6 @@
         "punctuation": 0.946736376228
       },
       "overall": 0.9911,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:spydspids+vand:near-miss#0",
-      "source": "pairs",
-      "text": "Karl dipped the stone-tipped spear into the water and swirled it, half-hoping it might learn something new. It came out just as sharp, just as opinionated, and just as dry within a minute. The stone-tipped spear had a use for water that had nothing to do with this.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 0.48322508119,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.951792228635
-      },
-      "overall": 0.9058,
-      "presentShareDecidable": true
-    },
-    {
-      "id": "pairs:pairs:spydspids+vand:near-miss#1",
-      "source": "pairs",
-      "text": "The stone-tipped spear carries an opinion about nearly everything Karl introduces it to, and its opinion of the water was indifference. The stone-tipped spear was hoping for rather more than indifference today.",
-      "hardRejects": [],
-      "dimensions": {
-        "wordLength": 1.0,
-        "sentenceCount": 1.0,
-        "wordCount": 1.0,
-        "vocabulary": 1.0,
-        "presentTense": 1.0,
-        "punctuation": 0.951792228635
-      },
-      "overall": 0.992,
       "presentShareDecidable": true
     },
     {
@@ -35189,6 +34901,806 @@
         "punctuation": 0.946736376228
       },
       "overall": 0.9911,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:rullesten+spyd:near-miss#0",
+      "source": "pairs",
+      "text": "Karl pressed the round stone into the spear, hoping proximity might count for something. It did not. The round stone belongs with the {partner}; this meeting was merely in the way.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.911947759868
+      },
+      "overall": 0.9853,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:rullesten+spyd:near-miss#1",
+      "source": "pairs",
+      "text": "The round stone rolled, the spear pointed, and neither talent helped the other. Somewhere else, the {partner} can actually use the round stone. History recommends they meet there.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:stenspil+vand:absurd#0",
+      "source": "pairs",
+      "text": "Karl rolled the water toward the boules court, expecting a splash to count as a legal throw. Nobody agreed, least of all the boules, which do not get wet on principle.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.961290024108
+      },
+      "overall": 0.9935,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:stenspil+vand:absurd#1",
+      "source": "pairs",
+      "text": "There is no rule in boules that rewards proximity to the water, and Karl checked twice before accepting that his afternoon's strategy did not exist.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.926133910054
+      },
+      "overall": 0.9877,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:malm+saft:absurd#0",
+      "source": "pairs",
+      "text": "Karl dipped the ore in the berry juice, waiting for a shine that never arrived. Rock does not drink, and rock especially does not drink fruit.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.985423452418
+      },
+      "overall": 0.9976,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:malm+saft:absurd#1",
+      "source": "pairs",
+      "text": "The ore sat in a puddle of berry juice for the length of an entire afternoon, gaining nothing but a faint purple tinge Karl mistook for progress.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.922784101727
+      },
+      "overall": 0.9871,
+      "presentShareDecidable": false
+    },
+    {
+      "id": "pairs:pairs:hammer+stenoekse:near-miss#0",
+      "source": "pairs",
+      "text": "Karl struck the stone axe with the hammer, hoping one finished tool might improve the other. It did not. The hammer belongs with the {partner}; this was only tools comparing handles.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.911947759868
+      },
+      "overall": 0.9853,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hammer+stenoekse:near-miss#1",
+      "source": "pairs",
+      "text": "The hammer and the stone axe met as two professionals forced into the same meeting. Somewhere else, the {partner} has legitimate work for the hammer. The other brought opinions.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:bautasten+mursten:absurd#0",
+      "source": "pairs",
+      "text": "Karl leaned the mud brick against the standing stone like an offering, unsure which of them was meant to be impressed.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 0.687289278791,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.935553801783
+      },
+      "overall": 0.9371,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:bautasten+mursten:absurd#1",
+      "source": "pairs",
+      "text": "The standing stone has stood, unmoved and unimpressed, since before Karl learned to stack mud bricks. It remained exactly that unimpressed today.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 0.821462375897,
+        "sentenceCount": 1.0,
+        "wordCount": 0.778800783071,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 0.9334,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hulemaleri+malm:absurd#0",
+      "source": "pairs",
+      "text": "Karl held a lump of ore up to the cave painting, checking if the glitter matched anything already drawn. It matched nothing; the painting had never once depicted rocks.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.877816121371
+      },
+      "overall": 0.9796,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hulemaleri+malm:absurd#1",
+      "source": "pairs",
+      "text": "The cave painting depicts a boar, a sunset, or possibly Ugh, depending entirely on who is asked. Ore was never a candidate, and today's introduction did not change that.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.969372473044
+      },
+      "overall": 0.9949,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hulemaleri+spyd:absurd#0",
+      "source": "pairs",
+      "text": "Karl pointed the spear at the cave painting as though scoring a very slow hit. The painting did not flinch, being made of stone and mineral pigment, not boar.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.969372473044
+      },
+      "overall": 0.9949,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hulemaleri+spyd:absurd#1",
+      "source": "pairs",
+      "text": "There is a version of the cave painting where the spear appears, and Karl has not painted it yet. Holding the actual spear up to the actual painting changed nothing about that.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.957821885591
+      },
+      "overall": 0.993,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:gnister+haandkile:absurd#0",
+      "source": "pairs",
+      "text": "Karl struck the hand axe against nothing in particular, hoping the sparks might improve its edge. The edge stayed exactly as sharp, and exactly as unimproved by fire it never touched.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.961290024108
+      },
+      "overall": 0.9935,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:gnister+haandkile:absurd#1",
+      "source": "pairs",
+      "text": "Sparks live for half a second and then are gone; the hand axe has outlasted several of Karl's other tools by years. Introducing the two taught neither of them anything about the other.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.869893396788
+      },
+      "overall": 0.9783,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:fisk+spyd:plausible#0",
+      "source": "pairs",
+      "text": "The spear is built for exactly this: something fast, wet, and worth catching. Karl held it over the fish for a long moment, certain a recipe was one thrust away.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.875346341854
+      },
+      "overall": 0.9792,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:fisk+spyd:plausible#1",
+      "source": "pairs",
+      "text": "Every instinct Karl has says the spear and the fish belong together, one hunting the other in some obvious way he can't yet name. The moment came and went without becoming anything.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.957821885591
+      },
+      "overall": 0.993,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:reb+spyd:near-miss#0",
+      "source": "pairs",
+      "text": "Karl looped the rope around the spear and waited for cleverness. The knot held; history did not. The rope belongs with the {partner}, not today's volunteer.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.902725923481
+      },
+      "overall": 0.9838,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:reb+spyd:near-miss#1",
+      "source": "pairs",
+      "text": "The rope and the spear produced a very secure version of nothing. Somewhere else, the {partner} can make proper use of the rope. This pairing merely tied up the afternoon.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:pind+stenspil:absurd#0",
+      "source": "pairs",
+      "text": "Karl offered the stick to the boules court as a replacement rule, on the grounds that sticks are sometimes involved in games. They are not involved in this one.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.969372473044
+      },
+      "overall": 0.9949,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:pind+stenspil:absurd#1",
+      "source": "pairs",
+      "text": "There is a stick at the center of every boules match, the one Ugh throws for, and it is never the stick Karl happened to be holding. Today's stick was no exception.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.957821885591
+      },
+      "overall": 0.993,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hammer+hammer:self#0",
+      "source": "pairs",
+      "text": "Karl held up two hammers side by side, checking whether one had grown sharper out of sheer jealousy. Neither had. They remain, stubbornly, the same hammer twice.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hammer+hammer:self#1",
+      "source": "pairs",
+      "text": "Two hammers, introduced to each other with great ceremony, discovered they had absolutely nothing new to say. Karl's arm, already upgraded once by the hammer, did not get a second upgrade.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.961290024108
+      },
+      "overall": 0.9935,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:ild+stenoekse:near-miss#0",
+      "source": "pairs",
+      "text": "Karl held the fire near the stone axe, expecting heat to improve an edge already proud of itself. It did not. The fire belongs with the {partner}; the other only got warm.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.913613403669
+      },
+      "overall": 0.9856,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:ild+stenoekse:near-miss#1",
+      "source": "pairs",
+      "text": "Fire met the stone axe and discovered that finished tools are poor raw material. Somewhere else, the {partner} can still do useful work with the fire. Here, nothing changed.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:boomerang+spyd:plausible#0",
+      "source": "pairs",
+      "text": "The boomerang and the spear are cut from the same reliable wood, and Karl felt sure that shared material meant a shared future. It didn't, not yet.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.979428757004
+      },
+      "overall": 0.9966,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:boomerang+spyd:plausible#1",
+      "source": "pairs",
+      "text": "Karl weighed the boomerang against the spear, both wood, both familiar in his hand, and waited for the obvious idea to finish forming. It never quite did.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.979428757004
+      },
+      "overall": 0.9966,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:stenspil+stenspil:self#0",
+      "source": "pairs",
+      "text": "Karl set up two boules courts side by side, hoping a rematch might change eleven straight losses. It changed nothing; the boules stayed exactly as merciless as before.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.880714527214
+      },
+      "overall": 0.9801,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:stenspil+stenspil:self#1",
+      "source": "pairs",
+      "text": "There is only one set of boules Karl actually owns, and introducing it to itself did not produce a second, easier opponent. Ugh remains undefeated either way.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.979428757004
+      },
+      "overall": 0.9966,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:galleri+rullesten:near-miss#0",
+      "source": "pairs",
+      "text": "Karl set the round stone beside the cave gallery, hoping placement alone might make it art. It did not. The cave gallery belongs with the {partner}; the other can wait outside the exhibition.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.915224184833
+      },
+      "overall": 0.9859,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:galleri+rullesten:near-miss#1",
+      "source": "pairs",
+      "text": "The cave gallery considered the round stone for a full second and declined the submission. Somewhere else, the {partner} has actual business with the cave gallery. This arrangement did not.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hulemaleri+ild:absurd#0",
+      "source": "pairs",
+      "text": "Karl held the fire close to the cave painting to see it better, then remembered what fire does to things that took him all afternoon to draw and stepped back immediately.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.917720496496
+      },
+      "overall": 0.9863,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hulemaleri+ild:absurd#1",
+      "source": "pairs",
+      "text": "The cave painting has survived every previous evening by staying far from the fire, and tonight was not the night that policy changed.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 0.882496902585,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.930285060265
+      },
+      "overall": 0.9688,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:gravestok+ler:plausible#0",
+      "source": "pairs",
+      "text": "The digging stick is built for exactly one job — turning ground into something workable — and the clay underneath it is about as workable as ground ever gets. Karl felt the idea arrive and then, somehow, leave again.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.850108940051
+      },
+      "overall": 0.975,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:gravestok+ler:plausible#1",
+      "source": "pairs",
+      "text": "Karl pressed the digging stick into the clay, certain that a tool this good and a material this soft owed each other something more than a hole. Nothing more arrived today.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.961290024108
+      },
+      "overall": 0.9935,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:faelde+saft:absurd#0",
+      "source": "pairs",
+      "text": "Karl baited the snare with berry juice, on the theory that anything sticky counts as bait. The snare caught nothing but a faint purple stain and Karl's own optimism.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.969372473044
+      },
+      "overall": 0.9949,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:faelde+saft:absurd#1",
+      "source": "pairs",
+      "text": "A snare hunts quietly while Karl sleeps; berry juice does nothing while anyone sleeps. Combining the two taught the snare nothing about patience it didn't already have.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.884124573796
+      },
+      "overall": 0.9807,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:froe+haandkile:plausible#0",
+      "source": "pairs",
+      "text": "The hand axe can shape almost anything Karl hands it, and seeds turned out to be the smallest, least cooperative thing he's tried so far. Something should come of that eventually.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.961290024108
+      },
+      "overall": 0.9935,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:froe+haandkile:plausible#1",
+      "source": "pairs",
+      "text": "Karl set the hand axe next to a small pile of seeds, waiting for shape to happen to something that doesn't hold still. Seeds, it turns out, do not hold still for good reasons.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.951792228635
+      },
+      "overall": 0.992,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hjul+spyd:near-miss#0",
+      "source": "pairs",
+      "text": "Karl rolled the wheel past the spear, admiring one motion and the other's point. Together, they invented traffic. The wheel belongs with the {partner}; this crossing was merely inconvenient.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 0.971992652841,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.908443648327
+      },
+      "overall": 0.9801,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hjul+spyd:near-miss#1",
+      "source": "pairs",
+      "text": "The wheel and the spear each arrived with a perfectly respectable purpose, neither involving the other. Somewhere else, the {partner} has a working future with the wheel. Today's meeting was a scheduling error.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:ild+rullesten:near-miss#0",
+      "source": "pairs",
+      "text": "Karl held the fire close to the round stone, hoping heat might persuade polish into progress. It did not. The fire belongs with the {partner}; the other remained decorative.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.908443648327
+      },
+      "overall": 0.9847,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:ild+rullesten:near-miss#1",
+      "source": "pairs",
+      "text": "The round stone warmed up. The fire used fire. Civilisation remained exactly where it was. Somewhere else, the {partner} has better work for the fire, away from this lukewarm summit.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:ild+saft:near-miss#0",
+      "source": "pairs",
+      "text": "Karl poured the berry juice near the fire, expecting steam or spectacle. It hissed once and stopped. The fire belongs with the {partner}; the other was only dampening the mood.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.910225189023
+      },
+      "overall": 0.985,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:ild+saft:near-miss#1",
+      "source": "pairs",
+      "text": "Fire and berry juice held a brief meeting about heat, sweetness, and neither one's actual job. Somewhere else, the {partner} has useful plans for the fire. This was refreshments.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hjul+mudder:near-miss#0",
+      "source": "pairs",
+      "text": "Karl rolled the wheel through the mud, expecting the track to become an invention. It became a track. The wheel belongs with the {partner}; this route went nowhere.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.906601151861
+      },
+      "overall": 0.9844,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:hjul+mudder:near-miss#1",
+      "source": "pairs",
+      "text": "The mud clung to the wheel with real commitment and no useful result. Somewhere else, the {partner} has a working future with the wheel. The other merely needs cleaning.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 1.0
+      },
+      "overall": 1.0,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:mursten+rullesten:plausible#0",
+      "source": "pairs",
+      "text": "The mud brick and the round stone are both hard, both stubborn, both convinced they belong in a wall somewhere. Karl held them together and waited for the wall to agree.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.961290024108
+      },
+      "overall": 0.9935,
+      "presentShareDecidable": true
+    },
+    {
+      "id": "pairs:pairs:mursten+rullesten:plausible#1",
+      "source": "pairs",
+      "text": "Karl stacked the round stone on top of the mud brick, testing whether hard-and-heavy and hard-and-dry might finally add up to something standing. Not today, but the idea has legs.",
+      "hardRejects": [],
+      "dimensions": {
+        "wordLength": 1.0,
+        "sentenceCount": 1.0,
+        "wordCount": 1.0,
+        "vocabulary": 1.0,
+        "presentTense": 1.0,
+        "punctuation": 0.951792228635
+      },
+      "overall": 0.992,
       "presentShareDecidable": true
     },
     {

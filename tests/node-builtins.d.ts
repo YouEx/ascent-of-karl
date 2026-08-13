@@ -30,10 +30,18 @@ declare module "node:child_process" {
     toString(encoding?: string): string;
   }
 
+  interface TextStream {
+    setEncoding(encoding: string): void;
+    on(event: "data", listener: (chunk: string) => void): void;
+  }
+
   interface ChildProcess {
     killed: boolean;
     exitCode: number | null;
     signalCode: string | null;
+    stdout: TextStream;
+    stderr: TextStream;
+    on(event: "close", listener: (code: number | null) => void): void;
   }
 
   export function execFileSync(
@@ -49,7 +57,10 @@ declare module "node:child_process" {
   export function spawn(
     file: string,
     args?: readonly string[],
-    options?: { stdio?: "ignore" | "pipe" | "inherit" },
+    options?: {
+      cwd?: string;
+      stdio?: "ignore" | "pipe" | "inherit";
+    },
   ): ChildProcess;
 }
 

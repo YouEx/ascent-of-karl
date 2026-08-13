@@ -14,7 +14,8 @@ tests/worker-voice-parity.test.ts sammenligner TS-portens output med det.
   fingeraftryk, præcis som `calibrated_threshold()` selv scorer dem (se dens
   docstring: tærsklen ER p5 af denne præcise mængde scoret sådan).
 - Alle 312 grammatik-varianter — `source="grammar"`, samme som `gate()` bruger.
-- Alle 908 bagte par-varianter — `source="pairs"`, samme som `gate()` bruger.
+- Alle aktuelle bagte par-varianter — `source="pairs"`, samme som `gate()` bruger
+  (940 i denne closure).
 - Syntetiske hård-afvisnings-cases: én pr. `hard_reject()`-kategori
   (sætningstal, ordtal, fejlmeddelelse-register, moderne ordforråd, genbrugt
   punchline), plus en kombineret to-grunde-case, plus to `source="pairs"`

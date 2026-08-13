@@ -669,7 +669,8 @@ def main() -> int:
         "`check_pairs.py` separat. Implementeret ved import (ikke subprocess) af en "
         "ny, ren `check_pairs_data()`/`check_pairs_file()`-kerne udtrukket af den "
         "eksisterende fil — `main()`'s CLI-adfærd er verificeret uændret (samme "
-        "udskrift, samme returkode på alle 10 udkast-batches). Ikke en judgment call "
+        f"udskrift, samme returkode på alle {len(J.assemble_pairs.BATCHES)} udkast-batches). "
+        "Ikke en judgment call "
         "i samme forstand som punkt 7/8 (brugeren bad eksplicit om præcis dette), men "
         "nævnt her fordi det udvider hvad `gate()` dømmer ud over den oprindelige "
         "opgavetekst.\n\n"
@@ -696,20 +697,16 @@ def main() -> int:
         "ændrede sig ved fjernelsen, kun de to meningsløse nøgler forsvandt.\n"
     )
 
-    md.append("\n## Wiring into validate\n\n")
+    md.append("\n## Kobling til validate\n\n")
     md.append(
-        "`tools/validate.py` ejes af en anden agent lige nu og røres ikke her. "
-        "Sådan kobles stemmedommeren ind, når den anden agents arbejde er flettet — "
-        "indsæt lige før den afsluttende rapportering (før `for note in notes:` "
-        "nederst i `main()`, efter tjekket af \"Flags der kræves men aldrig sættes\"):\n\n"
+        "`tools/validate.py` har nu `voice_judge.gate()` koblet direkte ind efter "
+        "indholds- og flagkontrollerne og før den afsluttende rapportering:\n\n"
         "```python\n"
-        "    # Stemmedommer (tools/voice/) — TASK-030.\n"
-        "    sys.path.insert(0, str(ROOT / \"tools\" / \"voice\"))\n"
-        "    import judge as voice_judge\n"
-        "    for f in voice_judge.gate():\n"
-        "        err(f\"stemme: {f}\")\n"
+        "    voice_failures = voice_judge.gate()\n"
+        "    for failure in voice_failures:\n"
+        "        err(f\"stemme: {failure}\")\n"
         "```\n\n"
-        "Fem linjer, ét anker-punkt. `voice_judge.gate()` returnerer allerede "
+        "`voice_judge` importeres fra `tools/voice` ved modulstart. Porten returnerer "
         "menneskelæsbare, danske fejlstrenge (streng pr. kandidat-linje der enten "
         "rammer en hård afvisning eller scorer under den kalibrerede tærskel, PLUS "
         "en streng pr. facit-fil der ikke er reproducerbar fra sine drafts) — "
@@ -717,10 +714,9 @@ def main() -> int:
         "fejler (exit 1) hvis stemmedommeren finder noget. `gate()` håndterer selv "
         "kilde-sammensætningen internt (se \"Politik: kilde-sammensatte gates\" "
         "ovenfor) — grammatik og bagte par scores hver mod deres egen kontrakt, uden "
-        "at wiring'en her behøver filtrere labels efter præfiks. Verificeret: "
-        "`python3 tools/voice/gate.py` slutter med exit 0 på det nuværende indhold "
-        "(0 grammatik-fejl, 0 par-fejl, begge facit-filer reproducerbare fra drafts), "
-        "så denne snippet kan indsættes direkte uden at gøre `npm run validate` rød.\n"
+        "at koblingen behøver filtrere labels efter præfiks. Samlingskontrollerne bruger "
+        "en unik midlertidig mappe pr. kørsel, så samtidige `validate`/gate-kørsler ikke "
+        "kan slette hinandens scratch-filer.\n"
     )
 
     md.append(

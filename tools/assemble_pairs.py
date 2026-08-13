@@ -47,6 +47,7 @@ OUT = ROOT / "content" / "narrator" / "pairs-act-1.json"
 BATCHES = [
     "top-a", "top-b", "mid-a", "mid-b", "mid-c", "mid-d",
     "runde2-a", "runde2-b", "runde2-c", "runde2-d",
+    "runde3-a",
 ]
 
 

@@ -35,6 +35,7 @@ from __future__ import annotations
 import contextlib
 import io
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -58,11 +59,11 @@ def check_grammar_assembly(*, real_out: Path | None = None) -> list[str]:
     target = real_out if real_out is not None else REAL_OUT
     problems: list[str] = []
 
-    SCRATCH_DIR.mkdir(exist_ok=True)
-    try:
+    with tempfile.TemporaryDirectory(prefix="karl-grammar-assembly-") as tmp:
+        scratch_out = Path(tmp) / SCRATCH_OUT.name
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
-            rc = assemble_grammar.main(["--out", str(SCRATCH_OUT)])
+            rc = assemble_grammar.main(["--out", str(scratch_out)])
         if rc != 0:
             problems.append(
                 "assemble_grammar.py meldte selv problemer ved en tør kørsel "
@@ -70,14 +71,8 @@ def check_grammar_assembly(*, real_out: Path | None = None) -> list[str]:
             )
             return problems
 
-        assembled = SCRATCH_OUT.read_text(encoding="utf-8")
+        assembled = scratch_out.read_text(encoding="utf-8")
         real = target.read_text(encoding="utf-8")
-    finally:
-        SCRATCH_OUT.unlink(missing_ok=True)
-        try:
-            SCRATCH_DIR.rmdir()
-        except OSError:
-            pass  # ikke tom (fx en samtidig kørsel, eller selftest's afdrevne kopi) — lad den stå
 
     if assembled != real:
         problems.append(

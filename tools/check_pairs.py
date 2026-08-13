@@ -29,8 +29,8 @@ BANNED = [
     (r"\bno reaction\b", "lyder som en fejlmeddelelse"),
     (r"\bdoes ?n.t work\b", "lyder som en fejlmeddelelse"),
     (r"!", "udråbstegn — fortælleren hæver aldrig stemmen"),
-    # {right}/{wrong} er tilladt ved near-miss og håndteres for sig nedenfor.
-    (r"\{(?!right\}|wrong\})[a-zA-Z]+\}", "pladsholder — bagte replikker skriver navnene ud"),
+    # {right}/{wrong}/{partner} er tilladt ved near-miss og håndteres for sig nedenfor.
+    (r"\{(?!right\}|wrong\}|partner\})[a-zA-Z]+\}", "pladsholder — bagte replikker skriver navnene ud"),
 ]
 
 PLURALS = {
@@ -93,9 +93,9 @@ def check_pairs_data(data: dict[str, Any], *, jobs: dict[str, Any] | None = None
                 problems.append(
                     f"{key}: near-miss uden {{right}} — den skal kunne pege, "
                     f"ellers er grammatikken bedre — \"{v[:60]}…\"")
-            if not near and ("{right}" in v or "{wrong}" in v):
+            if not near and ("{right}" in v or "{wrong}" in v or "{partner}" in v):
                 problems.append(
-                    f"{key}: {{right}}/{{wrong}} findes kun ved near-miss — "
+                    f"{key}: {{right}}/{{wrong}}/{{partner}} findes kun ved near-miss — "
                     f"\"{v[:60]}…\"")
             if a_name not in low:
                 problems.append(f"{key}: nævner ikke '{a_name}' — \"{v[:60]}…\"")
