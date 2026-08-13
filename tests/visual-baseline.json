@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "commit": "429849dd2ba4d483946c844f91facc96b68df49b",
+  "capturedAt": "2026-08-13",
+  "maxDrop": 0.02,
+  "aspects": ["overall", "structure", "tone", "ink", "geometry", "materiality"],
+  "note": "Frisk optaget, scoret og accepteret på denne commit (TASK-029). Hvert overall- og aspekttal er pinnet; allowedDeviations dokumenterer den kendte afstand, men åbner ikke et aggregate-hul for andre mål.",
+  "screens": {
+    "game": {
+      "overall": 0.8528,
+      "regions": {
+        "app-frame": {
+          "overall": 0.879,
+          "structure": 0.5572,
+          "tone": 0.9142,
+          "ink": 0.9804,
+          "geometry": 1.0,
+          "materiality": 0.943
+        },
+        "header": {
+          "overall": 0.8705,
+          "structure": 0.5314,
+          "tone": 0.921,
+          "ink": 0.9477,
+          "geometry": 0.9704,
+          "materiality": 0.9819
+        },
+        "narrator": {
+          "overall": 0.8869,
+          "structure": 0.6993,
+          "tone": 0.9067,
+          "ink": 0.9489,
+          "geometry": 0.975,
+          "materiality": 0.9048
+        },
+        "chronicle": {
+          "overall": 0.878,
+          "structure": 0.6564,
+          "tone": 0.8755,
+          "ink": 0.9282,
+          "geometry": 0.9887,
+          "materiality": 0.9411
+        },
+        "chips": {
+          "overall": 0.8857,
+          "structure": 0.6462,
+          "tone": 0.9113,
+          "ink": 0.8938,
+          "geometry": 0.9869,
+          "materiality": 0.9902
+        },
+        "slots": {
+          "overall": 0.8662,
+          "structure": 0.6118,
+          "tone": 0.8407,
+          "ink": 0.9967,
+          "geometry": 0.9814,
+          "materiality": 0.9006
+        },
+        "combine": {
+          "overall": 0.9007,
+          "structure": 0.6694,
+          "tone": 0.9581,
+          "ink": 0.9425,
+          "geometry": 0.9504,
+          "materiality": 0.9828
+        },
+        "search": {
+          "overall": 0.9062,
+          "structure": 0.6909,
+          "tone": 0.9233,
+          "ink": 0.9865,
+          "geometry": 0.9689,
+          "materiality": 0.9617
+        },
+        "grid": {
+          "overall": 0.7028,
+          "structure": 0.4002,
+          "tone": 0.4736,
+          "ink": 0.899,
+          "geometry": 0.8572,
+          "materiality": 0.8838
+        }
+      }
+    },
+    "title": {
+      "overall": 0.7838,
+      "regions": {
+        "headline": {
+          "overall": 0.752,
+          "structure": 0.4254,
+          "tone": 0.7754,
+          "ink": 0.7055,
+          "geometry": 0.9986,
+          "materiality": 0.8551
+        },
+        "ribbon": {
+          "overall": 0.7452,
+          "structure": 0.2804,
+          "tone": 0.594,
+          "ink": 0.9466,
+          "geometry": 0.9955,
+          "materiality": 0.9095
+        },
+        "tagline": {
+          "overall": 0.7352,
+          "structure": 0.2893,
+          "tone": 0.8188,
+          "ink": 0.7234,
+          "geometry": 0.9447,
+          "materiality": 0.8999
+        },
+        "divider": {
+          "overall": 0.8267,
+          "structure": 0.605,
+          "tone": 0.9112,
+          "ink": 0.7032,
+          "geometry": 0.9953,
+          "materiality": 0.919
+        },
+        "actions": {
+          "overall": 0.8251,
+          "structure": 0.2303,
+          "tone": 0.944,
+          "ink": 0.9844,
+          "geometry": 0.9982,
+          "materiality": 0.9687
+        },
+        "hint": {
+          "overall": 0.7363,
+          "structure": 0.3332,
+          "tone": 0.7076,
+          "ink": 0.8336,
+          "geometry": 0.8404,
+          "materiality": 0.9667
+        },
+        "tip-card": {
+          "overall": 0.7642,
+          "structure": 0.4723,
+          "tone": 0.7946,
+          "ink": 0.7201,
+          "geometry": 0.9333,
+          "materiality": 0.9007
+        },
+        "chip": {
+          "overall": 0.7543,
+          "structure": 0.2483,
+          "tone": 0.9004,
+          "ink": 0.7017,
+          "geometry": 0.968,
+          "materiality": 0.9531
+        },
+        "tools": {
+          "overall": 0.7369,
+          "structure": 0.2359,
+          "tone": 0.8189,
+          "ink": 0.7995,
+          "geometry": 0.9865,
+          "materiality": 0.8437
+        },
+        "scene": {
+          "overall": 0.9524,
+          "structure": 0.878,
+          "tone": 0.9577,
+          "ink": 0.9977,
+          "geometry": 1.0,
+          "materiality": 0.9288
+        }
+      }
+    }
+  }
+}

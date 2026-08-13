@@ -34,6 +34,23 @@
       "firstSeen": "2026-08-11",
       "iteration": 2,
       "status": "open"
+    },
+    {
+      "key": "headline:texture:UI-title-stone-fill",
+      "region": "headline",
+      "defect": "texture",
+      "severity": 3,
+      "evidence": "TASK-032, frisk optagelse .judge/close-01 (commit 739a0ab): structure 0,425, ink 0,706 — bogstavernes egen boks matcher referencen næsten pixel for pixel (geometry 0,999), men referencens glyffer er hugget/malet sten med kornet, ujævn overflade, mens .title-mark fylder bogstaverne med en flad 3-trins linear-gradient (--title-stone-hi/--title-stone/--title-stone-lo, se src/ui/style.css .title-mark). Tre manuelle runder har allerede presset denne gradient (blækdækning, akser, text-stroke, drop-shadow, se komponentens egne kommentarer) uden at kunne nå kornet stenoverflade med et token — det kræver et rigtigt teksturbillede, ikke endnu en gradient-justering.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "UI-title-stone-fill",
+        "spec": "Kornet, hugget stenoverflade som background-clip:text-fyld til .title-mark, samme sten-palet som --title-stone-hi/--title-stone/--title-stone-lo, tileable/seamless så den dækker fire linjer tekst ved enhver bredde (font-size er cqw-baseret og derfor viewport-afhængig)",
+        "producer": "tools/art/build_ui.py"
+      },
+      "why": null,
+      "firstSeen": "2026-08-13",
+      "iteration": 3,
+      "status": "open"
     }
   ]
 }

@@ -16,6 +16,7 @@ Beslutningen kan genbesøges før Step 4 uden at indholdet skal skrives om.
 npm install          # første gang
 npm run dev          # dev-server med hot reload
 npm test             # unit tests (vitest)
+npm run test:visual  # langsom, eksplicit visuel regression (rigtig browser)
 npm run validate     # indholdsvalidering (python3 tools/validate.py)
 npm run build        # typecheck + produktion-build
 ```
@@ -44,8 +45,16 @@ npm run build        # typecheck + produktion-build
   i rigtig rækkefølge (se `build_all.py`'s docstring for hvilke der er
   udeladt og hvorfor). Genereres, redigeres aldrig i hånden — ret referencen
   eller udskæringen i scriptet, aldrig den udskrevne webp.
+- `tools/judge/` — den visuelle tilbagekobling: deterministisk scenarie,
+  produktions-`vite preview`, Playwright-optagelse, fem regionsmetrikker,
+  50/50-overlejringer, fund/rutning og accept/fortryd. Sløjfen må kun skrive
+  token-overrides i `src/ui/tuning.css`; kunst og struktur går i de
+  versionerede køer under `docs/design/`. Se `DESIGN.md` §10 og
+  `plan/architecture-visual-judge-1.md`.
 - `docs/design/reference/` — Martins referencebilleder. Kilden til paletten;
   farver samples som regionsmedianer, aldrig som enkelt-pixels.
+  `registry.json` er samtidig dommerens maskinlæsbare skærm-, region-,
+  anker-, vægt- og tærskelkontrakt.
 - `plan/` — implementeringsplaner for større visuelle/strukturelle spor.
 
 ## Regler
@@ -81,6 +90,14 @@ npm run build        # typecheck + produktion-build
    Karl-tegningen, så kør scriptet igen og commit resultatet. Ret ALDRIG en
    PNG i public/ i hånden — den bliver forældet uden at nogen opdager det,
    fordi ingen ser sit eget delekort. Se `DESIGN.md` §7.
+10. **Visuelt arbejde dømmes, ikke gættes.** Kør en frisk capture + måling og
+    se render, 50/50-overlay og heatmap, før en visuel ændring accepteres.
+    `tests/visual-baseline.json` er en commit-identificeret, accepteret
+    måling; den må kun opdateres efter en ny rigtig kørsel og menneskeligt
+    gennemsyn. `npm run test:visual` er langsom og opt-in, bruger den rigtige
+    capture/metrics-pipeline og fejler, hvis et regions-overall eller ét af de
+    fem aspekter falder mere end 0,02. Den må aldrig flyttes ind i `npm test`s
+    hurtige sti.
 
 ## Tone (til indholdsarbejde)
 

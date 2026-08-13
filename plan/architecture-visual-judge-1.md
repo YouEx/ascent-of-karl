@@ -2,15 +2,15 @@
 goal: Bygge dommer-og-sløjfe-systemet der måler afstanden mellem spillet og referencebillederne objektivt, udpeger næste rettelse, beviser fremgang og forhindrer tilbagefald
 version: 1.0
 date_created: 2026-08-11
-last_updated: 2026-08-11
+last_updated: 2026-08-13
 owner: Martin (YouEx)
-status: 'In progress'
+status: 'Completed'
 tags: [architecture, design, tooling, testing, infrastructure]
 ---
 
 # Introduction
 
-![Status: In progress](https://img.shields.io/badge/status-In_progress-yellow)
+![Status: Completed](https://img.shields.io/badge/status-Completed-brightgreen)
 
 Titelskærmen er bygget om tre gange efter mockuppen, hver gang med en manuel
 runde af "byg → kig → ret". Martins dom efter tredje runde: *"this clearly
@@ -214,10 +214,10 @@ fem er direkte årsag til et delsystem i denne plan.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-029 | Skriv accepterede regionsscorer til `tests/visual-baseline.json` med det commit, de blev målt på. | | |
-| TASK-030 | Tilføj `tests/visual.test.ts` der kører optagelse + måling og fejler, hvis en region falder mere end 0,02 under baseline. Markeres som langsom test, kører ikke i `npm test`s hurtige sti. | | |
-| TASK-031 | Dokumentér systemet i `CLAUDE.md`s arkitekturliste og i `DESIGN.md` som den gældende metode for visuelt arbejde: fremover rettes UI ikke i blinde. | | |
-| TASK-032 | Kør systemet på titelskærmen og luk de fund det producerer — det er den første rigtige prøve, og den skærm har allerede tre manuelle runder bag sig at slå. | | |
+| TASK-029 | Skriv accepterede regionsscorer til `tests/visual-baseline.json` med det commit, de blev målt på. **Lukket 13-08-2026:** baseline schema 1 identificerer commit `429849dd2ba4d483946c844f91facc96b68df49b`, maxDrop 0,02 og begge registrerede native skærme. Frisk genmåling i `.judge/visual-close-final` gav game 0,8528115 og title 0,7838425 (samlet 0,816512); både overall og alle fem aspekter pr. region er pinnet til fire decimaler. 429849d ændrede register/kø/test, ikke UI-renderen, og genmålingen reproducerede derfor den run, committen dokumenterer. | ✅ | 2026-08-13 |
+| TASK-030 | Tilføj `tests/visual.test.ts` der kører optagelse + måling og fejler, hvis en region falder mere end 0,02 under baseline. Markeres som langsom test, kører ikke i `npm test`s hurtige sti. **Lukket 13-08-2026; hærdet efter integrationsreview samme dag:** `npm run test:visual` bruger en isoleret `vitest.visual.config.ts`, opretter selv en manglende `.judge/`, kører den rigtige `capture.mjs` (build + `vite preview` + Chromium) og `metrics.py` i en ejet procesgruppe og rydder barn/barnebørn på timeout eller fejl. Samme delte fire-decimalers helper bruges af slow-testen og accept-porten: 0,0200 består, 0,0201 fejler. Alle seks tal pr. region (overall + fem aspekter) sammenlignes, så en dokumenteret structure/content-afvigelse ikke kan skjule et tone-, ink-, geometry- eller materiality-fald bag aggregate. `vite.config.ts` udelukker stadig filen fra den hurtige sti. | ✅ | 2026-08-13 |
+| TASK-031 | Dokumentér systemet i `CLAUDE.md`s arkitekturliste og i `DESIGN.md` som den gældende metode for visuelt arbejde: fremover rettes UI ikke i blinde. **Lukket 13-08-2026:** `CLAUDE.md` dokumenterer lagene, registret, køerne, baselinepolitikken og opt-in-kommandoen; `DESIGN.md` §10 gør capture → metrics → overlay → accept/fortryd til den bindende visuelle lukningsmetode. | ✅ | 2026-08-13 |
+| TASK-032 | Kør systemet på titelskærmen og luk de fund det producerer — det er den første rigtige prøve, og den skærm har allerede tre manuelle runder bag sig at slå. **Lukket 13-08-2026 med ærlig afgrænsning:** commit 429849d dokumenterer den rigtige titel-run, den afviste delte-token-hypotese og de evidensbaserede allowed deviations. Frisk kontrol i `.judge/visual-close-final` reproducerede title 0,7838425; alle 10 titelregioner består nu deres individuelle tærskler. Overlays viser fortsat den kendte forskel mellem håndhugne/malede referenceglyffer og tilgængelig DOM-tekst; headline har derfor en åben, korrekt routet asset-post (`UI-title-stone-fill`) i stedet for endnu et CSS-gæt. `tools` viser bevidst lyd frem for reference-tandhjul. Spilskærmens `grid` 0,7027756 < 0,75 er fortsat uden for denne titelprøves mandat og er ikke skjult. | ✅ | 2026-08-13 |
 
 ## 3. Alternatives
 

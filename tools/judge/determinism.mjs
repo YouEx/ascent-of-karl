@@ -41,7 +41,7 @@ import { spawnSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { captureScreen, loadRegistry, startServer } from "./capture.mjs";
+import { captureScreen, loadRegistry, startServer, stopServer } from "./capture.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const COMPARATOR = join(ROOT, "tools/judge/determinism_compare.py");
@@ -98,7 +98,7 @@ async function main() {
       }
     }
   } finally {
-    server.kill();
+    await stopServer(server);
   }
 
   const nPairs = (paths.length * (paths.length - 1)) / 2;

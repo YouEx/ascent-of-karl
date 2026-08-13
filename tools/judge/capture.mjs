@@ -97,8 +97,48 @@ export async function startServer() {
     }
     await new Promise((r) => setTimeout(r, 300));
   }
-  proc.kill();
+  await stopServer(proc);
   throw new Error(`Preview-serveren kom ikke op på ${ORIGIN} inden for 30 s`);
+}
+
+/**
+ * Lukker preview-processen og venter på dens exit, så port 5199 faktisk er
+ * frigivet, før kalderen fortsætter. SIGKILL er kun en sidste udvej efter
+ * timeout; funktionen kaster aldrig fra oprydning og kan derfor ikke skjule
+ * den fejl, der udløste en finally-blok.
+ */
+export async function stopServer(server, { timeoutMs = 5_000 } = {}) {
+  if (!server || server.exitCode != null || server.signalCode != null) return;
+
+  // Små injicerede procesdoubler i enhedstest har kun kill(). Den rigtige
+  // ChildProcess har once()/removeListener() og går gennem ventestien nedenfor.
+  if (typeof server.once !== "function") {
+    try { server.kill?.(); } catch { /* oprydning må ikke skjule hovedfejlen */ }
+    return;
+  }
+
+  await new Promise((resolveDone) => {
+    let done = false;
+    let forceTimer;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(forceTimer);
+      server.removeListener?.("exit", finish);
+      resolveDone();
+    };
+
+    server.once("exit", finish);
+    forceTimer = setTimeout(() => {
+      try { server.kill("SIGKILL"); } catch { finish(); }
+    }, timeoutMs);
+
+    try {
+      if (!server.kill("SIGTERM")) finish();
+    } catch {
+      finish();
+    }
+  });
 }
 
 export async function loadRegistry() {
@@ -166,6 +206,54 @@ export async function captureScreen(browser, screen, outDir) {
   return metrics;
 }
 
+/**
+ * Den selvstændige capture-CLI's fulde levetid, gjort importerbar så både
+ * succes- og fejlstier kan prøves. Registry valideres før serverstart; efter
+ * serverstart lukkes browser og preview altid, også hvis Chromium-launch eller
+ * et screenshot fejler.
+ */
+export async function runCapture({
+  want = "all",
+  outDir,
+  loadRegistryFn = loadRegistry,
+  startServerFn = startServer,
+  launchBrowser = () => chromium.launch(),
+  captureScreenFn = captureScreen,
+  stopServerFn = stopServer,
+} = {}) {
+  const registry = await loadRegistryFn();
+  const screens = registry.screens.filter((s) => want === "all" || s.id === want);
+  if (screens.length === 0) {
+    throw new Error(
+      `Ukendt skærm "${want}". Kendte: ${registry.screens.map((s) => s.id).join(", ")}`,
+    );
+  }
+
+  let server;
+  let browser;
+  try {
+    server = await startServerFn();
+    browser = await launchBrowser();
+    const results = [];
+    for (const screen of screens) {
+      const metrics = await captureScreenFn(browser, screen, outDir);
+      results.push({ screen, metrics });
+    }
+    return results;
+  } finally {
+    if (browser) {
+      await browser.close().catch((err) => {
+        console.error(`kunne ikke lukke browseren pænt under oprydning: ${err.message}`);
+      });
+    }
+    try {
+      if (server) await stopServerFn(server);
+    } catch (err) {
+      console.error(`kunne ikke lukke preview-serveren pænt under oprydning: ${err.message}`);
+    }
+  }
+}
+
 function valueOf(args, flag) {
   const i = args.indexOf(flag);
   return i >= 0 ? args[i + 1] : undefined;
@@ -176,32 +264,17 @@ async function main() {
   const want = valueOf(args, "--screen") ?? "all";
   const outDir = resolve(ROOT, valueOf(args, "--out") ?? ".judge/latest");
 
-  const registry = await loadRegistry();
-  const screens = registry.screens.filter((s) => want === "all" || s.id === want);
-  if (screens.length === 0) {
-    throw new Error(
-      `Ukendt skærm "${want}". Kendte: ${registry.screens.map((s) => s.id).join(", ")}`,
+  const results = await runCapture({ want, outDir });
+  for (const { screen, metrics } of results) {
+    const missing = Object.entries(metrics.regions)
+      .filter(([, value]) => value.missing)
+      .map(([k]) => k);
+    console.log(
+      `optaget ${screen.id} (${screen.nativeWidth}×${screen.nativeHeight})` +
+        (missing.length ? `  — manglende ankre: ${missing.join(", ")}` : ""),
     );
   }
-
-  const server = await startServer();
-  const browser = await chromium.launch();
-  try {
-    for (const screen of screens) {
-      const m = await captureScreen(browser, screen, outDir);
-      const missing = Object.entries(m.regions)
-        .filter(([, v]) => v.missing)
-        .map(([k]) => k);
-      console.log(
-        `optaget ${screen.id} (${screen.nativeWidth}×${screen.nativeHeight})` +
-          (missing.length ? `  — manglende ankre: ${missing.join(", ")}` : ""),
-      );
-    }
-    console.log(`→ ${outDir}`);
-  } finally {
-    await browser.close();
-    server.kill();
-  }
+  console.log(`→ ${outDir}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

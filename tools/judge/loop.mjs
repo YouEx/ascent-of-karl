@@ -40,7 +40,7 @@ import { chromium } from "playwright";
 import { route, writeTuning, appendQueue, acceptGate, rejectedKeys } from "./apply.mjs";
 import { loadKnownTokens } from "./validate-finding.mjs";
 import { getFindings, loadRegionPayloads } from "./judge.mjs";
-import { build, startServer, loadRegistry, captureScreen } from "./capture.mjs";
+import { build, startServer, stopServer, loadRegistry, captureScreen } from "./capture.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const TUNING = path.join(ROOT, "src/ui/tuning.css");
@@ -363,13 +363,13 @@ export async function createCapture({
       await browser.close().catch((err) => {
         console.error(`kunne ikke lukke browseren pænt under oprydning: ${err.message}`);
       });
-      server.kill();
+      await stopServer(server);
     }
 
     return { captureAndScore, dispose };
   } catch (err) {
     if (browser) await browser.close().catch(() => {}); // sekundær lukkefejl må ALDRIG skjule den oprindelige
-    server.kill();
+    await stopServer(server);
     throw err;
   }
 }
