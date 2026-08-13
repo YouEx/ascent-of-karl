@@ -139,6 +139,86 @@
       "firstSeen": "2026-08-11",
       "iteration": 1,
       "status": "afvist"
+    },
+    {
+      "key": "pairs:wordcount:content/narrator/pairs-act-1.json",
+      "region": "pairs",
+      "defect": "wordcount",
+      "severity": 3,
+      "evidence": "Stemmedommerens hårde 32-ords-loft (TASK-028) rammer 445/908 (49,0 %) af de bagte par-varianter. Men disse 908 linjer er allerede godkendt af et menneske under TASK-023, gennem en ANDEN port: tools/check_pairs.py håndhæver i stedet et loft på 320 tegn, og alle 908 varianter overholder det præcist (målt max 317 tegn). 320 tegn engelsk prosa svarer typisk til 45-50 ord. Håndskrevne replikker har median 17 ord (p90 26, max 37); bagte par har median 32 ord (p90 43, max 58) — cirka dobbelt så langt. Se docs/design/narration-voice.md, 'Uoverensstemmelser med planen' punkt 2, for det fulde regnestykke og eksempler på de længste par-replikker.",
+      "fix": {
+        "kind": "afklaring",
+        "file": "tools/voice/judge.py",
+        "change": "Et menneske skal afgøre: (a) det hårde 32-ords-loft gælder kun grammatik/live-genereret tekst, og gate() skal undtage bagte par (de har allerede deres eget 320-tegns-loft via check_pairs.py), eller (b) 32-ords-loftet skal gælde overalt, og de 445 lange par-replikker skal redigeres ned til under 32 ord. Ændr IKKE reglen stiltiende for at få et grønt resultat — det er præcis den slags 'ønsketal' opgaven advarer imod."
+      },
+      "why": "Løst 2026-08-12 ved eksplicit brugerbeslutning (option a): det hårde 32-ords-/3-sætnings-loft i hard_reject() gælder nu kun source=\"grammar\"; bagte par bruger i stedet deres eget, allerede godkendte 320-tegns-kontraktloft via check_pairs.py. Ikke en svækkelse — stemmescore, moderne/fejlmeddelelses-register og punchline-genbrug gælder fortsat uændret for bagte par. Se docs/design/narration-voice.md, 'Politik: kilde-sammensatte gates (2026-08-12)' og 'Uoverensstemmelser med planen' punkt 2. Evidence-feltet ovenfor er bevidst urørt som audit trail af det oprindelige fund.",
+      "firstSeen": "2026-08-12",
+      "iteration": 1,
+      "status": "resolved"
+    },
+    {
+      "key": "pairs:score-marginal:content/narrator/pairs-act-1.json",
+      "region": "pairs",
+      "defect": "judge-vs-menneske",
+      "severity": 1,
+      "evidence": "Fire par-varianter passerer alle hårde afvisninger, men scorer lige under den kalibrerede tærskel (p5 = 0,8871), primært på lavt 'vocabulary'/'wordCount'-delscore: pairs:graes+hjul:plausible#0 (0,839, \"Karl packed dry grass around the wheel's rim, presumably for cushioning...\"), pairs:honning+ler:inert#1 (0,851, \"Honey heals, clay shapes: two proud little talents...\"), pairs:ler+saft:plausible#1 (0,871, \"Clay is, Karl will admit, much like his relationship with good ideas...\"), pairs:dyr+lerfigur:inert#1 (0,882, \"The clay figurine's entire career consists of resembling Ugh...\"). Ved manuel læsning lyder alle fire som fortælleren selv — dommeren har muligvis ikke ret her.",
+      "fix": {
+        "kind": "vurdering",
+        "file": "content/narrator/pairs-act-1.json",
+        "change": "Læs de fire linjer og afgør om de er i-stemme. Hvis ja: ingen ændring i indholdet, men overvej om tærsklen (p5) er for stram for netop denne slags kort-men-ordforrådsrig sætning. Hvis nej: de bør omskrives i en fremtidig bagerunde."
+      },
+      "why": "Løst 2026-08-12: pairs_wordcount_band() (se docs/design/narration-voice.md politik-punkt 7) omkalibrerede bagte pars wordCount-dimension til pars EGEN ordtal-fordeling i stedet for det håndskrevne korpus'. Genmålt: pairs:graes+hjul:plausible#0 scorer nu 0,899 (uændret tekst), pairs:ler+saft:plausible#1 0,952 (uændret), pairs:dyr+lerfigur:inert#1 0,953 (uændret) — alle tre var falsk alarm fra den forkerte ordtal-reference, ikke svage linjer. pairs:honning+ler:inert#1 scorede fortsat 0,851 under den korrigerede reference og ER omskrevet denne runde (se calibration_history.json og docs/design/narration-voice.md, 'Rettede replikker denne runde') — ny tekst scorer 0,918. Alle fire passerer nu.",
+      "firstSeen": "2026-08-12",
+      "iteration": 1,
+      "status": "resolved"
+    },
+    {
+      "key": "voice:punchline-reuse:tools/voice/judge.py",
+      "region": "grammar+pairs",
+      "defect": "genbrugt-punchline",
+      "severity": 1,
+      "evidence": "Fire kandidatlinjer (2 grammatik, 2 par) rammer den hårde afvisning 'genbrugt punchline', alle på meget korte, generiske lukninger: 'not today' (grammar:locked:g-locked-3#0), 'it is not' (grammar:self:g-self-1#1 OG pairs:hulemaleri+vand:absurd#2 — samme punchline rammes uafhængigt to gange), 'not that' (pairs:hjul+pind:near-miss#0). 108/819 (13,2 %) af de håndskrevne punchlines er selv 3 ord eller kortere, så en vis tilfældig sammenfald på netop disse korte, almindelige negationer er statistisk venteligt når 1214 kandidatlinjer genereres, ikke nødvendigvis et tegn på bevidst joke-genbrug.",
+      "fix": {
+        "kind": "afklaring",
+        "file": "tools/voice/judge.py",
+        "change": "Overvej om 'genbrugt punchline'-reglen bør undtage punchlines under en vis længde (fx <=3 ord) fra hard_reject, siden korte negationer er et sprogligt mønster, ikke en specifik vittighed. Rør ikke uden et menneskes bekræftelse — reglen er implementeret præcis som TASK-028 beder om."
+      },
+      "why": "Løst 2026-08-12 ved eksplicit politik-beslutning (TASK-030 refinement): punchline-genbrug hård-afvises dengang kun ved normaliserede slutninger på mindst 4 ord. UDVIDET/ERSTATTET 2026-08-13 (kodegennemgang): det blanke ≥4-ords-loft var for groft — det ville have undtaget IKKE KUN generiske negationer, men også korpussets egne korte, distinkte punchlines ('grub man', 'we have fire') hvis en kandidat tilfældigvis genbrugte netop dem. Erstattet med en lille, håndklassificeret liste `genericPunchlineExemptions` i lexicon.json (14 lukninger, hver vurderet mod sin fulde oprindelseslinje — se lexicon.json's `_genericPunchlineExemptionsKommentar` og docs/design/narration-voice.md politik-punkt 2). Alle fire oprindelige linjer ('not today', 'it is not' ×2, 'not that') matcher listen og rammer stadig ikke reglen — genmålt: hard_reject() returnerer [] for alle fire. Selftesten i judge.py beviser nu begge retninger eksplicit: alle 14 lexicon-undtagelser består, OG de fire distinkte eksempler kodegennemgangen selv navngav ('grub man'/'we have fire'/'onward, humanity'/'third time, harpoon') fælder stadig en kandidat, så reglen er stadig ikke udhulet.",
+      "firstSeen": "2026-08-12",
+      "iteration": 2,
+      "status": "resolved"
+    },
+    {
+      "key": "pairs:wordcount-band:tools/voice/judge.py",
+      "region": "pairs",
+      "defect": "judge-dømmekraft-ud-over-instruks",
+      "severity": 2,
+      "evidence": "Efter at det hårde 32-ords-loft blev afgrænset til source=\"grammar\" (se pairs:wordcount ovenfor), viste det sig at den KONTINUERLIGE wordCount-scoringsdimension i score() stadig målte bagte par mod det håndskrevne korpus' egen, kortere ordtal-fordeling (median 17, p90 26). Fordi bagte par er systematisk cirka dobbelt så lange under deres egen 320-tegns-kontrakt (selv-målt: median 32, p90 43), faldt 327/908 (36 %) bagte par-varianter under tærsklen alene på denne ene dimension — mens de 5 øvrige dimensioner scorede 0,94-1,0 for både bestående og fejlende. Dette var ikke en del af TASK-028's tekst eller brugerens oprindelige eksplicitte politik-instruks; det var en selvstændig dømmekraftsbeslutning truffet 2026-08-12 for at gøre politikken reelt sammenhængende (hård afvisning og kontinuerlig score bør måle samme ting).",
+      "fix": {
+        "kind": "afklaring",
+        "file": "tools/voice/judge.py",
+        "change": "Bekræft eller forkast pairs_wordcount_band(): bagte pars wordCount-dimension scores mod bagte pars EGEN ordtal-fordeling i stedet for det håndskrevne korpus'. Tærsklen (p5=0,8871) er urørt, og hver linje scores stadig individuelt — en ægte udligger blandt bagte par ville stadig fejle."
+      },
+      "why": "Grundprincippet (score bagte par mod deres egen fordeling) løst 2026-08-12 ved brugerbeslutning. UDVIDET 2026-08-13 ved en EKSPLICIT ny brugerinstruks (kodegennemgang, punkt 2: 'Freeze pair word-count baseline... Persist the approved 908-pair baseline distribution... have gate read that frozen band'): båndet var selv-kalibrerende (genberegnet LIVE fra netop de kandidater det dømmer) og derfor definitorisk blindt for et globalt skred i alle bagte par samtidig — et bånd der flytter sig med kandidaterne finder dem for evigt 'normale'. Frosset til tools/voice/pairs_baseline.json: et øjebliksbillede af de 908 allerede menneske-godkendte varianters ordtal-fordeling (version 1, 2026-08-13, commit c7a0d7198417b15f1e118d66cc9f312b385a34d0). Genkalibrering kræver nu en eksplicit, synlig handling (`python3 tools/voice/freeze_pairs_baseline.py`), aldrig en stiltiende bivirkning af scoring. Drift-detektion bevist konkret (selftest i judge.py + calibrate.py's rapport mod faktisk indhold): rigtige par mod det frosne bånd 0,958; SAMME par kunstigt oppustet med 40 fyldord mod DET SAMME frosne bånd 0,079 (skredet fanges); de oppustede par mod et bånd genberegnet FRA dem selv 0,958 (ville se normalt ud uden frysning — det er den blindhed frysningen forhindrer). Tærsklen (p5=0,8871) er urørt. Se docs/design/narration-voice.md, 'Frosset ordtal-bånd for bagte par' og 'Uoverensstemmelser med planen' punkt 7. De KONKRETE tal i den første frysning (taget fra det aktuelle, allerede godkendte indhold) er stadig min egen operationelle beslutning, ikke bogstaveligt dikteret — nævnt i narration-voice.md punkt 7 til orientering, men ikke en uafklaret uenighed: brugeren bad eksplicit om at fryse 'the approved... baseline', og det aktuelle indhold ER det godkendte.",
+      "firstSeen": "2026-08-12",
+      "iteration": 2,
+      "status": "resolved"
+    },
+    {
+      "key": "voice:generic-punchline-exemptions:tools/voice/lexicon.json",
+      "region": "grammar+pairs",
+      "defect": "judge-dømmekraft-ud-over-instruks",
+      "severity": 1,
+      "evidence": "Kodegennemgang (2026-08-13) bad om at erstatte det blanke '<4 ord'-loft (se voice:punchline-reuse ovenfor) med en lille, data-drevet liste af genuint generiske punchline-lukninger. Brugeren gav tre sædfrø ('not today', 'it is not', 'not that') og en rubrik ('1-3-ords generisk lukning er ikke en punchline'). De øvrige 11 poster i `genericPunchlineExemptions` ('it does not', 'it wasn't', 'neither did we', 'there is none', 'no', 'he did not', 'you shouldn't', 'why not', 'and yet', 'but still', 'the end') er fundet ved selv at læse alle 819 håndskrevne punchlines' FULDE oprindelseslinjer og vurdere hver enkelt mod rubrikken (rent grammatisk mønster ELLER bogstaveligt strukturmærke som 'the end'). Fire distinkte, korte punchlines der bevidst er UDELADT fra listen trods overfladisk lignende længde, fordi de er dømt som fortællerens stemme-teknik og ikke generisk fyld: 'grub man', 'we have fire', 'onward, humanity', 'third time, harpoon' — samt enkeltord som 'down'/'one'/'unfortunately' der indgår i bevidst gentagelses-wordplay ('Slow. Down.', 'Every. Single. One.') eller ironisk enkeltords-punch.",
+      "fix": {
+        "kind": "vurdering",
+        "file": "tools/voice/lexicon.json",
+        "change": "Et menneske bør læse de 14 poster i `genericPunchlineExemptions` og `_genericPunchlineExemptionsKommentar`s begrundelse for hver, og bekræfte eller korrigere klassificeringen. Listen er data (JSON), så en korrektion er en redigering af listen, ikke en kodeændring — tilføj/fjern en streng og kør `judge.py --selftest` igen."
+      },
+      "why": null,
+      "firstSeen": "2026-08-13",
+      "iteration": 1,
+      "status": "open"
     }
   ]
 }

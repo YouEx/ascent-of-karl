@@ -18,7 +18,7 @@
       "variants": [
         "Karl pressed the {a} to the {b} and waited for chemistry. What he got instead was {trait} refusing to negotiate with {trait2}.",
         "Something in the {a} recoiled the moment it touched the {b}. I'll spare you the technical explanation: {trait} and {trait2} simply do not shake hands.",
-        "He held the {a} and the {b} together a beat too long, as though {trait} might quietly become {trait2} if nobody looked directly at it. Nobody looked away either. Both stayed exactly what they were.",
+        "He held the {a} and the {b} together a beat too long, as though {trait} might quietly become {trait2} if nobody looked. Both stayed exactly what they were.",
         "The {a} and the {b} met, briefly and audibly, and parted on the same terms {trait} always parts from {trait2}: badly.",
         "Karl's theory was that {trait} and {trait2} just needed an introduction. The {a} and the {b} disagreed, immediately and at volume.",
         "A short, unhappy sound came from between the {a} and the {b}. That is what {trait} sounds like, meeting {trait2}."
@@ -127,7 +127,7 @@
         "Karl rubbed the {a} against the {a} and waited. I waited with him. Neither of us got anywhere.",
         "He held the {a} up to the {a}, as though the second one might know something the first one didn't. It did not.",
         "Karl pressed the {a} to the {a}, patiently, on the theory that pressure alone might invent a recipe. It does not work that way.",
-        "He turned the {a} over, considered it, and tried again with a second one. Same {a}. Same result. Same Karl.",
+        "He turned the {a} over, considered it, and tried again with a second one. Same {a}. Same result, same Karl.",
         "Karl gave it real effort: the {a}, against the {a}, held firmly, for longer than dignity really allows.",
         "He tapped the {a} against the {a} a few times, the way one checks if something is hollow. It was just the {a}. It stayed just the {a}."
       ]
@@ -139,7 +139,7 @@
         "I have narrated many civilizations, and none of them thought to combine the {a} with the {a}. There may be a reason for that.",
         "In all my ages of narrating, I have never had to explain why doubling the {a} does not create anything new. Today, apparently, is that day.",
         "Let the record show: Karl held the {a} against the {a}, expecting a result. The record shows nothing else happened.",
-        "I have seen empires rise on stranger ideas than this. I have not seen one rise on the {a} meeting the {a}. That idea remains untested, and after today, untested for a reason.",
+        "I have seen empires rise on stranger ideas than this. I have not seen one rise on the {a} meeting the {a}. That idea remains untested, and after today, still is.",
         "The {a} and the {a} have been tried before, by someone, somewhere, in some other narrator's story. It went exactly this well there too.",
         "For the record — and I do keep one — combining the {a} with the {a} is not a strategy. It is closer to a hobby."
       ]

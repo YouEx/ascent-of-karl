@@ -7,3 +7,8 @@ dist/
 # Regenereres af `npm run judge`. Køerne under docs/design/ er derimod
 # versionerede — de er systemets hukommelse på tværs af sessioner.
 .judge/
+
+# Midlertidigt outputrum for tools/voice/check_grammar_assembly.py — en
+# gensamlet grammar-act-1.json der kun bruges til at diffes mod facittet,
+# aldrig til at overskrive det. Ryddes selv efter hver kørsel.
+tools/voice/.tmp/

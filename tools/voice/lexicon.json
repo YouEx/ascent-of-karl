@@ -1,0 +1,121 @@
+{
+  "_kommentar": [
+    "Ordlister til stemmedommeren (tools/voice/judge.py, tools/voice/metrics.py).",
+    "Ligger som data ved siden af koden i stedet for i en funktionskrop, fordi",
+    "opgavens harde krav siger at forbudsord ikke må hardcodes i Python — se",
+    "plan/architecture-procedural-narration-1.md fase 5. Dette er IKKE",
+    "spilindhold (content/*.json er ALT spiller-vendt tekst); det er",
+    "dommerens eget måleudstyr, og hører derfor hjemme her, ikke i content/."
+  ],
+  "_forbiddenConstructionsKommentar": [
+    "Denne liste er empirisk luget: hver eneste frase er testet mod de 866",
+    "håndskrevne varianter (som pr. definition ALDRIG kan være fejlmeddelelse-",
+    "register), og enhver frase der gav træf der blev fjernet eller indsnævret.",
+    "'cannot'/'can not'/\"can't\"/'unable to' gav ægte træf i almindelig",
+    "fortælling ('The pose cannot.', 'unable to see past his own collar') og",
+    "er derfor fjernet — for brede, det er blot en negation, ikke et register.",
+    "'try again' alene gav et falsk positivt i grammatikkens eget indhold",
+    "('Karl will try again' — helt almindelig gentagelse, ikke en fejlskærm),",
+    "så kun den fulde 'please try again' er bevaret. 'not found'/'out of",
+    "range'/'loading' er droppet i deres bare form, fordi spillets EGET tema",
+    "(jagt, afstand, at læsse en vogn, at finde nye ting) gør dem sandsynlige",
+    "i ægte fortælling — de er indsnævret til former der ikke har en naturlig",
+    "læsning i det univers."
+  ],
+  "forbiddenConstructions": [
+    "invalid input", "invalid selection", "please try again",
+    "an error occurred", "error:", "operation failed",
+    "does not compute", "input not recognized", "page not found",
+    "file not found", "404", "undefined behavior", "undefined reference",
+    "null reference", "n/a", "success:", "failure:", "warning:",
+    "click here", "please wait", "still loading", "processing your request",
+    "syntax error", "value out of range", "access denied", "permission denied"
+  ],
+  "_modernVocabularyKommentar": [
+    "Ligesom forbiddenConstructions er denne liste luget mod de 866 håndskrevne",
+    "varianter. 'cloud' og 'based' er fjernet — begge er almindelige engelske",
+    "ord i deres ikke-moderne betydning ('a cloud went by', 'stone-based').",
+    "'car' er fjernet, fordi korpus SELV gør Karls opfindelse af bilen til en",
+    "gentaget, etableret joke (story-flintmobil, mem-bilist, story-drive-in —",
+    "7 forekomster) — anakronisme som pointe er altså en del af DENNE",
+    "fortællers stemme, ikke et brud på den. Det er en bevidst undtagelse for",
+    "netop dette ord, ikke en generel tilladelse til moderne ordforråd: 'tv'",
+    "eller 'mikroovn' har ikke samme etablerede kanon og bliver stående."
+  ],
+  "modernVocabulary": [
+    "ok", "okay", "internet", "computer", "app", "email", "e-mail", "phone",
+    "smartphone", "robot", "algorithm", "wifi", "wi-fi", "online", "browser",
+    "website", "download", "upload", "software", "hardware", "laptop",
+    "spreadsheet", "database", "server", "bluetooth", "gps",
+    "vibe", "vibes", "content creator", "influencer", "hashtag", "selfie",
+    "podcast", "livestream", "AI", "chatbot", "blockchain", "crypto",
+    "startup", "onboarding", "literally dying", "lol", "lmao", "yeet",
+    "cringe", "sus", "no cap", "rizz", "bro", "dude", "totally",
+    "awesome sauce", "synergy", "leverage synergies", "circle back",
+    "touch base", "deep dive", "bandwidth", "television", "tv",
+    "microwave", "electricity", "battery", "plastic", "nuclear"
+  ],
+  "_genericPunchlineExemptionsKommentar": [
+    "Erstatter den tidligere blanke '<4 ord'-undtagelse (politik 2026-08-12):",
+    "et vilkårligt ordtal-loft fritog ALT kort, inklusive korpussets egne",
+    "korte, distinkte punchlines. Denne liste er i stedet håndklassificeret",
+    "replik for replik mod hele det håndskrevne korpus (ikke bare den",
+    "isolerede afslutning) — se hver kandidats FULDE oprindelseslinje, ikke",
+    "kun den normaliserede slutning, før den blev vurderet generisk.",
+    "Rubrik: en lukning optages KUN her hvis den enten (a) udelukkende består",
+    "af pronominer/hjælpeverber/negationspartikler/konjunktioner/spørgeord —",
+    "altså nul selvstændigt indholdsord — eller (b) er et bogstaveligt,",
+    "gentaget strukturmærke (ikke en vittighed).",
+    "Medtaget: 'not today'/'it is not'/'not that' (givne eksempler),",
+    "'it does not'/'it wasn't'/'neither did we'/'there is none'/'no'/",
+    "'he did not'/'you shouldn't'/'why not'/'and yet'/'but still' (samme",
+    "mønster: bar negation, bekræftelse eller fast biord-forbindelse uden",
+    "specifikt indhold). 'the end' er medtaget som (b): den optræder",
+    "bogstaveligt (som 'THE END') i mere end 35 forskellige, navngivne",
+    "slut-replikker (ending-king, ending-legend, ending-painter, osv.) —",
+    "det er et titelkort-konvention, ikke en punchline nogen kunne 'genbruge'.",
+    "UDELUKKENDE bevidst: 'grub man'/'we have fire'/'onward, humanity'/",
+    "'third time, harpoon' — de fire eksempler brugeren selv gav som",
+    "SKAL blive ved med at blive afvist — er korte, men bærer hver et",
+    "specifikt, distinkt indholdsord (figurnavn, handling, tal+genstand) og",
+    "er nøjagtig den slags genkendelige vittighed punchline-vagten findes for",
+    "at fange. Samme grund udelukker 'again'/'i do'/'one'/'down' (disse er",
+    "halvdele af bevidst afbrudte sætninger — 'Slow. Down.', 'Every. Single.",
+    "One.' — ikke generiske partikler) og ironiske enkeltord som",
+    "'unfortunately'/'probably'/'eventually'/'genuinely' samt indholdsord som",
+    "'patience'/'revolution'/'growth'/'bold'/'congratulations'/'trade-offs'",
+    "(fortællerens stemme-teknik — ét stærkt ord som hel sætning — ikke",
+    "generisk fyld). Se docs/design/narration-voice.md, 'Genbrugte",
+    "punchlines', for selve optællingen mod korpus."
+  ],
+  "genericPunchlineExemptions": [
+    "not today", "it is not", "not that", "it does not", "it wasn't",
+    "neither did we", "there is none", "no", "he did not", "you shouldn't",
+    "why not", "and yet", "but still", "the end"
+  ],
+  "presentTenseMarkers": [
+    "is", "are", "am", "isn't", "aren't", "has", "have", "hasn't", "haven't",
+    "does", "do", "doesn't", "don't", "goes", "says", "gets", "makes",
+    "comes", "sees", "knows", "thinks", "feels", "leaves", "finds", "tells",
+    "becomes", "begins", "brings", "stands", "waits", "watches", "narrates",
+    "combines", "holds", "presents", "declines", "remains", "continues",
+    "returns", "enters", "shudders", "recoils", "applauds", "gasps",
+    "strikes", "smashes", "rewards", "flies", "keeps", "wants", "needs",
+    "seems", "looks", "sounds", "counts", "admires", "reigns", "rules"
+  ],
+  "pastTenseMarkers": [
+    "was", "were", "wasn't", "weren't", "had", "hadn't", "did", "didn't",
+    "went", "said", "took", "got", "made", "came", "saw", "knew", "thought",
+    "felt", "left", "found", "told", "became", "began", "brought", "bought",
+    "caught", "chose", "stood", "waited", "watched", "narrated", "combined",
+    "held", "presented", "declined", "remained", "continued", "returned",
+    "entered", "shuddered", "recoiled", "applauded", "gasped", "struck",
+    "smashed", "rewarded", "flew", "kept", "wanted", "needed", "seemed",
+    "looked", "sounded", "counted", "admired", "reigned", "ruled"
+  ],
+  "fixedFigures": {
+    "karl": ["karl"],
+    "boar": ["boar", "wild boar"],
+    "grubMan": ["grub man", "grub-man"]
+  }
+}
