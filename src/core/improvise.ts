@@ -136,6 +136,88 @@ function replaceTraits(
   }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isAllowed<T extends string>(
+  value: unknown,
+  allowed: readonly T[],
+): value is T {
+  return typeof value === "string" && allowed.includes(value as T);
+}
+
+/**
+ * Untrusted save-data bliver kun til et runtime-element, hvis hele den
+ * deterministiske kontrakt holder. Content-afhængige parent/depth-kontroller
+ * sker bagefter i Engine.loadState().
+ */
+export function sanitizeImprovisedElement(value: unknown): ElementDef | null {
+  if (!isRecord(value) || value.origin !== "improvised") return null;
+  if (
+    typeof value.id !== "string" ||
+    typeof value.name !== "string" ||
+    typeof value.emoji !== "string" ||
+    !Number.isInteger(value.act) ||
+    (value.act as number) < 1 ||
+    !Number.isInteger(value.depth) ||
+    (value.depth as number) < 1 ||
+    (value.depth as number) > MAX_IMPROVISED_DEPTH ||
+    value.base === true
+  ) {
+    return null;
+  }
+  if (
+    !Array.isArray(value.parents) ||
+    value.parents.length !== 2 ||
+    !value.parents.every(
+      (parent) => typeof parent === "string" && parent.length > 0,
+    )
+  ) {
+    return null;
+  }
+  const [rawA, rawB] = value.parents as string[];
+  if (
+    !rawA ||
+    !rawB ||
+    rawA === rawB ||
+    value.id !== improvisedElementId(rawA, rawB)
+  ) {
+    return null;
+  }
+  if (
+    !isAllowed(value.kind, KIND_PRIORITY) ||
+    !isAllowed(value.stuff, STUFF_PRIORITY) ||
+    !isAllowed(value.scale, SCALE_ORDER) ||
+    !Array.isArray(value.traits) ||
+    value.traits.length === 0 ||
+    !value.traits.every((trait) => isAllowed(trait, TRAIT_ORDER)) ||
+    (value.flavor !== undefined && typeof value.flavor !== "string")
+  ) {
+    return null;
+  }
+
+  const first = rawA <= rawB ? rawA : rawB;
+  const second = first === rawA ? rawB : rawA;
+  const traits = new Set(value.traits as ElementTrait[]);
+  return {
+    id: value.id,
+    origin: "improvised",
+    parents: [first, second],
+    name: value.name,
+    emoji: value.emoji,
+    act: value.act as number,
+    base: false,
+    depth: value.depth as number,
+    terminal: value.depth === MAX_IMPROVISED_DEPTH,
+    kind: value.kind,
+    stuff: value.stuff,
+    traits: TRAIT_ORDER.filter((trait) => traits.has(trait)),
+    scale: value.scale,
+    flavor: value.flavor as string | undefined,
+  };
+}
+
 export function deriveTags(
   a: ElementDef,
   b: ElementDef,

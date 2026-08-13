@@ -96,6 +96,7 @@ export type PredicateFailure =
     }
   | {
       requirement: "not";
+      predicate: SolvePredicate;
       matched: PredicateExplanation;
     }
   | {

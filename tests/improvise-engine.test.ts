@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { freshChallengeState } from "../src/core/challenge";
 import { Engine } from "../src/core/engine";
+import {
+  buildFallbackElement,
+  improvisedElementId,
+} from "../src/core/improvise";
 import { serialize, deserialize } from "../src/core/save";
 import { judgePair } from "../src/core/verdict";
 import { loadContent } from "../src/content";
@@ -109,6 +113,74 @@ function engineWithChallenge(): Engine {
   return engine;
 }
 
+function endingThresholdEngine(
+  attempts: number,
+  canonicalInventions: number,
+): Engine {
+  const endingA = element("ending-a", { base: true });
+  const endingB = element("ending-b", { base: true });
+  const fate = element("fate", { traits: ["sacred"] });
+  const padding = Array.from({ length: 13 }, (_, index) =>
+    element(`padding-${index + 1}`),
+  );
+  const improvised = buildFallbackElement(fire, berries);
+  const content: ContentBundle = {
+    elements: [fire, berries, endingA, endingB, fate, ...padding],
+    combos: [
+      {
+        pair: ["ending-a", "ending-b"],
+        result: "fate",
+        ending: "intended",
+      },
+    ],
+    acts: [{ act: 1, name: "Ending act", problems: [] }],
+    narrator: [],
+    endings: [
+      {
+        id: "intended",
+        title: "Intended",
+        emoji: "",
+        tone: "happy",
+        achievement: "Intended",
+        line: "intended-line",
+      },
+      {
+        id: "old-age",
+        title: "Old age",
+        emoji: "",
+        tone: "bittersweet",
+        achievement: "Old age",
+        line: "old-age-line",
+        automatic: true,
+      },
+    ],
+    challenges: [{ ...wolves, minPage: 99 }],
+    decisions: [],
+    predicates: { wolves: { traits: ["hot"], crafted: true } },
+    config: { turnLimit: 50, endingsUnlockAt: 14 },
+  };
+  const engine = new Engine(content);
+  const state = engine.getState();
+  engine.loadState({
+    ...state,
+    discovered: [
+      ...state.discovered,
+      ...padding.slice(0, canonicalInventions).map((entry) => entry.id),
+      improvised.id,
+    ],
+    attempts,
+    improvisedElements: [improvised],
+    creditedImprovised: [],
+    challenges: {
+      ...freshChallengeState(),
+      active: { id: "wolves", startedAtPage: attempts, turnsLeft: 2 },
+      seen: ["wolves"],
+      everSpawned: true,
+    },
+  });
+  return engine;
+}
+
 describe("Engine.improvise — atomisk tur", () => {
   it("registrerer, løser problem og challenge og krediterer i samme ene tur", () => {
     const engine = engineWithChallenge();
@@ -135,6 +207,50 @@ describe("Engine.improvise — atomisk tur", () => {
     expect(engine.getState().flags).toEqual([]);
     expect(engine.getState().act).toBe(1);
     expect(engine.getState().ended).toBeNull();
+  });
+
+  describe("Engine — challenge-kredit før endingvalg", () => {
+    it("vælger den tiltænkte ending på sommer 50 når challenge-kredit rammer 14", () => {
+      const engine = endingThresholdEngine(49, 12);
+
+      const outcome = engine.combine("ending-a", "ending-b");
+
+      expect(outcome.kind).toBe("discovery");
+      expect(outcome.challenge?.kind).toBe("solved");
+      expect(engine.inventions()).toBe(14);
+      expect(engine.getState().attempts).toBe(50);
+      expect(engine.activeEnding()?.id).toBe("intended");
+      if (outcome.kind === "discovery") {
+        expect(outcome.endingDeflected).toBe(false);
+      }
+    });
+
+    it("vælger samme ending på den tilstødende ikke-finale sommer 49", () => {
+      const engine = endingThresholdEngine(48, 12);
+
+      const outcome = engine.combine("ending-a", "ending-b");
+
+      expect(outcome.challenge?.kind).toBe("solved");
+      expect(engine.inventions()).toBe(14);
+      expect(engine.getState().attempts).toBe(49);
+      expect(engine.activeEnding()?.id).toBe("intended");
+      if (outcome.kind === "discovery") {
+        expect(outcome.endingDeflected).toBe(false);
+      }
+    });
+
+    it("bevarer deflection én invention under grænsen på en ikke-final sommer", () => {
+      const engine = endingThresholdEngine(48, 11);
+
+      const outcome = engine.combine("ending-a", "ending-b");
+
+      expect(outcome.challenge?.kind).toBe("solved");
+      expect(engine.inventions()).toBe(13);
+      expect(engine.activeEnding()).toBeNull();
+      if (outcome.kind === "discovery") {
+        expect(outcome.endingDeflected).toBe(true);
+      }
+    });
   });
 
   it("genbruger samme stabile element uden at duplikere registry eller kredit", () => {
@@ -307,6 +423,169 @@ describe("Engine.improvise — save og determinisme", () => {
     const legacy = new Engine(testContent(false), deserialize(oldSave));
     expect(legacy.getState().improvisedElements).toEqual([]);
     expect(legacy.getState().creditedImprovised).toEqual([]);
+    expect(legacy.element("fire").origin).toBe("canon");
+  });
+
+  it("lader aldrig et gemt runtime-element skygge et canonical id — heller ikke efter reload", () => {
+    const content = loadContent();
+    const engine = new Engine(content);
+    const clean = engine.getState();
+    const canonicalStone = engine.element("sten");
+    const malicious = {
+      ...canonicalStone,
+      origin: "improvised",
+      parents: ["pind", "graes"],
+      depth: 1,
+      name: "Forged stone",
+    } as ElementDef;
+
+    engine.loadState({
+      ...clean,
+      improvisedElements: [malicious],
+      creditedImprovised: ["sten"],
+    });
+    expect(engine.element("sten")).toEqual(canonicalStone);
+    expect(engine.getState().improvisedElements).toEqual([]);
+    expect(engine.getState().creditedImprovised).toEqual([]);
+
+    engine.loadState(clean);
+    expect(engine.element("sten")).toEqual(canonicalStone);
+  });
+
+  it("fjerner gamle runtime-elementer helt ved en senere ren load", () => {
+    const engine = new Engine(testContent(false));
+    const made = engine.improvise("fire", "berries");
+    expect(made.kind).toBe("improvised");
+    if (made.kind !== "improvised") return;
+
+    const clean = new Engine(testContent(false)).getState();
+    engine.loadState(clean);
+
+    expect(engine.getState().improvisedElements).toEqual([]);
+    expect(engine.isDiscovered(made.element.id)).toBe(false);
+    expect(() => engine.element(made.element.id)).toThrow("Ukendt element");
+  });
+
+  it("lader en senere kurateret canonical version vinde over samme stabile runtime-id", () => {
+    const improvised = buildFallbackElement(fire, berries);
+    const curated: ElementDef = {
+      ...improvised,
+      origin: "canon",
+      parents: undefined,
+      name: "Curated fire berries",
+    };
+    const content = testContent(false);
+    content.elements.push(curated);
+    const engine = new Engine(content);
+    const state = engine.getState();
+
+    engine.loadState({
+      ...state,
+      discovered: [...state.discovered, curated.id],
+      improvisedElements: [improvised],
+      creditedImprovised: [improvised.id],
+    });
+
+    expect(engine.element(curated.id)).toEqual(curated);
+    expect(engine.getState().improvisedElements).toEqual([]);
+    expect(engine.getState().creditedImprovised).toEqual([]);
+    expect(engine.inventions()).toBe(1);
+
+    expect(engine.improvise("fire", "berries")).toMatchObject({
+      kind: "improvise-rejected",
+      reason: "canonical-recipe",
+    });
+    expect(engine.element(curated.id)).toEqual(curated);
+    expect(engine.getState().improvisedElements).toEqual([]);
+  });
+
+  it.each([
+    ["origin", (entry: Record<string, unknown>) => { entry.origin = "canon"; }],
+    ["parents missing", (entry: Record<string, unknown>) => { delete entry.parents; }],
+    ["parents shape", (entry: Record<string, unknown>) => { entry.parents = ["fire"]; }],
+    ["depth zero", (entry: Record<string, unknown>) => { entry.depth = 0; }],
+    ["depth mismatch", (entry: Record<string, unknown>) => { entry.depth = 2; }],
+    ["depth four", (entry: Record<string, unknown>) => { entry.depth = 4; }],
+    ["unknown parents", (entry: Record<string, unknown>) => {
+      entry.parents = ["missing-a", "missing-b"];
+      entry.id = improvisedElementId("missing-a", "missing-b");
+    }],
+    ["kind", (entry: Record<string, unknown>) => { entry.kind = "vehicle"; }],
+    ["valid but forged kind", (entry: Record<string, unknown>) => { entry.kind = "tool"; }],
+    ["stuff", (entry: Record<string, unknown>) => { entry.stuff = "mud"; }],
+    ["traits", (entry: Record<string, unknown>) => { entry.traits = ["cooked"]; }],
+    ["valid but forged traits", (entry: Record<string, unknown>) => { entry.traits = ["hot"]; }],
+    ["scale", (entry: Record<string, unknown>) => { entry.scale = "world"; }],
+    ["act mismatch", (entry: Record<string, unknown>) => { entry.act = 2; }],
+    ["self parents", (entry: Record<string, unknown>) => {
+      entry.parents = ["fire", "fire"];
+      entry.id = improvisedElementId("fire", "fire");
+    }],
+  ])("discarder malformed runtime taxonomy: %s", (_label, mutate) => {
+    const valid = buildFallbackElement(fire, berries);
+    const malformed = structuredClone(valid) as unknown as Record<string, unknown>;
+    mutate(malformed);
+    const malformedId = String(malformed.id);
+    const engine = new Engine(testContent(false));
+    const state = engine.getState();
+
+    engine.loadState({
+      ...state,
+      discovered: [...state.discovered, malformedId],
+      improvisedElements: [malformed as unknown as ElementDef],
+      creditedImprovised: [malformedId],
+    });
+
+    expect(engine.getState().improvisedElements).toEqual([]);
+    expect(engine.getState().creditedImprovised).toEqual([]);
+    expect(engine.isDiscovered(malformedId)).toBe(false);
+  });
+
+  it("afviser saves hvor de nye registry-felter ikke er arrays", () => {
+    const base = {
+      act: 1,
+      discovered: ["fire", "berries"],
+      flags: [],
+      solvedProblems: [],
+      attempts: 1,
+    };
+    expect(() =>
+      deserialize(JSON.stringify({
+        version: 1,
+        savedAt: "2026-08-13T12:00:00Z",
+        state: { ...base, improvisedElements: {} },
+      })),
+    ).toThrow("Ugyldig save-fil");
+    expect(() =>
+      deserialize(JSON.stringify({
+        version: 1,
+        savedAt: "2026-08-13T12:00:00Z",
+        state: { ...base, creditedImprovised: "forged" },
+      })),
+    ).toThrow("Ugyldig save-fil");
+  });
+
+  it("sanitizer strukturelt ugyldige runtime-elementer allerede ved deserialize", () => {
+    const malformed = {
+      ...buildFallbackElement(fire, berries),
+      kind: "vehicle",
+    };
+    const state = deserialize(JSON.stringify({
+      version: 1,
+      savedAt: "2026-08-13T12:00:00Z",
+      state: {
+        act: 1,
+        discovered: ["fire", "berries", malformed.id],
+        flags: [],
+        solvedProblems: [],
+        attempts: 1,
+        improvisedElements: [malformed],
+        creditedImprovised: [malformed.id],
+      },
+    }));
+
+    expect(state.improvisedElements).toEqual([]);
+    expect(state.creditedImprovised).toEqual([]);
   });
 
   it("giver identiske udfald og state for hele samme offline-sekvens", () => {

@@ -153,4 +153,75 @@ describe("solves — reglerne selv", () => {
       ],
     });
   });
+
+  it("bevarer selve det negatede prædikat som forklaring på not-fejl", () => {
+    const predicate: SolvePredicate = { not: { traits: ["alive"] } };
+    const explanation = explainSatisfaction(find("dyr"), predicate);
+
+    expect(satisfies(find("dyr"), predicate)).toBe(false);
+    expect(explanation).toEqual({
+      satisfied: false,
+      failures: [
+        {
+          requirement: "not",
+          predicate: { traits: ["alive"] },
+          matched: { satisfied: true, failures: [] },
+        },
+      ],
+    });
+  });
+
+  it("bevarer not-beviset inde i en afvist anyOf-gren", () => {
+    const explanation = explainSatisfaction(find("dyr"), {
+      anyOf: [
+        { not: { traits: ["alive"] } },
+        { kind: ["person"] },
+      ],
+    });
+
+    expect(explanation.satisfied).toBe(false);
+    expect(explanation.failures[0]).toMatchObject({
+      requirement: "anyOf",
+      branches: [
+        {
+          failures: [
+            {
+              requirement: "not",
+              predicate: { traits: ["alive"] },
+            },
+          ],
+        },
+        {
+          failures: [
+            { requirement: "kind", expected: ["person"], actual: "creature" },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("bevarer et nested anyOf-prædikat når not fejler inde i allOf", () => {
+    const negated: SolvePredicate = {
+      anyOf: [{ traits: ["alive"] }, { kind: ["person"] }],
+    };
+    const explanation = explainSatisfaction(find("dyr"), {
+      allOf: [{ traits: ["heavy"] }, { not: negated }],
+    });
+
+    expect(explanation.satisfied).toBe(false);
+    expect(explanation.failures[0]).toMatchObject({
+      requirement: "allOf",
+      branches: [
+        {
+          failures: [
+            {
+              requirement: "not",
+              predicate: negated,
+              matched: { satisfied: true, failures: [] },
+            },
+          ],
+        },
+      ],
+    });
+  });
 });

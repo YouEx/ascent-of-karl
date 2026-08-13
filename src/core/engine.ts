@@ -8,6 +8,7 @@ import {
   buildFallbackElement,
   improvisedElementId,
   MAX_IMPROVISED_DEPTH,
+  sanitizeImprovisedElement,
 } from "./improvise";
 import { explainSatisfaction, solvesNeed } from "./solves";
 import { judgePair } from "./verdict";
@@ -65,6 +66,7 @@ export class Engine {
   readonly content: ContentBundle;
   private state: RuntimeGameState;
   private elementById = new Map<string, ElementDef>();
+  private canonicalElements = new Map<string, ElementDef>();
   private combosByPair = new Map<string, ComboDef[]>();
   private combosByElement = new Map<string, ComboDef[]>();
   private actByNumber = new Map<number, ActDef>();
@@ -76,8 +78,13 @@ export class Engine {
     this.content = content;
     this.predicates = content.predicates;
     for (const el of content.elements) {
-      const canonical = { ...el, origin: el.origin ?? "canon" } satisfies ElementDef;
+      const canonical = {
+        ...el,
+        origin: "canon",
+        parents: undefined,
+      } satisfies ElementDef;
       this.elementById.set(canonical.id, canonical);
+      this.canonicalElements.set(canonical.id, canonical);
       this.canonicalElementIds.add(canonical.id);
     }
     for (const combo of content.combos) {
@@ -124,27 +131,113 @@ export class Engine {
 
   loadState(state: GameState): void {
     const s = structuredClone(state);
+    const improvisedElements = this.sanitizeImprovisedRegistry(
+      s.improvisedElements,
+      s.discovered,
+    );
+    const improvisedIds = new Set(
+      improvisedElements.map((element) => element.id),
+    );
+    const discovered = s.discovered.filter(
+      (id) => this.canonicalElementIds.has(id) || improvisedIds.has(id),
+    );
     // ended/challenges tilføjet senere — ældre saves mangler felterne
     this.state = {
       ...s,
+      discovered,
       ended: s.ended ?? null,
       challenges: s.challenges ?? freshChallengeState(),
       seed: s.seed ?? 1,
-      improvisedElements: (s.improvisedElements ?? []).map((element) => ({
-        ...element,
-        origin: "improvised",
-        base: false,
-        terminal: (element.depth ?? 0) >= MAX_IMPROVISED_DEPTH,
-      })),
-      creditedImprovised: [...new Set(s.creditedImprovised ?? [])],
+      improvisedElements,
+      creditedImprovised: [
+        ...new Set(
+          (Array.isArray(s.creditedImprovised)
+            ? s.creditedImprovised
+            : []
+          ).filter(
+            (id): id is string =>
+              typeof id === "string" &&
+              improvisedIds.has(id) &&
+              discovered.includes(id),
+          ),
+        ),
+      ],
     };
     this.syncImprovisedRegistry();
   }
 
-  private syncImprovisedRegistry(): void {
-    for (const id of [...this.elementById.keys()]) {
-      if (!this.canonicalElementIds.has(id)) this.elementById.delete(id);
+  private sanitizeImprovisedRegistry(
+    raw: unknown,
+    discovered: string[],
+  ): ElementDef[] {
+    if (!Array.isArray(raw)) return [];
+    const discoveredIds = new Set(discovered);
+    const structural: ElementDef[] = [];
+    const duplicates = new Set<string>();
+    const seen = new Set<string>();
+    for (const value of raw) {
+      const element = sanitizeImprovisedElement(value);
+      if (
+        !element ||
+        this.canonicalElementIds.has(element.id) ||
+        !discoveredIds.has(element.id)
+      ) {
+        continue;
+      }
+      if (seen.has(element.id)) {
+        duplicates.add(element.id);
+      } else {
+        seen.add(element.id);
+        structural.push(element);
+      }
     }
+
+    const pending = new Map(
+      structural
+        .filter((element) => !duplicates.has(element.id))
+        .map((element) => [element.id, element]),
+    );
+    const accepted = new Map<string, ElementDef>();
+    let progressed = true;
+    while (progressed) {
+      progressed = false;
+      for (const [id, element] of pending) {
+        const parentA =
+          this.canonicalElements.get(element.parents![0]) ??
+          accepted.get(element.parents![0]);
+        const parentB =
+          this.canonicalElements.get(element.parents![1]) ??
+          accepted.get(element.parents![1]);
+        if (!parentA || !parentB) continue;
+        pending.delete(id);
+        progressed = true;
+        let expected: ElementDef;
+        try {
+          expected = buildFallbackElement(parentA, parentB);
+        } catch {
+          continue;
+        }
+        const taxonomyMatches =
+          element.act === expected.act &&
+          element.depth === expected.depth &&
+          element.kind === expected.kind &&
+          element.stuff === expected.stuff &&
+          element.scale === expected.scale &&
+          element.traits.length === expected.traits.length &&
+          element.traits.every(
+            (trait, index) => trait === expected.traits[index],
+          );
+        if (taxonomyMatches) {
+          accepted.set(id, element);
+        }
+      }
+    }
+
+    return structural.filter((element) => accepted.has(element.id));
+  }
+
+  private syncImprovisedRegistry(): void {
+    this.elementById = new Map(this.canonicalElements);
     for (const element of this.state.improvisedElements) {
       this.elementById.set(element.id, element);
     }
@@ -336,6 +429,14 @@ export class Engine {
 
     const id = improvisedElementId(a, b);
     const known = this.elementById.get(id);
+    if (known && known.origin !== "improvised") {
+      return this.completeTurn({
+        kind: "improvise-rejected",
+        a: first,
+        b: second,
+        reason: "canonical-recipe",
+      });
+    }
     const reused = known?.origin === "improvised";
     const element = reused ? known : buildFallbackElement(first, second);
     if (!reused) {
@@ -386,11 +487,18 @@ export class Engine {
     ) {
       this.creditImprovised(challenge.by.id);
     }
+    let completed = outcome;
+    if (outcome.kind === "discovery" || outcome.kind === "known") {
+      const endingDeflected = this.state.ended
+        ? false
+        : this.applyEnding(outcome.combo);
+      completed = { ...outcome, endingDeflected };
+    }
     if (!this.state.ended && this.state.attempts >= this.content.config.turnLimit) {
       const oldAge = this.content.endings.find((e) => e.automatic);
       if (oldAge) this.state.ended = oldAge.id;
     }
-    return challenge ? { ...outcome, challenge } : outcome;
+    return challenge ? { ...completed, challenge } : completed;
   }
 
   private creditImprovised(id: string): void {
@@ -511,8 +619,7 @@ export class Engine {
     if (this.isDiscovered(combo.result)) {
       // En skæbne der blev afværget tidligere kan opsøges igen — Karl går
       // tilbage til klippen. Ellers ville et for tidligt forsøg låse den ude.
-      const deflected = this.applyEnding(combo);
-      return { kind: "known", combo, element, endingDeflected: deflected };
+      return { kind: "known", combo, element };
     }
 
     // Blødt gate (PRD §2.3): age-up nægtes indtil obligatoriske problemer er løst.
@@ -525,7 +632,6 @@ export class Engine {
     for (const flag of combo.setsFlags ?? []) this.setFlag(flag);
     // Dybe opdagelser koster ekstra somre af Karls liv
     if (combo.cost && combo.cost > 1) this.state.attempts += combo.cost - 1;
-    const endingDeflected = this.applyEnding(combo);
 
     // Hvilket problem løser opdagelsen? Som hovedregel afgøres det af hvad
     // tingen ER — altså af elementets tags mod prædikatet — ikke af om nogen
@@ -571,9 +677,9 @@ export class Engine {
           this.state.discovered.push(el.id);
         }
       }
-      return { kind: "discovery", combo, element, solved, ageUp: true, act, endingDeflected };
+      return { kind: "discovery", combo, element, solved, ageUp: true, act };
     }
 
-    return { kind: "discovery", combo, element, solved, ageUp: false, act, endingDeflected };
+    return { kind: "discovery", combo, element, solved, ageUp: false, act };
   }
 }

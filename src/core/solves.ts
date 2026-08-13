@@ -42,7 +42,9 @@ export function explainSatisfaction(
   }
   if (pred.not) {
     const matched = explainSatisfaction(el, pred.not);
-    if (matched.satisfied) failures.push({ requirement: "not", matched });
+    if (matched.satisfied) {
+      failures.push({ requirement: "not", predicate: pred.not, matched });
+    }
   }
   if (pred.crafted && el.base) {
     failures.push({ requirement: "crafted", expected: true, actual: false });
