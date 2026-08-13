@@ -14,7 +14,12 @@ import { describe, expect, it } from "vitest";
 import predicatesRaw from "../content/predicates.json";
 import fixture from "./fixtures/solves-parity.json";
 import { loadContent } from "../src/content";
-import { satisfies, solvedNeeds, solvesNeed } from "../src/core/solves";
+import {
+  explainSatisfaction,
+  satisfies,
+  solvedNeeds,
+  solvesNeed,
+} from "../src/core/solves";
 import type { ElementDef, SolvePredicate } from "../src/core/types";
 
 // Elementerne hentes gennem loadContent() og ikke direkte fra JSON, fordi
@@ -106,5 +111,46 @@ describe("solves — reglerne selv", () => {
     // indholdet, før den blev til et system.
     expect(solvesNeed(find("mudderkage"), "sult", predicates)).toBe(true);
     expect(solvesNeed(find("klyngen"), "kulde", predicates)).toBe(true);
+  });
+
+  it("forklarer præcist hvilke atomare krav et element ikke opfylder", () => {
+    const explanation = explainSatisfaction(find("baer"), {
+      kind: ["food"],
+      traits: ["edible", "hot"],
+      minDepth: 2,
+    });
+
+    expect(explanation.satisfied).toBe(false);
+    expect(explanation.failures).toEqual([
+      { requirement: "minDepth", expected: 2, actual: 0 },
+      { requirement: "kind", expected: ["food"], actual: "material" },
+      { requirement: "traits", expected: ["edible", "hot"], missing: ["hot"] },
+    ]);
+  });
+
+  it("bevarer forklaringerne fra alle afviste anyOf-grene", () => {
+    const explanation = explainSatisfaction(find("sten"), {
+      anyOf: [{ traits: ["edible"] }, { kind: ["tool"] }],
+    });
+
+    expect(explanation.satisfied).toBe(false);
+    expect(explanation.failures).toHaveLength(1);
+    expect(explanation.failures[0]).toMatchObject({
+      requirement: "anyOf",
+      branches: [
+        {
+          satisfied: false,
+          failures: [
+            { requirement: "traits", expected: ["edible"], missing: ["edible"] },
+          ],
+        },
+        {
+          satisfied: false,
+          failures: [
+            { requirement: "kind", expected: ["tool"], actual: "material" },
+          ],
+        },
+      ],
+    });
   });
 });

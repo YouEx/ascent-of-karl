@@ -61,6 +61,7 @@ export function loadContent(): ContentBundle {
 
   const elementsWithDepth = (elements as { id: string }[]).map((el) => ({
     ...el,
+    origin: "canon" as const,
     depth: depths.get(el.id) ?? 0,
     terminal: !brugtSomInput.has(el.id),
   }));

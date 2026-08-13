@@ -1,0 +1,270 @@
+import type {
+  ElementDef,
+  ElementKind,
+  ElementScale,
+  ElementStuff,
+  ElementTrait,
+} from "./types";
+
+export const MAX_IMPROVISED_DEPTH = 3;
+
+const TRAIT_ORDER: readonly ElementTrait[] = [
+  "hard",
+  "soft",
+  "sharp",
+  "blunt",
+  "hot",
+  "cold",
+  "wet",
+  "dry",
+  "alive",
+  "dead",
+  "edible",
+  "heavy",
+  "light",
+  "fragile",
+  "sticky",
+  "insulating",
+  "tame",
+  "weapon",
+  "vessel",
+  "digs",
+  "healing",
+  "sacred",
+  "floats",
+  "loud",
+  "portable",
+];
+
+const SCALE_ORDER: readonly ElementScale[] = [
+  "hand",
+  "body",
+  "camp",
+  "landscape",
+];
+
+const KIND_PRIORITY: readonly ElementKind[] = [
+  "abstract",
+  "phenomenon",
+  "material",
+  "creature",
+  "person",
+  "food",
+  "tool",
+  "structure",
+];
+
+const STUFF_PRIORITY: readonly ElementStuff[] = [
+  "none",
+  "fire",
+  "water",
+  "plant",
+  "flesh",
+  "fibre",
+  "clay",
+  "bone",
+  "wood",
+  "stone",
+  "metal",
+];
+
+function orderedParents(a: ElementDef, b: ElementDef): [ElementDef, ElementDef] {
+  return a.id <= b.id ? [a, b] : [b, a];
+}
+
+export function improvisedElementId(a: string, b: string): string {
+  const first = a <= b ? a : b;
+  const second = first === a ? b : a;
+  return `improv:${first.length}:${first}:${second.length}:${second}`;
+}
+
+function rolePair(
+  a: ElementDef,
+  b: ElementDef,
+  predicate: (candidate: ElementDef) => boolean,
+): [ElementDef, ElementDef] | null {
+  if (predicate(a) && !predicate(b)) return [a, b];
+  if (predicate(b) && !predicate(a)) return [b, a];
+  return null;
+}
+
+function sharpCreaturePair(
+  a: ElementDef,
+  b: ElementDef,
+): { tool: ElementDef; creature: ElementDef } | null {
+  if (a.kind === "tool" && a.traits.includes("sharp") && b.kind === "creature") {
+    return { tool: a, creature: b };
+  }
+  if (b.kind === "tool" && b.traits.includes("sharp") && a.kind === "creature") {
+    return { tool: b, creature: a };
+  }
+  return null;
+}
+
+function toolMaterialPair(
+  a: ElementDef,
+  b: ElementDef,
+): { tool: ElementDef; material: ElementDef } | null {
+  if (a.kind === "tool" && b.kind === "material") {
+    return { tool: a, material: b };
+  }
+  if (b.kind === "tool" && a.kind === "material") {
+    return { tool: b, material: a };
+  }
+  return null;
+}
+
+function maxScale(a: ElementScale, b: ElementScale): ElementScale {
+  return SCALE_ORDER[Math.max(SCALE_ORDER.indexOf(a), SCALE_ORDER.indexOf(b))]!;
+}
+
+function higherPriority<T extends string>(
+  a: T,
+  b: T,
+  order: readonly T[],
+): T {
+  return order.indexOf(a) >= order.indexOf(b) ? a : b;
+}
+
+function replaceTraits(
+  target: Set<ElementTrait>,
+  ...sources: readonly ElementTrait[][]
+): void {
+  target.clear();
+  for (const source of sources) {
+    for (const trait of source) target.add(trait);
+  }
+}
+
+export function deriveTags(
+  a: ElementDef,
+  b: ElementDef,
+): Pick<ElementDef, "kind" | "stuff" | "traits" | "scale"> {
+  const traits = new Set<ElementTrait>([...a.traits, ...b.traits]);
+  const cut = sharpCreaturePair(a, b);
+  const fire = rolePair(a, b, (el) => el.traits.includes("hot") || el.stuff === "fire");
+  const water = rolePair(a, b, (el) => el.stuff === "water");
+  const clay = rolePair(a, b, (el) => el.stuff === "clay");
+  const worked = toolMaterialPair(a, b);
+
+  let kind = higherPriority(a.kind, b.kind, KIND_PRIORITY);
+  let stuff = higherPriority(a.stuff, b.stuff, STUFF_PRIORITY);
+  let scale = maxScale(a.scale, b.scale);
+
+  if (cut) {
+    replaceTraits(traits, cut.creature.traits);
+    kind = "food";
+    stuff = "flesh";
+    scale = cut.creature.scale;
+    traits.delete("alive");
+    traits.delete("tame");
+    traits.add("dead");
+    traits.add("edible");
+  } else if (fire) {
+    const target = fire[1];
+    replaceTraits(traits, target.traits);
+    kind = target.kind === "food" || target.traits.includes("edible")
+      ? "food"
+      : target.kind;
+    stuff = target.stuff;
+    scale = target.scale;
+    traits.delete("wet");
+    traits.delete("cold");
+    traits.add("hot");
+    traits.add("dry");
+  } else if (water) {
+    const target = water[1];
+    replaceTraits(traits, target.traits);
+    kind = target.kind;
+    stuff = target.stuff;
+    scale = target.scale;
+    traits.delete("dry");
+    traits.delete("hot");
+    traits.add("wet");
+  } else if (clay) {
+    const target = clay[1];
+    replaceTraits(traits, target.traits, clay[0].traits);
+    kind = target.kind;
+    stuff = target.stuff;
+    scale = target.scale;
+    traits.delete("dry");
+    traits.add("wet");
+    traits.add("fragile");
+  } else if (worked) {
+    replaceTraits(traits, worked.material.traits);
+    kind = "tool";
+    stuff = worked.material.stuff;
+  }
+
+  return {
+    kind,
+    stuff,
+    traits: TRAIT_ORDER.filter((trait) => traits.has(trait)),
+    scale,
+  };
+}
+
+export function buildFallbackElement(
+  a: ElementDef,
+  b: ElementDef,
+): ElementDef {
+  const depth = Math.max(a.depth ?? 0, b.depth ?? 0) + 1;
+  if (depth > MAX_IMPROVISED_DEPTH) {
+    throw new RangeError(
+      `Improvisation depth ${depth} exceeds maximum ${MAX_IMPROVISED_DEPTH}`,
+    );
+  }
+
+  const [first, second] = orderedParents(a, b);
+  const cut = sharpCreaturePair(a, b);
+  const fire = rolePair(a, b, (el) => el.traits.includes("hot") || el.stuff === "fire");
+  const water = rolePair(a, b, (el) => el.stuff === "water");
+  const clay = rolePair(a, b, (el) => el.stuff === "clay");
+  const worked = toolMaterialPair(a, b);
+
+  let name: string;
+  let flavor: string;
+  let emoji = first.emoji;
+
+  if (cut) {
+    name = `Butchered ${cut.creature.name}`;
+    flavor = `Karl introduces ${cut.tool.name} to ${cut.creature.name}. The result is edible, which is more than can be said for the plan.`;
+    emoji = cut.creature.emoji;
+  } else if (fire) {
+    name = `Fire-touched ${fire[1].name}`;
+    flavor = `Karl applies ${fire[0].name} to ${fire[1].name}. It is hotter, drier, and somehow now part of the plan.`;
+    emoji = fire[1].emoji;
+  } else if (water) {
+    name = `Soaked ${water[1].name}`;
+    flavor = `Karl adds ${water[0].name} to ${water[1].name}. Wetness is achieved with historic confidence.`;
+    emoji = water[1].emoji;
+  } else if (clay) {
+    name = `Clay-bound ${clay[1].name}`;
+    flavor = `Karl presses ${clay[0].name} around ${clay[1].name}. It holds together until history looks at it sharply.`;
+    emoji = clay[1].emoji;
+  } else if (worked) {
+    name = `${worked.material.name} worked by ${worked.tool.name}`;
+    flavor = `Karl works ${worked.material.name} with ${worked.tool.name}. Purpose appears shortly after the bruising.`;
+    emoji = worked.tool.emoji;
+  } else if (a.stuff === b.stuff && a.stuff !== "none") {
+    name = `Joined ${first.name}`;
+    flavor = `Karl joins ${first.name} to ${second.name}. More of the same is still technically progress.`;
+  } else {
+    name = `${first.name}-${second.name} contraption`;
+    flavor = `Karl combines ${first.name} with ${second.name}. The result exists, which was the full extent of the plan.`;
+  }
+
+  return {
+    id: improvisedElementId(first.id, second.id),
+    origin: "improvised",
+    parents: [first.id, second.id],
+    name,
+    emoji,
+    act: Math.max(a.act, b.act),
+    base: false,
+    depth,
+    terminal: depth === MAX_IMPROVISED_DEPTH,
+    ...deriveTags(a, b),
+    flavor,
+  };
+}

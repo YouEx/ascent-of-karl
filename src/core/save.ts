@@ -24,5 +24,9 @@ export function deserialize(json: string): GameState {
   ) {
     throw new Error("Ugyldig save-fil");
   }
-  return s;
+  return {
+    ...s,
+    improvisedElements: s.improvisedElements ?? [],
+    creditedImprovised: s.creditedImprovised ?? [],
+  };
 }

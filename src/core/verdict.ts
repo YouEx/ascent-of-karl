@@ -110,9 +110,12 @@ export function judgePair(
   const near = findNearMiss(world, a, b) ?? findNearMiss(world, b, a);
   if (near) return near;
 
-  // 4. inert — elementet indgår i ingen opskrift overhovedet. Spillets
-  //    blindgyder. Fortælleren må gerne være ærlig om dem.
-  const deadEnds = [a, b].filter((e) => world.combosWith(e.id).length === 0);
+  // 4. inert — et KANONISK element indgår i ingen opskrift overhovedet.
+  //    Improviserede elementer står pr. definition ikke i den kanoniske
+  //    opskriftsbog; fravær dér siger derfor intet om deres potentiale.
+  const deadEnds = [a, b].filter(
+    (e) => e.origin !== "improvised" && world.combosWith(e.id).length === 0,
+  );
   if (deadEnds.length > 0) {
     return { verdict: "inert", evidence: { deadEnds: deadEnds.map((e) => e.id) } };
   }
