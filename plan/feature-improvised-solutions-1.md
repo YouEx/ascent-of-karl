@@ -55,15 +55,18 @@ tags: [feature, architecture, engine, narrator, content, infrastructure]
 >
 > **Fase 3's server-copyhalvdel og klient er leveret som kilde, men slukket.**
 > `TASK-016`-`TASK-018` og `TASK-021` er leveret under den frosne
-> integrationskontrakt nedenfor; serverhalvdelen af `TASK-019` og `TASK-029`
-> er leveret. `TASK-015`, `TASK-020` og `TASK-025` er nu også leveret:
+> integrationskontrakt nedenfor; serverhalvdelen af `TASK-019` er leveret,
+> og `TASK-029` har nu både servereksport og et review-only høsteværktøj.
+> `TASK-015`, `TASK-020` og `TASK-025` er nu også leveret:
 > `Engine.attempt()` vælger canon før improvisation i én transition,
 > `src/ui/improvise-client.ts` prefetcher copy uden await, og bogen holder
 > Karls opfindelser ude af den historiske tidslinje. Hele spillerfladen er
 > fortsat gated af `VITE_IMPROVISE_ENABLED === "true"`; deploy-workflowet
 > sætter hverken det flag eller `VITE_IMPROVISE_URL`, så der er ingen trafik.
 > Fortællerens dom er leveret og stemme-gated. `TASK-019`'s klient-cap,
-> balanceringen, secrets, deploy og rigtig trafik er fortsat åbne.
+> balanceringen, secrets, deploy og rigtig trafik er fortsat åbne. Derfor
+> findes der stadig ingen faktisk høst: den afventer en deployet Worker,
+> admin-token og rigtig spillertrafik.
 
 Spillets sjoveste indhold findes allerede: **mudderkage** (mudder + bær) mætter Karl, og **klyngen** (nabo + skind) holder ham varm. Begge er mærket `spor: "komisk"`. Ideen om at løse en alvorlig nød på en latterlig måde er ikke ny — den er spillets bedste greb. Den er bare begrænset til de absurditeter, forfatteren nåede at forestille sig på forhånd.
 
@@ -180,7 +183,7 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
 |------|-------------|-----------|------|
 | TASK-027 | Simulér 2.000 runs med improvisation slået til: hvor mange nøder løses af improviserede elementer, hvor mange somre bruges, og hvor ofte når spilleren en skæbne? Sammenlign med baseline. Hvis improvisation gør spillet nemmere, skal den koste mere end én sommer (GUD-001). | | |
 | TASK-028 | Afgør prisen på improvisation ud fra TASK-027, ikke ud fra mavefornemmelse. Kandidater: 1 sommer (som i dag), 2 somre, eller 1 sommer men kun N gange pr. run. | | |
-| TASK-029 | **Server/export-halvdel leveret:** autentificeret `GET /admin/improvisations` eksporterer den aktuelle namespacede DO-cache i stabil leksikalsk par+akt-rækkefølge med cursor-after-key og efterspørgsels-/hit-/upstream-tællinger. Et eksternt høsteværktøj, faktisk trafik, skrivning til `content/drafts/harvested.json` og menneskelig forfremmelse er stadig åbne; intet høstes automatisk. | ◐ | 2026-08-13 |
+| TASK-029 | **Review-only stien er leveret som kode:** autentificeret schemaVersion 3 `GET /admin/improvisations` eksporterer én SHA-256-versioneret snapshot i stabil leksikalsk par+akt-rækkefølge med cursor-after-key og efterspørgsels-/hit-/upstream-tællinger; mutation mellem sider giver 409. `tools/harvest.mjs` kræver betroet origin før tokenafsendelse, kan hente alle sider eller læse en regulær offline fixture, validerer fjendtligt input/snapshot-komplethed og skriver med no-follow/symlink-værn atomisk til den eksakte `content/drafts/harvested.json`. Output er ubetroede, manuelt rangerede review-kandidater og kan aldrig forfremmes automatisk. **Faktisk høst er fortsat blokeret** på en deployet Worker, et admin-token og rigtig trafik; der committes derfor intet fabrikeret harvest-output. | ◐ | 2026-08-13 |
 | TASK-030 | Playtest: spil tre runs hvor målet udelukkende er at løse de tre nøder så absurd som muligt. Hvis det ikke er sjovere end at spille normalt, er prædikaterne for løse eller fortællerens domme for tørre. | | |
 | TASK-031 | Opdatér `PRD.md` og `DESIGN.md` med magtdelingen (PAT-001) og de to elementklasser, så reglen overlever den næste, der rører systemet. | | |
 
@@ -212,7 +215,10 @@ En sidste måling styrer sværhedsgraden: **bær og larver er base-elementer, sp
   stemme-gatede kandidatvarianter.
 - **FILE-008**: `worker/src/improvise*.ts` + den eksisterende Worker/`Coordinator` — skema, model-copy, DO-cache, kvoter, oprydning og admin-eksport.
 - **FILE-009**: `tools/predicate_report.mjs` *(ny)* — prædikat mod allowlist, falske negativer er fejl.
-- **FILE-010**: `tools/harvest.mjs` *(stadig åben)* — den leverede servereksport er inputtet; faktisk høst tilbage til `drafts/` er ekstern og ikke bygget.
+- **FILE-010**: `tools/harvest.mjs` — review-only CLI med produktionspagination,
+  offline fixture, hostile-data-validering og atomisk draft-output. Den udfører
+  ingen automatisk kuratering; faktisk høst afventer deploy, admin-token og
+  rigtig trafik.
 - **FILE-011**: `src/ui/book.ts` — krøniken skelner kurateret fra improviseret.
 - **FILE-012**: `tools/validate.py` — prædikater valideres; `alsoSolvedBy`-overlap advares.
 

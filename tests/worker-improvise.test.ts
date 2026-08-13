@@ -824,6 +824,7 @@ describe("GET /admin/improvisations: autentificeret cache-eksport og tællinger"
     const body = (await res.json()) as {
       schemaVersion: number;
       promptNamespace: string;
+      snapshotVersion: string;
       total: number;
       counts: { cached: number; requests: number; cacheHits: number; upstreamCalls: number };
       entries: {
@@ -839,8 +840,9 @@ describe("GET /admin/improvisations: autentificeret cache-eksport og tællinger"
       nextCursor: string | null;
     };
 
-    expect(body.schemaVersion).toBeGreaterThan(0);
+    expect(body.schemaVersion).toBe(3);
     expect(body.promptNamespace).toMatch(/^[0-9a-f]+$/);
+    expect(body.snapshotVersion).toMatch(/^[0-9a-f]{64}$/);
     expect(body.total).toBe(1);
     expect(body.counts).toEqual({ cached: 1, requests: 2, cacheHits: 1, upstreamCalls: 1 });
     expect(body.entries).toEqual([
@@ -877,7 +879,7 @@ describe("GET /admin/improvisations: autentificeret cache-eksport og tællinger"
     expect(await storage.get("budget:improvise")).toBeUndefined();
   });
 
-  it("cursor-after-key giver ingen dubletter eller huller når counts ændres mellem sider", () => {
+  it("cursor-after-key deler snapshot mellem sider, og mutation giver ny snapshot-version", async () => {
     const cached = new Map<string, CachedImprovisation>([
       [
         "improv-cache:ns:a+b:act:1",
@@ -914,7 +916,7 @@ describe("GET /admin/improvisations: autentificeret cache-eksport og tællinger"
       [improviseStatsKey("e", "f", 2), record("e", "f", 2, 10)],
     ]);
 
-    const first = buildImproviseExport(cached, stats, {
+    const first = await buildImproviseExport(cached, stats, {
       promptNamespace: "ns",
       now: 100,
       limit: 2,
@@ -925,10 +927,7 @@ describe("GET /admin/improvisations: autentificeret cache-eksport og tællinger"
       "c+d:act:1",
     ]);
     expect(first.nextCursor).toBe("c~d~1");
-    const promoted = record("e", "f", 2, 100);
-    stats.set(improviseStatsKey("e", "f", 2), promoted);
-
-    const second = buildImproviseExport(cached, stats, {
+    const second = await buildImproviseExport(cached, stats, {
       promptNamespace: "ns",
       now: 101,
       limit: 2,
@@ -939,7 +938,51 @@ describe("GET /admin/improvisations: autentificeret cache-eksport og tællinger"
     );
     expect(combined).toEqual(["a+b:act:1", "c+d:act:1", "e+f:act:2"]);
     expect(new Set(combined).size).toBe(3);
-    expect(second.entries[0]?.count).toBe(100);
+    expect(second.snapshotVersion).toBe(first.snapshotVersion);
     expect(second.nextCursor).toBeNull();
+
+    const promoted = record("e", "f", 2, 100);
+    stats.set(improviseStatsKey("e", "f", 2), promoted);
+    const mutated = await buildImproviseExport(cached, stats, {
+      promptNamespace: "ns",
+      now: 102,
+      limit: 2,
+      cursor: first.nextCursor,
+    });
+    expect(mutated.snapshotVersion).not.toBe(first.snapshotVersion);
+    expect(mutated.entries[0]?.count).toBe(100);
+  });
+
+  it("kræver snapshot på fortsættelsessider og svarer 409 hvis storage ændres", async () => {
+    const { coordinator } = nyCoordinator();
+    stubModelOutput(VALID_OUTPUT);
+    await coordinator.fetch(improviseRequest({ a: "sten", b: "pind", act: 1 }));
+
+    const first = await coordinator.fetch(
+      adminImproviseRequest({ [ADMIN_VERIFIED_HEADER]: "1" }, "?limit=1"),
+    );
+    const firstBody = (await first.json()) as {
+      snapshotVersion: string;
+      nextCursor: string | null;
+    };
+    expect(first.status).toBe(200);
+    expect(firstBody.snapshotVersion).toMatch(/^[0-9a-f]{64}$/);
+
+    const missingSnapshot = await coordinator.fetch(
+      adminImproviseRequest(
+        { [ADMIN_VERIFIED_HEADER]: "1" },
+        `?limit=1&cursor=${encodeURIComponent(firstBody.nextCursor ?? "pind~sten~1")}`,
+      ),
+    );
+    expect(missingSnapshot.status).toBe(400);
+
+    await coordinator.fetch(improviseRequest({ a: "graes", b: "vand", act: 1 }));
+    const staleSnapshot = await coordinator.fetch(
+      adminImproviseRequest(
+        { [ADMIN_VERIFIED_HEADER]: "1" },
+        `?limit=1&cursor=${encodeURIComponent(firstBody.nextCursor ?? "pind~sten~1")}&snapshot=${firstBody.snapshotVersion}`,
+      ),
+    );
+    expect(staleSnapshot.status).toBe(409);
   });
 });

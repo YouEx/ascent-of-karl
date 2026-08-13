@@ -31,6 +31,7 @@
     "pairs": "vite-node tools/pair_frequency.ts",
     "pairs:prepare": "vite-node tools/prepare_pairs.ts",
     "pairs:export": "node tools/live_pair_export.mjs",
+    "harvest": "node tools/harvest.mjs",
     "pairs:assemble": "python3 tools/assemble_pairs.py",
     "coverage": "node tools/coverage_report.mjs",
     "bundle-budget": "node tools/bundle_budget.mjs"
