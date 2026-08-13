@@ -26,6 +26,8 @@ CONTENT = ROOT / "content"
 # løsningstælleren dømmer med nøjagtig samme regel som porten.
 sys.path.insert(0, str(ROOT / "tools"))
 from predicate_report import compute_depths, satisfies  # noqa: E402
+sys.path.insert(0, str(ROOT / "tools" / "voice"))
+import judge as voice_judge  # noqa: E402
 
 errors: list[str] = []
 warnings: list[str] = []
@@ -708,6 +710,16 @@ def main() -> int:
         for f in c.get("requiresFlags", []):
             if f not in set_flags:
                 err(f"Kombination {c['pair'][0]}+{c['pair'][1]} kræver flag '{f}', som aldrig sættes")
+
+    # --- Fortællerens stemme + reproducerbare grammatik/par-facitter ---
+    voice_failures = voice_judge.gate()
+    for failure in voice_failures:
+        err(f"stemme: {failure}")
+    if not voice_failures:
+        info(
+            f"Stemmedommer: {len(voice_judge.expand_grammar())} grammatikvarianter "
+            f"og {len(voice_judge.expand_pairs())} bagte par består"
+        )
 
     for note in notes:
         print(f"ℹ️  {note}")
