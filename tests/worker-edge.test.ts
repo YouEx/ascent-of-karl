@@ -4,6 +4,7 @@ import { Coordinator, CACHE_MAX_AGE_MS, CLEANUP_INTERVAL_MS } from "../worker/sr
 import { BUDGET_KEY, CACHE_KEY_PREFIX, IP_BUDGET_KEY_PREFIX } from "../worker/src/coordinator";
 import { pairCacheKey, promptNamespace } from "../worker/src/cache-key";
 import { PROMPT_VERSION_INPUT, DEFAULT_MODEL } from "../worker/src/model";
+import { VOICE_PROFILE_HASH } from "../worker/src/voice/gate";
 import { INTERNAL_IP_HASH_HEADER, hashClientIp } from "../worker/src/ip";
 import type {
   DurableObjectId,
@@ -98,12 +99,13 @@ function nyCoordinator(env: Record<string, string | undefined> = {}) {
 /**
  * Navnerummet `Coordinator` selv vil udlede (sikkerhedsrunde 3, punkt 3;
  * udvidet i opfølgningen der lod `PROMPT_VERSION_INPUT` dække SYSTEM+DOMME+
- * brugerprompt-skabelonen, ikke kun SYSTEM): `nyCoordinator()` sætter ikke
+ * brugerprompt-skabelonen, ikke kun SYSTEM; udvidet igen af TASK-007 til
+ * også at folde `VOICE_PROFILE_HASH` ind): `nyCoordinator()` sætter ikke
  * `MODEL`, så den rigtige koordinator falder tilbage til `DEFAULT_MODEL` —
  * denne konstant skal matche PRÆCIS det, for at `saetCacheHit()` kan
  * forudfylde en nøgle koordinatoren selv ville slå op under.
  */
-const TEST_NAMESPACE = promptNamespace(PROMPT_VERSION_INPUT, DEFAULT_MODEL);
+const TEST_NAMESPACE = promptNamespace(PROMPT_VERSION_INPUT, DEFAULT_MODEL, VOICE_PROFILE_HASH);
 
 async function saetCacheHit(
   storage: FakeStorage,
