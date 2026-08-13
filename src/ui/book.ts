@@ -4,6 +4,8 @@ import type { TimelineNode } from "../core/timeline";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import type { RarityInfo } from "../core/rarity";
 import { artUrl, glyphHTML } from "./art";
+import { activeScenario } from "./scenario";
+import { scenarioTimelineOpen } from "./scenario-config";
 
 /**
  * Bogen: leksikonet er den primære flade — det åbne opslag viser den valgte
@@ -60,13 +62,16 @@ export class BookView {
 
   /** Kaldes efter hver opdagelse (med den nye opdagelses id) og efter age-up. */
   render(selectId?: string): void {
+    const blankChronicle = activeScenario()?.blankChronicle === true;
     const currentAct = this.engine.currentAct().act;
     if (this.selectedAct > currentAct) this.selectedAct = currentAct;
-    if (selectId) {
+    if (selectId && !blankChronicle) {
       this.selectedNode = selectId;
       this.selectedAct = this.engine.element(selectId).act;
     }
-    if (!this.selectedNode) {
+    if (blankChronicle) {
+      this.selectedNode = null;
+    } else if (!this.selectedNode) {
       // Åbn bogen på nyeste opdagelse i akten, hvis der er en
       const discoveredInAct = this.engine
         .availableElements()
@@ -100,6 +105,7 @@ export class BookView {
   private renderChips(): void {
     const chips = this.container.querySelector<HTMLElement>("#book-chips")!;
     chips.innerHTML = "";
+    if (activeScenario()?.blankChronicle) return;
     const discovered = this.engine
       .availableElements()
       .filter((e) => !e.base && e.act === this.selectedAct);
@@ -156,17 +162,20 @@ export class BookView {
   private renderTimelineSection(): void {
     const toggle = this.container.querySelector<HTMLButtonElement>("#timeline-toggle")!;
     const wrap = this.container.querySelector<HTMLElement>("#timeline-wrap")!;
+    const scenario = activeScenario();
+    this.timelineOpen = scenarioTimelineOpen(this.timelineOpen, scenario);
     const state = this.engine.getState();
     const discoveredSet = new Set(state.discovered);
     const { found, total } = buildTimeline(
       this.engine.content, this.selectedAct, discoveredSet, new Set(state.flags),
     );
+    const scenarioLabel = scenario?.timelineLabel;
 
     // Uret er et billede skåret ud af referencen (.timeline-watch i CSS) —
     // referencen har ingen ▸-trekant her. Tallet står fed, som i referencen.
     toggle.innerHTML =
       `<span class="timeline-watch" aria-hidden="true"></span>` +
-      `Timeline — <strong>${found}/${total}</strong> discovered`;
+      `Timeline — <strong>${scenarioLabel ?? `${found}/${total}`}</strong> discovered`;
     toggle.setAttribute("aria-expanded", String(this.timelineOpen));
     wrap.hidden = !this.timelineOpen;
     if (this.timelineOpen) this.renderTimeline(wrap, discoveredSet, new Set(state.flags));

@@ -327,9 +327,12 @@ function renderProblems(): void {
   // synlig uden at han skal gentage sig. Dét er det, der gør ulydighed
   // til et valg frem for et tilfælde.
   const pulled = narrator.currentPull()?.id;
+  const scenarioProblems = activeScenario()?.visibleProblemIds;
+  const visible = scenarioProblems ? new Set(scenarioProblems) : undefined;
   el.problems.innerHTML = engine
     .currentAct()
     .problems.map((p) => {
+      if (visible && !visible.has(p.id)) return "";
       const done = engine.isSolved(p.id);
       const wanted = !done && p.id === pulled;
       const tint = p.tint ? ` tint-${p.tint}` : "";
@@ -345,7 +348,7 @@ function renderProblems(): void {
       const icon = done
         ? `<i class="problem-icon" aria-hidden="true">${mark}</i>`
         : problemGlyphHTML(p.id, mark, "problem-icon");
-      return `<span class="${cls}" title="${p.description}${hint}">${icon} ${p.name}</span>`;
+      return `<span class="${cls}" data-problem="${p.id}" title="${p.description}${hint}">${icon} ${p.name}</span>`;
     })
     .join("");
 }
@@ -454,7 +457,9 @@ function renderGrid(): void {
 }
 
 function renderBookBadge(): void {
-  const count = engine.availableElements().filter((e) => !e.base).length;
+  const count = activeScenario()?.blankChronicle
+    ? 0
+    : engine.availableElements().filter((e) => !e.base).length;
   el.bookBadge.textContent = String(count);
   // Et "0"-badge er støj: mærket findes for at sige "der er noget nyt derinde".
   el.bookBadge.hidden = count === 0;
@@ -971,6 +976,12 @@ applyScenario();
 function applyScenario(): void {
   const spec = activeScenario();
   if (spec) {
+    if (spec.discovered) {
+      engine.loadState({
+        ...engine.getState(),
+        discovered: [...spec.discovered],
+      });
+    }
     if (spec.tipIndex !== undefined) {
       tipIndex = spec.tipIndex;
       renderTip();
@@ -979,6 +990,9 @@ function applyScenario(): void {
       el.titleScreen.hidden = true;
       runStartedAt = performance.now();
       renderAll();
+    }
+    for (const selector of spec.hiddenSelectors ?? []) {
+      document.querySelector(selector)?.remove();
     }
     if (spec.narratorText) {
       lastLineText = spec.narratorText;

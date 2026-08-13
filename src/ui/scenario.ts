@@ -12,42 +12,10 @@
  *
  * Se plan/architecture-visual-judge-1.md fase 1 (TASK-002 til TASK-006).
  */
-
-export type ScenarioName = "title-fresh" | "act1-opening";
-
-export interface ScenarioSpec {
-  /** Menneskelæsbar begrundelse — hvilken reference svarer scenariet til */
-  readonly reference: string;
-  /** Skal spillet starte (titelskærmen væk), eller bliver vi på titelskærmen? */
-  readonly start: boolean;
-  /**
-   * Fortællerlinjen der skal stå i boblen. Sættes DIREKTE i stedet for at
-   * spille sig frem: at klikke sig til en bestemt linje er både langsomt og
-   * skrøbeligt, og en fejlet klikvej ville give en tavs, forkert måling.
-   */
-  readonly narratorText?: string;
-  /** Hvilket tip-kort titelskærmen står på (referencen viser det første) */
-  readonly tipIndex?: number;
-}
-
-/**
- * Scenarierne svarer 1:1 til filerne i docs/design/reference/. Tilføjes en ny
- * reference, skal den have et scenarie her — ellers kan den ikke måles.
- */
-export const SCENARIOS: Readonly<Record<ScenarioName, ScenarioSpec>> = {
-  "title-fresh": {
-    reference: "docs/design/reference/title-2026-08-11.webp",
-    start: false,
-    tipIndex: 0,
-  },
-  "act1-opening": {
-    reference: "docs/design/reference/target-2026-08-11.webp",
-    start: true,
-    narratorText:
-      "Every great story begins somewhere. This one begins with a shivering man " +
-      "staring at a rock as if it owed him money. Onward, humanity.",
-  },
-};
+import { SCENARIOS } from "./scenario-config";
+import type { ScenarioName, ScenarioSpec } from "./scenario-config";
+export { SCENARIOS };
+export type { ScenarioName, ScenarioSpec };
 
 /**
  * Fast seed under frysning. Spillet trækker to tilfældige tal ved opstart
