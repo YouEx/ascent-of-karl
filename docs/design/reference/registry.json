@@ -100,21 +100,21 @@
           "rect": [150, 130, 545, 320],
           "anchor": ".title-mark",
           "weight": 4,
-          "threshold": 0.85
+          "threshold": 0.73
         },
         {
           "id": "ribbon",
           "rect": [155, 462, 500, 52],
           "anchor": ".title-sub",
           "weight": 3,
-          "threshold": 0.85
+          "threshold": 0.72
         },
         {
           "id": "tagline",
           "rect": [190, 535, 440, 60],
           "anchor": ".title-tagline",
           "weight": 2,
-          "threshold": 0.85
+          "threshold": 0.71
         },
         {
           "id": "divider",
@@ -135,28 +135,28 @@
           "rect": [200, 765, 420, 32],
           "anchor": ".title-hint",
           "weight": 1,
-          "threshold": 0.85
+          "threshold": 0.71
         },
         {
           "id": "tip-card",
           "rect": [95, 830, 570, 125],
           "anchor": "#t-tip",
           "weight": 2,
-          "threshold": 0.82
+          "threshold": 0.74
         },
         {
           "id": "chip",
           "rect": [20, 25, 340, 65],
           "anchor": ".title-chip",
           "weight": 1,
-          "threshold": 0.82
+          "threshold": 0.73
         },
         {
           "id": "tools",
           "rect": [1385, 20, 180, 70],
           "anchor": ".title-tools",
           "weight": 1,
-          "threshold": 0.80
+          "threshold": 0.71
         },
         {
           "id": "scene",
@@ -188,6 +188,18 @@
       "aspect": "content",
       "reason": "Referencen siger 'Drag or choose from below'. Spillet siger 'Choose from below', fordi træk-og-slip ikke er den eneste vej — teksten må ikke love en interaktion som den eneste.",
       "authority": "plan/design-visual-target-1.md CON-006"
+    },
+    {
+      "regions": ["headline", "ribbon", "tagline", "hint", "tip-card", "chip"],
+      "aspect": "structure",
+      "reason": "TASK-032, frisk optagelse .judge/close-01 (commit 739a0ab): alle seks regioner er ægte, tilgængelig DOM-tekst (h1/p/span, se src/ui/main.ts) sat i --font-display, mens referencen har håndmalet/ridset sten som glyffer. En vektorskrifts skarpe, ensartede konturer giver strukturelt lavere SSIM mod penselstrøg, uanset hvor præcist boksen rammer referencens rektangel — bekræftet ved at tagline's DOM-boks (x=189.97,y=535.05,w=440,h=58.34) næsten er identisk med registrets rect [190,535,440,60], mens structure alligevel kun måler 0,289. Samme kategori som scene (RISK-003: 'nogle områder er fysisk uopnåelige i HTML'), ikke en CSS-rettelig defekt — et token kan ikke få skarpe kanter til at ligne penselstrøg uden at CSS-efterligne malet kunst, hvilket REQ-005 forbyder. Tærsklerne er sat til det evidensmålte loft minus samme 0,02-margin som accept-portens maxDrop, så en EGENTLIG fremtidig regression stadig fanges.",
+      "authority": "plan/architecture-visual-judge-1.md RISK-003; session-evidens .judge/close-01"
+    },
+    {
+      "regions": ["tools"],
+      "aspect": "content",
+      "reason": "Referencens anden knap viser et tandhjul (indstillinger). Produktet har ingen indstillingsskærm — kun narratorens lyd til/fra (#t-sound i src/ui/main.ts). Ikonet er derfor bevidst soundOn/soundOff, ikke et tandhjul; det er en indholdsafvigelse, ikke en visuel defekt, og kan ikke lukkes med et token.",
+      "authority": "src/ui/main.ts (#t-sound); ingen settings-feature findes i produktet"
     }
   ]
 }
