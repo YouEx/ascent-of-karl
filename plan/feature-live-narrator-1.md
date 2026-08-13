@@ -149,8 +149,8 @@ grammatikken kun kender dommen.
 |--------|-------------|--------|------|
 | TASK-002 | Loft pr. klient i workeren: ét globalt Durable Object (`worker/src/coordinator-do.ts`) tæller kald pr. IP-hash i et rullende vindue (`worker/src/limiter.ts`) og svarer 429 med en sand `Retry-After`, når loftet er nået. Klienten (`src/narrator/live.ts`) behandler 429 som "intet svar": ingen tælling til den almindelige afbryder, og intet nyt forsøg før `Retry-After` er gået. Loftet — 20 kald/60 sek. — er udledt af det MÅLTE, hårde `turnLimit`-loft pr. run (50, bekræftet af simuleringen) og en fysisk-tids-udregning, ikke et gæt. **Sikkerhedsrunde 2:** IP'en fastslås nu KUN ved Cloudflare-kanten (`index.ts`, `cf-connecting-ip`, aldrig `X-Forwarded-For`) og hashes med en obligatorisk secret (`IP_HASH_SALT`) — Durable Object'et validerer blot en 64-hex-hash og fejler lukket (503) uden den. **Sikkerhedsrunde 3:** rate-limit-reservationen (`coordinator.ts`s `reserveRateLimitSlot()`) er flyttet UD af selve beslutningskæden (`decide()`) og ind i `coordinator-do.ts`s `fetch()`, hvor den nu sker FØR anmodningens krop overhovedet læses/parses — ellers kunne en for stor eller misdannet krop undgå rate-limiten fuldstændig, fordi den blev afvist (400) længe før noget rate-limit-tjek så den. Se "Fase 2 — målte tal", "Fase 2 — sikkerhedsrunde 2" og "Fase 2 — sikkerhedsrunde 3" nedenfor. | ✅ | 2026-08-12 |
 | TASK-003 | Dagligt UTC-udgiftsloft i samme Durable Object (`worker/src/budget.ts`): kun kald, der reserverer budget og når opstrøms (cache-misses), tæller — et cache-hit koster intet af loftet. Over grænsen svarer workeren 503 med `Retry-After` frem til næste UTC-midnat, og klienten slår laget fra indtil da uden at røre den almindelige afbryder. Loftet — 350/døgn — er udledt af den målte 95.-percentil af distinkte par+dom-nøgler pr. run, ganget med en udtrykkeligt antaget (ikke målt) travl-dag-trafik. **Sikkerhedsrunde 2:** tilføjet et ANDET, mindre loft — 165/døgn pr. IP-hash — så én spiller (eller angriber) aldrig alene kan opbruge hele det globale budget; ramt pr.-IP-loft svarer 429 (klient-specifik grænse), ramt globalt loft svarer stadig 503. **Sikkerhedsrunde 3:** oprydningsalarmen (`coordinator-do.ts`s `alarm()`) rydder nu også pr.-IP-budgetposter hvis gemte UTC-dato hverken er i dag eller i går — uden dette ville lageret vokse for evigt med én post pr. IP-hash der nogensinde har spurgt. Se "Fase 2 — målte tal". | ✅ | 2026-08-12 |
-| TASK-004 | Delt cache i Durable Object'ets egen storage (ikke KV — ét stateful binding er simplere end to), nøglet på sorteret par + dom + navnerum (`worker/src/cache-key.ts`). Målt FØR bygget: træfprocenten er beregnet til 96,9 % over 1.200 simulerede runs (langt over 20 %-grænsen), så cachen er bygget. Kun vellykket, renset modeltekst caches; fejl caches aldrig; samtidige misses på samme nøgle deles (`worker/src/concurrency.ts`), så en byge kun koster ét kald. **Sikkerhedsrunde 2:** anmodningen bærer nu KUN kanoniske id'er + dom (aldrig klient-oplyste navne/flavor/tags) — workeren genopbygger prompten fra det bundlede `content/elements.json`/`content/acts/*.json` (`worker/src/catalog.ts`); et ukendt id afvises 400 FØR budget/cache. **Sikkerhedsrunde 3:** cache-nøglens navnerum udledes nu AUTOMATISK (`cache-key.ts`s `promptNamespace()`, en deterministisk hash af selve prompten og modellen) i stedet for et manuelt versionstal (`CACHE_VERSION`), som en udvikler selv skulle huske at bumpe — en ændring i prompt ELLER model ændrer navnerummet af sig selv, uden et løfte om at huske noget. Se "Fase 2 — målte tal" for hele udregningen. | ✅ | 2026-08-12 |
-| TASK-005 | Deployment dokumenteret i `docs/deployment/live-narrator.md` (Durable Object-migration/binding, `OPENAI_API_KEY` og `IP_HASH_SALT` som secrets, sikre `[vars]`, `wrangler deploy`, `VITE_NARRATOR_URL` ved build, sådan verificeres helbred/429/503, og den hurtige nødstop) med en kort henvisning fra `README.md`. **Sikkerhedsrunde 3:** afsnit 4b omskrevet — beskriver nu den automatiske navnerumsudledning frem for en manuel version-bump-procedure. Ingen hemmelige værdier eller priser i dokumentet. | ✅ | 2026-08-12 |
+| TASK-004 | Delt cache i Durable Object'ets egen storage (ikke KV — ét stateful binding er simplere end to), nøglet på sorteret par + dom + navnerum (`worker/src/cache-key.ts`). Målt FØR bygget: træfprocenten er beregnet til 96,9 % over 1.200 simulerede runs (langt over 20 %-grænsen), så cachen er bygget. Kun vellykket, renset modeltekst caches; fejl caches aldrig; samtidige misses på samme nøgle deles (`worker/src/concurrency.ts`), så en byge kun koster ét kald. **Sikkerhedsrunde 2:** anmodningen bærer nu KUN kanoniske id'er + dom (aldrig klient-oplyste navne/flavor/tags) — workeren genopbygger prompten fra det bundlede `content/elements.json`/`content/acts/*.json` (`worker/src/catalog.ts`); et ukendt id afvises 400 FØR budget/cache. **Sikkerhedsrunde 3:** cache-nøglens navnerum udledes nu AUTOMATISK (`cache-key.ts`s `promptNamespace()`, en deterministisk hash af selve prompten og modellen) i stedet for et manuelt versionstal (`CACHE_VERSION`), som en udvikler selv skulle huske at bumpe — en ændring i prompt ELLER model ændrer navnerummet af sig selv, uden et løfte om at huske noget. **Opfølgning:** navnerummet dækkede dér stadig kun `SYSTEM`+model — en efterfølgende gennemgang fandt at hverken dom-forklaringerne (`DOMME`) eller selve brugerprompt-skabelonen indgik, selvom begge former den genererede tekst lige så meget som `SYSTEM`. `model.ts`s nye `PROMPT_VERSION_INPUT` retter det: navnerummet dækker nu SYSTEM+DOMME+skabelon+model, stadig automatisk, stadig intet versionstal. Se "Fase 2 — målte tal" og "Fase 2 — sikkerhedsrunde 3, opfølgning" for hele udregningen. | ✅ | 2026-08-12 |
+| TASK-005 | Deployment dokumenteret i `docs/deployment/live-narrator.md` (Durable Object-migration/binding, `OPENAI_API_KEY` og `IP_HASH_SALT` som secrets, sikre `[vars]`, `wrangler deploy`, `VITE_NARRATOR_URL` ved build, sådan verificeres helbred/429/503, og den hurtige nødstop) med en kort henvisning fra `README.md`. **Sikkerhedsrunde 3:** afsnit 4b omskrevet — beskriver nu den automatiske navnerumsudledning frem for en manuel version-bump-procedure. **Opfølgning:** afsnit 4b uddybet igen med den PRÆCISE, fulde dækning (SYSTEM+DOMME+skabelon+model, ikke kun SYSTEM+model) og en udtrykkelig "hvad dækkes ikke"-linje. Ingen hemmelige værdier eller priser i dokumentet. | ✅ | 2026-08-12 |
 | TASK-006 | Beslut, om laget overhovedet skal udrulles. Det er **Martins beslutning**, ikke en implementeringsdetalje: laget koster penge pr. spiller, og spillet er målt komplet uden det. Alternativet — at bage videre mod N=600 og lade grammatikken tage resten — er gratis og allerede i gang. **Stadig åben** — fase 2 (inkl. sikkerhedsrunde 2 og 3's rettelser) gør laget klar til at blive slået til, den beslutter ikke, at det skal. | | |
 
 #### Fase 2 — målte tal
@@ -359,6 +359,79 @@ TASK-002-005, leveret som nye commits (aldrig amendet). Alle tre er lukket:
    ændret prompt giver et andet navnerum; navnerummet er kort og
    nøgle-venligt (`tests/worker-security.test.ts`).
 
+#### Fase 2 — sikkerhedsrunde 3, opfølgning (cache-navnerummets fulde dækning)
+
+En opfølgende gennemgang af sikkerhedsrunde 3 punkt 3 fandt ÉT resterende
+hul: `promptNamespace(SYSTEM, model)` dækkede kun system-prompten og
+modellen — men den genererede tekst bestemmes lige så meget af
+`DOMME`-forklaringerne (7 faste tekster, én pr. dom) og selve
+brugerprompt-SKABELONEN (`beskriv`/`buildUserPrompt` i `model.ts`: hvordan
+FIRST/SECOND, "WHY IT FAILED" og de valgfrie need/summer-linjer sættes
+sammen). En redaktionel ændring i én dom-forklaring eller i skabelonens
+ordlyd ville derfor IKKE have ændret navnerummet, og gamle cache-linjer
+skrevet under den gamle tekst ville fortsat blive serveret som om de var
+skrevet af den nye.
+
+Løsningen, `worker/src/model.ts`:
+
+- **`beskriv`/`buildUserPrompt` er omskrevet til at bruge navngivne
+  `TPL_*`-konstanter** (15 stk. — indledningssætning, FIRST/SECOND-
+  mærkater, "WHY IT FAILED"-omslag, need-/summer-præfiks/suffiks, og
+  samtlige separatorer/parenteser i `beskriv`) i stedet for anonyme
+  streng-literaler direkte i funktionerne. Selve den RENDEREDE tekst er
+  UÆNDRET — verificeret byte-for-byte mod den oprindelige kode over 4.536
+  kombinationer af valgfrie felter (traits/flavor/karlMood/need/summer, i
+  alle kombinationer) med et midlertidigt (ikke committet) sammenlignings-
+  script, før omskrivningen blev stolet på.
+- **`USER_PROMPT_TEMPLATE_FRAGMENTS`** samler PRÆCIS de samme `TPL_*`-
+  konstanter (ikke en hånd-skrevet kopi af deres tekst) i én fast,
+  dokumenteret rækkefølge — kun til fingeraftryk, aldrig til rendering.
+  Fordi det er de samme konstanter, kan listen ikke "glemme" en ændring:
+  rør man en `TPL_*` for at ændre teksten, rører man automatisk også
+  fingeraftrykket. Bevidst IKKE en gengivet `buildUserPrompt(body)` for én
+  opdigtet "repræsentativ" krop — det ville kun fange de grene den ene
+  krop tilfældigvis rammer (need/summer er begge valgfrie), og kunne
+  stiltiende springe en fremtidig ny valgfri gren over, som TypeScript
+  ikke tvinger noget kald-sted til at udfylde.
+- **`buildPromptVersionInput(systemPrompt, domme, templateFragments)`**
+  (eksporteret, ren funktion) bygger selve fingeraftryks-strengen: `domme`s
+  nøgler slås op i STABIL (sorteret) rækkefølge, så selve
+  indsættelsesordenen i `DOMME`-objektet er ligegyldig — kun nøgle+værdi-
+  indholdet tæller. `\u0001` adskiller par internt og adskiller
+  skabelon-bidderne; `\u0000` adskiller de tre dele (system, domme,
+  skabelon) fra hinanden, samme adskillelsesprincip som `promptNamespace`
+  allerede brugte til at adskille model fra prompt.
+- **`PROMPT_VERSION_INPUT = buildPromptVersionInput(SYSTEM, DOMME, USER_PROMPT_TEMPLATE_FRAGMENTS)`**
+  (eksporteret konstant) er DEN fulde prompt-kontrakt. `coordinator-do.ts`s
+  `getDeps()` kalder nu `promptNamespace(PROMPT_VERSION_INPUT, ...)` i
+  stedet for `promptNamespace(SYSTEM, ...)` — `promptNamespace()` selv er
+  UÆNDRET (stadig FNV-1a, stadig 2 argumenter), kun hvad der reelt sendes
+  som første argument er blevet rigere.
+
+Testet i `tests/worker-security.test.ts`: `buildPromptVersionInput` er
+stabil for identiske input; uafhængig af `DOMME`s nøgle-indsættelsesorden;
+følsom over for en dom-forklarings TEKST alene; følsom over for at en
+dom-nøgle tilføjes/fjernes; følsom over for skabelonen alene; følsom over
+for `SYSTEM` alene. Desuden bekræftes med de RIGTIGE produktionskonstanter:
+`PROMPT_VERSION_INPUT` er PRÆCIS `buildPromptVersionInput(SYSTEM, DOMME, USER_PROMPT_TEMPLATE_FRAGMENTS)`
+(ikke bygget ved siden af dem), indeholder `SYSTEM` ordret, er længere end
+`SYSTEM` alene, og en ægte ændring i én rigtig `DOMME`-forklaring
+henholdsvis ét rigtigt skabelon-bidrag ændrer det navnerum
+`promptNamespace()` ville udlede. `tests/worker-edge.test.ts`s
+`TEST_NAMESPACE`-fixtur er opdateret til samme `PROMPT_VERSION_INPUT`, så
+de forudfyldte cache-hit-tests fortsat matcher hvad den rigtige
+koordinator selv udleder.
+
+**Kendt, bevidst udokumenteret grænse:** selve RÆKKEFØLGEN,
+`beskriv`/`buildUserPrompt` sætter de faste bidder sammen i, indgår ikke i
+fingeraftrykket — kun bidderens tekst-indhold gør. En omrokering af de
+statiske sammensætningstrin uden at ændre nogen literal tekst ville derfor
+ikke bumpe navnerummet. Vurderet som en teoretisk, ekstremt usandsynlig
+ændring (enhver reel tekstændring rammer altid en `TPL_*`-konstant og
+bumper dermed navnerummet under alle realistiske redigeringer), og
+bevidst IKKE løst generisk — se `docs/deployment/live-narrator.md` afsnit
+4b.
+
 ### Fase 3 — Kvalitet, når stemmedommeren findes
 
 | Opgave | Beskrivelse | Færdig | Dato |
@@ -419,7 +492,8 @@ TASK-002-005, leveret som nye commits (aldrig amendet). Alle tre er lukket:
   længere en fri beskrivelsestekst.
 - **FILE-005**: `tests/live.test.ts` — leveret/udvidet med 429/503-tests og
   (sikkerhedsrunde 2) en test af den smalle ledningsform.
-- **FILE-006** (fase 2, udvidet i sikkerhedsrunde 2 og 3): `worker/src/{limiter,
+- **FILE-006** (fase 2, udvidet i sikkerhedsrunde 2 og 3, samt en
+  opfølgning derefter): `worker/src/{limiter,
   budget,cache-key,origin,validate,clean,concurrency,ip,store,model,
   coordinator,coordinator-do,cf-types,env,catalog,cleanup}.ts` — de rene
   beslutningsmoduler plus den tynde Cloudflare-tilpasning. `cf-types.ts` er
@@ -443,12 +517,22 @@ TASK-002-005, leveret som nye commits (aldrig amendet). Alle tre er lukket:
   eksporteret `DEFAULT_MODEL`; `cleanup.ts` fik `findStaleIpBudgetKeys()`
   (punkt 2); `coordinator-do.ts`s `fetch()` kalder nu
   `reserveRateLimitSlot()` FØR kroppen læses, og `alarm()` fik en tredje
-  oprydningsomgang for `budget:ip:*`.
-- **FILE-007** (fase 2, tal opdateret i sikkerhedsrunde 2 og 3):
-  `tests/worker-security.test.ts` (55 tests: rate limit, globalt+pr.-IP
-  budget, cache-nøgle+automatisk navnerum, oprindelse, validering (inkl.
-  ægte UTF-8 byte-længde), env-fortolkning, katalog-opslag, oprydning
-  (rate-limit/cache/pr.-IP-budget), IP-hash-form),
+  oprydningsomgang for `budget:ip:*`. **Opfølgning:** `model.ts` fik
+  `USER_PROMPT_TEMPLATE_FRAGMENTS`, `buildPromptVersionInput()` og
+  `PROMPT_VERSION_INPUT` (SYSTEM+DOMME+skabelon, ikke kun SYSTEM), samt
+  `beskriv`/`buildUserPrompt` omskrevet til at bruge navngivne
+  `TPL_*`-konstanter; `cache-key.ts`s `promptNamespace()` er selv uændret,
+  men dens første parameter er omdøbt (`systemPrompt` → `promptContract`)
+  og dens doc-kommentar opdateret; `coordinator-do.ts`s `getDeps()` kalder
+  nu `promptNamespace(PROMPT_VERSION_INPUT, ...)`.
+- **FILE-007** (fase 2, tal opdateret i sikkerhedsrunde 2 og 3, samt en
+  opfølgning derefter):
+  `tests/worker-security.test.ts` (66 tests: rate limit, globalt+pr.-IP
+  budget, cache-nøgle+automatisk navnerum, den fulde prompt-kontrakts
+  fingeraftryk (`buildPromptVersionInput`/`PROMPT_VERSION_INPUT`,
+  opfølgningen — TEST-018), oprindelse, validering (inkl. ægte UTF-8
+  byte-længde), env-fortolkning, katalog-opslag, oprydning (rate-limit/
+  cache/pr.-IP-budget), IP-hash-form),
   `tests/worker-coordinator.test.ts` (14 tests: cache/budget/stampede/
   kanonisering, samt sikkerhedsrunde 3's `reserveRateLimitSlot()`-tjek og
   beviset for at `decide()` ikke længere rate-limiter selv) og (nyt i
@@ -458,17 +542,21 @@ TASK-002-005, leveret som nye commits (aldrig amendet). Alle tre er lukket:
   oprydningsalarmen bliver planlagt og reelt rydder alle tre slags stale
   poster, og — sikkerhedsrunde 3 — at 20 for-store/misdannede
   forespørgsler tæller ét rate-limit-slot hver uden at røre budgettet, og
-  at den 21. rammer selve rate-limiten) — alle kører i root-Vitest uden en
-  Cloudflare-testpool, jf. kravet om at holde adapteren tynd og de rene
-  moduler importerbare.
-- **FILE-008** (fase 2, udvidet i sikkerhedsrunde 2 og 3):
+  at den 21. rammer selve rate-limiten; opfølgningen opdaterede kun
+  `TEST_NAMESPACE`-fixturen til `PROMPT_VERSION_INPUT`, ingen nye tests
+  nødvendige her) — alle kører i root-Vitest uden en Cloudflare-testpool,
+  jf. kravet om at holde adapteren tynd og de rene moduler importerbare.
+- **FILE-008** (fase 2, udvidet i sikkerhedsrunde 2 og 3, samt en
+  opfølgning derefter):
   `docs/deployment/live-narrator.md` — TASK-005, udrulningsopskriften, med
   en kort henvisning fra `README.md`. Udvidet med: obligatorisk
   `IP_HASH_SALT`, pr.-IP dagligt loft, korrigeret Origin-forbehold, og at
   indholdsændringer kræver gendeploy. **Sikkerhedsrunde 3:** afsnit 4b
   omskrevet fra en manuel cache-version-bump-procedure til en beskrivelse
   af den automatiske navnerumsudledning; afsnit 4c nævner nu også
-  oprydning af pr.-IP-budgetposter.
+  oprydning af pr.-IP-budgetposter. **Opfølgning:** afsnit 4b uddybet med
+  den PRÆCISE dækning (SYSTEM+DOMME+skabelon+model, i den rækkefølge) og
+  en udtrykkelig "hvad dækkes ikke"-linje om sammensætningsrækkefølgen.
 - **FILE-009** (sikkerhedsrunde 2, punkt 5): `tools/pair_frequency.ts` —
   udvidet med pr.-run distinkte par+dom-nøgler (gennemsnit/95.-percentil/
   maksimum) og selve cache-træf-udregningen (to varianter: alle møder og
@@ -503,8 +591,9 @@ TASK-002-005, leveret som nye commits (aldrig amendet). Alle tre er lukket:
   moduler — rullende vindue (tillader op til loftet, afviser det næste,
   tillader igen når det ældste tidsstempel er udløbet), globalt OG pr.-IP
   daglig budget-reservation under simuleret samtidighed, cache-nøglens
-  rækkefølge-uafhængighed, dom-følsomhed og navnerum (nu automatisk
-  udledt af prompt+model, sikkerhedsrunde 3 punkt 3 — se TEST-017),
+  rækkefølge-uafhængighed, dom-følsomhed og navnerum (automatisk udledt af
+  den fulde prompt-kontrakt+model, sikkerhedsrunde 3 punkt 3, udvidet i en
+  opfølgning til at dække DOMME+skabelon — se TEST-017/TEST-018),
   oprindelsespolitik, validering af misdannet/for stort input (ægte UTF-8
   byte-længde, ikke `.length`), kanonisk id-opslag (`catalog.ts`, ukendt id
   afvises), og oprydningskandidater for alle tre slags poster —
@@ -587,6 +676,24 @@ TASK-002-005, leveret som nye commits (aldrig amendet). Alle tre er lukket:
   navnerum når MODELLEN ændres (uændret prompt), et andet navnerum når
   PROMPTEN ændres (uændret model), og en kort, hex-formet streng uanset
   promptens længde (`tests/worker-security.test.ts`).
+- **TEST-018** (sikkerhedsrunde 3, opfølgning — cache-navnerummets fulde
+  dækning): `buildPromptVersionInput(systemPrompt, domme, templateFragments)`
+  er stabil for identiske input; uafhængig af `domme`s nøgle-
+  indsættelsesorden (kun indhold tæller); følsom over for at ÉN
+  dom-forklarings tekst alene ændres; følsom over for at en dom-nøgle
+  tilføjes/fjernes alene; følsom over for at skabelon-bidderne alene
+  ændres; følsom over for at system-prompten alene ændres. Med de RIGTIGE
+  produktionskonstanter: `PROMPT_VERSION_INPUT` er PRÆCIS
+  `buildPromptVersionInput(SYSTEM, DOMME, USER_PROMPT_TEMPLATE_FRAGMENTS)`
+  (bevist lighed, ikke kun strukturel sandsynlighed), indeholder `SYSTEM`
+  ordret, og er målbart længere end `SYSTEM` alene (beviser DOMME og
+  skabelonen reelt bidrager); en ægte ændring i én rigtig `DOMME`-
+  forklaring, og separat en ægte ændring i ét rigtigt
+  `USER_PROMPT_TEMPLATE_FRAGMENTS`-bidrag, ændrer begge det navnerum
+  `promptNamespace()` ville udlede (`tests/worker-security.test.ts`).
+  `tests/worker-edge.test.ts`s `TEST_NAMESPACE`-fixtur bruger samme
+  `PROMPT_VERSION_INPUT`, så de forudfyldte cache-hit-tests fortsat
+  matcher den rigtige koordinators udledning.
 
 ## 7. Risks & Assumptions
 

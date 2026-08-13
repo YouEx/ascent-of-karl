@@ -8,6 +8,13 @@ import { toNonNegativeInt, toPositiveInt } from "../worker/src/env";
 import { clientIpFromRequest, hashClientIp, isValidIpHash, INTERNAL_IP_HASH_HEADER } from "../worker/src/ip";
 import { lookupElement, lookupNeed, resolveCanonicalBody } from "../worker/src/catalog";
 import { findStaleRateLimitKeys, findExpiredCacheKeys, findStaleIpBudgetKeys } from "../worker/src/cleanup";
+import {
+  buildPromptVersionInput,
+  PROMPT_VERSION_INPUT,
+  USER_PROMPT_TEMPLATE_FRAGMENTS,
+  SYSTEM,
+  DOMME,
+} from "../worker/src/model";
 
 /**
  * De rene workermoduler bag koordinatoren (TASK-002/003/004), testet uden
@@ -142,6 +149,80 @@ describe("cache-key: navnerummet udledes AUTOMATISK af prompt+model, ikke et man
     expect(navn.length).toBeLessThanOrEqual(16);
     expect(navn.length).toBeGreaterThan(0);
     expect(/^[0-9a-f]+$/.test(navn)).toBe(true);
+  });
+});
+
+describe("model: PROMPT_VERSION_INPUT dækker SYSTEM + DOMME + brugerprompt-skabelonen, ikke kun SYSTEM (opfølgning på sikkerhedsrunde 3, punkt 3)", () => {
+  it("buildPromptVersionInput er stabil for identiske input", () => {
+    const a = buildPromptVersionInput("sys", { clash: "c-tekst" }, ["frag-a", "frag-b"]);
+    const b = buildPromptVersionInput("sys", { clash: "c-tekst" }, ["frag-a", "frag-b"]);
+    expect(a).toBe(b);
+  });
+
+  it("buildPromptVersionInput er UAFHÆNGIG af DOMME-objektets nøgle-INDSÆTNINGSORDEN — kun indhold tæller", () => {
+    const dommeA = { clash: "c-tekst", plausible: "p-tekst" };
+    const dommeB = { plausible: "p-tekst", clash: "c-tekst" };
+    expect(buildPromptVersionInput("sys", dommeA, ["frag"])).toBe(buildPromptVersionInput("sys", dommeB, ["frag"]));
+  });
+
+  it("ændres ÉN dom-forklarings TEKST alene (uændret system og skabelon), ændres output", () => {
+    const dommeFoer = { clash: "den oprindelige forklaring" };
+    const dommeEfter = { clash: "den ÆNDREDE forklaring" };
+    const a = buildPromptVersionInput("uændret system", dommeFoer, ["uændret frag"]);
+    const b = buildPromptVersionInput("uændret system", dommeEfter, ["uændret frag"]);
+    expect(a).not.toBe(b);
+  });
+
+  it("tilføjes/fjernes en DOMME-nøgle alene, ændres output", () => {
+    const foerreDomme = { clash: "c-tekst" };
+    const flereDomme = { clash: "c-tekst", plausible: "p-tekst" };
+    const a = buildPromptVersionInput("sys", foerreDomme, ["frag"]);
+    const b = buildPromptVersionInput("sys", flereDomme, ["frag"]);
+    expect(a).not.toBe(b);
+  });
+
+  it("ændres selve brugerprompt-SKABELONEN alene (uændret system og domme), ændres output", () => {
+    const domme = { clash: "c-tekst" };
+    const a = buildPromptVersionInput("uændret system", domme, ["den oprindelige skabelonsætning"]);
+    const b = buildPromptVersionInput("uændret system", domme, ["den ÆNDREDE skabelonsætning"]);
+    expect(a).not.toBe(b);
+  });
+
+  it("ændres SYSTEM alene (uændret domme og skabelon), ændres output", () => {
+    const domme = { clash: "c-tekst" };
+    const fragmenter = ["frag"];
+    const a = buildPromptVersionInput("den oprindelige systemprompt", domme, fragmenter);
+    const b = buildPromptVersionInput("den ÆNDREDE systemprompt", domme, fragmenter);
+    expect(a).not.toBe(b);
+  });
+
+  it("PROMPT_VERSION_INPUT er koblet til de RIGTIGE SYSTEM/DOMME/skabelon-konstanter, ikke bare bygget ved siden af dem", () => {
+    expect(PROMPT_VERSION_INPUT).toBe(buildPromptVersionInput(SYSTEM, DOMME, USER_PROMPT_TEMPLATE_FRAGMENTS));
+  });
+
+  it("PROMPT_VERSION_INPUT indeholder den RIGTIGE SYSTEM-tekst ordret (ikke kun en forkortelse/hash af den)", () => {
+    expect(PROMPT_VERSION_INPUT.includes(SYSTEM)).toBe(true);
+  });
+
+  it("PROMPT_VERSION_INPUT er IKKE blot SYSTEM alene — DOMME og skabelonen bidrager reelt til inputtet", () => {
+    expect(PROMPT_VERSION_INPUT).not.toBe(SYSTEM);
+    expect(PROMPT_VERSION_INPUT.length).toBeGreaterThan(SYSTEM.length);
+  });
+
+  it("en ægte ændring i ÉN rigtig DOMME-forklaring ændrer det navnerum promptNamespace() ville udlede", () => {
+    const modificeretDomme = { ...DOMME, clash: `${DOMME.clash} (ændret i testen)` };
+    const foerInput = buildPromptVersionInput(SYSTEM, DOMME, USER_PROMPT_TEMPLATE_FRAGMENTS);
+    const efterInput = buildPromptVersionInput(SYSTEM, modificeretDomme, USER_PROMPT_TEMPLATE_FRAGMENTS);
+    expect(promptNamespace(foerInput, "gpt-4o-mini")).not.toBe(promptNamespace(efterInput, "gpt-4o-mini"));
+  });
+
+  it("en ægte ændring i ÉT rigtigt skabelon-bidrag ændrer det navnerum promptNamespace() ville udlede", () => {
+    const foerste = USER_PROMPT_TEMPLATE_FRAGMENTS[0];
+    if (foerste === undefined) throw new Error("forventede mindst ét skabelon-bidrag");
+    const aendredeFragmenter = [`${foerste} (ændret i testen)`, ...USER_PROMPT_TEMPLATE_FRAGMENTS.slice(1)];
+    const foerInput = buildPromptVersionInput(SYSTEM, DOMME, USER_PROMPT_TEMPLATE_FRAGMENTS);
+    const efterInput = buildPromptVersionInput(SYSTEM, DOMME, aendredeFragmenter);
+    expect(promptNamespace(foerInput, "gpt-4o-mini")).not.toBe(promptNamespace(efterInput, "gpt-4o-mini"));
   });
 });
 

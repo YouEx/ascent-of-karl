@@ -59,29 +59,132 @@ HARD RULES:
 
 Answer with the line and nothing else.`;
 
+/**
+ * Alle FASTE tekstbidder i brugerprompten (`beskriv`/`buildUserPrompt`
+ * nedenfor), navngivet og udtrukket til egne konstanter i stedet for at stå
+ * som anonyme literaler inde i funktionerne. Grunden er IKKE stil for
+ * stilens skyld: `USER_PROMPT_TEMPLATE_FRAGMENTS` længere nede genbruger
+ * PRÆCIS de samme konstanter til at udlede `PROMPT_VERSION_INPUT` (cache-
+ * navnerummets grundlag — se `cache-key.ts`s `promptNamespace`), så en
+ * ændring i selve skabelonen (ny sætning, ny separator, omformuleret
+ * præfiks) automatisk ændrer navnerummet: der findes kun ÉT sted teksten er
+ * skrevet, ikke to der kan drive fra hinanden. En hånd-skrevet kopi af
+ * disse strenge i fingeraftrykket ville netop genskabe det manuelle
+ * "husk at opdatere versionstallet"-løfte, sikkerhedsrunde 3 punkt 3
+ * allerede fjernede for SYSTEM+model — se `Fase 2 — sikkerhedsrunde 3,
+ * opfølgning` i planen for hele baggrunden.
+ */
+const TPL_INTRO = "Karl put these two together and nothing came of it.";
+const TPL_FIRST_LABEL = "FIRST: ";
+const TPL_SECOND_LABEL = "SECOND: ";
+const TPL_WHY_FAILED_PREFIX = "WHY IT FAILED (";
+const TPL_WHY_FAILED_SUFFIX = "): ";
+const TPL_NEED_LABEL = "\nWhat Karl still lacks right now: ";
+const TPL_SUMMER_PREFIX = "This is summer ";
+const TPL_SUMMER_SUFFIX = " of his life.";
+const TPL_LIST_SEP = ", ";
+const TPL_TRAITS_SEP = " — ";
+const TPL_PARTS_OPEN = " (";
+const TPL_PARTS_CLOSE = ")";
+const TPL_FLAVOR_PREFIX = '\n  Its entry reads: "';
+const TPL_FLAVOR_SUFFIX = '"';
+const TPL_MOOD_PREFIX = "\n  Karl feels about it: ";
+
 function beskriv(t: CanonicalThing): string {
-  const dele = [t.kind, t.stuff, t.scale].filter(Boolean).join(", ");
-  const traits = t.traits.length ? ` — ${t.traits.join(", ")}` : "";
-  const flavor = t.flavor ? `\n  Its entry reads: "${t.flavor}"` : "";
-  const mood = t.karlMood ? `\n  Karl feels about it: ${t.karlMood}` : "";
-  return `${t.name} (${dele}${traits})${flavor}${mood}`;
+  const dele = [t.kind, t.stuff, t.scale].filter(Boolean).join(TPL_LIST_SEP);
+  const traits = t.traits.length ? `${TPL_TRAITS_SEP}${t.traits.join(TPL_LIST_SEP)}` : "";
+  const flavor = t.flavor ? `${TPL_FLAVOR_PREFIX}${t.flavor}${TPL_FLAVOR_SUFFIX}` : "";
+  const mood = t.karlMood ? `${TPL_MOOD_PREFIX}${t.karlMood}` : "";
+  return `${t.name}${TPL_PARTS_OPEN}${dele}${traits}${TPL_PARTS_CLOSE}${flavor}${mood}`;
 }
 
 function buildUserPrompt(body: CanonicalBody): string {
   const dom = DOMME[body.verdict] ?? DOMME.inert!;
   return [
-    `Karl put these two together and nothing came of it.`,
+    TPL_INTRO,
     ``,
-    `FIRST: ${beskriv(body.a)}`,
-    `SECOND: ${beskriv(body.b)}`,
+    `${TPL_FIRST_LABEL}${beskriv(body.a)}`,
+    `${TPL_SECOND_LABEL}${beskriv(body.b)}`,
     ``,
-    `WHY IT FAILED (${body.verdict}): ${dom}`,
-    body.need ? `\nWhat Karl still lacks right now: ${body.need}` : ``,
-    body.summer ? `This is summer ${body.summer} of his life.` : ``,
+    `${TPL_WHY_FAILED_PREFIX}${body.verdict}${TPL_WHY_FAILED_SUFFIX}${dom}`,
+    body.need ? `${TPL_NEED_LABEL}${body.need}` : ``,
+    body.summer ? `${TPL_SUMMER_PREFIX}${body.summer}${TPL_SUMMER_SUFFIX}` : ``,
   ]
     .filter(Boolean)
     .join("\n");
 }
+
+/**
+ * PRÆCIS de samme skabelon-bidder som `beskriv`/`buildUserPrompt` ovenfor
+ * bruger til at RENDERE brugerprompten, samlet i én fast, dokumenteret
+ * rækkefølge — kun til fingeraftryk (`buildPromptVersionInput` nedenfor),
+ * ALDRIG til selve renderingen. Fordi det er de SAMME konstanter (ikke en
+ * hånd-skrevet kopi af deres tekst), kan denne liste ikke "glemme" en
+ * ændring: rør man en `TPL_*`-konstant for at ændre teksten, rører man
+ * automatisk også fingeraftrykket.
+ *
+ * Bevidst IKKE en gengivet `buildUserPrompt(body)` for én "repræsentativ"
+ * opdigtet krop — det ville kun fange de grene (need/summer/traits/
+ * flavor/karlMood) den ene krop tilfældigvis rammer, og kunne stiltiende
+ * glemme en fremtidig ny valgfri gren, som TypeScript ikke tvinger noget
+ * kald-sted til at udfylde (se planens "opfølgning"-afsnit for baggrunden).
+ */
+export const USER_PROMPT_TEMPLATE_FRAGMENTS: readonly string[] = [
+  TPL_INTRO,
+  TPL_FIRST_LABEL,
+  TPL_SECOND_LABEL,
+  TPL_WHY_FAILED_PREFIX,
+  TPL_WHY_FAILED_SUFFIX,
+  TPL_NEED_LABEL,
+  TPL_SUMMER_PREFIX,
+  TPL_SUMMER_SUFFIX,
+  TPL_LIST_SEP,
+  TPL_TRAITS_SEP,
+  TPL_PARTS_OPEN,
+  TPL_PARTS_CLOSE,
+  TPL_FLAVOR_PREFIX,
+  TPL_FLAVOR_SUFFIX,
+  TPL_MOOD_PREFIX,
+];
+
+/**
+ * Bygger den fulde, deterministiske prompt-kontrakt-streng: system-prompten,
+ * ALLE dom-forklaringer, og brugerprompt-skabelonens faste bidder — de tre
+ * ting der reelt bestemmer den genererede tekst. Ren funktion (intet
+ * modul-state), så den kan testes med opdigtede input UDEN at røre de
+ * rigtige `SYSTEM`/`DOMME`/`USER_PROMPT_TEMPLATE_FRAGMENTS`-konstanter.
+ *
+ * `domme`s nøgler slås op i STABIL (sorteret) rækkefølge, så selve
+ * INDSÆTNINGSORDENEN i objektet er ligegyldig — kun nøgle+værdi-INDHOLDET
+ * tæller. `\u0001` adskiller par internt og adskiller også selve
+ * skabelon-bidderne — ét niveau UNDER det `\u0000`, der i `promptNamespace`
+ * (se `cache-key.ts`) adskiller modellen fra selve prompt-kontrakten.
+ */
+export function buildPromptVersionInput(
+  systemPrompt: string,
+  domme: Readonly<Record<string, string>>,
+  templateFragments: readonly string[],
+): string {
+  const dommeStabil = Object.keys(domme)
+    .sort()
+    .map((key) => `${key}=${domme[key]!}`)
+    .join("\u0001");
+  const skabelonStabil = templateFragments.join("\u0001");
+  return [systemPrompt, dommeStabil, skabelonStabil].join("\u0000");
+}
+
+/**
+ * DEN fulde prompt-kontrakt, der reelt bestemmer den genererede tekst:
+ * system-prompten, ALLE dom-forklaringer (`DOMME`), og selve brugerprompt-
+ * skabelonens faste bidder (`USER_PROMPT_TEMPLATE_FRAGMENTS`). Brugt af
+ * `coordinator-do.ts` som `promptNamespace`s første argument — IKKE bare
+ * `SYSTEM` alene — så en ændring i ENTEN system-prompten, ÉN dom-forklaring,
+ * ELLER selve skabelonen ændrer cache-navnerummet automatisk. Se
+ * `docs/deployment/live-narrator.md` afsnit 4b for den fulde dækning, og
+ * planens "opfølgning"-afsnit for hvorfor den ikke dækkede DOMME/skabelonen
+ * før nu.
+ */
+export const PROMPT_VERSION_INPUT = buildPromptVersionInput(SYSTEM, DOMME, USER_PROMPT_TEMPLATE_FRAGMENTS);
 
 /**
  * Kalder OpenAI og renser svaret. Returnerer et diskrimineret resultat i

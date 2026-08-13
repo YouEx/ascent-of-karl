@@ -116,18 +116,40 @@ serverer den gamle beskrivelse for et ændret element.
 ### 4b. Cache-navnerum — udledes automatisk, ingen manuel handling
 
 Cache-nøglen (`worker/src/cache-key.ts`) har et navnerum som præfiks.
-Siden sikkerhedsrunde 3 (punkt 3) udledes dette navnerum **automatisk** af
-`promptNamespace(SYSTEM, model)` — en deterministisk, ikke-kryptografisk
-hash af selve promptteksten (`worker/src/model.ts`s `SYSTEM`) og den
-konfigurerede model (`MODEL`-varen, eller `DEFAULT_MODEL` hvis den
-mangler). Der er intet versionstal at huske at bumpe:
+Siden sikkerhedsrunde 3 (punkt 3), udvidet i en opfølgende gennemgang,
+udledes dette navnerum **automatisk** af `promptNamespace(PROMPT_VERSION_INPUT, model)`
+— en deterministisk, ikke-kryptografisk hash af DEN FULDE prompt-kontrakt
+(`worker/src/model.ts`s `PROMPT_VERSION_INPUT`) og den konfigurerede model
+(`MODEL`-varen, eller `DEFAULT_MODEL` hvis den mangler).
 
-- ændres prompten i `worker/src/model.ts` (`SYSTEM`), ændres navnerummet
-  af sig selv ved næste deploy;
+**Nøjagtig dækning** — `PROMPT_VERSION_INPUT` indeholder, i denne
+rækkefølge:
+
+1. `SYSTEM` — hele system-prompten, ordret;
+2. **alle** `DOMME`-forklaringer (nøgle+værdi for hver dom: `plausible`,
+   `near-miss`, `clash`, `absurd`, `self`, `inert`, `locked`), slået op i
+   STABIL (sorteret) rækkefølge, så selve indsættelsesordenen i
+   `DOMME`-objektet er ligegyldig — kun indholdet tæller;
+3. `USER_PROMPT_TEMPLATE_FRAGMENTS` — samtlige faste tekstbidder i selve
+   brugerprompt-skabelonen (`beskriv`/`buildUserPrompt` i `model.ts`):
+   indledningssætningen, FIRST/SECOND-mærkaterne, "WHY IT FAILED"-
+   omslaget, need- og summer-linjernes præfikser/suffikser, og alle
+   separatorer/parenteser brugt til at sætte et tings kind/stuff/scale/
+   traits/flavor/karlMood sammen. Disse bidder er navngivne `TPL_*`-
+   konstanter, som `beskriv`/`buildUserPrompt` selv bruger til at
+   RENDERE teksten — ikke en hånd-skrevet kopi af dem — så en ændring i
+   én skabelon-sætning automatisk ændrer fingeraftrykket, uden at nogen
+   skal huske at opdatere noget ved siden af.
+
+Der er intet versionstal at huske at bumpe:
+
+- ændres system-prompten (`SYSTEM`), ÉN dom-forklaring (`DOMME`), ELLER
+  selve brugerprompt-skabelonen (en `TPL_*`-konstant i `model.ts`),
+  ændres navnerummet af sig selv ved næste deploy;
 - ændres `MODEL`-varen i `wrangler.toml`, ændres navnerummet ligeledes af
   sig selv;
-- er begge uændrede, er navnerummet stabilt, og eksisterende cache-poster
-  fortsætter med at blive ramt.
+- er alle disse uændrede, er navnerummet stabilt, og eksisterende
+  cache-poster fortsætter med at blive ramt.
 
 En deploy skaber en FRISK Durable Object-instans (eller genstarter den
 eksisterende kode), så navnerummet genudregnes netop dér — gamle
@@ -136,6 +158,15 @@ uden migrering og uden at nogen skal huske at redigere en konstant. De
 fysiske, nu-uopslåelige poster rømmes senere af den daglige
 oprydningsalarm (afsnit 4c), men er allerede uskadelige fra første
 forespørgsel efter deploy.
+
+**Hvad dækkes IKKE**: rækkefølgen, `beskriv`/`buildUserPrompt` selv sætter
+de faste bidder sammen i (f.eks. om FIRST nævnes før SECOND), er ikke en
+del af fingeraftrykket — kun selve TEKST-INDHOLDET af hver bid. En
+omrokering af de statiske sammensætningstrin uden at ændre nogen literal
+tekst er en teoretisk, ekstremt usandsynlig ændring, der ikke automatisk
+ville bumpe navnerummet; den er bevidst ikke løst generisk og forventes
+aldrig at forekomme i praksis (enhver reel tekstændring rammer altid en
+`TPL_*`-konstant og bumper dermed navnerummet).
 
 ### 4c. Lagerlivscyklus (oprydning)
 

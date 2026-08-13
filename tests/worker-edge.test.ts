@@ -3,7 +3,7 @@ import worker from "../worker/src/index";
 import { Coordinator, CACHE_MAX_AGE_MS, CLEANUP_INTERVAL_MS } from "../worker/src/coordinator-do";
 import { BUDGET_KEY, CACHE_KEY_PREFIX, IP_BUDGET_KEY_PREFIX } from "../worker/src/coordinator";
 import { pairCacheKey, promptNamespace } from "../worker/src/cache-key";
-import { SYSTEM, DEFAULT_MODEL } from "../worker/src/model";
+import { PROMPT_VERSION_INPUT, DEFAULT_MODEL } from "../worker/src/model";
 import { INTERNAL_IP_HASH_HEADER, hashClientIp } from "../worker/src/ip";
 import type {
   DurableObjectId,
@@ -96,13 +96,14 @@ function nyCoordinator(env: Record<string, string | undefined> = {}) {
  * kald må forekomme under test).
  */
 /**
- * Navnerummet `Coordinator` selv vil udlede (sikkerhedsrunde 3, punkt 3):
- * `nyCoordinator()` sætter ikke `MODEL`, så den rigtige koordinator falder
- * tilbage til `DEFAULT_MODEL` — denne konstant skal matche PRÆCIS det, for
- * at `saetCacheHit()` kan forudfylde en nøgle koordinatoren selv ville slå
- * op under.
+ * Navnerummet `Coordinator` selv vil udlede (sikkerhedsrunde 3, punkt 3;
+ * udvidet i opfølgningen der lod `PROMPT_VERSION_INPUT` dække SYSTEM+DOMME+
+ * brugerprompt-skabelonen, ikke kun SYSTEM): `nyCoordinator()` sætter ikke
+ * `MODEL`, så den rigtige koordinator falder tilbage til `DEFAULT_MODEL` —
+ * denne konstant skal matche PRÆCIS det, for at `saetCacheHit()` kan
+ * forudfylde en nøgle koordinatoren selv ville slå op under.
  */
-const TEST_NAMESPACE = promptNamespace(SYSTEM, DEFAULT_MODEL);
+const TEST_NAMESPACE = promptNamespace(PROMPT_VERSION_INPUT, DEFAULT_MODEL);
 
 async function saetCacheHit(
   storage: FakeStorage,

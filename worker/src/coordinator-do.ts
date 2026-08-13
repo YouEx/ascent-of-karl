@@ -34,7 +34,7 @@ import { INTERNAL_IP_HASH_HEADER, isValidIpHash } from "./ip";
 import { findExpiredCacheKeys, findStaleIpBudgetKeys, findStaleRateLimitKeys } from "./cleanup";
 import { isBodyTooLarge } from "./validate";
 import { promptNamespace } from "./cache-key";
-import { callUpstreamOpenAI, DEFAULT_MODEL, SYSTEM, type ModelEnv } from "./model";
+import { callUpstreamOpenAI, DEFAULT_MODEL, PROMPT_VERSION_INPUT, type ModelEnv } from "./model";
 
 export interface CoordinatorEnv extends ModelEnv {
   /** Sekunder i det rullende vindue (TASK-002). Se wrangler.toml for den målte default. */
@@ -68,11 +68,13 @@ const DEFAULT_DAILY_MAX_UPSTREAM_CALLS_PER_IP = 165;
  * Hvor længe en cache-post må ligge, før oprydningen fjerner den
  * (sikkerhedsrunde 2, punkt 4). Indholdet BLIVER ikke forkert med tiden —
  * samme par+dom+navnerum giver stadig samme kategori af fiasko — men et
- * ubegrænset lager er en ubegrænset regning. En prompt- eller
- * modelændring rammes IKKE af denne grænse og behøver ikke vente på den:
- * cache-navnerummet (sikkerhedsrunde 3, punkt 3, se `cache-key.ts`s
- * `promptNamespace()`) udledes AUTOMATISK af selve prompten og modellen, så
- * en ændring i den ene eller den anden gør gamle nøgler uopslåelige med det
+ * ubegrænset lager er en ubegrænset regning. En ændring i prompt-
+ * kontrakten (SYSTEM, en DOMME-forklaring, brugerprompt-skabelonen) eller
+ * modellen rammes IKKE af denne grænse og behøver ikke vente på den:
+ * cache-navnerummet (sikkerhedsrunde 3, punkt 3, udvidet i en opfølgning,
+ * se `cache-key.ts`s `promptNamespace()` og `model.ts`s
+ * `PROMPT_VERSION_INPUT`) udledes AUTOMATISK af hele prompt-kontrakten og
+ * modellen, så en ændring i én af dem gør gamle nøgler uopslåelige med det
  * samme, uden at nogen skal huske at bumpe noget som helst.
  *
  * Eksporteret (ikke kun en modul-privat konstant), så tests kan sætte en
@@ -124,10 +126,13 @@ export class Coordinator {
 
   private getDeps(): CoordinatorDeps {
     if (!this.deps) {
-      // Udledt ÉN gang pr. objekt-instans (ikke pr. forespørgsel) —
-      // prompten og modellen ændrer sig kun ved en gendeploy, som skaber en
-      // FRISK instans alligevel (sikkerhedsrunde 3, punkt 3).
-      const cacheNamespace = promptNamespace(SYSTEM, this.env.MODEL ?? DEFAULT_MODEL);
+      // Udledt ÉN gang pr. objekt-instans (ikke pr. forespørgsel) — hele
+      // prompt-kontrakten (SYSTEM+DOMME+skabelon, `PROMPT_VERSION_INPUT`)
+      // og modellen ændrer sig kun ved en gendeploy, som skaber en FRISK
+      // instans alligevel (sikkerhedsrunde 3, punkt 3; udvidet i en
+      // opfølgning til at dække DOMME og brugerprompt-skabelonen, ikke
+      // kun SYSTEM).
+      const cacheNamespace = promptNamespace(PROMPT_VERSION_INPUT, this.env.MODEL ?? DEFAULT_MODEL);
       this.deps = createCoordinatorDeps({
         store: this.state.storage,
         callUpstream: (body) => callUpstreamOpenAI(body, this.env),

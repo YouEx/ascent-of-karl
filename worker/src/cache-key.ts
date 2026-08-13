@@ -10,15 +10,21 @@
  * near-miss i et andet), og de fortjener hver sin replik.
  *
  * Navnerum (sikkerhedsrunde 2 punkt 4, gjort AUTOMATISK i sikkerhedsrunde 3
- * punkt 3): prompten i `worker/src/model.ts` eller selve modellen
+ * punkt 3, og UDVIDET i en opfølgning derefter): den fulde prompt-kontrakt
+ * (system-prompt + alle dom-forklaringer + brugerprompt-skabelonen,
+ * `worker/src/model.ts`s `PROMPT_VERSION_INPUT`) eller selve modellen
  * (`MODEL`-variablen) kan ændre sig, og en gammel, cachet linje skal ikke
  * blive ved med at blive serveret, som om den stadig var skrevet af den nye
  * prompt. Sikkerhedsrunde 2 løste dette med et MANUELT versionstal
  * (`CACHE_VERSION`), en udvikler selv skulle huske at bumpe — et løfte, ikke
  * en garanti. Sikkerhedsrunde 3 erstattede løftet med `promptNamespace()`
- * nedenfor: navnerummet udledes AUTOMATISK af selve promptteksten og
- * modellen, så en ændring i den ene eller den anden ændrer navnerummet af
- * sig selv, uden at nogen skal huske noget som helst.
+ * nedenfor, men dækkede først kun `SYSTEM` — en opfølgende gennemgang
+ * fandt at hverken dom-forklaringerne (`DOMME`) eller selve
+ * brugerprompt-skabelonen indgik, selvom begge former den genererede tekst
+ * lige så meget som `SYSTEM`. `PROMPT_VERSION_INPUT` retter det: navnerummet
+ * udledes nu AUTOMATISK af HELE prompt-kontrakten og modellen, så en
+ * ændring i ét af de tre ændrer navnerummet af sig selv, uden at nogen skal
+ * huske noget som helst.
  */
 
 /**
@@ -39,17 +45,23 @@ function fnv1a32(input: string): string {
 }
 
 /**
- * Udleder et deterministisk, kort navnerum fra selve promptteksten og den
- * konfigurerede model (sikkerhedsrunde 3, punkt 3). Et NUL-tegn adskiller de
- * to inputs, så `model="a", prompt="bc"` og `model="ab", prompt="c"` aldrig
- * kan give samme hash ved simpel sammenkædning.
+ * Udleder et deterministisk, kort navnerum fra den FULDE prompt-kontrakt
+ * (`promptContract` — i praksis `model.ts`s `PROMPT_VERSION_INPUT`: system-
+ * prompt + dom-forklaringer + brugerprompt-skabelon, se filens top-
+ * kommentar) og den konfigurerede model (sikkerhedsrunde 3, punkt 3,
+ * udvidet i en opfølgning). Funktionen selv er ligeglad med HVAD
+ * `promptContract` indeholder — den hasher blot en streng — så testene
+ * herunder kan fodre den vilkårlige literaler uden at kende `model.ts`.
+ * Et NUL-tegn adskiller de to inputs, så `model="a", contract="bc"` og
+ * `model="ab", contract="c"` aldrig kan give samme hash ved simpel
+ * sammenkædning.
  *
  * Kaldes ÉN gang pr. Durable Object-instans (`coordinator-do.ts`s
- * `getDeps()`), ikke pr. forespørgsel — prompten og modellen ændrer sig
- * kun ved en gendeploy, aldrig midt i en kørende instans.
+ * `getDeps()`), ikke pr. forespørgsel — prompt-kontrakten og modellen
+ * ændrer sig kun ved en gendeploy, aldrig midt i en kørende instans.
  */
-export function promptNamespace(systemPrompt: string, model: string): string {
-  return fnv1a32(`${model}\u0000${systemPrompt}`);
+export function promptNamespace(promptContract: string, model: string): string {
+  return fnv1a32(`${model}\u0000${promptContract}`);
 }
 
 export function pairCacheKey(aId: string, bId: string, verdict: string, namespace: string): string {
