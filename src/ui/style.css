@@ -1094,7 +1094,15 @@ img.chip-glyph {
    ikke nøjagtigt som pladen, glider den fra sine egne huller.
    ========================================================================== */
 #title-screen {
-  position: fixed; inset: 0; z-index: 70;
+  position: fixed;
+  inset: 0 auto auto 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 70;
+  /* Spilskærmens skjulte, brede kontroller kan få en mobilbrowser til at
+     udvide layout-viewportun ud over den synlige rude. `inset: 0` fulgte
+     den bredde og centrerede derfor titlens pergament uden for skærmen.
+     Dynamic viewport-units binder heroen til den rude spilleren faktisk ser. */
   /* Scenepladen dækker 90.4vh i bredden, arket 70.2vh. Er ruden bredere end
      summen, opstår der et hul mellem dem, som kun kan fyldes med slør. Derfor
      får kompositionen en maksimal bredde og en ramme af dalens mørke tone i
@@ -1719,7 +1727,13 @@ body.overlay-open { overflow: hidden; }
 
 /* ---------- Modaler ---------- */
 #card, #banner, #ending, #trophy-modal {
-  position: fixed; inset: 0; background: var(--veil);
+  position: fixed;
+  inset: 0 auto auto 0;
+  width: 100dvw;
+  height: 100dvh;
+  background: var(--veil);
+  /* Samme mobilfælde som titlen: et bredt, skjult spil-layout må ikke gøre
+     modalens slør og centrerede indhold bredere end den synlige rude. */
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   display: flex; align-items: center; justify-content: center; padding: 1rem;

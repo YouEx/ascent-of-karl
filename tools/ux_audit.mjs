@@ -141,6 +141,101 @@ async function auditTitleFatesModal(browser) {
   await page.close();
 }
 
+/**
+ * En rigtig mobilbrowser kan udvide layout-viewportun til sidens bredeste
+ * baggrundsindhold, selv om visual viewport stadig er 390 px. Titlen er
+ * `position: fixed`, så `inset: 0` følger den udvidede layout-viewport og kan
+ * ellers centrere hele pergamentet uden for den synlige rude.
+ */
+async function auditTitleMobileViewport(browser) {
+  const page = await browser.newPage({
+    viewport: MOBILE,
+    screen: MOBILE,
+    deviceScaleFactor: 2,
+    isMobile: true,
+    hasTouch: true,
+  });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(URL);
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.waitForSelector("#title-screen #t-primary");
+
+  const layout = await page.evaluate(() => {
+    const title = document.getElementById("title-screen")?.getBoundingClientRect();
+    const panel = document.querySelector(".title-panel")?.getBoundingClientRect();
+    return {
+      clientWidth: document.documentElement.clientWidth,
+      clientHeight: document.documentElement.clientHeight,
+      title: title && { left: title.left, width: title.width, height: title.height },
+      panel: panel && { left: panel.left, right: panel.right },
+    };
+  });
+  const epsilon = 0.5;
+  record(
+    "Titlens mobilrude",
+    "visual-width",
+    !!layout.title &&
+      Math.abs(layout.title.left) <= epsilon &&
+      layout.title.width <= layout.clientWidth + epsilon,
+    layout.title
+      ? `${Math.round(layout.title.width)}px mod ${layout.clientWidth}px`
+      : "titlen mangler",
+  );
+  record(
+    "Titlens mobilrude",
+    "visual-height",
+    !!layout.title && layout.title.height <= layout.clientHeight + epsilon,
+    layout.title
+      ? `${Math.round(layout.title.height)}px mod ${layout.clientHeight}px`
+      : "titlen mangler",
+  );
+  record(
+    "Titlens mobilrude",
+    "panel-in-viewport",
+    !!layout.panel &&
+      layout.panel.left >= -epsilon &&
+      layout.panel.right <= layout.clientWidth + epsilon,
+    layout.panel
+      ? `${Math.round(layout.panel.left)}–${Math.round(layout.panel.right)}px`
+      : "panelet mangler",
+  );
+
+  await page.click("#t-fates");
+  await page.waitForTimeout(250);
+  const trophy = await page.evaluate(() => {
+    const modal = document.getElementById("trophy-modal")?.getBoundingClientRect();
+    const inner = document.querySelector("#trophy-modal .modal-inner")?.getBoundingClientRect();
+    return {
+      clientWidth: document.documentElement.clientWidth,
+      modal: modal && { left: modal.left, right: modal.right, width: modal.width },
+      inner: inner && { left: inner.left, right: inner.right },
+    };
+  });
+  record(
+    "Titlens mobilrude",
+    "trophy-visual-width",
+    !!trophy.modal &&
+      trophy.modal.left >= -epsilon &&
+      trophy.modal.right <= trophy.clientWidth + epsilon,
+    trophy.modal
+      ? `${Math.round(trophy.modal.width)}px mod ${trophy.clientWidth}px`
+      : "modalen mangler",
+  );
+  record(
+    "Titlens mobilrude",
+    "trophy-panel-in-viewport",
+    !!trophy.inner &&
+      trophy.inner.left >= -epsilon &&
+      trophy.inner.right <= trophy.clientWidth + epsilon,
+    trophy.inner
+      ? `${Math.round(trophy.inner.left)}–${Math.round(trophy.inner.right)}px`
+      : "modalens indhold mangler",
+  );
+
+  await page.close();
+}
+
 async function freshGame(browser) {
   const page = await browser.newPage({ viewport: MOBILE, hasTouch: true });
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -264,6 +359,7 @@ const execPath = process.env.CHROMIUM_PATH;
 const browser = await chromium.launch(execPath ? { executablePath: execPath } : {});
 for (const o of OVERLAYS) await auditOverlay(browser, o);
 await auditTitleFatesModal(browser);
+await auditTitleMobileViewport(browser);
 await browser.close();
 
 // --- rapport ---

@@ -278,6 +278,25 @@ describe("berøringsmål og karrusel-prikker rammer 44px-kravet (TASK-018/021 a1
   });
 });
 
+describe("titlen bindes til den synlige mobilrude, ikke spilskærmens bredere layout-viewport", () => {
+  it("#title-screen bruger dynamic viewport-units i begge retninger", () => {
+    const stripped = stripComments(styles);
+    const rule = extractBlock(stripped, "#title-screen {");
+    expect(rule).toMatch(/width:\s*100dvw/);
+    expect(rule).toMatch(/height:\s*100dvh/);
+  });
+
+  it("de fuldskærmsmodaler titlen kan åbne bruger samme synlige rude", () => {
+    const stripped = stripComments(styles);
+    const rule = extractBlock(
+      stripped,
+      "#card, #banner, #ending, #trophy-modal {",
+    );
+    expect(rule).toMatch(/width:\s*100dvw/);
+    expect(rule).toMatch(/height:\s*100dvh/);
+  });
+});
+
 describe("rå titel-farver er allerede dækket andetsteds (undgår dobbelt sandhedskilde)", () => {
   it("henviser til tests/design-tokens.test.ts i stedet for at gentage scanneren her", () => {
     // "no raw title colors" fra opgavebeskrivelsen er implementeret som
