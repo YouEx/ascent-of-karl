@@ -2,7 +2,7 @@
 goal: Gøre The Ascent of Karl visuelt identisk med referencebilledet af 10-08-2026 — malet pergament-æstetik, illustrerede elementer, hulemaleri-motiver
 version: 1.0
 date_created: 2026-08-11
-last_updated: 2026-08-11
+last_updated: 2026-08-12
 owner: Martin (YouEx)
 status: 'In progress'
 tags: [design, assets, refactor, architecture]
@@ -56,16 +56,34 @@ bagefter uden en eneste kodeændring.
   vises emojien. Ingen kodeændring pr. leveret illustration — kun en fil.
 - **REQ-005**: Huden (fase 2-5) skal kunne gå live **uden** at en eneste
   elementillustration findes. Playtest-runde 1 blokeres ikke af kunst.
-- **REQ-006**: Alle 8 render-steder der viser en emoji i dag skal gå gennem ét
-  fælles opslag, ikke hver sin `.emoji`-interpolation. Steder i dag:
-  `main.ts` (grid, slots, opdagelseskort, trofæ, slutskærm, challenge-banner),
-  `book.ts` (fane, opslag, tidslinje-SVG).
+- **REQ-006**: De **6 render-steder der viser elementkunst** skal gå gennem ét
+  fælles opslag, ikke hver sin `.emoji`-interpolation: `main.ts` (grid, slots,
+  opdagelseskort), `book.ts` (fanerækken, opslaget, tidslinje-SVG'en).
+  **Indsnævret 2026-08-12 efter review:** teksten sagde oprindeligt "alle 8
+  render-steder" men listede selv 9 (6 element-steder + 3 andre) — tallet var
+  forkert i forvejen. Optalt på ny ved `grep -n
+  "glyphHTML\|hasArt\|artUrl\|\.emoji\b" src/ui/main.ts src/ui/book.ts`: der
+  findes 9 steder i alt, hvoraf de sidste 3 (trofæ, slutskærm,
+  challenge-banner) viser slutnings-/challenge-kunst fra et andet id-rum end
+  elementernes — se det udskilte REQ-008. At blande dem sammen med
+  elementkunsten skjulte at REQ-006, forstået korrekt, reelt var 100 % opfyldt
+  af TASK-031, bag et misvisende "kun 3 af 8"-regnskab.
 
 ### Ydelse
 
 - **REQ-007**: Initialvisningen må kun hente kunst til de **13 base-elementer**,
   baggrunden og teksturerne. De resterende 174 hentes dovent (`loading="lazy"`)
   efterhånden som de opdages.
+- **REQ-008**: Trofæ, slutskærm og challenge-banner (`main.ts`) viser i dag
+  emoji fra hhv. `content/endings.json` og en challenges-definition — et andet
+  id-rum end elementernes, og uden malet kunst bygget til det domæne endnu.
+  De hører **ikke** under REQ-006's opslag; at koble dem til det
+  element-scopede `artFor()`/`glyphHTML()` i dag ville være en kategorifejl og
+  en permanent no-op (ingen fil ville nogensinde matche). De kræver egne
+  `endingArt`/`challengeArt`-opslag efter samme mønster, først meningsfulde når
+  TASK-039/040 leverer illustrationerne. **Tilføjet 2026-08-12** som en ærlig
+  afgrænsning af REQ-006 — ikke et nyt løfte, kun en navngivning af noget der
+  allerede var bevidst fravalgt.
 - **CON-001**: **Typografireglen brydes.** `DESIGN.md` §3 siger *"serif er
   fortællerens verden, sans er spillerens værktøj"*. Mockuppen sætter **også**
   elementnavne, chips, slot-tekst, søgefelt og Combine i serif. Enten opgives reglen,
@@ -130,7 +148,7 @@ bagefter uden en eneste kodeændring.
 |------|-------------|-----------|------|
 | TASK-008 | Producér baggrundsmaleriet (ASSET-001) i tre varianter: desktop 2560×1440, tablet 1440×1080, mobil-portræt 1080×1920 beskåret om dalen. WebP q78. Budget: ≤ 220 kB pr. variant. Vælges via `<picture>`/`image-set()`, aldrig én stor fil til alle. **Leveret anderledes:** ét 21:9-maleri i to bredder (`bg-wide-1600.webp`, `bg-wide-2560.webp`, valgt via `@media (min-width: 1100px)`), `cover`'et med CSS i stedet for tre beskårne sigtemål — samme effekt (aldrig blank kant, fra 4:3 til ultrabred), færre filer. | ✅ | 2026-08-12 |
 | TASK-009 | Erstat `--canvas`-gradienten i `tokens.css` med baggrundsbilledet, og behold gradienten som `background-color` under billedet, så siden aldrig blinker hvid før maleriet er hentet. **Leveret som ny `--canvas-fallback`-token** (varm palet) under `bg-wide`-billedet på `body`; den gamle `--canvas` (kølig palet) lever videre, men kun til `#book-panel`s mobilflade — ikke længere lærredet. | ✅ | 2026-08-12 |
-| TASK-010 | Byg app-rammen: ny wrapper omkring hele spillet med radius, hårfin lys kant (`#CCADAB`), stor blød skygge og let gennemsigtig pergamentflade — mockuppens "vindue" der svæver over landskabet. Skal falde til fuld bredde uden ramme under 768px. **Rammen (radius/kant/skygge) fandtes allerede; det manglende var 768px-nedfaldet, tilføjet 2026-08-12** (`@media (max-width: 767px)` fjerner margin/kant/radius). | ✅ | 2026-08-12 |
+| TASK-010 | Byg app-rammen: ny wrapper omkring hele spillet med radius, hårfin lys kant (`#CCADAB`), stor blød skygge og let gennemsigtig pergamentflade — mockuppens "vindue" der svæver over landskabet. Skal falde til fuld bredde uden ramme under app'ens egen mobilgrænse. **Rammen (radius/kant/skygge) fandtes allerede; det manglende var nedfaldet, tilføjet 2026-08-12 første omgang som `@media (max-width: 767px)`.** **Rettet igen 2026-08-12 efter review:** 767/768px var en tredje, ny grænse ved siden af den grænse spillet allerede havde — `#dock` skifter fra `position: fixed` til `static` ved 820px (`docs/design/ui-mobile.md`, ikke ændret af denne plan). Mellem 768 og 819px viste appen desktop-ramme (margin/kant/radius) mens dock'en stadig opførte sig mobilt (fixed) — et 52px bredt vindue med modstridende layout-logik. Flyttet til `@media (max-width: 819px)` så begge grænser er samme 820px-tærskel; `DESIGN.md` §4 og §5's to forekomster af "768px" rettet til "820px" i samme omgang, så der er ét sted der siger sandheden. Verificeret med Playwright-målinger (`getBoundingClientRect()` + computed style) ved bredderne 390/767/768/819/820/1024px: mobilstil (margin 0, ingen kant, `#dock` fixed) uændret hele vejen til og med 819px, desktopstil (margin 4px, 1px kant, `#dock` static) fra og med 820px — ingen overgangszone. Regressionstest tilføjet i `tests/app-frame.test.ts`. Den prae-eksisterende vandrette overflow ved 390px bredde (692px scrollWidth) er urørt — hører ikke til denne opgave. | ✅ | 2026-08-12 |
 | TASK-011 | Producér pergamenttekstur (ASSET-002) som ét sømløst fliseligt lag + tre uregelmæssige kant-masker. Lægges som `background-blend-mode` over papirfarven, så én tekstur kan bære alle flader uden 6 forskellige filer. **Delvist:** `paper-grain.png` findes og bæres af 6 flader via `background-blend-mode: overlay` (verificeret), men de "tre uregelmæssige kant-masker" er ikke fundet nogen steder i CSS'en (ingen `clip-path`/maskefiler) — kan ikke bekræftes leveret. | | |
 | TASK-012 | Producér revet kant til fortællerkortet (ASSET-003) — SVG-maske frem for PNG, så den skalerer og kan farves med tokens. **Leveret anderledes:** kanten er bagt ind i `narrator-paper.webp`, en udskæring fra referencen (`build_narrator_paper.py`), ikke en separat tokeniseret SVG-maske — samme visuelle resultat, men skalerer ikke uafhængigt og kan ikke farves via token. | ✅ | 2026-08-12 |
 | TASK-013 | Lav teksturen mærkbar men diskret: verificér at kontrasten mellem tekst og pergament fortsat er ≥ 4,5:1 efter teksturen er lagt på. Tekstur der koster læsbarhed ryger ud. **Ikke direkte testet:** `tests/design-tokens.test.ts` tester kontrast mod det mørkeste papir tokenet kan lande på (CLAUDE.md regel 8), hvilket er en skarpere standard end "efter teksturen", men ingen test måler kontrasten MED teksturen aktivt lagt på. | | |
@@ -177,7 +195,7 @@ bagefter uden en eneste kodeændring.
 | TASK-027 | Søgefeltet: ledende forstørrelsesglas, pergamentflade, indre kant. "New finds" får sparkle-ikon. **Forstørrelsesglasset er den ene inline SVG i planen** (rent krom, ingen illustration) — `sparkle.webp` er raster, udskåret. | ✅ | 2026-08-12 |
 | TASK-028 | Tidslinjerækken: erstat trekant-disclosure med lommeur-ikonet og sæt tallet i tabular-nums. **`font-variant-numeric: tabular-nums` manglede stadig på `#timeline-toggle strong` og `.modal-sub` — tilføjet 2026-08-12** (`.fates-count`/`#age` havde det allerede). | ✅ | 2026-08-12 |
 | TASK-029 | Element-fliser: op i størrelse (kunstfelt ~64px over navnet), pergamentflade, blødere kant, tydeligere valgt-tilstand. | ✅ | 2026-08-12 |
-| TASK-030 | Layout: spillet skal fylde rammen. I dag står ~40 % af skærmen tom under griddet (verificeret på det live site 11-08-2026). **Årsag fundet og rettet 2026-08-12:** `#app`s tvungne `min-height: calc(100dvh - 8px)` gjorde boksen højere end indholdet på korte/brede desktop-ruder, hvilket strakte `app-field.webp`-baggrunden og efterlod tomrum. Rettet med `min-height: auto` scoped til `@media (min-width: 820px)`; mobil-layoutet (`#dock` som `position: fixed`) er urørt og verificeret. | ✅ | 2026-08-12 |
+| TASK-030 | Layout: spillet skal fylde rammen. I dag står ~40 % af skærmen tom under griddet (verificeret på det live site 11-08-2026). **Første forsøg 2026-08-12 forkastet ved review:** `min-height: auto` scoped til `@media (min-width: 820px)` fjernede tomrummet ved at *krympe* `#app` til indholdets højde i stedet for at fylde ruden — det modsatte af opgaven ("fylde rammen", ikke skrumpe den til et lille flydende kort over landskabet). **Rettet 2026-08-12, anden omgang:** `#app` beholder sin oprindelige `min-height: calc(100dvh - 8px)` (fylder altid ruden, som før); i stedet får `#grid` — den eneste indholdsblok der reelt kan vokse — `flex: 1; min-height: 0` i samme `@media (min-width: 820px)`-blok, så den absorberer overskydende højde som del af sin egen boks i stedet for at efterlade den som ukrævet plads under sidste grid-række. Verificeret med Playwright-målinger ved 1000×1080, 1920×1080, 1440×1900 og 1440×700 (titel + spil): rammens top- og bundmargin til vinduet er symmetriske (~4px hver) ved de tre første; ingen ydre tomrum; `#dock` forbliver `position: static` i flow. Ved 1440×700 (indhold højere end rude) opstår naturlig scroll i stedet for dødt rum — forventet, ikke en regression. Regressionstest tilføjet i `tests/app-frame.test.ts` (ingen `min-height: auto` i style.css; `#grid` har `flex: 1` i desktop-blokken). | ✅ | 2026-08-12 |
 
 ### Implementation Phase 6
 
@@ -187,7 +205,7 @@ bagefter uden en eneste kodeændring.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-031 | Tilføj `src/ui/art.ts`: ét opslag `artFor(element)` der returnerer `<img>` når `public/art/<id>.webp` findes i det genererede manifest, ellers emojien. Alle 8 render-steder (REQ-006) kaldes om til at bruge det. **Leveret anderledes, verificeret 2026-08-12:** kunsten ligger i `src/assets/art/elements/`, opslaget (`glyphHTML`/`hasArt`/`artUrl`) bruger `import.meta.glob` i stedet for et genereret `manifest.json` — filsystemet ER manifestet. Af de 8 render-steder i REQ-006 er kun 3 elementrelaterede (`book.ts`: fanerækken, opslaget, tidslinje-SVG'en) koblet til; de resterende 5 blev allerede koblet før denne plan (grid, slots, opdagelseskort) undtagen trofæ/slutskærm/challenge-banner (`main.ts`), som viser slutninger og challenges — id'er fra `content/endings.json`/`content/challenges.json`, et helt andet id-rum end elementernes, uden malet kunst bygget for det domæne endnu. At koble dem til det element-scopede opslag ville i dag være en permanent no-op og en kategorifejl, ikke en reel forbedring — kræver egne `endingArt`/`challengeArt`-kort (TASK-039/040-territorium) først. | ✅ | 2026-08-12 |
+| TASK-031 | Tilføj `src/ui/art.ts`: ét opslag `artFor(element)` der returnerer `<img>` når `public/art/<id>.webp` findes i det genererede manifest, ellers emojien. De 6 render-steder i REQ-006 kaldes om til at bruge det. **Leveret anderledes, verificeret 2026-08-12:** kunsten ligger i `src/assets/art/elements/`, opslaget (`glyphHTML`/`hasArt`/`artUrl`) bruger `import.meta.glob` i stedet for et genereret `manifest.json` — filsystemet ER manifestet. **Bogføring rettet 2026-08-12 efter review:** alle 6 render-steder i REQ-006 (`main.ts`: grid, slots, opdagelseskort; `book.ts`: fanerækken, opslaget, tidslinje-SVG'en) er koblet til opslaget — verificeret ved `grep -n "\.emoji\b" src/ui/main.ts src/ui/book.ts`: 7 af de 10 træf sender `.emoji` ind i `glyphHTML(id, emoji, …)` som fallback-parameter (de 6 REQ-006-steder, hvoraf slot-rendering er ét sted udtrykt i to symmetriske linjer for slot A/B); de resterende 3 (linje 578, 621, 938 i `main.ts`) interpolerer emojien råt uden om opslaget — det er netop trofæ, slutskærm og challenge-banner. Disse tre er bevidst UDENFOR REQ-006's omfang (se REQ-008) — de viser slutnings-/challenge-kunst fra et andet id-rum, ikke elementkunst, og forbliver på rå emoji indtil TASK-039/040 leverer illustrationer og et separat `endingArt`/`challengeArt`-opslag bygges. ✅ er derfor 6/6 af den opgave REQ-006 faktisk beskriver, ikke "3 af 8" som den tidligere, bredere formulering gav indtryk af. | ✅ | 2026-08-12 |
 | TASK-032 | Tilføj `public/art/manifest.json` genereret af scriptet — koden må ikke gætte på filers eksistens med `onerror`-fallback, da det giver et synligt glimt af en brudt billed-ikon. **Ikke leveret:** intet manifest.json findes (`import.meta.glob` gør det overflødigt, se TASK-031), og REQ-007's dovne indlæsning er heller ikke implementeret — `art.ts` bruger `eager: true` begge steder, så alle elementbilleder hentes ved opstart, ikke kun de 13 base-elementer. Uden for denne prøvelses omfang (eager-vs-lazy er en afvejning, ikke en fejl med ét rigtigt svar). | | |
 | TASK-033 | Byg `tools/art/generate.mjs`: læser stilkontrakten fra `DESIGN.md` §9, bygger én prompt pr. element ud fra `name` + `flavor`, kalder billedmodellen, gemmer råfilen i `tools/art/raw/`. Rå filer committes **ikke**. Ikke leveret — ingen automatiseret billedmodel-pipeline findes. De 13 leverede elementer er malet/udskåret manuelt fra `elements-sheet.png`/referencen (`build_elements.py`, `build_element_art.py`), ikke genereret pr. element fra en prompt. | | |
 | TASK-034 | Byg `tools/art/normalise.mjs` — det er her konsistensen skabes, ikke i prompten: beskær til synligt indhold, centrér på kvadratisk lærred med fast luft, skalér til 256px, farvegradér mod pergamentpaletten, fjern indbagte skygger, skriv WebP q80. Deterministisk og idempotent. **Leveret som Python, ikke `.mjs`:** `build_elements.py`/`build_element_art.py` gør præcis dette (alfa fra baggrundsafstand, fast luft, WebP-output) — verificeret deterministisk 2026-08-12 ved at køre `npm run art` to gange og se `git status` give 0 ændrede filer begge gange. Kvadratisk lærred er dog fravalgt bevidst (kasse ~91×67, ikke kvadrat — se `build_elements.py`s docstring). | ✅ | 2026-08-12 |
@@ -251,7 +269,8 @@ bagefter uden en eneste kodeændring.
 - **FILE-004**: `src/ui/main.ts` — 6 render-steder til `artFor()`, `⏳` ud, slot-tekst.
   **Reelt:** `⏳` og slot-teksten er rettet; main.ts's 3 element-visende steder
   (grid, slots, opdagelseskort) var allerede koblet før denne plan — trofæ,
-  slutskærm og challenge-banner er bevidst IKKE koblet (se TASK-031-noten).
+  slutskærm og challenge-banner er bevidst IKKE koblet (uden for REQ-006's
+  omfang, se REQ-008 og TASK-031-noten).
 - **FILE-005**: `src/ui/book.ts` — 3 render-steder til `artFor()`. Leveret 2026-08-12
   (fanerække, opslag, tidslinje-SVG), via `glyphHTML()`/`artUrl()` i `art.ts`.
 - **FILE-006**: `src/ui/icons.ts` — 5 nye krom-ikoner + 3 problem-ikoner.
@@ -306,6 +325,49 @@ bagefter uden en eneste kodeændring.
   Verificeres ved at tælle netværksforespørgsler til `/art/` på en frisk indlæsning.
 - **TEST-009**: Baggrundsmaleriet må ikke give vandret scroll eller layout-hop på
   mobil, og fallback-farven skal være synlig før billedet er hentet.
+- **TEST-010**: Ramme-udfyldning og breakpoint-konsistens (TASK-010/TASK-030,
+  rettet efter review 2026-08-12). **Automatiseret** i `tests/app-frame.test.ts`
+  (kører med `npm test`): ingen `min-height: auto` nogen steder i `style.css`;
+  `#grid` har `flex: 1` i desktop-blokken (`@media (min-width: 820px)`); `#dock`
+  er `position: static` samme sted; mobil-nedfaldet bruger `max-width: 819px`/
+  `min-width: 820px` (ikke 767/768); `DESIGN.md` siger "820px", ikke "768px".
+  **Manuel/visuel** (gentages ved næste layoutændring — ikke i CI, da vitest
+  kører uden jsdom/happy-dom og ingen af dem beregner ægte flexbox-layout):
+  mål `#app`/`#grid`/`#dock`s `getBoundingClientRect()` og computed style ved
+  bredderne 390, 767, 768, 819, 820, 1024px og ved rudestørrelserne
+  1000×1080, 1920×1080, 1440×1900, 1440×700 (titel- og spilskærm hver). Forvent:
+  under 820px bredde er `#app`-margin `0`, kant ingen, `#dock` `fixed`; fra og
+  med 820px er margin `4px`, kant `1px solid`, `#dock` `static`, og `#app`s
+  top- og bundafstand til vinduet er symmetriske (~4px hver) når indholdet er
+  lavere end ruden — ved 1440×700 er indholdet højere end ruden, så naturlig
+  scroll er korrekt, ikke en fejl. Kodestump til at gentage målingen (kræver
+  `playwright`, allerede en devDependency, og `npm run dev` kørende i en anden
+  terminal):
+
+  ```js
+  import { chromium } from 'playwright';
+  const sizes = [[390,900],[767,900],[768,900],[819,900],[820,900],[1024,900],
+                 [1000,1080],[1920,1080],[1440,1900],[1440,700]];
+  const browser = await chromium.launch();
+  for (const [width, height] of sizes) {
+    const page = await browser.newPage({ viewport: { width, height } });
+    await page.goto('http://localhost:5173');
+    const m = await page.evaluate(() => {
+      const app = document.querySelector('#app');
+      const r = app.getBoundingClientRect();
+      return {
+        appTop: r.top, appBottom: r.bottom, innerHeight: innerHeight,
+        appMargin: getComputedStyle(app).marginTop,
+        appRadius: getComputedStyle(app).borderRadius,
+        dockPos: getComputedStyle(document.querySelector('#dock')).position,
+        gridFlexGrow: getComputedStyle(document.querySelector('#grid')).flexGrow,
+      };
+    });
+    console.log(width, height, m);
+    await page.close();
+  }
+  await browser.close();
+  ```
 
 ## 7. Risks & Assumptions
 
