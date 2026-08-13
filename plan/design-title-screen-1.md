@@ -144,6 +144,12 @@ igen (**2/36 fejlede**). Den fælles fuldskærmsregel for `#card`, `#banner`,
 `#ending` og `#trophy-modal` bruger nu samme `100dvw × 100dvh`-binding; Fates
 ligger efter rettelsen helt i 390 px-ruden, og hele auditten er GRØN **36/36**.
 
+Den afsluttende branch-gennemgang lukkede også højdematematikken omkring
+mobilbrowserens værktøjslinjer: titlen var bundet til `dvh`, mens dens
+letterbox (`--bar`) og scenesamling (`--seam`) stadig brugte statisk `vh`.
+De bruger nu `100dvw`, `178dvh` og `90.4dvh` konsekvent. To fokuserede
+kildetests blev først kørt RØDT mod de gamle enheder og derefter GRØNT.
+
 Den tidligere Esc-fokusbemærkning ovenfor er også supersederet af den afsluttende
 uafhængige kodegennemgang: den kunne ikke reproduceres; fokus vendte korrekt
 tilbage til udløseren. Det ændrer ikke inert-rettelsen, men betyder, at der ikke
