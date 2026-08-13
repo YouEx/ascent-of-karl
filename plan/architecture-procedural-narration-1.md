@@ -30,6 +30,13 @@ tags: [architecture, engine, narrator, content, tooling, feature]
 > mod CON-003's loft på 60 KiB. Der er 607 bytes tilbage. TASK-022 er derfor
 > stadig åben: 304 af den målte top-600 er bagt, og næste batch kræver
 > kompression eller en eksplicit budgetbeslutning — loftet hæves ikke stiltiende.
+>
+> **Recovery-beslutning for improvisation** (2026-08-13): verdikt-motoren er
+> nu også den deterministiske portvagt for `Engine.improvise()`. Kun
+> `plausible`/`absurd` fortsætter; improviserede forældre må ikke kaldes
+> `inert` alene, fordi de naturligt mangler i canon-indexet. Gameplay-
+> klassifikation og ids ejes af offline-regler. En fremtidig model må kun
+> forbedre navn/flavor og ændrer hverken denne plans verdikt eller tags.
 
 Ved planens start havde spillet 187 elementer og 225 opskrifter: 17.578
 mulige uordnede par (inklusive selv-par), hvor 17.353 faldt tilbage på otte

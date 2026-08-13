@@ -4,7 +4,13 @@ import {
   rollChallenge,
 } from "./challenge";
 import type { ActiveChallenge, ChallengeState } from "./challenge";
-import { solvesNeed } from "./solves";
+import {
+  buildFallbackElement,
+  improvisedElementId,
+  MAX_IMPROVISED_DEPTH,
+  sanitizeImprovisedElement,
+} from "./improvise";
+import { explainSatisfaction, solvesNeed } from "./solves";
 import { judgePair } from "./verdict";
 import type {
   ActDef,
@@ -15,6 +21,7 @@ import type {
   ContentBundle,
   ElementDef,
   EndingDef,
+  NeedExplanations,
   ProblemDef,
   SolvePredicate,
 } from "./types";
@@ -33,7 +40,19 @@ export interface GameState {
   challenges: ChallengeState;
   /** Run-seed — styrer hvornår challenges spawner og hvad der løser dem */
   seed: number;
+  /** Runets improviserede elementregistry. Canon lever fortsat i content. */
+  improvisedElements?: ElementDef[];
+  /** Improviserede elementer der faktisk løste et problem eller challenge. */
+  creditedImprovised?: string[];
 }
+
+export type RuntimeGameState = Omit<
+  GameState,
+  "improvisedElements" | "creditedImprovised"
+> & {
+  improvisedElements: ElementDef[];
+  creditedImprovised: string[];
+};
 
 export function pairKey(a: string, b: string): string {
   return [a, b].sort().join("+");
@@ -45,18 +64,29 @@ export function pairKey(a: string, b: string): string {
  */
 export class Engine {
   readonly content: ContentBundle;
-  private state: GameState;
+  private state: RuntimeGameState;
   private elementById = new Map<string, ElementDef>();
+  private canonicalElements = new Map<string, ElementDef>();
   private combosByPair = new Map<string, ComboDef[]>();
   private combosByElement = new Map<string, ComboDef[]>();
   private actByNumber = new Map<number, ActDef>();
+  private canonicalElementIds = new Set<string>();
   /** Prædikaterne der afgør hvad der løser hvad (content/predicates.json). */
   private predicates: Record<string, SolvePredicate>;
 
   constructor(content: ContentBundle, state?: GameState) {
     this.content = content;
     this.predicates = content.predicates;
-    for (const el of content.elements) this.elementById.set(el.id, el);
+    for (const el of content.elements) {
+      const canonical = {
+        ...el,
+        origin: "canon",
+        parents: undefined,
+      } satisfies ElementDef;
+      this.elementById.set(canonical.id, canonical);
+      this.canonicalElements.set(canonical.id, canonical);
+      this.canonicalElementIds.add(canonical.id);
+    }
     for (const combo of content.combos) {
       const key = pairKey(combo.pair[0], combo.pair[1]);
       const list = this.combosByPair.get(key) ?? [];
@@ -73,10 +103,11 @@ export class Engine {
         this.combosByElement.set(id, list);
       }
     }
-    this.state = state ?? this.freshState();
+    this.state = this.freshState();
+    if (state) this.loadState(state);
   }
 
-  private freshState(): GameState {
+  private freshState(): RuntimeGameState {
     const firstAct = Math.min(...this.content.acts.map((a) => a.act));
     return {
       act: firstAct,
@@ -89,22 +120,127 @@ export class Engine {
       ended: null,
       challenges: freshChallengeState(),
       seed: 1,
+      improvisedElements: [],
+      creditedImprovised: [],
     };
   }
 
-  getState(): GameState {
+  getState(): RuntimeGameState {
     return structuredClone(this.state);
   }
 
   loadState(state: GameState): void {
     const s = structuredClone(state);
+    const improvisedElements = this.sanitizeImprovisedRegistry(
+      s.improvisedElements,
+      s.discovered,
+    );
+    const improvisedIds = new Set(
+      improvisedElements.map((element) => element.id),
+    );
+    const discovered = s.discovered.filter(
+      (id) => this.canonicalElementIds.has(id) || improvisedIds.has(id),
+    );
     // ended/challenges tilføjet senere — ældre saves mangler felterne
     this.state = {
       ...s,
+      discovered,
       ended: s.ended ?? null,
       challenges: s.challenges ?? freshChallengeState(),
       seed: s.seed ?? 1,
+      improvisedElements,
+      creditedImprovised: [
+        ...new Set(
+          (Array.isArray(s.creditedImprovised)
+            ? s.creditedImprovised
+            : []
+          ).filter(
+            (id): id is string =>
+              typeof id === "string" &&
+              improvisedIds.has(id) &&
+              discovered.includes(id),
+          ),
+        ),
+      ],
     };
+    this.syncImprovisedRegistry();
+  }
+
+  private sanitizeImprovisedRegistry(
+    raw: unknown,
+    discovered: string[],
+  ): ElementDef[] {
+    if (!Array.isArray(raw)) return [];
+    const discoveredIds = new Set(discovered);
+    const structural: ElementDef[] = [];
+    const duplicates = new Set<string>();
+    const seen = new Set<string>();
+    for (const value of raw) {
+      const element = sanitizeImprovisedElement(value);
+      if (
+        !element ||
+        this.canonicalElementIds.has(element.id) ||
+        !discoveredIds.has(element.id)
+      ) {
+        continue;
+      }
+      if (seen.has(element.id)) {
+        duplicates.add(element.id);
+      } else {
+        seen.add(element.id);
+        structural.push(element);
+      }
+    }
+
+    const pending = new Map(
+      structural
+        .filter((element) => !duplicates.has(element.id))
+        .map((element) => [element.id, element]),
+    );
+    const accepted = new Map<string, ElementDef>();
+    let progressed = true;
+    while (progressed) {
+      progressed = false;
+      for (const [id, element] of pending) {
+        const parentA =
+          this.canonicalElements.get(element.parents![0]) ??
+          accepted.get(element.parents![0]);
+        const parentB =
+          this.canonicalElements.get(element.parents![1]) ??
+          accepted.get(element.parents![1]);
+        if (!parentA || !parentB) continue;
+        pending.delete(id);
+        progressed = true;
+        let expected: ElementDef;
+        try {
+          expected = buildFallbackElement(parentA, parentB);
+        } catch {
+          continue;
+        }
+        const taxonomyMatches =
+          element.act === expected.act &&
+          element.depth === expected.depth &&
+          element.kind === expected.kind &&
+          element.stuff === expected.stuff &&
+          element.scale === expected.scale &&
+          element.traits.length === expected.traits.length &&
+          element.traits.every(
+            (trait, index) => trait === expected.traits[index],
+          );
+        if (taxonomyMatches) {
+          accepted.set(id, element);
+        }
+      }
+    }
+
+    return structural.filter((element) => accepted.has(element.id));
+  }
+
+  private syncImprovisedRegistry(): void {
+    this.elementById = new Map(this.canonicalElements);
+    for (const element of this.state.improvisedElements) {
+      this.elementById.set(element.id, element);
+    }
   }
 
   element(id: string): ElementDef {
@@ -168,7 +304,12 @@ export class Engine {
    * desuden næste akts base-elementer i puljen, som heller ikke er fortjent.)
    */
   inventions(): number {
-    return this.state.discovered.filter((id) => !this.element(id).base).length;
+    const credited = new Set(this.state.creditedImprovised);
+    return this.state.discovered.filter((id) => {
+      const element = this.element(id);
+      if (element.origin === "improvised") return credited.has(id);
+      return !element.base;
+    }).length;
   }
 
   /** Er Karl nået langt nok til at hans historie må få en ende? */
@@ -233,24 +374,156 @@ export class Engine {
 
   /**
    * Kernen i loopet (PRD §2.1): kombinér to elementer.
-   * Muterer state ved opdagelser; "known"/"nothing"/"gated" ændrer kun attempts-tælleren.
+   * Muterer state ved opdagelser; øvrige udfald ændrer kun turtilstanden.
    */
   combine(a: string, b: string): CombineOutcome {
+    this.assertTurnAllowed(a, b);
+    this.state.attempts++;
+    const outcome = this.resolve(a, b);
+    return this.completeTurn(outcome);
+  }
+
+  /**
+   * Atomisk improvisation: portvagt, registry, problemløsning og challenge
+   * sker i én transition og koster præcis én sommer.
+   */
+  improvise(a: string, b: string): CombineOutcome {
+    this.assertTurnAllowed(a, b);
+    this.state.attempts++;
+
+    const first = this.element(a);
+    const second = this.element(b);
+    const canonical = this.matchCombo(a, b);
+    if (canonical) {
+      return this.completeTurn({
+        kind: "improvise-rejected",
+        a: first,
+        b: second,
+        reason: "canonical-recipe",
+      });
+    }
+
+    const judgment = judgePair(this, first, second);
+    if (judgment.verdict !== "plausible" && judgment.verdict !== "absurd") {
+      return this.completeTurn({
+        kind: "improvise-rejected",
+        a: first,
+        b: second,
+        reason: "verdict",
+        ...judgment,
+      });
+    }
+
+    const attemptedDepth = Math.max(first.depth ?? 0, second.depth ?? 0) + 1;
+    if (attemptedDepth > MAX_IMPROVISED_DEPTH) {
+      return this.completeTurn({
+        kind: "improvise-rejected",
+        a: first,
+        b: second,
+        reason: "depth-limit",
+        verdict: judgment.verdict,
+        evidence: judgment.evidence,
+        attemptedDepth,
+      });
+    }
+
+    const id = improvisedElementId(a, b);
+    const known = this.elementById.get(id);
+    if (known && known.origin !== "improvised") {
+      return this.completeTurn({
+        kind: "improvise-rejected",
+        a: first,
+        b: second,
+        reason: "canonical-recipe",
+      });
+    }
+    const reused = known?.origin === "improvised";
+    const element = reused ? known : buildFallbackElement(first, second);
+    if (!reused) {
+      this.state.improvisedElements.push(element);
+      this.state.discovered.push(element.id);
+      this.elementById.set(element.id, element);
+    }
+
+    const act = this.currentAct();
+    const needExplanations = this.explainCurrentNeeds(element);
+    let solved: ProblemDef | undefined;
+    for (const problem of act.problems) {
+      if (this.isSolved(problem.id)) continue;
+      if (!needExplanations[problem.id]?.satisfied) continue;
+      this.state.solvedProblems.push(problem.id);
+      solved = problem;
+      break;
+    }
+
+    return this.completeTurn({
+      kind: "improvised",
+      element,
+      reused,
+      solved,
+      ageUp: false,
+      act,
+      needExplanations,
+    });
+  }
+
+  private assertTurnAllowed(a: string, b: string): void {
     if (this.state.ended) {
       throw new Error("Karls historie er slut — start et nyt liv");
     }
     if (!this.isDiscovered(a) || !this.isDiscovered(b)) {
       throw new Error(`Kan ikke kombinere uopdagede elementer: ${a}, ${b}`);
     }
-    this.state.attempts++;
-    const outcome = this.resolve(a, b);
+  }
+
+  private completeTurn(outcome: CombineOutcome): CombineOutcome {
     const challenge = this.tickChallenge(outcome);
-    // Slutninger: en skæbne-kombination, ellers alderdom når somrene slipper op
+    if (outcome.kind === "improvised") {
+      if (outcome.solved) this.creditImprovised(outcome.element.id);
+    }
+    if (
+      challenge?.kind === "solved" &&
+      challenge.by.origin === "improvised"
+    ) {
+      this.creditImprovised(challenge.by.id);
+    }
+    let completed = outcome;
+    if (outcome.kind === "discovery" || outcome.kind === "known") {
+      const endingDeflected = this.state.ended
+        ? false
+        : this.applyEnding(outcome.combo);
+      completed = { ...outcome, endingDeflected };
+    }
     if (!this.state.ended && this.state.attempts >= this.content.config.turnLimit) {
       const oldAge = this.content.endings.find((e) => e.automatic);
       if (oldAge) this.state.ended = oldAge.id;
     }
-    return challenge ? { ...outcome, challenge } : outcome;
+    return challenge ? { ...completed, challenge } : completed;
+  }
+
+  private creditImprovised(id: string): void {
+    if (!this.state.creditedImprovised.includes(id)) {
+      this.state.creditedImprovised.push(id);
+    }
+  }
+
+  private explainCurrentNeeds(element: ElementDef): NeedExplanations {
+    const explanations: NeedExplanations = {};
+    for (const problem of this.currentAct().problems) {
+      if (this.isSolved(problem.id)) continue;
+      const predicate = this.predicates[problem.id];
+      if (predicate) {
+        explanations[problem.id] = explainSatisfaction(element, predicate);
+      }
+    }
+    const active = this.activeChallenge();
+    if (active) {
+      const predicate = this.predicates[active.def.id];
+      if (predicate) {
+        explanations[active.def.id] = explainSatisfaction(element, predicate);
+      }
+    }
+    return explanations;
   }
 
   /** Challenget der presser Karl lige nu — null hvis der ingen er. */
@@ -278,7 +551,7 @@ export class Engine {
       const def = this.content.challenges.find((c) => c.id === cs.active!.id)!;
       // Kun rigtige opdagelser kan løse et challenge — man slipper ikke
       // udenom ved at kombinere de samme to ting igen og igen.
-      if (outcome.kind === "discovery") {
+      if (outcome.kind === "discovery" || outcome.kind === "improvised") {
         if (resolves(def, outcome.element, this.predicates)) {
           cs.active = null;
           cs.gap = 0;
@@ -346,8 +619,7 @@ export class Engine {
     if (this.isDiscovered(combo.result)) {
       // En skæbne der blev afværget tidligere kan opsøges igen — Karl går
       // tilbage til klippen. Ellers ville et for tidligt forsøg låse den ude.
-      const deflected = this.applyEnding(combo);
-      return { kind: "known", combo, element, endingDeflected: deflected };
+      return { kind: "known", combo, element };
     }
 
     // Blødt gate (PRD §2.3): age-up nægtes indtil obligatoriske problemer er løst.
@@ -360,7 +632,6 @@ export class Engine {
     for (const flag of combo.setsFlags ?? []) this.setFlag(flag);
     // Dybe opdagelser koster ekstra somre af Karls liv
     if (combo.cost && combo.cost > 1) this.state.attempts += combo.cost - 1;
-    const endingDeflected = this.applyEnding(combo);
 
     // Hvilket problem løser opdagelsen? Som hovedregel afgøres det af hvad
     // tingen ER — altså af elementets tags mod prædikatet — ikke af om nogen
@@ -406,9 +677,9 @@ export class Engine {
           this.state.discovered.push(el.id);
         }
       }
-      return { kind: "discovery", combo, element, solved, ageUp: true, act, endingDeflected };
+      return { kind: "discovery", combo, element, solved, ageUp: true, act };
     }
 
-    return { kind: "discovery", combo, element, solved, ageUp: false, act, endingDeflected };
+    return { kind: "discovery", combo, element, solved, ageUp: false, act };
   }
 }

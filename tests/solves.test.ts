@@ -14,7 +14,12 @@ import { describe, expect, it } from "vitest";
 import predicatesRaw from "../content/predicates.json";
 import fixture from "./fixtures/solves-parity.json";
 import { loadContent } from "../src/content";
-import { satisfies, solvedNeeds, solvesNeed } from "../src/core/solves";
+import {
+  explainSatisfaction,
+  satisfies,
+  solvedNeeds,
+  solvesNeed,
+} from "../src/core/solves";
 import type { ElementDef, SolvePredicate } from "../src/core/types";
 
 // Elementerne hentes gennem loadContent() og ikke direkte fra JSON, fordi
@@ -106,5 +111,117 @@ describe("solves — reglerne selv", () => {
     // indholdet, før den blev til et system.
     expect(solvesNeed(find("mudderkage"), "sult", predicates)).toBe(true);
     expect(solvesNeed(find("klyngen"), "kulde", predicates)).toBe(true);
+  });
+
+  it("forklarer præcist hvilke atomare krav et element ikke opfylder", () => {
+    const explanation = explainSatisfaction(find("baer"), {
+      kind: ["food"],
+      traits: ["edible", "hot"],
+      minDepth: 2,
+    });
+
+    expect(explanation.satisfied).toBe(false);
+    expect(explanation.failures).toEqual([
+      { requirement: "minDepth", expected: 2, actual: 0 },
+      { requirement: "kind", expected: ["food"], actual: "material" },
+      { requirement: "traits", expected: ["edible", "hot"], missing: ["hot"] },
+    ]);
+  });
+
+  it("bevarer forklaringerne fra alle afviste anyOf-grene", () => {
+    const explanation = explainSatisfaction(find("sten"), {
+      anyOf: [{ traits: ["edible"] }, { kind: ["tool"] }],
+    });
+
+    expect(explanation.satisfied).toBe(false);
+    expect(explanation.failures).toHaveLength(1);
+    expect(explanation.failures[0]).toMatchObject({
+      requirement: "anyOf",
+      branches: [
+        {
+          satisfied: false,
+          failures: [
+            { requirement: "traits", expected: ["edible"], missing: ["edible"] },
+          ],
+        },
+        {
+          satisfied: false,
+          failures: [
+            { requirement: "kind", expected: ["tool"], actual: "material" },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("bevarer selve det negatede prædikat som forklaring på not-fejl", () => {
+    const predicate: SolvePredicate = { not: { traits: ["alive"] } };
+    const explanation = explainSatisfaction(find("dyr"), predicate);
+
+    expect(satisfies(find("dyr"), predicate)).toBe(false);
+    expect(explanation).toEqual({
+      satisfied: false,
+      failures: [
+        {
+          requirement: "not",
+          predicate: { traits: ["alive"] },
+          matched: { satisfied: true, failures: [] },
+        },
+      ],
+    });
+  });
+
+  it("bevarer not-beviset inde i en afvist anyOf-gren", () => {
+    const explanation = explainSatisfaction(find("dyr"), {
+      anyOf: [
+        { not: { traits: ["alive"] } },
+        { kind: ["person"] },
+      ],
+    });
+
+    expect(explanation.satisfied).toBe(false);
+    expect(explanation.failures[0]).toMatchObject({
+      requirement: "anyOf",
+      branches: [
+        {
+          failures: [
+            {
+              requirement: "not",
+              predicate: { traits: ["alive"] },
+            },
+          ],
+        },
+        {
+          failures: [
+            { requirement: "kind", expected: ["person"], actual: "creature" },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("bevarer et nested anyOf-prædikat når not fejler inde i allOf", () => {
+    const negated: SolvePredicate = {
+      anyOf: [{ traits: ["alive"] }, { kind: ["person"] }],
+    };
+    const explanation = explainSatisfaction(find("dyr"), {
+      allOf: [{ traits: ["heavy"] }, { not: negated }],
+    });
+
+    expect(explanation.satisfied).toBe(false);
+    expect(explanation.failures[0]).toMatchObject({
+      requirement: "allOf",
+      branches: [
+        {
+          failures: [
+            {
+              requirement: "not",
+              predicate: negated,
+              matched: { satisfied: true, failures: [] },
+            },
+          ],
+        },
+      ],
+    });
   });
 });

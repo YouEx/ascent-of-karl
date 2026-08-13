@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { Engine } from "../src/core/engine";
 import { loadContent } from "../src/content";
 import { judgePair } from "../src/core/verdict";
-import type { Verdict } from "../src/core/types";
+import type { ElementDef, Verdict } from "../src/core/types";
+import type { VerdictWorld } from "../src/core/verdict";
 
 const content = loadContent();
 
@@ -200,5 +201,34 @@ describe("Dommen: bevismaterialet holder", () => {
         }
       }
     }
+  });
+});
+
+describe("Dommen: improviserede forældre", () => {
+  it("er ikke inerte alene fordi de ikke står i den kanoniske opskriftsbog", () => {
+    const world: VerdictWorld = {
+      isDiscovered: () => true,
+      allCombosFor: () => [],
+      flagObstacles: () => ({ missing: [], blocking: [] }),
+      combosWith: () => [],
+      element: () => undefined,
+    };
+    const improvised = (id: string): ElementDef => ({
+      id,
+      origin: "improvised",
+      parents: ["sten", "pind"],
+      name: id,
+      emoji: "",
+      act: 1,
+      depth: 1,
+      kind: "material",
+      stuff: "wood",
+      traits: ["dry"],
+      scale: "hand",
+    });
+
+    expect(judgePair(world, improvised("a"), improvised("b")).verdict).toBe(
+      "plausible",
+    );
   });
 });

@@ -56,6 +56,7 @@ export type ElementTrait =
   | "portable";
 
 export type ElementScale = "hand" | "body" | "camp" | "landscape";
+export type ElementOrigin = "canon" | "improvised";
 
 /**
  * Et prædikat over tags. Hovedreglen for hvad der løser hvad — erstatter de
@@ -88,8 +89,66 @@ export interface SolvePredicate {
   not?: SolvePredicate;
 }
 
+export type PredicateFailure =
+  | {
+      requirement: "allOf" | "anyOf";
+      branches: PredicateExplanation[];
+    }
+  | {
+      requirement: "not";
+      predicate: SolvePredicate;
+      matched: PredicateExplanation;
+    }
+  | {
+      requirement: "crafted";
+      expected: true;
+      actual: false;
+    }
+  | {
+      requirement: "minDepth";
+      expected: number;
+      actual: number;
+    }
+  | {
+      requirement: "kind";
+      expected: ElementKind[];
+      actual: ElementKind;
+    }
+  | {
+      requirement: "stuff";
+      expected: ElementStuff[];
+      actual: ElementStuff;
+    }
+  | {
+      requirement: "traits";
+      expected: ElementTrait[];
+      missing: ElementTrait[];
+    }
+  | {
+      requirement: "scale";
+      expected: ElementScale[];
+      actual: ElementScale;
+    };
+
+/** Rent, serialiserbart bevis for hvorfor et prædikat bestod eller fejlede. */
+export interface PredicateExplanation {
+  satisfied: boolean;
+  failures: PredicateFailure[];
+}
+
+/** Prædikatbeviser nøglet på problem- eller challenge-id. */
+export type NeedExplanations = Record<string, PredicateExplanation>;
+
 export interface ElementDef {
   id: string;
+  /**
+   * Kuraterede elementer kan fortsat udelade feltet i content og gamle saves;
+   * fravær betyder `canon`. Runtime-improvisationer skriver altid
+   * `improvised` eksplicit.
+   */
+  origin?: ElementOrigin;
+  /** Det ordnede, stabile forældrepar. Findes kun på improviserede elementer. */
+  parents?: [string, string];
   /** Visningsnavn på dansk */
   name: string;
   /** Midlertidigt ikon indtil illustrationer (Step 4) */
@@ -99,8 +158,9 @@ export interface ElementDef {
   /** Base-elementer er tilgængelige fra aktens start */
   base?: boolean;
   /**
-   * Korteste opskriftsafstand fra starthånden. Udledes i loadContent() — står
-   * ikke i elements.json, netop for ikke at kunne blive forældet.
+   * Korteste opskriftsafstand fra starthånden for canon. Udledes i
+   * loadContent() og står ikke i elements.json. For improviserede elementer
+   * gemmes `max(parent.depth)+1` i runets registry.
    */
   depth?: number;
   /**
@@ -479,6 +539,24 @@ export type CombineOutcome = {
       b: ElementDef;
       verdict: Verdict;
       evidence: VerdictEvidence;
+    }
+  | {
+      kind: "improvised";
+      element: ElementDef;
+      reused: boolean;
+      solved?: ProblemDef;
+      ageUp: false;
+      act: ActDef;
+      needExplanations: NeedExplanations;
+    }
+  | {
+      kind: "improvise-rejected";
+      a: ElementDef;
+      b: ElementDef;
+      reason: "canonical-recipe" | "verdict" | "depth-limit";
+      verdict?: Verdict;
+      evidence?: VerdictEvidence;
+      attemptedDepth?: number;
     });
 
 /**
