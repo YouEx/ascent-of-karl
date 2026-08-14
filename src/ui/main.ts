@@ -1233,13 +1233,18 @@ function showTitleScreen(): void {
         </p>
         <div class="title-divider title-block" aria-hidden="true"></div>
         <div class="title-actions title-block${crowded}">
-          <button id="t-primary" class="btn-stone">
-            <span class="orn orn-spiral" aria-hidden="true"></span>${canContinue ? "Continue" : "Begin"}
+          <button id="t-primary" class="title-action btn-stone">
+            <span class="title-action-icon" aria-hidden="true">${icons.spiral}</span>
+            <span class="title-action-label">${canContinue ? "Continue" : "Begin"}</span>
           </button>
-          ${canContinue ? `<button id="t-new" class="btn-quiet">New life</button>` : ""}
-          <button id="t-fates" class="btn-quiet">
-            <span class="orn orn-trophy" aria-hidden="true"></span>Fates
-            <span class="fates-count">${unlocked}/${content.endings.length}</span>
+          ${canContinue ? `<button id="t-new" class="title-action btn-quiet">
+            <span class="title-action-icon" aria-hidden="true">${icons.restart}</span>
+            <span class="title-action-label">New life</span>
+          </button>` : ""}
+          <button id="t-fates" class="title-action btn-quiet">
+            <span class="title-action-icon" aria-hidden="true">${icons.trophy}</span>
+            <span class="title-action-label">Fates</span>
+            <span class="title-action-count fates-count">${unlocked}/${content.endings.length}</span>
           </button>
         </div>
         <p class="title-hint title-block">

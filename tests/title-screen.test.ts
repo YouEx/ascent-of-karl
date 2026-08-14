@@ -105,7 +105,7 @@ describe("først-gang vs gemt spil (TASK-002/010)", () => {
 describe("Fates-tallet er data-drevet, ikke en hardkodet konstant (TASK-014)", () => {
   it("bruger content.endings.length, ikke et fastlåst tal", () => {
     expect(showTitleScreenBody).toContain(
-      '<span class="fates-count">${unlocked}/${content.endings.length}</span>',
+      '<span class="title-action-count fates-count">${unlocked}/${content.endings.length}</span>',
     );
   });
 
@@ -271,10 +271,10 @@ describe("gear/tap-ikonerne er væk fra icons.ts og bliver ikke sneget ind igen 
   });
 });
 
-describe("godkendte titelmaterialer bruges kun til observerbar krom", () => {
+describe("titlens krom er semantiske komponenter, ikke sammensyede screenshots", () => {
   const stripped = stripComments(styles);
 
-  it("bruger de sourceafledte 3-/9-slice-materialer og ornamenter", () => {
+  it("bruger ingen af de forbudte slice- eller frame-assets i runtime-CSS", () => {
     for (const asset of [
       "ribbon-left.webp",
       "ribbon-center.webp",
@@ -286,12 +286,17 @@ describe("godkendte titelmaterialer bruges kun til observerbar krom", () => {
       "fates-center.webp",
       "fates-right.webp",
       "welcome-frame.webp",
-      "welcome-figure.webp",
       "tool-frame.webp",
       "tip-card-frame.webp",
+    ]) {
+      expect(stripped).not.toContain(`title-materials/${asset}`);
+    }
+  });
+
+  it("bevarer kun selvstændige illustrationer som billeder", () => {
+    for (const asset of [
+      "welcome-figure.webp",
       "tip-fire-tile.webp",
-      "ornament-spiral.webp",
-      "ornament-trophy.webp",
       "ornament-tap.webp",
       "ornament-divider.webp",
       "ornament-hunt.webp",
@@ -300,11 +305,44 @@ describe("godkendte titelmaterialer bruges kun til observerbar krom", () => {
     }
   });
 
-  it("opfinder ikke malede hover-, pressed- eller sound-assets", () => {
-    expect(stripped).not.toMatch(/title-materials\/[^"')]*(hover|pressed|sound)/);
-    expect(stripped).not.toMatch(/\.title-actions button:hover/);
-    expect(stripped).not.toMatch(/\.title-actions button:active/);
-    expect(stripped).not.toMatch(/\.title-tools button:hover/);
+  it("bruger ikke border-image på actions, tools, welcome eller tip card", () => {
+    const componentRules = [
+      extractBlock(stripped, ".title-actions button {"),
+      extractBlock(stripped, ".title-tools button {"),
+      extractBlock(stripped, ".title-tools button::before {"),
+      extractBlock(stripped, ".title-chip {"),
+      extractBlock(stripped, ".title-chip::before {"),
+      extractBlock(stripped, ".title-tip {"),
+      extractBlock(stripped, ".title-tip::before {"),
+    ].join("\n");
+    expect(componentRules).not.toMatch(/border-image/);
+  });
+
+  it("giver alle titelhandlinger den samme ikon/label/count-struktur", () => {
+    expect(showTitleScreenBody).toMatch(
+      /id="t-primary" class="title-action btn-stone"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.spiral[\s\S]*?class="title-action-label"[\s\S]*?\$\{canContinue \? "Continue" : "Begin"\}/,
+    );
+    expect(showTitleScreenBody).toMatch(
+      /id="t-new" class="title-action btn-quiet"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.restart[\s\S]*?class="title-action-label">New life/,
+    );
+    expect(showTitleScreenBody).toMatch(
+      /id="t-fates" class="title-action btn-quiet"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.trophy[\s\S]*?class="title-action-label">Fates[\s\S]*?class="title-action-count fates-count"/,
+    );
+  });
+
+  it("har rigtige hover-, pressed- og fokus-tilstande i CSS", () => {
+    expect(stripped).toMatch(/\.title-actions button:hover/);
+    expect(stripped).toMatch(/\.title-actions button:active/);
+    expect(stripped).toMatch(/\.title-actions button:focus-visible/);
+    expect(stripped).toMatch(/\.title-tools button:hover/);
+    expect(stripped).toMatch(/\.title-tools button:active/);
+    expect(stripped).toMatch(/\.title-tools button:focus-visible/);
+  });
+
+  it("slår titelkomponenternes bevægelse fra ved reduced motion", () => {
+    const reduced = extractBlock(stripped, "@media (prefers-reduced-motion: reduce) {");
+    expect(reduced).toContain(".title-actions button");
+    expect(reduced).toContain(".title-tools button");
   });
 
   it("gemt spil frigiver fresh-state-bredderne, så tre knapper forbliver på én række", () => {

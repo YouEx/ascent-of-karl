@@ -1421,33 +1421,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
       transparent 87%, var(--tile-contour) 100%),
     linear-gradient(to bottom, var(--tile-bevel), var(--tile-edge));
   background-blend-mode: overlay, multiply, normal;
-  filter: drop-shadow(0 0 1px var(--ribbon-ink));
-  /* Kildens båndudsnit er 500×61 ved native-ruden, mens dommerens synlige
-     anker er de midterste 52 px (y=462..514). Skiverne beholdes derfor i
-     deres oprindelige proportioner og forskydes fire pixels op i boksen i
-     stedet for at blive klemt lodret og strakt vandret. `min()` skalerer
-     samme komposition ned på mobil, men aldrig over kildens native mål.
-     De ligger som et afdæmpet materialelag over token-bunden: generatorens
-     rekonstruerede tekstbed er ikke observeret kilde og må derfor ikke
-     overdøve den verificerede tone/kontrast i den læsbare midte. */
-}
-.title-sub::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  opacity: 0.28;
-  pointer-events: none;
-  background:
-    url("../assets/art/title-materials/ribbon-left.webp")
-      left max(-0.57cqw, -4px) /
-      min(8.61cqw, 60px) min(8.75cqw, 61px) no-repeat,
-    url("../assets/art/title-materials/ribbon-right.webp")
-      right max(-0.57cqw, -4px) /
-      min(8.61cqw, 60px) min(8.75cqw, 61px) no-repeat,
-    url("../assets/art/title-materials/ribbon-center.webp")
-      center max(-0.57cqw, -4px) /
-      min(54.50cqw, 380px) min(8.75cqw, 61px) no-repeat;
+  filter: drop-shadow(0 1px 0 var(--tile-contour));
 }
 
 .title-tagline {
@@ -1491,9 +1465,9 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 
 /* --- Knapperne --------------------------------------------------------- */
 .title-actions {
-  /* Målt: rækken er 78 px høj i referencen, vores 104,44 = button'ens
-     min-height 15cqw. 11,2cqw rammer 78. btn-quiet skal skrumpes med, ellers
-     bliver DEN (align-items: stretch) rækkens højeste og holder den på 96,8. */
+  /* Referencens knapper er fysiske, afrundede tavler. Rækken beholder de
+     målte ankre, men hver tavle er nu én ubrudt CSS-flade i stedet for tre
+     billedskiver med synlige samlinger. */
   left: 18.75%; right: 8.01%;
   top: 62.53%;
   display: flex;
@@ -1502,129 +1476,143 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 }
 /* Med et gemt spil er der tre knapper i stedet for to. Rækken er lige så
    bred som før, så luften og polstringen må give sig — ikke skriftstørrelsen. */
-.title-actions.crowded { gap: 1.8cqw; }
+.title-actions.crowded { gap: 0.7cqw; }
 .title-actions.crowded .btn-stone {
-  padding-inline: 1cqw;
-  font-size: 5cqw;
+  padding-inline: 0.7cqw;
 }
 .title-actions.crowded .btn-quiet {
-  padding-inline: 1.6cqw;
-  font-size: 3.2cqw;
+  padding-inline: 0.7cqw;
 }
 .title-actions button {
   position: relative;
-  border: 0;
-  background: none;
-  padding: 0 4cqw;
+  border: 1px solid var(--tile-contour);
+  border-radius: min(3.2cqw, var(--radius-lg));
+  background-color: var(--btn-parchment);
+  background-image:
+    var(--grain),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--field-bevel) 72%, var(--tile-lit)),
+      color-mix(in srgb, var(--btn-parchment) 76%, var(--tile-shade))
+    );
+  background-blend-mode: overlay, normal;
+  padding: 0 min(3.2cqw, 22px);
   /* Målt: rent 11,2cqw giver kun 33-40 px i bredden 320-390, under de 44 px
      et trykmål kræver. `max()` beholder cqw-skalaen på store ruder (den
      krydser 44 px ved ca. 393 px arkbredde og styrer selv derfra), men
      lægger en absolut gulv under den på smalle telefoner. */
   min-height: max(11.2cqw, 44px);
   display: inline-flex; align-items: center; justify-content: center;
-  gap: 1.8cqw;
+  gap: min(1.45cqw, 10px);
   font-family: var(--font-display);
   color: var(--btn-ink);
   cursor: pointer;
-  isolation: isolate;
   white-space: nowrap;
+  box-shadow:
+    inset 0 0 0 2px var(--field-bevel),
+    inset 0 0 0 4px var(--tile-groove),
+    inset 0 1px 0 color-mix(in srgb, var(--chronicle) 80%, transparent),
+    var(--shadow-paper);
+  transition:
+    transform var(--dur-press) var(--ease-out),
+    filter var(--dur-press) var(--ease-out),
+    box-shadow var(--dur-press) var(--ease-out);
 }
-/* Knapfladerne er høstet større end dommerens 78 px høje handlingsanker:
-   Begin ved [143,642,280×106], Fates ved [441,645,214×100]. Pseudo-
-   elementerne lægger de tre godkendte skiver tilbage i de observerede
-   koordinater og lader dem male uden for det semantiske trykmål. Det
-   bevarer native bevel/geometri uden opskalering; på smalle ruder skalerer
-   alle mål proportionalt ned via cqw. */
+.title-actions button:hover {
+  filter: brightness(1.035);
+  transform: translateY(-1px);
+}
+.title-actions button:active {
+  filter: brightness(0.98);
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 0 0 2px var(--tile-groove),
+    inset 0 0 0 4px var(--field-bevel),
+    inset 0 3px 7px color-mix(in srgb, var(--valley-dark) 16%, transparent),
+    var(--shadow-paper);
+}
+.title-actions button:focus-visible {
+  outline: 3px solid var(--ochre-ink);
+  outline-offset: 2px;
+}
 .title-actions .btn-stone {
   width: min(39.31cqw, 274px);
   flex: none;
-  font-size: 6.4cqw;
-  font-weight: 600;
+  background-color: var(--tile-edge);
+  background-image:
+    var(--grain),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--field-bevel) 64%, var(--tile-lit)),
+      color-mix(in srgb, var(--tile-edge) 70%, var(--tile-groove))
+    );
+  font-size: 5.6cqw;
+  font-weight: 650;
   font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
-  padding-inline: min(5.2cqw, 36px);
-}
-.title-actions .btn-stone::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-  left: max(-0.72cqw, -5px);
-  top: max(-1.15cqw, -8px);
-  width: min(40.17cqw, 280px);
-  height: min(15.21cqw, 106px);
-  background:
-    url("../assets/art/title-materials/begin-left.webp")
-      left center / min(8.03cqw, 56px) min(15.21cqw, 106px) no-repeat,
-    url("../assets/art/title-materials/begin-right.webp")
-      right center / min(8.03cqw, 56px) min(15.21cqw, 106px) no-repeat,
-    url("../assets/art/title-materials/begin-center.webp")
-      center / min(24.10cqw, 168px) min(15.21cqw, 106px) no-repeat;
 }
 .title-actions .btn-quiet {
   width: min(30.70cqw, 214px);
   flex: none;
-  font-size: 4.3cqw;
-  min-height: 10.4cqw;
+  font-size: 4.1cqw;
+  padding-inline: min(1.5cqw, 10px);
 }
-.title-actions .btn-quiet::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-  left: 0;
-  top: max(-0.72cqw, -5px);
-  width: min(30.70cqw, 214px);
-  height: min(14.35cqw, 100px);
-  background:
-    url("../assets/art/title-materials/fates-left.webp")
-      left center / min(6.89cqw, 48px) min(14.35cqw, 100px) no-repeat,
-    url("../assets/art/title-materials/fates-right.webp")
-      right center / min(6.89cqw, 48px) min(14.35cqw, 100px) no-repeat,
-    url("../assets/art/title-materials/fates-center.webp")
-      center / min(16.93cqw, 118px) min(14.35cqw, 100px) no-repeat;
+.title-actions .btn-quiet .title-action-icon {
+  width: 6.2cqw;
+  height: 6.2cqw;
 }
 /* Gemte spil viser Continue, New life og Fates i samme 510 px række.
-   Fresh-state-målene ovenfor er kildekoordinater for præcis to knapper og
-   må derfor ikke låse treknaps-layoutet. Her genbruges de samme godkendte
-   skiver, men inden for knappernes eksisterende indholdsbestemte bredder. */
+   Fresh-state-målene ovenfor må derfor ikke låse treknaps-layoutet. */
 .title-actions.crowded .btn-stone,
 .title-actions.crowded .btn-quiet {
   width: auto;
   flex: 0 1 auto;
   min-width: 0;
 }
-.title-actions.crowded .btn-stone::before,
-.title-actions.crowded .btn-quiet::before {
-  inset: 0;
-  width: auto;
-  height: auto;
+.title-actions.crowded .title-action-icon {
+  width: 5.8cqw;
+  height: 5.8cqw;
 }
-.title-actions.crowded .btn-stone::before {
-  background-size:
-    auto 100%,
-    auto 100%,
-    calc(100% - 11.84cqw) 100%;
+.title-actions.crowded .btn-stone .title-action-label {
+  font-size: 3.6cqw;
 }
-.title-actions.crowded .btn-quiet::before {
-  background-size:
-    auto 100%,
-    auto 100%,
-    calc(100% - 10.75cqw) 100%;
+.title-actions.crowded .btn-quiet .title-action-label {
+  font-size: 3cqw;
 }
-.title-actions .orn {
-  width: 7.4cqw; height: 7.4cqw;
-  background: no-repeat center / contain;
-  mix-blend-mode: multiply;
+.title-actions.crowded .title-action-count {
+  font-size: 2.6cqw;
+}
+.title-action-icon {
+  width: 7.4cqw;
+  height: 7.4cqw;
+  display: grid;
+  place-items: center;
   flex: none;
+  color: var(--label-ink);
+  background: color-mix(in srgb, var(--tile-groove) 34%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tile-contour) 72%, var(--btn-ink));
+  border-radius: min(2cqw, var(--radius));
+  box-shadow:
+    inset 0 1px 3px color-mix(in srgb, var(--valley-dark) 16%, transparent),
+    0 1px 0 color-mix(in srgb, var(--chronicle) 72%, transparent);
 }
-.title-actions .orn-spiral {
-  background-image: url("../assets/art/title-materials/ornament-spiral.webp");
+.title-action-icon svg {
+  width: 62%;
+  height: 62%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-.title-actions .orn-trophy {
-  background-image: url("../assets/art/title-materials/ornament-trophy.webp");
-  width: 4.6cqw; height: 6.8cqw;
+.title-action-label {
+  line-height: 1;
 }
-.fates-count { font-variant-numeric: tabular-nums; color: var(--rust-warm); }
+.title-action-count {
+  font-size: 3.2cqw;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.fates-count { color: var(--rust-warm); }
 
 /* --- Hjælpelinjen ------------------------------------------------------ */
 .title-hint {
@@ -1659,23 +1647,31 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   gap: 2.6cqw;
   padding: 2.2cqw 2.6cqw 3.4cqw;
   text-align: left;
-  /* Fladens egen medianfarve i referencen er (221,192,163) — --chronicle
-     (238,224,205) er bygget til lyse kort på selve arket, men dette kort
-     svæver over maleriet nederst på pladen, ligesom chip/tools, og skal
-     være mørkere. --tile-edge (216,191,165) rammer tættest (afstand ~5,5 i
-     RGB mod --chronicles ~40). Kun farven skiftet — korn/kant/skygge/radius
-     er urørt, da struct (0,442) og materiality (0,953) allerede er gode. */
+  background-color: var(--tile-edge);
+  background-image:
+    var(--grain),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--tile-lit) 58%, var(--tile-edge)),
+      color-mix(in srgb, var(--tile-edge) 72%, var(--tile-groove))
+    );
+  background-blend-mode: overlay, normal;
+  border: 1px solid var(--tile-contour);
+  border-radius: min(2.8cqw, var(--radius-lg));
+  box-shadow:
+    inset 0 0 0 2px var(--tile-bevel),
+    inset 0 0 0 4px var(--tile-groove),
+    var(--shadow-paper);
   isolation: isolate;
 }
 .title-tip::before {
   content: "";
-  position: absolute; inset: 0;
-  z-index: -1;
-  border: 24px solid transparent;
-  border-image-source: url("../assets/art/title-materials/tip-card-frame.webp");
-  border-image-slice: 24 28 fill;
-  border-image-width: 24px 28px;
-  border-image-repeat: stretch;
+  position: absolute;
+  inset: min(1.15cqw, 8px);
+  z-index: 0;
+  border: 1px solid color-mix(in srgb, var(--tile-contour) 66%, transparent);
+  border-radius: min(1.9cqw, var(--radius));
+  pointer-events: none;
 }
 .title-tip .tip-text { min-width: 0; position: relative; z-index: 2; }
 .tip-dots {
@@ -1760,6 +1756,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   width: 340px;
   height: 65px;
   padding: 7px 12px 7px 25px;
+  border-radius: var(--radius-lg);
   isolation: isolate;
 }
 .title-chip::before {
@@ -1772,17 +1769,18 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   background-color: var(--tile-shade);
   background-image:
     var(--grain),
-    linear-gradient(to bottom, var(--tile-shade), var(--tile-groove));
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--tile-lit) 62%, var(--tile-shade)),
+      color-mix(in srgb, var(--tile-shade) 72%, var(--tile-groove))
+    );
   background-blend-mode: overlay, normal;
-  border: 18px solid transparent;
-  border-image-source: url("../assets/art/title-materials/welcome-frame.webp");
-  border-image-slice: 18 24;
-  border-image-width: 18px 24px;
-  border-image-repeat: stretch;
-  border-radius: 1.1rem;
+  border: 1px solid var(--tile-contour);
+  border-radius: var(--radius-lg);
   box-shadow:
     inset 0 0 0 2px var(--tile-bevel),
     inset 0 0 0 4px var(--tile-groove),
+    inset 0 1px 0 color-mix(in srgb, var(--chronicle) 74%, transparent),
     var(--shadow-paper);
   pointer-events: none;
 }
@@ -1820,20 +1818,48 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   position: relative;
   width: 4.4rem; height: 4.4rem;
   display: grid; place-items: center;
-  background: none;
-  border: 0;
+  background-color: var(--tile-shade);
+  background-image:
+    var(--grain),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--tile-lit) 62%, var(--tile-shade)),
+      color-mix(in srgb, var(--tile-shade) 74%, var(--tile-groove))
+    );
+  background-blend-mode: overlay, normal;
+  border: 1px solid var(--tile-contour);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 0 0 2px var(--tile-bevel),
+    inset 0 0 0 4px var(--tile-groove),
+    var(--shadow-paper);
   color: var(--label-ink);
   cursor: pointer;
+  transition:
+    transform var(--dur-press) var(--ease-out),
+    filter var(--dur-press) var(--ease-out),
+    box-shadow var(--dur-press) var(--ease-out);
 }
 .title-tools button::before {
   content: "";
-  position: absolute; inset: 0;
-  border: 16px solid transparent;
-  border-image-source: url("../assets/art/title-materials/tool-frame.webp");
-  border-image-slice: 16 fill;
-  border-image-width: 16px;
-  border-image-repeat: stretch;
+  position: absolute;
+  inset: 6px;
+  border: 1px solid color-mix(in srgb, var(--tile-contour) 68%, transparent);
+  border-radius: calc(var(--radius-lg) - 5px);
   pointer-events: none;
+}
+.title-tools button:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+.title-tools button:active {
+  filter: brightness(0.98);
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 0 0 2px var(--tile-groove),
+    inset 0 0 0 4px var(--tile-bevel),
+    inset 0 3px 7px color-mix(in srgb, var(--valley-dark) 16%, transparent),
+    var(--shadow-paper);
 }
 /* Disse to knapper står oven på selve maleriet, ikke arket — den globale
    `:focus-visible`-ring (ochre mod luft/bjerg) kan derfor lande på en lys
@@ -1844,8 +1870,11 @@ html[data-improvise-enabled] .invention-entry .invention-label {
    derfor ≥3:1 mod enhver baggrund, uanset hvor lys eller mørk himlen er der. */
 .title-tools button:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px var(--parchment),
-              0 0 0 6px var(--ochre-ink);
+  box-shadow:
+    inset 0 0 0 2px var(--tile-bevel),
+    inset 0 0 0 4px var(--tile-groove),
+    0 0 0 3px var(--parchment),
+    0 0 0 6px var(--ochre-ink);
 }
 /* Referencens ikoner er streg, ikke fyldte flader — samme regel som
    .icon-btn svg (DESIGN.md §8), men glemt her: uden fill:none arver SVG'en
@@ -1888,20 +1917,14 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   .title-divider {
     background-size: auto min(100%, 13px);
   }
-  .title-tip::before {
-    border-width: 12px 14px;
-    border-image-width: 12px 14px;
-  }
+  .title-tip::before { inset: 6px; }
   .title-tip .tile {
     width: min(12.4cqw, 43px);
     height: min(12.4cqw, 43px);
   }
   .title-tools { gap: 0.75rem; }
   .title-tools button { width: 44px; height: 44px; }
-  .title-tools button::before {
-    border-width: 8px;
-    border-image-width: 8px;
-  }
+  .title-tools button::before { inset: 4px; }
   .title-tools svg { width: 1.25rem; height: 1.25rem; }
 }
 
@@ -1919,7 +1942,14 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .title-actions button { transition: none; }
+  .title-actions button,
+  .title-tools button {
+    transition: none;
+  }
+  .title-actions button:hover,
+  .title-tools button:hover {
+    transform: none;
+  }
 }
 
 /* ---------- Overlejringer (docs/design/ux-checklist.md) ---------- */

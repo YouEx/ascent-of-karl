@@ -226,9 +226,9 @@ describe("kontrastkrav fra DESIGN.md §2", () => {
 
 describe("titelskærmens kontrastpar (overflader uden for de seks generiske papirer)", () => {
   // Ribbon, sten-knapper og redskabsikoner sidder ikke på en af de seks
-  // generiske papirflader ovenfor: båndet har sin egen flade, knapperne er
-  // malede aktiver uden fladt token, og værktøjsknappen blander sig ned i
-  // en gradient. Parrene skrives eksplicit ind her, så en fremtidig
+  // generiske papirflader ovenfor: båndet har sin egen flade, og knapperne
+  // blander eksisterende titel-/flisetokens i CSS. Parrene skrives eksplicit
+  // ind her, så en fremtidig
   // tokenændring, der umærkeligt sænker en af dem, fældes af testen — ikke
   // først opdaget ved næste visuelle gennemgang.
 
@@ -240,19 +240,13 @@ describe("titelskærmens kontrastpar (overflader uden for de seks generiske papi
     ).toBeGreaterThanOrEqual(4.5);
   });
 
-  it("--btn-ink mod stenknappens mørkeste målte flisetone klarer AA (4.5:1)", () => {
-    // btn-begin-m.webp/btn-quiet-m.webp er malede aktiver uden et fladt
-    // token — label-teksten ("Begin"/"Continue"/"Fates") sidder direkte på
-    // pixels, ikke på en CSS-farve. Målt: mørkeste pixel i den vandrette
-    // midterbånd (35-75% højde, hvor .title-actions buttons egen
-    // align-items:center reelt centrerer teksten) af btn-begin-m.webp er
-    // #b78b63 — btn-quiet-m.webp er lysere overalt (mørkeste #dcc3a5,
-    // 8,32:1) og er derfor ikke den bindende flade. Værdien er en frosset
-    // måling af et statisk aktiv, ikke et token — ændrer aktivet sig, skal
-    // tallet genmåles med samme metode.
-    const BTN_FACE_DARKEST = "b78b63";
+  it("--btn-ink mod CSS-knappens mørkeste rille klarer AA (4.5:1)", () => {
+    // Handlingsknappernes tekst ligger på en gradient mellem de lyse
+    // flisetokens, mens --tile-groove er komponentens mørkeste token. Testen
+    // bruger derfor rillen som konservativt gulv i stedet for en pixelmåling
+    // fra et udgået knapbillede.
     expect(
-      contrast(token("btn-ink"), BTN_FACE_DARKEST),
+      contrast(token("btn-ink"), token("tile-groove")),
     ).toBeGreaterThanOrEqual(4.5);
   });
 
