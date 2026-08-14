@@ -62,6 +62,25 @@ def test_config_pinner_kilde_dimensioner_og_full_plate_gates() -> None:
         "width": 760,
         "height": 1680,
     }
+    provenance = value["provenance"]
+    assert provenance["approvedLosslessComposite"]["sha256"] == (
+        "8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770"
+    )
+    assert provenance["approvedLosslessComposite"]["buildInput"] is False
+    derivative = provenance["knownBlankDerivative"]
+    assert derivative == {
+        "path": "src/assets/art/title-parchment-692.webp",
+        "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a",
+        "width": 692,
+        "height": 907,
+        "bytes": 51254,
+        "relationship": "RGBA derivative produced by masking and inpainting the flattened canonical UI; not original clean art",
+        "buildInput": False,
+    }
+    derivative_path = ROOT / derivative["path"]
+    assert hashlib.sha256(derivative_path.read_bytes()).hexdigest() == derivative["sha256"]
+    assert provenance["layeredSourceFound"] is False
+    assert provenance["cleanMobileSourceFound"] is False
     gates = value["gates"]
     assert gates["sourcePixelRetentionMax"] == 1.0
     assert gates["duplicatePatchCountMax"] == 0

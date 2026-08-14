@@ -5,6 +5,24 @@
 **Source SHA-256:** `8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850`  
 **Requested master:** 760×1680 lossless RGBA
 
+## Source-scout provenance
+
+- The local approved lossless composite remains
+  `/Users/martin/Downloads/ChatGPT Image 11. aug. 2026, 15.11.10.png`
+  (1586×992 RGB, SHA-256
+  `8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770`).
+  Its decoded RGB is pixel-identical to the versioned WebP. It is still a
+  flattened title UI composite, not a clean parchment layer.
+- `src/assets/art/title-parchment-692.webp` is a 692×907 RGBA derivative
+  (51,254 bytes, SHA-256
+  `efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a`).
+  `tools/art/build_parchment.py` created it by masking and inpainting the
+  canonical UI composite. It is a stronger prior than four isolated 48px
+  samples, but its blank pixels are reconstructed claims, not original
+  observations. It is therefore excluded from source-retention ground truth.
+- No PSD, XCF, TIFF, clean parchment original, separated layer set or clean
+  mobile source was found locally.
+
 ## Verdict
 
 The approved composite is insufficient to reconstruct a visually credible,
@@ -53,6 +71,8 @@ clipped and cannot exceed 100%.
 
 All attempts used the complete eligible source field, not the previous four
 48×48 sample quilt. None used network services or third-party generation.
+The existing 692×907 derivative was not promoted to source truth because doing
+so would recursively count its inpainted pixels as retained evidence.
 
 ## Precise unblock
 

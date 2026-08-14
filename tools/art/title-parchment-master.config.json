@@ -9,6 +9,27 @@
     "height": 992,
     "crop": [0, 85, 700, 992]
   },
+  "provenance": {
+    "approvedLosslessComposite": {
+      "localPath": "/Users/martin/Downloads/ChatGPT Image 11. aug. 2026, 15.11.10.png",
+      "sha256": "8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770",
+      "width": 1586,
+      "height": 992,
+      "relationship": "decoded RGB is pixel-identical to the versioned WebP; still a flattened UI composite",
+      "buildInput": false
+    },
+    "knownBlankDerivative": {
+      "path": "src/assets/art/title-parchment-692.webp",
+      "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a",
+      "width": 692,
+      "height": 907,
+      "bytes": 51254,
+      "relationship": "RGBA derivative produced by masking and inpainting the flattened canonical UI; not original clean art",
+      "buildInput": false
+    },
+    "layeredSourceFound": false,
+    "cleanMobileSourceFound": false
+  },
   "output": {
     "file": "parchment-master.webp",
     "width": 760,

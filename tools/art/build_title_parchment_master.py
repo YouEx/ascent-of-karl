@@ -833,6 +833,7 @@ def build(
             "sha256": config["source"]["sha256"],
             "crop": config["source"]["crop"],
         },
+        "provenance": config["provenance"],
         "output": {
             "file": config["output"]["file"],
             "width": config["output"]["width"],
