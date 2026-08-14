@@ -17,6 +17,9 @@ export const icons = {
   book: svg(
     `<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5z"/>`,
   ),
+  help: svg(
+    `<path d="M9.6 8.4a2.7 2.7 0 1 1 4.3 2.2c-1.2.8-1.9 1.3-1.9 2.7"/><path d="M12 17.5h.01"/><circle cx="12" cy="12" r="9"/>`,
+  ),
   trophy: svg(
     `<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5H4.5v1.5A3.5 3.5 0 0 0 8 10"/><path d="M17 5h2.5v1.5A3.5 3.5 0 0 1 16 10"/><path d="M12 14v3"/><path d="M8.5 20h7"/><path d="M10 17h4l.7 3h-5.4z"/>`,
   ),

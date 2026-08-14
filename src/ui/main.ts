@@ -25,8 +25,8 @@ import {
 import {
   renderElementTileContent,
   elementOriginClass,
+  escapeHTML,
   renderCopyStatus,
-  renderInventionCard,
   renderInventionSummaryHTML,
   renderSlotContent,
 } from "./improvise-view";
@@ -37,6 +37,8 @@ import {
   type ImproviseCopyState,
 } from "./improvise-client";
 import { summarizeInventions } from "./run-summary";
+import { StoryBook } from "./story-book";
+import { openingStoryPage, storyPageForOutcome } from "./story-page";
 import { ImprovisationPlaytestLog } from "./improvise-playtest";
 import {
   activeScenario,
@@ -148,21 +150,27 @@ app.innerHTML = `
   <header>
     <span class="mark" aria-hidden="true"></span>
     <h1>The Ascent of Karl</h1>
-    <span id="age" title="Every attempt costs a summer of Karl's life"></span>
+    <span id="act-label"></span>
+    <span id="age"></span>
     <div class="header-actions">
-      <button id="book-btn" class="icon-btn" aria-label="Open the chronicle">${icons.book}<span id="book-badge"></span></button>
+      <button id="book-btn" class="icon-btn" aria-label="Open the chronicle archive">${icons.help}<span id="book-badge"></span></button>
       <button id="trophies" class="icon-btn" aria-label="Fates discovered">${icons.trophy}</button>
       <button id="restart" class="icon-btn" aria-label="Start over">${icons.restart}</button>
     </div>
   </header>
 
-  <section id="narrator" aria-live="polite">
-    <div id="bubble">
+  <section id="story-book" aria-label="Karl's living chronicle">
+    <div class="story-cover">
+      <article id="bubble" class="story-page story-page-narrator">
       <div id="bubble-head">
         <span id="narrator-label">The Narrator</span>
         <button id="mute" class="icon-btn" aria-pressed="false" aria-label="Mute the narrator">${icons.soundOn}</button>
       </div>
-      <p id="narrator-text"></p>
+        <p id="narrator-text" aria-live="polite"></p>
+      </article>
+      <div class="story-gutter" aria-hidden="true"></div>
+      <article id="story-outcome" class="story-page story-page-outcome" aria-live="polite"></article>
+      <div class="story-turn-leaf" aria-hidden="true"></div>
     </div>
   </section>
 
@@ -172,7 +180,8 @@ app.innerHTML = `
   <div id="tools">
     <input id="search" type="search" placeholder="Search elements…" aria-label="Search elements" autocomplete="off">
     <button id="filter-new" class="chip-btn" aria-pressed="false">New finds</button>
-    <button id="filter-done" class="chip-btn" aria-pressed="false" title="Hide the things that lead nowhere further">Hide finished</button>
+    <button id="filter-done" class="chip-btn" aria-pressed="false"
+            aria-label="Hide finished elements that lead nowhere further">Hide finished</button>
   </div>
 
   <section id="grid" aria-label="Elements"></section>
@@ -186,8 +195,8 @@ app.innerHTML = `
   </div>
   ${IMPROVISE_ENABLED ? '<div id="improvise-status-host"></div>' : ""}
 
-  <aside id="book-panel" aria-label="The chronicle of mankind">
-    <button id="book-close" class="icon-btn" aria-label="Close the chronicle">${icons.close}</button>
+  <aside id="book-panel" aria-label="Chronicle archive">
+    <button id="book-close" class="icon-btn" aria-label="Close the chronicle archive">${icons.close}</button>
     <section id="book"></section>
   </aside>
 
@@ -200,6 +209,7 @@ app.innerHTML = `
 
 const el = {
   age: document.getElementById("age")!,
+  actLabel: document.getElementById("act-label")!,
   problems: document.getElementById("problems")!,
   challenge: document.getElementById("challenge")!,
   narratorText: document.getElementById("narrator-text")!,
@@ -235,6 +245,20 @@ const book = new BookView(
   document.getElementById("book")!,
   IMPROVISE_ENABLED,
 );
+
+/**
+ * Bogens højre side. Frysning og reduceret bevægelse behandles ens: siden
+ * skiftes med det samme, så en optagelse af samme tilstand aldrig fanger et
+ * halvvendt blad.
+ */
+const storyBook = new StoryBook(
+  document.getElementById("story-book")!,
+  document.getElementById("story-outcome")!,
+  () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    isFrozen(),
+);
+storyBook.render(openingStoryPage());
 
 let selected: [string | null, string | null] = [null, null];
 let typewriterTimer: ReturnType<typeof setInterval> | undefined;
@@ -415,39 +439,38 @@ function renderAge(): void {
   // Bægeret er et billede skåret ud af referencen, ikke en emoji: ⏳ tegnes
   // forskelligt på hver platform og lå 12 px for bredt. Se #age::before i CSS.
   el.age.textContent = `${Math.min(spent + 1, content.config.turnLimit)}/${content.config.turnLimit}`;
-  el.age.title = `Summer ${Math.min(spent + 1, content.config.turnLimit)} of ${content.config.turnLimit} — every attempt costs one`;
+  el.age.setAttribute(
+    "aria-label",
+    `Summer ${Math.min(spent + 1, content.config.turnLimit)} of ${content.config.turnLimit} — every attempt costs one`,
+  );
   el.age.classList.toggle("age-late", engine.remainingTurns() <= 10);
 }
 
+function renderActLabel(): void {
+  const act = engine.currentAct();
+  // Aktens NAVN er det første der må vige: på 390 px skubbede "· The Stone
+  // Age" hele header-action-rækken ud af ruden. Nummeret bærer betydningen,
+  // navnet er smykket — så navnet får sit eget element, som CSS kan skjule.
+  el.actLabel.innerHTML =
+    `Act ${act.act}<span class="act-name"> · ${escapeHTML(act.name)}</span>`;
+}
+
 function renderProblems(): void {
-  // Det problem fortælleren peger på markeres, så hans hensigt altid er
-  // synlig uden at han skal gentage sig. Dét er det, der gør ulydighed
-  // til et valg frem for et tilfælde.
-  const pulled = narrator.currentPull()?.id;
-  const scenarioProblems = activeScenario()?.visibleProblemIds;
-  const visible = scenarioProblems ? new Set(scenarioProblems) : undefined;
-  el.problems.innerHTML = engine
-    .currentAct()
-    .problems.map((p) => {
-      if (visible && !visible.has(p.id)) return "";
-      const done = engine.isSolved(p.id);
-      const wanted = !done && p.id === pulled;
-      const tint = p.tint ? ` tint-${p.tint}` : "";
-      const cls = `problem${done ? " solved" : ""}${wanted ? " wanted" : ""}${tint}`;
-      const hint = wanted ? " — the narrator wants this next" : "";
-      // Emnet står først; status er farve og gennemstregning, ikke et tegn.
-      // Løst problem er undtagelsen: fluebenet er hele pointen med at se det.
-      // Kun det LØSTE problem bytter motiv ud med et tegn — fluebenet er hele
-      // pointen med at se det. Fortællerens træk vises med okkerringen fra
-      // .wanted, ikke ved at male problemets ikon over: referencen viser
-      // sneflokken på den chip fortælleren peger på.
-      const mark = done ? "✓" : (p.icon ?? "○");
-      const icon = done
-        ? `<i class="problem-icon" aria-hidden="true">${mark}</i>`
-        : problemGlyphHTML(p.id, mark, "problem-icon");
-      return `<span class="${cls}" data-problem="${p.id}" title="${p.description}${hint}">${icon} ${p.name}</span>`;
-    })
-    .join("");
+  const problem = narrator.currentPull();
+  if (!problem) {
+    el.problems.replaceChildren();
+    el.problems.hidden = true;
+    return;
+  }
+  el.problems.hidden = false;
+  const mark = problem.icon ?? "○";
+  const tint = problem.tint ? ` tint-${problem.tint}` : "";
+  el.problems.innerHTML = `
+    <span class="problem wanted${tint}" data-problem="${problem.id}"
+          aria-label="${problem.name}. ${problem.description}">
+      ${problemGlyphHTML(problem.id, mark, "problem-icon")}
+      <span>${problem.name}</span>
+    </span>`;
 }
 
 /**
@@ -678,7 +701,12 @@ function renderGrid(): void {
       freshFinds.has(def.id) ? "is-new" : ""
     } ${def.terminal ? "is-done" : ""}`;
     btn.dataset.id = def.id;
-    if (def.terminal) btn.title = `${def.name} — finished. Nothing combines with it.`;
+    if (def.terminal) {
+      btn.setAttribute(
+        "aria-label",
+        `${def.name}. Finished; nothing combines with it.`,
+      );
+    }
     btn.innerHTML = renderElementTileContent(def, IMPROVISE_ENABLED);
     attachSelect(btn, def);
     el.grid.appendChild(btn);
@@ -715,13 +743,13 @@ el.filterDone.addEventListener("click", () => {
   renderGrid();
 });
 
-// --- Bogen som sheet på mobil, inline på desktop ---
+// --- Chronicle archive: overlay på alle viewports ---
 function openBook(): void {
   el.bookPanel.classList.add("open");
   document.body.classList.add("book-open");
   book.render();
   openOverlay(el.bookPanel, {
-    label: "The book — your encyclopedia of history",
+    label: "Chronicle archive",
     onClose: () => {
       el.bookPanel.classList.remove("open");
       document.body.classList.remove("book-open");
@@ -773,29 +801,6 @@ function showDiscoveryCard(outcome: Extract<CombineOutcome, { kind: "discovery" 
     label: `Discovered: ${d.name}`,
     // Combine-knappen deaktiveres når slots ryddes, så den kan ikke tage
     // fokus tilbage. Bogen er det naturlige næste sted efter en opdagelse.
-    fallbackFocus: () => el.bookBtn,
-    onClose: () => {
-      el.card.hidden = true;
-    },
-  });
-  document
-    .getElementById("card-close")!
-    .addEventListener("click", () => closeTopOverlay());
-}
-
-function showInventionCard(
-  outcome: Extract<CombineOutcome, { kind: "improvised" }>,
-): void {
-  const invention = outcome.element;
-  el.card.innerHTML = renderInventionCard(
-    invention,
-    glyphHTML(invention.id, invention.emoji, "card-glyph"),
-    outcome.solved,
-  );
-  el.card.dataset.elementId = invention.id;
-  el.card.hidden = false;
-  openOverlay(el.card, {
-    label: `Karl invented: ${invention.name}`,
     fallbackFocus: () => el.bookBtn,
     onClose: () => {
       el.card.hidden = true;
@@ -965,6 +970,13 @@ function performCombine(a: string, b: string): void {
   );
   const line = narrator.react(a, b, outcome, elapsedMs);
   const ending = engine.activeEnding();
+
+  // Ét sideskift pr. afsluttet forsøg — her, ikke i udfaldsgrenene nedenfor.
+  // Lå kaldet i grenene, ville "no fuse" og afviste indfald ingen side få, og
+  // bogen ville tie præcis når spilleren mest har brug for at se hvad der skete.
+  storyBook.present(
+    storyPageForOutcome(engine.element(a), engine.element(b), outcome),
+  );
   // Beregnes FØR save() nedenfor: followUp() bogfører hvad fortælleren bad
   // om og hvor tit han er blevet trodset. Kørte den efter gemmet, ville en
   // genindlæsning nulstille hans hukommelse om sine egne opfordringer.
@@ -1017,7 +1029,11 @@ function performCombine(a: string, b: string): void {
   if (outcome.kind === "discovery") {
     settledImproviseStatus = null;
     freshFinds.add(outcome.element.id);
-    if (!ending) showDiscoveryCard(outcome);
+    // Bogens side ER afsløringen nu. Kortet ville lægge sig oven på den og
+    // sige det samme igen, så det er forbeholdt de fund der fortjener et stop.
+    if (!ending && (rarity.get(outcome.element.id)?.tier ?? "common") !== "common") {
+      showDiscoveryCard(outcome);
+    }
     renderGrid();
     renderProblems();
     renderBookBadge();
@@ -1027,7 +1043,6 @@ function performCombine(a: string, b: string): void {
   }
   if (outcome.kind === "improvised") {
     if (!outcome.reused) freshFinds.add(outcome.element.id);
-    if (!outcome.reused && !ending) showInventionCard(outcome);
     renderGrid();
     renderProblems();
     renderBookBadge();
@@ -1049,6 +1064,7 @@ function performCombine(a: string, b: string): void {
   // ignoreret. Køes bag historiereplikken, så den ikke overskriver sin optakt.
   sayAfter(followUp);
   renderAge();
+  renderActLabel();
   renderChallenge();
   if (ending) {
     // Runnet slutter HER, ikke når skærmen vises: en genindlæsning på
@@ -1342,6 +1358,7 @@ function renderChallenge(): void {
 
 function renderAll(): void {
   renderAge();
+  renderActLabel();
   renderChallenge();
   renderProblems();
   renderSlots();

@@ -38,11 +38,32 @@ const OVERLAYS = [
   {
     id: "card",
     name: "Opdagelseskort",
+    // Almindelige fund afsløres nu på bogens højre side; kortet er forbeholdt
+    // rare/unique. Fixturet skal derfor lande på et SJÆLDENT element, ellers
+    // åbner overlejringen aldrig og checken måler ingenting.
+    // larvefarm + nabo -> larvebod ("Grub stand"), rare, akt 1, ingen ending.
     open: async (p) => {
-      await p.locator('#grid .element[data-id="sten"]').click();
-      await p.locator('#grid .element[data-id="sten"]').click();
+      await p.evaluate(() => {
+        localStorage.setItem("kolde-karl-save-v1", JSON.stringify({
+          version: 1,
+          savedAt: "2026-08-14T00:00:00Z",
+          state: {
+            act: 1,
+            discovered: ["sten", "pind", "graes", "vand", "ler", "baer",
+              "larver", "dyr", "stamme", "nabo", "larvefarm"],
+            flags: [],
+            solvedProblems: [],
+            attempts: 12,
+          },
+        }));
+      });
+      await p.reload();
+      await p.click("#t-primary");
+      await p.waitForTimeout(400);
+      await p.locator('#grid .element[data-id="larvefarm"]').click();
+      await p.locator('#grid .element[data-id="nabo"]').click();
       await p.click("#combine");
-      await p.waitForTimeout(500);
+      await p.waitForTimeout(700);
     },
     isOpen: (p) => p.locator("#card").isVisible(),
     closeControl: "#card-close",
@@ -343,6 +364,67 @@ async function freshGame(browser) {
   return page;
 }
 
+async function auditLivingChronicle(browser) {
+  const page = await freshGame(browser);
+
+  // Én bog som standardflade — arkivet er en overlejring, ikke en anden bog.
+  record(
+    "Living Chronicle",
+    "single-default-book",
+    (await page.locator("#story-book").count()) === 1 &&
+      !(await page.locator("#book-panel").isVisible()),
+  );
+
+  record(
+    "Living Chronicle",
+    "act-in-header",
+    await page.locator("header #act-label").isVisible(),
+  );
+
+  // Åbningssiden skal stå der før første forsøg — en tom højreside ser ud
+  // som en fejl, ikke som en invitation.
+  record(
+    "Living Chronicle",
+    "opening-page",
+    (await page.locator("#story-outcome .story-pair").count()) === 1,
+  );
+
+  // Kun det aktuelle mål må stå fremme. Rendte vi hele aktens problemliste,
+  // ville akt 1 spoile sig selv i første skærmbillede.
+  record(
+    "Living Chronicle",
+    "single-current-objective",
+    (await page.locator("#problems .problem").count()) <= 1,
+  );
+
+  // Ingen native tooltips: browserens gule boks kan hverken tastaturfokuseres
+  // eller læses op, og den er ikke stylet af os.
+  record(
+    "Living Chronicle",
+    "no-native-tooltips",
+    (await page.locator("#problems [title]").count()) === 0,
+  );
+
+  // Ét sideskift pr. afsluttet forsøg, og teksten skal faktisk skifte.
+  const before = await page.locator("#story-outcome").innerHTML();
+  await page.locator('#grid .element[data-id="sten"]').click();
+  await page.locator('#grid .element[data-id="sten"]').click();
+  await page.click("#combine");
+  await page.waitForTimeout(700);
+  const after = await page.locator("#story-outcome").innerHTML();
+  record("Living Chronicle", "page-turns-on-attempt", before !== after);
+
+  // Reduceret bevægelse er slået til for denne side: bladet må ikke blive
+  // liggende midt i en vending oven på den nye tekst.
+  record(
+    "Living Chronicle",
+    "no-stuck-turn-leaf",
+    (await page.locator("#story-book.is-turning").count()) === 0,
+  );
+
+  await page.close();
+}
+
 async function auditOverlay(browser, o) {
   // --- lukkekontrol findes og er stor nok ---
   {
@@ -449,6 +531,7 @@ for (const o of OVERLAYS) await auditOverlay(browser, o);
 await auditTitleFatesModal(browser);
 await auditTitleMobileViewport(browser);
 await auditGameMobileViewport(browser);
+await auditLivingChronicle(browser);
 await browser.close();
 
 // --- rapport ---

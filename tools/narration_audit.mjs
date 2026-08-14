@@ -74,6 +74,18 @@ async function selectPair(page, a, b) {
   await page.locator("#combine").click();
 }
 
+/**
+ * Almindelige fund afsløres på bogens side og har intet kort. Kun rare/unique
+ * åbner overlejringen, så auditen må ikke ANTAGE at den er der — den skal
+ * lukke den hvis den kom, og ellers gå videre.
+ */
+async function dismissDiscoveryCard(page) {
+  const close = page.locator("#card-close");
+  if (await close.isVisible().catch(() => false)) {
+    await close.click();
+  }
+}
+
 async function runAudit(baseUrl) {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -154,11 +166,11 @@ async function runAudit(baseUrl) {
     await waitForSettled(page, 2);
 
     await selectPair(page, "sten", "pind");
-    await page.locator("#card-close").click();
+    await dismissDiscoveryCard(page);
     await waitForSettled(page, 4);
 
     await selectPair(page, "graes", "graes");
-    await page.locator("#card-close").click();
+    await dismissDiscoveryCard(page);
     await waitForSettled(page, 5);
 
     const result = await page.evaluate(() => ({

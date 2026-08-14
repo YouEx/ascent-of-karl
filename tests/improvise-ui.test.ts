@@ -470,7 +470,9 @@ describe("invention motion", () => {
     it("prefixer de responsive feature-overrides med root-attributten", () => {
       for (const selector of [
         "header",
-        "#narrator",
+        // #narrator blev til den samlede bog (Living Chronicle); overriden
+        // følger komponenten, ikke det gamle id.
+        "#story-book",
         "#tools",
         "#dock",
         "#book-panel",

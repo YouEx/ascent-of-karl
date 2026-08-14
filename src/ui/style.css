@@ -204,6 +204,17 @@ header h1 {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+#act-label {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: var(--act-badge);
+  color: var(--act-badge-ink);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
 #age {
   display: inline-flex;
   align-items: center;
@@ -313,43 +324,162 @@ header h1 {
 }
 #book-badge[hidden] { display: none; }
 
-/* ---------- Fortælleren ---------- */
-#narrator {
-  position: sticky;
-  top: 3.25rem;
+/* ---------- Living Chronicle ---------- */
+/* Bogen er IKKE sticky. Den gamle narrator-boble var én lille flade og kunne
+   klæbe under headeren uden at være i vejen; den samlede bog er to sider og
+   fylder på mobil over en tredjedel af skærmen. Klæbede den, ville den ligge
+   oven på grid'et og æde klik på brikkerne — UX-dommeren fangede præcis det.
+   Referencelayoutet (min-width: 820px) satte i forvejen position: static, så
+   sticky gjaldt i praksis kun der hvor den skadede mest. */
+#story-book {
+  position: relative;
   z-index: 15;
-  /* Målt: referencens boble fylder HELE regionen (kant på y=105 og y=251
-     inden for rect [237,105,978,145]). Vores boble sad 8 px inde i toppen
-     og bunden, så den synlige flade var 129 px hvor referencens er 145. */
-  padding: 0;
+  perspective: 1400px;
 }
+.story-cover {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr);
+  min-height: 230px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid var(--tile-contour);
+  border-radius: var(--radius-lg);
+  background:
+    var(--grain),
+    linear-gradient(to bottom, var(--tile-lit), var(--tile-shade));
+  background-blend-mode: overlay, normal;
+  box-shadow:
+    inset 0 0 0 3px var(--field-bevel),
+    inset 0 0 0 4px var(--field-groove),
+    var(--shadow-paper);
+}
+.story-page {
+  min-width: 0;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  color: var(--ink-warm);
+  background:
+    var(--grain),
+    linear-gradient(100deg, var(--chronicle), var(--parchment));
+  background-blend-mode: overlay, normal;
+}
+.story-page-narrator {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+.story-page-outcome {
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-family: var(--font-display);
+}
+.story-gutter {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--valley-dark) 22%, transparent),
+    transparent 45% 55%,
+    color-mix(in srgb, var(--valley-dark) 18%, transparent)
+  );
+}
+.story-turn-leaf {
+  position: absolute;
+  inset: 14px 14px 14px calc(50% + 8px);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  background:
+    var(--grain),
+    linear-gradient(100deg, var(--chronicle), var(--parchment));
+  background-blend-mode: overlay, normal;
+}
+/* Ét autoriseret sideskift. Bladet står på kant ved midtpunktet — præcis der
+   hvor StoryBook skifter teksten — så spilleren ser en side vende, ikke en
+   tekst der bliver erstattet. */
+#story-book.is-turning .story-turn-leaf {
+  opacity: 1;
+  animation: story-page-turn var(--dur-celebrate) var(--ease-out) both;
+}
+@keyframes story-page-turn {
+  0% { transform: rotateY(0deg); }
+  48% {
+    box-shadow: -18px 4px 22px color-mix(in srgb, var(--valley-dark) 28%, transparent);
+  }
+  100% { transform: rotateY(-180deg); }
+}
+
+/* Højre side: hvad forsøget gjorde. Kicker og par står som marginalia over
+   selve resultatet, så øjet lander på titlen først. */
+.story-entry { display: grid; gap: 0.35rem; }
+.story-pair {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step-label);
+  color: var(--label-ink);
+}
+.story-kicker {
+  margin: 0;
+  font-size: var(--step-kicker);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  color: var(--ochre-ink);
+}
+.story-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.1rem 0 0;
+  font-size: var(--step-title);
+  line-height: 1.15;
+}
+.story-glyph { width: 1.6em; height: 1.6em; font-size: 1.1em; }
+img.story-glyph { object-fit: contain; }
+.story-body {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-display);
+  font-size: var(--step-narrator);
+  line-height: 1.5;
+  max-width: var(--measure);
+}
+.story-note {
+  margin: 0.35rem 0 0;
+  font-size: var(--step-label);
+  line-height: 1.45;
+  color: var(--label-ink);
+}
+.story-note-label {
+  display: inline-block;
+  margin-right: 0.4rem;
+  font-size: var(--step-kicker);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  color: var(--ochre-ink);
+}
+.story-solved {
+  margin: 0.35rem 0 0;
+  font-size: var(--step-label);
+  font-weight: 600;
+  color: var(--ochre-ink);
+}
+/* Fluebenet er krom, ikke indhold — det hører til i CSS, ikke i strengen. */
+.story-solved::before { content: "✓"; margin-right: 0.35rem; }
 #bubble {
   position: relative;
-  /* Hele boblens flade er skåret ud af referencen (build_narrator_paper.py).
-     Målingen: referencens venstre kant har en MALET bueskytte — kolonne
-     10-50 bærer 24-42 mørke pixels pr. søjle, hvor kolonne 60-110 har 0-7 —
-     plus ornamenter, et mørkere bånd langs kanten og en varm åring i hele
-     fladen. Vi havde intet af det, og strukturen stod på 0,470.
-     Kant, skygge og korn er malet ind i billedet og må derfor ikke lægges
-     ovenpå igen. */
-  background: url("../assets/art/narrator-paper.webp") no-repeat center / 100% 100%;
-  border-radius: var(--radius-lg);
-  border-top-right-radius: 2px;
-  /* Venstre polstring er bueskyttens plads: referencens etiket OG brødtekst
-     begynder begge på x=117 i panelet, altså lige efter figuren. */
-  padding: 27px 22px 32px 117px;
-  min-height: 5rem;
+  min-height: 100%;
 }
-#bubble.muted { opacity: 0.55; border-style: dashed; }
+#bubble.muted {
+  opacity: 0.55;
+  outline: 1px dashed var(--dashed);
+  outline-offset: -0.5rem;
+}
 #bubble-head { display: flex; justify-content: space-between; align-items: center; }
 #narrator-label {
   font-size: var(--step-kicker);
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-weight: 600;
-  /* Målt kerne i referencens etiket: (96,58,33) — brændt umbra, ikke den
-     grå-violette --ink-soft (83,81,93). */
-  color: rgb(96 58 33);
+  color: var(--label-ink);
 }
 /* Referencens højttaler er et malet mørkt ikon direkte på pergamentet, ikke
    en SVG i en hvid pille. Målt 23x20. */
@@ -364,13 +494,30 @@ header h1 {
   background: url("../assets/art/ui/icon-speaker.webp") no-repeat center / contain;
 }
 #narrator-text {
-  margin: 0.15rem 0 0;
+  margin: 0.75rem 0 0;
   font-family: var(--font-display);
   font-style: italic;
   font-size: var(--step-narrator);
   line-height: 1.5;
-  /* Målt: referencens første linje løber fra x=117 til x=818 i panelet. */
-  max-width: 705px;
+  max-width: var(--measure);
+}
+
+@media (max-width: 819px) {
+  .story-cover {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .story-page-narrator {
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .story-page-outcome {
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .story-gutter { height: 1px; }
+  .story-turn-leaf {
+    inset: 14px;
+    transform-origin: right center;
+  }
 }
 
 /* ---------- Problemer ---------- */
@@ -2111,6 +2258,13 @@ html[data-improvise-enabled] .invention-card .card-emoji {
 
 /* ---------- Mobil: én visuel rude, kompakt værksted ---------- */
 @media (max-width: 819px) {
+  /* Aktens navn koster ~120 px i headeren og skubbede lyd-, arkiv-, trofæ- og
+     genstart-knapperne uden for ruden på 390 px. Nummeret bliver stående. */
+  #act-label .act-name { display: none; }
+  #act-label {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.74rem;
+  }
   html[data-improvise-enabled] header {
     flex-wrap: wrap;
     column-gap: 0.5rem;
@@ -2142,7 +2296,7 @@ html[data-improvise-enabled] .invention-card .card-emoji {
     width: var(--tap);
     height: var(--tap);
   }
-  html[data-improvise-enabled] #narrator {
+  html[data-improvise-enabled] #story-book {
     top: 7rem;
   }
   html[data-improvise-enabled] #tools {
@@ -2205,7 +2359,7 @@ html[data-improvise-enabled] .invention-card .card-emoji {
   }
 }
 
-/* ---------- Desktop: bogen inline, dock i flow ---------- */
+/* ---------- Desktop: archive overlay, dock i flow ---------- */
 @media (min-width: 820px) {
   #app {
     padding-bottom: 1rem;
@@ -2228,8 +2382,7 @@ html[data-improvise-enabled] .invention-card .card-emoji {
      dobbelttælle, som den gjorde for #problems og #book-panel. */
   #app { gap: 0; }
   header { order: 1; }
-  #narrator { order: 2; position: static; margin-top: 20px; }
-  #book-panel { order: 3; margin-top: 17px; }
+  #story-book { order: 2; position: static; margin-top: 20px; }
   #problems { order: 4; margin-top: 18px; }
   #dock { order: 5; margin-top: 12.5px; }  /* 15 - 2,5: de udskårne problemikoner gjorde chip-rækken 3,5 px højere */
   html[data-improvise-enabled] #improvise-status-host {
@@ -2274,25 +2427,11 @@ html[data-improvise-enabled] .invention-card .card-emoji {
      Titlen er skærmens største typografiske element og bar en fjerdedel af
      forskellen i headerens blækdækning (8.3 % mod vores 3.0 %). */
   header h1 { font-size: 2.45rem; }
-  #book-btn { display: none; }
 
   /* Dokken er 109 px i referencen, og feltet FYLDER den: der er ingen luft
      over eller under. Vi lod indholdet bestemme højden, og to-linjers
      invitationen skubbede rækken til 121 — hvilket forskød alt derunder
      (søgefelt +16, grid +13). Højden er derfor sat, ikke udledt. */
-
-  #book-panel {
-    position: static;
-    transform: none;
-    visibility: visible;
-    padding: 0;
-    overflow: visible;
-    background: none;
-    /* Ingen margin: `#app` har `gap`, så en margin her tælles OVENI og
-       gav 32 px hvor referencen måler 18. Samme dobbelttælling som
-       #problems' margin havde, da rytmen først blev sat. */
-  }
-  #book-close { display: none; }
 
   #dock {
     position: static;
@@ -2311,7 +2450,10 @@ html[data-improvise-enabled] .invention-card .card-emoji {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .element, #book-panel { transition: none; }
+  .element, #book-panel, .story-turn-leaf { transition: none; }
+  /* StoryBook skifter allerede siden med det samme her; bladet må ikke
+     efterlade et halvvendt papir liggende oven på teksten. */
+  #story-book.is-turning .story-turn-leaf { animation: none; opacity: 0; }
 }
 
 /* ---------- Challenges (docs/design/challenges.md) ---------- */

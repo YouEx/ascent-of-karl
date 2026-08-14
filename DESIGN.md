@@ -349,13 +349,55 @@ en fælde, og teksten må ikke kopieres.
 **Akt-badgen.** `--act-badge`-flade, `--act-badge-ink`-tekst, lille radius, siddende
 halvt ud over krønikekortets øverste kant. Det eneste sted den flade må optræde.
 
-**Fortællerboblen.** Pergament med revet kant og jægerglyffen i venstre side.
-Kursiv Fraunces. Mutet tilstand: 55 % opacitet og stiplet kant — stadig læsbar,
-tydeligt slukket.
+### Living Chronicle
 
-**Bogen.** Varmere papir end resten, indre skygge langs falsen, malet bogillustration
-frem for 📖. Bogen er det eneste sted, hvor brødtekst må sættes i serif _uden_ at
-komme fra `content/*.json`.
+The default game surface has one open-book component. Its left page is the
+narrator; its right page is the latest combination outcome. The archive is an
+overlay opened by the header question-mark button. Component geometry is CSS,
+never PNG slices or `border-image`. Only `Narrator.currentPull()` is visible as
+the current objective; later Act problems remain hidden until they become
+current.
+
+The book is one semantic region labelled _"Karl's living chronicle"_. The left
+page keeps the exact visible narrator line, mute control, italic Fraunces, and
+polite live behavior. The right page truthfully reports the latest pair and
+outcome: canonical discoveries may include their historical note, inventions
+must be identified as Karl's, and failed/reused attempts must not be presented
+as new historical discoveries.
+
+Desktop presents two pages around one decorative gutter. Mobile stacks the same
+content narrator-first inside the same region; the fold is not a second
+component. A completed combination turns one decorative leaf and swaps content
+at its midpoint. Newer attempts cancel stale turns. Reduced motion and frozen
+judge scenarios swap immediately.
+
+The cover, pages, gutter, edges, shadows, and turn leaf are semantic HTML and
+token-based CSS. Existing grain and painted element glyphs may remain
+illustrations, but `narrator-paper.webp`, `chronicle-paper.webp`, stitched frame
+assets, and `border-image` must not construct the Living Chronicle.
+
+**Bogen klæber ikke.** Den gamle fortællerboble var én lille flade og kunne
+klæbe under headeren. Den samlede bog er to sider og fylder på 390 px over en
+tredjedel af skærmen; klæbede den, ville den ligge oven på grid'et og opsluge
+klik på brikkerne. Bogen følger derfor siden (`position: relative`) på alle
+bredder.
+
+**Akt-badgen på mobil.** Aktens NUMMER bærer betydningen, navnet er smykket.
+Under 820 px skjules `.act-name`, så header-rækkens knapper beholder deres
+plads; over 820 px står `Act 1 · The Stone Age` fuldt ud.
+
+**Chronicle archive.** The full canonical chronicle, Karl's inventions, act
+navigation, and timeline remain rendered by `BookView`, but the archive is
+overlay-only on every viewport. It opens through `openOverlay()` from the
+visible `?` header button and keeps close, Escape, backdrop, and browser-back
+exits. Its warmer paper and inner gutter styling belong to the archive, not the
+default Living Chronicle.
+
+**Progressive objective.** The default problem rail contains at most the current
+unlocked `Narrator.currentPull()`. Solved and future problems remain in the
+archive. The visible objective carries an accessible name/description without a
+native `title` tooltip; challenges remain separate because they are timed
+interruptions rather than chapter objectives.
 
 **Opfindelser i bogen.** Den kanoniske tidslinje forbliver historisk og læser kun
 kurateret content. Under leksikonopslaget ligger i stedet en separat, stiplet sektion

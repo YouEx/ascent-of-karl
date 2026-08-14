@@ -13,9 +13,9 @@ import { activeScenario } from "./scenario";
 import { scenarioTimelineOpen } from "./scenario-config";
 
 /**
- * Bogen: leksikonet er den primære flade — det åbne opslag viser den valgte
- * (eller nyeste) opdagelse, med en chip-række til at bladre. Tidslinjen er
- * sammenklappet som udgangspunkt (docs/design/bogen.md).
+ * Chronicle archive: det åbne opslag viser den valgte (eller nyeste)
+ * opdagelse, med en chip-række til at bladre. Tidslinjen er sammenklappet som
+ * udgangspunkt (docs/design/bogen.md).
  */
 
 const COL_W = 108;
@@ -126,7 +126,7 @@ export class BookView {
     for (const def of canonical) {
       const btn = document.createElement("button");
       btn.className = `chip ${def.id === this.selectedNode ? "active" : ""}`;
-      btn.title = def.name;
+      btn.setAttribute("aria-label", def.name);
       btn.innerHTML = glyphHTML(def.id, def.emoji, "chip-glyph");
       btn.addEventListener("click", () => {
         this.selectedNode = def.id;
