@@ -1786,6 +1786,86 @@
         "The stone stands. Karl stands next to it. Two vertical things on an empty plain, one of which will still be there long after the other is forgotten, and both of them know it.",
         "Karl raises a stone for no reason he can explain. It is the first useless thing he has ever built, and therefore the first thing that was truly his."
       ]
+    },
+    {
+      "id": "bridge-discovery-first-1",
+      "variants": [
+        "{element}. Karl has made one thing and already looks ready to make another. The problem in front of him is {need}.",
+        "Karl creates {element}. History has begun, badly but undeniably. Next comes {need}.",
+        "{element} exists now. Karl appears encouraged by this. He should be, because {need} is still waiting.",
+        "Karl has made {element}. This is progress, technically. Progress now needs to address {need}.",
+        "The world gains {element}. Karl gains confidence. Neither has yet solved {need}."
+      ]
+    },
+    {
+      "id": "bridge-discovery-first-2",
+      "variants": [
+        "Karl's first answer is {element}. It is not the answer to everything. The next question is {need}.",
+        "With {element}, Karl has started inventing. Starting is the easy part. Now he must consider {need}.",
+        "{element}: proof that Karl can change the world. The world would prefer he changed the part involving {need}.",
+        "{element} is Karl's opening move. A strange move, but a move. The board still says {need}.",
+        "Karl begins with {element}. History waits to see whether his second idea concerns {need}."
+      ]
+    },
+    {
+      "id": "bridge-discovery-1",
+      "variants": [
+        "The {previous} inspired Karl to create {element}. Nobody knows how, but Karl is on a roll. With both in hand, he turns back to {need}.",
+        "From {previous} to {element}: the reasoning is unavailable, but the momentum is real. Karl points it toward {need}.",
+        "Karl studies the {previous}, produces {element}, and refuses to explain the middle step. Fine. What remains is {need}.",
+        "Apparently the {previous} suggested {element}. Karl heard it clearly. His next concern is {need}.",
+        "The {previous} has become {element}, in the broadest possible sense of become. Karl returns to {need}."
+      ]
+    },
+    {
+      "id": "bridge-discovery-2",
+      "variants": [
+        "First {previous}, now {element}. Karl's method is unclear. His direction is not: {need}.",
+        "{previous} was apparently only the beginning. Now there is {element}. Next, if history gets a vote: {need}.",
+        "Karl adds {element} beside {previous}. The collection grows. The immediate problem remains {need}.",
+        "{previous}, then {element}. Karl has discovered sequence. The sequence should probably continue toward {need}.",
+        "Karl places {element} next to {previous} and calls it a system. The system's first assignment is {need}."
+      ]
+    },
+    {
+      "id": "bridge-discovery-3",
+      "variants": [
+        "{previous} led, somehow, to {element}. History declines to explain the connection. Karl still has one thing on his mind: {need}.",
+        "The route from {previous} to {element} will puzzle scholars. Karl is less troubled. He is thinking about {need}.",
+        "One moment, {previous}. The next, {element}. Karl calls this progress and turns it toward {need}.",
+        "The official account will place {element} after {previous} and omit the explanation. It will also mention {need}.",
+        "Somehow, {previous} produced the idea for {element}. Somehow remains Karl's main technique. Now: {need}."
+      ]
+    },
+    {
+      "id": "bridge-discovery-4",
+      "variants": [
+        "Karl looks from {previous} to {element} and decides this counts as momentum. It does. The momentum points toward {need}.",
+        "{element} joins {previous} in the pile. Karl has invented a workflow. Its next task is {need}.",
+        "The {previous} has company now: {element}. Karl, briefly unstoppable, returns to {need}.",
+        "Karl follows {previous} with {element}, which is either a plan or a pattern. Both point toward {need}.",
+        "{element} arrives beside {previous}. Karl has momentum, materials, and one remaining priority: {need}."
+      ]
+    },
+    {
+      "id": "bridge-discovery-5",
+      "variants": [
+        "One invention became two: {previous}, then {element}. Civilisation is accelerating. Karl would like it to accelerate toward {need}.",
+        "After {previous} comes {element}. Karl is building a sequence, if not an argument. The sequence needs to reach {need}.",
+        "{previous}. {element}. Karl is on a roll. The roll has one sensible destination: {need}.",
+        "The age of {previous} lasted briefly. The age of {element} begins now. Both are leading toward {need}.",
+        "Karl moves from {previous} to {element} without slowing down. History hopes he slows down near {need}."
+      ]
+    },
+    {
+      "id": "bridge-discovery-6",
+      "variants": [
+        "{element} joins {previous} in Karl's growing pile of answers. Neither answers the question that remains: {need}.",
+        "Karl now owns {previous} and {element}, which is twice as much civilisation as before. It still leaves {need}.",
+        "The pile contains {previous}, {element}, and confidence. Only one of those may help with {need}.",
+        "Karl has {previous}. Karl has {element}. Karl does not yet have a solution to {need}, but he is enjoying the inventory.",
+        "{previous} and {element} now exist together. This is impressive, if not immediately useful for {need}."
+      ]
     }
   ],
   "behavior": {
@@ -1845,6 +1925,28 @@
     "gf-14"
   ],
   "deflectedEndingLine": "ending-deflected",
+  "discoveryBridge": {
+    "first": [
+      "bridge-discovery-first-1",
+      "bridge-discovery-first-2"
+    ],
+    "continued": [
+      "bridge-discovery-1",
+      "bridge-discovery-2",
+      "bridge-discovery-3",
+      "bridge-discovery-4",
+      "bridge-discovery-5",
+      "bridge-discovery-6"
+    ],
+    "needs": {
+      "kulde": "getting warm",
+      "vaerktoej": "making a proper tool",
+      "sult": "finding something edible",
+      "kedsomhed": "finding something worth doing",
+      "ensomhed": "finding company",
+      "mening": "making any of this mean something"
+    }
+  },
   "discoveryFallback": [
     "disc-1",
     "disc-2",

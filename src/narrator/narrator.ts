@@ -63,6 +63,8 @@ export interface NarratorState {
   genericIndex: number;
   /** Rotation i puljen af generiske opdagelses-replikker */
   discoveryIndex: number;
+  /** Navnet på seneste canonical opdagelse, så næste beat kan bygge videre. */
+  lastDiscoveryElement: string | null;
   /**
    * Problemet fortælleren senest pegede på. Ulydighed måles mod dette:
    * har han ikke sagt noget højt, er der intet at trodse.
@@ -122,6 +124,7 @@ export function freshNarratorState(seed = 1): NarratorState {
     usedOnce: [],
     genericIndex: 0,
     discoveryIndex: 0,
+    lastDiscoveryElement: null,
     pulledProblem: null,
     lastPullAttempt: -100,
     defianceCount: 0,
@@ -156,6 +159,8 @@ interface LineContext {
   rightOne?: string;
   /** Improvisationsdommens spiller-vendte kontekst. */
   need?: string;
+  /** Forrige canonical opdagelse, leveret som navn frem for element-id. */
+  previous?: string;
   actual?: string;
   expected?: string;
   missing?: string;
@@ -238,6 +243,8 @@ export class Narrator {
    * spil uden endpoint skal kunne bygge en fortæller uden at kende til den.
    */
   private live?: LiveNarrator;
+  /** Pull som `react()` allerede har dækket i sit contextual discovery-beat. */
+  private coveredPullInLastReact: string | null = null;
 
   constructor(
     private engine: Engine,
@@ -346,6 +353,7 @@ export class Narrator {
       .replaceAll("{trait}", ctx?.trait ?? "")
       .replaceAll("{trait2}", ctx?.trait2 ?? "")
       .replaceAll("{element}", element)
+      .replaceAll("{previous}", ctx?.previous?.toLowerCase() ?? "")
       .replaceAll("{Need}", needCap)
       .replaceAll("{need}", need)
       .replaceAll("{actual}", ctx?.actual ?? "")
@@ -562,6 +570,34 @@ export class Narrator {
     const id = pool[this.state.discoveryIndex % pool.length];
     this.state.discoveryIndex++;
     return id;
+  }
+
+  /**
+   * Canonical opdagelser uden eget story-beat skal ikke mødes af en løs
+   * one-liner og derefter et separat mål. Broen fortæller i samme åndedrag:
+   * hvad Karl kom fra, hvad han netop skabte, og hvad historien vil nu.
+   */
+  private discoveryBridgeLine(
+    previous: string | null,
+    element: string,
+  ): SpokenLine | undefined {
+    const bridge = this.content().discoveryBridge;
+    const next = this.currentPull();
+    if (!bridge || !next) return undefined;
+    const need = bridge.needs[next.id];
+    if (!need) return undefined;
+    const pool = previous ? bridge.continued : bridge.first;
+    const id = this.poolLine(pool);
+    if (!id) return undefined;
+
+    this.coveredPullInLastReact = next.id;
+    this.state.pulledProblem = next.id;
+    this.state.lastPullAttempt = this.state.attempts;
+    return this.speak(id, {
+      previous: previous ?? undefined,
+      element,
+      need,
+    });
   }
 
   /**
@@ -889,6 +925,7 @@ export class Narrator {
     outcome: CombineOutcome,
     elapsedMs?: number,
   ): SpokenLine | undefined {
+    this.coveredPullInLastReact = null;
     this.updateCounters(a, b, outcome, elapsedMs);
     const act = this.engine.currentAct();
     const ctx = { a, b };
@@ -944,9 +981,13 @@ export class Narrator {
     // 1. Story-beats (håndskrevne, højeste prioritet)
     if (outcome.kind === "gated" && act.gateLine) return this.speak(act.gateLine, ctx);
     if (outcome.kind === "discovery") {
+      const previous = this.state.lastDiscoveryElement;
+      this.state.lastDiscoveryElement = outcome.element.name;
       // Ved age-up er engine allerede i næste akt — brug akten opdagelsen skete i.
       if (outcome.ageUp && outcome.act.ageUpLine) return this.speak(outcome.act.ageUpLine, ctx);
       if (outcome.combo.narratorLine) return this.speak(outcome.combo.narratorLine, ctx);
+      const bridge = this.discoveryBridgeLine(previous, outcome.element.name);
+      if (bridge) return bridge;
       // En opdagelse må ALDRIG møde tavshed. Kun 38 af 205 kombinationer har
       // en håndskrevet replik; resten faldt før igennem uden en lyd.
       const generic = this.discoveryLine();
@@ -1162,6 +1203,7 @@ export class Narrator {
       const defiance = this.defianceLine(outcome);
       if (defiance) return this.speak(defiance, { element: outcome.element.name });
     }
+    if (this.coveredPullInLastReact) return undefined;
 
     const next = this.currentPull();
     if (!next?.pull) {
