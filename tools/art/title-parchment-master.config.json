@@ -30,6 +30,11 @@
     "layeredSourceFound": false,
     "cleanMobileSourceFound": false
   },
+  "retention": {
+    "observableMaskPixelCount": 248615,
+    "observableMaskSha256": "c27eceafc284d843df37fc871b459b97e6cf28ce58b9e5a6cdf40fab287a4547",
+    "hashEncoding": "big-endian uint32 shape + little-bitorder packbits"
+  },
   "output": {
     "file": "parchment-master.webp",
     "width": 760,
@@ -120,6 +125,7 @@
   "gates": {
     "sourcePixelRetentionMin": 0.999,
     "sourcePixelRetentionMax": 1.0,
+    "changedOrMissingObservableSourcePixelsMax": 0,
     "textureEnergyRatioMin": 0.8,
     "textureEnergyRatioMax": 1.2,
     "reconstructionBoundaryGradientRatioMax": 4.0,

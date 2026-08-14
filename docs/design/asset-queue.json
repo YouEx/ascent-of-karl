@@ -57,7 +57,7 @@
       "region": "title",
       "defect": "missing-master",
       "severity": 5,
-      "evidence": "Den godkendte 1586x992-reference giver 248615 direkte observerbare pergamentpixels efter UI- og sceneocclusioner, men en 760x1680-plade kræver 762217 rekonstruerede pixels. Tre deterministiske full-source-forsøg bevarede kilden 100 %, men nåede kun 0,237, 0,544 og 0,506 af papirets målte højfrekvensenergi og viste henholdsvis tekstspøgelser/striber, patchgitter/rektangulære fyld og bevarede kortskygger/repetitiv vævning. Source-scout fandt kun den flade lossless 1586x992-komposit og title-parchment-692.webp, som selv er en maskeret/inpaintet 692x907-derivativ; ingen PSD/XCF/TIFF, clean layer eller mobilkilde. Se docs/design/evidence/title-parchment-master/BLOCKED.md.",
+      "evidence": "Den godkendte 1586x992-reference giver 248615 direkte observerbare pergamentpixels efter UI- og sceneocclusioner, men en 760x1680-plade kræver 762217 rekonstruerede pixels. To tidligere, ikke-reproducerbare lokale observationer uden bevarede artifacts målte 0,237 og 0,544 af papirets højfrekvensenergi og viste henholdsvis tekstspøgelser/striber og patchgitter/rektangulære fyld. Den committede, reproducerbare diagnostic måler 0,506 og viser bevarede kortskygger/repetitiv vævning. Source-scout fandt kun den flade lossless 1586x992-komposit og title-parchment-692.webp, som selv er en maskeret/inpaintet 692x907-derivativ; ingen PSD/XCF/TIFF, clean layer eller mobilkilde. Se docs/design/evidence/title-parchment-master/BLOCKED.md.",
       "fix": {
         "kind": "asset",
         "assetId": "TITLE-parchment-master-v1",

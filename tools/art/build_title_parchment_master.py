@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import tempfile
 from pathlib import Path
@@ -33,6 +34,15 @@ STAGING_DIR = ROOT / ".judge/parchment-master"
 PRODUCTION_DIR = ROOT / "src/assets/art/title-layers"
 EVIDENCE_DIR = ROOT / "docs/design/evidence/title-parchment-master"
 LUMA = np.array([0.2126, 0.7152, 0.0722])
+APPROVED_PUBLISH_CONFIG_SHA256 = (
+    "36d2f845956c050e2a72f34b4147bef7890413559c9894b4441c3c1c59e0634c"
+)
+APPROVED_SOURCE_SHA256 = (
+    "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850"
+)
+APPROVED_LOSSLESS_SOURCE_SHA256 = (
+    "8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770"
+)
 
 
 def sha256(path: Path) -> str:
@@ -89,6 +99,7 @@ def silhouette(
 ) -> tuple[np.ndarray, np.ndarray]:
     out_w = int(config["output"]["width"])
     out_h = int(config["output"]["height"])
+    crop_x = int(config["source"]["crop"][0])
     crop_y = int(config["source"]["crop"][1])
     spec = config["silhouette"]
     rng = np.random.default_rng(int(config["seed"]) + 1)
@@ -115,8 +126,8 @@ def silhouette(
     left = np.clip(left, 28, 132)
 
     right_noise = spectral_contour(left_values, out_h, rng) * 0.22
-    right = float(spec["rightEdgeX"]) + right_noise
-    right = np.clip(right, 684, 704)
+    right = float(spec["rightEdgeX"]) - crop_x + right_noise
+    right = np.clip(right, 684 - crop_x, 704 - crop_x)
 
     top_noise = spectral_contour(left_values, out_w, rng) * 0.28
     top = int(spec["topEdgeSourceY"]) - crop_y + top_noise
@@ -142,9 +153,13 @@ def silhouette(
     return support, alpha
 
 
-def global_rect(rect: list[int], crop_y: int) -> tuple[int, int, int, int]:
+def global_rect(
+    rect: list[int],
+    crop: list[int],
+) -> tuple[int, int, int, int]:
+    crop_x, crop_y = int(crop[0]), int(crop[1])
     x0, y0, x1, y1 = rect
-    return x0, y0 - crop_y, x1, y1 - crop_y
+    return x0 - crop_x, y0 - crop_y, x1 - crop_x, y1 - crop_y
 
 
 def build_occlusion_mask(
@@ -152,6 +167,8 @@ def build_occlusion_mask(
     source_crop: np.ndarray,
     config: dict[str, Any],
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    crop = config["source"]["crop"]
+    crop_x = int(crop[0])
     crop_y = int(config["source"]["crop"][1])
     fine = np.zeros(source_crop.shape[:2], dtype=bool)
 
@@ -171,13 +188,13 @@ def build_occlusion_mask(
     wordmark = np.asarray(
         build_title_materials.build_ink_matte(observed, local_spec, matte)
     )[..., 3] > 0
-    fine[y0 - crop_y:y1 - crop_y, x0:x1] |= wordmark
+    fine[y0 - crop_y:y1 - crop_y, x0 - crop_x:x1 - crop_x] |= wordmark
     fine = ndimage.binary_dilation(fine, np.ones((3, 3)), iterations=3)
 
     canvas = Image.new("1", (source_crop.shape[1], source_crop.shape[0]), 0)
     draw = ImageDraw.Draw(canvas)
     for item in config["surfaceOcclusions"]:
-        gx0, gy0, gx1, gy1 = global_rect(item["crop"], crop_y)
+        gx0, gy0, gx1, gy1 = global_rect(item["crop"], crop)
         if item["type"] == "polygon":
             points = [(gx0 + x, gy0 + y) for x, y in item["points"]]
             draw.polygon(points, fill=1)
@@ -195,7 +212,7 @@ def build_occlusion_mask(
 
     luma = source_crop.astype(np.float64) @ LUMA
     for item in config["inkOcclusions"]:
-        x0, y0, x1, y1 = global_rect(item["rect"], crop_y)
+        x0, y0, x1, y1 = global_rect(item["rect"], crop)
         seed = np.zeros(fine.shape, dtype=bool)
         seed[y0:y1, x0:x1] = luma[y0:y1, x0:x1] < float(item["lumaMax"])
         seed = remove_small_components(seed, int(item["minimumComponentPixels"]))
@@ -208,14 +225,16 @@ def donor_mask(
     occlusion: np.ndarray,
     config: dict[str, Any],
 ) -> np.ndarray:
+    crop = config["source"]["crop"]
+    crop_x = int(crop[0])
     crop_y = int(config["source"]["crop"][1])
     donor = observable.copy()
-    donor[:, :80] = False
-    donor[:, 660:] = False
+    donor[:, :max(0, 80 - crop_x)] = False
+    donor[:, max(0, 660 - crop_x):] = False
     donor[max(0, 800 - crop_y):] = False
     donor &= ~ndimage.binary_dilation(occlusion, np.ones((9, 9)))
     for rect in config["donorExclusions"]:
-        x0, y0, x1, y1 = global_rect(rect, crop_y)
+        x0, y0, x1, y1 = global_rect(rect, crop)
         donor[max(0, y0):max(0, y1), x0:x1] = False
     return donor
 
@@ -461,13 +480,54 @@ def source_retention(
     rgb: np.ndarray,
     source: np.ndarray,
     observable: np.ndarray,
+    present: np.ndarray | None = None,
 ) -> float:
+    return float(
+        source_retention_metrics(rgb, source, observable, present)[
+            "sourcePixelRetention"
+        ]
+    )
+
+
+def observable_mask_sha256(observable: np.ndarray) -> str:
+    shape = np.asarray(observable.shape, dtype=">u4").tobytes()
+    packed = np.packbits(
+        observable.astype(np.uint8),
+        bitorder="little",
+    ).tobytes()
+    return hashlib.sha256(shape + packed).hexdigest()
+
+
+def source_retention_metrics(
+    rgb: np.ndarray,
+    source: np.ndarray,
+    observable: np.ndarray,
+    present: np.ndarray | None = None,
+) -> dict[str, float | int | str]:
+    if observable.shape != source.shape[:2]:
+        raise ValueError("observable mask shape does not match configured source crop")
+    if rgb.shape[0] < source.shape[0] or rgb.shape[1] < source.shape[1]:
+        raise ValueError("output is smaller than configured source crop")
+    if present is not None and present.shape[:2] < source.shape[:2]:
+        raise ValueError("presence mask is smaller than configured source crop")
     expected = int(observable.sum())
     if expected == 0:
-        return 0.0
+        return {
+            "sourcePixelRetention": 0.0,
+            "observableSourcePixels": 0,
+            "observableMaskSha256": observable_mask_sha256(observable),
+            "changedOrMissingObservableSourcePixels": 0,
+        }
     exact = np.all(rgb[:source.shape[0], :source.shape[1]] == source, axis=2)
+    if present is not None:
+        exact &= present[:source.shape[0], :source.shape[1]]
     retained = int((exact & observable).sum())
-    return retained / expected
+    return {
+        "sourcePixelRetention": retained / expected,
+        "observableSourcePixels": expected,
+        "observableMaskSha256": observable_mask_sha256(observable),
+        "changedOrMissingObservableSourcePixels": expected - retained,
+    }
 
 
 def alpha_fringe_metrics(rgba: np.ndarray) -> dict[str, float]:
@@ -603,9 +663,14 @@ def quality_metrics(
 
     repetition = repetition_metrics(rgb, reconstructed, support)
     fringe = alpha_fringe_metrics(rgba)
+    retention = source_retention_metrics(
+        rgb,
+        source,
+        observable,
+        alpha == 255,
+    )
     return {
-        "sourcePixelRetention": source_retention(rgb, source, observable),
-        "observableSourcePixels": int(observable.sum()),
+        **retention,
         "reconstructedPixels": int(reconstructed.sum()),
         "textureEnergyRatio": energy_ratio,
         "reconstructionBoundaryGradientRatio": boundary_ratio,
@@ -623,12 +688,25 @@ def quality_metrics(
 
 def metric_failures(metrics: dict[str, Any], config: dict[str, Any]) -> list[str]:
     gates = config["gates"]
+    retention = config["retention"]
     checks = [
         (
             gates["sourcePixelRetentionMin"]
             <= metrics["sourcePixelRetention"]
             <= gates["sourcePixelRetentionMax"],
             "source retention",
+        ),
+        (
+            metrics["changedOrMissingObservableSourcePixels"]
+            <= gates["changedOrMissingObservableSourcePixelsMax"],
+            "observable source pixels",
+        ),
+        (
+            metrics["observableSourcePixels"]
+            == retention["observableMaskPixelCount"]
+            and metrics["observableMaskSha256"]
+            == retention["observableMaskSha256"],
+            "observable mask",
         ),
         (
             gates["textureEnergyRatioMin"]
@@ -692,7 +770,7 @@ def composite(rgba: np.ndarray, background: tuple[int, int, int]) -> Image.Image
 
 
 def contact_sheet(
-    full_source: np.ndarray,
+    source: np.ndarray,
     rgba: np.ndarray,
     observable: np.ndarray,
     destination: Path,
@@ -711,13 +789,14 @@ def contact_sheet(
     ]
 
     reference = np.zeros_like(rgba)
-    crop = full_source[85:992, :700]
-    reference[:crop.shape[0], :crop.shape[1], :3] = crop
-    reference[:crop.shape[0], :crop.shape[1], 3] = 255
+    height = min(source.shape[0], rgba.shape[0])
+    width = min(source.shape[1], rgba.shape[1])
+    reference[:height, :width, :3] = source[:height, :width]
+    reference[:height, :width, 3] = 255
     overlay = rgba.copy()
-    core = overlay[:crop.shape[0], :crop.shape[1], :3].astype(np.float64)
-    core = core * 0.5 + crop.astype(np.float64) * 0.5
-    overlay[:crop.shape[0], :crop.shape[1], :3] = np.rint(core).astype(np.uint8)
+    core = overlay[:height, :width, :3].astype(np.float64)
+    core = core * 0.5 + source[:height, :width].astype(np.float64) * 0.5
+    overlay[:height, :width, :3] = np.rint(core).astype(np.uint8)
 
     images = [
         Image.fromarray(reference),
@@ -758,11 +837,11 @@ def build(
     x0, y0, x1, y1 = config["source"]["crop"]
     source = full_source[y0:y1, x0:x1].copy()
     observed_full = observed_sheet_mask(
-        full_source[:, :x1],
+        full_source[:, x0:x1],
         float(config["silhouette"]["sheetLuma"]),
     )
     observed_full[:int(config["silhouette"]["topEdgeSourceY"])] = False
-    observed = observed_full[y0:y1, x0:x1]
+    observed = observed_full[y0:y1]
     support, alpha = silhouette(observed, config)
     occlusion, fine_occlusion, surface_occlusion = build_occlusion_mask(
         full_source,
@@ -855,6 +934,7 @@ def build(
     }
     arrays = {
         "full_source": full_source,
+        "source": source,
         "observable": observable,
         "support": support,
         "donor": donors,
@@ -876,21 +956,132 @@ def write_build(
     decoded = np.asarray(Image.open(output_path).convert("RGBA"))
     manifest["output"]["bytes"] = output_path.stat().st_size
     manifest["output"]["sha256"] = sha256(output_path)
-    manifest["metrics"]["sourcePixelRetention"] = source_retention(
+    manifest["metrics"].update(source_retention_metrics(
         decoded[..., :3],
-        arrays["full_source"][85:992, :700],
+        arrays["source"],
         arrays["observable"],
-    )
+        decoded[..., 3] == 255,
+    ))
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     if evidence_dir is not None:
         contact_sheet(
-            arrays["full_source"],
+            arrays["source"],
             decoded,
             arrays["observable"],
             evidence_dir / "contact-sheet.png",
         )
         shutil.copy2(manifest_path, evidence_dir / "manifest.json")
+
+
+def publish_files_atomically(
+    publications: list[tuple[Path, Path]],
+    *,
+    inject_failure_after: int | None = None,
+) -> None:
+    destinations = [destination.resolve() for _, destination in publications]
+    if len(destinations) != len(set(destinations)):
+        raise ValueError("publication destinations must be unique")
+
+    staged: list[tuple[Path, Path]] = []
+    backups: dict[Path, Path | None] = {}
+    installed: list[Path] = []
+    replace_count = 0
+    try:
+        for source, destination in publications:
+            if not source.is_file():
+                raise FileNotFoundError(source)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            descriptor, temporary_name = tempfile.mkstemp(
+                prefix=f".{destination.name}.publish-",
+                dir=destination.parent,
+            )
+            os.close(descriptor)
+            temporary = Path(temporary_name)
+            shutil.copy2(source, temporary)
+            if sha256(temporary) != sha256(source):
+                raise ValueError(f"publication staging mismatch: {source}")
+            staged.append((temporary, destination))
+
+        for _, destination in staged:
+            if destination.exists():
+                descriptor, backup_name = tempfile.mkstemp(
+                    prefix=f".{destination.name}.rollback-",
+                    dir=destination.parent,
+                )
+                os.close(descriptor)
+                backup = Path(backup_name)
+                shutil.copy2(destination, backup)
+                backups[destination] = backup
+            else:
+                backups[destination] = None
+
+        for temporary, destination in staged:
+            os.replace(temporary, destination)
+            installed.append(destination)
+            replace_count += 1
+            if inject_failure_after == replace_count:
+                raise RuntimeError(
+                    f"injected failure after replace {replace_count}"
+                )
+    except BaseException:
+        for destination in reversed(installed):
+            backup = backups.get(destination)
+            if backup is not None and backup.exists():
+                os.replace(backup, destination)
+            elif destination.exists():
+                destination.unlink()
+        raise
+    finally:
+        for temporary, _ in staged:
+            if temporary.exists():
+                temporary.unlink()
+        for backup in backups.values():
+            if backup is not None and backup.exists():
+                backup.unlink()
+
+
+def path_is_within(path: Path, directory: Path) -> bool:
+    return path.resolve().is_relative_to(directory.resolve())
+
+
+def validate_output_paths(args: argparse.Namespace) -> None:
+    if args.publish:
+        return
+    paths = [args.output_dir, args.manifest]
+    if args.evidence_dir is not None:
+        paths.append(args.evidence_dir)
+    if any(path_is_within(path, PRODUCTION_DIR) for path in paths):
+        raise SystemExit(
+            "production title-layer paths require the approved publish flow"
+        )
+
+
+def validate_publish_request(
+    config_path: Path,
+    config: dict[str, Any],
+    approved_source_sha256: str | None,
+) -> None:
+    if approved_source_sha256 is None:
+        raise SystemExit(
+            "--publish requires --approved-source-sha256 provenance"
+        )
+    if (
+        config_path.resolve() != DEFAULT_CONFIG.resolve()
+        or sha256(config_path) != APPROVED_PUBLISH_CONFIG_SHA256
+    ):
+        raise SystemExit("--publish requires the pinned publish config")
+    if approved_source_sha256 != APPROVED_SOURCE_SHA256:
+        raise SystemExit("approved source provenance SHA mismatch")
+    source = config["source"]
+    approved = config["provenance"]["approvedLosslessComposite"]
+    if (
+        source["path"] != "docs/design/reference/title-2026-08-11.webp"
+        or source["sha256"] != APPROVED_SOURCE_SHA256
+        or approved["sha256"] != APPROVED_LOSSLESS_SOURCE_SHA256
+        or approved["buildInput"] is not False
+    ):
+        raise SystemExit("pinned approved-source provenance mismatch")
 
 
 def parse_args() -> argparse.Namespace:
@@ -902,27 +1093,56 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--publish", action="store_true")
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--diagnostic", action="store_true")
+    parser.add_argument("--approved-source-sha256")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    config = load_config(args.config)
     if args.publish and args.diagnostic:
         raise SystemExit("--diagnostic may not be combined with --publish")
+    validate_output_paths(args)
+    config_path = args.config.resolve()
+    config = load_config(config_path)
+    if args.publish:
+        validate_publish_request(
+            config_path,
+            config,
+            args.approved_source_sha256,
+        )
+        if (
+            args.evidence_dir is not None
+            and args.evidence_dir.resolve() != EVIDENCE_DIR.resolve()
+        ):
+            raise SystemExit("--publish requires the pinned evidence directory")
+    elif args.approved_source_sha256 is not None:
+        raise SystemExit(
+            "--approved-source-sha256 is only valid with --publish"
+        )
     image, manifest, arrays = build(config, require_green=not args.diagnostic)
 
-    output_dir = PRODUCTION_DIR if args.publish else args.output_dir
+    output_dir = (
+        PRODUCTION_DIR if args.publish else args.output_dir.resolve()
+    )
     manifest_path = (
         Path(__file__).with_name("title-parchment-master.manifest.json")
         if args.publish
-        else args.manifest
+        else args.manifest.resolve()
     )
-    evidence_dir = args.evidence_dir
-    if args.publish and evidence_dir is None:
-        evidence_dir = EVIDENCE_DIR
+    evidence_dir = (
+        EVIDENCE_DIR
+        if args.publish
+        else args.evidence_dir.resolve()
+        if args.evidence_dir is not None
+        else None
+    )
 
-    with tempfile.TemporaryDirectory(prefix="parchment-master-") as scratch:
+    scratch_parent = STAGING_DIR / ".staging"
+    scratch_parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(
+        prefix="parchment-master-",
+        dir=scratch_parent,
+    ) as scratch:
         scratch_root = Path(scratch)
         staged_assets = scratch_root / "assets"
         staged_manifest = scratch_root / "manifest.json"
@@ -935,19 +1155,37 @@ def main() -> int:
             staged_manifest,
             staged_evidence,
         )
-        if args.check:
-            decoded = Image.open(staged_assets / config["output"]["file"]).convert("RGBA")
-            assert decoded.size == (config["output"]["width"], config["output"]["height"])
+        if args.check or args.publish:
+            decoded = Image.open(
+                staged_assets / config["output"]["file"]
+            ).convert("RGBA")
+            assert decoded.size == (
+                config["output"]["width"],
+                config["output"]["height"],
+            )
             if not args.diagnostic:
                 validate_metrics(manifest["metrics"], config)
-        output_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(staged_assets / config["output"]["file"], output_dir / config["output"]["file"])
-        manifest_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(staged_manifest, manifest_path)
+        publications = [
+            (
+                staged_assets / config["output"]["file"],
+                output_dir / config["output"]["file"],
+            ),
+            (staged_manifest, manifest_path),
+        ]
         if evidence_dir and staged_evidence:
-            evidence_dir.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(staged_evidence / "contact-sheet.png", evidence_dir / "contact-sheet.png")
-            shutil.copy2(staged_evidence / "manifest.json", evidence_dir / "manifest.json")
+            publications.extend(
+                [
+                    (
+                        staged_evidence / "contact-sheet.png",
+                        evidence_dir / "contact-sheet.png",
+                    ),
+                    (
+                        staged_evidence / "manifest.json",
+                        evidence_dir / "manifest.json",
+                    ),
+                ]
+            )
+        publish_files_atomically(publications)
 
     metrics = manifest["metrics"]
     output_path = output_dir / config["output"]["file"]

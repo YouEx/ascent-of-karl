@@ -60,14 +60,17 @@ Inspect:
 Retention is `retained observable pixels / observable source pixels`; it is not
 clipped and cannot exceed 100%.
 
-## Three bounded attempts
+## Two local observations and one reproducible diagnostic
 
-1. **Overlap-add, distinct full-source patches:** energy 0.237; visible title
-   ghosts, horizontal seams, and soft vertical striping.
-2. **Detrended/scaled patches:** energy 0.544; visible patch lattice and
-   rectangular button/card fills.
-3. **Minimum-cut seams with contextual inpaint:** energy 0.506; UI shadow
-   geometry remains visible and the extension still reads as repetitive weave.
+1. **Non-reproducible local observation, no retained artifact:** overlap-add
+   with distinct full-source patches measured energy 0.237 and showed visible
+   title ghosts, horizontal seams, and soft vertical striping.
+2. **Non-reproducible local observation, no retained artifact:**
+   detrended/scaled patches measured energy 0.544 and showed visible patch
+   lattice and rectangular button/card fills.
+3. **Reproducible committed diagnostic:** minimum-cut seams with contextual
+   inpaint measure energy 0.506; UI shadow geometry remains visible and the
+   extension still reads as repetitive weave.
 
 All attempts used the complete eligible source field, not the previous four
 48×48 sample quilt. None used network services or third-party generation.
