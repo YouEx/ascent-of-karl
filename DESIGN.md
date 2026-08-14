@@ -354,9 +354,18 @@ se kanten. Tilgængeligt navn og læserækkefølge skal indeholde både
 _"Karl's invention"_ og elementnavnet. Ingen mikrocopy må kalde det en
 _historical discovery_, og fraværet af note/kilde må ikke erstattes af et
 tomt noteikon, som kunne antyde en manglende historisk reference.
-Hele udvidelsens markup og stil ligger under root-attributten
-`data-improvise-enabled`; uden den er incumbent mobil- og desktoplayout
-beregningsmæssigt og visuelt uændret.
+Udvidelsens EGEN markup og stil ligger under root-attributten
+`data-improvise-enabled`: copy-status, invention-kort og opfindelsesmærket
+findes ikke uden flaget, hverken visuelt eller beregningsmæssigt.
+
+**Flaget må aldrig stå foran en responsiv regel.** Løftet ovenfor handler om
+udvidelsens flader, ikke om skærmbredder. Da hele mobilblokken engang blev
+prefixet med attributten i ét hug, forsvandt telefonens layout ud af den build
+vi faktisk udgiver — regel 12 tvinger flaget af i produktion — og skærmen flød
+302 px ud på hver eneste telefonbredde, uden at nogen dommer sagde fra.
+En skærmbredde er ikke en feature.
+`tests/improvise-ui.test.ts` håndhæver begge halvdele: udvidelsens vært SKAL
+bære attributten, og mobilblokkens layoutregler må ALDRIG bære den.
 
 **Slots.** `Slot`-flade med **stiplet** `Dashed`-kant og en blegt aftegnet
 element-silhuet i midten. Mellem de to slots sidder et cirkulært pergament-token med

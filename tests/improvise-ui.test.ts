@@ -28,6 +28,27 @@ import {
   summarizeInventions,
 } from "../src/ui/run-summary";
 
+function escapeSelector(selector: string): string {
+  return selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Klipper den responsive mobilblok ud af style.css, så en test kan udtale sig
+// om PRÆCIS de regler, en telefon får — ikke om filen som helhed.
+function mobileBlock(css: string): string {
+  const marker = "@media (max-width: 819px) {";
+  const start = css.lastIndexOf(marker);
+  if (start < 0) throw new Error("mobilblokken findes ikke i style.css");
+  let depth = 0;
+  for (let i = start; i < css.length; i += 1) {
+    if (css[i] === "{") depth += 1;
+    else if (css[i] === "}") {
+      depth -= 1;
+      if (depth === 0) return css.slice(start, i + 1);
+    }
+  }
+  throw new Error("mobilblokken er ikke lukket");
+}
+
 function invention(id: string, name = id): ElementDef {
   return {
     id,
@@ -467,20 +488,45 @@ describe("invention motion", () => {
       expect(share({ total: 1, names: [made.name] }, false)).toBe("");
     });
 
-    it("prefixer de responsive feature-overrides med root-attributten", () => {
+    it("holder udvidelsens EGEN flade bag root-attributten", () => {
+      // DESIGN.md: "Hele udvidelsens markup og stil ligger under
+      // root-attributten data-improvise-enabled". Løftet gælder udvidelsens
+      // egne flader — copy-status, invention-kort, opfindelsesmærket — så en
+      // spiller uden flaget hverken ser eller betaler for dem.
+      expect(styles).toContain(
+        "html[data-improvise-enabled] #improvise-status-host",
+      );
+    });
+
+    it("lægger ALDRIG det responsive mobillayout bag root-attributten", () => {
+      // Regressionsværn for bb0d4e9. Dér blev hele mobilblokken prefixet med
+      // flaget i ét hug, og da regel 12 tvinger flaget af i produktion, mistede
+      // hver eneste telefon sit layout: desktopbredden blev presset ned i
+      // 390 px og flød 302 px ud. Testen herunder er vendt om i forhold til den
+      // gamle: den kræver, at de responsive regler står UDEN prefiks.
+      const mobile = mobileBlock(styles);
+      // #story-book står bevidst IKKE her: bogen har ingen mobiloverride
+      // længere, efter at den klæbende fortællerboble blev til en bog i flow.
       for (const selector of [
         "header",
-        // #narrator blev til den samlede bog (Living Chronicle); overriden
-        // følger komponenten, ikke det gamle id.
-        "#story-book",
         "#tools",
+        "#search",
+        ".chip-btn",
         "#dock",
         "#book-panel",
       ]) {
-        expect(styles).toContain(
-          `html[data-improvise-enabled] ${selector}`,
+        expect(mobile).toMatch(
+          new RegExp(`^\\s*${escapeSelector(selector)}\\s*[,{]`, "m"),
         );
       }
+      // En skærmbredde er ikke en feature: kun udvidelsens egen vært må bære
+      // flaget herinde.
+      const flagged = mobile.match(
+        /html\[data-improvise-enabled\][^,{]*/g,
+      ) ?? [];
+      expect(
+        flagged.filter((s) => !s.includes("#improvise-status-host")),
+      ).toEqual([]);
     });
   });
 

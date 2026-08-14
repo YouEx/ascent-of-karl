@@ -366,6 +366,7 @@ async function auditGameMobileViewport(browser) {
   const epsilon = 0.5;
   const layout = await page.evaluate(() => {
     const dock = document.getElementById("dock")?.getBoundingClientRect();
+    const tools = document.getElementById("tools")?.getBoundingClientRect();
     const status = document
       .getElementById("improvise-status-host")
       ?.getBoundingClientRect();
@@ -384,6 +385,13 @@ async function auditGameMobileViewport(browser) {
           width: dock.width,
           top: dock.top,
         },
+      tools:
+        tools &&
+        {
+          left: tools.left,
+          right: tools.right,
+          width: tools.width,
+        },
       status:
         status &&
         {
@@ -394,6 +402,37 @@ async function auditGameMobileViewport(browser) {
         },
     };
   });
+  // Vandret scroll og dokken afhænger IKKE af improvise-flaget, og de lå før
+  // i flagets else-gren. Rule 12 tvinger flaget af i produktion, så netop den
+  // gren kørte aldrig: skærmen flød 302 px ud på hver eneste telefonbredde,
+  // mens dommeren meldte alt grønt. En check, der kun kører i en konfiguration
+  // vi ikke udgiver, er ikke en check.
+  record(
+    "Spillets mobilrude",
+    "no-horizontal-scroll",
+    layout.scrollWidth <= layout.clientWidth + epsilon,
+    `${Math.round(layout.scrollWidth)}px mod ${layout.clientWidth}px`,
+  );
+  record(
+    "Spillets mobilrude",
+    "dock-in-viewport",
+    !!layout.dock &&
+      layout.dock.left >= -epsilon &&
+      layout.dock.right <= layout.clientWidth + epsilon,
+    layout.dock
+      ? `${Math.round(layout.dock.left)}–${Math.round(layout.dock.right)}px`
+      : "dokken mangler",
+  );
+  record(
+    "Spillets mobilrude",
+    "tools-row-in-viewport",
+    !!layout.tools &&
+      layout.tools.left >= -epsilon &&
+      layout.tools.right <= layout.clientWidth + epsilon,
+    layout.tools
+      ? `${Math.round(layout.tools.left)}–${Math.round(layout.tools.right)}px`
+      : "værktøjsrækken mangler",
+  );
   if (!layout.featureEnabled) {
     record(
       "Spillets mobilrude",
@@ -405,42 +444,24 @@ async function auditGameMobileViewport(browser) {
       "feature-markup-absent",
       !layout.featureMarkup,
     );
-  } else {
+  } else if (layout.status) {
     record(
       "Spillets mobilrude",
-      "no-horizontal-scroll",
-      layout.scrollWidth <= layout.clientWidth + epsilon,
-      `${Math.round(layout.scrollWidth)}px mod ${layout.clientWidth}px`,
+      "copy-status-in-viewport",
+      layout.status.left >= -epsilon &&
+        layout.status.right <= layout.clientWidth + epsilon,
+      `${Math.round(layout.status.left)}–${Math.round(layout.status.right)}px`,
     );
     record(
       "Spillets mobilrude",
-      "dock-in-viewport",
-      !!layout.dock &&
-        layout.dock.left >= -epsilon &&
-        layout.dock.right <= layout.clientWidth + epsilon,
+      "copy-status-above-dock",
+      !!layout.dock && layout.status.bottom <= layout.dock.top + epsilon,
       layout.dock
-        ? `${Math.round(layout.dock.left)}–${Math.round(layout.dock.right)}px`
+        ? `${Math.round(layout.status.bottom)}px mod dock-top ${Math.round(
+            layout.dock.top,
+          )}px`
         : "dokken mangler",
     );
-    if (layout.status) {
-      record(
-        "Spillets mobilrude",
-        "copy-status-in-viewport",
-        layout.status.left >= -epsilon &&
-          layout.status.right <= layout.clientWidth + epsilon,
-        `${Math.round(layout.status.left)}–${Math.round(layout.status.right)}px`,
-      );
-      record(
-        "Spillets mobilrude",
-        "copy-status-above-dock",
-        !!layout.dock && layout.status.bottom <= layout.dock.top + epsilon,
-        layout.dock
-          ? `${Math.round(layout.status.bottom)}px mod dock-top ${Math.round(
-              layout.dock.top,
-            )}px`
-          : "dokken mangler",
-      );
-    }
   }
   await page.close();
 }

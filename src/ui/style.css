@@ -2353,6 +2353,16 @@ html[data-improvise-enabled] .invention-card .card-emoji {
 .trophy small { color: var(--ink-soft); }
 
 /* ---------- Mobil: én visuel rude, kompakt værksted ---------- */
+/* ---------- Mobil: én visuel rude, kompakt værksted ---------- */
+/* Reglerne her gælder ALLE mobilbrugere. De stod tidligere med
+   html[data-improvise-enabled] foran hver eneste selektor — et utilsigtet
+   fund-og-erstat i bb0d4e9, som blot skulle lukke en fletningsfejl i
+   improvisationsklienten. Virkningen var, at hele mobillayoutet kun fandtes
+   i den fejlflagede build: regel 12 tvinger improvisation af i produktion, så
+   telefoner fik desktoplayoutet presset ned i 390 px og flød 302 px ud til
+   højre. Dommeren så det ikke, fordi dens no-horizontal-scroll-check lå i
+   præcis samme flag-gren. Sæt aldrig et produktflag foran responsive regler:
+   en skærmbredde er ikke en feature. */
 @media (max-width: 819px) {
   /* Aktens navn koster ~120 px i headeren og skubbede lyd-, arkiv-, trofæ- og
      genstart-knapperne uden for ruden på 390 px. Nummeret bliver stående. */
@@ -2361,56 +2371,53 @@ html[data-improvise-enabled] .invention-card .card-emoji {
     padding: 0.25rem 0.45rem;
     font-size: 0.74rem;
   }
-  html[data-improvise-enabled] header {
+  header {
     flex-wrap: wrap;
     column-gap: 0.5rem;
     row-gap: 0.2rem;
     padding-inline: var(--pad);
   }
-  html[data-improvise-enabled] header .mark {
+  header .mark {
     width: 56px;
     height: 48px;
   }
-  html[data-improvise-enabled] header h1 {
+  header h1 {
     flex: 1 1 8rem;
   }
-  html[data-improvise-enabled] #age {
+  #age {
     margin-right: 0;
     font-size: 1.1rem;
     gap: 0.35rem;
   }
-  html[data-improvise-enabled] #age::before {
+  #age::before {
     width: 16px;
     height: 17px;
   }
-  html[data-improvise-enabled] .header-actions {
+  .header-actions {
     flex: 1 0 100%;
     justify-content: flex-end;
     gap: 0.5rem;
   }
-  html[data-improvise-enabled] .header-actions .icon-btn {
+  .header-actions .icon-btn {
     width: var(--tap);
     height: var(--tap);
   }
-  html[data-improvise-enabled] #story-book {
-    top: 7rem;
-  }
-  html[data-improvise-enabled] #tools {
+  #tools {
     height: auto;
     flex-wrap: wrap;
   }
-  html[data-improvise-enabled] #search {
+  #search {
     flex: 1 0 100%;
     min-width: 0;
   }
-  html[data-improvise-enabled] .chip-btn {
+  .chip-btn {
     flex: 1 1 calc(50% - 0.25rem);
     min-width: 0;
     padding-inline: 2.6rem 0.75rem;
     background-position: 1rem center, 0 0;
     font-size: 1rem;
   }
-  html[data-improvise-enabled] #dock {
+  #dock {
     width: 100dvw;
     max-width: 100dvw;
     display: grid;
@@ -2418,38 +2425,41 @@ html[data-improvise-enabled] .invention-card .card-emoji {
     gap: 0.25rem;
     padding-inline: 0.35rem;
   }
-  html[data-improvise-enabled] .slot {
+  .slot {
     min-width: 0;
     min-height: 68px;
     padding: 0.3rem;
     justify-content: center;
     text-align: center;
   }
-  html[data-improvise-enabled] .slot.filled {
+  .slot.filled {
     padding-left: 0.3rem;
   }
-  html[data-improvise-enabled] .slot-empty {
+  .slot-empty {
     align-items: center;
   }
-  html[data-improvise-enabled] .slot-empty b {
+  .slot-empty b {
     font-size: 0.78rem;
   }
-  html[data-improvise-enabled] .slot-empty i {
+  .slot-empty i {
     display: none;
   }
-  html[data-improvise-enabled] .plus {
+  .plus {
     width: 40px;
     height: 68px;
   }
-  html[data-improvise-enabled] #combine {
+  #combine {
     width: 118px;
     height: 72px;
     font-size: 1.05rem;
   }
+  /* Selve udvidelsens flade bliver under flaget — det er DENNE regel,
+     DESIGN.md's løfte handler om. Værtselementet findes kun, når flaget er
+     sat, men prefikset står eksplicit, så løftet er læsbart i CSS'en. */
   html[data-improvise-enabled] #improvise-status-host {
     bottom: calc(var(--dock-h) + var(--safe-b) + 0.35rem);
   }
-  html[data-improvise-enabled] #book-panel {
+  #book-panel {
     width: 100dvw;
     max-width: 100dvw;
   }
