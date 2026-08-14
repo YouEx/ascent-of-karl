@@ -70,6 +70,25 @@
       "firstSeen": "2026-08-14",
       "iteration": 1,
       "status": "open"
+    },
+    {
+      "key": "title:missing-master:TITLE-parchment-clean-v1",
+      "region": "parchment",
+      "defect": "missing-master",
+      "severity": 5,
+      "evidence": "Den blokerede TASK-005..008-candidate målte kun fire plantede 24×24-kerner og kunne derfor bestå retention, mens resten af pladen viste gentagne quiltfelter og en brudt mobil silhuet. Der findes ingen godkendt, tekstfri 700×992-plade eller source-aligned maske at måle hele fladen imod.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "TITLE-parchment-clean-v1",
+        "producer": "manual-approved-clean-plate",
+        "minimum": "700×992 lossless clean parchment plate plus binary source-aligned mask",
+        "invariant": "samme flossede silhuet, belysning og ornamentplacering som den godkendte reference",
+        "unblock": "full-plate retention, silhouette, alpha og fringe består uden plantede prøvekerner"
+      },
+      "why": "Referencebilledets titel, kontroller og kort skjuler størstedelen af den rene papirflade; samples kan validere teksturtypen, men ikke den samlede plade eller maskens sandhed.",
+      "firstSeen": "2026-08-14",
+      "iteration": 1,
+      "status": "open"
     }
   ]
 }

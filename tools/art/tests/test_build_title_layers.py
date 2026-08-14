@@ -1,13 +1,14 @@
-"""Kontrakt for den deterministiske, kildeafledte titel-lagspipeline."""
+"""Fail-closed kontrakt for titelkunstens pipelinefundament."""
 from __future__ import annotations
 
 import hashlib
 import importlib.util
 import json
+import subprocess
+import sys
 from pathlib import Path
 from types import ModuleType
 
-import cv2
 import numpy as np
 import pytest
 from PIL import Image
@@ -16,41 +17,25 @@ ROOT = Path(__file__).resolve().parents[3]
 SCRIPT = ROOT / "tools/art/build_title_layers.py"
 CONFIG = ROOT / "tools/art/title-layers.config.json"
 SOURCE = ROOT / "docs/design/reference/title-2026-08-11.webp"
-ELEMENTS = ROOT / "src/assets/art/elements"
+FIXTURE = ROOT / "tools/art/tests/fixtures/title-layers/patchwork"
+PRODUCTION = ROOT / "src/assets/art/title-layers"
+PRODUCTION_MANIFEST = ROOT / "tools/art/title-layers.manifest.json"
 ASSET_QUEUE = ROOT / "docs/design/asset-queue.json"
-
-EXPECTED_DIMENSIONS = {
-    "scene-mobile-390.webp": (780, 1688),
-    "foreground-mobile-390.webp": (780, 1688),
-    "scene-mobile-430.webp": (860, 1864),
-    "foreground-mobile-430.webp": (860, 1864),
-    "scene-desktop-1366.webp": (1366, 768),
-    "foreground-desktop-1366.webp": (1366, 768),
-    "scene-desktop-1536.webp": (1536, 1024),
-    "foreground-desktop-1536.webp": (1536, 1024),
-    "scene-target-native.webp": (1586, 992),
-    "foreground-target-native.webp": (1586, 992),
-    "scene-desktop-2560.webp": (2560, 1440),
-    "foreground-desktop-2560.webp": (2560, 1440),
-    "parchment-desktop.webp": (700, 992),
-    "parchment-mobile-390.webp": (700, 1530),
-    "parchment-mobile-430.webp": (760, 1680),
-}
 
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-@pytest.fixture(scope="module")
-def config() -> dict:
-    assert CONFIG.exists(), "title-layers.config.json mangler"
-    return json.loads(CONFIG.read_text(encoding="utf-8"))
+def tree_hashes(root: Path) -> dict[str, str]:
+    return {
+        str(path.relative_to(root)): sha256(path)
+        for path in sorted(path for path in root.rglob("*") if path.is_file())
+    }
 
 
 @pytest.fixture(scope="module")
 def module() -> ModuleType:
-    assert SCRIPT.exists(), "build_title_layers.py mangler"
     spec = importlib.util.spec_from_file_location("build_title_layers", SCRIPT)
     assert spec and spec.loader
     loaded = importlib.util.module_from_spec(spec)
@@ -59,337 +44,314 @@ def module() -> ModuleType:
 
 
 @pytest.fixture(scope="module")
-def built(
-    tmp_path_factory: pytest.TempPathFactory,
-    module: ModuleType,
-) -> tuple[Path, dict]:
-    root = tmp_path_factory.mktemp("title-layers")
-    output = root / "assets"
-    manifest_path = root / "manifest.json"
-    manifest = module.build_bundle(
-        config_path=CONFIG,
-        output_dir=output,
-        manifest_path=manifest_path,
-    )
-    assert manifest_path.exists()
-    assert json.loads(manifest_path.read_text(encoding="utf-8")) == manifest
-    return output, manifest
+def config() -> dict:
+    return json.loads(CONFIG.read_text(encoding="utf-8"))
 
 
-def test_config_pinner_kilde_samples_seeds_outputs_og_budgetter(config: dict) -> None:
-    source = config["source"]
-    assert source["path"] == "docs/design/reference/title-2026-08-11.webp"
-    assert source["sha256"] == sha256(SOURCE)
-    assert source["dimensions"] == [1586, 992]
-    assert source["sceneCrop"] == [690, 0, 1586, 992]
-    assert source["characterCrop"] == [900, 210, 1440, 815]
+@pytest.fixture(scope="module")
+def negative_report(module: ModuleType) -> dict:
+    return module.evaluate_candidate(FIXTURE, config_path=CONFIG)
 
-    assert config["seed"] == 20260814
-    assert config["patchQuilting"]["scene"] == {
-        "patchSize": 160,
-        "overlap": 48,
+
+def test_config_og_kode_indeholder_ingen_metric_gaming(config: dict) -> None:
+    banned_config = {
+        "seamSkySample",
+        "mobileDetailStamps",
+        "sceneSourcePreemphasis",
+        "reconstructedDetailPreemphasis",
+        "parchmentTexturePreemphasis",
     }
-    assert config["patchQuilting"]["parchment"] == {
-        "patchSize": 48,
-        "overlap": 12,
-    }
-    assert len(config["blankPaperSamples"]) == 4
-    assert all(
-        sample["crop"][2] - sample["crop"][0] >= 48
-        and sample["crop"][3] - sample["crop"][1] >= 48
-        for sample in config["blankPaperSamples"]
-    )
-    assert 1 <= len(config["variants"]) <= 3
-
-    outputs = {item["file"]: tuple(item["dimensions"]) for item in config["outputs"]}
-    assert outputs == EXPECTED_DIMENSIONS
-    assert config["budgets"]["groups"] == {
-        "desktopSceneForeground": 420_000,
-        "mobileSceneForeground": 230_000,
-        "desktopParchment": 180_000,
-        "mobileParchment": 120_000,
-    }
-    assert config["provenanceGates"] == {
-        "minDirectSourceCoverage": 0.5,
-    }
-
-
-def test_config_pinner_de_frosne_fidelityporte(config: dict) -> None:
-    assert config["metrics"]["algorithmVersion"] == "title-fidelity-v1"
-    assert config["metrics"]["gates"] == {
-        "sceneSeamGradientMax": 4.0,
-        "bottomLeftDarkShareMin": 35.0,
-        "bottomLeftDarkShareMax": 47.0,
-        "characterDetailVarianceMin": 300.0,
-        "globalEdgeDensityMin": 6.1,
-        "sceneDetailRetentionMin": 0.95,
-        "parchmentBlankRetentionMin": 0.85,
-        "parchmentSampleRetentionMin": 0.80,
-        "alphaTransitionMaxPx": 1,
-        "alphaFringeMaxPx": 1,
-    }
-
-
-def test_build_skriver_kun_de_registrerede_dimensioner(
-    built: tuple[Path, dict],
-) -> None:
-    output, manifest = built
-    assert {path.name for path in output.iterdir()} == set(EXPECTED_DIMENSIONS)
-    assert {item["file"] for item in manifest["outputs"]} == set(EXPECTED_DIMENSIONS)
-
-    for name, dimensions in EXPECTED_DIMENSIONS.items():
-        with Image.open(output / name) as image:
-            assert image.size == dimensions
-            expected_mode = "RGBA" if name.startswith(("foreground-", "parchment-")) else "RGB"
-            assert image.mode == expected_mode
-
-
-def test_manifestet_pinner_proveniens_hashes_og_valgt_variant(
-    config: dict,
-    built: tuple[Path, dict],
-) -> None:
-    output, manifest = built
-    assert manifest["algorithmVersion"] == config["algorithmVersion"]
-    assert manifest["source"] == {
-        "path": config["source"]["path"],
-        "sha256": config["source"]["sha256"],
-        "dimensions": config["source"]["dimensions"],
-    }
-    assert manifest["configSha256"] == sha256(CONFIG)
-    assert manifest["selectedVariant"] in {item["id"] for item in config["variants"]}
-    assert 1 <= len(manifest["candidates"]) <= 3
-    assert all("score" in candidate and "viewports" in candidate for candidate in manifest["candidates"])
-
-    for item in manifest["outputs"]:
-        path = output / item["file"]
-        assert item["sha256"] == sha256(path)
-        assert item["bytes"] == path.stat().st_size
-        assert item["dimensions"] == list(EXPECTED_DIMENSIONS[item["file"]])
-
-
-def test_to_byg_er_byteidentiske(
-    tmp_path: Path,
-    module: ModuleType,
-) -> None:
-    manifests = []
-    hashes = []
-    for run in ("a", "b"):
-        output = tmp_path / run / "assets"
-        manifest_path = tmp_path / run / "manifest.json"
-        manifests.append(
-            module.build_bundle(
-                config_path=CONFIG,
-                output_dir=output,
-                manifest_path=manifest_path,
-            )
-        )
-        hashes.append({path.name: sha256(path) for path in output.iterdir()})
-    assert hashes[0] == hashes[1]
-    assert manifests[0] == manifests[1]
-
-
-def test_karls_kildepixels_er_bevaret_uden_opskalering(
-    config: dict,
-    built: tuple[Path, dict],
-) -> None:
-    output, manifest = built
-    source = np.asarray(Image.open(SOURCE).convert("RGB"))
-    placements = manifest["sourcePlacements"]
-    assert set(placements) == {
-        item["id"] for item in config["outputs"] if item["kind"] == "scene"
-    }
-
-    for asset_id, placement in placements.items():
-        sx0, sy0, sx1, sy1 = placement["sourceCrop"]
-        dx0, dy0, dx1, dy1 = placement["destination"]
-        assert dx1 - dx0 <= sx1 - sx0
-        assert dy1 - dy0 <= sy1 - sy0
-
-        px0, py0, px1, py1 = placement["protectedSourceCrop"]
-        scale_x = (dx1 - dx0) / (sx1 - sx0)
-        scale_y = (dy1 - dy0) / (sy1 - sy0)
-        ox0 = dx0 + round((px0 - sx0) * scale_x)
-        oy0 = dy0 + round((py0 - sy0) * scale_y)
-        ox1 = dx0 + round((px1 - sx0) * scale_x)
-        oy1 = dy0 + round((py1 - sy0) * scale_y)
-
-        expected = Image.fromarray(source[py0:py1, px0:px1]).resize(
-            (ox1 - ox0, oy1 - oy0),
-            Image.Resampling.LANCZOS,
-        )
-        actual = Image.open(output / f"{asset_id}.webp").convert("RGB").crop(
-            (ox0, oy0, ox1, oy1)
-        )
-        delta = np.abs(
-            np.asarray(actual, dtype=np.int16)
-            - np.asarray(expected, dtype=np.int16)
-        )
-        assert float(delta.mean()) <= 5.0, f"{asset_id}: Karls pixels gled {delta.mean():.2f}"
-
-
-def test_scene_foreground_bestaar_frosne_porte(
-    built: tuple[Path, dict],
-) -> None:
-    _, manifest = built
-    gates = manifest["gates"]
-    assert gates["sceneSeamGradient"]["passed"]
-    assert gates["characterDetailVariance"]["passed"]
-    assert gates["globalEdgeDensity"]["passed"]
-    assert gates["targetBottomLeftDarkShare"]["passed"]
-    assert gates["sceneDetailRetention"]["passed"]
-
-    for viewport in manifest["candidateMetrics"]["viewports"].values():
-        assert viewport["sceneSeamGradient"] <= 4.0
-        assert viewport["characterDetailVariance"] >= 300.0
-        assert viewport["globalEdgeDensity"] >= 6.1
-    target = manifest["candidateMetrics"]["viewports"]["target-native"]
-    assert 35.0 <= target["bottomLeftDarkShare"] <= 47.0
-    assert min(manifest["metrics"]["sceneDetailRetention"].values()) >= 0.95
-
-
-def test_manglende_wide_og_mobile_sourcepixels_failer_lukket(
-    built: tuple[Path, dict],
-) -> None:
-    _, manifest = built
-    coverage = manifest["metrics"]["directSourceCoverage"]
-    assert coverage["scene-target-native"] >= 0.5
-    assert coverage["scene-desktop-2560"] < 0.5
-    assert coverage["scene-mobile-390"] < 0.5
-    assert coverage["scene-mobile-430"] < 0.5
-    assert not manifest["gates"]["sourceCoverage"]["passed"]
-    assert not manifest["hardGatePassed"]
-    assert manifest["masterBlocker"] == {
-        "assetId": "TITLE-scene-master-v2",
-        "key": "title:missing-master:TITLE-scene-master-v2",
-        "missing": [
-            "docs/design/reference/scene-wide.png",
-            "approved 2560x1440 lossless scene",
-            "approved 860x1864 art-directed mobile scene",
-        ],
-    }
-
-    queue = json.loads(ASSET_QUEUE.read_text(encoding="utf-8"))
-    matching = [
-        item
-        for item in queue["items"]
-        if item["key"] == "title:missing-master:TITLE-scene-master-v2"
-    ]
-    assert len(matching) == 1
-    assert matching[0]["fix"] == {
-        "kind": "asset",
-        "assetId": "TITLE-scene-master-v2",
-        "producer": "manual-approved-outpaint",
-        "minimum": "2560×1440 lossless scene plus 860×1864 art-directed mobile scene",
-        "invariant": "Karl er pixelidentisk i identitet/pose med den godkendte kilde",
-        "unblock": "alle REQ-003 til REQ-008-gates består uden tærskelændring",
-    }
-
-
-def test_pergament_quiltes_fra_hver_godkendt_proeve(
-    built: tuple[Path, dict],
-) -> None:
-    _, manifest = built
-    retention = manifest["metrics"]["parchmentRetention"]
-    assert retention["overall"] >= 0.85
-    assert set(retention["samples"]) == {
-        "paper-top-left",
-        "paper-top-mid",
-        "paper-middle-left",
-        "paper-middle-right",
-    }
-    assert min(retention["samples"].values()) >= 0.80
-    assert manifest["gates"]["parchmentRetention"]["passed"]
+    assert not banned_config.intersection(config)
+    assert all("detailWeight" not in variant for variant in config.get("variants", []))
 
     source = SCRIPT.read_text(encoding="utf-8")
-    assert "standard_normal" not in source
-    assert "random.normal" not in source
-    assert "normalvariate" not in source
+    for banned in (
+        "seamSkySample",
+        "mobileDetailStamps",
+        "detailWeight",
+        "sceneSourcePreemphasis",
+        "reconstructedDetailPreemphasis",
+        "parchmentTexturePreemphasis",
+        "outputCrop",
+        "sampleEvidence",
+    ):
+        assert banned not in source
 
 
-def test_rgba_kanter_er_dekontaminerede_mod_tre_baggrunde(
-    built: tuple[Path, dict],
+def test_roede_kandidater_er_fixtures_ikke_produktionsassets() -> None:
+    assert not PRODUCTION.exists()
+    assert not PRODUCTION_MANIFEST.exists()
+    assert (FIXTURE / "manifest.json").exists()
+    assert len(list(FIXTURE.glob("*.webp"))) == 15
+
+
+def test_overlapfejl_bevarer_2d_geometri(module: ModuleType) -> None:
+    vertical = np.repeat(np.arange(12, dtype=np.uint8)[:, None], 12, axis=1)
+    horizontal = vertical.T
+    vertical_rgb = np.dstack([vertical] * 3)
+    horizontal_rgb = np.dstack([horizontal] * 3)
+    mask = np.ones((12, 12), dtype=bool)
+
+    assert module.gradient_error(vertical_rgb, vertical_rgb, mask) == pytest.approx(0)
+    assert module.gradient_error(horizontal_rgb, vertical_rgb, mask) > 0
+
+
+def test_reference_scene_har_lav_repetition_og_sammenhaeng(module: ModuleType) -> None:
+    source = np.asarray(Image.open(SOURCE).convert("RGB"))
+    scene = source[:, 690:1586]
+    repetition = module.measure_repetition(scene)
+    coherence = module.measure_coherence(scene)
+    gates = module.load_config(CONFIG)["qualityGates"]
+
+    assert repetition["maxRepeatedBlockShare"] <= gates["repetition"]["maxRepeatedBlockShare"]
+    assert coherence["maxRowColumnJump"] <= gates["coherence"]["maxRowColumnJump"]
+
+
+def test_patchwork_fixture_afvises_af_fuldframe_og_identitetsporte(
+    negative_report: dict,
 ) -> None:
-    _, manifest = built
-    for asset_id, metrics in manifest["metrics"]["alpha"].items():
-        assert metrics["transitionPx"] <= 1, asset_id
-        assert set(metrics["fringePx"]) == {"black", "white", "parchment"}
-        assert max(metrics["fringePx"].values()) <= 1, asset_id
-    assert manifest["gates"]["alpha"]["passed"]
+    assert not negative_report["hardGatePassed"]
+    assert not negative_report["gates"]["fullFrameRepetition"]["passed"]
+    assert not negative_report["gates"]["fullFrameCoherence"]["passed"]
+    assert not negative_report["gates"]["localizedKarlIdentity"]["passed"]
+    assert set(negative_report["gates"]["localizedKarlIdentity"]["regions"]) == {
+        "face",
+        "hair",
+        "hands",
+        "stone",
+        "torso",
+    }
 
 
-def test_bytebudgetter_holds_for_valgte_assets(
+def test_patchwork_fixture_afvises_af_silhuet_og_alpha(
+    negative_report: dict,
+) -> None:
+    assert not negative_report["gates"]["silhouette"]["passed"]
+    assert not negative_report["gates"]["alpha"]["passed"]
+    assert any(
+        not item["hasAntialiasedTransition"]
+        for item in negative_report["metrics"]["alpha"].values()
+    )
+    assert (
+        negative_report["metrics"]["silhouette"]["parchment-mobile-430"][
+            "largestComponentShare"
+        ]
+        < 0.98
+    )
+
+
+def test_alpha_gate_er_ikke_vakuuos(module: ModuleType) -> None:
+    binary = np.zeros((32, 32, 4), dtype=np.uint8)
+    binary[8:24, 8:24, :3] = 180
+    binary[8:24, 8:24, 3] = 255
+    antialiased = binary.copy()
+    antialiased[8, 8:24, 3] = 128
+    antialiased[23, 8:24, 3] = 128
+    antialiased[8:24, 8, 3] = 128
+    antialiased[8:24, 23, 3] = 128
+
+    assert not module.measure_alpha(binary)["hasAntialiasedTransition"]
+    assert module.measure_alpha(antialiased)["hasAntialiasedTransition"]
+
+
+def test_silhuetdaekning_er_kind_specifik(config: dict) -> None:
+    gate = config["qualityGates"]["silhouette"]
+    assert gate["foregroundCoverage"] == [0.01, 0.55]
+    assert gate["parchmentCoverage"] == [0.60, 0.95]
+
+
+def test_pergamentretention_kraever_hele_pladen_og_masken(
     config: dict,
-    built: tuple[Path, dict],
+    negative_report: dict,
 ) -> None:
-    output, manifest = built
-    by_id = {item["id"]: item for item in config["outputs"]}
-    for item in manifest["outputs"]:
-        assert item["bytes"] <= by_id[item["id"]]["byteBudget"], item["id"]
-
-    groups = manifest["metrics"]["payloadBytes"]
-    assert groups["desktopSceneForeground"] <= 420_000
-    assert groups["mobileSceneForeground"] <= 230_000
-    assert groups["desktopParchment"] <= 180_000
-    assert groups["mobileParchment"] <= 120_000
-    assert manifest["gates"]["budgets"]["passed"]
-    assert sum(path.stat().st_size for path in output.iterdir()) > 0
+    plate = ROOT / config["parchmentMaster"]["plate"]
+    mask = ROOT / config["parchmentMaster"]["mask"]
+    assert not plate.exists()
+    assert not mask.exists()
+    gate = negative_report["gates"]["parchmentPlateRetention"]
+    assert not gate["passed"]
+    assert gate["status"] == "blocked"
+    assert gate["missing"] == [str(plate.relative_to(ROOT)), str(mask.relative_to(ROOT))]
 
 
-def test_fejl_foer_installation_bevarer_eksisterende_output(
+def test_stage_skriver_kun_evidence_og_honorerer_only(
     tmp_path: Path,
     module: ModuleType,
 ) -> None:
-    output = tmp_path / "installed"
-    output.mkdir()
-    sentinel = output / "sentinel"
-    sentinel.write_bytes(b"bevar")
-    manifest_path = tmp_path / "installed-manifest.json"
-    manifest_path.write_text('{"before":true}\n', encoding="utf-8")
+    evidence = tmp_path / "evidence"
+    report = module.stage_candidate(
+        FIXTURE,
+        evidence,
+        config_path=CONFIG,
+        only={"scene", "foreground"},
+    )
+    assert not report["hardGatePassed"]
+    assert {path.name for path in evidence.glob("*.webp")} == {
+        path.name
+        for path in FIXTURE.glob("*.webp")
+        if path.name.startswith(("scene-", "foreground-"))
+    }
+    assert not list(evidence.glob("parchment-*.webp"))
+    assert json.loads((evidence / "manifest.json").read_text(encoding="utf-8")) == report
+    assert not PRODUCTION.exists()
 
-    bad = json.loads(CONFIG.read_text(encoding="utf-8"))
-    bad["source"]["sha256"] = "0" * 64
-    bad_config = tmp_path / "bad-config.json"
-    bad_config.write_text(
-        json.dumps(bad, indent=2, ensure_ascii=False) + "\n",
+
+def test_evidence_kan_ikke_skrives_under_produktionsstien(
+    module: ModuleType,
+) -> None:
+    with pytest.raises(ValueError, match="produktionsstien"):
+        module.stage_candidate(
+            FIXTURE,
+            PRODUCTION / "nested-evidence",
+            config_path=CONFIG,
+            only={"scene"},
+        )
+    assert not PRODUCTION.exists()
+
+
+def test_cli_only_honoreres_i_fresh_process(tmp_path: Path) -> None:
+    evidence = tmp_path / "parchment-only"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--check",
+            "--negative-fixture",
+            str(FIXTURE),
+            "--only",
+            "parchment",
+            "--evidence-dir",
+            str(evidence),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 1
+    assert {path.name for path in evidence.glob("*.webp")} == {
+        "parchment-desktop.webp",
+        "parchment-mobile-390.webp",
+        "parchment-mobile-430.webp",
+    }
+
+
+def test_fresh_process_determinisme(tmp_path: Path) -> None:
+    outputs = []
+    for run in ("a", "b"):
+        evidence = tmp_path / run
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT),
+                "--check",
+                "--negative-fixture",
+                str(FIXTURE),
+                "--only",
+                "scene,foreground",
+                "--evidence-dir",
+                str(evidence),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 1, result.stdout + result.stderr
+        outputs.append(tree_hashes(evidence))
+    assert outputs[0] == outputs[1]
+
+
+def test_roed_evidence_kan_ikke_publiceres_atomisk(
+    tmp_path: Path,
+    module: ModuleType,
+) -> None:
+    evidence = tmp_path / "evidence"
+    module.stage_candidate(FIXTURE, evidence, config_path=CONFIG)
+    production = tmp_path / "production"
+    production.mkdir()
+    (production / "before").write_bytes(b"asset-before")
+    manifest = tmp_path / "production-manifest.json"
+    manifest.write_bytes(b"manifest-before")
+
+    with pytest.raises(RuntimeError, match="hardGatePassed"):
+        module.publish_evidence(evidence, production, manifest)
+    assert tree_hashes(production) == {"before": hashlib.sha256(b"asset-before").hexdigest()}
+    assert manifest.read_bytes() == b"manifest-before"
+
+
+def _green_evidence(root: Path) -> Path:
+    evidence = root / "green-evidence"
+    evidence.mkdir()
+    image_path = evidence / "scene-test.webp"
+    Image.new("RGB", (8, 8), (120, 90, 60)).save(image_path, "WEBP", lossless=True)
+    manifest = {
+        "version": 1,
+        "hardGatePassed": True,
+        "outputs": [
+            {
+                "file": image_path.name,
+                "bytes": image_path.stat().st_size,
+                "sha256": sha256(image_path),
+            }
+        ],
+    }
+    (evidence / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+    return evidence
 
-    with pytest.raises(ValueError, match="source-SHA"):
-        module.install_bundle(
-            config_path=bad_config,
-            output_dir=output,
-            manifest_path=manifest_path,
+
+@pytest.mark.parametrize("fault_at", ["after-backup", "after-assets", "after-manifest"])
+def test_atomisk_publicering_ruller_baade_assets_og_manifest_tilbage(
+    tmp_path: Path,
+    module: ModuleType,
+    fault_at: str,
+) -> None:
+    evidence = _green_evidence(tmp_path)
+    production = tmp_path / "production"
+    production.mkdir()
+    (production / "before").write_bytes(b"asset-before")
+    manifest = tmp_path / "production-manifest.json"
+    manifest.write_bytes(b"manifest-before")
+
+    with pytest.raises(RuntimeError, match="fault injection"):
+        module.publish_evidence(
+            evidence,
+            production,
+            manifest,
+            fault_at=fault_at,
         )
-    assert {path.name: path.read_bytes() for path in output.iterdir()} == {
-        "sentinel": b"bevar"
-    }
-    assert manifest_path.read_text(encoding="utf-8") == '{"before":true}\n'
+    assert tree_hashes(production) == {"before": hashlib.sha256(b"asset-before").hexdigest()}
+    assert manifest.read_bytes() == b"manifest-before"
 
 
-def test_titlebyg_aendrer_ikke_elementoutput(
+def test_groen_publicering_installerer_manifest_og_assetset_sammen(
     tmp_path: Path,
     module: ModuleType,
 ) -> None:
-    before = {path.name: sha256(path) for path in ELEMENTS.glob("*.webp")}
-    assert len(before) == 13
-    module.build_bundle(
-        config_path=CONFIG,
-        output_dir=tmp_path / "assets",
-        manifest_path=tmp_path / "manifest.json",
+    evidence = _green_evidence(tmp_path)
+    production = tmp_path / "production"
+    manifest = tmp_path / "production-manifest.json"
+    module.publish_evidence(evidence, production, manifest)
+
+    assert {path.name for path in production.iterdir()} == {"scene-test.webp"}
+    installed = json.loads(manifest.read_text(encoding="utf-8"))
+    assert installed["hardGatePassed"]
+    assert installed["outputs"][0]["sha256"] == sha256(production / "scene-test.webp")
+
+
+def test_assetkoeen_navnsaetter_begge_reelle_masterblokeringer() -> None:
+    queue = json.loads(ASSET_QUEUE.read_text(encoding="utf-8"))
+    by_key = {item["key"]: item for item in queue["items"]}
+    assert by_key["title:missing-master:TITLE-scene-master-v2"]["fix"]["assetId"] == (
+        "TITLE-scene-master-v2"
     )
-    after = {path.name: sha256(path) for path in ELEMENTS.glob("*.webp")}
-    assert after == before
-
-
-def test_kantmaaling_bruger_rigtige_alphapixels(
-    built: tuple[Path, dict],
-) -> None:
-    output, _ = built
-    for name in EXPECTED_DIMENSIONS:
-        if not name.startswith(("foreground-", "parchment-")):
-            continue
-        alpha = np.asarray(Image.open(output / name).convert("RGBA"))[..., 3]
-        semitransparent = (alpha > 0) & (alpha < 255)
-        if semitransparent.any():
-            count, _ = cv2.connectedComponents(semitransparent.astype(np.uint8))
-            assert count >= 1
+    parchment = by_key["title:missing-master:TITLE-parchment-clean-v1"]
+    assert parchment["fix"] == {
+        "kind": "asset",
+        "assetId": "TITLE-parchment-clean-v1",
+        "producer": "manual-approved-clean-plate",
+        "minimum": "700×992 lossless clean parchment plate plus binary source-aligned mask",
+        "invariant": "samme flossede silhuet, belysning og ornamentplacering som den godkendte reference",
+        "unblock": "full-plate retention, silhouette, alpha og fringe består uden plantede prøvekerner",
+    }
