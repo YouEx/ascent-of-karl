@@ -343,9 +343,23 @@ def test_groen_publicering_installerer_manifest_og_assetset_sammen(
 def test_assetkoeen_navnsaetter_begge_reelle_masterblokeringer() -> None:
     queue = json.loads(ASSET_QUEUE.read_text(encoding="utf-8"))
     by_key = {item["key"]: item for item in queue["items"]}
-    assert by_key["title:missing-master:TITLE-scene-master-v2"]["fix"]["assetId"] == (
-        "TITLE-scene-master-v2"
-    )
+    # Scenen stod tidligere som én samlet post, TITLE-scene-master-v2. Da begge
+    # kandidater blev målt og blokeret hver for sig (spejlet forlængelse i
+    # portrættet, gentaget kant i den brede), blev den afløst af to præcise
+    # poster. Testen holder derfor på KRAVET — at hver manglende master står
+    # navngivet i køen — ikke på den gamle nøgle, som ellers ville tvinge den
+    # samme mangel til at optræde to gange.
+    for key, asset_id in (
+        ("title:missing-master:TITLE-scene-master-wide", "TITLE-scene-master-wide"),
+        (
+            "title:missing-master:TITLE-scene-master-portrait",
+            "TITLE-scene-master-portrait",
+        ),
+    ):
+        assert by_key[key]["fix"]["assetId"] == asset_id
+        assert by_key[key]["status"] == "open"
+    assert "title:missing-master:TITLE-scene-master-v2" not in by_key
+
     parchment = by_key["title:missing-master:TITLE-parchment-clean-v1"]
     assert parchment["fix"] == {
         "kind": "asset",

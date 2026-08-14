@@ -53,25 +53,6 @@
       "status": "open"
     },
     {
-      "key": "title:missing-master:TITLE-scene-master-v2",
-      "region": "scene",
-      "defect": "missing-master",
-      "severity": 5,
-      "evidence": "TASK-005..008, tre source-derived varianter: de frosne billedformler kan bringes i grønt, men direkte godkendte sourcepixels dækker kun 11,3 % af 2560x1440-scenen, 33,6 % af mobile-390 og 30,4 % af mobile-430. Resten må gentage exemplarer, fordi scene-wide.png og godkendt portrætkunst ikke findes. Kandidaterne er reproducerbare, men er ikke en sand kontinuerlig master.",
-      "fix": {
-        "kind": "asset",
-        "assetId": "TITLE-scene-master-v2",
-        "producer": "manual-approved-outpaint",
-        "minimum": "2560×1440 lossless scene plus 860×1864 art-directed mobile scene",
-        "invariant": "Karl er pixelidentisk i identitet/pose med den godkendte kilde",
-        "unblock": "alle REQ-003 til REQ-008-gates består uden tærskelændring"
-      },
-      "why": "Det godkendte 1586×992-billede indeholder ingen pixels bag pergamentet og ingen scene uden for sit eget lærred. Automatisk generering og netværks-outpaint er forbudt.",
-      "firstSeen": "2026-08-14",
-      "iteration": 1,
-      "status": "open"
-    },
-    {
       "key": "title:missing-master:TITLE-parchment-clean-v1",
       "region": "parchment",
       "defect": "missing-master",
@@ -103,6 +84,40 @@
         "producer": "manual-approved-local-restoration"
       },
       "why": "Kilden indeholder ikke observerbar papirstruktur under titel, bånd, knapper, hjælpetekst, tipkort eller de nederste 773 px. Den eksisterende 692x907-blank er allerede en inpaintet derivativ og kan kun bruges som prior, ikke som original retention-evidens. Statistisk source-quilting kan matche palette og alfa, men ikke dokumentere en troværdig unik malet flade.",
+      "firstSeen": "2026-08-14",
+      "iteration": 1,
+      "status": "open"
+    },
+    {
+      "key": "title:missing-master:TITLE-scene-master-wide",
+      "region": "title",
+      "defect": "missing-master",
+      "severity": 5,
+      "evidence": "docs/design/evidence/title-scene-masters-2026-08-14/BLOCKED.md: den deterministiske lokale kandidat bevarer 100% af synlige godkendte pixels og Karl med maxDelta 0, men blokeres nu på to målte forhold. Sidefeltet genbruger sit eget kantterræn med sideFieldReuseCorrelation 0.756489 mod grænsen 0.72, og det nederste lærred er et spejl: mirrorCorrelation 0.9966 om række 991 i kolonne 2048-2560 mod grænsen 0.85, og extension-mod-kilde-genbrug 0.9955 i spejlet orientering. Den højeste måling på en godkendt håndmalet reference er 0.656, så 0.9966 er ikke motiv, det er en foldning.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "TITLE-scene-master-wide",
+        "spec": "Godkendt scene-only 2560x1440 bred master uden ordmærke, knapper eller parchment/UI. Den kanoniske 896x992 scene skal ligge ved x=1664 i native skala; alle synlige Karl-pixels skal være pixel-identiske, og mindst 95% af øvrige synlige godkendte scene-pixels skal bevares. Nyt venstre og nederste lærred skal være en sammenhængende malet scene uden gentagelser, blokke, striber eller clone seams.",
+        "producer": "tools/art/build_title_scene_masters.py"
+      },
+      "why": "De lokale godkendte kilder indeholder ikke unik billedinformation for hele det skjulte og udvidede brede lærred. Klassisk lokal rekonstruktion kan enten genbruge genkendelige former eller spejle det godkendte materiale; ingen af delene er en malet fortsættelse, og ingen visuelt troværdig kandidat må derfor promoveres. Kræver en godkendt kilde der faktisk dækker lærredet.",
+      "firstSeen": "2026-08-14",
+      "iteration": 1,
+      "status": "open"
+    },
+    {
+      "key": "title:missing-master:TITLE-scene-master-portrait",
+      "region": "title",
+      "defect": "missing-master",
+      "severity": 5,
+      "evidence": "docs/design/evidence/title-scene-masters-2026-08-14/BLOCKED.md: den 860x1864 portrætkandidat blev promoveret 2026-08-14 på en håndskreven påstand om at manuel inspektion ikke fandt nogen synlig clone seam. Påstanden er trukket tilbage og var forkert. Alt under række 992 er et spejl af rækkerne ovenover: mirrorCorrelation 0.9982 om række 991 mod grænsen 0.85, og extension-mod-kilde-genbrug 0.9938 i spejlet orientering med én rækkes forskydning. Bundens seam-ratio er præcis 1.000, fordi en spejling er sømløs pr. konstruktion, og maxTileCorrelation er kun 0.098, så hverken seam- eller gentagelsesporten kunne se det. Kandidaten viser desuden kun 860 af scenens 896 godkendte kolonner, så fullCoverage er false og retention 0.9608. docs/design/reference/title-scene-portrait-860x1864.png er slettet.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "TITLE-scene-master-portrait",
+        "spec": "Godkendt scene-only 860x1864 portraetmaster uden ordmærke, knapper eller parchment/UI. Alle 896 kolonner af den kanoniske scene skal være dækket, alle synlige Karl-pixels skal være pixel-identiske, og mindst 95% af øvrige synlige godkendte scene-pixels skal bevares. Det nye lærred under scenen skal være malet fortsættelse — ikke spejling, ikke gentagelse, ikke syntetiseret tekstur.",
+        "producer": "tools/art/build_title_scene_masters.py"
+      },
+      "why": "Der findes ingen godkendt lokal kilde med pixels under række 992. Enhver portrætmaster fra de nuværende kilder må opfinde den nederste halvdel af billedet, og den eneste rekonstruktion der ser sømløs ud, er en spejling af det godkendte materiale. Kræver en godkendt kilde med mindst 1864 rækker malet scene.",
       "firstSeen": "2026-08-14",
       "iteration": 1,
       "status": "open"
