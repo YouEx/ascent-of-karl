@@ -1,20 +1,33 @@
 {
-  "version": 1,
-  "algorithm": "title-scene-masters-classical-v1",
+  "version": 2,
+  "algorithm": "title-scene-masters-classical-v2",
   "seed": 20260814,
+  "publication": {
+    "outputDir": ".judge/title-scene-masters/current",
+    "evidenceDir": "docs/design/evidence/title-scene-masters-2026-08-14",
+    "manifest": "docs/design/evidence/title-scene-masters-2026-08-14/manifest.json"
+  },
   "sources": {
     "canonicalTitle": {
       "path": "docs/design/reference/title-2026-08-11.webp",
       "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
       "width": 1586,
       "height": 992,
-      "sceneCrop": [690, 0, 1586, 992]
+      "sceneCrop": [690, 0, 1586, 992],
+      "provenance": {
+        "humanApproved": true,
+        "role": "canonical-scene-and-karl"
+      }
     },
     "approvedLandscape": {
       "path": "docs/design/reference/bg-wide.png",
       "sha256": "e4c12992241cf6048f07f5fb9ea8ab8443ceee986c78e917d6f6c48576ffd8eb",
       "width": 1913,
-      "height": 822
+      "height": 822,
+      "provenance": {
+        "humanApproved": false,
+        "role": "continuation-donor-only"
+      }
     }
   },
   "toolOcclusions": [
@@ -41,9 +54,11 @@
       "bottomFadeHeight": 220
     },
     "bottomFieldHeight": 220,
+    "output": "docs/design/reference/title-scene-master-2560x1440.png",
+    "manualApproval": null,
     "promotion": {
       "approved": false,
-      "reason": "The best local classical reconstruction still repeats recognizable lower source-edge forms or replaces them with a visible soft join."
+      "reason": "Blokeret. Sidefeltet genbruger sit eget kantterræn med sourceReuseCorrelation 0,756 mod grænsen 0,72, og bundfeltet er en spejling af de godkendte rækker om række 991 med spejlkorrelation 0,997 i kolonnefeltet 2048-2560 mod grænsen 0,85. Ingen af de to lokale kilder indeholder unik billedinformation til det nye lærred."
     }
   },
   "portrait": {
@@ -54,9 +69,16 @@
     "landscapeCrop": [1080, 0, 1459, 822],
     "bottomFieldHeight": 220,
     "output": "docs/design/reference/title-scene-portrait-860x1864.png",
+    "manualApproval": null,
     "promotion": {
-      "approved": true,
-      "reason": "Manual inspection found a continuous portrait composition without a visible clone seam or repeated subject."
+      "approved": false,
+      "reason": "Blokeret. Bundforlængelsen under række 992 er en spejling af rækkerne over: den stærkeste spejlakse i hele billedet ligger på række 991 med normaliseret spejlkorrelation 0,998 mod grænsen 0,85, og forlængelsens øverste bånd matcher kildens nederste bånd spejlvendt med 0,997. Dertil viser portrættet kun 860 af scenens 896 godkendte kolonner, så fullCoverage er falsk.",
+      "withdrawnClaim": {
+        "claim": "Manual inspection found a continuous portrait composition without a visible clone seam or repeated subject.",
+        "withdrawnOn": "2026-08-14",
+        "withdrawnBecause": "Påstanden var en håndskreven vurdering uden måling bag sig, og den er nu modbevist. Spejlkorrelationen på række 991 er 0,998, mens ingen godkendt reference i docs/design/reference/ kommer over 0,66. Løvværket og stenafsatsen lige under Karl er en refleksion, ikke en fortsættelse af scenen.",
+        "whyTheOldGatesMissedIt": "repeatCorrelation måler forskudt genbrug. En spejlvendt kopi vender rækkefølgen om og giver derfor lav translationskorrelation, så porten var blind for netop denne fejlklasse."
+      }
     }
   },
   "karl": {
@@ -66,6 +88,11 @@
     "sourceRetentionMin": 0.95,
     "karlMaxDelta": 0,
     "seamGradientRatioMax": 2.0,
-    "repeatCorrelationMax": 0.72
+    "repeatCorrelationMax": 0.72,
+    "repeatTileCorrelationMax": 0.92,
+    "portraitSourceReuseCorrelationMax": 0.65,
+    "mirrorCorrelationMax": 0.85,
+    "transitionEnergyRatioMin": 0.8,
+    "transitionEnergyRatioMax": 1.2
   }
 }

@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "algorithm": "title-scene-masters-classical-v1",
+  "version": 2,
+  "algorithm": "title-scene-masters-classical-v2",
   "seed": 20260814,
   "sources": {
     "canonicalTitle": {
@@ -13,18 +13,26 @@
         0,
         1586,
         992
-      ]
+      ],
+      "provenance": {
+        "humanApproved": true,
+        "role": "canonical-scene-and-karl"
+      }
     },
     "approvedLandscape": {
       "path": "docs/design/reference/bg-wide.png",
       "sha256": "e4c12992241cf6048f07f5fb9ea8ab8443ceee986c78e917d6f6c48576ffd8eb",
       "width": 1913,
-      "height": 822
+      "height": 822,
+      "provenance": {
+        "humanApproved": false,
+        "role": "continuation-donor-only"
+      }
     }
   },
   "outputs": {
     "wideCandidate": {
-      "path": ".judge/title-scene-masters/final/wide-candidate-2560x1440.png",
+      "name": "wide-candidate-2560x1440.png",
       "sha256": "4a55c5bcc2206d2bdbd97787e425eaba653379835996c9891282d66be65f6932",
       "bytes": 3938869,
       "width": 2560,
@@ -33,7 +41,7 @@
       "lossless": true
     },
     "portraitCandidate": {
-      "path": ".judge/title-scene-masters/final/portrait-860x1864.png",
+      "name": "portrait-860x1864.png",
       "sha256": "b9d6d11fc9377f4ba135a55783eb3dcf1b39e8ed5126ee7df72171d1f06161a5",
       "bytes": 1889819,
       "width": 860,
@@ -41,13 +49,34 @@
       "format": "PNG",
       "lossless": true
     },
-    "promotedPortrait": "docs/design/reference/title-scene-portrait-860x1864.png"
+    "promoted": []
+  },
+  "gates": {
+    "sourceRetentionMin": 0.95,
+    "karlMaxDelta": 0,
+    "seamGradientRatioMax": 2.0,
+    "repeatCorrelationMax": 0.72,
+    "repeatTileCorrelationMax": 0.92,
+    "portraitSourceReuseCorrelationMax": 0.65,
+    "mirrorCorrelationMax": 0.85,
+    "transitionEnergyRatioMin": 0.8,
+    "transitionEnergyRatioMax": 1.2
   },
   "metrics": {
     "wide": {
       "sourceRetention": {
+        "canonicalSize": [
+          896,
+          992
+        ],
+        "coveredSize": [
+          896,
+          992
+        ],
+        "fullCoverage": true,
         "retainedShare": 1.0,
         "visiblePixels": 866850,
+        "coveredVisiblePixels": 866850,
         "changedVisiblePixels": 0
       },
       "karlDelta": {
@@ -67,21 +96,92 @@
           "ratio": 1.0
         }
       },
+      "transition": {
+        "scales": [
+          4,
+          16,
+          64
+        ],
+        "columns": [
+          1664,
+          2560
+        ],
+        "energyRatioRange": [
+          0.8,
+          1.2
+        ],
+        "bands": {
+          "4": {
+            "sourceEnergy": 2.172808464511717,
+            "extensionEnergy": 1.9839790881404902,
+            "energyRatio": 0.9130943295484347,
+            "pass": true
+          },
+          "16": {
+            "sourceEnergy": 2.0313075401688736,
+            "extensionEnergy": 2.0050237394032946,
+            "energyRatio": 0.9870606492390641,
+            "pass": true
+          },
+          "64": {
+            "sourceEnergy": 2.4441182352376964,
+            "extensionEnergy": 2.275345208619045,
+            "energyRatio": 0.9309472740780734,
+            "pass": true
+          }
+        },
+        "pass": true
+      },
       "repeatDetection": {
-        "sourceReuseCorrelation": 0.756489235319935,
+        "extensionRows": 448,
+        "maxTileCorrelation": 0.09036789055396056,
+        "maxTileLag": 10,
+        "sourceReuseBand": 32,
+        "sourceReuseCorrelation": 0.9955438585039339,
+        "sourceReuseOrientation": "mirrored",
+        "sourceReuseOffset": 1,
+        "sideFieldReuseCorrelation": 0.756489235319935,
         "sampleRect": [
           1364,
           560,
           300,
           340
-        ]
+        ],
+        "pass": false
+      },
+      "mirrorSymmetry": {
+        "band": 32,
+        "tileWidth": 512,
+        "bestCorrelation": 0.996592556771886,
+        "bestAxis": 991,
+        "bestParity": "on-row",
+        "bestColumns": [
+          2048,
+          2560
+        ],
+        "medianCorrelation": 0.012809007437634867,
+        "deviationBand": 48,
+        "deviationAtBestAxis": 2.335200358072917,
+        "medianDeviation": 23.77011186116536,
+        "deviationRatio": 10.1790459987687,
+        "pass": false
       }
     },
     "portrait": {
       "sourceRetention": {
-        "retainedShare": 1.0,
-        "visiblePixels": 833010,
-        "changedVisiblePixels": 0
+        "canonicalSize": [
+          896,
+          992
+        ],
+        "coveredSize": [
+          860,
+          992
+        ],
+        "fullCoverage": false,
+        "retainedShare": 0.9607821422391417,
+        "visiblePixels": 866850,
+        "coveredVisiblePixels": 832854,
+        "changedVisiblePixels": 33996
       },
       "karlDelta": {
         "maxDelta": 0,
@@ -94,23 +194,146 @@
           "sourceEdgeGradient": 1.9953488372093022,
           "ratio": 1.0
         }
+      },
+      "transition": {
+        "scales": [
+          4,
+          16,
+          64
+        ],
+        "columns": [
+          0,
+          860
+        ],
+        "energyRatioRange": [
+          0.8,
+          1.2
+        ],
+        "bands": {
+          "4": {
+            "sourceEnergy": 2.1935754511015384,
+            "extensionEnergy": 2.0077286253416413,
+            "energyRatio": 0.9152767571014842,
+            "pass": true
+          },
+          "16": {
+            "sourceEnergy": 2.0542578480598346,
+            "extensionEnergy": 2.031430167168131,
+            "energyRatio": 0.988887626296152,
+            "pass": true
+          },
+          "64": {
+            "sourceEnergy": 2.44315972378376,
+            "extensionEnergy": 2.267737918898059,
+            "energyRatio": 0.9281987979836117,
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      "repeatDetection": {
+        "extensionRows": 872,
+        "maxTileCorrelation": 0.09817123855216421,
+        "maxTileLag": 8,
+        "sourceReuseBand": 32,
+        "sourceReuseCorrelation": 0.9937559373815957,
+        "sourceReuseOrientation": "mirrored",
+        "sourceReuseOffset": 1,
+        "pass": false
+      },
+      "mirrorSymmetry": {
+        "band": 32,
+        "tileWidth": 512,
+        "bestCorrelation": 0.9982140958470473,
+        "bestAxis": 991,
+        "bestParity": "on-row",
+        "bestColumns": [
+          0,
+          860
+        ],
+        "medianCorrelation": 0.012838514677561022,
+        "deviationBand": 48,
+        "deviationAtBestAxis": 6.050569462209302,
+        "medianDeviation": 18.224825886627908,
+        "deviationRatio": 3.0120843997340545,
+        "pass": false
       }
+    },
+    "control": {
+      "mirrorSymmetry": {
+        "canonicalScene": {
+          "band": 32,
+          "tileWidth": 512,
+          "bestCorrelation": 0.4930699069910359,
+          "bestAxis": 59,
+          "bestParity": "between-rows",
+          "bestColumns": [
+            0,
+            896
+          ],
+          "medianCorrelation": 0.013702635560420949,
+          "deviationBand": 48,
+          "deviationAtBestAxis": 15.136699711681546,
+          "medianDeviation": 27.293267592075903,
+          "deviationRatio": 1.8031187849365002,
+          "pass": true
+        },
+        "approvedLandscape": {
+          "band": 32,
+          "tileWidth": 512,
+          "bestCorrelation": 0.09221624999449561,
+          "bestAxis": 477,
+          "bestParity": "between-rows",
+          "bestColumns": [
+            1275,
+            1913
+          ],
+          "medianCorrelation": 0.005513382734810151,
+          "deviationBand": 48,
+          "deviationAtBestAxis": 27.737002625391852,
+          "medianDeviation": 14.426032680250783,
+          "deviationRatio": 0.5201006350644559,
+          "pass": true
+        }
+      },
+      "pass": true,
+      "note": "Spejlporten m\u00e5les p\u00e5 de godkendte kilder selv. Overskrider en kilde gr\u00e6nsen, er porten ugyldig og intet m\u00e5 promoveres."
     }
   },
   "promotion": {
     "wide": {
       "pass": false,
+      "automatedGates": false,
+      "manualApproval": {
+        "valid": false,
+        "present": false,
+        "checks": {}
+      },
+      "controlPass": true,
       "approved": false,
-      "reason": "The best local classical reconstruction still repeats recognizable lower source-edge forms or replaces them with a visible soft join."
+      "reason": "Blokeret. Sidefeltet genbruger sit eget kantterr\u00e6n med sourceReuseCorrelation 0,756 mod gr\u00e6nsen 0,72, og bundfeltet er en spejling af de godkendte r\u00e6kker om r\u00e6kke 991 med spejlkorrelation 0,997 i kolonnefeltet 2048-2560 mod gr\u00e6nsen 0,85. Ingen af de to lokale kilder indeholder unik billedinformation til det nye l\u00e6rred."
     },
     "portrait": {
-      "pass": true,
-      "approved": true,
-      "reason": "Manual inspection found a continuous portrait composition without a visible clone seam or repeated subject."
+      "pass": false,
+      "automatedGates": false,
+      "manualApproval": {
+        "valid": false,
+        "present": false,
+        "checks": {}
+      },
+      "controlPass": true,
+      "approved": false,
+      "reason": "Blokeret. Bundforl\u00e6ngelsen under r\u00e6kke 992 er en spejling af r\u00e6kkerne over: den st\u00e6rkeste spejlakse i hele billedet ligger p\u00e5 r\u00e6kke 991 med normaliseret spejlkorrelation 0,998 mod gr\u00e6nsen 0,85, og forl\u00e6ngelsens \u00f8verste b\u00e5nd matcher kildens nederste b\u00e5nd spejlvendt med 0,997. Dertil viser portr\u00e6ttet kun 860 af scenens 896 godkendte kolonner, s\u00e5 fullCoverage er falsk.",
+      "withdrawnClaim": {
+        "claim": "Manual inspection found a continuous portrait composition without a visible clone seam or repeated subject.",
+        "withdrawnOn": "2026-08-14",
+        "withdrawnBecause": "P\u00e5standen var en h\u00e5ndskreven vurdering uden m\u00e5ling bag sig, og den er nu modbevist. Spejlkorrelationen p\u00e5 r\u00e6kke 991 er 0,998, mens ingen godkendt reference i docs/design/reference/ kommer over 0,66. L\u00f8vv\u00e6rket og stenafsatsen lige under Karl er en refleksion, ikke en forts\u00e6ttelse af scenen.",
+        "whyTheOldGatesMissedIt": "repeatCorrelation m\u00e5ler forskudt genbrug. En spejlvendt kopi vender r\u00e6kkef\u00f8lgen om og giver derfor lav translationskorrelation, s\u00e5 porten var blind for netop denne fejlklasse."
+      }
     }
   },
   "evidence": {
-    "contactSheet": "docs/design/evidence/title-scene-masters-2026-08-14/contact-sheet.webp",
-    "wideBlockerOverlay": "docs/design/evidence/title-scene-masters-2026-08-14/wide-blocker-overlay.webp"
+    "contactSheet": "contact-sheet.webp",
+    "wideBlockerOverlay": "wide-blocker-overlay.webp"
   }
 }
