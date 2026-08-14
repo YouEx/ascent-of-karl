@@ -222,6 +222,106 @@ async function auditTitleMobileViewport(browser) {
       : "panelet mangler",
   );
 
+  const semantics = await page.evaluate(() => {
+    const heading = document.querySelector("#title-screen h1");
+    const semantic = document.querySelector(".title-mark-semantic");
+    const image = document.querySelector('img[data-title-layer="wordmark"]');
+    const title = document.getElementById("title-screen");
+    const panel = document.querySelector(".title-panel")?.getBoundingClientRect();
+    const box = image?.getBoundingClientRect();
+    const style = semantic ? getComputedStyle(semantic) : null;
+    return {
+      headingCount: document.querySelectorAll("#title-screen h1").length,
+      headingText: heading?.textContent?.replace(/\s+/g, " ").trim(),
+      semanticVisibleToAT:
+        !!style && style.display !== "none" && style.visibility !== "hidden",
+      decorativeImage:
+        image?.getAttribute("alt") === "" &&
+        image?.getAttribute("aria-hidden") === "true",
+      currentSrc: image?.currentSrc ?? "",
+      complete: image?.complete ?? false,
+      noUpscale:
+        !!box &&
+        box.width * devicePixelRatio <= (image?.naturalWidth ?? 0) + 0.5 &&
+        box.height * devicePixelRatio <= (image?.naturalHeight ?? 0) + 0.5,
+      inPanel:
+        !!box &&
+        !!panel &&
+        box.left >= panel.left - 0.5 &&
+        box.right <= panel.right + 0.5 &&
+        box.top >= panel.top - 0.5 &&
+        box.bottom <= panel.bottom + 0.5,
+      noHorizontalScroll:
+        !!title && title.scrollWidth <= title.clientWidth + 0.5,
+      rendered: box && [box.width, box.height],
+      natural: image && [image.naturalWidth, image.naturalHeight],
+    };
+  });
+  record(
+    "Titlens semantik",
+    "single-accessible-heading",
+    semantics.headingCount === 1 &&
+      semantics.headingText === "The Ascent of Karl" &&
+      semantics.semanticVisibleToAT,
+    `${semantics.headingCount} h1 · ${semantics.headingText ?? "intet navn"}`,
+  );
+  record(
+    "Titlens semantik",
+    "decorative-mobile-wordmark",
+    semantics.decorativeImage &&
+      semantics.complete &&
+      semantics.currentSrc.includes("wordmark-mobile"),
+    semantics.currentSrc.split("/").pop() || "wordmark mangler",
+  );
+  record(
+    "Titlens semantik",
+    "wordmark-no-upscale",
+    semantics.noUpscale,
+    `${semantics.rendered?.map(Math.round).join("×") ?? "?"} CSS ved DPR2 mod ${
+      semantics.natural?.join("×") ?? "?"
+    } native`,
+  );
+  record("Titlens semantik", "wordmark-in-panel", semantics.inPanel);
+  record(
+    "Titlens mobilrude",
+    "no-horizontal-scroll",
+    semantics.noHorizontalScroll,
+  );
+
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  });
+  const focusOrder = [];
+  for (let i = 0; i < 7; i++) {
+    await page.keyboard.press("Tab");
+    focusOrder.push(
+      await page.evaluate(() => {
+        const active = document.activeElement;
+        if (!(active instanceof HTMLElement)) return "";
+        return active.id || (
+          active.dataset.tip === undefined ? active.tagName : `tip-${active.dataset.tip}`
+        );
+      }),
+    );
+  }
+  const expectedFocusOrder = [
+    "t-primary",
+    "t-fates",
+    "tip-0",
+    "tip-1",
+    "tip-2",
+    "t-trophies",
+    "t-sound",
+  ];
+  record(
+    "Titlens semantik",
+    "focus-order",
+    JSON.stringify(focusOrder) === JSON.stringify(expectedFocusOrder),
+    focusOrder.join(" → "),
+  );
+
   await page.click("#t-fates");
   await page.waitForTimeout(250);
   const trophy = await page.evaluate(() => {

@@ -14,6 +14,7 @@ import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
 import { glyphHTML, problemGlyphHTML } from "./art";
+import { TITLE_WORDMARKS } from "./title-art";
 import { PlaytestLog } from "./playtest";
 import {
   IMPROVISE_ENABLED,
@@ -1225,10 +1226,21 @@ function showTitleScreen(): void {
     <div class="title-stage">
       <div class="title-panel">
         <h1 class="title-mark title-block">
-          <span class="t-the">The</span>
-          <span class="t-ascent">Ascent</span>
-          <span class="t-of">of</span>
-          <span class="t-karl">Karl</span>
+          <span class="title-mark-semantic">The Ascent of Karl</span>
+          <picture class="title-wordmark" aria-hidden="true">
+            <source media="(max-width: 900px)"
+                    srcset="${TITLE_WORDMARKS.mobile.src}"
+                    width="${TITLE_WORDMARKS.mobile.width}"
+                    height="${TITLE_WORDMARKS.mobile.height}">
+            <img class="title-wordmark-art"
+                 data-title-layer="wordmark"
+                 src="${TITLE_WORDMARKS.desktop.src}"
+                 width="${TITLE_WORDMARKS.desktop.width}"
+                 height="${TITLE_WORDMARKS.desktop.height}"
+                 sizes="(max-width: 900px) min(61vw, 218px), min(34.36vw, 545px)"
+                 alt="" aria-hidden="true"
+                 loading="eager" fetchpriority="high">
+          </picture>
         </h1>
         <p class="title-sub title-block">reinvent history, badly</p>
         <p class="title-tagline title-block">
@@ -1237,13 +1249,18 @@ function showTitleScreen(): void {
         </p>
         <div class="title-divider title-block" aria-hidden="true"></div>
         <div class="title-actions title-block${crowded}">
-          <button id="t-primary" class="btn-stone">
-            <span class="orn orn-spiral" aria-hidden="true"></span>${canContinue ? "Continue" : "Begin"}
+          <button id="t-primary" class="title-action btn-stone">
+            <span class="title-action-icon" aria-hidden="true">${icons.spiral}</span>
+            <span class="title-action-label">${canContinue ? "Continue" : "Begin"}</span>
           </button>
-          ${canContinue ? `<button id="t-new" class="btn-quiet">New life</button>` : ""}
-          <button id="t-fates" class="btn-quiet">
-            <span class="orn orn-trophy" aria-hidden="true"></span>Fates
-            <span class="fates-count">${unlocked}/${content.endings.length}</span>
+          ${canContinue ? `<button id="t-new" class="title-action btn-quiet">
+            <span class="title-action-icon" aria-hidden="true">${icons.restart}</span>
+            <span class="title-action-label">New life</span>
+          </button>` : ""}
+          <button id="t-fates" class="title-action btn-quiet">
+            <span class="title-action-icon" aria-hidden="true">${icons.trophy}</span>
+            <span class="title-action-label">Fates</span>
+            <span class="title-action-count fates-count">${unlocked}/${content.endings.length}</span>
           </button>
         </div>
         <p class="title-hint title-block">

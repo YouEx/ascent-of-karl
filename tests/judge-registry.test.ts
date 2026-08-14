@@ -149,18 +149,20 @@ describe("registry.json — dokumenterede afvigelser for titelskærmen (TASK-032
     expect(regions.actions.threshold).toBe(0.82);
   });
 
-  it("de strukturelt afveget regioner er stadig ægte, tilgængelig DOM-tekst — ikke erstattet af et billede", () => {
-    // Den strukturelle afvigelse må aldrig blive en undskyldning for at rette
-    // med et <img>, der ville koste den skærmlæser-verificerede semantik fra
-    // design-title-screen-1.md TASK-011/021. Et fladt strengeftersyn er nok:
-    // hvis nogen erstatter <h1 class="title-mark">-teksten med et billede,
-    // forsvinder disse markører fra kildeteksten.
+  it("den malede wordmark bevarer én semantisk h1 og dekorativ billedkunst", () => {
+    // Phase D må erstatte den synlige font-efterligning, men ikke headingens
+    // navn. Teksten bliver i accessibility tree; rasteren er tom-alt og skjult.
     const src = readFileSync(MAIN_TS_PATH, "utf8");
     expect(src).toMatch(/<h1 class="title-mark[^"]*">/);
+    expect(src).toContain(
+      '<span class="title-mark-semantic">The Ascent of Karl</span>',
+    );
+    expect(src).toMatch(
+      /<img[\s\S]{0,300}data-title-layer="wordmark"[\s\S]{0,300}alt=""[\s\S]{0,300}aria-hidden="true"/,
+    );
     expect(src).toMatch(/class="title-tagline/);
     expect(src).toMatch(/class="title-hint/);
     expect(src).toMatch(/class="title-chip"/);
-    expect(src).not.toMatch(/title-mark[\s\S]{0,200}<img/);
   });
 });
 

@@ -190,10 +190,10 @@ ikke en ny en:
 > **Fanebåndet og knapperne sidder ikke på pergamentet, og deres tekst måles derfor
 > mod deres EGEN flade, ikke mod papirtrinnene ovenfor.** `Ribbon Ink` mod fanebåndets
 > flade `Tile Edge` giver **4,92:1** (`Tile Groove` lå tættere på referencens egen
-> tone, men gav kun 4,19:1 og dumpede AA). `Btn Ink` mod knappernes malede stenflade
-> — et rent aktiv uden fladt token — er målt til **4,62:1** på det mørkeste punkt i
-> knappens tekstbånd, tættest på grænsen af titlens par og derfor den, der er pinnet
-> i `tests/design-tokens.test.ts` i stedet for kun i et screenshot.
+> tone, men gav kun 4,19:1 og dumpede AA). `Btn Ink` bruges mod en sammenhængende
+> CSS-bygget flade af de eksisterende `Tile`/`Field`/`Groove`-tokens. Den mørkeste
+> tilladte kombination er fortsat pinnet i `tests/design-tokens.test.ts`; en
+> billedudskæring må ikke bruges som skjult kontrastgrundlag.
 >
 > Titlens to redskabsknapper (trofæ, lyd) genbruger spillets egen "hugget
 > flise"-opskrift (`Tile Shade` → `Tile Groove`, samme som `.title-chip`) med
@@ -246,6 +246,10 @@ at diskutere det:
 
 > **Kommer strengen fra `content/*.json` eller fra fortællerens mund? → Fraunces.**
 > **Er strengen skrevet i grænsefladen? → Plus Jakarta Sans.**
+
+Titelskærmens tre store handlingslabels er den ene dokumenterede undtagelse:
+de er del af den bogtrykte hero-komposition og sættes i varm Fraunces. Deres
+semantik er stadig knapper, og deres ikon/tæller forbliver UI-krom.
 
 | Fraunces (indhold)                      | Plus Jakarta Sans (grænseflade)       |
 | --------------------------------------- | ------------------------------------- |
@@ -306,6 +310,21 @@ måles de ikke efter påføring, er den for kraftig.
 sekundær adskilles af **vægt og kant**, ikke af farve. Aktiv tilstand giver 1px
 nedadgående forskydning (taktilt tryk). Ingen ydre glød. Ingen farvede skygger.
 Minimum 44px berøringsflade.
+
+**Titelskærmens krom er komponenter, ikke screenshots.** Fanebåndet,
+Begin/Continue, New life, Fates, redskabsknapperne, velkomstchippen og tipkortets
+ramme bygges som semantisk HTML med sammenhængende CSS-flader. De må bruge
+`--grain`, tokenbaserede gradienter, én ydre kontur, indre fas/rille og inline-SVG
+fra `src/ui/icons.ts`, men aldrig 3-/9-slice, `border-image` eller venstre/midte/
+højre-udsnit af et komponentbillede. Handlingerne deler samme genbrugelige
+struktur: ikonbrønd, label og valgfri tæller. Hover, pressed, tastaturfokus og
+reduced-motion er rigtige komponenttilstande, ikke særskilte billedaktiver.
+
+Det malede verdenslag er fortsat urørligt: scene, pergament, den sourceafledte
+wordmark og selvstændige illustrationer må forblive billeder. Det samme gælder
+ornamenter, der er komplette motiver i sig selv, fx skillelinje, tap-hånd,
+jagtscene, velkomstfigur og ildflise. Skellet er funktionelt: **en illustration
+kan være et billede; en interaktiv kontrol eller komponentramme kan ikke.**
 
 **Combine-knappen** er undtagelsen: udskåret sten (`Stone` med `Stone Edge`-facet
 foroven), lyse bogstaver, chevron-ornament langs underkanten. Den løses med
@@ -538,6 +557,10 @@ slags fejl med en anden farve.
 - ❌ Opdigtede tal og statistik. Tællere viser rigtig spiltilstand eller ingenting
 - ❌ Vandret scroll på mobil
 - ❌ **Farve uden token.** Rå hex i `style.css` er forbudt (CLAUDE.md regel 8)
+- ❌ **Komponentscreenshots som UI.** Ingen 3-/9-slice, `border-image` eller
+  venstre/midte/højre-PNG/WebP til titlens fanebånd, handlingsknapper,
+  redskabsknapper, velkomstchip eller tipkort. Scene, pergament, wordmark og
+  selvstændige illustrationer er ikke omfattet.
 - ❌ **Tekstfarve valgt mod den lyseste flade.** Den skal holde mod den mørkeste
   papirflade den kan lande på (`Slot` `#DEC6B0`) — se etiketfælden i §2
 - ❌ **Emoji i UI-krom** — ingen emoji i knaptekster, faner eller etiketter.
@@ -667,6 +690,7 @@ npm run test:visual
 
 | Dato       | Ændring                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 14-08-2026 | §2/§3/§4/§8: titlens krom er nu semantisk HTML/CSS, ikke sammensyede komponentudsnit. Fanebånd, handlinger, redskaber, velkomstchip og tipkort får kontinuerlige tokenbyggede flader med rigtige interaktionstilstande; scene, pergament, source-wordmark og selvstændige illustrationer bevares som billeder. |
 | 13-08-2026 | §10: den visuelle dommer er nu den gældende lukningsmetode: commit-identificeret baseline, rigtig produktions-capture, fem regionsmetrikker, obligatoriske overlays, 0,02-regressionsgrænse og en langsom opt-in-test uden for `npm test`. |
 | 13-08-2026 | §4: spillerens improviserede elementer er dokumenteret som samme pergamentmateriale med stiplet blæk og markøren "Karl's invention"; bogen holder dem i en separat sektion uden note, kilde eller canonical tidslinjenode, og copy-status er inline og ikke-blokerende. |
 | 12-08-2026 | §8: emoji er ikke længere illustrationssproget. Ikoner skæres ud af referencen (`tools/art/build_*.py` + `sizes.json` + eksplicit `width`/`height`); emoji er kun fallback. Metoden bag: når en flades struktur, blæk og materialitet alle er lave, skæres HELE fladen ud af referencen og CSS'ens `border`, `--grain` og `box-shadow` slettes — ellers påføres krommet to gange. Brugt på krøniken, fortælleren, dokkens felter og elementfliserne. |

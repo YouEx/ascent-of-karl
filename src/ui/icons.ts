@@ -23,6 +23,9 @@ export const icons = {
   trophy: svg(
     `<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5H4.5v1.5A3.5 3.5 0 0 0 8 10"/><path d="M17 5h2.5v1.5A3.5 3.5 0 0 1 16 10"/><path d="M12 14v3"/><path d="M8.5 20h7"/><path d="M10 17h4l.7 3h-5.4z"/>`,
   ),
+  spiral: svg(
+    `<path d="M12 2.75v2"/><path d="M12 19.25v2"/><path d="M2.75 12h2"/><path d="M19.25 12h2"/><path d="m5.46 5.46 1.42 1.42"/><path d="m17.12 17.12 1.42 1.42"/><path d="m18.54 5.46-1.42 1.42"/><path d="m6.88 17.12-1.42 1.42"/><path d="M12 8.1a3.9 3.9 0 1 1-3.78 4.84 2.85 2.85 0 1 1 3.53 2.03"/>`,
+  ),
   restart: svg(`<path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/>`),
   close: svg(`<path d="M6 6l12 12"/><path d="M18 6L6 18"/>`),
   soundOn: svg(

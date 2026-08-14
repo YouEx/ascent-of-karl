@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import mainSource from "../src/ui/main.ts?raw";
 import iconsSource from "../src/ui/icons.ts?raw";
 import styles from "../src/ui/style.css?raw";
+import titleArtSource from "../src/ui/title-art.ts?raw";
 
 /**
  * Titelskærmen har ingen jsdom/happy-dom i dette repo (se vite.config.ts'
@@ -104,7 +105,7 @@ describe("først-gang vs gemt spil (TASK-002/010)", () => {
 describe("Fates-tallet er data-drevet, ikke en hardkodet konstant (TASK-014)", () => {
   it("bruger content.endings.length, ikke et fastlåst tal", () => {
     expect(showTitleScreenBody).toContain(
-      '<span class="fates-count">${unlocked}/${content.endings.length}</span>',
+      '<span class="title-action-count fates-count">${unlocked}/${content.endings.length}</span>',
     );
   });
 
@@ -178,6 +179,36 @@ describe("titelskærmens egen h1 er den ENESTE, en skærmlæser møder (TASK-011
     expect(showTitleScreenBody).toMatch(/setBackgroundInert\(true\)/);
   });
 
+  it("bevarer den læsbare titel som semantisk tekst og gør den malede wordmark dekorativ", () => {
+    expect(showTitleScreenBody).toContain(
+      '<span class="title-mark-semantic">The Ascent of Karl</span>',
+    );
+    expect(showTitleScreenBody).toMatch(
+      /<picture class="title-wordmark" aria-hidden="true">[\s\S]*?<source[\s\S]*?TITLE_WORDMARKS\.mobile[\s\S]*?<img[\s\S]*?data-title-layer="wordmark"[\s\S]*?alt=""[\s\S]*?aria-hidden="true"/,
+    );
+  });
+
+  it("deklarerer begge wordmarks med deres godkendte native mål", () => {
+    expect(titleArtSource).toContain("wordmark-desktop.webp");
+    expect(titleArtSource).toContain("wordmark-mobile.webp");
+    expect(titleArtSource).toMatch(/desktop:[\s\S]*?width:\s*545[\s\S]*?height:\s*320/);
+    expect(titleArtSource).toMatch(/mobile:[\s\S]*?width:\s*436[\s\S]*?height:\s*256/);
+  });
+
+  it("holder wordmarken på native 545px desktop / 218px ved DPR2 og bruger ikke CSS-tekstfyld", () => {
+    const stripped = stripComments(styles);
+    const desktop = extractBlock(stripped, ".title-mark {");
+    const mobile = extractBlock(
+      stripped,
+      "@media (max-width: 900px), (max-aspect-ratio: 1/1) {",
+    );
+    expect(desktop).toMatch(/width:\s*min\(78\.27%,\s*545px\)/);
+    expect(desktop).not.toMatch(/background-clip|text-stroke/);
+    expect(mobile).toMatch(
+      /\.title-mark\s*\{[\s\S]*?width:\s*min\(61%,\s*218px\)/,
+    );
+  });
+
   it("setBackgroundInert skåner #title-screen selv, men rammer alle andre børn af #app", () => {
     expect(setBackgroundInertBody).toMatch(
       /child\.id === "title-screen"/,
@@ -236,7 +267,90 @@ describe("gear/tap-ikonerne er væk fra icons.ts og bliver ikke sneget ind igen 
 
   it("titelskærmen bruger det malede orn-tap.webp til hintet, ikke et icons.tap", () => {
     expect(showTitleScreenBody).not.toContain("icons.tap");
-    expect(stripComments(styles)).toContain("orn-tap.webp");
+    expect(stripComments(styles)).toContain("title-materials/ornament-tap.webp");
+  });
+});
+
+describe("titlens krom er semantiske komponenter, ikke sammensyede screenshots", () => {
+  const stripped = stripComments(styles);
+
+  it("bruger ingen af de forbudte slice- eller frame-assets i runtime-CSS", () => {
+    for (const asset of [
+      "ribbon-left.webp",
+      "ribbon-center.webp",
+      "ribbon-right.webp",
+      "begin-left.webp",
+      "begin-center.webp",
+      "begin-right.webp",
+      "fates-left.webp",
+      "fates-center.webp",
+      "fates-right.webp",
+      "welcome-frame.webp",
+      "tool-frame.webp",
+      "tip-card-frame.webp",
+    ]) {
+      expect(stripped).not.toContain(`title-materials/${asset}`);
+    }
+  });
+
+  it("bevarer kun selvstændige illustrationer som billeder", () => {
+    for (const asset of [
+      "welcome-figure.webp",
+      "tip-fire-tile.webp",
+      "ornament-tap.webp",
+      "ornament-divider.webp",
+      "ornament-hunt.webp",
+    ]) {
+      expect(stripped).toContain(`title-materials/${asset}`);
+    }
+  });
+
+  it("bruger ikke border-image på actions, tools, welcome eller tip card", () => {
+    const componentRules = [
+      extractBlock(stripped, ".title-actions button {"),
+      extractBlock(stripped, ".title-tools button {"),
+      extractBlock(stripped, ".title-tools button::before {"),
+      extractBlock(stripped, ".title-chip {"),
+      extractBlock(stripped, ".title-chip::before {"),
+      extractBlock(stripped, ".title-tip {"),
+      extractBlock(stripped, ".title-tip::before {"),
+    ].join("\n");
+    expect(componentRules).not.toMatch(/border-image/);
+  });
+
+  it("giver alle titelhandlinger den samme ikon/label/count-struktur", () => {
+    expect(showTitleScreenBody).toMatch(
+      /id="t-primary" class="title-action btn-stone"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.spiral[\s\S]*?class="title-action-label"[\s\S]*?\$\{canContinue \? "Continue" : "Begin"\}/,
+    );
+    expect(showTitleScreenBody).toMatch(
+      /id="t-new" class="title-action btn-quiet"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.restart[\s\S]*?class="title-action-label">New life/,
+    );
+    expect(showTitleScreenBody).toMatch(
+      /id="t-fates" class="title-action btn-quiet"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.trophy[\s\S]*?class="title-action-label">Fates[\s\S]*?class="title-action-count fates-count"/,
+    );
+  });
+
+  it("har rigtige hover-, pressed- og fokus-tilstande i CSS", () => {
+    expect(stripped).toMatch(/\.title-actions button:hover/);
+    expect(stripped).toMatch(/\.title-actions button:active/);
+    expect(stripped).toMatch(/\.title-actions button:focus-visible/);
+    expect(stripped).toMatch(/\.title-tools button:hover/);
+    expect(stripped).toMatch(/\.title-tools button:active/);
+    expect(stripped).toMatch(/\.title-tools button:focus-visible/);
+  });
+
+  it("slår titelkomponenternes bevægelse fra ved reduced motion", () => {
+    const reduced = extractBlock(stripped, "@media (prefers-reduced-motion: reduce) {");
+    expect(reduced).toContain(".title-actions button");
+    expect(reduced).toContain(".title-tools button");
+  });
+
+  it("gemt spil frigiver fresh-state-bredderne, så tre knapper forbliver på én række", () => {
+    expect(stripped).toMatch(
+      /\.title-actions\.crowded \.btn-stone,\s*\.title-actions\.crowded \.btn-quiet\s*\{[^}]*width:\s*auto/,
+    );
+    const button = extractBlock(stripped, ".title-actions button {");
+    expect(button).toMatch(/white-space:\s*nowrap/);
   });
 });
 
