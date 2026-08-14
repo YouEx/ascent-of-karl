@@ -1,8 +1,8 @@
 # TITLE-parchment-master-v1 — blocked
 
-**Date:** 2026-08-14  
-**Approved source:** `docs/design/reference/title-2026-08-11.webp`  
-**Source SHA-256:** `8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850`  
+**Date:** 2026-08-14
+**Approved source:** `docs/design/reference/title-2026-08-11.webp`
+**Source SHA-256:** `8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850`
 **Requested master:** 760×1680 lossless RGBA
 
 ## Source-scout provenance
