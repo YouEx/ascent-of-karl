@@ -2,18 +2,26 @@
 /**
  * Verificerer det færdige GitHub Pages-artifact uden en browser.
  *
- * Kontrollen binder HTML, entry-bundle og den deterministiske buildkontrakt
- * sammen for både root og /playtest/improvisation/. Dermed fejler manglende,
- * stale eller krydslinkede outputs før upload.
+ * Vite skriver selv pages-build.json fra den resolverede compile-time env,
+ * entry-hashen og Rollups komplette chunkgraf. Denne fil validerer kontrakten
+ * mod de faktiske bytes og følger statiske/dynamiske imports, preload-assets,
+ * import.meta-URL'er og CSS-URL'er inden for hver variants egen rod.
  */
 
+import { createHash } from "node:crypto";
 import {
   existsSync,
   readFileSync,
   readdirSync,
   statSync,
 } from "node:fs";
-import { dirname, relative, resolve, sep } from "node:path";
+import {
+  dirname,
+  posix,
+  relative,
+  resolve,
+  sep,
+} from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -23,7 +31,7 @@ const PREVIEW_URL = `${ROOT_URL}playtest/improvisation/`;
 const PREVIEW_MARKER =
   '<meta name="playtest-build" content="improvisation-offline-non-production">';
 const ROBOTS_MARKER = '<meta name="robots" content="noindex,nofollow">';
-const FEATURE_MARKER = 'dataset.improviseEnabled="true"';
+const SHA256 = /^[a-f0-9]{64}$/;
 
 function fail(message) {
   throw new Error(`Pages-artifact: ${message}`);
@@ -32,6 +40,17 @@ function fail(message) {
 function readRequired(path, label) {
   if (!existsSync(path)) fail(`${label} mangler: ${path}`);
   return readFileSync(path, "utf8");
+}
+
+function fileSha256(path) {
+  return createHash("sha256").update(readFileSync(path)).digest("hex");
+}
+
+function stringArray(value) {
+  return (
+    Array.isArray(value) &&
+    value.every((entry) => typeof entry === "string")
+  );
 }
 
 function contractAt(dir, expected) {
@@ -47,21 +66,42 @@ function contractAt(dir, expected) {
     );
   }
   if (
-    contract.schema !== 1 ||
+    contract.schema !== 2 ||
     contract.variant !== expected ||
-    typeof contract.entry !== "string"
+    typeof contract.entry !== "string" ||
+    !SHA256.test(contract.entrySha256 ?? "") ||
+    !contract.env ||
+    typeof contract.modules !== "object" ||
+    contract.modules === null ||
+    Array.isArray(contract.modules)
   ) {
     fail(`${expected} buildkontrakt er stale eller ugyldig`);
   }
+
   const shouldEnable = expected === "improvisation-playtest";
   const expectedUrl = shouldEnable ? PREVIEW_URL : ROOT_URL;
   if (
     contract.publicUrl !== expectedUrl ||
-    contract.improvisationEnabled !== shouldEnable ||
-    contract.improviseUrl !== "" ||
-    contract.narratorUrl !== ""
+    contract.env.mode !== "production" ||
+    contract.env.VITE_IMPROVISE_ENABLED !==
+      (shouldEnable ? "true" : "false") ||
+    contract.env.VITE_IMPROVISE_URL !== "" ||
+    contract.env.VITE_NARRATOR_URL !== ""
   ) {
-    fail(`${expected} har en ugyldig feature-/Worker-kontrakt`);
+    fail(`${expected} har en ugyldig resolveret feature-/Worker-kontrakt`);
+  }
+
+  for (const [file, module] of Object.entries(contract.modules)) {
+    if (
+      !module ||
+      typeof module !== "object" ||
+      !SHA256.test(module.sha256 ?? "") ||
+      !stringArray(module.imports) ||
+      !stringArray(module.dynamicImports) ||
+      !stringArray(module.preloads)
+    ) {
+      fail(`${expected} har ugyldig modulmetadata for ${file}`);
+    }
   }
   return contract;
 }
@@ -87,8 +127,277 @@ function moduleEntry(html, label) {
   fail(`${label} mangler et module-entry i index.html`);
 }
 
-function normalizedReference(reference) {
-  return decodeURIComponent(reference.split(/[?#]/, 1)[0]).replace(/^\.\//, "");
+function cleanReference(reference) {
+  try {
+    return decodeURIComponent(reference.split(/[?#]/, 1)[0]);
+  } catch {
+    fail(`ugyldig URL-kodning i reference: ${reference}`);
+  }
+}
+
+function normalizedHtmlReference(reference) {
+  return cleanReference(reference).replace(/^\.\//, "");
+}
+
+function hasParentSegment(reference) {
+  return cleanReference(reference)
+    .replaceAll("\\", "/")
+    .split("/")
+    .includes("..");
+}
+
+function assertOutputName(reference, label) {
+  const clean = cleanReference(reference).replaceAll("\\", "/");
+  if (
+    !clean ||
+    clean.startsWith("/") ||
+    /^[a-z]+:/i.test(clean) ||
+    hasParentSegment(clean) ||
+    posix.normalize(clean) !== clean
+  ) {
+    fail(`${label} har et ../-krydslink eller ugyldigt outputnavn: ${reference}`);
+  }
+  return clean;
+}
+
+function isInside(path, dir) {
+  return path === dir || path.startsWith(`${dir}${sep}`);
+}
+
+function assertVariantTarget(dir, variant, target, reference, label) {
+  if (!isInside(target, dir)) {
+    fail(`${variant} har et ../-krydslink i ${label}: ${reference}`);
+  }
+  if (
+    variant === "production-root" &&
+    isInside(target, resolve(dir, PREVIEW_PATH))
+  ) {
+    fail(`${variant} krydslinker til preview i ${label}: ${reference}`);
+  }
+  if (!existsSync(target)) {
+    fail(`${variant} reference mangler i ${label}: ${reference}`);
+  }
+}
+
+function resolveModuleReference(dir, variant, moduleName, reference, label) {
+  const clean = cleanReference(reference).replaceAll("\\", "/");
+  if (hasParentSegment(clean)) {
+    fail(`${variant} har et ../-krydslink i ${moduleName}: ${reference}`);
+  }
+  if (!clean.startsWith("./")) {
+    fail(`${variant} har en ikke-relativ ${label} i ${moduleName}: ${reference}`);
+  }
+  const outputName = posix.normalize(
+    posix.join(posix.dirname(moduleName), clean),
+  );
+  const target = resolve(dir, outputName);
+  assertVariantTarget(dir, variant, target, reference, `${moduleName} ${label}`);
+  return outputName;
+}
+
+function resolveRootReference(dir, variant, reference, label) {
+  const outputName = assertOutputName(reference.replace(/^\.\//, ""), label);
+  const target = resolve(dir, outputName);
+  assertVariantTarget(dir, variant, target, reference, label);
+  return outputName;
+}
+
+function scanModuleReferences(code) {
+  const dynamicImports = Array.from(
+    code.matchAll(/\bimport\s*\(\s*(["'])([^"'`]+)\1\s*\)/g),
+    (match) => match[2],
+  );
+  const sideEffectImports = Array.from(
+    code.matchAll(/\bimport\s*(["'])([^"']+)\1/g),
+    (match) => match[2],
+  );
+  const fromImports = Array.from(
+    code.matchAll(
+      /\b(?:import|export)\s+(?!\()[^;"']{0,500}?\bfrom\s*(["'])([^"']+)\1/g,
+    ),
+    (match) => match[2],
+  );
+  const importMetaAssets = Array.from(
+    code.matchAll(
+      /new URL\(\s*(["'])([^"']+)\1\s*,\s*import\.meta\.url\s*\)/g,
+    ),
+    (match) => match[2],
+  );
+  const preloadAssets = [];
+  for (const match of code.matchAll(/\.f\s*=\s*\[([^\]]*)\]/g)) {
+    preloadAssets.push(
+      ...Array.from(
+        match[1].matchAll(/(["'])([^"']+)\1/g),
+        (literal) => literal[2],
+      ),
+    );
+  }
+  return {
+    imports: [...new Set([...sideEffectImports, ...fromImports])],
+    dynamicImports: [...new Set(dynamicImports)],
+    importMetaAssets: [...new Set(importMetaAssets)],
+    preloadAssets: [...new Set(preloadAssets)],
+  };
+}
+
+function sameStrings(actual, expected) {
+  return (
+    actual.length === expected.length &&
+    [...actual].sort().every((value, index) => value === [...expected].sort()[index])
+  );
+}
+
+function verifyCssGraph(dir, variant, initialCss) {
+  const pending = [...new Set(initialCss)];
+  const seen = new Set();
+  while (pending.length > 0) {
+    const css = pending.pop();
+    if (!css || seen.has(css)) continue;
+    seen.add(css);
+    const path = resolve(dir, css);
+    assertVariantTarget(dir, variant, path, css, "CSS-graf");
+    const source = readRequired(path, `${variant} CSS`);
+    const references = [
+      ...Array.from(
+        source.matchAll(/url\(\s*(?:(["'])(.*?)\1|([^)'"]+))\s*\)/gi),
+        (match) => match[2] ?? match[3],
+      ),
+      ...Array.from(
+        source.matchAll(/@import\s+(?:url\(\s*)?(["'])([^"']+)\1/gi),
+        (match) => match[2],
+      ),
+    ].filter(
+      (reference) =>
+        reference &&
+        !/^(?:data:|[a-z]+:|\/\/|#)/i.test(reference),
+    );
+    for (const reference of references) {
+      const outputName = resolveModuleReference(
+        dir,
+        variant,
+        css,
+        reference,
+        "CSS-reference",
+      );
+      if (outputName.endsWith(".css")) pending.push(outputName);
+    }
+  }
+}
+
+function verifyModuleGraph(dir, variant, contract) {
+  const moduleNames = Object.keys(contract.modules).map((name) =>
+    assertOutputName(name, `${variant} modul`),
+  );
+  if (!moduleNames.includes(contract.entry)) {
+    fail(`${variant} entry findes ikke i den deklarerede modulgraph`);
+  }
+
+  const css = new Set();
+  for (const moduleName of moduleNames) {
+    const metadata = contract.modules[moduleName];
+    const path = resolve(dir, moduleName);
+    assertVariantTarget(dir, variant, path, moduleName, "modulgraph");
+    const actualHash = fileSha256(path);
+    if (actualHash !== metadata.sha256) {
+      fail(`${variant} SHA256/hash mismatch for ${moduleName}`);
+    }
+    for (const dependency of [
+      ...metadata.imports,
+      ...metadata.dynamicImports,
+      ...metadata.preloads,
+    ]) {
+      const outputName = resolveRootReference(
+        dir,
+        variant,
+        dependency,
+        `${moduleName} dependency`,
+      );
+      if (
+        (metadata.imports.includes(dependency) ||
+          metadata.dynamicImports.includes(dependency) ||
+          outputName.endsWith(".js")) &&
+        !contract.modules[outputName]
+      ) {
+        fail(`${variant} mangler lazy/import-modulmetadata for ${outputName}`);
+      }
+      if (outputName.endsWith(".css")) css.add(outputName);
+    }
+
+    const source = readRequired(path, `${variant} modul`);
+    const scanned = scanModuleReferences(source);
+    const actualImports = scanned.imports.map((reference) =>
+      resolveModuleReference(
+        dir,
+        variant,
+        moduleName,
+        reference,
+        "statisk import",
+      ),
+    );
+    const actualDynamic = scanned.dynamicImports.map((reference) =>
+      resolveModuleReference(
+        dir,
+        variant,
+        moduleName,
+        reference,
+        "dynamisk import",
+      ),
+    );
+    if (!sameStrings(actualImports, metadata.imports)) {
+      fail(`${variant} statisk importgraf er stale for ${moduleName}`);
+    }
+    if (!sameStrings(actualDynamic, metadata.dynamicImports)) {
+      fail(`${variant} dynamisk importgraf er stale for ${moduleName}`);
+    }
+    for (const reference of scanned.importMetaAssets) {
+      resolveModuleReference(
+        dir,
+        variant,
+        moduleName,
+        reference.startsWith(".") ? reference : `./${reference}`,
+        "import.meta-asset",
+      );
+    }
+    for (const reference of scanned.preloadAssets) {
+      const outputName = resolveRootReference(
+        dir,
+        variant,
+        reference,
+        `${moduleName} preload`,
+      );
+      if (outputName.endsWith(".css")) css.add(outputName);
+    }
+  }
+
+  const reachable = new Set();
+  const pending = [contract.entry];
+  while (pending.length > 0) {
+    const moduleName = pending.pop();
+    if (!moduleName || reachable.has(moduleName)) continue;
+    reachable.add(moduleName);
+    const metadata = contract.modules[moduleName];
+    if (!metadata) {
+      fail(`${variant} modulgraph mangler ${moduleName}`);
+    }
+    for (const dependency of [
+      ...metadata.imports,
+      ...metadata.dynamicImports,
+      ...metadata.preloads.filter((name) => name.endsWith(".js")),
+    ]) {
+      pending.push(dependency);
+    }
+  }
+  const unreachable = moduleNames.filter((name) => !reachable.has(name));
+  if (unreachable.length > 0) {
+    fail(`${variant} har uopnåelige/stale chunks: ${unreachable.join(", ")}`);
+  }
+
+  const entryHash = fileSha256(resolve(dir, contract.entry));
+  if (entryHash !== contract.entrySha256) {
+    fail(`${variant} entry SHA256/hash matcher ikke buildkontrakten`);
+  }
+  verifyCssGraph(dir, variant, css);
+  return { entryHash, css: [...css] };
 }
 
 function inspectVariant(root, relativeDir, expectedVariant) {
@@ -96,37 +405,34 @@ function inspectVariant(root, relativeDir, expectedVariant) {
   const htmlPath = resolve(dir, "index.html");
   const html = readRequired(htmlPath, `${expectedVariant} index.html`);
   const contract = contractAt(dir, expectedVariant);
+  const htmlCss = [];
 
   for (const reference of localReferences(html)) {
-    const clean = decodeURIComponent(reference.split(/[?#]/, 1)[0]);
-    const target = resolve(dir, clean);
-    const inside = target === dir || target.startsWith(`${dir}${sep}`);
-    if (!inside) {
-      fail(`${expectedVariant} har et krydslink uden for sin outputmappe: ${reference}`);
-    }
-    if (!existsSync(target)) {
-      fail(`${expectedVariant} reference mangler: ${reference}`);
-    }
+    const outputName = assertOutputName(
+      normalizedHtmlReference(reference),
+      `${expectedVariant} index.html`,
+    );
+    const target = resolve(dir, outputName);
+    assertVariantTarget(
+      dir,
+      expectedVariant,
+      target,
+      reference,
+      "index.html",
+    );
+    if (outputName.endsWith(".css")) htmlCss.push(outputName);
   }
 
-  const entryReference = moduleEntry(html, expectedVariant);
-  const entry = normalizedReference(entryReference);
+  const entry = normalizedHtmlReference(moduleEntry(html, expectedVariant));
   if (entry !== contract.entry) {
     fail(
       `${expectedVariant} entry er stale: index.html=${entry}, kontrakt=${contract.entry}`,
     );
   }
-  const entryPath = resolve(dir, entry);
-  if (!entryPath.startsWith(`${dir}${sep}`) || !existsSync(entryPath)) {
-    fail(`${expectedVariant} entry mangler eller krydslinker: ${entry}`);
-  }
-  const bundle = readRequired(entryPath, `${expectedVariant} entry`);
-  const enabled = bundle.includes(FEATURE_MARKER);
-  if (enabled !== contract.improvisationEnabled) {
-    fail(`${expectedVariant} bundle matcher ikke feature-kontrakten`);
-  }
+  const graph = verifyModuleGraph(dir, expectedVariant, contract);
+  verifyCssGraph(dir, expectedVariant, htmlCss);
 
-  return { dir, html, contract, entry, entryPath, bundle };
+  return { dir, html, contract, entry, entryHash: graph.entryHash };
 }
 
 function textFiles(root) {
@@ -179,10 +485,7 @@ export function verifyPagesArtifact({
   ) {
     fail("preview mangler non-production playtest/noindex-metadata");
   }
-  if (
-    production.entry === preview.entry ||
-    production.bundle === preview.bundle
-  ) {
+  if (production.entryHash === preview.entryHash) {
     fail("root og preview har samme stale entry-bundle");
   }
 
@@ -201,7 +504,7 @@ export function verifyPagesArtifact({
 
   log(`root: ${production.entry} (improvisation off)`);
   log(`preview: ${preview.entry} (improvisation on, offline)`);
-  log("✅ Pages-artifact: lokale assets, build modes og metadata er konsistente.");
+  log("✅ Pages-artifact: env, hashes og hele modulgrafen er konsistente.");
   return {
     root: { entry: production.entry },
     preview: { entry: preview.entry },
@@ -218,7 +521,9 @@ function cliRoot(argv) {
   return resolve(REPO_ROOT, value);
 }
 
-const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : "";
+const invokedPath = process.argv[1]
+  ? pathToFileURL(resolve(process.argv[1])).href
+  : "";
 if (invokedPath === import.meta.url) {
   try {
     verifyPagesArtifact({

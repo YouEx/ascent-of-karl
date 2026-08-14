@@ -42,14 +42,20 @@ export function createPagesBuildPlan(parentEnv = process.env) {
       outDir: "dist",
       publicUrl: ROOT_URL,
       enabled: false,
-      env: safeEnvironment(parentEnv, false),
+      env: {
+        ...safeEnvironment(parentEnv, false),
+        KARL_PAGES_VARIANT: "production-root",
+      },
     },
     {
       variant: "improvisation-playtest",
       outDir: "dist/playtest/improvisation",
       publicUrl: PREVIEW_URL,
       enabled: true,
-      env: safeEnvironment(parentEnv, true),
+      env: {
+        ...safeEnvironment(parentEnv, true),
+        KARL_PAGES_VARIANT: "improvisation-playtest",
+      },
     },
   ];
 }
@@ -81,16 +87,6 @@ function runViteBuild(step, root) {
   });
 }
 
-function entryFromHtml(html) {
-  for (const match of html.matchAll(/<script\b[^>]*>/gi)) {
-    const tag = match[0];
-    if (!/\btype=["']module["']/i.test(tag)) continue;
-    const entry = tag.match(/\bsrc=["']([^"']+)["']/i)?.[1];
-    if (entry) return entry.replace(/^\.\//, "");
-  }
-  throw new Error("Vite-outputtet mangler et module-entry");
-}
-
 function markPreview(indexPath) {
   let html = readFileSync(indexPath, "utf8");
   if (!html.includes(ROOT_OG_URL) || !html.includes("  </head>")) {
@@ -100,26 +96,6 @@ function markPreview(indexPath) {
     .replace(ROOT_OG_URL, `<meta property="og:url" content="${PREVIEW_URL}" />`)
     .replace("  </head>", `${PLAYTEST_META}\n  </head>`);
   writeFileSync(indexPath, html);
-}
-
-function writeContract(step, root) {
-  const outDir = resolve(root, step.outDir);
-  const indexPath = resolve(outDir, "index.html");
-  if (step.enabled) markPreview(indexPath);
-  const html = readFileSync(indexPath, "utf8");
-  const contract = {
-    schema: 1,
-    variant: step.variant,
-    publicUrl: step.publicUrl,
-    entry: entryFromHtml(html),
-    improvisationEnabled: step.enabled,
-    improviseUrl: "",
-    narratorUrl: "",
-  };
-  writeFileSync(
-    resolve(outDir, "pages-build.json"),
-    `${JSON.stringify(contract, null, 2)}\n`,
-  );
 }
 
 export async function buildPages({
@@ -137,7 +113,9 @@ export async function buildPages({
   for (const step of plan) {
     log(`\nBygger ${step.variant} → ${step.outDir}`);
     await runner(step, root);
-    writeContract(step, root);
+    if (step.enabled) {
+      markPreview(resolve(root, step.outDir, "index.html"));
+    }
     checkBundleBudget({ root, outDir: step.outDir, log });
   }
 

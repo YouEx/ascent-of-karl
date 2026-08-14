@@ -5,6 +5,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
@@ -14,6 +15,7 @@ const SCRATCH_ROOT = resolve(ROOT, ".judge", "test-scratch");
 const read = (path: string) => readFileSync(resolve(ROOT, path), "utf8");
 const PREVIEW_URL =
   "https://youex.github.io/ascent-of-karl/playtest/improvisation/";
+const ROOT_URL = "https://youex.github.io/ascent-of-karl/";
 
 const scratch: string[] = [];
 
@@ -62,24 +64,38 @@ function writeFixture(): string {
   mkdirSync(rootAssets, { recursive: true });
   mkdirSync(previewAssets, { recursive: true });
 
+  const rootEntry = 'import("./lazy-root.js");globalThis.rootBuild=true;';
+  const rootLazy = "export default 'root lazy';";
+  const previewEntry =
+    'import("./lazy-preview.js");globalThis.previewBuild=true;';
+  const previewLazy = "export default 'preview lazy';";
+
   writeFileSync(
     join(root, "index.html"),
     '<!doctype html><script type="module" src="./assets/index-root.js"></script>',
   );
-  writeFileSync(
-    join(rootAssets, "index-root.js"),
-    'document.documentElement.dataset.ready="true";',
-  );
+  writeFileSync(join(rootAssets, "index-root.js"), rootEntry);
+  writeFileSync(join(rootAssets, "lazy-root.js"), rootLazy);
   writeFileSync(
     join(root, "pages-build.json"),
     JSON.stringify({
-      schema: 1,
+      schema: 2,
       variant: "production-root",
-      publicUrl: "https://youex.github.io/ascent-of-karl/",
+      publicUrl: ROOT_URL,
       entry: "assets/index-root.js",
-      improvisationEnabled: false,
-      improviseUrl: "",
-      narratorUrl: "",
+      entrySha256: sha256(rootEntry),
+      env: {
+        mode: "production",
+        VITE_IMPROVISE_ENABLED: "false",
+        VITE_IMPROVISE_URL: "",
+        VITE_NARRATOR_URL: "",
+      },
+      modules: {
+        "assets/index-root.js": moduleContract(rootEntry, {
+          dynamicImports: ["assets/lazy-root.js"],
+        }),
+        "assets/lazy-root.js": moduleContract(rootLazy),
+      },
     }),
   );
 
@@ -92,23 +108,77 @@ function writeFixture(): string {
       '<script type="module" src="./assets/index-preview.js"></script>',
     ].join(""),
   );
-  writeFileSync(
-    join(previewAssets, "index-preview.js"),
-    'document.documentElement.dataset.improviseEnabled="true";',
-  );
+  writeFileSync(join(previewAssets, "index-preview.js"), previewEntry);
+  writeFileSync(join(previewAssets, "lazy-preview.js"), previewLazy);
   writeFileSync(
     join(preview, "pages-build.json"),
     JSON.stringify({
-      schema: 1,
+      schema: 2,
       variant: "improvisation-playtest",
       publicUrl: PREVIEW_URL,
       entry: "assets/index-preview.js",
-      improvisationEnabled: true,
-      improviseUrl: "",
-      narratorUrl: "",
+      entrySha256: sha256(previewEntry),
+      env: {
+        mode: "production",
+        VITE_IMPROVISE_ENABLED: "true",
+        VITE_IMPROVISE_URL: "",
+        VITE_NARRATOR_URL: "",
+      },
+      modules: {
+        "assets/index-preview.js": moduleContract(previewEntry, {
+          dynamicImports: ["assets/lazy-preview.js"],
+        }),
+        "assets/lazy-preview.js": moduleContract(previewLazy),
+      },
     }),
   );
   return root;
+}
+
+function sha256(text: string): string {
+  return createHash("sha256").update(text).digest("hex");
+}
+
+function moduleContract(
+  text: string,
+  overrides: Partial<{
+    imports: string[];
+    dynamicImports: string[];
+    preloads: string[];
+  }> = {},
+): {
+  sha256: string;
+  imports: string[];
+  dynamicImports: string[];
+  preloads: string[];
+} {
+  return {
+    sha256: sha256(text),
+    imports: [],
+    dynamicImports: [],
+    preloads: [],
+    ...overrides,
+  };
+}
+
+function rewriteModuleAndHash(
+  root: string,
+  variant: "root" | "preview",
+  module: string,
+  text: string,
+): void {
+  const dir =
+    variant === "root" ? root : join(root, "playtest", "improvisation");
+  const contractPath = join(dir, "pages-build.json");
+  const contract = JSON.parse(readFileSync(contractPath, "utf8")) as {
+    entry: string;
+    entrySha256: string;
+    modules: Record<string, { sha256: string }>;
+  };
+  writeFileSync(join(dir, module), text);
+  contract.modules[module]!.sha256 = sha256(text);
+  if (contract.entry === module) contract.entrySha256 = sha256(text);
+  writeFileSync(contractPath, JSON.stringify(contract));
 }
 
 describe("GitHub Pages playtest-buildkontrakt", () => {
@@ -130,7 +200,7 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
       scripts: Record<string, string>;
     };
     expect(pkg.scripts["build:pages"]).toContain("tools/build_pages.mjs");
-    expect(pkg.scripts["verify:pages"]).toContain(
+    expect(pkg.scripts["pages:verify"]).toContain(
       "tools/verify_pages_artifact.mjs",
     );
   });
@@ -152,12 +222,14 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
     expect(plan[1]?.outDir).toBe("dist/playtest/improvisation");
     expect(plan[0]?.env).toMatchObject({
       NODE_ENV: "production",
+      KARL_PAGES_VARIANT: "production-root",
       VITE_IMPROVISE_ENABLED: "false",
       VITE_IMPROVISE_URL: "",
       VITE_NARRATOR_URL: "",
     });
     expect(plan[1]?.env).toMatchObject({
       NODE_ENV: "production",
+      KARL_PAGES_VARIANT: "improvisation-playtest",
       VITE_IMPROVISE_ENABLED: "true",
       VITE_IMPROVISE_URL: "",
       VITE_NARRATOR_URL: "",
@@ -194,13 +266,18 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
     writeFileSync(
       join(stale, "playtest", "improvisation", "pages-build.json"),
       JSON.stringify({
-        schema: 1,
+        schema: 2,
         variant: "improvisation-playtest",
         publicUrl: PREVIEW_URL,
         entry: "assets/index-old.js",
-        improvisationEnabled: true,
-        improviseUrl: "",
-        narratorUrl: "",
+        entrySha256: "0".repeat(64),
+        env: {
+          mode: "production",
+          VITE_IMPROVISE_ENABLED: "true",
+          VITE_IMPROVISE_URL: "",
+          VITE_NARRATOR_URL: "",
+        },
+        modules: {},
       }),
     );
     expect(() =>
@@ -222,13 +299,80 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
     ).toThrow(/krydslink|cross-link|preview/i);
   });
 
+  it("afviser kommentar, unrelated streng og reviewerens erstattede bundle", async () => {
+    const { verifyPagesArtifact } = await verifierModule();
+    for (const mutate of [
+      (previewBundle: string) =>
+        `${previewBundle}\n// dataset.improviseEnabled="true"`,
+      (previewBundle: string) =>
+        `${previewBundle}\nconst unrelated="dataset.improviseEnabled=\\"true\\"";`,
+      (_previewBundle: string, rootBundle: string) =>
+        `${rootBundle}\n// dataset.improviseEnabled="true"`,
+    ]) {
+      const root = writeFixture();
+      const previewPath = join(
+        root,
+        "playtest",
+        "improvisation",
+        "assets",
+        "index-preview.js",
+      );
+      writeFileSync(
+        previewPath,
+        mutate(
+          readFileSync(previewPath, "utf8"),
+          readFileSync(join(root, "assets", "index-root.js"), "utf8"),
+        ),
+      );
+
+      expect(() =>
+        verifyPagesArtifact({ root, log: () => undefined }),
+      ).toThrow(/hash|sha256|entry/i);
+    }
+  });
+
+  it("afviser en muteret dynamisk import, der krydslinker fra preview til root", async () => {
+    const { verifyPagesArtifact } = await verifierModule();
+    const root = writeFixture();
+    rewriteModuleAndHash(
+      root,
+      "preview",
+      "assets/index-preview.js",
+      'import("../../../assets/lazy-root.js");globalThis.previewBuild=true;',
+    );
+
+    expect(() =>
+      verifyPagesArtifact({ root, log: () => undefined }),
+    ).toThrow(/krydslink|cross-link|\.\.\//i);
+  });
+
+  it("afviser en manglende lazy chunk i den deklarerede modulgraph", async () => {
+    const { verifyPagesArtifact } = await verifierModule();
+    const root = writeFixture();
+    rmSync(
+      join(
+        root,
+        "playtest",
+        "improvisation",
+        "assets",
+        "lazy-preview.js",
+      ),
+    );
+
+    expect(() =>
+      verifyPagesArtifact({ root, log: () => undefined }),
+    ).toThrow(/lazy-preview|lazy|mangler|missing/i);
+  });
+
   it("afviser en Worker-URL fra et fjendtligt ambient miljø", async () => {
     const { verifyPagesArtifact } = await verifierModule();
     const root = writeFixture();
     const hostile = "https://hostile.invalid/improvise?bill=someone";
-    writeFileSync(
-      join(root, "playtest", "improvisation", "assets", "index-preview.js"),
-      `const endpoint=${JSON.stringify(hostile)};document.documentElement.dataset.improviseEnabled="true";`,
+    rewriteModuleAndHash(
+      root,
+      "preview",
+      "assets/index-preview.js",
+      `import("./lazy-preview.js");const endpoint=${JSON.stringify(hostile)};globalThis.previewBuild=true;`,
     );
 
     expect(() =>
