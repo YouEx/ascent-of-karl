@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 from PIL import Image
 from scipy import ndimage
 
@@ -16,6 +17,9 @@ CONFIG_PATH = ROOT / "tools/art/title-materials.config.json"
 SCRIPT_PATH = ROOT / "tools/art/build_title_materials.py"
 SOURCE_PATH = ROOT / "docs/design/reference/title-2026-08-11.webp"
 SOURCE_SHA256 = "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850"
+
+sys.path.insert(0, str(ROOT / "tools/art"))
+import build_title_materials as builder  # noqa: E402
 
 EXPECTED_DIMENSIONS = {
     "wordmark-desktop.webp": (545, 320),
@@ -78,7 +82,7 @@ def _built(tmp_path: Path, name: str) -> tuple[Path, dict]:
 def test_config_pinner_kilde_crops_matte_dimensioner_og_budgetter() -> None:
     config = _config()
 
-    assert config["version"] == 1
+    assert config["version"] == 2
     assert config["source"] == {
         "path": "docs/design/reference/title-2026-08-11.webp",
         "sha256": SOURCE_SHA256,
@@ -92,6 +96,7 @@ def test_config_pinner_kilde_crops_matte_dimensioner_og_budgetter() -> None:
         "closeRadiusPixels": 1,
         "maxTransitionPixels": 1,
         "maxFringePixels": 1,
+        "maxCompositeDeltaE": 8.0,
         "parchmentRgb": [229, 207, 185],
     }
     assert config["budgets"] == {
@@ -105,6 +110,37 @@ def test_config_pinner_kilde_crops_matte_dimensioner_og_budgetter() -> None:
     assert config["assets"]["welcomeFrame"]["crop"] == [20, 20, 360, 100]
     assert config["assets"]["toolFrame"]["crop"] == [1384, 20, 1458, 96]
     assert config["assets"]["tipCardFrame"]["crop"] == [95, 828, 665, 954]
+    assert config["assets"]["ribbon"]["centerPolicy"] == "stretch"
+    assert config["assets"]["begin"]["centerPolicy"] == "stretch"
+    assert config["assets"]["fates"]["centerPolicy"] == "stretch"
+    assert config["coverageGates"]["wordmark"]["minDominantInkPixels"] == 8_000
+    assert config["occupancyGrouping"] == {
+        "dilationHeight": 5,
+        "dilationWidth": 15,
+        "inkLumaMax": 100,
+        "alphaMin": 64,
+        "minDensity": 0.25,
+    }
+    assert config["parchmentDependencies"] == {
+        "desktop": {
+            "path": "src/assets/art/title-parchment-692.webp",
+            "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a",
+            "width": 692,
+            "height": 907,
+        },
+        "mobile-390": {
+            "path": "src/assets/art/title-parchment-360.webp",
+            "sha256": "e9ebd8305af47b2c349818c41b673903ac53b4ad3b854fd9c38ea72b75758636",
+            "width": 360,
+            "height": 472,
+        },
+        "mobile-430": {
+            "path": "src/assets/art/title-parchment-520.webp",
+            "sha256": "a9ea6949645b1c8f7a7b442e727454c0b36c603ab535fcda3ed50ec308396938",
+            "width": 520,
+            "height": 682,
+        },
+    }
     assert config["outputDimensions"] == {
         name: list(size) for name, size in EXPECTED_DIMENSIONS.items()
     }
@@ -131,7 +167,7 @@ def test_build_er_byteidentisk_og_manifestet_har_proveniens(tmp_path: Path) -> N
     assert first == second
     assert first_manifest == second_manifest
     assert first_manifest["source"]["sha256"] == SOURCE_SHA256
-    assert first_manifest["algorithm"] == "title-materials-v1"
+    assert first_manifest["algorithm"] == "title-materials-v2"
     assert set(first_manifest["assets"]) == set(EXPECTED_DIMENSIONS)
     for name, entry in first_manifest["assets"].items():
         assert entry["sha256"] == hashlib.sha256(first[name]).hexdigest()
@@ -166,41 +202,47 @@ def _max_transition_depth(alpha: np.ndarray) -> float:
     return float(depth[semi].max())
 
 
-def _max_composite_fringe(
-    rgba: np.ndarray,
-    background: tuple[int, int, int],
-) -> float:
-    rgb = rgba[..., :3].astype(np.float64)
-    alpha = rgba[..., 3].astype(np.float64) / 255.0
-    foreground = alpha > 0
-    opaque = alpha >= (250 / 255)
-    if not opaque.any():
-        raise AssertionError("aktiv uden dækkende kerne")
-
-    _, indices = ndimage.distance_transform_edt(~opaque, return_indices=True)
-    nearest = rgb[indices[0], indices[1]]
-    bg = np.asarray(background, dtype=np.float64)
-    composite = rgb * alpha[..., None] + bg * (1 - alpha[..., None])
-    expected = nearest * alpha[..., None] + bg * (1 - alpha[..., None])
-    fringe = (np.linalg.norm(composite - expected, axis=2) > 28) & foreground
-    if not fringe.any():
-        return 0.0
-    depth = ndimage.distance_transform_edt(foreground)
-    return float(depth[fringe].max())
-
-
-def test_rgba_kanter_bestaar_sort_hvid_og_pergament(tmp_path: Path) -> None:
+def test_rgba_kanter_bestaar_kildematte_mod_sort_hvid_og_pergament(
+    tmp_path: Path,
+) -> None:
     output_dir, _ = _built(tmp_path, "alpha")
-    backgrounds = [(0, 0, 0), (255, 255, 255), (229, 207, 185)]
+    config = _config()
+    source = np.asarray(Image.open(SOURCE_PATH).convert("RGB"))
+    expected_raw, metadata = builder.build_asset_images(source, config)
+    expected = builder.codec_reference_images(expected_raw, metadata)
 
     for path in sorted(output_dir.glob("*.webp")):
         rgba = np.asarray(Image.open(path).convert("RGBA"))
         assert _max_transition_depth(rgba[..., 3]) <= 1.0, path.name
-        for background in backgrounds:
-            assert _max_composite_fringe(rgba, background) <= 1.0, (
-                path.name,
-                background,
-            )
+        result = builder.measure_matte_contamination(
+            Image.fromarray(rgba),
+            expected[path.name],
+            config["matting"],
+        )
+        assert result["maxFringePixels"] <= 1.0, path.name
+        assert result["opaqueContaminatedEdgePixels"] == 0, path.name
+        assert result["maxCompositeDeltaE"] <= 8.0, path.name
+
+
+def test_opaque_matteforurening_paa_kanten_afvises() -> None:
+    config = _config()
+    source = np.asarray(Image.open(SOURCE_PATH).convert("RGB"))
+    expected_raw, metadata = builder.build_asset_images(source, config)
+    expected = builder.codec_reference_images(expected_raw, metadata)
+    clean = np.asarray(expected["wordmark-desktop.webp"].convert("RGBA")).copy()
+    alpha = clean[..., 3]
+    boundary = (alpha >= 250) & ~ndimage.binary_erosion(alpha > 0, np.ones((3, 3)))
+    candidates = np.argwhere(boundary)
+    luma = clean[..., :3] @ np.array([0.2126, 0.7152, 0.0722])
+    y, x = candidates[np.argmin(luma[boundary])]
+    clean[y, x, :3] = config["matting"]["parchmentRgb"]
+    with pytest.raises(ValueError, match="matteforurening"):
+        builder.validate_matte_contamination(
+            Image.fromarray(clean),
+            expected["wordmark-desktop.webp"],
+            config["matting"],
+            "wordmark-desktop.webp",
+        )
 
 
 def test_wordmark_rammes_maalets_synlige_occupancy_ved_native_placering(
@@ -219,55 +261,244 @@ def test_wordmark_rammes_maalets_synlige_occupancy_ved_native_placering(
         "maxOccupancyPercent": 28.5,
     }
 
-    canvas = np.full((992, 1586, 3), (229, 207, 185), dtype=np.float64)
-    rgba = np.asarray(Image.open(output_dir / "wordmark-desktop.webp").convert("RGBA"))
-    alpha = rgba[..., 3:4].astype(np.float64) / 255.0
-    x, y = placement["left"], placement["top"]
-    canvas[y : y + 320, x : x + 545] = (
-        rgba[..., :3] * alpha
-        + canvas[y : y + 320, x : x + 545] * (1 - alpha)
+    metrics = builder.measure_wordmark_silhouette(
+        Image.open(output_dir / "wordmark-desktop.webp").convert("RGBA"),
+        placement,
+        _config()["occupancyGrouping"],
     )
-    luma = canvas @ np.array([0.2126, 0.7152, 0.0722])
-    roi = luma[round(0.10 * 992) : round(0.46 * 992), round(0.08 * 1586) : round(0.45 * 1586)]
-    labels, count = ndimage.label(roi < 100, np.ones((3, 3)))
-    sizes = ndimage.sum(roi < 100, labels, range(1, count + 1))
-    keep = np.zeros(count + 1, dtype=bool)
-    keep[1:] = sizes >= 20
-    ys, xs = np.where(keep[labels])
-    occupancy = 100 * (xs.max() - xs.min() + 1) / 1586
+    occupancy = metrics["occupancyPercent"]
 
     assert 26.5 <= occupancy <= 28.5
     assert abs(occupancy - manifest["measurements"]["titleInkOccupancyPercent"]) < 1e-9
+    assert metrics["dominantInkPixels"] >= 10_000
+    assert metrics["dominantInkDensity"] >= 0.25
+    assert manifest["measurements"]["wordmarkDominantSilhouette"] == metrics
 
 
-def test_slices_har_brede_ikke_periodiske_centerstrips(tmp_path: Path) -> None:
+def test_sparse_extrema_kan_ikke_falsk_bestaa_wordmark_occupancy() -> None:
+    sparse = np.zeros((320, 545, 4), dtype=np.uint8)
+    sparse[120:123, 40:43] = (40, 25, 15, 255)
+    sparse[120:123, 475:478] = (40, 25, 15, 255)
+    placement = _config()["nativePlacement"]["wordmark"]
+    metrics = builder.measure_wordmark_silhouette(
+        Image.fromarray(sparse),
+        placement,
+        _config()["occupancyGrouping"],
+    )
+    assert metrics["dominantInkPixels"] == 9
+    assert metrics["occupancyPercent"] < 1
+
+
+def _seam_ratio(image: Image.Image, seams: list[int]) -> float:
+    rgba = np.asarray(image.convert("RGBA")).astype(np.float64)
+    alpha = rgba[..., 3:4] / 255.0
+    parchment = np.asarray((229, 207, 185), dtype=np.float64)
+    composite = rgba[..., :3] * alpha + parchment * (1 - alpha)
+    adjacent = np.mean(np.abs(np.diff(composite, axis=1)), axis=(0, 2))
+    excluded = np.ones(adjacent.shape, dtype=bool)
+    for seam in seams:
+        excluded[max(0, seam - 3) : min(adjacent.size, seam + 2)] = False
+    normal = max(float(np.percentile(adjacent[excluded], 75)), 0.25)
+    return max(float(adjacent[seam - 1] / normal) for seam in seams)
+
+
+def test_slices_har_brede_seamfri_stretchcentre_ved_3x(tmp_path: Path) -> None:
     output_dir, manifest = _built(tmp_path, "slices")
-    assert manifest["slices"]["ribbon"]["centerWidth"] == 380
-    assert manifest["slices"]["begin"]["centerWidth"] == 168
-    assert manifest["slices"]["fates"]["centerWidth"] == 118
-    assert manifest["slices"]["welcomeFrame"]["insets"] == [18, 24, 18, 24]
-    assert manifest["slices"]["toolFrame"]["insets"] == [16, 16, 16, 16]
-    assert manifest["slices"]["tipCardFrame"]["insets"] == [24, 28, 24, 28]
+    config = _config()
+    for asset_id in ("ribbon", "begin", "fates"):
+        spec = config["assets"][asset_id]
+        assert spec["centerPolicy"] == "stretch"
+        assert spec["slices"][1] >= 96
+        expanded = builder.render_three_slice(
+            [Image.open(output_dir / name).convert("RGBA") for name in spec["outputs"]],
+            center_width=spec["slices"][1] * 3,
+            policy=spec["centerPolicy"],
+        )
+        seams = [spec["slices"][0], spec["slices"][0] + spec["slices"][1] * 3]
+        ratio = _seam_ratio(expanded, seams)
+        assert ratio <= spec["maxSeamRatio"], asset_id
+        assert abs(ratio - manifest["slices"][asset_id]["expanded3xSeamRatio"]) < 1e-9
 
-    for name in ("ribbon-center.webp", "begin-center.webp", "fates-center.webp"):
-        rgb = np.asarray(Image.open(output_dir / name).convert("RGB"))
-        assert rgb.shape[1] >= 96, name
-        for forbidden_period in (12, 28):
-            if rgb.shape[1] > forbidden_period:
-                same = np.mean(rgb[:, forbidden_period:] == rgb[:, :-forbidden_period])
-                assert same < 0.98, f"{name}: gentager {forbidden_period}px-strip"
+
+def test_9slice_policy_og_min_native_max_expansioner_bestaar(tmp_path: Path) -> None:
+    output_dir, manifest = _built(tmp_path, "nine-slice")
+    config = _config()
+    for asset_id in ("welcomeFrame", "toolFrame", "tipCardFrame"):
+        spec = config["assets"][asset_id]
+        policy = spec["nineSlicePolicy"]
+        assert policy["regions"] == {
+            "corners": {},
+            "topEdge": {"x": "stretch"},
+            "bottomEdge": {"x": "stretch"},
+            "leftEdge": {"y": "stretch"},
+            "rightEdge": {"y": "stretch"},
+            "center": {"x": "stretch", "y": "stretch"},
+        }
+        source = Image.open(output_dir / spec["output"]).convert("RGBA")
+        evidence = {}
+        for size_id, size in spec["expansionSizes"].items():
+            expanded = builder.render_nine_slice(
+                source,
+                spec["insets"],
+                tuple(size),
+                policy,
+            )
+            quality = builder.measure_nine_slice_quality(
+                source,
+                expanded,
+                spec["insets"],
+            )
+            assert quality["maxSeamRatio"] <= spec["maxSeamRatio"], (asset_id, size_id)
+            assert quality["maxEdgeDistortion"] <= spec["maxEdgeDistortion"], (
+                asset_id,
+                size_id,
+            )
+            assert quality["cornersExact"] is True
+            evidence[size_id] = quality
+        assert manifest["nineSliceEvidence"][asset_id] == evidence
+
+
+def test_synlig_daekning_komponenter_og_blaek_er_meningsfulde(
+    tmp_path: Path,
+) -> None:
+    output_dir, manifest = _built(tmp_path, "coverage")
+    config = _config()
+    for name, entry in manifest["assets"].items():
+        metrics = builder.measure_visible_coverage(
+            Image.open(output_dir / name).convert("RGBA"),
+            entry["assetClass"],
+            config,
+        )
+        assert entry["coverage"] == metrics
+        assert entry["maxTransitionPixels"] <= 1.0
+        builder.validate_visible_coverage(
+            metrics,
+            entry["assetClass"],
+            config,
+            name,
+        )
+
+    tiny = np.zeros((100, 100, 4), dtype=np.uint8)
+    tiny[49:51, 49:51] = (0, 0, 0, 255)
+    with pytest.raises(ValueError, match="synlig dækning"):
+        metrics = builder.measure_visible_coverage(
+            Image.fromarray(tiny),
+            "ornament",
+            config,
+        )
+        builder.validate_visible_coverage(
+            metrics,
+            "ornament",
+            config,
+            "tiny.webp",
+        )
+
+    flat = np.full((100, 100, 4), (120, 80, 40, 255), dtype=np.uint8)
+    with pytest.raises(ValueError, match="synlig dækning"):
+        metrics = builder.measure_visible_coverage(
+            Image.fromarray(flat),
+            "material",
+            config,
+        )
+        builder.validate_visible_coverage(
+            metrics,
+            "material",
+            config,
+            "flat.webp",
+        )
 
 
 def test_kritiske_materialer_holder_desktop_og_mobilbudget(tmp_path: Path) -> None:
     _, manifest = _built(tmp_path, "budgets")
     assert manifest["bundles"]["desktop"]["bytes"] <= 180_000
-    assert manifest["bundles"]["mobile"]["bytes"] <= 120_000
+    assert manifest["bundles"]["mobile-390"]["bytes"] <= 120_000
+    assert manifest["bundles"]["mobile-430"]["bytes"] <= 120_000
     assert "wordmark-desktop.webp" in manifest["bundles"]["desktop"]["files"]
     assert "wordmark-mobile.webp" not in manifest["bundles"]["desktop"]["files"]
-    assert "wordmark-mobile.webp" in manifest["bundles"]["mobile"]["files"]
-    assert "wordmark-desktop.webp" not in manifest["bundles"]["mobile"]["files"]
-    assert "welcome-frame.webp" not in manifest["bundles"]["mobile"]["files"]
-    assert "welcome-figure.webp" not in manifest["bundles"]["mobile"]["files"]
+    for viewport in ("mobile-390", "mobile-430"):
+        assert "wordmark-mobile.webp" in manifest["bundles"][viewport]["files"]
+        assert "wordmark-desktop.webp" not in manifest["bundles"][viewport]["files"]
+        assert "welcome-frame.webp" not in manifest["bundles"][viewport]["files"]
+        assert "welcome-figure.webp" not in manifest["bundles"][viewport]["files"]
+        parchment = manifest["bundles"][viewport]["parchment"]
+        assert parchment["bytes"] > 0
+        assert manifest["bundles"][viewport]["bytes"] == (
+            manifest["bundles"][viewport]["materialBytes"] + parchment["bytes"]
+        )
+    assert manifest["bundles"]["desktop"]["bytes"] == (
+        manifest["bundles"]["desktop"]["materialBytes"]
+        + manifest["bundles"]["desktop"]["parchment"]["bytes"]
+    )
+
+
+def test_manglende_pergament_afviser_payloadmanifest(
+    tmp_path: Path,
+) -> None:
+    config = _config()
+    config["parchmentDependencies"]["desktop"]["path"] = (
+        "src/assets/art/missing-title-parchment.webp"
+    )
+    config_path = tmp_path / "missing-parchment.json"
+    config_path.write_text(json.dumps(config))
+    with pytest.raises(subprocess.CalledProcessError):
+        subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT_PATH),
+                "--config",
+                str(config_path),
+                "--output-dir",
+                str(tmp_path / "assets"),
+                "--manifest",
+                str(tmp_path / "manifest.json"),
+                "--check",
+            ],
+            cwd=ROOT,
+            check=True,
+        )
+
+
+def _snapshot_pair(assets: Path, manifest: Path) -> tuple[dict[str, bytes], bytes]:
+    return (
+        {
+            path.relative_to(assets).as_posix(): path.read_bytes()
+            for path in sorted(assets.rglob("*"))
+            if path.is_file()
+        },
+        manifest.read_bytes(),
+    )
+
+
+@pytest.mark.parametrize("boundary", [1, 2, 3, 4])
+def test_publish_transaction_ruller_tilbage_ved_hver_renamegraense(
+    tmp_path: Path,
+    boundary: int,
+) -> None:
+    target_assets = tmp_path / "assets"
+    target_assets.mkdir()
+    (target_assets / "old.webp").write_bytes(b"old-asset")
+    target_manifest = tmp_path / "manifest.json"
+    target_manifest.write_bytes(b"old-manifest")
+    before = _snapshot_pair(target_assets, target_manifest)
+
+    staged_assets = tmp_path / "staged-assets"
+    staged_assets.mkdir()
+    (staged_assets / "new.webp").write_bytes(b"new-asset")
+    staged_manifest = tmp_path / "staged-manifest.json"
+    staged_manifest.write_bytes(b"new-manifest")
+
+    with pytest.raises(RuntimeError, match=f"rename {boundary}"):
+        builder.publish_transaction(
+            staged_assets,
+            staged_manifest,
+            target_assets,
+            target_manifest,
+            inject_failure_after=boundary,
+        )
+
+    assert _snapshot_pair(target_assets, target_manifest) == before
+    assert not target_assets.with_name(".assets.previous").exists()
+    assert not target_manifest.with_name(".manifest.json.previous").exists()
 
 
 def test_manifestet_failer_lukket_for_ikke_observerbare_pixels(tmp_path: Path) -> None:

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -321,68 +322,515 @@ def resize_rgba(image: Image.Image, size: tuple[int, int]) -> Image.Image:
     return rgba_image(np.rint(out_rgb).astype(np.uint8), out_alpha)
 
 
-def save_webp(image: Image.Image, path: Path, quality: int) -> None:
+def save_webp(
+    image: Image.Image,
+    path: Path,
+    quality: int,
+    *,
+    lossless: bool = False,
+) -> None:
     image.save(
         path,
         "WEBP",
         quality=quality,
         method=6,
         exact=True,
+        lossless=lossless,
     )
 
 
-def split_surface(
+def match_center_edges(
+    center: Image.Image,
+    left: Image.Image,
+    right: Image.Image,
+    blend_pixels: int,
+) -> Image.Image:
+    """Matcher centerens ender til de synlige caps over en bred overgang."""
+    rgba = np.asarray(center.convert("RGBA")).astype(np.float64)
+    left_edge = np.asarray(left.convert("RGBA"))[:, -1].astype(np.float64)
+    right_edge = np.asarray(right.convert("RGBA"))[:, 0].astype(np.float64)
+    blend = min(blend_pixels, max(1, center.width // 3))
+    for offset in range(blend):
+        weight = ((blend - offset) / blend) ** 2
+        rgba[:, offset] = rgba[:, offset] * (1 - weight) + left_edge * weight
+        rgba[:, -(offset + 1)] = (
+            rgba[:, -(offset + 1)] * (1 - weight)
+            + right_edge * weight
+        )
+    return Image.fromarray(np.rint(np.clip(rgba, 0, 255)).astype(np.uint8))
+
+
+def split_surface_images(
     image: Image.Image,
     widths: list[int],
     names: list[str],
-    output_dir: Path,
-    quality: int,
-) -> list[str]:
+) -> dict[str, Image.Image]:
     if sum(widths) != image.width:
         raise ValueError(f"slicebredder {widths} matcher ikke {image.width}px")
-    x = 0
-    written: list[str] = []
     if len(widths) != len(names):
         raise ValueError("antal slicebredder og filnavne matcher ikke")
+    x = 0
+    parts: dict[str, Image.Image] = {}
     for width, name in zip(widths, names):
-        part = image.crop((x, 0, x + width, image.height))
-        save_webp(part, output_dir / name, quality)
-        written.append(name)
+        parts[name] = image.crop((x, 0, x + width, image.height))
         x += width
-    return written
+    return parts
 
 
-def title_ink_occupancy(wordmark: Image.Image, placement: dict[str, Any]) -> float:
-    viewport_w = int(placement["viewportWidth"])
-    viewport_h = int(placement["viewportHeight"])
-    canvas = np.full((viewport_h, viewport_w, 3), (229, 207, 185), dtype=np.float64)
-    rgba = np.asarray(wordmark.convert("RGBA")).astype(np.float64)
-    alpha = rgba[..., 3:4] / 255.0
-    x, y = int(placement["left"]), int(placement["top"])
-    h, w = rgba.shape[:2]
-    canvas[y : y + h, x : x + w] = (
-        rgba[..., :3] * alpha
-        + canvas[y : y + h, x : x + w] * (1 - alpha)
+def render_three_slice(
+    parts: list[Image.Image],
+    center_width: int,
+    policy: str,
+) -> Image.Image:
+    left, center, right = [part.convert("RGBA") for part in parts]
+    if policy == "stretch":
+        rendered_center = resize_rgba(center, (center_width, center.height))
+    elif policy in {"repeat", "round"}:
+        rendered_center = tile_region(center, (center_width, center.height), policy)
+    else:
+        raise ValueError(f"ukendt 3-slice-policy: {policy}")
+    output = Image.new(
+        "RGBA",
+        (left.width + rendered_center.width + right.width, left.height),
+        (0, 0, 0, 0),
     )
-    luma = canvas @ LUMA_WEIGHTS
-    roi = luma[
-        round(0.10 * viewport_h) : round(0.46 * viewport_h),
-        round(0.08 * viewport_w) : round(0.45 * viewport_w),
+    output.alpha_composite(left, (0, 0))
+    output.alpha_composite(rendered_center, (left.width, 0))
+    output.alpha_composite(right, (left.width + rendered_center.width, 0))
+    return output
+
+
+def tile_region(
+    image: Image.Image,
+    size: tuple[int, int],
+    policy: str,
+) -> Image.Image:
+    source = image.convert("RGBA")
+    width, height = size
+    if policy == "stretch":
+        return resize_rgba(source, size)
+    if policy == "round":
+        count_x = max(1, round(width / source.width))
+        count_y = max(1, round(height / source.height))
+        source = resize_rgba(
+            source,
+            (max(1, round(width / count_x)), max(1, round(height / count_y))),
+        )
+    output = Image.new("RGBA", size, (0, 0, 0, 0))
+    for y in range(0, height, source.height):
+        for x in range(0, width, source.width):
+            output.alpha_composite(source, (x, y))
+    return output
+
+
+def render_nine_slice(
+    image: Image.Image,
+    insets: list[int],
+    size: tuple[int, int],
+    policy: dict[str, Any],
+) -> Image.Image:
+    """Renderer 9-slice med faste hjørner og deklareret aksepolitik."""
+    source = image.convert("RGBA")
+    top, right, bottom, left = [int(value) for value in insets]
+    width, height = size
+    if width < left + right or height < top + bottom:
+        raise ValueError("9-slice-output er mindre end de faste hjørner")
+
+    sx = (0, left, source.width - right, source.width)
+    sy = (0, top, source.height - bottom, source.height)
+    dx = (0, left, width - right, width)
+    dy = (0, top, height - bottom, height)
+    regions = policy["regions"]
+    output = Image.new("RGBA", size, (0, 0, 0, 0))
+
+    for row in range(3):
+        for col in range(3):
+            crop = source.crop((sx[col], sy[row], sx[col + 1], sy[row + 1]))
+            target_size = (dx[col + 1] - dx[col], dy[row + 1] - dy[row])
+            if row in {0, 2} and col in {0, 2}:
+                rendered = crop
+            elif row == 0:
+                rendered = tile_region(crop, target_size, regions["topEdge"]["x"])
+            elif row == 2:
+                rendered = tile_region(crop, target_size, regions["bottomEdge"]["x"])
+            elif col == 0:
+                rendered = tile_region(crop, target_size, regions["leftEdge"]["y"])
+            elif col == 2:
+                rendered = tile_region(crop, target_size, regions["rightEdge"]["y"])
+            else:
+                center_x = regions["center"]["x"]
+                center_y = regions["center"]["y"]
+                if center_x == center_y:
+                    rendered = tile_region(crop, target_size, center_x)
+                else:
+                    rendered = tile_region(
+                        tile_region(crop, (target_size[0], crop.height), center_x),
+                        target_size,
+                        center_y,
+                    )
+            output.paste(rendered, (dx[col], dy[row]))
+    return output
+
+
+def composite_rgb(image: Image.Image, background: tuple[int, int, int]) -> np.ndarray:
+    rgba = np.asarray(image.convert("RGBA")).astype(np.float64)
+    alpha = rgba[..., 3:4] / 255.0
+    bg = np.asarray(background, dtype=np.float64)
+    return rgba[..., :3] * alpha + bg * (1 - alpha)
+
+
+def adjacent_variation(
+    rgb: np.ndarray,
+    axis: int,
+) -> np.ndarray:
+    return np.mean(np.abs(np.diff(rgb, axis=axis)), axis=tuple(
+        dimension for dimension in range(3) if dimension != axis
+    ))
+
+
+def measured_seam_ratio(
+    image: Image.Image,
+    seams: list[int],
+    axis: int,
+) -> float:
+    rgb = composite_rgb(image, (229, 207, 185))
+    adjacent = adjacent_variation(rgb, axis)
+    included = np.ones(adjacent.shape, dtype=bool)
+    for seam in seams:
+        included[max(0, seam - 3) : min(adjacent.size, seam + 2)] = False
+    normal = max(float(np.percentile(adjacent[included], 75)), 0.25)
+    return max(float(adjacent[seam - 1] / normal) for seam in seams)
+
+
+def _edge_distortion(
+    source: Image.Image,
+    expanded: Image.Image,
+    source_box: tuple[int, int, int, int],
+    expanded_box: tuple[int, int, int, int],
+) -> float:
+    original = source.crop(source_box).convert("RGBA")
+    rendered = expanded.crop(expanded_box).convert("RGBA")
+    rendered = resize_rgba(rendered, original.size)
+    original_rgb = composite_rgb(original, (229, 207, 185))
+    rendered_rgb = composite_rgb(rendered, (229, 207, 185))
+    scale = max(float(original_rgb.std()), 1.0)
+    return float(np.mean(np.abs(original_rgb - rendered_rgb)) / scale)
+
+
+def measure_nine_slice_quality(
+    source: Image.Image,
+    expanded: Image.Image,
+    insets: list[int],
+) -> dict[str, Any]:
+    top, right, bottom, left = [int(value) for value in insets]
+    source = source.convert("RGBA")
+    expanded = expanded.convert("RGBA")
+    corners = [
+        ((0, 0, left, top), (0, 0, left, top)),
+        (
+            (source.width - right, 0, source.width, top),
+            (expanded.width - right, 0, expanded.width, top),
+        ),
+        (
+            (0, source.height - bottom, left, source.height),
+            (0, expanded.height - bottom, left, expanded.height),
+        ),
+        (
+            (
+                source.width - right,
+                source.height - bottom,
+                source.width,
+                source.height,
+            ),
+            (
+                expanded.width - right,
+                expanded.height - bottom,
+                expanded.width,
+                expanded.height,
+            ),
+        ),
     ]
-    labels, count = ndimage.label(roi < 100, np.ones((3, 3)))
-    sizes = ndimage.sum(roi < 100, labels, range(1, count + 1))
-    keep = np.zeros(count + 1, dtype=bool)
-    keep[1:] = sizes >= 20
-    ys, xs = np.where(keep[labels])
-    if xs.size == 0:
+    corners_exact = all(
+        np.array_equal(
+            np.asarray(source.crop(source_box)),
+            np.asarray(expanded.crop(expanded_box)),
+        )
+        for source_box, expanded_box in corners
+    )
+
+    source_rgb = composite_rgb(source, (229, 207, 185))
+    expanded_rgb = composite_rgb(expanded, (229, 207, 185))
+    source_x = adjacent_variation(source_rgb, 1)
+    expanded_x = adjacent_variation(expanded_rgb, 1)
+    source_y = adjacent_variation(source_rgb, 0)
+    expanded_y = adjacent_variation(expanded_rgb, 0)
+    x_pairs = [
+        (left, left),
+        (source.width - right, expanded.width - right),
+    ]
+    y_pairs = [
+        (top, top),
+        (source.height - bottom, expanded.height - bottom),
+    ]
+    seam_ratios = [
+        float(expanded_x[expanded_seam - 1] / max(source_x[source_seam - 1], 0.25))
+        for source_seam, expanded_seam in x_pairs
+    ] + [
+        float(expanded_y[expanded_seam - 1] / max(source_y[source_seam - 1], 0.25))
+        for source_seam, expanded_seam in y_pairs
+    ]
+
+    edge_distortions = [
+        _edge_distortion(
+            source,
+            expanded,
+            (left, 0, source.width - right, top),
+            (left, 0, expanded.width - right, top),
+        ),
+        _edge_distortion(
+            source,
+            expanded,
+            (left, source.height - bottom, source.width - right, source.height),
+            (
+                left,
+                expanded.height - bottom,
+                expanded.width - right,
+                expanded.height,
+            ),
+        ),
+        _edge_distortion(
+            source,
+            expanded,
+            (0, top, left, source.height - bottom),
+            (0, top, left, expanded.height - bottom),
+        ),
+        _edge_distortion(
+            source,
+            expanded,
+            (source.width - right, top, source.width, source.height - bottom),
+            (
+                expanded.width - right,
+                top,
+                expanded.width,
+                expanded.height - bottom,
+            ),
+        ),
+    ]
+    return {
+        "width": expanded.width,
+        "height": expanded.height,
+        "maxSeamRatio": max(seam_ratios),
+        "maxEdgeDistortion": max(edge_distortions),
+        "cornersExact": corners_exact,
+    }
+
+
+def measure_wordmark_silhouette(
+    wordmark: Image.Image,
+    placement: dict[str, Any],
+    grouping: dict[str, Any],
+) -> dict[str, Any]:
+    """Måler den dominerende sammenhængende blækgruppe, ikke løse ekstremer."""
+    rgba = np.asarray(wordmark.convert("RGBA"))
+    luma = rgba[..., :3].astype(np.float64) @ LUMA_WEIGHTS
+    ink = (
+        (rgba[..., 3] >= int(grouping["alphaMin"]))
+        & (luma < float(grouping["inkLumaMax"]))
+    )
+    grouped = ndimage.binary_dilation(
+        ink,
+        np.ones(
+            (
+                int(grouping["dilationHeight"]),
+                int(grouping["dilationWidth"]),
+            )
+        ),
+    )
+    labels, count = ndimage.label(grouped, np.ones((3, 3)))
+    if count == 0:
         raise ValueError("wordmarken gav ingen målbar blækkomponent")
-    return 100 * (xs.max() - xs.min() + 1) / viewport_w
+    ink_counts = np.array(
+        [int(ink[labels == label].sum()) for label in range(1, count + 1)]
+    )
+    dominant_label = int(np.argmax(ink_counts)) + 1
+    dominant = ink & (labels == dominant_label)
+    ys, xs = np.where(dominant)
+    x0, x1 = int(xs.min()), int(xs.max()) + 1
+    y0, y1 = int(ys.min()), int(ys.max()) + 1
+    bbox_area = (x1 - x0) * (y1 - y0)
+    density = float(dominant.sum() / bbox_area)
+    return {
+        "occupancyPercent": 100 * (x1 - x0) / int(placement["viewportWidth"]),
+        "dominantInkPixels": int(dominant.sum()),
+        "dominantInkDensity": density,
+        "bbox": [x0, y0, x1, y1],
+    }
+
+
+def title_ink_occupancy(
+    wordmark: Image.Image,
+    placement: dict[str, Any],
+    grouping: dict[str, Any],
+) -> float:
+    return float(
+        measure_wordmark_silhouette(wordmark, placement, grouping)[
+            "occupancyPercent"
+        ]
+    )
+
+
+def measure_visible_coverage(
+    image: Image.Image,
+    asset_class: str,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    rgba = np.asarray(image.convert("RGBA"))
+    alpha = rgba[..., 3]
+    visible = alpha > 0
+    labels, count = ndimage.label(visible, np.ones((3, 3)))
+    sizes = (
+        ndimage.sum(visible, labels, range(1, count + 1))
+        if count
+        else np.array([])
+    )
+    visible_pixels = int(visible.sum())
+    dominant = int(max(sizes)) if len(sizes) else 0
+    gate = config["coverageGates"][asset_class]
+    luma = rgba[..., :3].astype(np.float64) @ LUMA_WEIGHTS
+    ink_pixels = int(
+        ((luma < float(gate["inkLumaMax"])) & visible).sum()
+    )
+    color_std = (
+        float(
+            np.std(
+                rgba[..., :3][visible].astype(np.float64),
+                axis=0,
+            ).mean()
+        )
+        if visible_pixels
+        else 0.0
+    )
+    metrics = {
+        "alphaCoverage": float(visible.mean()),
+        "visiblePixels": visible_pixels,
+        "connectedComponents": int(count),
+        "dominantComponentPixels": dominant,
+        "dominantComponentShare": float(dominant / max(visible_pixels, 1)),
+        "inkPixels": ink_pixels,
+        "colorStdDev": color_std,
+    }
+    if asset_class == "wordmark":
+        silhouette = measure_wordmark_silhouette(
+            image,
+            config["nativePlacement"]["wordmark"],
+            config["occupancyGrouping"],
+        )
+        metrics["dominantInkPixels"] = silhouette["dominantInkPixels"]
+    return metrics
+
+
+def validate_visible_coverage(
+    metrics: dict[str, Any],
+    asset_class: str,
+    config: dict[str, Any],
+    name: str,
+) -> None:
+    gate = config["coverageGates"][asset_class]
+    checks = {
+        "alphaCoverage": "minAlphaCoverage",
+        "dominantComponentPixels": "minDominantComponentPixels",
+        "dominantComponentShare": "minDominantComponentShare",
+        "inkPixels": "minInkPixels",
+        "colorStdDev": "minColorStdDev",
+    }
+    if "minDominantInkPixels" in gate:
+        checks["dominantInkPixels"] = "minDominantInkPixels"
+    failed = [
+        f"{metric}={metrics.get(metric, 0)}<{gate[threshold]}"
+        for metric, threshold in checks.items()
+        if metrics.get(metric, 0) < gate[threshold]
+    ]
+    if failed:
+        raise ValueError(f"{name}: utilstrækkelig synlig dækning: {', '.join(failed)}")
+
+
+def measure_matte_contamination(
+    actual: Image.Image,
+    expected: Image.Image,
+    matting: dict[str, Any],
+) -> dict[str, Any]:
+    actual_rgba = np.asarray(actual.convert("RGBA"))
+    expected_rgba = np.asarray(expected.convert("RGBA"))
+    if actual_rgba.shape != expected_rgba.shape:
+        raise ValueError("matte-sammenligning kræver samme dimensioner")
+
+    expected_alpha = expected_rgba[..., 3]
+    foreground = expected_alpha > 0
+    edge = foreground & ~ndimage.binary_erosion(foreground, np.ones((3, 3)))
+    edge |= (expected_alpha > 0) & (expected_alpha < 255)
+    threshold = float(matting["maxCompositeDeltaE"])
+    backgrounds = [
+        (0, 0, 0),
+        (255, 255, 255),
+        tuple(matting["parchmentRgb"]),
+    ]
+    max_delta = 0.0
+    contaminated = np.zeros(edge.shape, dtype=bool)
+    for background in backgrounds:
+        actual_composite = np.clip(
+            composite_rgb(actual, background),
+            0,
+            255,
+        ).astype(np.uint8)
+        expected_composite = np.clip(
+            composite_rgb(expected, background),
+            0,
+            255,
+        ).astype(np.uint8)
+        delta = lab_delta(actual_composite, expected_composite)
+        if edge.any():
+            max_delta = max(max_delta, float(delta[edge].max()))
+        contaminated |= edge & (delta > threshold)
+
+    depth = ndimage.distance_transform_edt(foreground)
+    max_fringe = (
+        float(depth[contaminated].max())
+        if contaminated.any()
+        else 0.0
+    )
+    opaque_contaminated = int(
+        (contaminated & (expected_alpha >= 250)).sum()
+    )
+    return {
+        "maxCompositeDeltaE": max_delta,
+        "maxFringePixels": max_fringe,
+        "opaqueContaminatedEdgePixels": opaque_contaminated,
+    }
+
+
+def validate_matte_contamination(
+    actual: Image.Image,
+    expected: Image.Image,
+    matting: dict[str, Any],
+    name: str,
+) -> dict[str, Any]:
+    metrics = measure_matte_contamination(actual, expected, matting)
+    if (
+        metrics["maxCompositeDeltaE"] > float(matting["maxCompositeDeltaE"])
+        or metrics["maxFringePixels"] > float(matting["maxFringePixels"])
+        or metrics["opaqueContaminatedEdgePixels"] > 0
+    ):
+        raise ValueError(f"{name}: matteforurening {metrics}")
+    return metrics
 
 
 def asset_manifest_entry(
     path: Path,
-    provenance: str,
+    metadata: dict[str, Any],
     source_path: str,
+    coverage: dict[str, Any],
+    matte: dict[str, Any],
+    max_transition: float,
 ) -> dict[str, Any]:
     with Image.open(path) as image:
         width, height = image.size
@@ -392,7 +840,11 @@ def asset_manifest_entry(
         "nativeWidth": width,
         "nativeHeight": height,
         "sourcePath": source_path,
-        "provenance": provenance,
+        "provenance": metadata["provenance"],
+        "assetClass": metadata["assetClass"],
+        "coverage": coverage,
+        "matte": matte,
+        "maxTransitionPixels": max_transition,
         "display": {
             "maxPhysicalScale": 1,
             "maxCssWidthDpr1": width,
@@ -403,14 +855,13 @@ def asset_manifest_entry(
     }
 
 
-def build_assets(
+def build_asset_images(
     source: np.ndarray,
     config: dict[str, Any],
-    output_dir: Path,
-) -> tuple[dict[str, str], Image.Image]:
+) -> tuple[dict[str, Image.Image], dict[str, dict[str, Any]]]:
     matting = config["matting"]
-    provenance_by_file: dict[str, str] = {}
-    desktop_wordmark: Image.Image | None = None
+    images: dict[str, Image.Image] = {}
+    metadata: dict[str, dict[str, Any]] = {}
 
     for asset_index, (asset_id, spec) in enumerate(config["assets"].items()):
         observed = crop_array(source, spec["crop"])
@@ -428,44 +879,143 @@ def build_assets(
             raise ValueError(f"{asset_id}: ukendt kind {kind}")
 
         if kind == "surface-3slice":
-            names = split_surface(
+            parts = split_surface_images(
                 image,
                 spec["slices"],
                 spec["outputs"],
-                output_dir,
-                int(spec["quality"]),
             )
-            for name in names:
-                provenance_by_file[name] = spec["provenance"]
+            left_name, center_name, right_name = spec["outputs"]
+            parts[center_name] = match_center_edges(
+                parts[center_name],
+                parts[left_name],
+                parts[right_name],
+                int(spec["edgeBlendPixels"]),
+            )
+            for name, part in parts.items():
+                images[name] = part
+                metadata[name] = {
+                    "provenance": spec["provenance"],
+                    "assetClass": spec["assetClass"],
+                    "quality": int(spec["quality"]),
+                    "lossless": False,
+                    "assetId": asset_id,
+                }
             continue
 
         if "outputs" in spec:
             for output in spec["outputs"]:
                 size = (int(output["width"]), int(output["height"]))
                 rendered = resize_rgba(image, size)
-                save_webp(
-                    rendered,
-                    output_dir / output["file"],
-                    int(output["quality"]),
-                )
-                provenance_by_file[output["file"]] = spec["provenance"]
-                if output["file"] == "wordmark-desktop.webp":
-                    desktop_wordmark = rendered
+                images[output["file"]] = rendered
+                metadata[output["file"]] = {
+                    "provenance": spec["provenance"],
+                    "assetClass": spec["assetClass"],
+                    "quality": int(output["quality"]),
+                    "lossless": False,
+                    "assetId": asset_id,
+                }
             continue
 
         name = spec["output"]
-        save_webp(image, output_dir / name, int(spec["quality"]))
-        provenance_by_file[name] = spec["provenance"]
+        images[name] = image
+        metadata[name] = {
+            "provenance": spec["provenance"],
+            "assetClass": spec["assetClass"],
+            "quality": int(spec["quality"]),
+            "lossless": False,
+            "assetId": asset_id,
+        }
 
-    if desktop_wordmark is None:
+    if "wordmark-desktop.webp" not in images:
         raise ValueError("wordmark-desktop.webp blev ikke bygget")
-    return provenance_by_file, desktop_wordmark
+    return images, metadata
+
+
+def write_asset_images(
+    images: dict[str, Image.Image],
+    metadata: dict[str, dict[str, Any]],
+    output_dir: Path,
+) -> None:
+    for name, image in images.items():
+        entry = metadata[name]
+        save_webp(
+            image,
+            output_dir / name,
+            int(entry["quality"]),
+            lossless=bool(entry["lossless"]),
+        )
+
+
+def codec_reference_images(
+    images: dict[str, Image.Image],
+    metadata: dict[str, dict[str, Any]],
+) -> dict[str, Image.Image]:
+    """Normaliserer source-matten gennem den deklarerede WebP-codec."""
+    references: dict[str, Image.Image] = {}
+    for name, image in images.items():
+        entry = metadata[name]
+        buffer = io.BytesIO()
+        image.save(
+            buffer,
+            "WEBP",
+            quality=int(entry["quality"]),
+            method=6,
+            exact=True,
+            lossless=bool(entry["lossless"]),
+        )
+        buffer.seek(0)
+        references[name] = Image.open(buffer).convert("RGBA").copy()
+    return references
+
+
+def max_alpha_transition(alpha: np.ndarray) -> float:
+    semi = (alpha > 0) & (alpha < 255)
+    if not semi.any():
+        return 0.0
+    return float(ndimage.distance_transform_edt(alpha > 0)[semi].max())
+
+
+def collect_asset_quality(
+    output_dir: Path,
+    expected_images: dict[str, Image.Image],
+    metadata: dict[str, dict[str, Any]],
+    config: dict[str, Any],
+) -> dict[str, dict[str, Any]]:
+    quality: dict[str, dict[str, Any]] = {}
+    for name in sorted(expected_images):
+        actual = Image.open(output_dir / name).convert("RGBA")
+        coverage = measure_visible_coverage(
+            actual,
+            metadata[name]["assetClass"],
+            config,
+        )
+        validate_visible_coverage(
+            coverage,
+            metadata[name]["assetClass"],
+            config,
+            name,
+        )
+        matte = validate_matte_contamination(
+            actual,
+            expected_images[name],
+            config["matting"],
+            name,
+        )
+        transition = max_alpha_transition(np.asarray(actual)[..., 3])
+        if transition > float(config["matting"]["maxTransitionPixels"]):
+            raise ValueError(f"{name}: alphaovergang {transition}px")
+        quality[name] = {
+            "coverage": coverage,
+            "matte": matte,
+            "maxTransitionPixels": transition,
+        }
+    return quality
 
 
 def validate_outputs(
     output_dir: Path,
     config: dict[str, Any],
-    occupancy: float,
+    silhouette: dict[str, Any],
 ) -> None:
     expected = config["outputDimensions"]
     actual = {path.name for path in output_dir.glob("*.webp")}
@@ -480,64 +1030,150 @@ def validate_outputs(
                 raise ValueError(f"{name}: mangler reel alpha")
 
     placement = config["nativePlacement"]["wordmark"]
+    occupancy = float(silhouette["occupancyPercent"])
     if not (
         float(placement["minOccupancyPercent"])
         <= occupancy
         <= float(placement["maxOccupancyPercent"])
     ):
         raise ValueError(f"wordmark occupancy {occupancy:.6f}% er uden for gate")
+    if silhouette["dominantInkDensity"] < float(
+        config["occupancyGrouping"]["minDensity"]
+    ):
+        raise ValueError(
+            "wordmarkens dominerende blæksilhuet er for sparsom: "
+            f"{silhouette['dominantInkDensity']}"
+        )
 
 
 def create_manifest(
     output_dir: Path,
     config: dict[str, Any],
     config_path: Path,
-    provenance_by_file: dict[str, str],
-    occupancy: float,
+    metadata: dict[str, dict[str, Any]],
+    asset_quality: dict[str, dict[str, Any]],
+    silhouette: dict[str, Any],
 ) -> dict[str, Any]:
     source_path = config["source"]["path"]
     assets = {
         name: asset_manifest_entry(
             output_dir / name,
-            provenance_by_file[name],
+            metadata[name],
             source_path,
+            asset_quality[name]["coverage"],
+            asset_quality[name]["matte"],
+            asset_quality[name]["maxTransitionPixels"],
         )
         for name in sorted(config["outputDimensions"])
     }
-    bundles: dict[str, Any] = {}
-    for bundle_id, files in config["bundles"].items():
-        bundles[bundle_id] = {
-            "files": files,
-            "bytes": sum(assets[name]["bytes"] for name in files),
+
+    parchment: dict[str, Any] = {}
+    for dependency_id, dependency in config["parchmentDependencies"].items():
+        path = ROOT / dependency["path"]
+        if not path.exists():
+            raise ValueError(f"{dependency_id}: pergament mangler: {path}")
+        if sha256(path) != dependency["sha256"]:
+            raise ValueError(f"{dependency_id}: pergament-SHA afviger")
+        with Image.open(path) as image:
+            if list(image.size) != [dependency["width"], dependency["height"]]:
+                raise ValueError(f"{dependency_id}: pergamentdimension afviger")
+        parchment[dependency_id] = {
+            **dependency,
+            "bytes": path.stat().st_size,
         }
 
+    bundles: dict[str, Any] = {}
+    for bundle_id, payload in config["payloadBundles"].items():
+        files = config["bundles"][payload["materials"]]
+        material_bytes = sum(assets[name]["bytes"] for name in files)
+        parchment_entry = parchment[payload["parchment"]]
+        bundles[bundle_id] = {
+            "files": files,
+            "materialBytes": material_bytes,
+            "parchment": parchment_entry,
+            "bytes": material_bytes + parchment_entry["bytes"],
+        }
+
+    slices: dict[str, Any] = {}
+    for asset_id in ("ribbon", "begin", "fates"):
+        spec = config["assets"][asset_id]
+        parts = [
+            Image.open(output_dir / name).convert("RGBA")
+            for name in spec["outputs"]
+        ]
+        expanded = render_three_slice(
+            parts,
+            int(spec["slices"][1]) * 3,
+            spec["centerPolicy"],
+        )
+        seams = [
+            int(spec["slices"][0]),
+            int(spec["slices"][0]) + int(spec["slices"][1]) * 3,
+        ]
+        seam_ratio = measured_seam_ratio(expanded, seams, 1)
+        if seam_ratio > float(spec["maxSeamRatio"]):
+            raise ValueError(f"{asset_id}: 3-slice-sømratio {seam_ratio}")
+        slices[asset_id] = {
+            "centerWidth": spec["slices"][1],
+            "centerPolicy": spec["centerPolicy"],
+            "expanded3xSeamRatio": seam_ratio,
+        }
+
+    nine_slice_evidence: dict[str, Any] = {}
+    for asset_id in ("welcomeFrame", "toolFrame", "tipCardFrame"):
+        spec = config["assets"][asset_id]
+        source = Image.open(output_dir / spec["output"]).convert("RGBA")
+        evidence: dict[str, Any] = {}
+        for size_id, size in spec["expansionSizes"].items():
+            expanded = render_nine_slice(
+                source,
+                spec["insets"],
+                tuple(size),
+                spec["nineSlicePolicy"],
+            )
+            quality = measure_nine_slice_quality(source, expanded, spec["insets"])
+            if quality["maxSeamRatio"] > float(spec["maxSeamRatio"]):
+                raise ValueError(
+                    f"{asset_id}/{size_id}: 9-slice-sømratio "
+                    f"{quality['maxSeamRatio']}"
+                )
+            if quality["maxEdgeDistortion"] > float(spec["maxEdgeDistortion"]):
+                raise ValueError(
+                    f"{asset_id}/{size_id}: kantforvrængning "
+                    f"{quality['maxEdgeDistortion']}"
+                )
+            if not quality["cornersExact"]:
+                raise ValueError(f"{asset_id}/{size_id}: hjørner blev ændret")
+            evidence[size_id] = quality
+        nine_slice_evidence[asset_id] = evidence
+
     manifest = {
-        "version": 1,
+        "version": config["version"],
         "algorithm": config["algorithm"],
         "configSha256": sha256(config_path),
         "source": config["source"],
         "assets": assets,
         "nativePlacement": config["nativePlacement"],
         "measurements": {
-            "titleInkOccupancyPercent": occupancy,
+            "titleInkOccupancyPercent": silhouette["occupancyPercent"],
+            "wordmarkDominantSilhouette": silhouette,
         },
-        "slices": {
-            "ribbon": {"centerWidth": config["assets"]["ribbon"]["slices"][1]},
-            "begin": {"centerWidth": config["assets"]["begin"]["slices"][1]},
-            "fates": {"centerWidth": config["assets"]["fates"]["slices"][1]},
-            "welcomeFrame": {"insets": config["assets"]["welcomeFrame"]["insets"]},
-            "toolFrame": {"insets": config["assets"]["toolFrame"]["insets"]},
-            "tipCardFrame": {"insets": config["assets"]["tipCardFrame"]["insets"]},
+        "slices": slices,
+        "nineSlicePolicy": {
+            asset_id: {
+                "insets": config["assets"][asset_id]["insets"],
+                **config["assets"][asset_id]["nineSlicePolicy"],
+            }
+            for asset_id in ("welcomeFrame", "toolFrame", "tipCardFrame")
         },
+        "nineSliceEvidence": nine_slice_evidence,
         "bundles": bundles,
         "budgets": config["budgets"],
         "reconstructedRegions": config["reconstructedRegions"],
         "blocked": config["blocked"],
     }
-    for bundle_id, budget_key in (
-        ("desktop", "desktopCriticalBytes"),
-        ("mobile", "mobileCriticalBytes"),
-    ):
+    for bundle_id, payload in config["payloadBundles"].items():
+        budget_key = payload["budget"]
         if bundles[bundle_id]["bytes"] > config["budgets"][budget_key]:
             raise ValueError(
                 f"{bundle_id}: {bundles[bundle_id]['bytes']} bytes > "
@@ -546,20 +1182,69 @@ def create_manifest(
     return manifest
 
 
-def atomic_replace_directory(staged: Path, target: Path) -> None:
-    backup = target.with_name(f".{target.name}.previous")
-    if backup.exists():
-        shutil.rmtree(backup)
-    if target.exists():
-        os.replace(target, backup)
+def publish_transaction(
+    staged_assets: Path,
+    staged_manifest: Path,
+    target_assets: Path,
+    target_manifest: Path,
+    *,
+    inject_failure_after: int | None = None,
+) -> None:
+    """Publicerer assetmappe og manifest som én rollback-sikret transaktion."""
+    backup_assets = target_assets.with_name(f".{target_assets.name}.previous")
+    backup_manifest = target_manifest.with_name(
+        f".{target_manifest.name}.previous"
+    )
+    if backup_assets.exists() or backup_manifest.exists():
+        raise RuntimeError("forrige titelmaterialetransaktion er ikke ryddet")
+
+    rename_count = 0
+    old_assets_moved = False
+    old_manifest_moved = False
+    new_assets_installed = False
+    new_manifest_installed = False
+
+    def rename(source: Path, target: Path, state: str) -> None:
+        nonlocal rename_count, old_assets_moved, old_manifest_moved
+        nonlocal new_assets_installed, new_manifest_installed
+        os.replace(source, target)
+        if state == "old-assets":
+            old_assets_moved = True
+        elif state == "old-manifest":
+            old_manifest_moved = True
+        elif state == "new-assets":
+            new_assets_installed = True
+        elif state == "new-manifest":
+            new_manifest_installed = True
+        rename_count += 1
+        if inject_failure_after == rename_count:
+            raise RuntimeError(f"injected failure after rename {rename_count}")
+
     try:
-        os.replace(staged, target)
+        if target_assets.exists():
+            rename(target_assets, backup_assets, "old-assets")
+        if target_manifest.exists():
+            rename(target_manifest, backup_manifest, "old-manifest")
+        rename(staged_assets, target_assets, "new-assets")
+        rename(staged_manifest, target_manifest, "new-manifest")
     except BaseException:
-        if backup.exists() and not target.exists():
-            os.replace(backup, target)
+        if new_manifest_installed and target_manifest.exists():
+            target_manifest.unlink()
+        if new_assets_installed and target_assets.exists():
+            shutil.rmtree(target_assets)
+        if old_manifest_moved and backup_manifest.exists():
+            os.replace(backup_manifest, target_manifest)
+        if old_assets_moved and backup_assets.exists():
+            os.replace(backup_assets, target_assets)
+        if backup_assets.exists():
+            shutil.rmtree(backup_assets)
+        if backup_manifest.exists():
+            backup_manifest.unlink()
         raise
-    if backup.exists():
-        shutil.rmtree(backup)
+    if backup_assets.exists():
+        shutil.rmtree(backup_assets)
+    if backup_manifest.exists():
+        backup_manifest.unlink()
 
 
 def parse_args() -> argparse.Namespace:
@@ -599,18 +1284,29 @@ def main() -> int:
     )
     manifest_tmp: Path | None = None
     try:
-        provenance, wordmark = build_assets(source, config, staged)
-        occupancy = title_ink_occupancy(
+        expected_images, metadata = build_asset_images(source, config)
+        write_asset_images(expected_images, metadata, staged)
+        matte_references = codec_reference_images(expected_images, metadata)
+        wordmark = Image.open(staged / "wordmark-desktop.webp").convert("RGBA")
+        silhouette = measure_wordmark_silhouette(
             wordmark,
             config["nativePlacement"]["wordmark"],
+            config["occupancyGrouping"],
         )
-        validate_outputs(staged, config, occupancy)
+        validate_outputs(staged, config, silhouette)
+        asset_quality = collect_asset_quality(
+            staged,
+            matte_references,
+            metadata,
+            config,
+        )
         manifest = create_manifest(
             staged,
             config,
             config_path,
-            provenance,
-            occupancy,
+            metadata,
+            asset_quality,
+            silhouette,
         )
         descriptor, temporary_name = tempfile.mkstemp(
             prefix=f".{manifest_path.name}.",
@@ -621,8 +1317,12 @@ def main() -> int:
         manifest_tmp.write_text(
             json.dumps(manifest, indent=2, sort_keys=True) + "\n"
         )
-        atomic_replace_directory(staged, output_dir)
-        os.replace(manifest_tmp, manifest_path)
+        publish_transaction(
+            staged,
+            manifest_tmp,
+            output_dir,
+            manifest_path,
+        )
         manifest_tmp = None
     finally:
         if staged.exists():
@@ -634,9 +1334,10 @@ def main() -> int:
         print(
             "title-materials: "
             f"{len(config['outputDimensions'])} assets, "
-            f"occupancy {occupancy:.6f}%, "
+            f"occupancy {silhouette['occupancyPercent']:.6f}%, "
             f"desktop {manifest['bundles']['desktop']['bytes']} B, "
-            f"mobile {manifest['bundles']['mobile']['bytes']} B"
+            f"mobile-390 {manifest['bundles']['mobile-390']['bytes']} B, "
+            f"mobile-430 {manifest['bundles']['mobile-430']['bytes']} B"
         )
     return 0
 
