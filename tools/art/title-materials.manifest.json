@@ -1,0 +1,990 @@
+{
+  "algorithm": "title-materials-v2",
+  "assets": {
+    "begin-center.webp": {
+      "assetClass": "material",
+      "bytes": 2704,
+      "coverage": {
+        "alphaCoverage": 0.9622641509433962,
+        "colorStdDev": 33.004279986418936,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 17136,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 13710,
+        "visiblePixels": 17136
+      },
+      "display": {
+        "maxCssHeightDpr1": 106,
+        "maxCssHeightDpr2": 53.0,
+        "maxCssWidthDpr1": 168,
+        "maxCssWidthDpr2": 84.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 106,
+      "nativeWidth": 168,
+      "provenance": "caps and bevel are visible; icon and label bed is reconstructed from adjacent visible stone",
+      "sha256": "29dc3d2ed5c347e54420bf20db073e81ad8657008d38b82a9262a4eaf1d4dc90",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "begin-left.webp": {
+      "assetClass": "material",
+      "bytes": 2062,
+      "coverage": {
+        "alphaCoverage": 0.8965633423180593,
+        "colorStdDev": 32.09000447643343,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 5322,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 4906,
+        "visiblePixels": 5322
+      },
+      "display": {
+        "maxCssHeightDpr1": 106,
+        "maxCssHeightDpr2": 53.0,
+        "maxCssWidthDpr1": 56,
+        "maxCssWidthDpr2": 28.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 106,
+      "nativeWidth": 56,
+      "provenance": "caps and bevel are visible; icon and label bed is reconstructed from adjacent visible stone",
+      "sha256": "8890e68ee0ca8146d9f36f42fb3c157923bc98f0ac3cc274e4ddbd028393f542",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "begin-right.webp": {
+      "assetClass": "material",
+      "bytes": 2130,
+      "coverage": {
+        "alphaCoverage": 0.8965633423180593,
+        "colorStdDev": 32.78153324575725,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 5322,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 4807,
+        "visiblePixels": 5322
+      },
+      "display": {
+        "maxCssHeightDpr1": 106,
+        "maxCssHeightDpr2": 53.0,
+        "maxCssWidthDpr1": 56,
+        "maxCssWidthDpr2": 28.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 106,
+      "nativeWidth": 56,
+      "provenance": "caps and bevel are visible; icon and label bed is reconstructed from adjacent visible stone",
+      "sha256": "56d0708ce23074cb2405245ffbc709feb4814ce1d317d29caa5664df6e1e811e",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "fates-center.webp": {
+      "assetClass": "material",
+      "bytes": 1930,
+      "coverage": {
+        "alphaCoverage": 0.97,
+        "colorStdDev": 21.900164427720583,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 11446,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 1065,
+        "visiblePixels": 11446
+      },
+      "display": {
+        "maxCssHeightDpr1": 100,
+        "maxCssHeightDpr2": 50.0,
+        "maxCssWidthDpr1": 118,
+        "maxCssWidthDpr2": 59.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 100,
+      "nativeWidth": 118,
+      "provenance": "caps and bevel are visible; trophy and label bed is reconstructed from adjacent visible stone",
+      "sha256": "789459af2b3e483de2420b2c44a7d4e38aa33128ec2d06113fbcfc6e27846f86",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "fates-left.webp": {
+      "assetClass": "material",
+      "bytes": 1460,
+      "coverage": {
+        "alphaCoverage": 0.9002083333333334,
+        "colorStdDev": 22.89342451454374,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 4321,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 690,
+        "visiblePixels": 4321
+      },
+      "display": {
+        "maxCssHeightDpr1": 100,
+        "maxCssHeightDpr2": 50.0,
+        "maxCssWidthDpr1": 48,
+        "maxCssWidthDpr2": 24.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 100,
+      "nativeWidth": 48,
+      "provenance": "caps and bevel are visible; trophy and label bed is reconstructed from adjacent visible stone",
+      "sha256": "bb60ea232348437f6186ad52ffccda50415645e47c606d311be4fba6619c459e",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "fates-right.webp": {
+      "assetClass": "material",
+      "bytes": 1716,
+      "coverage": {
+        "alphaCoverage": 0.9002083333333334,
+        "colorStdDev": 23.973132593286834,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 4321,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 877,
+        "visiblePixels": 4321
+      },
+      "display": {
+        "maxCssHeightDpr1": 100,
+        "maxCssHeightDpr2": 50.0,
+        "maxCssWidthDpr1": 48,
+        "maxCssWidthDpr2": 24.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 100,
+      "nativeWidth": 48,
+      "provenance": "caps and bevel are visible; trophy and label bed is reconstructed from adjacent visible stone",
+      "sha256": "6962fe77d02d612f1dd0f13d153ea24d7b415f3a9d90dc483af920ac18ee3610",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-divider.webp": {
+      "assetClass": "ornament",
+      "bytes": 1264,
+      "coverage": {
+        "alphaCoverage": 0.16187658495350804,
+        "colorStdDev": 43.45972236444257,
+        "connectedComponents": 3,
+        "dominantComponentPixels": 301,
+        "dominantComponentShare": 0.39295039164490864,
+        "inkPixels": 632,
+        "visiblePixels": 766
+      },
+      "display": {
+        "maxCssHeightDpr1": 26,
+        "maxCssHeightDpr2": 13.0,
+        "maxCssWidthDpr1": 182,
+        "maxCssWidthDpr2": 91.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 26,
+      "nativeWidth": 182,
+      "provenance": "visible divider pigment",
+      "sha256": "45bd2dd13aed32390c1ecb08cddead60997d66797d235b86e67a86f5485f884e",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-hunt.webp": {
+      "assetClass": "ornament",
+      "bytes": 5140,
+      "coverage": {
+        "alphaCoverage": 0.2569821930646673,
+        "colorStdDev": 39.383909376471564,
+        "connectedComponents": 8,
+        "dominantComponentPixels": 2486,
+        "dominantComponentShare": 0.9066374908825675,
+        "inkPixels": 1686,
+        "visiblePixels": 2742
+      },
+      "display": {
+        "maxCssHeightDpr1": 97,
+        "maxCssHeightDpr2": 48.5,
+        "maxCssWidthDpr1": 110,
+        "maxCssWidthDpr2": 55.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 97,
+      "nativeWidth": 110,
+      "provenance": "visible hunt pigment",
+      "sha256": "a8cc760368b5d1f6877af263a3d769c0a08d1fdf71e04d0a89e82639e3d16d19",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-spiral.webp": {
+      "assetClass": "ornament",
+      "bytes": 2714,
+      "coverage": {
+        "alphaCoverage": 0.4942857142857143,
+        "colorStdDev": 33.143163882380996,
+        "connectedComponents": 4,
+        "dominantComponentPixels": 2231,
+        "dominantComponentShare": 0.921139554087531,
+        "inkPixels": 2234,
+        "visiblePixels": 2422
+      },
+      "display": {
+        "maxCssHeightDpr1": 70,
+        "maxCssHeightDpr2": 35.0,
+        "maxCssWidthDpr1": 70,
+        "maxCssWidthDpr2": 35.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 70,
+      "nativeWidth": 70,
+      "provenance": "visible spiral pigment",
+      "sha256": "2ff7c274d7e290f25c515a8b442adabd3d78c54f93fb344ca010477dca6b867c",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-tap.webp": {
+      "assetClass": "ornament",
+      "bytes": 848,
+      "coverage": {
+        "alphaCoverage": 0.39054054054054055,
+        "colorStdDev": 44.75076983975598,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 578,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 521,
+        "visiblePixels": 578
+      },
+      "display": {
+        "maxCssHeightDpr1": 40,
+        "maxCssHeightDpr2": 20.0,
+        "maxCssWidthDpr1": 37,
+        "maxCssWidthDpr2": 18.5,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 40,
+      "nativeWidth": 37,
+      "provenance": "visible tap pigment",
+      "sha256": "256e0daf84a309de72ddade51ef27caa0bb00760331504d99084cd11959db2fa",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-trophy.webp": {
+      "assetClass": "ornament",
+      "bytes": 784,
+      "coverage": {
+        "alphaCoverage": 0.18947368421052632,
+        "colorStdDev": 52.353734792209586,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 504,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 400,
+        "visiblePixels": 504
+      },
+      "display": {
+        "maxCssHeightDpr1": 70,
+        "maxCssHeightDpr2": 35.0,
+        "maxCssWidthDpr1": 38,
+        "maxCssWidthDpr2": 19.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 70,
+      "nativeWidth": 38,
+      "provenance": "visible trophy pigment",
+      "sha256": "9f0c05ae37728bc7bef3177bae6d0fdd52efa321531930e59ae4f5d5256dcb3e",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ribbon-center.webp": {
+      "assetClass": "material",
+      "bytes": 2734,
+      "coverage": {
+        "alphaCoverage": 0.8852459016393442,
+        "colorStdDev": 24.473062183779792,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 20520,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 8715,
+        "visiblePixels": 20520
+      },
+      "display": {
+        "maxCssHeightDpr1": 61,
+        "maxCssHeightDpr2": 30.5,
+        "maxCssWidthDpr1": 380,
+        "maxCssWidthDpr2": 190.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 61,
+      "nativeWidth": 380,
+      "provenance": "caps are directly visible; text bed is reconstructed from the ribbon's visible row profiles",
+      "sha256": "11628ca2ff2dfca4547e0e80130f8e2970e05b8ac59f083360b6fe4cf27c0a9d",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ribbon-left.webp": {
+      "assetClass": "material",
+      "bytes": 1594,
+      "coverage": {
+        "alphaCoverage": 0.7879781420765027,
+        "colorStdDev": 21.856502050877072,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 2884,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 2426,
+        "visiblePixels": 2884
+      },
+      "display": {
+        "maxCssHeightDpr1": 61,
+        "maxCssHeightDpr2": 30.5,
+        "maxCssWidthDpr1": 60,
+        "maxCssWidthDpr2": 30.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 61,
+      "nativeWidth": 60,
+      "provenance": "caps are directly visible; text bed is reconstructed from the ribbon's visible row profiles",
+      "sha256": "b095a8fea9c2913e360e3e30a26c208d12e6e532332bff728ebe15f96408a012",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ribbon-right.webp": {
+      "assetClass": "material",
+      "bytes": 1730,
+      "coverage": {
+        "alphaCoverage": 0.7937158469945356,
+        "colorStdDev": 21.938078283954393,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 2905,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 2382,
+        "visiblePixels": 2905
+      },
+      "display": {
+        "maxCssHeightDpr1": 61,
+        "maxCssHeightDpr2": 30.5,
+        "maxCssWidthDpr1": 60,
+        "maxCssWidthDpr2": 30.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 61,
+      "nativeWidth": 60,
+      "provenance": "caps are directly visible; text bed is reconstructed from the ribbon's visible row profiles",
+      "sha256": "73cc05e29527d296ac724a85fff9bff4a9bf860187dda8ac31c04bce5c26a4c0",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "tip-card-frame.webp": {
+      "assetClass": "material",
+      "bytes": 2018,
+      "coverage": {
+        "alphaCoverage": 0.9569757727652465,
+        "colorStdDev": 12.7058322748286,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 68730,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 6645,
+        "visiblePixels": 68730
+      },
+      "display": {
+        "maxCssHeightDpr1": 126,
+        "maxCssHeightDpr2": 63.0,
+        "maxCssWidthDpr1": 570,
+        "maxCssWidthDpr2": 285.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 126,
+      "nativeWidth": 570,
+      "provenance": "frame is visible; tile, copy, pagination and hunt beds are reconstructed from visible card material",
+      "sha256": "c0e69deb13fd9ec0d412b7c17761100b9a480887acb368f0fab1724ad2f155d8",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "tip-fire-tile.webp": {
+      "assetClass": "illustration",
+      "bytes": 1638,
+      "coverage": {
+        "alphaCoverage": 0.9935100054083288,
+        "colorStdDev": 50.162503984809405,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 7348,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 6271,
+        "visiblePixels": 7348
+      },
+      "display": {
+        "maxCssHeightDpr1": 86,
+        "maxCssHeightDpr2": 43.0,
+        "maxCssWidthDpr1": 86,
+        "maxCssWidthDpr2": 43.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 86,
+      "nativeWidth": 86,
+      "provenance": "visible framed fire tile",
+      "sha256": "dd53c72e9a4c72c2868368fab431934b3973ff31c1a3d93c1cfcd3a67462e353",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "tool-frame.webp": {
+      "assetClass": "material",
+      "bytes": 770,
+      "coverage": {
+        "alphaCoverage": 0.84850640113798,
+        "colorStdDev": 25.582249356026526,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 4772,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 605,
+        "visiblePixels": 4772
+      },
+      "display": {
+        "maxCssHeightDpr1": 76,
+        "maxCssHeightDpr2": 38.0,
+        "maxCssWidthDpr1": 74,
+        "maxCssWidthDpr2": 37.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 76,
+      "nativeWidth": 74,
+      "provenance": "frame is visible; trophy bed is reconstructed from visible tool material",
+      "sha256": "edcff4aea27111821667df375ae02793d1a1ec7365333f02bbb62660f9c8c1db",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "welcome-figure.webp": {
+      "assetClass": "illustration",
+      "bytes": 2368,
+      "coverage": {
+        "alphaCoverage": 0.8500831551437396,
+        "colorStdDev": 61.119859165378024,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 3578,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 2804,
+        "visiblePixels": 3578
+      },
+      "display": {
+        "maxCssHeightDpr1": 61,
+        "maxCssHeightDpr2": 30.5,
+        "maxCssWidthDpr1": 69,
+        "maxCssWidthDpr2": 34.5,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 61,
+      "nativeWidth": 69,
+      "provenance": "visible welcome cave figure",
+      "sha256": "e922ca7be6ca553d64bdadb86b961f92e80328d8f6e44aec692bc4e0afc1f306",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "welcome-frame.webp": {
+      "assetClass": "material",
+      "bytes": 1774,
+      "coverage": {
+        "alphaCoverage": 0.8828676470588235,
+        "colorStdDev": 22.571809851221204,
+        "connectedComponents": 1,
+        "dominantComponentPixels": 24014,
+        "dominantComponentShare": 1.0,
+        "inkPixels": 15898,
+        "visiblePixels": 24014
+      },
+      "display": {
+        "maxCssHeightDpr1": 80,
+        "maxCssHeightDpr2": 40.0,
+        "maxCssWidthDpr1": 340,
+        "maxCssWidthDpr2": 170.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 80,
+      "nativeWidth": 340,
+      "provenance": "outer frame is visible; figure and copy bed is reconstructed from visible chip material",
+      "sha256": "de103e5fa43324d48a85f6eb8007e33e444700ad1860a756d3c644f70864647b",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "wordmark-desktop.webp": {
+      "assetClass": "wordmark",
+      "bytes": 28648,
+      "coverage": {
+        "alphaCoverage": 0.22158256880733945,
+        "colorStdDev": 58.661552700627716,
+        "connectedComponents": 17,
+        "dominantComponentPixels": 6442,
+        "dominantComponentShare": 0.16670116965117482,
+        "dominantInkPixels": 14472,
+        "inkPixels": 34421,
+        "visiblePixels": 38644
+      },
+      "display": {
+        "maxCssHeightDpr1": 320,
+        "maxCssHeightDpr2": 160.0,
+        "maxCssWidthDpr1": 545,
+        "maxCssWidthDpr2": 272.5,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 320,
+      "nativeWidth": 545,
+      "provenance": "visible carved glyphs; blank parchment is estimated only for alpha recovery",
+      "sha256": "e286b12b55929f846647ef8ce9480dbc69b991ff513cc0d5be64d78a5b6ccce9",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "wordmark-mobile.webp": {
+      "assetClass": "wordmark",
+      "bytes": 29038,
+      "coverage": {
+        "alphaCoverage": 0.26568771502293576,
+        "colorStdDev": 79.00275884862027,
+        "connectedComponents": 57,
+        "dominantComponentPixels": 9838,
+        "dominantComponentShare": 0.3317484403979093,
+        "dominantInkPixels": 9098,
+        "inkPixels": 22867,
+        "visiblePixels": 29655
+      },
+      "display": {
+        "maxCssHeightDpr1": 256,
+        "maxCssHeightDpr2": 128.0,
+        "maxCssWidthDpr1": 436,
+        "maxCssWidthDpr2": 218.0,
+        "maxPhysicalScale": 1
+      },
+      "matte": {
+        "maxCompositeDeltaE": 0.0,
+        "maxFringePixels": 0.0,
+        "opaqueContaminatedEdgePixels": 0
+      },
+      "maxTransitionPixels": 1.0,
+      "nativeHeight": 256,
+      "nativeWidth": 436,
+      "provenance": "visible carved glyphs; blank parchment is estimated only for alpha recovery",
+      "sha256": "7ff24d14497f69f7afd87f555459c3c4e6b7b2763ed9c1915f03477222221c6a",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    }
+  },
+  "blocked": [
+    {
+      "id": "button-hover-state",
+      "reason": "The approved target contains only the resting button state."
+    },
+    {
+      "id": "button-pressed-state",
+      "reason": "The approved target contains only the resting button state."
+    },
+    {
+      "id": "sound-icon",
+      "reason": "The target shows a settings gear; the product's sound icon is not observable."
+    },
+    {
+      "id": "higher-resolution-detail",
+      "reason": "No source pixels exist above the approved 1586x992 master."
+    }
+  ],
+  "budgets": {
+    "desktopCriticalBytes": 180000,
+    "mobileCriticalBytes": 120000
+  },
+  "bundles": {
+    "desktop": {
+      "bytes": 117280,
+      "files": [
+        "wordmark-desktop.webp",
+        "ribbon-left.webp",
+        "ribbon-center.webp",
+        "ribbon-right.webp",
+        "begin-left.webp",
+        "begin-center.webp",
+        "begin-right.webp",
+        "fates-left.webp",
+        "fates-center.webp",
+        "fates-right.webp",
+        "welcome-frame.webp",
+        "tool-frame.webp",
+        "tip-card-frame.webp",
+        "ornament-spiral.webp",
+        "ornament-trophy.webp",
+        "ornament-tap.webp",
+        "ornament-divider.webp",
+        "ornament-hunt.webp",
+        "welcome-figure.webp",
+        "tip-fire-tile.webp"
+      ],
+      "materialBytes": 66026,
+      "parchment": {
+        "bytes": 51254,
+        "height": 907,
+        "path": "src/assets/art/title-parchment-692.webp",
+        "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a",
+        "width": 692
+      }
+    },
+    "mobile-390": {
+      "bytes": 82370,
+      "files": [
+        "wordmark-mobile.webp",
+        "ribbon-left.webp",
+        "ribbon-center.webp",
+        "ribbon-right.webp",
+        "begin-left.webp",
+        "begin-center.webp",
+        "begin-right.webp",
+        "fates-left.webp",
+        "fates-center.webp",
+        "fates-right.webp",
+        "tool-frame.webp",
+        "tip-card-frame.webp",
+        "ornament-spiral.webp",
+        "ornament-trophy.webp",
+        "ornament-tap.webp",
+        "ornament-divider.webp",
+        "ornament-hunt.webp",
+        "tip-fire-tile.webp"
+      ],
+      "materialBytes": 62274,
+      "parchment": {
+        "bytes": 20096,
+        "height": 472,
+        "path": "src/assets/art/title-parchment-360.webp",
+        "sha256": "e9ebd8305af47b2c349818c41b673903ac53b4ad3b854fd9c38ea72b75758636",
+        "width": 360
+      }
+    },
+    "mobile-430": {
+      "bytes": 97256,
+      "files": [
+        "wordmark-mobile.webp",
+        "ribbon-left.webp",
+        "ribbon-center.webp",
+        "ribbon-right.webp",
+        "begin-left.webp",
+        "begin-center.webp",
+        "begin-right.webp",
+        "fates-left.webp",
+        "fates-center.webp",
+        "fates-right.webp",
+        "tool-frame.webp",
+        "tip-card-frame.webp",
+        "ornament-spiral.webp",
+        "ornament-trophy.webp",
+        "ornament-tap.webp",
+        "ornament-divider.webp",
+        "ornament-hunt.webp",
+        "tip-fire-tile.webp"
+      ],
+      "materialBytes": 62274,
+      "parchment": {
+        "bytes": 34982,
+        "height": 682,
+        "path": "src/assets/art/title-parchment-520.webp",
+        "sha256": "a9ea6949645b1c8f7a7b442e727454c0b36c603ab535fcda3ed50ec308396938",
+        "width": 520
+      }
+    }
+  },
+  "configSha256": "97770cdb5e5977b67502b94d067992d299d6c7803f9a6ed5b0018947bd206037",
+  "measurements": {
+    "titleInkOccupancyPercent": 27.30138713745271,
+    "wordmarkDominantSilhouette": {
+      "bbox": [
+        44,
+        44,
+        477,
+        153
+      ],
+      "dominantInkDensity": 0.3066296586647456,
+      "dominantInkPixels": 14472,
+      "occupancyPercent": 27.30138713745271
+    }
+  },
+  "nativePlacement": {
+    "wordmark": {
+      "height": 320,
+      "left": 150,
+      "maxOccupancyPercent": 28.5,
+      "minOccupancyPercent": 26.5,
+      "top": 130,
+      "viewportHeight": 992,
+      "viewportWidth": 1586,
+      "width": 545
+    }
+  },
+  "nineSliceEvidence": {
+    "tipCardFrame": {
+      "max": {
+        "cornersExact": true,
+        "height": 160,
+        "maxEdgeDistortion": 0.0018936493589389288,
+        "maxSeamRatio": 0.9557692307692307,
+        "width": 900
+      },
+      "min": {
+        "cornersExact": true,
+        "height": 100,
+        "maxEdgeDistortion": 0.00808195293619414,
+        "maxSeamRatio": 1.729166973084277,
+        "width": 320
+      },
+      "native": {
+        "cornersExact": true,
+        "height": 126,
+        "maxEdgeDistortion": 0.0,
+        "maxSeamRatio": 1.0,
+        "width": 570
+      }
+    },
+    "toolFrame": {
+      "max": {
+        "cornersExact": true,
+        "height": 96,
+        "maxEdgeDistortion": 0.014824226648372636,
+        "maxSeamRatio": 0.8667310743067452,
+        "width": 120
+      },
+      "min": {
+        "cornersExact": true,
+        "height": 64,
+        "maxEdgeDistortion": 0.02839489166473698,
+        "maxSeamRatio": 1.2359223300970874,
+        "width": 64
+      },
+      "native": {
+        "cornersExact": true,
+        "height": 76,
+        "maxEdgeDistortion": 0.0,
+        "maxSeamRatio": 1.0,
+        "width": 74
+      }
+    },
+    "welcomeFrame": {
+      "max": {
+        "cornersExact": true,
+        "height": 120,
+        "maxEdgeDistortion": 0.015534412050910868,
+        "maxSeamRatio": 0.9689291391685535,
+        "width": 680
+      },
+      "min": {
+        "cornersExact": true,
+        "height": 64,
+        "maxEdgeDistortion": 0.033620917129182075,
+        "maxSeamRatio": 1.9063356195614851,
+        "width": 220
+      },
+      "native": {
+        "cornersExact": true,
+        "height": 80,
+        "maxEdgeDistortion": 0.0,
+        "maxSeamRatio": 1.0,
+        "width": 340
+      }
+    }
+  },
+  "nineSlicePolicy": {
+    "tipCardFrame": {
+      "insets": [
+        24,
+        28,
+        24,
+        28
+      ],
+      "regions": {
+        "bottomEdge": {
+          "x": "stretch"
+        },
+        "center": {
+          "x": "stretch",
+          "y": "stretch"
+        },
+        "corners": {},
+        "leftEdge": {
+          "y": "stretch"
+        },
+        "rightEdge": {
+          "y": "stretch"
+        },
+        "topEdge": {
+          "x": "stretch"
+        }
+      }
+    },
+    "toolFrame": {
+      "insets": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "regions": {
+        "bottomEdge": {
+          "x": "stretch"
+        },
+        "center": {
+          "x": "stretch",
+          "y": "stretch"
+        },
+        "corners": {},
+        "leftEdge": {
+          "y": "stretch"
+        },
+        "rightEdge": {
+          "y": "stretch"
+        },
+        "topEdge": {
+          "x": "stretch"
+        }
+      }
+    },
+    "welcomeFrame": {
+      "insets": [
+        18,
+        24,
+        18,
+        24
+      ],
+      "regions": {
+        "bottomEdge": {
+          "x": "stretch"
+        },
+        "center": {
+          "x": "stretch",
+          "y": "stretch"
+        },
+        "corners": {},
+        "leftEdge": {
+          "y": "stretch"
+        },
+        "rightEdge": {
+          "y": "stretch"
+        },
+        "topEdge": {
+          "x": "stretch"
+        }
+      }
+    }
+  },
+  "reconstructedRegions": [
+    "ribbon-text-bed",
+    "begin-icon-and-label-bed",
+    "fates-icon-and-label-bed",
+    "welcome-copy-bed",
+    "tool-icon-bed",
+    "tip-copy-and-pagination-bed"
+  ],
+  "slices": {
+    "begin": {
+      "centerPolicy": "stretch",
+      "centerWidth": 168,
+      "expanded3xSeamRatio": 1.930712868036591
+    },
+    "fates": {
+      "centerPolicy": "stretch",
+      "centerWidth": 118,
+      "expanded3xSeamRatio": 1.8297678154205608
+    },
+    "ribbon": {
+      "centerPolicy": "stretch",
+      "centerWidth": 380,
+      "expanded3xSeamRatio": 2.493800047302092
+    }
+  },
+  "source": {
+    "height": 992,
+    "path": "docs/design/reference/title-2026-08-11.webp",
+    "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
+    "width": 1586
+  },
+  "version": 2
+}

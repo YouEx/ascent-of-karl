@@ -1,0 +1,438 @@
+{
+  "version": 2,
+  "algorithm": "title-materials-v2",
+  "textureSeed": 20260814,
+  "source": {
+    "path": "docs/design/reference/title-2026-08-11.webp",
+    "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
+    "width": 1586,
+    "height": 992
+  },
+  "matting": {
+    "deltaETransparent": 2.0,
+    "deltaEOpaque": 12.0,
+    "minComponentPixels": 8,
+    "closeRadiusPixels": 1,
+    "maxTransitionPixels": 1,
+    "maxFringePixels": 1,
+    "maxCompositeDeltaE": 8.0,
+    "parchmentRgb": [229, 207, 185]
+  },
+  "budgets": {
+    "desktopCriticalBytes": 180000,
+    "mobileCriticalBytes": 120000
+  },
+  "occupancyGrouping": {
+    "dilationHeight": 5,
+    "dilationWidth": 15,
+    "inkLumaMax": 100,
+    "alphaMin": 64,
+    "minDensity": 0.25
+  },
+  "coverageGates": {
+    "wordmark": {
+      "minAlphaCoverage": 0.18,
+      "minDominantComponentPixels": 5000,
+      "minDominantComponentShare": 0.15,
+      "minDominantInkPixels": 8000,
+      "minInkPixels": 20000,
+      "minColorStdDev": 30.0,
+      "inkLumaMax": 180
+    },
+    "material": {
+      "minAlphaCoverage": 0.75,
+      "minDominantComponentPixels": 500,
+      "minDominantComponentShare": 0.95,
+      "minInkPixels": 500,
+      "minColorStdDev": 10.0,
+      "inkLumaMax": 180
+    },
+    "ornament": {
+      "minAlphaCoverage": 0.12,
+      "minDominantComponentPixels": 200,
+      "minDominantComponentShare": 0.35,
+      "minInkPixels": 300,
+      "minColorStdDev": 30.0,
+      "inkLumaMax": 180
+    },
+    "illustration": {
+      "minAlphaCoverage": 0.75,
+      "minDominantComponentPixels": 3000,
+      "minDominantComponentShare": 0.9,
+      "minInkPixels": 2000,
+      "minColorStdDev": 40.0,
+      "inkLumaMax": 180
+    }
+  },
+  "parchmentDependencies": {
+    "desktop": {
+      "path": "src/assets/art/title-parchment-692.webp",
+      "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a",
+      "width": 692,
+      "height": 907
+    },
+    "mobile-390": {
+      "path": "src/assets/art/title-parchment-360.webp",
+      "sha256": "e9ebd8305af47b2c349818c41b673903ac53b4ad3b854fd9c38ea72b75758636",
+      "width": 360,
+      "height": 472
+    },
+    "mobile-430": {
+      "path": "src/assets/art/title-parchment-520.webp",
+      "sha256": "a9ea6949645b1c8f7a7b442e727454c0b36c603ab535fcda3ed50ec308396938",
+      "width": 520,
+      "height": 682
+    }
+  },
+  "nativePlacement": {
+    "wordmark": {
+      "viewportWidth": 1586,
+      "viewportHeight": 992,
+      "left": 150,
+      "top": 130,
+      "width": 545,
+      "height": 320,
+      "minOccupancyPercent": 26.5,
+      "maxOccupancyPercent": 28.5
+    }
+  },
+  "assets": {
+    "wordmark": {
+      "kind": "ink-matte",
+      "assetClass": "wordmark",
+      "crop": [150, 130, 695, 450],
+      "inkLumaMax": 174,
+      "regions": [
+        [175, 4, 310, 72],
+        [38, 38, 493, 158],
+        [66, 154, 315, 218],
+        [82, 202, 425, 320]
+      ],
+      "inpaintRadius": 5,
+      "outputs": [
+        {"file": "wordmark-desktop.webp", "width": 545, "height": 320, "quality": 82},
+        {"file": "wordmark-mobile.webp", "width": 436, "height": 256, "quality": 80}
+      ],
+      "provenance": "visible carved glyphs; blank parchment is estimated only for alpha recovery"
+    },
+    "ribbon": {
+      "kind": "surface-3slice",
+      "assetClass": "material",
+      "crop": [155, 458, 655, 519],
+      "shape": {
+        "type": "polygon",
+        "points": [[10, 4], [490, 4], [487, 14], [499, 21], [493, 31], [499, 48], [488, 46], [490, 57], [10, 57], [12, 47], [0, 50], [6, 31], [0, 23], [12, 16]]
+      },
+      "reconstruct": [[93, 6, 425, 59]],
+      "slices": [60, 380, 60],
+      "centerPolicy": "stretch",
+      "edgeBlendPixels": 16,
+      "maxSeamRatio": 3.0,
+      "outputs": ["ribbon-left.webp", "ribbon-center.webp", "ribbon-right.webp"],
+      "quality": 92,
+      "provenance": "caps are directly visible; text bed is reconstructed from the ribbon's visible row profiles"
+    },
+    "begin": {
+      "kind": "surface-3slice",
+      "assetClass": "material",
+      "crop": [143, 642, 423, 748],
+      "shape": {"type": "rounded-rect", "inset": [1, 1, 1, 3], "radius": 25},
+      "reconstruct": [[28, 14, 250, 92]],
+      "slices": [56, 168, 56],
+      "centerPolicy": "stretch",
+      "edgeBlendPixels": 16,
+      "maxSeamRatio": 3.0,
+      "outputs": ["begin-left.webp", "begin-center.webp", "begin-right.webp"],
+      "quality": 92,
+      "provenance": "caps and bevel are visible; icon and label bed is reconstructed from adjacent visible stone"
+    },
+    "fates": {
+      "kind": "surface-3slice",
+      "assetClass": "material",
+      "crop": [441, 645, 655, 745],
+      "shape": {"type": "rounded-rect", "inset": [1, 1, 1, 2], "radius": 23},
+      "reconstruct": [[22, 14, 200, 84]],
+      "slices": [48, 118, 48],
+      "centerPolicy": "stretch",
+      "edgeBlendPixels": 16,
+      "maxSeamRatio": 3.0,
+      "outputs": ["fates-left.webp", "fates-center.webp", "fates-right.webp"],
+      "quality": 92,
+      "provenance": "caps and bevel are visible; trophy and label bed is reconstructed from adjacent visible stone"
+    },
+    "welcomeFrame": {
+      "kind": "surface-9slice",
+      "assetClass": "material",
+      "crop": [20, 20, 360, 100],
+      "shape": {"type": "rounded-rect", "inset": [3, 3, 3, 4], "radius": 20},
+      "reconstruct": [[22, 5, 330, 75]],
+      "insets": [18, 24, 18, 24],
+      "nineSlicePolicy": {
+        "regions": {
+          "corners": {},
+          "topEdge": {"x": "stretch"},
+          "bottomEdge": {"x": "stretch"},
+          "leftEdge": {"y": "stretch"},
+          "rightEdge": {"y": "stretch"},
+          "center": {"x": "stretch", "y": "stretch"}
+        }
+      },
+      "expansionSizes": {
+        "min": [220, 64],
+        "native": [340, 80],
+        "max": [680, 120]
+      },
+      "maxSeamRatio": 3.0,
+      "maxEdgeDistortion": 0.35,
+      "output": "welcome-frame.webp",
+      "quality": 72,
+      "provenance": "outer frame is visible; figure and copy bed is reconstructed from visible chip material"
+    },
+    "toolFrame": {
+      "kind": "surface-9slice",
+      "assetClass": "material",
+      "crop": [1384, 20, 1458, 96],
+      "shape": {"type": "rounded-rect", "inset": [2, 2, 2, 2], "radius": 17},
+      "reconstruct": [[17, 15, 59, 61]],
+      "insets": [16, 16, 16, 16],
+      "nineSlicePolicy": {
+        "regions": {
+          "corners": {},
+          "topEdge": {"x": "stretch"},
+          "bottomEdge": {"x": "stretch"},
+          "leftEdge": {"y": "stretch"},
+          "rightEdge": {"y": "stretch"},
+          "center": {"x": "stretch", "y": "stretch"}
+        }
+      },
+      "expansionSizes": {
+        "min": [64, 64],
+        "native": [74, 76],
+        "max": [120, 96]
+      },
+      "maxSeamRatio": 3.0,
+      "maxEdgeDistortion": 0.35,
+      "output": "tool-frame.webp",
+      "quality": 72,
+      "provenance": "frame is visible; trophy bed is reconstructed from visible tool material"
+    },
+    "tipCardFrame": {
+      "kind": "surface-9slice",
+      "assetClass": "material",
+      "crop": [95, 828, 665, 954],
+      "shape": {"type": "rounded-rect", "inset": [1, 1, 2, 3], "radius": 22},
+      "reconstruct": [
+        [26, 17, 116, 108],
+        [132, 18, 440, 90],
+        [245, 91, 365, 121],
+        [450, 12, 565, 114]
+      ],
+      "insets": [24, 28, 24, 28],
+      "nineSlicePolicy": {
+        "regions": {
+          "corners": {},
+          "topEdge": {"x": "stretch"},
+          "bottomEdge": {"x": "stretch"},
+          "leftEdge": {"y": "stretch"},
+          "rightEdge": {"y": "stretch"},
+          "center": {"x": "stretch", "y": "stretch"}
+        }
+      },
+      "expansionSizes": {
+        "min": [320, 100],
+        "native": [570, 126],
+        "max": [900, 160]
+      },
+      "maxSeamRatio": 3.0,
+      "maxEdgeDistortion": 0.35,
+      "output": "tip-card-frame.webp",
+      "quality": 70,
+      "provenance": "frame is visible; tile, copy, pagination and hunt beds are reconstructed from visible card material"
+    },
+    "ornamentSpiral": {
+      "kind": "ink-matte",
+      "assetClass": "ornament",
+      "crop": [176, 660, 246, 730],
+      "inkLumaMax": 150,
+      "regions": [[0, 0, 70, 70]],
+      "inpaintRadius": 4,
+      "output": "ornament-spiral.webp",
+      "quality": 78,
+      "provenance": "visible spiral pigment"
+    },
+    "ornamentTrophy": {
+      "kind": "ink-matte",
+      "assetClass": "ornament",
+      "crop": [464, 660, 502, 730],
+      "inkLumaMax": 160,
+      "regions": [[0, 0, 38, 70]],
+      "inpaintRadius": 4,
+      "output": "ornament-trophy.webp",
+      "quality": 78,
+      "provenance": "visible trophy pigment"
+    },
+    "ornamentTap": {
+      "kind": "ink-matte",
+      "assetClass": "ornament",
+      "crop": [193, 762, 230, 802],
+      "inkLumaMax": 170,
+      "regions": [[0, 0, 37, 40]],
+      "inpaintRadius": 4,
+      "output": "ornament-tap.webp",
+      "quality": 78,
+      "provenance": "visible tap pigment"
+    },
+    "ornamentDivider": {
+      "kind": "ink-matte",
+      "assetClass": "ornament",
+      "crop": [296, 606, 478, 632],
+      "inkLumaMax": 175,
+      "regions": [[0, 0, 182, 26]],
+      "inpaintRadius": 4,
+      "output": "ornament-divider.webp",
+      "quality": 78,
+      "provenance": "visible divider pigment"
+    },
+    "ornamentHunt": {
+      "kind": "ink-matte",
+      "assetClass": "ornament",
+      "crop": [548, 843, 658, 940],
+      "inkLumaMax": 190,
+      "regions": [[0, 0, 110, 97]],
+      "inpaintRadius": 4,
+      "output": "ornament-hunt.webp",
+      "quality": 76,
+      "provenance": "visible hunt pigment"
+    },
+    "welcomeFigure": {
+      "kind": "ink-matte",
+      "assetClass": "illustration",
+      "crop": [45, 28, 114, 89],
+      "inkLumaMax": 188,
+      "regions": [[0, 0, 69, 61]],
+      "inpaintRadius": 4,
+      "output": "welcome-figure.webp",
+      "quality": 78,
+      "provenance": "visible welcome cave figure"
+    },
+    "tipFireTile": {
+      "kind": "shape-matte",
+      "assetClass": "illustration",
+      "crop": [122, 847, 208, 933],
+      "shape": {"type": "rounded-rect", "inset": [0, 0, 0, 0], "radius": 7},
+      "output": "tip-fire-tile.webp",
+      "quality": 78,
+      "provenance": "visible framed fire tile"
+    }
+  },
+  "outputDimensions": {
+    "wordmark-desktop.webp": [545, 320],
+    "wordmark-mobile.webp": [436, 256],
+    "ribbon-left.webp": [60, 61],
+    "ribbon-center.webp": [380, 61],
+    "ribbon-right.webp": [60, 61],
+    "begin-left.webp": [56, 106],
+    "begin-center.webp": [168, 106],
+    "begin-right.webp": [56, 106],
+    "fates-left.webp": [48, 100],
+    "fates-center.webp": [118, 100],
+    "fates-right.webp": [48, 100],
+    "welcome-frame.webp": [340, 80],
+    "tool-frame.webp": [74, 76],
+    "tip-card-frame.webp": [570, 126],
+    "ornament-spiral.webp": [70, 70],
+    "ornament-trophy.webp": [38, 70],
+    "ornament-tap.webp": [37, 40],
+    "ornament-divider.webp": [182, 26],
+    "ornament-hunt.webp": [110, 97],
+    "welcome-figure.webp": [69, 61],
+    "tip-fire-tile.webp": [86, 86]
+  },
+  "bundles": {
+    "desktop": [
+      "wordmark-desktop.webp",
+      "ribbon-left.webp",
+      "ribbon-center.webp",
+      "ribbon-right.webp",
+      "begin-left.webp",
+      "begin-center.webp",
+      "begin-right.webp",
+      "fates-left.webp",
+      "fates-center.webp",
+      "fates-right.webp",
+      "welcome-frame.webp",
+      "tool-frame.webp",
+      "tip-card-frame.webp",
+      "ornament-spiral.webp",
+      "ornament-trophy.webp",
+      "ornament-tap.webp",
+      "ornament-divider.webp",
+      "ornament-hunt.webp",
+      "welcome-figure.webp",
+      "tip-fire-tile.webp"
+    ],
+    "mobile": [
+      "wordmark-mobile.webp",
+      "ribbon-left.webp",
+      "ribbon-center.webp",
+      "ribbon-right.webp",
+      "begin-left.webp",
+      "begin-center.webp",
+      "begin-right.webp",
+      "fates-left.webp",
+      "fates-center.webp",
+      "fates-right.webp",
+      "tool-frame.webp",
+      "tip-card-frame.webp",
+      "ornament-spiral.webp",
+      "ornament-trophy.webp",
+      "ornament-tap.webp",
+      "ornament-divider.webp",
+      "ornament-hunt.webp",
+      "tip-fire-tile.webp"
+    ]
+  },
+  "payloadBundles": {
+    "desktop": {
+      "materials": "desktop",
+      "parchment": "desktop",
+      "budget": "desktopCriticalBytes"
+    },
+    "mobile-390": {
+      "materials": "mobile",
+      "parchment": "mobile-390",
+      "budget": "mobileCriticalBytes"
+    },
+    "mobile-430": {
+      "materials": "mobile",
+      "parchment": "mobile-430",
+      "budget": "mobileCriticalBytes"
+    }
+  },
+  "blocked": [
+    {
+      "id": "button-hover-state",
+      "reason": "The approved target contains only the resting button state."
+    },
+    {
+      "id": "button-pressed-state",
+      "reason": "The approved target contains only the resting button state."
+    },
+    {
+      "id": "sound-icon",
+      "reason": "The target shows a settings gear; the product's sound icon is not observable."
+    },
+    {
+      "id": "higher-resolution-detail",
+      "reason": "No source pixels exist above the approved 1586x992 master."
+    }
+  ],
+  "reconstructedRegions": [
+    "ribbon-text-bed",
+    "begin-icon-and-label-bed",
+    "fates-icon-and-label-bed",
+    "welcome-copy-bed",
+    "tool-icon-bed",
+    "tip-copy-and-pagination-bed"
+  ]
+}
