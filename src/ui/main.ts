@@ -14,6 +14,7 @@ import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
 import { glyphHTML, problemGlyphHTML } from "./art";
+import { TITLE_WORDMARKS } from "./title-art";
 import { PlaytestLog } from "./playtest";
 import {
   IMPROVISE_ENABLED,
@@ -1209,10 +1210,21 @@ function showTitleScreen(): void {
     <div class="title-stage">
       <div class="title-panel">
         <h1 class="title-mark title-block">
-          <span class="t-the">The</span>
-          <span class="t-ascent">Ascent</span>
-          <span class="t-of">of</span>
-          <span class="t-karl">Karl</span>
+          <span class="title-mark-semantic">The Ascent of Karl</span>
+          <picture class="title-wordmark" aria-hidden="true">
+            <source media="(max-width: 900px)"
+                    srcset="${TITLE_WORDMARKS.mobile.src}"
+                    width="${TITLE_WORDMARKS.mobile.width}"
+                    height="${TITLE_WORDMARKS.mobile.height}">
+            <img class="title-wordmark-art"
+                 data-title-layer="wordmark"
+                 src="${TITLE_WORDMARKS.desktop.src}"
+                 width="${TITLE_WORDMARKS.desktop.width}"
+                 height="${TITLE_WORDMARKS.desktop.height}"
+                 sizes="(max-width: 900px) min(61vw, 218px), min(34.36vw, 545px)"
+                 alt="" aria-hidden="true"
+                 loading="eager" fetchpriority="high">
+          </picture>
         </h1>
         <p class="title-sub title-block">reinvent history, badly</p>
         <p class="title-tagline title-block">

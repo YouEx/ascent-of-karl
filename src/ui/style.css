@@ -1361,76 +1361,36 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 
 /* --- Overskriften ------------------------------------------------------ */
 .title-mark {
-  /* Målt: overskriften er 355,3 px høj mod referencens 320 (Δ 35,27 px =
-     5,07cqw), men blækbredde-forholdet er 0,975 — skriftstørrelsen er altså
-     rigtig, det er linjeafstanden på tværs af fire linjer der stabler for
-     højt. Reduktionen fordeles proportionalt over font-size × Δline-height;
-     kun summen er hårdt målt, fordelingen er en model. */
-  left: 19.04%; right: 2.69%;
+  /* Targetens sourceafledte wordmark er 545×320 og står på præcis dette
+     anker ved den native 1586×992-rude. Procenten bevarer ankeret, mens
+     pixel-loftet forhindrer opskalering på højere/bredere desktopruder. */
+  left: 19.04%; right: auto;
   top: 5.55%;
+  width: min(78.27%, 545px);
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 600;
-  /* DESIGN.md's skala-tabel (§ Hero-titel) foreskriver WONK 1 og -0.02em —
-     stod her på WONK 0 / -0.012em, uden nogen begrundet afvigelse. Rettet
-     til at følge loven.
-     Blækdækningen i overskriften lå alligevel 43 % under referencens (målt
-     direkte på pixels: 13,7 % mod 24,0 %), selvom bogstavernes egen boks
-     matchede referencens næsten pixel for pixel — formen var rigtig, men
-     strøget var for tyndt. To ting afprøvet, kun den anden virkede:
-     1) `wght` sat eksplicit i variations-listen (i stedet for kun via
-        `font-weight`) — målt ingen ændring (13,1 %), så aksen arvede
-        allerede korrekt; beholdt alligevel som eksplicit lov-værdi.
-     2) `opsz` 144 er Fraunces' mest kontrastrige display-snit (tykt tykt,
-        tyndt meget tyndt) — sænket til 72, samme værdi som
-        `.title-actions .btn-stone` allerede bruger med tilfredsstillende
-        blæk (ink 0,984), gav 15,2 %. */
-  font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 1, "wght" 600;
-  letter-spacing: -0.02em;
-  /* Bogstaverne er hugget i sten: mørk kerne, lysere top, og en tynd lys
-     kant forneden hvor lyset fanger den nederste facet. */
-  background: linear-gradient(
-    177deg,
-    var(--title-stone-hi) 0%,
-    var(--title-stone) 46%,
-    var(--title-stone-lo) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  /* De resterende ~9 procentpoint hentes med en tynd streg i samme
-     sten-mørke tone som bundfarvens skygge — lægger vægt på uden at ændre
-     skriftstørrelse, sporing eller den lovpligtige vægt 600. 1,6px er
-     afvejet: mere gav aftagende gevinst og begyndte at fylde bogstavernes
-     modhold (fx "e"s åbning). */
-  -webkit-text-stroke: 1.6px var(--title-stone-lo);
-  filter: drop-shadow(0 0.12cqw 0 var(--title-relief));
 }
-.title-mark span { display: block; }
-.title-mark .t-the { font-size: 10.2cqw; line-height: 0.97; }
-.title-mark .t-ascent { font-size: 14.9cqw; line-height: 0.84; }
-/* "of" står mellem to korte streger, som i referencen. Stregerne er
-   ornament og bærer ingen betydning. */
-.title-mark .t-of {
-  font-size: 5.6cqw; line-height: 1.1;
-  font-style: italic;
-  font-variation-settings: "opsz" 48, "SOFT" 40, "WONK" 1, "wght" 600;
-  display: flex; align-items: center; justify-content: center; gap: 1.6cqw;
+.title-mark-semantic {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
-.title-mark .t-of::before,
-.title-mark .t-of::after {
-  content: ""; height: 0.2cqw; width: 9cqw;
-  background: var(--ornament); opacity: 0.75;
+.title-wordmark,
+.title-wordmark-art {
+  display: block;
+  width: 100%;
+  height: auto;
 }
-.title-mark .t-karl { font-size: 19.8cqw; line-height: 0.88; }
+.title-wordmark-art { object-fit: contain; }
 
 /* --- Undertitlen på det malede bånd ------------------------------------ */
 .title-sub {
   /* Målt: registerets bånd er 52 px højt — det dækker hele det MALEDE bånd,
-     ikke kun tekstlinjen. Vores boks var 29,94 px = 4,3cqw x line-height 1,
-     altså tekstlinjens egen højde. 1,74 strækker boksen til 52 px med halv
-     ledning i begge ender uden at røre skriftstørrelsen. Uden eget
-     left/right arvede den .title-block's 564 px mod registerets 500. */
+     ikke kun tekstlinjen. Kildens tekst er 28 px ved native-ruden; 4,02cqw
+     rammer bredden, mens line-height 1,86 beholder ankerets fulde 52 px.
+     Uden eget left/right arvede boksen .title-block's 564 px mod 500. */
   left: 19.75%; right: 8.44%;
   top: 41.93%;
   margin: 0;
@@ -1443,45 +1403,51 @@ html[data-improvise-enabled] .invention-entry .invention-label {
      defensiv værdi, ikke selve løftestangen for blækdækningen der (se
      `.title-mark`s kommentar for hvad der faktisk flyttede tallet). */
   font-variation-settings: "opsz" 32, "SOFT" 40, "WONK" 1, "wght" 600;
-  font-size: 4.3cqw;
-  line-height: 1.74;
+  font-size: 4.02cqw;
+  line-height: 1.86;
   color: var(--ribbon-ink);
-  /* TASK-012: formen er nu tegnet med `clip-path`, ikke hentet fra
-     pladens pixels. Punkterne er sporet af referencens fanebånd i
-     `docs/design/reference/title-2026-08-11.webp` (registerets rect
-     155,462,500,52 beskåret 1:1, gitter lagt over hver 10 %): kroppen
-     løber fladt 6-94 % af bredden, og hver ende smalner til to takker
-     (top ~18/68 %) om en indadgående tunge ved 45 % — samme "fanebånd
-     med hak" som referencen, fremfor et rent rektangel. Tidligere
-     forsøg lod pladens EGNE pixels (build_parchment.py's bevarede bånd)
-     stå som eneste form; det gav kun structure 0,259, og de to
-     forstærkningslinjer der blev lagt ovenpå (se historik i git) skabte
-     en dobbeltkant referencen ikke har. Denne kant er skarp, hvor
-     pladens er blødt resizet ned mod dens 692 px. */
+  isolation: isolate;
   clip-path: polygon(
     6% 2%, 94% 2%,
     100% 18%, 95% 45%, 100% 68%,
     94% 92%, 6% 92%,
     0% 68%, 5% 45%, 0% 18%
   );
-  /* Fladens farve er `--tile-edge`: målt kropstone i referencen er
-     (210,174,136); `--tile-groove` (205,175,147) ligger tættere på
-     (afstand ~12 mod ~34), men falder til 4,19:1 kontrast mod
-     `--ribbon-ink` — under lovens 4,5:1 for normal tekst. `--tile-edge`
-     holder 4,92:1 og er næstnærmest, så tilgængelighed vinder over den
-     sidste tone-finpudsning. Korn + svag lodret gradient (samme greb som
-     `.title-chip`/`.title-tools`) giver båndet papirets egen struktur
-     tilbage — en flad tokenfarve alene målte lav `materiality`, fordi
-     referencens bånd er synligt fiber-teksturet, ikke en glat flade. */
   background-color: var(--tile-edge);
-  background-image: var(--grain),
-                    linear-gradient(to right, var(--tile-contour) 0%, transparent 13%, transparent 87%, var(--tile-contour) 100%),
-                    linear-gradient(to bottom, var(--tile-bevel), var(--tile-edge));
+  background-image:
+    var(--grain),
+    linear-gradient(to right,
+      var(--tile-contour) 0%, transparent 13%,
+      transparent 87%, var(--tile-contour) 100%),
+    linear-gradient(to bottom, var(--tile-bevel), var(--tile-edge));
   background-blend-mode: overlay, multiply, normal;
-  /* Blæk-konturen følger den beskårne form (i modsætning til
-     `box-shadow`, der ville tegne om boksens rette hjørner) — tynd og
-     varm som referencens egen kant. */
   filter: drop-shadow(0 0 1px var(--ribbon-ink));
+  /* Kildens båndudsnit er 500×61 ved native-ruden, mens dommerens synlige
+     anker er de midterste 52 px (y=462..514). Skiverne beholdes derfor i
+     deres oprindelige proportioner og forskydes fire pixels op i boksen i
+     stedet for at blive klemt lodret og strakt vandret. `min()` skalerer
+     samme komposition ned på mobil, men aldrig over kildens native mål.
+     De ligger som et afdæmpet materialelag over token-bunden: generatorens
+     rekonstruerede tekstbed er ikke observeret kilde og må derfor ikke
+     overdøve den verificerede tone/kontrast i den læsbare midte. */
+}
+.title-sub::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.28;
+  pointer-events: none;
+  background:
+    url("../assets/art/title-materials/ribbon-left.webp")
+      left max(-0.57cqw, -4px) /
+      min(8.61cqw, 60px) min(8.75cqw, 61px) no-repeat,
+    url("../assets/art/title-materials/ribbon-right.webp")
+      right max(-0.57cqw, -4px) /
+      min(8.61cqw, 60px) min(8.75cqw, 61px) no-repeat,
+    url("../assets/art/title-materials/ribbon-center.webp")
+      center max(-0.57cqw, -4px) /
+      min(54.50cqw, 380px) min(8.75cqw, 61px) no-repeat;
 }
 
 .title-tagline {
@@ -1514,7 +1480,12 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   left: 37.71%; right: 23.52%;
   top: 57.60%;
   height: 4.021cqw;
-  background: url("../assets/art/orn-divider.webp") no-repeat center / contain;
+  /* Pigmentet blev høstet ved x=296,y=606; ankeret starter x=280,y=605.
+     Den observerede 16×1 px forskydning bevares, frem for at centrere det
+     182 px brede motiv i den 270 px brede måleboks. */
+  background: url("../assets/art/title-materials/ornament-divider.webp")
+    no-repeat min(2.30cqw, 16px) min(0.14cqw, 1px) /
+    min(26.11cqw, 182px) min(3.73cqw, 26px);
   mix-blend-mode: multiply;
 }
 
@@ -1526,14 +1497,20 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   left: 18.75%; right: 8.01%;
   top: 62.53%;
   display: flex;
-  justify-content: center;
-  gap: 3.6cqw;
+  justify-content: flex-start;
+  gap: min(2.73cqw, 19px);
 }
 /* Med et gemt spil er der tre knapper i stedet for to. Rækken er lige så
    bred som før, så luften og polstringen må give sig — ikke skriftstørrelsen. */
 .title-actions.crowded { gap: 1.8cqw; }
-.title-actions.crowded .btn-stone { padding-inline: 3.4cqw; }
-.title-actions.crowded .btn-quiet { padding-inline: 2.4cqw; font-size: 3.8cqw; }
+.title-actions.crowded .btn-stone {
+  padding-inline: 1cqw;
+  font-size: 5cqw;
+}
+.title-actions.crowded .btn-quiet {
+  padding-inline: 1.6cqw;
+  font-size: 3.2cqw;
+}
 .title-actions button {
   position: relative;
   border: 0;
@@ -1549,41 +1526,102 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   font-family: var(--font-display);
   color: var(--btn-ink);
   cursor: pointer;
-  transition: transform var(--dur-press) var(--ease-out),
-              filter var(--dur-press) var(--ease-out);
+  isolation: isolate;
+  white-space: nowrap;
 }
-/* Stenknappen er skåret i tre: to hætter og en ren søjle fra fladen, der
-   gentages. Hver del skaleres til fuld højde, så det lodrette lysforløb i
-   stenen følger med, uanset hvor bred knappen bliver. */
+/* Knapfladerne er høstet større end dommerens 78 px høje handlingsanker:
+   Begin ved [143,642,280×106], Fates ved [441,645,214×100]. Pseudo-
+   elementerne lægger de tre godkendte skiver tilbage i de observerede
+   koordinater og lader dem male uden for det semantiske trykmål. Det
+   bevarer native bevel/geometri uden opskalering; på smalle ruder skalerer
+   alle mål proportionalt ned via cqw. */
 .title-actions .btn-stone {
+  width: min(39.31cqw, 274px);
+  flex: none;
   font-size: 6.4cqw;
   font-weight: 600;
   font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
-  padding-inline: 5.2cqw;
+  padding-inline: min(5.2cqw, 36px);
+}
+.title-actions .btn-stone::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  left: max(-0.72cqw, -5px);
+  top: max(-1.15cqw, -8px);
+  width: min(40.17cqw, 280px);
+  height: min(15.21cqw, 106px);
   background:
-    url("../assets/art/btn-begin-l.webp") left center / auto 100% no-repeat,
-    url("../assets/art/btn-begin-r.webp") right center / auto 100% no-repeat,
-    url("../assets/art/btn-begin-m.webp") center center / auto 100% repeat-x;
+    url("../assets/art/title-materials/begin-left.webp")
+      left center / min(8.03cqw, 56px) min(15.21cqw, 106px) no-repeat,
+    url("../assets/art/title-materials/begin-right.webp")
+      right center / min(8.03cqw, 56px) min(15.21cqw, 106px) no-repeat,
+    url("../assets/art/title-materials/begin-center.webp")
+      center / min(24.10cqw, 168px) min(15.21cqw, 106px) no-repeat;
 }
 .title-actions .btn-quiet {
+  width: min(30.70cqw, 214px);
+  flex: none;
   font-size: 4.3cqw;
   min-height: 10.4cqw;
-  background:
-    url("../assets/art/btn-quiet-l.webp") left center / auto 100% no-repeat,
-    url("../assets/art/btn-quiet-r.webp") right center / auto 100% no-repeat,
-    url("../assets/art/btn-quiet-m.webp") center center / auto 100% repeat-x;
 }
-.title-actions button:hover { filter: brightness(1.04); }
-.title-actions button:active { transform: translateY(0.3cqw); }
+.title-actions .btn-quiet::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  left: 0;
+  top: max(-0.72cqw, -5px);
+  width: min(30.70cqw, 214px);
+  height: min(14.35cqw, 100px);
+  background:
+    url("../assets/art/title-materials/fates-left.webp")
+      left center / min(6.89cqw, 48px) min(14.35cqw, 100px) no-repeat,
+    url("../assets/art/title-materials/fates-right.webp")
+      right center / min(6.89cqw, 48px) min(14.35cqw, 100px) no-repeat,
+    url("../assets/art/title-materials/fates-center.webp")
+      center / min(16.93cqw, 118px) min(14.35cqw, 100px) no-repeat;
+}
+/* Gemte spil viser Continue, New life og Fates i samme 510 px række.
+   Fresh-state-målene ovenfor er kildekoordinater for præcis to knapper og
+   må derfor ikke låse treknaps-layoutet. Her genbruges de samme godkendte
+   skiver, men inden for knappernes eksisterende indholdsbestemte bredder. */
+.title-actions.crowded .btn-stone,
+.title-actions.crowded .btn-quiet {
+  width: auto;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.title-actions.crowded .btn-stone::before,
+.title-actions.crowded .btn-quiet::before {
+  inset: 0;
+  width: auto;
+  height: auto;
+}
+.title-actions.crowded .btn-stone::before {
+  background-size:
+    auto 100%,
+    auto 100%,
+    calc(100% - 11.84cqw) 100%;
+}
+.title-actions.crowded .btn-quiet::before {
+  background-size:
+    auto 100%,
+    auto 100%,
+    calc(100% - 10.75cqw) 100%;
+}
 .title-actions .orn {
   width: 7.4cqw; height: 7.4cqw;
   background: no-repeat center / contain;
   mix-blend-mode: multiply;
   flex: none;
 }
-.title-actions .orn-spiral { background-image: url("../assets/art/orn-spiral.webp"); }
+.title-actions .orn-spiral {
+  background-image: url("../assets/art/title-materials/ornament-spiral.webp");
+}
 .title-actions .orn-trophy {
-  background-image: url("../assets/art/orn-trophy.webp");
+  background-image: url("../assets/art/title-materials/ornament-trophy.webp");
   width: 4.6cqw; height: 6.8cqw;
 }
 .fates-count { font-variant-numeric: tabular-nums; color: var(--rust-warm); }
@@ -1603,7 +1641,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 }
 .title-hint .orn-tap {
   width: 4cqw; height: 4.2cqw;
-  background: url("../assets/art/orn-tap.webp") no-repeat center / contain;
+  background: url("../assets/art/title-materials/ornament-tap.webp") no-repeat center / contain;
   mix-blend-mode: multiply;
   flex: none;
 }
@@ -1627,19 +1665,23 @@ html[data-improvise-enabled] .invention-entry .invention-label {
      være mørkere. --tile-edge (216,191,165) rammer tættest (afstand ~5,5 i
      RGB mod --chronicles ~40). Kun farven skiftet — korn/kant/skygge/radius
      er urørt, da struct (0,442) og materiality (0,953) allerede er gode. */
-  background-color: var(--tile-edge);
-  background-image: var(--grain);
-  background-blend-mode: overlay;
-  /* Kanten var også --tile-edge, men den er nu fladefarve — skiftet til
-     --tile-contour (mørkere), så konturen stadig er synlig mod fladen. */
-  border: 0.3cqw solid var(--tile-contour);
-  border-radius: 2.4cqw;
-  box-shadow: var(--shadow-paper);
+  isolation: isolate;
 }
-.title-tip .tip-text { min-width: 0; }
+.title-tip::before {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: -1;
+  border: 24px solid transparent;
+  border-image-source: url("../assets/art/title-materials/tip-card-frame.webp");
+  border-image-slice: 24 28 fill;
+  border-image-width: 24px 28px;
+  border-image-repeat: stretch;
+}
+.title-tip .tip-text { min-width: 0; position: relative; z-index: 2; }
 .tip-dots {
   position: absolute; left: 0; right: 0; bottom: 1.4cqw;
   display: flex; justify-content: center; gap: 1.6cqw;
+  z-index: 2;
 }
 .tip-dots button {
   width: 1.7cqw; height: 1.7cqw; padding: 0;
@@ -1663,7 +1705,9 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 .tip-dots button { position: relative; }
 
 .title-tip .tile {
-  width: 12.4cqw; height: 12.4cqw;
+  position: relative;
+  z-index: 2;
+  width: min(12.4cqw, 86px); height: min(12.4cqw, 86px);
   border-radius: 1.6cqw;
 }
 /* Fliserne genbruger elementglyffer, hvor emnet ikke er ilden selv — ét
@@ -1672,7 +1716,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
    ikke nye netværksaktiver. tip.tile styrer klassen, så TITLE_TIPS rent
    faktisk bestemmer, hvad kortet viser (før viste alle tre samme flise). */
 .title-tip .tile-fire {
-  background: url("../assets/art/tile-fire.webp") no-repeat center / cover;
+  background: url("../assets/art/title-materials/tip-fire-tile.webp") no-repeat center / cover;
 }
 .title-tip .tile-sten {
   background-color: var(--tile);
@@ -1701,7 +1745,8 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   content: "";
   position: absolute; right: 2cqw; top: 8%; bottom: 8%;
   width: 15cqw;
-  background: url("../assets/art/orn-hunt.webp") no-repeat center / contain;
+  z-index: 1;
+  background: url("../assets/art/title-materials/ornament-hunt.webp") no-repeat center / contain;
   mix-blend-mode: multiply;
   pointer-events: none;
 }
@@ -1711,55 +1756,55 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   position: absolute;
   z-index: 1;
   left: calc(var(--bar) + 1.26vw); top: 2.5%;
-  display: flex; align-items: center; gap: 1.8rem;
-  padding: 0.6rem 4.75rem 0.6rem 0.75rem;
-  /* Målt mod referencen: fladens egen medianfarve er (213,182,149), en
-     tydeligt mørkere/varmere pergamenttone end --chronicle (238,224,205,
-     bygget til lyse kort på selve arket). Chippen svæver derimod over
-     himlen, ligesom .title-tools, og skal læse som et tykkere stykke
-     pergament for at stå tydeligt af mod maleriet.
-     Fladfarve + korn løftede tonen men gjorde intet ved formen — dommerens
-     `structure` blev stående på 0,273. Referencen har synlig retningsbestemt
-     skygge (lysere top, mørkere bund) og en indrammet, hugget kant, ikke en
-     jævn flade. Samme greb (og samme tokenpalet) som spillets eget
-     `.element` (game-skærmen, IKKE redigeret her) — kun tokens delt, ingen
-     kode delt på tværs af skærme. .element bruger selv --tile-lit/-shade;
-     her rammer --tile-edge/-groove målingen bedre (chippen er mindre og
-     svæver frit, så gennemsnittet skal ligge tættere på referencens 213/182/
-     149 end .elements lysere kortflade tillader): --tile-edge/--tile-groove
-     som lodret gradient, --tile-contour som ydre kant, --tile-bevel/
-     --tile-groove som indre ring. */
+  display: flex; align-items: center; gap: 24px;
+  width: 340px;
+  height: 65px;
+  padding: 7px 12px 7px 25px;
+  isolation: isolate;
+}
+.title-chip::before {
+  content: "";
+  position: absolute;
+  left: 0; top: -5px;
+  width: 340px; height: 80px;
+  z-index: -1;
+  box-sizing: border-box;
   background-color: var(--tile-shade);
-  background-image: var(--grain),
-                    linear-gradient(to bottom, var(--tile-shade), var(--tile-groove));
+  background-image:
+    var(--grain),
+    linear-gradient(to bottom, var(--tile-shade), var(--tile-groove));
   background-blend-mode: overlay, normal;
-  border: 1px solid var(--tile-contour);
-  /* Referencens hjørner er tydeligt rundere end 0,7rem på denne boksstørrelse
-     (målt ved gennemsyn ~20 % af højden, ikke ~11 %). */
+  border: 18px solid transparent;
+  border-image-source: url("../assets/art/title-materials/welcome-frame.webp");
+  border-image-slice: 18 24;
+  border-image-width: 18px 24px;
+  border-image-repeat: stretch;
   border-radius: 1.1rem;
-  box-shadow: inset 0 0 0 2px var(--tile-bevel),
-              inset 0 0 0 4px var(--tile-groove),
-              var(--shadow-paper);
+  box-shadow:
+    inset 0 0 0 2px var(--tile-bevel),
+    inset 0 0 0 4px var(--tile-groove),
+    var(--shadow-paper);
+  pointer-events: none;
 }
 .title-chip .figure {
-  width: 4.5rem; height: 2.7rem;
-  border-radius: 0.35rem;
-  background: url("../assets/art/chip-figure.webp") no-repeat center / cover;
+  width: 69px; height: 61px;
+  background: url("../assets/art/title-materials/welcome-figure.webp") no-repeat center / contain;
   flex: none;
 }
 .title-chip strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 0.95rem; font-weight: 600;
+  font-size: 1rem; font-weight: 600;
   color: var(--ink-warm);
 }
 .title-chip span {
   display: block;
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--ink-warm-soft);
 }
+.title-chip > div { translate: 0 4px; }
 
 /* --- Trofæ og lyd øverst til højre i maleriet -------------------------- */
 .title-tools {
@@ -1772,24 +1817,24 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   display: flex; gap: 2.45rem;
 }
 .title-tools button {
+  position: relative;
   width: 4.4rem; height: 4.4rem;
   display: grid; place-items: center;
-  /* Samme tonemåling og genbrug af spillets egen "hugget flise"-opskrift
-     som .title-chip — se dens kommentar. */
-  background-color: var(--tile-shade);
-  background-image: var(--grain),
-                    linear-gradient(to bottom, var(--tile-shade), var(--tile-groove));
-  background-blend-mode: overlay, normal;
-  border: 1px solid var(--tile-contour);
-  border-radius: 1.15rem;
-  box-shadow: inset 0 0 0 2px var(--tile-bevel),
-              inset 0 0 0 4px var(--tile-groove),
-              var(--shadow-paper);
+  background: none;
+  border: 0;
   color: var(--label-ink);
   cursor: pointer;
-  transition: transform var(--dur-press) var(--ease-out);
 }
-.title-tools button:hover { transform: translateY(-1px); }
+.title-tools button::before {
+  content: "";
+  position: absolute; inset: 0;
+  border: 16px solid transparent;
+  border-image-source: url("../assets/art/title-materials/tool-frame.webp");
+  border-image-slice: 16 fill;
+  border-image-width: 16px;
+  border-image-repeat: stretch;
+  pointer-events: none;
+}
 /* Disse to knapper står oven på selve maleriet, ikke arket — den globale
    `:focus-visible`-ring (ochre mod luft/bjerg) kan derfor lande på en lys
    sky ét sted og en mørk klippe et andet, målt helt ned til 1,05:1. En enkelt
@@ -1799,16 +1844,15 @@ html[data-improvise-enabled] .invention-entry .invention-label {
    derfor ≥3:1 mod enhver baggrund, uanset hvor lys eller mørk himlen er der. */
 .title-tools button:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 2px var(--tile-bevel),
-              inset 0 0 0 4px var(--tile-groove),
-              var(--shadow-paper),
-              0 0 0 3px var(--parchment),
+  box-shadow: 0 0 0 3px var(--parchment),
               0 0 0 6px var(--ochre-ink);
 }
 /* Referencens ikoner er streg, ikke fyldte flader — samme regel som
    .icon-btn svg (DESIGN.md §8), men glemt her: uden fill:none arver SVG'en
    sin standard (sort fyld), og trofæ/lyd blev massive sorte silhuetter. */
 .title-tools svg {
+  position: relative;
+  z-index: 1;
   width: 2.05rem; height: 2.05rem;
   fill: none; stroke: currentColor; stroke-width: 1.6;
   stroke-linecap: round; stroke-linejoin: round;
@@ -1836,7 +1880,29 @@ html[data-improvise-enabled] .invention-entry .invention-label {
     height: min(92%, 128vw);
     max-width: min(92%, 27rem);
   }
+  .title-mark {
+    left: 10%;
+    width: min(61%, 218px);
+  }
   .title-chip { display: none; }
+  .title-divider {
+    background-size: auto min(100%, 13px);
+  }
+  .title-tip::before {
+    border-width: 12px 14px;
+    border-image-width: 12px 14px;
+  }
+  .title-tip .tile {
+    width: min(12.4cqw, 43px);
+    height: min(12.4cqw, 43px);
+  }
+  .title-tools { gap: 0.75rem; }
+  .title-tools button { width: 44px; height: 44px; }
+  .title-tools button::before {
+    border-width: 8px;
+    border-image-width: 8px;
+  }
+  .title-tools svg { width: 1.25rem; height: 1.25rem; }
 }
 
 /* Tre bredder findes for scene og pergament (897/640/448 og 692/520/360 px,

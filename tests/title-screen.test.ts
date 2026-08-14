@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import mainSource from "../src/ui/main.ts?raw";
 import iconsSource from "../src/ui/icons.ts?raw";
 import styles from "../src/ui/style.css?raw";
+import titleArtSource from "../src/ui/title-art.ts?raw";
 
 /**
  * Titelskærmen har ingen jsdom/happy-dom i dette repo (se vite.config.ts'
@@ -178,6 +179,36 @@ describe("titelskærmens egen h1 er den ENESTE, en skærmlæser møder (TASK-011
     expect(showTitleScreenBody).toMatch(/setBackgroundInert\(true\)/);
   });
 
+  it("bevarer den læsbare titel som semantisk tekst og gør den malede wordmark dekorativ", () => {
+    expect(showTitleScreenBody).toContain(
+      '<span class="title-mark-semantic">The Ascent of Karl</span>',
+    );
+    expect(showTitleScreenBody).toMatch(
+      /<picture class="title-wordmark" aria-hidden="true">[\s\S]*?<source[\s\S]*?TITLE_WORDMARKS\.mobile[\s\S]*?<img[\s\S]*?data-title-layer="wordmark"[\s\S]*?alt=""[\s\S]*?aria-hidden="true"/,
+    );
+  });
+
+  it("deklarerer begge wordmarks med deres godkendte native mål", () => {
+    expect(titleArtSource).toContain("wordmark-desktop.webp");
+    expect(titleArtSource).toContain("wordmark-mobile.webp");
+    expect(titleArtSource).toMatch(/desktop:[\s\S]*?width:\s*545[\s\S]*?height:\s*320/);
+    expect(titleArtSource).toMatch(/mobile:[\s\S]*?width:\s*436[\s\S]*?height:\s*256/);
+  });
+
+  it("holder wordmarken på native 545px desktop / 218px ved DPR2 og bruger ikke CSS-tekstfyld", () => {
+    const stripped = stripComments(styles);
+    const desktop = extractBlock(stripped, ".title-mark {");
+    const mobile = extractBlock(
+      stripped,
+      "@media (max-width: 900px), (max-aspect-ratio: 1/1) {",
+    );
+    expect(desktop).toMatch(/width:\s*min\(78\.27%,\s*545px\)/);
+    expect(desktop).not.toMatch(/background-clip|text-stroke/);
+    expect(mobile).toMatch(
+      /\.title-mark\s*\{[\s\S]*?width:\s*min\(61%,\s*218px\)/,
+    );
+  });
+
   it("setBackgroundInert skåner #title-screen selv, men rammer alle andre børn af #app", () => {
     expect(setBackgroundInertBody).toMatch(
       /child\.id === "title-screen"/,
@@ -236,7 +267,52 @@ describe("gear/tap-ikonerne er væk fra icons.ts og bliver ikke sneget ind igen 
 
   it("titelskærmen bruger det malede orn-tap.webp til hintet, ikke et icons.tap", () => {
     expect(showTitleScreenBody).not.toContain("icons.tap");
-    expect(stripComments(styles)).toContain("orn-tap.webp");
+    expect(stripComments(styles)).toContain("title-materials/ornament-tap.webp");
+  });
+});
+
+describe("godkendte titelmaterialer bruges kun til observerbar krom", () => {
+  const stripped = stripComments(styles);
+
+  it("bruger de sourceafledte 3-/9-slice-materialer og ornamenter", () => {
+    for (const asset of [
+      "ribbon-left.webp",
+      "ribbon-center.webp",
+      "ribbon-right.webp",
+      "begin-left.webp",
+      "begin-center.webp",
+      "begin-right.webp",
+      "fates-left.webp",
+      "fates-center.webp",
+      "fates-right.webp",
+      "welcome-frame.webp",
+      "welcome-figure.webp",
+      "tool-frame.webp",
+      "tip-card-frame.webp",
+      "tip-fire-tile.webp",
+      "ornament-spiral.webp",
+      "ornament-trophy.webp",
+      "ornament-tap.webp",
+      "ornament-divider.webp",
+      "ornament-hunt.webp",
+    ]) {
+      expect(stripped).toContain(`title-materials/${asset}`);
+    }
+  });
+
+  it("opfinder ikke malede hover-, pressed- eller sound-assets", () => {
+    expect(stripped).not.toMatch(/title-materials\/[^"')]*(hover|pressed|sound)/);
+    expect(stripped).not.toMatch(/\.title-actions button:hover/);
+    expect(stripped).not.toMatch(/\.title-actions button:active/);
+    expect(stripped).not.toMatch(/\.title-tools button:hover/);
+  });
+
+  it("gemt spil frigiver fresh-state-bredderne, så tre knapper forbliver på én række", () => {
+    expect(stripped).toMatch(
+      /\.title-actions\.crowded \.btn-stone,\s*\.title-actions\.crowded \.btn-quiet\s*\{[^}]*width:\s*auto/,
+    );
+    const button = extractBlock(stripped, ".title-actions button {");
+    expect(button).toMatch(/white-space:\s*nowrap/);
   });
 });
 

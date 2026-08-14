@@ -457,6 +457,35 @@ bredere feather.
 - **GOAL-004**: Integrér de nye lag i den semantiske titelskærm og iterér
   målbart til alle closure-gates og eksisterende kontrakter er grønne.
 
+#### Status 14-08-2026 — materialesporet er synligt integreret
+
+Stream C er koblet ind uden at vente på de blokerede scene-/pergamentmasters:
+
+- `wordmark-desktop.webp` og `wordmark-mobile.webp` vælges med `<picture>`,
+  mens ét semantisk `<h1>` fortsat hedder `The Ascent of Karl`.
+- Bånd, Begin/Fates-materialer, velkomst-, værktøjs- og tiprammer samt de
+  godkendte ornamenter erstatter de tidligere CSS-/ældre asset-tilnærmelser.
+  Hover/pressed- og sound-kunst er fortsat udeladt, fordi manifestet markerer
+  dem som ikke observerbare.
+- Fokuscapture ved `target-native`, `mobile-390` og `mobile-430` målte
+  `titleInkOccupancy` til henholdsvis **27,3014 %**, **27,1795 %** og
+  **27,5581 %** med `title-fidelity-v2`.
+- Wordmarken vises 544,97×319,97 fysiske pixels mod 545×320 native på
+  `target-native` og præcis 436×256 fysiske pixels mod 436×256 native på
+  begge DPR2-mobiler.
+- Konservativt med alle CSS-refererede materialer medregnet er
+  parchment+materiale **117.280/180.000 byte** desktop,
+  **86.512/120.000 byte** på `mobile-390` og **101.398/120.000 byte** på
+  `mobile-430`.
+- Den fokuserede native regiondommer i `.judge/fidelity-ui-native5` ender
+  på **0,8246** samlet uden røde titelregioner. De direkte berørte flader
+  måler ribbon **0,7407**, divider **0,8240**, actions **0,8561**, chip
+  **0,7861**, tip-card **0,8625** og tools **0,7917** mod deres uændrede
+  registry-tærskler.
+
+De fulde Phase D scene-, foreground- og parchment-gates er fortsat åbne og er
+ikke omgået eller sænket af denne integration.
+
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
 | TASK-012 | Opret `src/ui/title-art.ts`; wire `<picture>`-lag ind i `showTitleScreen()` uden at ændre state-, knap- eller modaladfærd. Bevar ét semantisk h1 og marker synlig wordmarkkunst dekorativt. | | |
