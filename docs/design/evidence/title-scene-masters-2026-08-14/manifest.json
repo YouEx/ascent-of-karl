@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "algorithm": "title-scene-masters-classical-v1",
+  "seed": 20260814,
+  "sources": {
+    "canonicalTitle": {
+      "path": "docs/design/reference/title-2026-08-11.webp",
+      "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
+      "width": 1586,
+      "height": 992,
+      "sceneCrop": [
+        690,
+        0,
+        1586,
+        992
+      ]
+    },
+    "approvedLandscape": {
+      "path": "docs/design/reference/bg-wide.png",
+      "sha256": "e4c12992241cf6048f07f5fb9ea8ab8443ceee986c78e917d6f6c48576ffd8eb",
+      "width": 1913,
+      "height": 822
+    }
+  },
+  "outputs": {
+    "wideCandidate": {
+      "path": ".judge/title-scene-masters/final/wide-candidate-2560x1440.png",
+      "sha256": "4a55c5bcc2206d2bdbd97787e425eaba653379835996c9891282d66be65f6932",
+      "bytes": 3938869,
+      "width": 2560,
+      "height": 1440,
+      "format": "PNG",
+      "lossless": true
+    },
+    "portraitCandidate": {
+      "path": ".judge/title-scene-masters/final/portrait-860x1864.png",
+      "sha256": "b9d6d11fc9377f4ba135a55783eb3dcf1b39e8ed5126ee7df72171d1f06161a5",
+      "bytes": 1889819,
+      "width": 860,
+      "height": 1864,
+      "format": "PNG",
+      "lossless": true
+    },
+    "promotedPortrait": "docs/design/reference/title-scene-portrait-860x1864.png"
+  },
+  "metrics": {
+    "wide": {
+      "sourceRetention": {
+        "retainedShare": 1.0,
+        "visiblePixels": 866850,
+        "changedVisiblePixels": 0
+      },
+      "karlDelta": {
+        "maxDelta": 0,
+        "meanDelta": 0.0,
+        "pixels": 390000
+      },
+      "seams": {
+        "left": {
+          "meanGradient": 0.1310483870967742,
+          "sourceEdgeGradient": 2.163306451612903,
+          "ratio": 0.06057781919850886
+        },
+        "bottom": {
+          "meanGradient": 1.9933035714285714,
+          "sourceEdgeGradient": 1.9933035714285714,
+          "ratio": 1.0
+        }
+      },
+      "repeatDetection": {
+        "sourceReuseCorrelation": 0.756489235319935,
+        "sampleRect": [
+          1364,
+          560,
+          300,
+          340
+        ]
+      }
+    },
+    "portrait": {
+      "sourceRetention": {
+        "retainedShare": 1.0,
+        "visiblePixels": 833010,
+        "changedVisiblePixels": 0
+      },
+      "karlDelta": {
+        "maxDelta": 0,
+        "meanDelta": 0.0,
+        "pixels": 390000
+      },
+      "seams": {
+        "bottom": {
+          "meanGradient": 1.9953488372093022,
+          "sourceEdgeGradient": 1.9953488372093022,
+          "ratio": 1.0
+        }
+      }
+    }
+  },
+  "promotion": {
+    "wide": {
+      "pass": false,
+      "approved": false,
+      "reason": "The best local classical reconstruction still repeats recognizable lower source-edge forms or replaces them with a visible soft join."
+    },
+    "portrait": {
+      "pass": true,
+      "approved": true,
+      "reason": "Manual inspection found a continuous portrait composition without a visible clone seam or repeated subject."
+    }
+  },
+  "evidence": {
+    "contactSheet": "docs/design/evidence/title-scene-masters-2026-08-14/contact-sheet.webp",
+    "wideBlockerOverlay": "docs/design/evidence/title-scene-masters-2026-08-14/wide-blocker-overlay.webp"
+  }
+}

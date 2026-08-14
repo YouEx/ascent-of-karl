@@ -1,0 +1,54 @@
+{
+  "wide": {
+    "sourceRetention": {
+      "retainedShare": 1.0,
+      "visiblePixels": 866850,
+      "changedVisiblePixels": 0
+    },
+    "karlDelta": {
+      "maxDelta": 0,
+      "meanDelta": 0.0,
+      "pixels": 390000
+    },
+    "seams": {
+      "left": {
+        "meanGradient": 0.1310483870967742,
+        "sourceEdgeGradient": 2.163306451612903,
+        "ratio": 0.06057781919850886
+      },
+      "bottom": {
+        "meanGradient": 1.9933035714285714,
+        "sourceEdgeGradient": 1.9933035714285714,
+        "ratio": 1.0
+      }
+    },
+    "repeatDetection": {
+      "sourceReuseCorrelation": 0.756489235319935,
+      "sampleRect": [
+        1364,
+        560,
+        300,
+        340
+      ]
+    }
+  },
+  "portrait": {
+    "sourceRetention": {
+      "retainedShare": 1.0,
+      "visiblePixels": 833010,
+      "changedVisiblePixels": 0
+    },
+    "karlDelta": {
+      "maxDelta": 0,
+      "meanDelta": 0.0,
+      "pixels": 390000
+    },
+    "seams": {
+      "bottom": {
+        "meanGradient": 1.9953488372093022,
+        "sourceEdgeGradient": 1.9953488372093022,
+        "ratio": 1.0
+      }
+    }
+  }
+}

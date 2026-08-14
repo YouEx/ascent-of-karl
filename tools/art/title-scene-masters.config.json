@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "algorithm": "title-scene-masters-classical-v1",
+  "seed": 20260814,
+  "sources": {
+    "canonicalTitle": {
+      "path": "docs/design/reference/title-2026-08-11.webp",
+      "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
+      "width": 1586,
+      "height": 992,
+      "sceneCrop": [690, 0, 1586, 992]
+    },
+    "approvedLandscape": {
+      "path": "docs/design/reference/bg-wide.png",
+      "sha256": "e4c12992241cf6048f07f5fb9ea8ab8443ceee986c78e917d6f6c48576ffd8eb",
+      "width": 1913,
+      "height": 822
+    }
+  },
+  "toolOcclusions": [
+    [680, 10, 780, 110],
+    [780, 10, 896, 110]
+  ],
+  "toolMask": {
+    "radius": 22,
+    "dilationPixels": 5,
+    "featherSigma": 1.2
+  },
+  "wide": {
+    "width": 2560,
+    "height": 1440,
+    "sourcePlacement": [1664, 0],
+    "landscapeCropLeft": 430,
+    "landscapeAlignment": {
+      "outputY": [0, 250, 390, 650, 820, 992, 1440],
+      "inputY": [0, 300, 650, 850, 1050, 1160, 1439]
+    },
+    "sideField": {
+      "width": 300,
+      "donorWidth": 150,
+      "bottomFadeHeight": 220
+    },
+    "bottomFieldHeight": 220,
+    "promotion": {
+      "approved": false,
+      "reason": "The best local classical reconstruction still repeats recognizable lower source-edge forms or replaces them with a visible soft join."
+    }
+  },
+  "portrait": {
+    "width": 860,
+    "height": 1864,
+    "sourceCrop": [18, 0, 878, 992],
+    "sourcePlacement": [0, 0],
+    "landscapeCrop": [1080, 0, 1459, 822],
+    "bottomFieldHeight": 220,
+    "output": "docs/design/reference/title-scene-portrait-860x1864.png",
+    "promotion": {
+      "approved": true,
+      "reason": "Manual inspection found a continuous portrait composition without a visible clone seam or repeated subject."
+    }
+  },
+  "karl": {
+    "sourceRect": [879, 180, 600, 650]
+  },
+  "gates": {
+    "sourceRetentionMin": 0.95,
+    "karlMaxDelta": 0,
+    "seamGradientRatioMax": 2.0,
+    "repeatCorrelationMax": 0.72
+  }
+}

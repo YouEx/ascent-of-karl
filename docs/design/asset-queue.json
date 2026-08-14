@@ -51,6 +51,23 @@
       "firstSeen": "2026-08-13",
       "iteration": 3,
       "status": "open"
+    },
+    {
+      "key": "title:missing-master:TITLE-scene-master-wide",
+      "region": "title",
+      "defect": "missing-master",
+      "severity": 5,
+      "evidence": "docs/design/evidence/title-scene-masters-2026-08-14/: den deterministiske lokale kandidat bevarer 100% af synlige godkendte pixels og Karl med maxDelta 0, men sourceReuseCorrelation 0.756489 overstiger 0.72-grænsen. Manuel inspektion viser genkendeligt gentaget kantterræn og en blød lodret join i nederste højre felt.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "TITLE-scene-master-wide",
+        "spec": "Godkendt scene-only 2560x1440 bred master uden ordmærke, knapper eller parchment/UI. Den kanoniske 896x992 scene skal ligge ved x=1664 i native skala; alle synlige Karl-pixels skal være pixel-identiske, og mindst 95% af øvrige synlige godkendte scene-pixels skal bevares. Nyt venstre og nederste lærred skal være en sammenhængende malet scene uden gentagelser, blokke, striber eller clone seams.",
+        "producer": "tools/art/build_title_scene_masters.py"
+      },
+      "why": "De lokale godkendte kilder indeholder ikke unik billedinformation for hele det skjulte og udvidede brede lærred. Klassisk lokal rekonstruktion kan enten genbruge genkendelige former eller introducere en synlig overgang; ingen visuelt troværdig kandidat må derfor promoveres.",
+      "firstSeen": "2026-08-14",
+      "iteration": 1,
+      "status": "open"
     }
   ]
 }
