@@ -1,0 +1,74 @@
+{
+  "algorithm": "title-parchment-master-v1",
+  "construction": {
+    "donorPatchCount": 1239,
+    "extension": "full-source minimum-cut exemplar quilting; exact repeated patches are gated and visual review remains authoritative",
+    "placedPatchCount": 883,
+    "preservation": "decoded approved pixels copied byte-for-byte outside measured UI occlusions",
+    "seed": 20260814
+  },
+  "gateFailures": [
+    "texture energy"
+  ],
+  "metrics": {
+    "alphaCoverage": 0.7916917293233082,
+    "changedOrMissingObservableSourcePixels": 0,
+    "duplicatePatchCount": 0,
+    "largestAlphaComponentShare": 1.0,
+    "maxAlphaCompositeChannelDelta": 0.0,
+    "maxAlphaFringePixels": 0.0,
+    "maxAlphaTransitionPixels": 1.0,
+    "maxNonAdjacentPatchCorrelation": 0.9865928894138564,
+    "observableMaskSha256": "c27eceafc284d843df37fc871b459b97e6cf28ce58b9e5a6cdf40fab287a4547",
+    "observableSourcePixels": 248615,
+    "opaqueCoverage": 0.7878782894736842,
+    "reconstructedPixels": 762217,
+    "reconstructionBoundaryGradientRatio": 2.7930118086077957,
+    "rowBandingPeakRatio": 1.8582105786502299,
+    "sampledPatchCount": 248,
+    "sourcePixelRetention": 1.0,
+    "textureEnergyRatio": 0.5060439659404539,
+    "transparentCoverage": 0.20830827067669172
+  },
+  "output": {
+    "bytes": 1027288,
+    "file": "parchment-master.webp",
+    "format": "lossless WebP RGBA",
+    "height": 1680,
+    "sha256": "c2706b142e80e40d0aee211cff3750e1d9e0082b4f5bb9021655feef8ded12bc",
+    "width": 760
+  },
+  "provenance": {
+    "approvedLosslessComposite": {
+      "buildInput": false,
+      "height": 992,
+      "localPath": "/Users/martin/Downloads/ChatGPT Image 11. aug. 2026, 15.11.10.png",
+      "relationship": "decoded RGB is pixel-identical to the versioned WebP; still a flattened UI composite",
+      "sha256": "8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770",
+      "width": 1586
+    },
+    "cleanMobileSourceFound": false,
+    "knownBlankDerivative": {
+      "buildInput": false,
+      "bytes": 51254,
+      "height": 907,
+      "path": "src/assets/art/title-parchment-692.webp",
+      "relationship": "RGBA derivative produced by masking and inpainting the flattened canonical UI; not original clean art",
+      "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a",
+      "width": 692
+    },
+    "layeredSourceFound": false
+  },
+  "source": {
+    "crop": [
+      0,
+      85,
+      700,
+      992
+    ],
+    "path": "docs/design/reference/title-2026-08-11.webp",
+    "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850"
+  },
+  "status": "blocked",
+  "version": 1
+}

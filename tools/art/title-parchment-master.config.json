@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "algorithm": "title-parchment-master-v1",
+  "seed": 20260814,
+  "source": {
+    "path": "docs/design/reference/title-2026-08-11.webp",
+    "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
+    "width": 1586,
+    "height": 992,
+    "crop": [0, 85, 700, 992]
+  },
+  "provenance": {
+    "approvedLosslessComposite": {
+      "localPath": "/Users/martin/Downloads/ChatGPT Image 11. aug. 2026, 15.11.10.png",
+      "sha256": "8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770",
+      "width": 1586,
+      "height": 992,
+      "relationship": "decoded RGB is pixel-identical to the versioned WebP; still a flattened UI composite",
+      "buildInput": false
+    },
+    "knownBlankDerivative": {
+      "path": "src/assets/art/title-parchment-692.webp",
+      "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a",
+      "width": 692,
+      "height": 907,
+      "bytes": 51254,
+      "relationship": "RGBA derivative produced by masking and inpainting the flattened canonical UI; not original clean art",
+      "buildInput": false
+    },
+    "layeredSourceFound": false,
+    "cleanMobileSourceFound": false
+  },
+  "retention": {
+    "observableMaskPixelCount": 248615,
+    "observableMaskSha256": "c27eceafc284d843df37fc871b459b97e6cf28ce58b9e5a6cdf40fab287a4547",
+    "hashEncoding": "big-endian uint32 shape + little-bitorder packbits"
+  },
+  "output": {
+    "file": "parchment-master.webp",
+    "width": 760,
+    "height": 1680
+  },
+  "silhouette": {
+    "sheetLuma": 150,
+    "observedLeftEndSourceY": 620,
+    "rightEdgeX": 694,
+    "rightEdgeInsetForRetention": 24,
+    "leftExtensionDrift": 18,
+    "topEdgeSourceY": 100,
+    "bottomEdgeY": 1672
+  },
+  "texture": {
+    "patchSize": 56,
+    "overlap": 20,
+    "candidateCount": 64,
+    "donorStride": 2,
+    "illuminationSigma": 24,
+    "minimumDonorPatches": 700
+  },
+  "wordmark": {
+    "crop": [150, 130, 695, 450],
+    "inkLumaMax": 174,
+    "regions": [
+      [175, 4, 310, 72],
+      [38, 38, 493, 158],
+      [66, 154, 315, 218],
+      [82, 202, 425, 320]
+    ],
+    "inpaintRadius": 5
+  },
+  "surfaceOcclusions": [
+    {
+      "id": "ribbon",
+      "type": "polygon",
+      "crop": [155, 458, 655, 519],
+      "points": [[10, 4], [490, 4], [487, 14], [499, 21], [493, 31], [499, 48], [488, 46], [490, 57], [10, 57], [12, 47], [0, 50], [6, 31], [0, 23], [12, 16]]
+    },
+    {
+      "id": "begin",
+      "type": "rounded-rect",
+      "crop": [143, 642, 423, 748],
+      "radius": 25
+    },
+    {
+      "id": "fates",
+      "type": "rounded-rect",
+      "crop": [441, 645, 655, 745],
+      "radius": 23
+    },
+    {
+      "id": "tip-card",
+      "type": "rounded-rect",
+      "crop": [95, 828, 665, 954],
+      "radius": 22
+    }
+  ],
+  "inkOcclusions": [
+    {
+      "id": "body-copy",
+      "rect": [190, 538, 642, 596],
+      "lumaMax": 160,
+      "minimumComponentPixels": 4
+    },
+    {
+      "id": "divider",
+      "rect": [280, 603, 500, 635],
+      "lumaMax": 178,
+      "minimumComponentPixels": 4
+    },
+    {
+      "id": "hint",
+      "rect": [185, 756, 650, 808],
+      "lumaMax": 168,
+      "minimumComponentPixels": 4
+    }
+  ],
+  "donorExclusions": [
+    [95, 105, 185, 200],
+    [80, 195, 170, 285],
+    [10, 245, 190, 390],
+    [470, 105, 555, 190],
+    [610, 130, 700, 230],
+    [560, 300, 700, 450]
+  ],
+  "gates": {
+    "sourcePixelRetentionMin": 0.999,
+    "sourcePixelRetentionMax": 1.0,
+    "changedOrMissingObservableSourcePixelsMax": 0,
+    "textureEnergyRatioMin": 0.8,
+    "textureEnergyRatioMax": 1.2,
+    "reconstructionBoundaryGradientRatioMax": 4.0,
+    "rowBandingPeakRatioMax": 8.0,
+    "duplicatePatchCountMax": 0,
+    "nonAdjacentPatchCorrelationMax": 0.995,
+    "alphaTransitionPixelsMax": 1.0,
+    "alphaFringePixelsMax": 1.0,
+    "alphaCoverageMin": 0.65,
+    "alphaCoverageMax": 0.95,
+    "largestAlphaComponentShareMin": 0.99
+  }
+}
