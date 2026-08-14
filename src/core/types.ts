@@ -295,7 +295,8 @@ export interface ActDef {
  * Hver afspilning vælger én variant via playthrough-seedet RNG, så to
  * gennemspilninger ikke lyder ens. Tekst-first; audioId kobles på i Step 4.
  * Varianter kan bruge pladsholdere: {a}, {b} (parrets navne), {element}
- * (sweep/opfindelsens navn) samt improvisationsbevisets spiller-vendte
+ * (sweep/opfindelsens navn), {previous} (forrige opdagelse) samt
+ * improvisationsbevisets spiller-vendte
  * {need}/{Need}/{actual}/{expected}/{missing}; {Need} er samme frase med
  * stort begyndelsesbogstav, når den åbner en sætning.
  */
@@ -427,6 +428,15 @@ export interface NarratorContentDef {
    * Bruger {a} og {b} til det par, han selv sendte spilleren efter.
    */
   obeyedFailure?: string[];
+  /**
+   * Kontekstbro til canonical opdagelser uden eget story-beat. Binder forrige
+   * og nuværende opdagelse til den næste aktive historiske retning i ét beat.
+   */
+  discoveryBridge?: {
+    first: string[];
+    continued: string[];
+    needs: Record<string, string>;
+  };
   /**
    * Roterende pulje til opdagelser uden håndskrevet replik. En opdagelse må
    * aldrig møde tavshed — det er spillets vigtigste øjeblik.

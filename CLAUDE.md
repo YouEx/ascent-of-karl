@@ -22,6 +22,7 @@ npm run improvise:report        # regenerér balance-rapport til stdout
 npm run improvise:report:check  # byte/hash/cap/cost mod committed facit
 npm run playtest:evidence:check # verificér TASK-030-agentbevisets WebP/referencer
 npm run harvest -- --input path/to/fixture.json --dry-run # offline høsteaudit
+npm run audit:narration # browseraudit: synlig tekst = faktisk lyd, korrekt beat-rækkefølge
 npm run build        # typecheck + produktion-build
 npm run build:pages  # root feature-off + indlejret offline playtest-preview
 npm run verify:pages # kontrollér det allerede byggede Pages-artifact
@@ -53,6 +54,9 @@ og et admin-token i miljøet; brug aldrig token som CLI-argument. Se
   den valgfrie copy-prefetch, `improvise-view.ts` holder opfindelser ude af
   den historiske tidslinje, og `improvise-playtest.ts` skriver det separate
   `karl-playtest-improvisation-v2`-format.
+- `src/ui/audio.ts` — recorded scratch-voice først, lokal browser-TTS som
+  eksakt fallback for dynamiske/manglende replikker. Et nyt tekstbeat stopper
+  altid gammel lyd, og beat-køen venter på både tekst og faktisk audio-end.
 - `src/assets/` — skrifter og grafik Vite skal hashe. `public/` er for filer der
   skal have et forudsigeligt navn (lyd, manifest, `karl.webp`, delekort og ikoner).
 - `src/content.ts` — samler content-filerne. Eneste fil der importerer JSON.
@@ -140,6 +144,10 @@ og et admin-token i miljøet; brug aldrig token som CLI-argument. Se
     aktiveret, når 5–10 engelsktalende deltagere på tværs af crafting-game-
     og low-game-experience-grupper har spillet uden forklaring, og evidensen
     er dokumenteret.
+13. **Synlig fortællertekst og faktisk lyd er samme beat.** En replik uden MP3
+    må aldrig lade den forrige lyd fortsætte. Den siges med exact-text
+    browser-TTS eller markeres ærligt text-only, og `npm run audit:narration`
+    skal bevise start/complete-rækkefølgen over spilstart og kombinationer.
 
 ## Tone (til indholdsarbejde)
 

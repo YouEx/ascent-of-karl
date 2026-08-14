@@ -87,10 +87,13 @@ bemærkning til opgivende. Tre regler gør den skarp:
    hans sidste, opgivende replik. Derfor må replikkerne heller ikke tælle højt
    ("Twice now…"), for et trin kan siges ved et hvilket som helst antal trodser.
 
-Fortælleren taler i **takter**. En opdagelse giver to: hvad der skete, og hvad
-historien vil herfra. UI-laget køer dem, så anden takt først skrives ud, når
-første er færdig. Ved age-up og slutninger tier trækket — historien har sin egen
-store takt dér.
+Fortælleren taler i **takter**. En håndskrevet story-opdagelse kan stadig give
+to: hvad der skete, og hvad historien vil herfra. En canonical opdagelse uden
+eget story-beat bruger derimod `discoveryBridge`: ét kontekstuelt beat, der
+navngiver forrige opdagelse, det nye resultat og den næste aktive retning.
+Det erstatter de løse `disc-*`-one-liners som almindelig vej. UI-laget starter
+aldrig næste beat, før både den synlige tekst og den faktiske lyd er færdig.
+Ved age-up og slutninger tier trækket — historien har sin egen store takt dér.
 
 Validatoren håndhæver, at hvert obligatorisk problem har et træk med mindst fem
 varianter (det høres hver gang historien rykker), at trods-replikkerne findes,
@@ -128,8 +131,9 @@ Prioriteten ændres kun dér, hvor en mere specifik sandhed findes:
 Den absurde løsning er produktets payoff og har derfor den største enkelte
 pulje: 24 varianter mod 8 i hver almindelig succesfamilie. Alle puljer har
 mindst to replik-id'er, så den eksisterende globale id-no-repeat virker; RNG,
-variant-hukommelse og save/load er uændret. Linjerne har ingen `audioId` og
-falder derfor ærligt tilbage til tekst. Stemmedommeren ekspanderer hver variant
+variant-hukommelse og save/load er uændret. Linjerne har ingen præindspillet
+MP3 og siges derfor med exact-text browser-TTS; mangler browseren også TTS,
+står de ærligt som tekst uden at en gammel lyd fortsætter. Stemmedommeren ekspanderer hver variant
 to gange: en kort profil til fuld stemmescore og en konservativ 23-ords
 dybde-3-profil til de hårde ord-/sætningslofter — 218 runtime-linjer i alt.
 
@@ -214,11 +218,12 @@ kommer fra puljerne, ikke fra live-kald.
   (`--act N --min 5`), og skribenten kuraterer. Validatoren fejler CI,
   hvis et nøglebeat kommer under 5 varianter.
 
-## Audio: pre-genereret scratch-voice (besluttet 2026-08-05)
+## Audio: recorded først, exact-text fallback (besluttet 2026-08-05, rettet 2026-08-14)
 
-Al fortæller-lyd genereres **på forhånd** og shippes som filer — aldrig
-live-TTS (samme princip som tekst-pipelinen: gratis drift, offline, ens
-timing for alle spillere).
+Håndskrevne, statiske replikker bruger fortsat pre-genereret scratch-voice.
+Dynamiske eller senere tilføjede replikker kan ikke alle ligge som filer; de
+siges med browserens lokale `SpeechSynthesis` og den EKSAKTE tekst, der står i
+boblen. Det er offline og uden modelkald.
 
 - **Pipeline**: `tools/generate_audio.py` → én MP3 pr. variant
   (`public/audio/<replik-id>.v<index>.mp3`) + `manifest.json`. UI'et
@@ -226,12 +231,20 @@ timing for alle spillere).
   spillet tekst-only.
 - **Scratch-stemme**: Edge TTS `en-GB-RyanNeural` (gratis, britisk
   dokumentar-tone), rate -4 %, pitch -2 Hz. Akt I+II = 168 filer, ~9 MB.
-- **Regel**: voicede replikker må ikke bruge `{a}`/`{b}`-pladsholdere
-  (kombinatorisk eksplosion) — de forbliver tekst-only. `{element}`-replikker
-  kan senere pre-renderes pr. element, hvis de skal voices.
-- Afspilning: ny replik ducker den gamle (hurtigt fade); autoplay-blokering
-  håndteres ved at udskyde til første interaktion; mute-knappen stopper
-  også lyden.
+- **Regel**: manifestet vinder, når id+variant findes. Ellers bruges lokal
+  exact-text TTS; findes den heller ikke, er beatet text-only.
+- **Paritetsregel**: en ny synlig replik stopper altid den gamle recorded eller
+  synthesized lyd. Et manglende manifest-hit må aldrig lade gammel tale køre
+  under ny tekst.
+- **Beatregel**: anden takt venter på både typewriter-completion og
+  `HTMLAudioElement.ended`/`SpeechSynthesisUtterance.onend`, plus den korte
+  åndedrætspause. Introens 14–15 sekunders fil kan derfor ikke overskrives af
+  et pull efter tre sekunder.
+- **Audit**: `npm run audit:narration` stikker deterministiske recorded/TTS-
+  drivere ind i en rigtig browser, spiller start + Stone axe + Rope og fejler
+  ved overlap, text-only beat eller forskel mellem synlig og sagt tekst.
+- Autoplay-blokering håndteres ved at udskyde til første interaktion;
+  mute-knappen stopper begge lydkilder.
 - Final voice besluttes i Step 4 efter playtest med scratch-stemmen
   (menneskelig speaker eller premium-TTS — PRD §6, "largest single bet").
 

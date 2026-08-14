@@ -25,6 +25,7 @@
     "voice:parity-fixture": "python3 tools/voice/export_voice_parity_fixture.py",
     "verdicts": "vite-node tools/verdict_report.ts",
     "ux": "node tools/ux_audit.mjs",
+    "audit:narration": "node tools/narration_audit.mjs",
     "art": "python3 tools/art/build_all.py",
     "social": "node tools/social/render.mjs",
     "judge:capture": "node tools/judge/capture.mjs",

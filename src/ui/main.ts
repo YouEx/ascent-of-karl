@@ -273,6 +273,9 @@ const pendingCopySummers = new Map<string, number[]>();
  */
 let lineQueue: SpokenLine[] = [];
 let queueTimer: ReturnType<typeof setTimeout> | undefined;
+let queueScheduled = false;
+let beatGeneration = 0;
+let currentBeatDone: Promise<void> = Promise.resolve();
 /** Pause mellem to takter, så det læses som et åndedrag og ikke som én tekst */
 const BEAT_PAUSE_MS = 900;
 // Tipkortet skal kunne læses færdigt af en langsom læser, før det bladrer.
@@ -280,9 +283,11 @@ const TIP_ROTATE_MS = 7000;
 
 function say(line: SpokenLine): void {
   if (queueTimer) clearTimeout(queueTimer);
+  queueTimer = undefined;
+  queueScheduled = false;
+  beatGeneration++;
   lineQueue = [];
-  playLine(line, muted);
-  speak(line.text);
+  currentBeatDone = presentLine(line);
 }
 
 /** Læg en efterfølgende takt i kø bag den, der spiller nu. */
@@ -293,32 +298,47 @@ function sayAfter(line: SpokenLine | undefined): void {
 }
 
 function scheduleNextBeat(): void {
-  if (queueTimer || lineQueue.length === 0) return;
-  // Mutet fortæller skriver ikke, så der er ingen skrivetid at vente på.
-  const wait = muted ? BEAT_PAUSE_MS : typewriterMsLeft() + BEAT_PAUSE_MS;
-  queueTimer = setTimeout(() => {
-    queueTimer = undefined;
-    const next = lineQueue.shift();
-    if (!next) return;
-    playLine(next, muted);
-    speak(next.text);
-    scheduleNextBeat();
-  }, wait);
+  if (queueScheduled || lineQueue.length === 0) return;
+  queueScheduled = true;
+  const generation = beatGeneration;
+  void currentBeatDone.then(() => {
+    if (generation !== beatGeneration) return;
+    queueTimer = setTimeout(() => {
+      queueTimer = undefined;
+      if (generation !== beatGeneration) return;
+      queueScheduled = false;
+      const next = lineQueue.shift();
+      if (!next) return;
+      beatGeneration++;
+      currentBeatDone = presentLine(next);
+      scheduleNextBeat();
+    }, BEAT_PAUSE_MS);
+  });
 }
 
 /** Skrivehastighed for skrivemaskine-effekten (ms pr. tegn) */
 const TYPE_MS = 18;
 /** Tegn der mangler at blive skrevet ud — driver pausen mellem to takter */
 let typewriterLeft = 0;
+let resolveTypewriter: (() => void) | undefined;
 
 function typewriterMsLeft(): number {
   return typewriterLeft * TYPE_MS;
 }
 
-function speak(text: string): void {
-  lastLineText = text;
-  if (muted) return;
+function finishTypewriter(): void {
   if (typewriterTimer) clearInterval(typewriterTimer);
+  typewriterTimer = undefined;
+  typewriterLeft = 0;
+  const resolve = resolveTypewriter;
+  resolveTypewriter = undefined;
+  resolve?.();
+}
+
+function speak(text: string): Promise<void> {
+  finishTypewriter();
+  lastLineText = text;
+  if (muted) return Promise.resolve();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   // Frysning behandles som reduceret bevægelse: linjen står færdig med det
   // samme. En halvskrevet replik ("…who has spen") er den mest åbenlyse måde
@@ -326,17 +346,47 @@ function speak(text: string): void {
   if (reducedMotion || isFrozen()) {
     typewriterLeft = 0;
     el.narratorText.textContent = text;
-    return;
+    return Promise.resolve();
   }
   el.narratorText.textContent = "";
   let i = 0;
   typewriterLeft = text.length;
-  typewriterTimer = setInterval(() => {
-    i++;
-    typewriterLeft = text.length - i;
-    el.narratorText.textContent = text.slice(0, i);
-    if (i >= text.length && typewriterTimer) clearInterval(typewriterTimer);
-  }, TYPE_MS);
+  return new Promise<void>((resolve) => {
+    resolveTypewriter = resolve;
+    typewriterTimer = setInterval(() => {
+      i++;
+      typewriterLeft = text.length - i;
+      el.narratorText.textContent = text.slice(0, i);
+      if (i >= text.length) finishTypewriter();
+    }, TYPE_MS);
+  });
+}
+
+function presentLine(line: SpokenLine): Promise<void> {
+  const playback = playLine(line, muted);
+  const textDone = speak(line.text);
+  window.dispatchEvent(
+    new CustomEvent("narration:beat-start", {
+      detail: {
+        id: line.id,
+        variant: line.variant,
+        text: line.text,
+        audioMode: playback.mode,
+      },
+    }),
+  );
+  return Promise.all([playback.done, textDone]).then(() => {
+    window.dispatchEvent(
+      new CustomEvent("narration:beat-complete", {
+        detail: {
+          id: line.id,
+          variant: line.variant,
+          text: line.text,
+          audioMode: playback.mode,
+        },
+      }),
+    );
+  });
 }
 
 function renderMute(): void {
@@ -346,10 +396,10 @@ function renderMute(): void {
   el.bubble.classList.toggle("muted", muted);
   if (muted) {
     stopAudio();
-    if (typewriterTimer) clearInterval(typewriterTimer);
+    finishTypewriter();
     el.narratorText.textContent = "…";
   } else if (lastLineText) {
-    speak(lastLineText);
+    void speak(lastLineText);
   }
 }
 

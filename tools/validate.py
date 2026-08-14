@@ -333,6 +333,58 @@ def main() -> int:
                  f"— spilleren hører dem ofte, sigt efter mindst 8")
         for ref in fallback:
             check_ref(ref, "discoveryFallback", key_min)
+
+        bridge = n.get("discoveryBridge") or {}
+        if bridge:
+            for pool_name in ("first", "continued"):
+                pool = bridge.get(pool_name) or []
+                if len(pool) < 2:
+                    err(
+                        f"Akt {act['act']}: discoveryBridge.{pool_name} har "
+                        f"{len(pool)} replikker — no-repeat kræver mindst 2"
+                    )
+                for ref in pool:
+                    check_ref(ref, f"discoveryBridge.{pool_name}", key_min)
+                    for text in lines_by_id.get(ref, {}).get("variants", []):
+                        required = {"element", "need"}
+                        if pool_name == "continued":
+                            required.add("previous")
+                        for placeholder in required:
+                            if f"{{{placeholder}}}" not in text:
+                                err(
+                                    f"{ref}: discoveryBridge.{pool_name} skal "
+                                    f"nævne {{{placeholder}}}"
+                                )
+                        for placeholder in re.findall(r"\{([a-zA-Z]+)\}", text):
+                            if placeholder not in {
+                                "element",
+                                "previous",
+                                "need",
+                                "Need",
+                            }:
+                                err(
+                                    f"{ref}: ukendt discoveryBridge-pladsholder "
+                                    f"{{{placeholder}}}"
+                                )
+
+            need_labels = bridge.get("needs") or {}
+            pulled_ids = {
+                problem["id"]
+                for problem in act.get("problems", [])
+                if problem.get("pull")
+            }
+            missing_labels = sorted(pulled_ids - set(need_labels))
+            unknown_labels = sorted(set(need_labels) - pulled_ids)
+            if missing_labels:
+                err(
+                    f"Akt {act['act']}: discoveryBridge mangler need-labels: "
+                    f"{missing_labels}"
+                )
+            if unknown_labels:
+                err(
+                    f"Akt {act['act']}: discoveryBridge har ukendte need-labels: "
+                    f"{unknown_labels}"
+                )
         # Fiasko-puljen er den mest hørte tekst i spillet: målt til ~15 af de
         # ~29 replikker pr. run. Rotationen cykler gennem ID'er, så antallet
         # af replikker betyder lige så meget som varianterne i hver.

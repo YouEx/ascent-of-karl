@@ -52,8 +52,9 @@ const profile = voiceProfile as unknown as VoiceProfile;
 const scorer = createScorer(profile);
 
 describe("stemmedommer-paritet: Python facit vs. TS-port (TASK-007)", () => {
-  it("fiksturen dækker de tal opgaven kræver — 866 håndskrevne, 312 grammatik, 940 par", () => {
-    expect(typedFixture.counts.handwritten).toBe(866);
+  it("fiksturen dækker de godkendte puljer — 906 håndskrevne, 312 grammatik, 940 par", () => {
+    // 40 nye kontekstbro-varianter erstatter den generiske opdagelsesstemme.
+    expect(typedFixture.counts.handwritten).toBe(906);
     expect(typedFixture.counts.grammar).toBe(312);
     // RISK-005: ni bagte par fik en ubetinget åben opskrift (908 -> 890
     // varianter, 404 -> 395 opslag, jf. narration-coverage.md) og blev fjernet
