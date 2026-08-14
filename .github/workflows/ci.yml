@@ -76,15 +76,27 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - run: npm ci
+      - name: Installér titel-dommerens Python-afhængigheder
+        run: python3 -m pip install -r tools/judge/requirements.txt
       # Uden version: bruger projektets egen playwright, så browser-build og
       # bibliotek matcher. En pinnet version her hentede v1155, mens
       # biblioteket ville have v1234, og jobbet fejlede.
       - name: Hent Chromium
         run: npx playwright install --with-deps chromium
+      - name: Titel-fidelity (forventet rød indtil målkunsten er integreret)
+        id: title-fidelity
+        continue-on-error: true
+        run: npm run judge:title-fidelity
       - name: Start dev-server
         run: |
           npx vite --port 5199 --strictPort &
           npx wait-on http://localhost:5199/ --timeout 60000
       - name: UX-audit
         run: npm run ux
+      - name: Fæld jobbet på titel-fidelity
+        if: ${{ always() && steps.title-fidelity.outcome == 'failure' }}
+        run: exit 1

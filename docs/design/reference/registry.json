@@ -10,6 +10,112 @@
     "Se plan/architecture-visual-judge-1.md fase 2."
   ],
   "version": 1,
+  "viewports": [
+    {
+      "id": "mobile-390",
+      "width": 390,
+      "height": 844,
+      "dpr": 2,
+      "payloadClass": "mobile"
+    },
+    {
+      "id": "mobile-430",
+      "width": 430,
+      "height": 932,
+      "dpr": 2,
+      "payloadClass": "mobile"
+    },
+    {
+      "id": "desktop-1366",
+      "width": 1366,
+      "height": 768,
+      "dpr": 1,
+      "payloadClass": "desktop"
+    },
+    {
+      "id": "desktop-1536",
+      "width": 1536,
+      "height": 1024,
+      "dpr": 1,
+      "payloadClass": "desktop"
+    },
+    {
+      "id": "target-native",
+      "width": 1586,
+      "height": 992,
+      "dpr": 1,
+      "payloadClass": "desktop"
+    },
+    {
+      "id": "desktop-2560",
+      "width": 2560,
+      "height": 1440,
+      "dpr": 1,
+      "payloadClass": "desktop"
+    }
+  ],
+  "goalMetrics": {
+    "algorithmVersion": "title-fidelity-v1",
+    "screen": "title",
+    "sources": {
+      "approvedOriginal": {
+        "sha256": "8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770"
+      },
+      "approvedReference": {
+        "path": "docs/design/reference/title-2026-08-11.webp",
+        "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850"
+      },
+      "currentCalibration": {
+        "sha256": "082d979dd4c6c3f9b84bb763cd354b39502ce1ad4758cda94f087f77f95a575b"
+      }
+    },
+    "gates": {
+      "sceneSeamGradient": {
+        "max": 4.0,
+        "viewports": "all"
+      },
+      "titleInkOccupancy": {
+        "min": 26.5,
+        "max": 28.5,
+        "viewports": ["target-native"],
+        "logOnly": ["mobile-390", "mobile-430"]
+      },
+      "bottomLeftDarkShare": {
+        "min": 35.0,
+        "max": 47.0,
+        "viewports": ["target-native"],
+        "logOnly": ["mobile-390", "mobile-430"]
+      },
+      "characterDetailVariance": {
+        "min": 300.0,
+        "viewports": "all"
+      },
+      "globalEdgeDensity": {
+        "min": 6.1,
+        "viewports": "all"
+      },
+      "sceneDetailRetention": {
+        "min": 0.95
+      },
+      "parchmentBlankRetention": {
+        "min": 0.85,
+        "sampleMin": 0.80
+      },
+      "alphaEdge": {
+        "transitionPxMax": 1,
+        "fringePxMax": 1,
+        "backgrounds": ["#000000", "#ffffff", "parchment"]
+      },
+      "payloadBytes": {
+        "desktopMax": 600000,
+        "mobileMax": 350000
+      },
+      "noUpscale": {
+        "maxPhysicalScale": 1,
+        "viewports": ["mobile-390", "mobile-430"]
+      }
+    }
+  },
   "screens": [
     {
       "id": "game",

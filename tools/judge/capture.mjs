@@ -28,7 +28,8 @@
  * shell høstes, og en optagelse mod en død server giver et hvidt billede og
  * en score der ser ud som et sammenbrud.
  *
- * Kør:  node tools/judge/capture.mjs [--screen game|title|all] [--out DIR]
+ * Kør:  node tools/judge/capture.mjs [--screen game|title|all]
+ *        [--viewports native|registered] [--out DIR]
  * Se plan/architecture-visual-judge-1.md fase 3 (TASK-012, TASK-013, CON-004).
  */
 import { chromium } from "playwright";
@@ -145,65 +146,172 @@ export async function loadRegistry() {
   return JSON.parse(await readFile(REGISTRY, "utf8"));
 }
 
+function captureName(screen, viewport) {
+  return viewport?.registered ? `${screen.id}-${viewport.id}` : screen.id;
+}
+
+function nativeViewport(screen) {
+  return {
+    id: `${screen.id}-native`,
+    width: screen.nativeWidth,
+    height: screen.nativeHeight,
+    dpr: 1,
+    payloadClass: "desktop",
+    registered: false,
+  };
+}
+
 /**
  * Optager én skærm. Returnerer måldata, så kalderen kan bruge dem uden at
  * læse dem tilbage fra disk.
  */
-export async function captureScreen(browser, screen, outDir) {
-  const page = await browser.newPage({
-    viewport: { width: screen.nativeWidth, height: screen.nativeHeight },
-    deviceScaleFactor: 1,
+export async function captureScreen(browser, screen, outDir, selectedViewport = nativeViewport(screen)) {
+  const viewport = {
+    ...selectedViewport,
+    registered: selectedViewport.registered ?? false,
+  };
+  const context = await browser.newContext({
+    viewport: { width: viewport.width, height: viewport.height },
+    screen: { width: viewport.width, height: viewport.height },
+    deviceScaleFactor: viewport.dpr,
+    isMobile: viewport.payloadClass === "mobile",
+    hasTouch: viewport.payloadClass === "mobile",
     // Reduceret bevægelse ville også fryse skrivemaskinen, men frysningen skal
     // komme fra ÉT sted (?freeze=1), så en fejl i den ene mekanisme ikke
     // skjules af den anden.
     reducedMotion: "no-preference",
   });
+  const page = await context.newPage();
+  const name = captureName(screen, viewport);
 
-  const url = `${ORIGIN}/?scenario=${screen.scenario}&freeze=1`;
-  await page.goto(url, { waitUntil: "load" });
-  // Venter på et FAKTUM (siden er malet), ikke på et gæt (en timeout).
-  await page.waitForSelector("html[data-ready='true']", { timeout: 20_000 });
+  try {
+    const url = `${ORIGIN}/?scenario=${screen.scenario}&freeze=1`;
+    await page.goto(url, { waitUntil: "load" });
+    // Venter på et FAKTUM (siden er malet), ikke på et gæt (en timeout).
+    await page.waitForSelector("html[data-ready='true']", { timeout: 20_000 });
 
-  await mkdir(join(outDir, "render", screen.id), { recursive: true });
-  await mkdir(join(outDir, "metrics"), { recursive: true });
+    await mkdir(join(outDir, "render", name), { recursive: true });
+    await mkdir(join(outDir, "metrics"), { recursive: true });
+    await mkdir(join(outDir, "resources"), { recursive: true });
 
-  await page.screenshot({ path: join(outDir, "render", `${screen.id}.png`) });
+    await page.screenshot({ path: join(outDir, "render", `${name}.png`) });
 
-  const metrics = { screen: screen.id, url, regions: {} };
-  for (const region of screen.regions) {
-    const loc = page.locator(region.anchor).first();
-    const count = await loc.count();
-    if (count === 0) {
-      // Et manglende anker er et RESULTAT, ikke en fejl: det er præcis, hvad
-      // "komponenten findes ikke endnu" ser ud som, og dommeren skal se det.
-      metrics.regions[region.id] = { anchor: region.anchor, missing: true };
-      continue;
-    }
-    const box = await loc.boundingBox();
-    const styles = await loc.evaluate((node, fields) => {
-      const cs = getComputedStyle(node);
-      const out = {};
-      for (const f of fields) out[f] = cs[f];
-      out.textContent = (node.textContent ?? "").trim().slice(0, 200);
-      out.childCount = node.children.length;
-      return out;
-    }, STYLE_FIELDS);
+    const browserEvidence = await page.evaluate((dpr) => {
+      const titleRoot = document.querySelector("#title-screen");
+      const criticalSources = new Set();
+      const titleElements = titleRoot
+        ? [titleRoot, ...titleRoot.querySelectorAll("*")]
+        : [];
+      const addCssUrls = (backgroundImage) => {
+        for (const match of backgroundImage.matchAll(/url\((?:"|')?([^"')]+)(?:"|')?\)/g)) {
+          criticalSources.add(new URL(match[1], document.baseURI).href);
+        }
+      };
+      for (const element of titleElements) {
+        addCssUrls(getComputedStyle(element).backgroundImage);
+        addCssUrls(getComputedStyle(element, "::before").backgroundImage);
+        addCssUrls(getComputedStyle(element, "::after").backgroundImage);
+      }
 
-    metrics.regions[region.id] = { anchor: region.anchor, box, styles };
-
-    if (box && box.width > 0 && box.height > 0) {
-      await loc.screenshot({
-        path: join(outDir, "render", screen.id, `${region.id}.png`),
+      const selectorFor = (image) => {
+        if (image.id) return `#${image.id}`;
+        const classes = [...image.classList].map((name) => `.${name}`).join("");
+        return `${image.tagName.toLowerCase()}${classes}`;
+      };
+      const images = [...document.images].map((image) => {
+        const box = image.getBoundingClientRect();
+        const currentSrc = image.currentSrc || image.src;
+        const titleCritical = Boolean(titleRoot?.contains(image));
+        if (titleCritical && currentSrc) criticalSources.add(currentSrc);
+        return {
+          selector: selectorFor(image),
+          currentSrc,
+          naturalWidth: image.naturalWidth,
+          naturalHeight: image.naturalHeight,
+          renderedWidth: box.width,
+          renderedHeight: box.height,
+          physicalWidth: box.width * dpr,
+          physicalHeight: box.height * dpr,
+          titleCritical,
+        };
       });
-    }
-  }
 
-  await writeFile(
-    join(outDir, "metrics", `${screen.id}.json`),
-    JSON.stringify(metrics, null, 2),
-  );
-  await page.close();
-  return metrics;
+      const resources = performance.getEntriesByType("resource").map((entry) => ({
+        url: entry.name,
+        transferSize: entry.transferSize,
+        decodedBodySize: entry.decodedBodySize,
+        encodedBodySize: entry.encodedBodySize,
+        initiatorType: entry.initiatorType,
+        criticalPayload: criticalSources.has(entry.name),
+      }));
+      return {
+        images,
+        criticalSources: [...criticalSources].sort(),
+        resources,
+      };
+    }, viewport.dpr);
+
+    const metrics = {
+      screen: screen.id,
+      url,
+      viewport: {
+        id: viewport.id,
+        width: viewport.width,
+        height: viewport.height,
+        dpr: viewport.dpr,
+        payloadClass: viewport.payloadClass,
+      },
+      images: browserEvidence.images,
+      criticalSources: browserEvidence.criticalSources,
+      regions: {},
+    };
+    for (const region of screen.regions) {
+      const loc = page.locator(region.anchor).first();
+      const count = await loc.count();
+      if (count === 0) {
+        // Et manglende anker er et RESULTAT, ikke en fejl: det er præcis, hvad
+        // "komponenten findes ikke endnu" ser ud som, og dommeren skal se det.
+        metrics.regions[region.id] = { anchor: region.anchor, missing: true };
+        continue;
+      }
+      const box = await loc.boundingBox();
+      const styles = await loc.evaluate((node, fields) => {
+        const cs = getComputedStyle(node);
+        const out = {};
+        for (const f of fields) out[f] = cs[f];
+        out.textContent = (node.textContent ?? "").trim().slice(0, 200);
+        out.childCount = node.children.length;
+        return out;
+      }, STYLE_FIELDS);
+
+      metrics.regions[region.id] = { anchor: region.anchor, box, styles };
+
+      if (box && box.width > 0 && box.height > 0) {
+        await loc.screenshot({
+          path: join(outDir, "render", name, `${region.id}.png`),
+        });
+      }
+    }
+
+    await writeFile(
+      join(outDir, "metrics", `${name}.json`),
+      JSON.stringify(metrics, null, 2),
+    );
+    await writeFile(
+      join(outDir, "resources", `${name}.json`),
+      JSON.stringify({
+        screen: screen.id,
+        url,
+        viewport: metrics.viewport,
+        entries: browserEvidence.resources,
+      }, null, 2),
+    );
+    return metrics;
+  } finally {
+    await context.close().catch((err) => {
+      console.error(`kunne ikke lukke viewport-contexten pænt: ${err.message}`);
+    });
+  }
 }
 
 /**
@@ -214,6 +322,7 @@ export async function captureScreen(browser, screen, outDir) {
  */
 export async function runCapture({
   want = "all",
+  viewports = "native",
   outDir,
   loadRegistryFn = loadRegistry,
   startServerFn = startServer,
@@ -236,8 +345,13 @@ export async function runCapture({
     browser = await launchBrowser();
     const results = [];
     for (const screen of screens) {
-      const metrics = await captureScreenFn(browser, screen, outDir);
-      results.push({ screen, metrics });
+      const selectedViewports = viewports === "registered"
+        ? registry.viewports.map((viewport) => ({ ...viewport, registered: true }))
+        : [nativeViewport(screen)];
+      for (const viewport of selectedViewports) {
+        const metrics = await captureScreenFn(browser, screen, outDir, viewport);
+        results.push({ screen, viewport, metrics });
+      }
     }
     return results;
   } finally {
@@ -262,15 +376,19 @@ function valueOf(args, flag) {
 async function main() {
   const args = process.argv.slice(2);
   const want = valueOf(args, "--screen") ?? "all";
+  const viewports = valueOf(args, "--viewports") ?? "native";
+  if (!["native", "registered"].includes(viewports)) {
+    throw new Error(`Ukendt --viewports "${viewports}". Brug native eller registered.`);
+  }
   const outDir = resolve(ROOT, valueOf(args, "--out") ?? ".judge/latest");
 
-  const results = await runCapture({ want, outDir });
-  for (const { screen, metrics } of results) {
+  const results = await runCapture({ want, viewports, outDir });
+  for (const { screen, viewport, metrics } of results) {
     const missing = Object.entries(metrics.regions)
       .filter(([, value]) => value.missing)
       .map(([k]) => k);
     console.log(
-      `optaget ${screen.id} (${screen.nativeWidth}×${screen.nativeHeight})` +
+      `optaget ${screen.id}/${viewport.id} (${viewport.width}×${viewport.height} DPR${viewport.dpr})` +
         (missing.length ? `  — manglende ankre: ${missing.join(", ")}` : ""),
     );
   }
