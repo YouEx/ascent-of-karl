@@ -10,9 +10,11 @@ Tre agent-QA-runs fandt ingen source-defekt, men tæller ikke med her:
 
 Den eksterne gate er præcis **5–10 engelsktalende deltagere** på tværs af
 crafting-game- og low-game-experience-grupper, som spiller **uden
-forklaring**. Brug et lokalt feature-on build under en modereret session eller
-en særskilt ikke-produktions-preview. Den offentlige GitHub Pages-build er
-feature-off og må ikke bruges som bevis for improvisationsgaten.
+forklaring**. Gaten er fortsat åben. Brug den særskilte, unlisted
+ikke-produktions-preview:
+<https://youex.github.io/ascent-of-karl/playtest/improvisation/>. Den er
+feature-on, men deterministisk offline med tom Worker-URL. Den offentlige root
+på <https://youex.github.io/ascent-of-karl/> forbliver feature-off.
 
 Lokal kandidat:
 
@@ -73,8 +75,8 @@ blive set på mens de spiller. Undgå folk der allerede har hørt om projektet
   fællesskab og skjuler præcis den forvirring vi leder efter.
 
 Baseline-link: <https://youex.github.io/ascent-of-karl/>. Det offentlige link
-har improvisation slået fra. Brug feature-on-kandidaten ovenfor til den
-særskilte improvisationsgate.
+har improvisation slået fra. Improvisationslink:
+<https://youex.github.io/ascent-of-karl/playtest/improvisation/>.
 
 ## Dig selv som tester 0
 

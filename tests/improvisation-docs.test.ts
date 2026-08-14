@@ -51,9 +51,17 @@ describe("improvisationens dokumentationskontrakt", () => {
     );
   });
 
-  it("holder production-deployet feature-off indtil den præcise gate", () => {
+  it("holder production-root off og kun offline-preview on indtil den præcise gate", () => {
     const deploy = read(".github/workflows/deploy.yml");
-    expect(deploy).not.toMatch(/VITE_IMPROVISE_(?:ENABLED|URL)/);
+    const pagesBuild = read("tools/build_pages.mjs");
+    expect(deploy).toContain("run: npm run build:pages");
+    expect(deploy.indexOf("run: npm run build:pages")).toBeLessThan(
+      deploy.indexOf("uses: actions/upload-pages-artifact@v3"),
+    );
+    expect(pagesBuild).toContain('VITE_IMPROVISE_ENABLED: enabled ? "true" : "false"');
+    expect(pagesBuild).toContain('VITE_IMPROVISE_URL: ""');
+    expect(pagesBuild).toContain('VITE_NARRATOR_URL: ""');
+    expect(pagesBuild).toContain("dist/playtest/improvisation");
 
     for (const path of [
       "PRD.md",
@@ -70,9 +78,10 @@ describe("improvisationens dokumentationskontrakt", () => {
 
     for (const path of ["PRD.md", "README.md", "ROADMAP.md", PLAN]) {
       const text = read(path);
-      expect(text, path).toMatch(/sætter hverken/i);
-      expect(text, path).toContain("`VITE_IMPROVISE_ENABLED`");
-      expect(text, path).toContain("`VITE_IMPROVISE_URL`");
+      expect(text, path).toMatch(/production-root|offentlige root/i);
+      expect(text, path).toMatch(/feature-off|featuret slukket/i);
+      expect(text, path).toMatch(/playtest|preview/i);
+      expect(text, path).toMatch(/Worker-URL|Worker-URL'erne/i);
     }
   });
 

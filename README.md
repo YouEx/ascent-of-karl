@@ -23,11 +23,13 @@ canonical prioritet, cap **6**, pris **én sommer**, narrator-dom,
 feature-gated UI/Chronicle/playtest v2, valgfri copy-only Worker-rute, sikker
 snapshot-høst og robust balancecheck.
 
-**Produktion er ikke aktiveret.** Deploy-workflowet sætter hverken
-`VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`; Workeren har ingen
-provisioneret improvisations-URL/secrets/trafik. `VITE_IMPROVISE_URL` er kun
-en uafhængig copy-forbedring. Uden URL virker den deterministiske
-offline-opfindelse fuldt ud, og canonical opskrifter vinder altid først.
+**Produktion er ikke aktiveret.** Pages-buildet tvinger den eksisterende
+offentlige root til feature-off. Samme artifact rummer en særskilt, unlisted
+offline-kandidat:
+<https://youex.github.io/ascent-of-karl/playtest/improvisation/>. Kun dér er
+produktflaget `true`; både improvisations- og live-fortæller-URL tvinges tomme
+i begge builds. Kandidaten foretager derfor nul Worker-kald og bruger ingen
+secrets eller betalt trafik. Det er ikke production-enable.
 
 Tre agent-QA-runs fandt ingen source-defekt, men tæller ikke som
 ekstern-human evidens. Næste handling er **5–10 engelsktalende deltagere**
@@ -35,6 +37,7 @@ fra både crafting-game- og low-game-experience-grupper, som spiller uden
 forklaring. Produktionsflaget forbliver slukket indtil da. Se
 `plan/feature-improvised-solutions-1.md` og
 `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`.
+Den eksterne playtestgate er fortsat åben.
 
 ## Kom i gang
 
@@ -60,6 +63,8 @@ npm run validate   # indholdsvalidering (kræver python3)
 npm run improvise:report:check
 npm run playtest:evidence:check
 npm run build      # typecheck + produktion-build
+npm run build:pages  # root off + indlejret offline playtest
+npm run verify:pages # verificér et bygget Pages-artifact
 ```
 
 ## Tilføj et element uden at skrive en replik

@@ -51,9 +51,13 @@ høflighed — og så måler du din egen invitation i stedet for spillet.
 >
 > Jeg svarer ikke på spørgsmål undervejs. Det er ikke fordi jeg er led.
 
-Link: brug den aftalte feature-on kandidat til improvisationstesten. Den
-offentlige GitHub Pages-build er feature-off og må ikke bruges som
-improvisationsevidens.
+Link:
+<https://youex.github.io/ascent-of-karl/playtest/improvisation/>
+
+Det er den unlisted, deterministiske offline feature-on kandidat. Den
+offentlige root er feature-off. Den eksterne gate er fortsat åben, indtil
+**5–10 engelsktalende deltagere** fra crafting-game- og low-game-experience-
+grupper har spillet uden forklaring; previewet er ikke production-enable.
 
 ---
 

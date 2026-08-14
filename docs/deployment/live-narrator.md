@@ -9,10 +9,12 @@ eller spillerdata, der retfærdiggør den ekstra betalte driftsflade.
 Ingen af trinene herunder er udført: der er ikke deployet noget, der er ikke
 sat en rigtig `OPENAI_API_KEY`, og buildet har ingen `VITE_NARRATOR_URL`.
 Improvisationsruten, som nu ligger i samme kilde, er heller ikke deployet,
-og produktionen sætter hverken `VITE_IMPROVISE_ENABLED` eller
-`VITE_IMPROVISE_URL`. Der er ingen provisioneret improvisations-Worker-URL,
-secrets eller trafik. Klienten findes nu, men er derfor død kode i det
-udrullede spil.
+og den offentlige production-root tvinges feature-off. Det samme Pages-
+artifact rummer en unlisted feature-on playtest på
+<https://youex.github.io/ascent-of-karl/playtest/improvisation/>, men både
+improvisations- og live-fortæller-URL tvinges tomme i begge builds. Der er
+ingen provisioneret Worker-URL, secrets, trafik eller omkostning. Previewet
+er en offline kandidat til den åbne eksterne gate, ikke production-enable.
 Runbooken bevares, fordi beslutningen er reversibel, hvis senere data viser
 en konkret kvalitetskløft i grammatikhalen.
 
@@ -227,14 +229,12 @@ slået fra — det er den nuværende, afleverede tilstand.
   ```
   og kør `npm run dev` som vanligt.
 - **Den rigtige, udrullede build** (GitHub Pages via
-  `.github/workflows/deploy.yml`): denne fil sætter IKKE
-  `VITE_NARRATOR_URL` i dag — det er selve grunden til, at laget er slået
-  fra i det spil, der ligger live nu. At tænde for laget i produktion
-  betyder at tilføje variablen til workflowets build-trin (som et
-  repository-/environment-variable, ikke en secret — værdien er en URL,
-  synlig i browserens netværksfane under alle omstændigheder). **Denne
-  opskrift redigerer bevidst ikke `deploy.yml`** — at gøre det ER
-  TASK-006-beslutningen, ikke en del af fase 2.
+  `.github/workflows/deploy.yml`): `npm run build:pages` tilsidesætter
+  eksplicit ambient/repository-værdier. `VITE_NARRATOR_URL` og
+  `VITE_IMPROVISE_URL` bliver tomme i både root og preview; produktflaget
+  bliver `false` i root og `true` kun i den indlejrede offline-preview.
+  At tænde et Worker-lag eller production-root kræver derfor en synlig,
+  reviewet ændring af buildkontrakten — en ambient variabel er ikke nok.
 
 `VITE_NARRATOR_URL`, `VITE_IMPROVISE_ENABLED` og `VITE_IMPROVISE_URL` er
 bevidst uafhængige build-kontrakter:
@@ -246,12 +246,12 @@ bevidst uafhængige build-kontrakter:
   aldrig på den (2,5 s timeout, synkront cache-read ved Combine).
 - `VITE_NARRATOR_URL` styrer fortsat kun live-fortælleren.
 
-Ingen af de tre variabler står i `.github/workflows/deploy.yml`. Et lokalt
-offline-check kan derfor køres med `VITE_IMPROVISE_ENABLED=true npm run dev`;
-et lokalt Worker-check tilføjer desuden `VITE_IMPROVISE_URL`. At sætte dem i
-produktion er en separat beslutning efter den eksterne gate: 5–10
-engelsktalende deltagere på tværs af crafting-game- og
-low-game-experience-grupper, uden forklaring.
+Pages-buildets scoped kontrakt ligger i `tools/build_pages.mjs`, ikke som
+løse workflow-variabler. Et lokalt offline-check kan køres med
+`VITE_IMPROVISE_ENABLED=true npm run dev`; et lokalt Worker-check tilføjer
+desuden `VITE_IMPROVISE_URL`. At aktivere production-root eller en Worker er
+en separat beslutning efter den eksterne gate: 5–10 engelsktalende deltagere
+på tværs af crafting-game- og low-game-experience-grupper, uden forklaring.
 
 ## 7. Sådan verificeres opførslen efter et deploy
 
@@ -779,21 +779,24 @@ et production-build med begge variabler.
    npm run playtest:evidence:check
    npm test
    npm run validate
-   npm run build
+   npm run build:pages
+   npm run verify:pages
    ```
 
-2. Kør først den komplette offline-kandidat:
+2. Brug den byggede/offentlige komplette offline-kandidat:
 
-   ```bash
-   env -u VITE_IMPROVISE_URL VITE_IMPROVISE_ENABLED=true npm run dev
-   ```
+   <https://youex.github.io/ascent-of-karl/playtest/improvisation/>
+
+   Til lokal iteration kan
+   `env -u VITE_IMPROVISE_URL VITE_IMPROVISE_ENABLED=true npm run dev`
+   fortsat bruges.
 
 3. Lad **5–10 engelsktalende deltagere** på tværs af crafting-game- og
    low-game-experience-grupper spille uden forklaring. Brug modereret lokal
    kandidat eller en særskilt ikke-produktions-preview. Agent-QA tæller ikke.
    Dokumentér observationer og `karl-playtest-improvisation-v2`-logs.
-4. Stop her, hvis gaten ikke er gennemført. Production-deployet skal fortsat
-   have begge improvisationsvariabler usat.
+4. Stop her, hvis gaten ikke er gennemført. Production-root skal fortsat
+   tvinges feature-off, og Worker-URL'erne skal fortsat tvinges tomme.
 
 ### 13b. Valgfri Worker-copy efter human gate
 
@@ -830,10 +833,10 @@ Efter dokumenteret human acceptance:
    forbliver uafhængig og usat, medmindre live-fortælleren har sin egen
    beslutning.
 
-Den nuværende `.github/workflows/deploy.yml` gør ingen af delene. Repository-
-eller environment-variabler bliver ikke automatisk synlige for Vite; et
-fremtidigt enable skal derfor wire dem eksplicit ind i build-trinnet og være
-synligt i review.
+Den nuværende Pages-kontrakt gør ingen af delene for production-root.
+Repository- eller environment-variabler kan ikke omgå de eksplicitte
+overrides; et fremtidigt enable skal derfor ændre
+`tools/build_pages.mjs` eksplicit og være synligt i review.
 
 ### 13d. Rollback
 
@@ -841,13 +844,12 @@ synligt i review.
    igen. Den deterministiske feature fortsætter uden adfærdsændring. Ved akut
    Worker-stop kan `IMPROVISE_DAILY_MAX_UPSTREAM_CALLS` sættes til `0` og
    Workeren gendeployes; cache-hits kan stadig svare.
-2. **Gameplay- eller UX-problem:** fjern også
-   `VITE_IMPROVISE_ENABLED` og deploy igen. UI'et går tilbage til det
-   eksisterende `Engine.combine()`-flow; Worker-ruten kan blive stående uden
-   trafik, fordi ingen klient-URL er bygget ind.
-3. Verificér efter rollback, at det nye `dist` ikke indeholder en aktiv
+2. **Gameplay- eller UX-problem:** fjern den indlejrede preview fra
+   Pages-buildkontrakten og deploy igen. Production-root er allerede på det
+   eksisterende `Engine.combine()`-flow.
+3. Verificér efter rollback, at production-root ikke indeholder en aktiv
    improvisationsklient, at canonical gameplay stadig kan gennemføres, og at
-   deploy-workflowet igen sætter ingen af variablerne.
+   Worker-URL'erne fortsat er tomme.
 
 ### 13e. Harvest-krav efter rigtig trafik
 

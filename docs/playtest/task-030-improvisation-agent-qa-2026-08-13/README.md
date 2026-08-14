@@ -197,5 +197,6 @@ round: 5–10 English-speaking participants across crafting-game- and
 low-game-experience groups, playing without explanation under
 `docs/playtest/README.md`,
 with their reactions and copied logs recorded. Until that evidence exists,
-`VITE_IMPROVISE_ENABLED` must remain unset in deploy, and no Worker URL,
-secret or production traffic should be configured.
+the public production root must remain forcibly feature-off. The separate
+offline playtest preview does not close this gate. No Worker URL, secret or
+production traffic should be configured.

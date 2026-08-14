@@ -25,9 +25,11 @@ tags: [feature, architecture, engine, narrator, content, infrastructure]
 > low-game-experience-grupper har spillet uden forklaring og fået
 > observationer/logs dokumenteret efter `docs/playtest/README.md`.
 >
-> **Produktion er off:** `.github/workflows/deploy.yml` sætter hverken
-> `VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`. Der er ingen
-> provisioneret improvisations-Worker-URL, secrets eller trafik. Faktisk
+> **Produktion er off:** Pages-buildet tvinger den offentlige root feature-off.
+> Samme artifact har en unlisted, feature-on offline-playtest under
+> `/playtest/improvisation/`; begge builds tvinger Worker-URL'erne tomme.
+> Previewet er ikke production-enable, og acceptancedelen ovenfor er fortsat
+> åben. Der er ingen provisioneret Worker, secrets eller trafik. Faktisk
 > harvest-output findes ikke og må ikke fabrikeres; driftshøsten afventer en
 > deployet Worker, et admin-token og rigtig trafik.
 
