@@ -55,7 +55,7 @@
     }
   ],
   "goalMetrics": {
-    "algorithmVersion": "title-fidelity-v1",
+    "algorithmVersion": "title-fidelity-v2",
     "screen": "title",
     "sources": {
       "approvedOriginal": {
@@ -64,15 +64,50 @@
       "approvedReference": {
         "path": "docs/design/reference/title-2026-08-11.webp",
         "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850"
+      }
+    },
+    "capture": {
+      "canonicalCharacterSize": {
+        "width": 512,
+        "height": 554
       },
-      "currentCalibration": {
-        "sha256": "082d979dd4c6c3f9b84bb763cd354b39502ce1ad4758cda94f087f77f95a575b"
+      "sceneAssetSelector": ".title-stage",
+      "sceneCssVariable": "--scene-src",
+      "characterRectNormalized": [0.211817, 0.181452, 0.668896, 0.655242],
+      "requiredLayers": ["scene", "foreground", "parchment", "wordmark"]
+    },
+    "referenceGeometry": {
+      "capture": {
+        "pixelWidth": 1586,
+        "pixelHeight": 992
+      },
+      "seam": {
+        "axis": "vertical",
+        "kind": "scene-parchment",
+        "physicalX": 690,
+        "physicalY": 40,
+        "physicalHeight": 40
+      },
+      "character": {
+        "measurementSource": "reference",
+        "sourceRect": [879, 180, 600, 650],
+        "canonicalWidth": 512,
+        "canonicalHeight": 554,
+        "uiOverlapPixels": 0
       }
     },
     "gates": {
+      "captureDimensions": {
+        "viewports": "all"
+      },
       "sceneSeamGradient": {
         "max": 4.0,
-        "viewports": "all"
+        "viewports": [
+          "desktop-1366",
+          "desktop-1536",
+          "target-native",
+          "desktop-2560"
+        ]
       },
       "titleInkOccupancy": {
         "min": 26.5,
@@ -87,24 +122,21 @@
         "logOnly": ["mobile-390", "mobile-430"]
       },
       "characterDetailVariance": {
-        "min": 300.0,
+        "min": 400.0,
+        "viewports": "all"
+      },
+      "characterEvidence": {
         "viewports": "all"
       },
       "globalEdgeDensity": {
         "min": 6.1,
         "viewports": "all"
       },
-      "sceneDetailRetention": {
-        "min": 0.95
-      },
-      "parchmentBlankRetention": {
-        "min": 0.85,
-        "sampleMin": 0.80
-      },
-      "alphaEdge": {
-        "transitionPxMax": 1,
-        "fringePxMax": 1,
-        "backgrounds": ["#000000", "#ffffff", "parchment"]
+      "layerManifest": {
+        "viewports": "all",
+        "forbidCss": true,
+        "forbidInline": true,
+        "minimumNaturalArea": 1024
       },
       "payloadBytes": {
         "desktopMax": 600000,
@@ -112,7 +144,47 @@
       },
       "noUpscale": {
         "maxPhysicalScale": 1,
-        "viewports": ["mobile-390", "mobile-430"]
+        "viewports": "all"
+      },
+      "assetContracts": {
+        "sceneRetention": {
+          "required": {
+            "scene-target-native": [1586, 992]
+          },
+          "similarityMin": 0.90,
+          "detailRatioMin": 0.95,
+          "detailRatioMax": 1.10,
+          "varianceMin": 1.0,
+          "varianceMax": 5000.0
+        },
+        "parchmentRetention": {
+          "required": {
+            "parchment-desktop": [700, 992]
+          },
+          "similarityMin": 0.90,
+          "energyRatioMin": 0.85,
+          "energyRatioMax": 1.15,
+          "sampleMin": 0.80,
+          "sampleMax": 1.20,
+          "energyMax": 40.0
+        },
+        "alphaEdges": {
+          "required": {
+            "scene": [1586, 992],
+            "foreground": [1586, 992],
+            "parchment": [700, 992],
+            "wordmark": [545, 320]
+          },
+          "transitionPxMax": 1,
+          "fringePxMax": 1,
+          "coverageMin": 0.05,
+          "coverageMax": 0.95,
+          "opaqueMin": 0.02,
+          "transparentMin": 0.02,
+          "largestComponentMin": 0.10,
+          "similarityMin": 0.90,
+          "backgrounds": ["#000000", "#ffffff", "parchment"]
+        }
       }
     }
   },

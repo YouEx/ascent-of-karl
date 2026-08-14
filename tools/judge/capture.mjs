@@ -165,7 +165,13 @@ function nativeViewport(screen) {
  * Optager én skærm. Returnerer måldata, så kalderen kan bruge dem uden at
  * læse dem tilbage fra disk.
  */
-export async function captureScreen(browser, screen, outDir, selectedViewport = nativeViewport(screen)) {
+export async function captureScreen(
+  browser,
+  screen,
+  outDir,
+  selectedViewport = nativeViewport(screen),
+  fidelityCapture = {},
+) {
   const viewport = {
     ...selectedViewport,
     registered: selectedViewport.registered ?? false,
@@ -174,7 +180,9 @@ export async function captureScreen(browser, screen, outDir, selectedViewport = 
     viewport: { width: viewport.width, height: viewport.height },
     screen: { width: viewport.width, height: viewport.height },
     deviceScaleFactor: viewport.dpr,
-    isMobile: viewport.payloadClass === "mobile",
+    // Chromium's mobile emulation rasteriser can return height*dpr-1. Vi
+    // tester CSS-viewports og fysisk DPR, ikke browser-UA-emulering.
+    isMobile: false,
     hasTouch: viewport.payloadClass === "mobile",
     // Reduceret bevægelse ville også fryse skrivemaskinen, men frysningen skal
     // komme fra ÉT sted (?freeze=1), så en fejl i den ene mekanisme ikke
@@ -194,9 +202,14 @@ export async function captureScreen(browser, screen, outDir, selectedViewport = 
     await mkdir(join(outDir, "metrics"), { recursive: true });
     await mkdir(join(outDir, "resources"), { recursive: true });
 
-    await page.screenshot({ path: join(outDir, "render", `${name}.png`) });
+    const screenshot = await page.screenshot();
+    const capture = {
+      pixelWidth: screenshot.readUInt32BE(16),
+      pixelHeight: screenshot.readUInt32BE(20),
+    };
+    await writeFile(join(outDir, "render", `${name}.png`), screenshot);
 
-    const browserEvidence = await page.evaluate((dpr) => {
+    const browserEvidence = await page.evaluate(async ({ dpr, config, payloadClass }) => {
       const titleRoot = document.querySelector("#title-screen");
       const criticalSources = new Set();
       const titleElements = titleRoot
@@ -236,6 +249,119 @@ export async function captureScreen(browser, screen, outDir, selectedViewport = 
         };
       });
 
+      const layers = [...document.querySelectorAll("img[data-title-layer]")].map((image) => {
+        const box = image.getBoundingClientRect();
+        return {
+          layerId: image.getAttribute("data-title-layer"),
+          selector: selectorFor(image),
+          sourceKind: "img",
+          currentSrc: image.currentSrc || image.src,
+          naturalWidth: image.naturalWidth,
+          naturalHeight: image.naturalHeight,
+          renderedWidth: box.width,
+          renderedHeight: box.height,
+          physicalWidth: box.width * dpr,
+          physicalHeight: box.height * dpr,
+          titleCritical: Boolean(titleRoot?.contains(image)),
+          complete: image.complete,
+        };
+      });
+
+      const parseUrl = (value) => {
+        const match = value?.match(/url\((?:"|')?([^"')]+)(?:"|')?\)/);
+        return match ? new URL(match[1], document.baseURI).href : "";
+      };
+      const stage = document.querySelector(config.sceneAssetSelector ?? ".title-stage");
+      const panel = document.querySelector(".title-panel");
+      let characterDataUrl = "";
+      let character = {
+        measurementSource: "asset",
+        canonicalWidth: config.canonicalCharacterSize?.width ?? 0,
+        canonicalHeight: config.canonicalCharacterSize?.height ?? 0,
+        uiOverlapPixels: 0,
+      };
+      let seam = {
+        axis: "vertical",
+        kind: "missing",
+        physicalX: -1,
+        physicalY: -1,
+        physicalHeight: 0,
+      };
+      if (stage) {
+        const stageStyle = getComputedStyle(stage);
+        const variable = stageStyle.getPropertyValue(config.sceneCssVariable ?? "--scene-src");
+        const sceneLayer = document.querySelector('img[data-title-layer="scene"]');
+        const sceneUrl = sceneLayer?.currentSrc
+          || parseUrl(getComputedStyle(stage, "::after").backgroundImage)
+          || parseUrl(stageStyle.backgroundImage)
+          || parseUrl(variable);
+        if (sceneUrl) {
+          const source = sceneLayer ?? new Image();
+          if (!sceneLayer) source.src = sceneUrl;
+          await source.decode();
+          const normalized = config.characterRectNormalized ?? [0, 0, 1, 1];
+          const sourceRect = {
+            x: normalized[0] * source.naturalWidth,
+            y: normalized[1] * source.naturalHeight,
+            width: normalized[2] * source.naturalWidth,
+            height: normalized[3] * source.naturalHeight,
+          };
+          const canvas = document.createElement("canvas");
+          canvas.width = character.canonicalWidth;
+          canvas.height = character.canonicalHeight;
+          canvas.getContext("2d").drawImage(
+            source,
+            sourceRect.x,
+            sourceRect.y,
+            sourceRect.width,
+            sourceRect.height,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+          );
+          characterDataUrl = canvas.toDataURL("image/png");
+          character = {
+            ...character,
+            assetUrl: sceneUrl,
+            naturalWidth: source.naturalWidth,
+            naturalHeight: source.naturalHeight,
+            sourceRect,
+          };
+
+          const stageBox = stage.getBoundingClientRect();
+          const panelBox = panel?.getBoundingClientRect();
+          const pseudo = getComputedStyle(stage, "::after");
+          if (payloadClass !== "mobile" && pseudo.display !== "none") {
+            const renderedSceneWidth =
+              source.naturalWidth * stageBox.height / source.naturalHeight;
+            const x = stageBox.right - renderedSceneWidth;
+            const y = stageBox.top + stageBox.height * 0.04;
+            const end = Math.min(
+              panelBox?.top ?? stageBox.top + stageBox.height * 0.16,
+              stageBox.top + stageBox.height * 0.16,
+            );
+            seam = {
+              axis: "vertical",
+              kind: "scene-extension",
+              physicalX: x * dpr,
+              physicalY: y * dpr,
+              physicalHeight: Math.max(1, end - y) * dpr,
+              physicalWidth: 200 * dpr,
+            };
+          } else if (panelBox) {
+            seam = {
+              axis: "vertical",
+              kind: "scene-parchment",
+              physicalX: panelBox.left * dpr,
+              physicalY: panelBox.top * dpr,
+              physicalHeight: panelBox.height * dpr,
+              physicalWidth: 1,
+            };
+          }
+        }
+      }
+
       const resources = performance.getEntriesByType("resource").map((entry) => ({
         url: entry.name,
         transferSize: entry.transferSize,
@@ -246,10 +372,24 @@ export async function captureScreen(browser, screen, outDir, selectedViewport = 
       }));
       return {
         images,
+        layers,
+        geometry: { seam, character },
+        characterDataUrl,
         criticalSources: [...criticalSources].sort(),
         resources,
       };
-    }, viewport.dpr);
+    }, {
+      dpr: viewport.dpr,
+      config: fidelityCapture,
+      payloadClass: viewport.payloadClass,
+    });
+
+    const characterRelativePath = join("render", `${name}-character.png`);
+    if (browserEvidence.characterDataUrl) {
+      const encoded = browserEvidence.characterDataUrl.split(",", 2)[1];
+      await writeFile(join(outDir, characterRelativePath), Buffer.from(encoded, "base64"));
+      browserEvidence.geometry.character.cropPath = characterRelativePath;
+    }
 
     const metrics = {
       screen: screen.id,
@@ -261,7 +401,10 @@ export async function captureScreen(browser, screen, outDir, selectedViewport = 
         dpr: viewport.dpr,
         payloadClass: viewport.payloadClass,
       },
+      capture,
       images: browserEvidence.images,
+      layers: browserEvidence.layers,
+      geometry: browserEvidence.geometry,
       criticalSources: browserEvidence.criticalSources,
       regions: {},
     };
@@ -349,7 +492,13 @@ export async function runCapture({
         ? registry.viewports.map((viewport) => ({ ...viewport, registered: true }))
         : [nativeViewport(screen)];
       for (const viewport of selectedViewports) {
-        const metrics = await captureScreenFn(browser, screen, outDir, viewport);
+        const metrics = await captureScreenFn(
+          browser,
+          screen,
+          outDir,
+          viewport,
+          registry.goalMetrics?.capture ?? {},
+        );
         results.push({ screen, viewport, metrics });
       }
     }

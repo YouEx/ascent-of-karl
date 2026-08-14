@@ -176,9 +176,9 @@ describe("registry.json — titelens fidelitymål (TASK-001)", () => {
     expect(actual).toEqual(EXPECTED_VIEWPORTS);
   });
 
-  it("pinner algoritmeversionen, de tre provenance-hashes og alle frosne gates", () => {
+  it("pinner v2, portable provenance, geometri og de fire obligatoriske lag", () => {
     const metrics = loadRegistry().goalMetrics;
-    expect(metrics.algorithmVersion).toBe("title-fidelity-v1");
+    expect(metrics.algorithmVersion).toBe("title-fidelity-v2");
     expect(metrics.sources).toEqual({
       approvedOriginal: {
         sha256: "8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770",
@@ -187,38 +187,47 @@ describe("registry.json — titelens fidelitymål (TASK-001)", () => {
         path: "docs/design/reference/title-2026-08-11.webp",
         sha256: "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
       },
-      currentCalibration: {
-        sha256: "082d979dd4c6c3f9b84bb763cd354b39502ce1ad4758cda94f087f77f95a575b",
+    });
+    expect(JSON.stringify(metrics)).not.toMatch(/\/Users\/|session-state|currentCalibration/);
+    expect(metrics.capture).toMatchObject({
+      canonicalCharacterSize: { width: 512, height: 554 },
+      sceneAssetSelector: ".title-stage",
+      sceneCssVariable: "--scene-src",
+      requiredLayers: ["scene", "foreground", "parchment", "wordmark"],
+    });
+    expect(metrics.referenceGeometry).toMatchObject({
+      seam: { axis: "vertical", physicalX: 690 },
+      character: {
+        sourceRect: [879, 180, 600, 650],
+        canonicalWidth: 512,
+        canonicalHeight: 554,
       },
     });
-    expect(metrics.gates).toEqual({
-      sceneSeamGradient: { max: 4, viewports: "all" },
-      titleInkOccupancy: {
-        min: 26.5,
-        max: 28.5,
-        viewports: ["target-native"],
-        logOnly: ["mobile-390", "mobile-430"],
-      },
-      bottomLeftDarkShare: {
-        min: 35,
-        max: 47,
-        viewports: ["target-native"],
-        logOnly: ["mobile-390", "mobile-430"],
-      },
-      characterDetailVariance: { min: 300, viewports: "all" },
-      globalEdgeDensity: { min: 6.1, viewports: "all" },
-      sceneDetailRetention: { min: 0.95 },
-      parchmentBlankRetention: { min: 0.85, sampleMin: 0.8 },
-      alphaEdge: {
-        transitionPxMax: 1,
-        fringePxMax: 1,
-        backgrounds: ["#000000", "#ffffff", "parchment"],
-      },
-      payloadBytes: { desktopMax: 600_000, mobileMax: 350_000 },
-      noUpscale: {
-        maxPhysicalScale: 1,
-        viewports: ["mobile-390", "mobile-430"],
-      },
+    expect(metrics.gates.captureDimensions.viewports).toBe("all");
+    expect(metrics.gates.sceneSeamGradient.viewports).toEqual([
+      "desktop-1366",
+      "desktop-1536",
+      "target-native",
+      "desktop-2560",
+    ]);
+    expect(metrics.gates.characterEvidence.viewports).toBe("all");
+    expect(metrics.gates.layerManifest).toMatchObject({
+      viewports: "all",
+      forbidCss: true,
+      forbidInline: true,
+      minimumNaturalArea: 1024,
+    });
+    expect(metrics.gates.assetContracts.sceneRetention.required).toEqual({
+      "scene-target-native": [1586, 992],
+    });
+    expect(metrics.gates.assetContracts.parchmentRetention.required).toEqual({
+      "parchment-desktop": [700, 992],
+    });
+    expect(metrics.gates.assetContracts.alphaEdges.required).toEqual({
+      scene: [1586, 992],
+      foreground: [1586, 992],
+      parchment: [700, 992],
+      wordmark: [545, 320],
     });
   });
 
