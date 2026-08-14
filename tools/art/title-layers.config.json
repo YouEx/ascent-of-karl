@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "algorithmVersion": "title-layers-foundation-v2",
+  "seed": 20260814,
+  "source": {
+    "path": "docs/design/reference/title-2026-08-11.webp",
+    "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
+    "dimensions": [1586, 992],
+    "sceneCrop": [690, 0, 1586, 992],
+    "characterCrop": [900, 210, 1440, 815],
+    "sceneOcclusions": [
+      [1374, 10, 1467, 106],
+      [1468, 10, 1578, 106]
+    ]
+  },
+  "patchQuilting": {
+    "scene": {
+      "patchSize": 160,
+      "overlap": 48
+    },
+    "parchment": {
+      "patchSize": 48,
+      "overlap": 12
+    }
+  },
+  "blankPaperSamples": [
+    {
+      "id": "paper-top-left",
+      "crop": [176, 100, 224, 148]
+    },
+    {
+      "id": "paper-top-mid",
+      "crop": [256, 108, 304, 156]
+    },
+    {
+      "id": "paper-middle-left",
+      "crop": [168, 516, 216, 564]
+    },
+    {
+      "id": "paper-middle-right",
+      "crop": [616, 524, 664, 572]
+    }
+  ],
+  "parchmentMaster": {
+    "plate": "docs/design/reference/title-parchment-clean.png",
+    "mask": "docs/design/reference/title-parchment-clean-mask.png"
+  },
+  "outputs": [
+    {
+      "id": "scene-mobile-390",
+      "kind": "scene",
+      "file": "scene-mobile-390.webp",
+      "dimensions": [780, 1688],
+      "byteBudget": 210000,
+      "viewport": "mobile-390",
+      "sourcePlacement": {
+        "sourceCrop": [855, 210, 1586, 815],
+        "destination": [0, 420, 731, 1025]
+      }
+    },
+    {
+      "id": "foreground-mobile-390",
+      "kind": "foreground",
+      "file": "foreground-mobile-390.webp",
+      "dimensions": [780, 1688],
+      "byteBudget": 35000,
+      "viewport": "mobile-390"
+    },
+    {
+      "id": "scene-mobile-430",
+      "kind": "scene",
+      "file": "scene-mobile-430.webp",
+      "dimensions": [860, 1864],
+      "byteBudget": 210000,
+      "viewport": "mobile-430",
+      "sourcePlacement": {
+        "sourceCrop": [780, 210, 1586, 815],
+        "destination": [0, 460, 806, 1065]
+      }
+    },
+    {
+      "id": "foreground-mobile-430",
+      "kind": "foreground",
+      "file": "foreground-mobile-430.webp",
+      "dimensions": [860, 1864],
+      "byteBudget": 40000,
+      "viewport": "mobile-430"
+    },
+    {
+      "id": "scene-desktop-1366",
+      "kind": "scene",
+      "file": "scene-desktop-1366.webp",
+      "dimensions": [1366, 768],
+      "byteBudget": 380000,
+      "viewport": "desktop-1366",
+      "sourcePlacement": {
+        "sourceCrop": [690, 0, 1586, 992],
+        "destination": [672, 0, 1366, 768]
+      }
+    },
+    {
+      "id": "foreground-desktop-1366",
+      "kind": "foreground",
+      "file": "foreground-desktop-1366.webp",
+      "dimensions": [1366, 768],
+      "byteBudget": 60000,
+      "viewport": "desktop-1366"
+    },
+    {
+      "id": "scene-desktop-1536",
+      "kind": "scene",
+      "file": "scene-desktop-1536.webp",
+      "dimensions": [1536, 1024],
+      "byteBudget": 380000,
+      "viewport": "desktop-1536",
+      "sourcePlacement": {
+        "sourceCrop": [690, 0, 1586, 992],
+        "destination": [640, 16, 1536, 1008]
+      }
+    },
+    {
+      "id": "foreground-desktop-1536",
+      "kind": "foreground",
+      "file": "foreground-desktop-1536.webp",
+      "dimensions": [1536, 1024],
+      "byteBudget": 60000,
+      "viewport": "desktop-1536"
+    },
+    {
+      "id": "scene-target-native",
+      "kind": "scene",
+      "file": "scene-target-native.webp",
+      "dimensions": [1586, 992],
+      "byteBudget": 380000,
+      "viewport": "target-native",
+      "sourcePlacement": {
+        "sourceCrop": [690, 0, 1586, 992],
+        "destination": [690, 0, 1586, 992]
+      }
+    },
+    {
+      "id": "foreground-target-native",
+      "kind": "foreground",
+      "file": "foreground-target-native.webp",
+      "dimensions": [1586, 992],
+      "byteBudget": 60000,
+      "viewport": "target-native"
+    },
+    {
+      "id": "scene-desktop-2560",
+      "kind": "scene",
+      "file": "scene-desktop-2560.webp",
+      "dimensions": [2560, 1440],
+      "byteBudget": 380000,
+      "viewport": "desktop-2560",
+      "sourcePlacement": {
+        "sourceCrop": [900, 210, 1586, 815],
+        "destination": [1618, 400, 2304, 1005]
+      }
+    },
+    {
+      "id": "foreground-desktop-2560",
+      "kind": "foreground",
+      "file": "foreground-desktop-2560.webp",
+      "dimensions": [2560, 1440],
+      "byteBudget": 80000,
+      "viewport": "desktop-2560"
+    },
+    {
+      "id": "parchment-desktop",
+      "kind": "parchment",
+      "file": "parchment-desktop.webp",
+      "dimensions": [700, 992],
+      "byteBudget": 180000,
+      "viewport": "desktop"
+    },
+    {
+      "id": "parchment-mobile-390",
+      "kind": "parchment",
+      "file": "parchment-mobile-390.webp",
+      "dimensions": [700, 1530],
+      "byteBudget": 120000,
+      "viewport": "mobile-390"
+    },
+    {
+      "id": "parchment-mobile-430",
+      "kind": "parchment",
+      "file": "parchment-mobile-430.webp",
+      "dimensions": [760, 1680],
+      "byteBudget": 120000,
+      "viewport": "mobile-430"
+    }
+  ],
+  "variants": [
+    {
+      "id": "balanced",
+      "seedOffset": 0
+    },
+    {
+      "id": "dark-valley",
+      "seedOffset": 101
+    },
+    {
+      "id": "detail-rich",
+      "seedOffset": 211
+    }
+  ],
+  "qualityGates": {
+    "repetition": {
+      "blockSizes": [48, 64],
+      "correlationThreshold": 0.98,
+      "maxRepeatedBlockShare": 0.02
+    },
+    "coherence": {
+      "maxRowColumnJump": 25.0
+    },
+    "silhouette": {
+      "foregroundCoverage": [0.01, 0.55],
+      "parchmentCoverage": [0.6, 0.95],
+      "foregroundMaxComponents": 8,
+      "foregroundMinLargestComponentShare": 0.8,
+      "parchmentMaxComponents": 3,
+      "parchmentMinLargestComponentShare": 0.98
+    },
+    "alpha": {
+      "requireAntialiasedTransition": true,
+      "maxTransitionPx": 1,
+      "maxFringeDelta": 24.0
+    },
+    "karlIdentity": {
+      "maxRegionMae": 3.0,
+      "regions": {
+        "face": [1035, 255, 1215, 455],
+        "hair": [920, 210, 1220, 500],
+        "hands": [1160, 390, 1375, 590],
+        "stone": [1210, 380, 1345, 535],
+        "torso": [900, 420, 1130, 700]
+      }
+    },
+    "parchmentPlateRetention": {
+      "minimum": 0.85
+    }
+  },
+  "provenanceGates": {
+    "minDirectSourceCoverage": 0.5
+  },
+  "budgets": {
+    "groups": {
+      "desktopSceneForeground": 420000,
+      "mobileSceneForeground": 230000,
+      "desktopParchment": 180000,
+      "mobileParchment": 120000
+    }
+  }
+}

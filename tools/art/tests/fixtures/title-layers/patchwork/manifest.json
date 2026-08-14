@@ -1,0 +1,1271 @@
+{
+  "algorithmVersion": "title-layers-v1",
+  "candidateMetrics": {
+    "hardSceneGatesPassed": true,
+    "id": "detail-rich",
+    "score": 100.0,
+    "sourcePlacements": {
+      "scene-desktop-1366": {
+        "destination": [
+          672,
+          0,
+          1366,
+          768
+        ],
+        "protectedSourceCrop": [
+          900,
+          210,
+          1440,
+          815
+        ],
+        "sourceCrop": [
+          690,
+          0,
+          1586,
+          992
+        ]
+      },
+      "scene-desktop-1536": {
+        "destination": [
+          640,
+          16,
+          1536,
+          1008
+        ],
+        "protectedSourceCrop": [
+          900,
+          210,
+          1440,
+          815
+        ],
+        "sourceCrop": [
+          690,
+          0,
+          1586,
+          992
+        ]
+      },
+      "scene-desktop-2560": {
+        "destination": [
+          1618,
+          400,
+          2304,
+          1005
+        ],
+        "protectedSourceCrop": [
+          900,
+          210,
+          1440,
+          815
+        ],
+        "sourceCrop": [
+          900,
+          210,
+          1586,
+          815
+        ]
+      },
+      "scene-mobile-390": {
+        "destination": [
+          0,
+          420,
+          731,
+          1025
+        ],
+        "protectedSourceCrop": [
+          900,
+          210,
+          1440,
+          815
+        ],
+        "sourceCrop": [
+          855,
+          210,
+          1586,
+          815
+        ]
+      },
+      "scene-mobile-430": {
+        "destination": [
+          0,
+          460,
+          806,
+          1065
+        ],
+        "protectedSourceCrop": [
+          900,
+          210,
+          1440,
+          815
+        ],
+        "sourceCrop": [
+          780,
+          210,
+          1586,
+          815
+        ]
+      },
+      "scene-target-native": {
+        "destination": [
+          690,
+          0,
+          1586,
+          992
+        ],
+        "protectedSourceCrop": [
+          900,
+          210,
+          1440,
+          815
+        ],
+        "sourceCrop": [
+          690,
+          0,
+          1586,
+          992
+        ]
+      }
+    },
+    "viewports": {
+      "desktop-1366": {
+        "bottomLeftDarkShare": 76.18331662768682,
+        "characterDetailVariance": 657.668450044878,
+        "globalEdgeDensity": 9.308561340897999,
+        "sceneSeamGradient": 2.9245283018867925
+      },
+      "desktop-1536": {
+        "bottomLeftDarkShare": 83.78937993988646,
+        "characterDetailVariance": 430.6016641977304,
+        "globalEdgeDensity": 8.061472574869793,
+        "sceneSeamGradient": 2.7094972067039107
+      },
+      "desktop-2560": {
+        "bottomLeftDarkShare": 85.20820660989456,
+        "characterDetailVariance": 307.4360108922263,
+        "globalEdgeDensity": 6.169189453125,
+        "sceneSeamGradient": 2.5993265993265995
+      },
+      "mobile-390": {
+        "bottomLeftDarkShare": 83.13319310204047,
+        "characterDetailVariance": 348.54482657051494,
+        "globalEdgeDensity": 6.451725604569207,
+        "sceneSeamGradient": 2.522222222222222
+      },
+      "mobile-430": {
+        "bottomLeftDarkShare": 85.60343946626958,
+        "characterDetailVariance": 322.1761565533258,
+        "globalEdgeDensity": 6.1609816348937025,
+        "sceneSeamGradient": 2.5656565656565657
+      },
+      "target-native": {
+        "bottomLeftDarkShare": 35.84763692711127,
+        "characterDetailVariance": 433.4869866385177,
+        "globalEdgeDensity": 8.131762803563438,
+        "sceneSeamGradient": 2.5652173913043477
+      }
+    }
+  },
+  "candidates": [
+    {
+      "hardSceneGatesPassed": false,
+      "id": "balanced",
+      "score": 99.88655349167956,
+      "sourcePlacements": {
+        "scene-desktop-1366": {
+          "destination": [
+            672,
+            0,
+            1366,
+            768
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        },
+        "scene-desktop-1536": {
+          "destination": [
+            640,
+            16,
+            1536,
+            1008
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        },
+        "scene-desktop-2560": {
+          "destination": [
+            1618,
+            400,
+            2304,
+            1005
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            900,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-mobile-390": {
+          "destination": [
+            0,
+            420,
+            731,
+            1025
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            855,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-mobile-430": {
+          "destination": [
+            0,
+            460,
+            806,
+            1065
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            780,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-target-native": {
+          "destination": [
+            690,
+            0,
+            1586,
+            992
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        }
+      },
+      "viewports": {
+        "desktop-1366": {
+          "bottomLeftDarkShare": 79.75164272190666,
+          "characterDetailVariance": 658.5688799472024,
+          "globalEdgeDensity": 8.589841843582235,
+          "sceneSeamGradient": 2.880503144654088
+        },
+        "desktop-1536": {
+          "bottomLeftDarkShare": 88.67490444914468,
+          "characterDetailVariance": 434.81629266461766,
+          "globalEdgeDensity": 7.575734456380208,
+          "sceneSeamGradient": 3.016759776536313
+        },
+        "desktop-2560": {
+          "bottomLeftDarkShare": 86.30214669505271,
+          "characterDetailVariance": 297.2628551772995,
+          "globalEdgeDensity": 6.086452907986111,
+          "sceneSeamGradient": 2.164983164983165
+        },
+        "mobile-390": {
+          "bottomLeftDarkShare": 83.47489593595513,
+          "characterDetailVariance": 341.55281232903707,
+          "globalEdgeDensity": 6.398104265402843,
+          "sceneSeamGradient": 2.3777777777777778
+        },
+        "mobile-430": {
+          "bottomLeftDarkShare": 88.6881560314749,
+          "characterDetailVariance": 339.2473826819051,
+          "globalEdgeDensity": 6.1876185248028746,
+          "sceneSeamGradient": 2.0707070707070705
+        },
+        "target-native": {
+          "bottomLeftDarkShare": 36.19107217355027,
+          "characterDetailVariance": 433.2410233237406,
+          "globalEdgeDensity": 7.618450758654355,
+          "sceneSeamGradient": 2.8260869565217392
+        }
+      }
+    },
+    {
+      "hardSceneGatesPassed": false,
+      "id": "dark-valley",
+      "score": 99.31559650599098,
+      "sourcePlacements": {
+        "scene-desktop-1366": {
+          "destination": [
+            672,
+            0,
+            1366,
+            768
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        },
+        "scene-desktop-1536": {
+          "destination": [
+            640,
+            16,
+            1536,
+            1008
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        },
+        "scene-desktop-2560": {
+          "destination": [
+            1618,
+            400,
+            2304,
+            1005
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            900,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-mobile-390": {
+          "destination": [
+            0,
+            420,
+            731,
+            1025
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            855,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-mobile-430": {
+          "destination": [
+            0,
+            460,
+            806,
+            1065
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            780,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-target-native": {
+          "destination": [
+            690,
+            0,
+            1586,
+            992
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        }
+      },
+      "viewports": {
+        "desktop-1366": {
+          "bottomLeftDarkShare": 86.60095779039982,
+          "characterDetailVariance": 658.2209170902929,
+          "globalEdgeDensity": 7.755116825280625,
+          "sceneSeamGradient": 2.880503144654088
+        },
+        "desktop-1536": {
+          "bottomLeftDarkShare": 83.93112916991355,
+          "characterDetailVariance": 432.97312029458516,
+          "globalEdgeDensity": 7.132212320963542,
+          "sceneSeamGradient": 2.910614525139665
+        },
+        "desktop-2560": {
+          "bottomLeftDarkShare": 85.92957978507705,
+          "characterDetailVariance": 290.5641532910683,
+          "globalEdgeDensity": 5.874376085069445,
+          "sceneSeamGradient": 2.2053872053872055
+        },
+        "mobile-390": {
+          "bottomLeftDarkShare": 85.390206885534,
+          "characterDetailVariance": 346.7034280580353,
+          "globalEdgeDensity": 6.404256288734962,
+          "sceneSeamGradient": 2.3777777777777778
+        },
+        "mobile-430": {
+          "bottomLeftDarkShare": 89.97065650593439,
+          "characterDetailVariance": 335.62624707351813,
+          "globalEdgeDensity": 6.189427587583591,
+          "sceneSeamGradient": 2.1313131313131315
+        },
+        "target-native": {
+          "bottomLeftDarkShare": 36.26557005781036,
+          "characterDetailVariance": 432.8248928507219,
+          "globalEdgeDensity": 7.194059410975064,
+          "sceneSeamGradient": 2.8260869565217392
+        }
+      }
+    },
+    {
+      "hardSceneGatesPassed": true,
+      "id": "detail-rich",
+      "score": 100.0,
+      "sourcePlacements": {
+        "scene-desktop-1366": {
+          "destination": [
+            672,
+            0,
+            1366,
+            768
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        },
+        "scene-desktop-1536": {
+          "destination": [
+            640,
+            16,
+            1536,
+            1008
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        },
+        "scene-desktop-2560": {
+          "destination": [
+            1618,
+            400,
+            2304,
+            1005
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            900,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-mobile-390": {
+          "destination": [
+            0,
+            420,
+            731,
+            1025
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            855,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-mobile-430": {
+          "destination": [
+            0,
+            460,
+            806,
+            1065
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            780,
+            210,
+            1586,
+            815
+          ]
+        },
+        "scene-target-native": {
+          "destination": [
+            690,
+            0,
+            1586,
+            992
+          ],
+          "protectedSourceCrop": [
+            900,
+            210,
+            1440,
+            815
+          ],
+          "sourceCrop": [
+            690,
+            0,
+            1586,
+            992
+          ]
+        }
+      },
+      "viewports": {
+        "desktop-1366": {
+          "bottomLeftDarkShare": 76.18331662768682,
+          "characterDetailVariance": 657.668450044878,
+          "globalEdgeDensity": 9.308561340897999,
+          "sceneSeamGradient": 2.9245283018867925
+        },
+        "desktop-1536": {
+          "bottomLeftDarkShare": 83.78937993988646,
+          "characterDetailVariance": 430.6016641977304,
+          "globalEdgeDensity": 8.061472574869793,
+          "sceneSeamGradient": 2.7094972067039107
+        },
+        "desktop-2560": {
+          "bottomLeftDarkShare": 85.20820660989456,
+          "characterDetailVariance": 307.4360108922263,
+          "globalEdgeDensity": 6.169189453125,
+          "sceneSeamGradient": 2.5993265993265995
+        },
+        "mobile-390": {
+          "bottomLeftDarkShare": 83.13319310204047,
+          "characterDetailVariance": 348.54482657051494,
+          "globalEdgeDensity": 6.451725604569207,
+          "sceneSeamGradient": 2.522222222222222
+        },
+        "mobile-430": {
+          "bottomLeftDarkShare": 85.60343946626958,
+          "characterDetailVariance": 322.1761565533258,
+          "globalEdgeDensity": 6.1609816348937025,
+          "sceneSeamGradient": 2.5656565656565657
+        },
+        "target-native": {
+          "bottomLeftDarkShare": 35.84763692711127,
+          "characterDetailVariance": 433.4869866385177,
+          "globalEdgeDensity": 8.131762803563438,
+          "sceneSeamGradient": 2.5652173913043477
+        }
+      }
+    }
+  ],
+  "configSha256": "c825b437e8421903bf3b9d44c2134ea1f4d7a527bde38c90e9b4d03a8533dbae",
+  "gates": {
+    "alpha": {
+      "evidence": {
+        "foreground-desktop-1366": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        },
+        "foreground-desktop-1536": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        },
+        "foreground-desktop-2560": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        },
+        "foreground-mobile-390": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        },
+        "foreground-mobile-430": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        },
+        "foreground-target-native": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        },
+        "parchment-desktop": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        },
+        "parchment-mobile-390": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        },
+        "parchment-mobile-430": {
+          "fringePx": {
+            "black": 0,
+            "parchment": 0,
+            "white": 0
+          },
+          "transitionPx": 0
+        }
+      },
+      "passed": true,
+      "requirement": "overgang og fringe <= 1 px mod sort, hvid og parchment"
+    },
+    "budgets": {
+      "evidence": {
+        "desktopParchment": 78094,
+        "desktopSceneForeground": 392470,
+        "mobileParchment": 109236,
+        "mobileSceneForeground": 224050
+      },
+      "passed": true,
+      "requirement": {
+        "desktopParchment": 180000,
+        "desktopSceneForeground": 420000,
+        "mobileParchment": 120000,
+        "mobileSceneForeground": 230000
+      }
+    },
+    "characterDetailVariance": {
+      "evidence": {
+        "desktop-1366": 657.668450044878,
+        "desktop-1536": 430.6016641977304,
+        "desktop-2560": 307.4360108922263,
+        "mobile-390": 348.54482657051494,
+        "mobile-430": 322.1761565533258,
+        "target-native": 433.4869866385177
+      },
+      "passed": true,
+      "requirement": ">= 300 ved alle viewports"
+    },
+    "globalEdgeDensity": {
+      "evidence": {
+        "desktop-1366": 9.308561340897999,
+        "desktop-1536": 8.061472574869793,
+        "desktop-2560": 6.169189453125,
+        "mobile-390": 6.451725604569207,
+        "mobile-430": 6.1609816348937025,
+        "target-native": 8.131762803563438
+      },
+      "passed": true,
+      "requirement": ">= 6.1 % ved alle viewports"
+    },
+    "parchmentRetention": {
+      "evidence": {
+        "overall": 1.3212836397225973,
+        "samples": {
+          "paper-middle-left": 1.219730763884146,
+          "paper-middle-right": 0.9747942174178256,
+          "paper-top-left": 1.413182870934702,
+          "paper-top-mid": 1.6774267066537165
+        }
+      },
+      "passed": true,
+      "requirement": "samlet >= 0.85 og hver prøve >= 0.80"
+    },
+    "sceneDetailRetention": {
+      "evidence": {
+        "scene-desktop-1366": 1.3129979380814252,
+        "scene-desktop-1536": 1.265694150183583,
+        "scene-desktop-2560": 1.2018930263456296,
+        "scene-mobile-390": 1.2701469134421082,
+        "scene-mobile-430": 1.276593812906289,
+        "scene-target-native": 1.2805823649305144
+      },
+      "passed": true,
+      "requirement": ">= 0.95"
+    },
+    "sceneSeamGradient": {
+      "evidence": {
+        "desktop-1366": 2.9245283018867925,
+        "desktop-1536": 2.7094972067039107,
+        "desktop-2560": 2.5993265993265995,
+        "mobile-390": 2.522222222222222,
+        "mobile-430": 2.5656565656565657,
+        "target-native": 2.5652173913043477
+      },
+      "passed": true,
+      "requirement": "<= 4.0 ved alle viewports"
+    },
+    "sourceCoverage": {
+      "evidence": {
+        "scene-desktop-1366": 0.5080527086383602,
+        "scene-desktop-1536": 0.5651041666666666,
+        "scene-desktop-2560": 0.11258409288194444,
+        "scene-mobile-390": 0.33589667638838255,
+        "scene-mobile-430": 0.3041907875037429,
+        "scene-target-native": 0.5649432534678437
+      },
+      "passed": false,
+      "requirement": "direkte godkendte sourcepixels dækker mindst 50 % af hver sceneeksport"
+    },
+    "targetBottomLeftDarkShare": {
+      "evidence": 35.84763692711127,
+      "passed": true,
+      "requirement": "35-47 % ved target-native"
+    }
+  },
+  "hardGatePassed": false,
+  "masterBlocker": {
+    "assetId": "TITLE-scene-master-v2",
+    "key": "title:missing-master:TITLE-scene-master-v2",
+    "missing": [
+      "docs/design/reference/scene-wide.png",
+      "approved 2560x1440 lossless scene",
+      "approved 860x1864 art-directed mobile scene"
+    ]
+  },
+  "metricAlgorithmVersion": "title-fidelity-v1",
+  "metrics": {
+    "alpha": {
+      "foreground-desktop-1366": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      },
+      "foreground-desktop-1536": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      },
+      "foreground-desktop-2560": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      },
+      "foreground-mobile-390": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      },
+      "foreground-mobile-430": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      },
+      "foreground-target-native": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      },
+      "parchment-desktop": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      },
+      "parchment-mobile-390": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      },
+      "parchment-mobile-430": {
+        "fringePx": {
+          "black": 0,
+          "parchment": 0,
+          "white": 0
+        },
+        "transitionPx": 0
+      }
+    },
+    "directSourceCoverage": {
+      "scene-desktop-1366": 0.5080527086383602,
+      "scene-desktop-1536": 0.5651041666666666,
+      "scene-desktop-2560": 0.11258409288194444,
+      "scene-mobile-390": 0.33589667638838255,
+      "scene-mobile-430": 0.3041907875037429,
+      "scene-target-native": 0.5649432534678437
+    },
+    "parchmentRetention": {
+      "overall": 1.3212836397225973,
+      "samples": {
+        "paper-middle-left": 1.219730763884146,
+        "paper-middle-right": 0.9747942174178256,
+        "paper-top-left": 1.413182870934702,
+        "paper-top-mid": 1.6774267066537165
+      }
+    },
+    "payloadBytes": {
+      "desktopParchment": 78094,
+      "desktopSceneForeground": 392470,
+      "mobileParchment": 109236,
+      "mobileSceneForeground": 224050
+    },
+    "sceneDetailRetention": {
+      "scene-desktop-1366": 1.3129979380814252,
+      "scene-desktop-1536": 1.265694150183583,
+      "scene-desktop-2560": 1.2018930263456296,
+      "scene-mobile-390": 1.2701469134421082,
+      "scene-mobile-430": 1.276593812906289,
+      "scene-target-native": 1.2805823649305144
+    }
+  },
+  "outputs": [
+    {
+      "byteBudget": 210000,
+      "bytes": 165708,
+      "dimensions": [
+        780,
+        1688
+      ],
+      "file": "scene-mobile-390.webp",
+      "id": "scene-mobile-390",
+      "kind": "scene",
+      "sha256": "eacbfe64d5ad3e393246f271ec9405ded1bd91af6f5168f046e502d781e149bf"
+    },
+    {
+      "byteBudget": 35000,
+      "bytes": 24494,
+      "dimensions": [
+        780,
+        1688
+      ],
+      "file": "foreground-mobile-390.webp",
+      "id": "foreground-mobile-390",
+      "kind": "foreground",
+      "sha256": "33c9ef57e685227ec66863ccccdf42bead9c9304fe92d9260691d0eee8230728"
+    },
+    {
+      "byteBudget": 210000,
+      "bytes": 191642,
+      "dimensions": [
+        860,
+        1864
+      ],
+      "file": "scene-mobile-430.webp",
+      "id": "scene-mobile-430",
+      "kind": "scene",
+      "sha256": "18156562a462bd44d57de4b238a104d89cbf3cc6bcd7a56f4d97037c99c682cb"
+    },
+    {
+      "byteBudget": 40000,
+      "bytes": 32408,
+      "dimensions": [
+        860,
+        1864
+      ],
+      "file": "foreground-mobile-430.webp",
+      "id": "foreground-mobile-430",
+      "kind": "foreground",
+      "sha256": "7de06bccac25db9ea18341edfa1df1c812f4897b247fb21301b098045b174adb"
+    },
+    {
+      "byteBudget": 380000,
+      "bytes": 156222,
+      "dimensions": [
+        1366,
+        768
+      ],
+      "file": "scene-desktop-1366.webp",
+      "id": "scene-desktop-1366",
+      "kind": "scene",
+      "sha256": "73f600cca183c3594fc2671a2ce3d9cbcfb557df6936d3bf2ec2ae554dbe7a45"
+    },
+    {
+      "byteBudget": 60000,
+      "bytes": 12200,
+      "dimensions": [
+        1366,
+        768
+      ],
+      "file": "foreground-desktop-1366.webp",
+      "id": "foreground-desktop-1366",
+      "kind": "foreground",
+      "sha256": "66109095ab8f4067f457d1bfcb99855bf687aede68ac49c4b3a9570b88b72b9f"
+    },
+    {
+      "byteBudget": 380000,
+      "bytes": 208514,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "file": "scene-desktop-1536.webp",
+      "id": "scene-desktop-1536",
+      "kind": "scene",
+      "sha256": "9fae056f0ff90556c599e3ced7cd4c723ffeb6c6c52647fcb5896e52489d6886"
+    },
+    {
+      "byteBudget": 60000,
+      "bytes": 17244,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "file": "foreground-desktop-1536.webp",
+      "id": "foreground-desktop-1536",
+      "kind": "foreground",
+      "sha256": "a054361ebcce8a621478fb5db88f49c0c91cad9c63ece6820948c29de44d17b5"
+    },
+    {
+      "byteBudget": 380000,
+      "bytes": 201086,
+      "dimensions": [
+        1586,
+        992
+      ],
+      "file": "scene-target-native.webp",
+      "id": "scene-target-native",
+      "kind": "scene",
+      "sha256": "c28b0beac4e7870f5a6c9651fa38f605064ad540e06128409aef6b208c54d4c8"
+    },
+    {
+      "byteBudget": 60000,
+      "bytes": 8254,
+      "dimensions": [
+        1586,
+        992
+      ],
+      "file": "foreground-target-native.webp",
+      "id": "foreground-target-native",
+      "kind": "foreground",
+      "sha256": "dd3d356b243dfb7af5b8ffff15d20a6533642f5553379014f5f2196afb4a7deb"
+    },
+    {
+      "byteBudget": 380000,
+      "bytes": 322956,
+      "dimensions": [
+        2560,
+        1440
+      ],
+      "file": "scene-desktop-2560.webp",
+      "id": "scene-desktop-2560",
+      "kind": "scene",
+      "sha256": "dc1f458ba6dafe68199f4c78568387dbe33023eb38cf21cfa0c55f4b937da871"
+    },
+    {
+      "byteBudget": 80000,
+      "bytes": 69514,
+      "dimensions": [
+        2560,
+        1440
+      ],
+      "file": "foreground-desktop-2560.webp",
+      "id": "foreground-desktop-2560",
+      "kind": "foreground",
+      "sha256": "c2ea728219fe47207ec6d5a36ec2a157f21fce94ec87f3ceecc2c0baf6ca22ec"
+    },
+    {
+      "byteBudget": 180000,
+      "bytes": 78094,
+      "dimensions": [
+        700,
+        992
+      ],
+      "file": "parchment-desktop.webp",
+      "id": "parchment-desktop",
+      "kind": "parchment",
+      "sha256": "4c93d1a092c9e779e3750696c6923d66ff7ac09b680613f4e341e438b0036cdf"
+    },
+    {
+      "byteBudget": 120000,
+      "bytes": 108912,
+      "dimensions": [
+        700,
+        1530
+      ],
+      "file": "parchment-mobile-390.webp",
+      "id": "parchment-mobile-390",
+      "kind": "parchment",
+      "sha256": "e392bd32ce4fc1fa5ffa3d99f62e0c14453c42a98f306089964b0e4a44fb66d8"
+    },
+    {
+      "byteBudget": 120000,
+      "bytes": 109236,
+      "dimensions": [
+        760,
+        1680
+      ],
+      "file": "parchment-mobile-430.webp",
+      "id": "parchment-mobile-430",
+      "kind": "parchment",
+      "sha256": "844505470ca40f365c57013c1c43fdc9b74c9f54e680d0993651a0c1cf6c55bf"
+    }
+  ],
+  "selectedVariant": "detail-rich",
+  "source": {
+    "dimensions": [
+      1586,
+      992
+    ],
+    "path": "docs/design/reference/title-2026-08-11.webp",
+    "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850"
+  },
+  "sourcePlacements": {
+    "scene-desktop-1366": {
+      "destination": [
+        672,
+        0,
+        1366,
+        768
+      ],
+      "protectedSourceCrop": [
+        900,
+        210,
+        1440,
+        815
+      ],
+      "sourceCrop": [
+        690,
+        0,
+        1586,
+        992
+      ]
+    },
+    "scene-desktop-1536": {
+      "destination": [
+        640,
+        16,
+        1536,
+        1008
+      ],
+      "protectedSourceCrop": [
+        900,
+        210,
+        1440,
+        815
+      ],
+      "sourceCrop": [
+        690,
+        0,
+        1586,
+        992
+      ]
+    },
+    "scene-desktop-2560": {
+      "destination": [
+        1618,
+        400,
+        2304,
+        1005
+      ],
+      "protectedSourceCrop": [
+        900,
+        210,
+        1440,
+        815
+      ],
+      "sourceCrop": [
+        900,
+        210,
+        1586,
+        815
+      ]
+    },
+    "scene-mobile-390": {
+      "destination": [
+        0,
+        420,
+        731,
+        1025
+      ],
+      "protectedSourceCrop": [
+        900,
+        210,
+        1440,
+        815
+      ],
+      "sourceCrop": [
+        855,
+        210,
+        1586,
+        815
+      ]
+    },
+    "scene-mobile-430": {
+      "destination": [
+        0,
+        460,
+        806,
+        1065
+      ],
+      "protectedSourceCrop": [
+        900,
+        210,
+        1440,
+        815
+      ],
+      "sourceCrop": [
+        780,
+        210,
+        1586,
+        815
+      ]
+    },
+    "scene-target-native": {
+      "destination": [
+        690,
+        0,
+        1586,
+        992
+      ],
+      "protectedSourceCrop": [
+        900,
+        210,
+        1440,
+        815
+      ],
+      "sourceCrop": [
+        690,
+        0,
+        1586,
+        992
+      ]
+    }
+  },
+  "version": 1
+}

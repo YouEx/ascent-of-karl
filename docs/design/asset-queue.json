@@ -51,6 +51,44 @@
       "firstSeen": "2026-08-13",
       "iteration": 3,
       "status": "open"
+    },
+    {
+      "key": "title:missing-master:TITLE-scene-master-v2",
+      "region": "scene",
+      "defect": "missing-master",
+      "severity": 5,
+      "evidence": "TASK-005..008, tre source-derived varianter: de frosne billedformler kan bringes i grønt, men direkte godkendte sourcepixels dækker kun 11,3 % af 2560x1440-scenen, 33,6 % af mobile-390 og 30,4 % af mobile-430. Resten må gentage exemplarer, fordi scene-wide.png og godkendt portrætkunst ikke findes. Kandidaterne er reproducerbare, men er ikke en sand kontinuerlig master.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "TITLE-scene-master-v2",
+        "producer": "manual-approved-outpaint",
+        "minimum": "2560×1440 lossless scene plus 860×1864 art-directed mobile scene",
+        "invariant": "Karl er pixelidentisk i identitet/pose med den godkendte kilde",
+        "unblock": "alle REQ-003 til REQ-008-gates består uden tærskelændring"
+      },
+      "why": "Det godkendte 1586×992-billede indeholder ingen pixels bag pergamentet og ingen scene uden for sit eget lærred. Automatisk generering og netværks-outpaint er forbudt.",
+      "firstSeen": "2026-08-14",
+      "iteration": 1,
+      "status": "open"
+    },
+    {
+      "key": "title:missing-master:TITLE-parchment-clean-v1",
+      "region": "parchment",
+      "defect": "missing-master",
+      "severity": 5,
+      "evidence": "Den blokerede TASK-005..008-candidate målte kun fire plantede 24×24-kerner og kunne derfor bestå retention, mens resten af pladen viste gentagne quiltfelter og en brudt mobil silhuet. Der findes ingen godkendt, tekstfri 700×992-plade eller source-aligned maske at måle hele fladen imod.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "TITLE-parchment-clean-v1",
+        "producer": "manual-approved-clean-plate",
+        "minimum": "700×992 lossless clean parchment plate plus binary source-aligned mask",
+        "invariant": "samme flossede silhuet, belysning og ornamentplacering som den godkendte reference",
+        "unblock": "full-plate retention, silhouette, alpha og fringe består uden plantede prøvekerner"
+      },
+      "why": "Referencebilledets titel, kontroller og kort skjuler størstedelen af den rene papirflade; samples kan validere teksturtypen, men ikke den samlede plade eller maskens sandhed.",
+      "firstSeen": "2026-08-14",
+      "iteration": 1,
+      "status": "open"
     }
   ]
 }
