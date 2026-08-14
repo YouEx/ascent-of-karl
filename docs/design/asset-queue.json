@@ -51,6 +51,23 @@
       "firstSeen": "2026-08-13",
       "iteration": 3,
       "status": "open"
+    },
+    {
+      "key": "title:missing-master:TITLE-parchment-master-v1",
+      "region": "title",
+      "defect": "missing-master",
+      "severity": 5,
+      "evidence": "Den godkendte 1586x992-reference giver 248615 direkte observerbare pergamentpixels efter UI- og sceneocclusioner, men en 760x1680-plade kræver 762217 rekonstruerede pixels. Tre deterministiske full-source-forsøg bevarede kilden 100 %, men nåede kun 0,237, 0,544 og 0,506 af papirets målte højfrekvensenergi og viste henholdsvis tekstspøgelser/striber, patchgitter/rektangulære fyld og bevarede kortskygger/repetitiv vævning. Se docs/design/evidence/title-parchment-master/BLOCKED.md.",
+      "fix": {
+        "kind": "asset",
+        "assetId": "TITLE-parchment-master-v1",
+        "spec": "Godkendt, UI-fri, tabsfri RGBA-pergamentplade på mindst 760x1680. Samme malede lys, krakelering, huleornamenter og flossede silhuet som title-2026-08-11.webp. De direkte observerbare referencepixels skal være identiske, og den nederste mobilforlængelse skal være malet som én sammenhængende flade uden strips, klonblokke eller scene-matte.",
+        "producer": "manual-approved-local-restoration"
+      },
+      "why": "Kilden indeholder ikke observerbar papirstruktur under titel, bånd, knapper, hjælpetekst, tipkort eller de nederste 773 px. Statistisk source-quilting kan matche palette og alfa, men ikke dokumentere en troværdig unik malet flade.",
+      "firstSeen": "2026-08-14",
+      "iteration": 1,
+      "status": "open"
     }
   ]
 }
