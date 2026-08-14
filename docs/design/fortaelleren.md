@@ -230,7 +230,11 @@ boblen. Det er offline og uden modelkald.
   afspiller kun filer, der står i manifestet; mangler manifestet, er
   spillet tekst-only.
 - **Scratch-stemme**: Edge TTS `en-GB-RyanNeural` (gratis, britisk
-  dokumentar-tone), rate -4 %, pitch -2 Hz. Akt I+II = 168 filer, ~9 MB.
+  dokumentar-tone), rate -4 %, pitch -2 Hz. Håndskrevne akter + det bagte lag
+  = 438 replikker / 1414 varianter, 83,7 MB (2026-08-14). Lyden lazy-loades pr.
+  fil og røres derfor ikke af JS-budgettet, men den fylder i repo og udrulning;
+  bitraten sænkes IKKE for at spare plads, da det netop er stemmens kvalitet,
+  playtesten skal bedømme.
 - **Regel**: manifestet vinder, når id+variant findes. Ellers bruges lokal
   exact-text TTS; findes den heller ikke, er beatet text-only.
 - **Paritetsregel**: en ny synlig replik stopper altid den gamle recorded eller
@@ -247,6 +251,56 @@ boblen. Det er offline og uden modelkald.
   mute-knappen stopper begge lydkilder.
 - Final voice besluttes i Step 4 efter playtest med scratch-stemmen
   (menneskelig speaker eller premium-TTS — PRD §6, "largest single bet").
+
+## Stemmeenheden (målt og rettet 2026-08-14)
+
+Fortælleren har to lydkilder, og de lyder hørbart forskelligt: den indspillede
+`en-GB-RyanNeural` og spillerens egen browser-TTS. Begge er britiske, så
+forskellen er ikke accent — det er *stemmen selv*. Ingen browser kan efterligne
+en neural stemme med en lokal, så hvert skift mellem de to kilder er et skift
+af fortæller midt i spillet. Derfor er spørgsmålet ikke "hvor god er
+fallbacken", men **hvor ofte høres den**.
+
+**Hvad målingen viste.** `tools/generate_audio.py` samlede sine kilder med
+`glob("act-*.json")`. Det ramte de håndskrevne akt-filer — og udelod dermed
+tavst hele det **bagte lag** (`pairs-act-1.json`), altså 71,2 % af alle møder
+(trelagsmodellen ovenfor). Konsekvensen var ikke et hjørnetilfælde, men en
+omvending: de sjældne, håndskrevne øjeblikke havde den rigtige stemme, mens
+spillets **hyppigst hørte replik — svaret på et mislykket forsøg — blev sagt af
+browseren hver eneste gang**. Af 685 replik-ider var 145 indtalt (21 %).
+
+**Hvad der er rettet.** Kildelisten er nu eksplicit (`NARRATOR_SOURCES`), ikke
+et glob, og det bagte lag er indtalt i samme scratch-stemme som resten. En
+`glob` kan udelade et helt lag uden at efterlade et spor i koden; en navngiven
+liste tvinger et nyt lag til at blive taget stilling til. `tests/
+narration-voice-coverage.test.ts` måler nu afstanden mellem "kan siges højt" og
+"findes som fil" og fejler, hvis den vokser.
+
+**Gulvet, der bliver tilbage — release-blocker.** Grammatiklaget
+(`grammar-act-1.json`, 52 opslag / 312 varianter) er **28,8 % af alle møder**,
+og hver eneste variant interpolerer elementnavne (`{a}`, `{b}`) i spiltiden.
+Det kan derfor *aldrig* indtales på forhånd — ikke med mere arbejde, ikke med
+en anden stemme. Cirka hvert fjerde svar vil skifte til browserens stemme,
+uanset hvor meget der indspilles. Det er en designbeslutning, ikke en opgave,
+og den skal træffes før release:
+
+1. **Accepter sømmen.** Grammatiklaget tales af browseren. Billigst, men
+   spilleren hører to fortællere.
+2. **Lad grammatiklaget være text-only.** Én stemme i hele spillet, men hvert
+   fjerde svar står tavst på skærmen.
+3. **Indtal grammatikken som fragmenter** og sæt dem sammen i spiltiden.
+   Bevarer én stemme, men sammensat tale har sin egen kunstighed, og det er
+   reelt en ny lydarkitektur.
+
+Ingen af de tre er gratis, og valget hører til sammen med Step 4-beslutningen
+om den endelige stemme (PRD §6, "largest single bet") — ikke før.
+
+**Nødsporet lyver ikke længere.** `getVoices()` er asynkron i Chrome: første
+kald giver en TOM liste. Koden satte da `utterance.voice = null`, hvilket lader
+**systemets standardstemme** tale — på en dansk Mac altså Karls engelske replik
+med dansk stemme. Nu caches stemmen, `voiceschanged` aflyttes, og findes ingen
+britisk stemme, **tier** spillet (text-only) i stedet for at tale i en
+tilfældig. En manglende stemme er ærlig; en forkert stemme er en fortællerfejl.
 
 ## Senere (ikke i denne version)
 

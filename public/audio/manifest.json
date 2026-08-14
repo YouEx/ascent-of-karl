@@ -82,6 +82,34 @@
     3,
     4
   ],
+  "defiance-1": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "defiance-2": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "defiance-4": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "defiance-comic": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "disc-1": [
     0,
     1,
@@ -464,6 +492,30 @@
     6,
     7
   ],
+  "hint-ensomhed-1": [
+    0,
+    1
+  ],
+  "hint-ensomhed-2": [
+    0,
+    1
+  ],
+  "hint-ensomhed-3": [
+    0,
+    1
+  ],
+  "hint-kedsomhed-1": [
+    0,
+    1
+  ],
+  "hint-kedsomhed-2": [
+    0,
+    1
+  ],
+  "hint-kedsomhed-3": [
+    0,
+    1
+  ],
   "hint-kulde-1": [
     0,
     1
@@ -473,6 +525,18 @@
     1
   ],
   "hint-kulde-3": [
+    0,
+    1
+  ],
+  "hint-mening-1": [
+    0,
+    1
+  ],
+  "hint-mening-2": [
+    0,
+    1
+  ],
+  "hint-mening-3": [
     0,
     1
   ],
@@ -541,6 +605,1194 @@
     0,
     1,
     2
+  ],
+  "obeyed-failure": [
+    1,
+    3,
+    4,
+    6
+  ],
+  "pair-agern-agern-self": [
+    0,
+    1
+  ],
+  "pair-agern-fjer-plausible": [
+    0,
+    1
+  ],
+  "pair-agern-fugl-plausible": [
+    0,
+    1
+  ],
+  "pair-agern-honning-inert": [
+    0,
+    1
+  ],
+  "pair-agern-ler-plausible": [
+    0,
+    1
+  ],
+  "pair-agern-nabo-absurd": [
+    0,
+    1
+  ],
+  "pair-agern-pind-plausible": [
+    0,
+    1
+  ],
+  "pair-agern-stamme-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-brydekamp-absurd": [
+    0,
+    1
+  ],
+  "pair-baer-bue-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-faelde-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-fisk-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-fjer-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-froe-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-galleri-inert": [
+    0,
+    1
+  ],
+  "pair-baer-hulemaleri-absurd": [
+    0,
+    1
+  ],
+  "pair-baer-ler-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-baer-lerfigur-inert": [
+    0,
+    1
+  ],
+  "pair-baer-mudderkage-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-reb-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-slynge-inert": [
+    0,
+    1
+  ],
+  "pair-baer-spyd-plausible": [
+    0,
+    1
+  ],
+  "pair-baer-stenspil-inert": [
+    0,
+    1
+  ],
+  "pair-bautasten-dyr-plausible": [
+    0,
+    1
+  ],
+  "pair-bautasten-fjer-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-fugl-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-graes-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-larver-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-ler-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-mudder-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-mursten-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-nabo-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-bautasten-stamme-plausible": [
+    0,
+    1
+  ],
+  "pair-bautasten-tamsvin-plausible": [
+    0,
+    1
+  ],
+  "pair-boomerang-boomerang-self": [
+    0,
+    1
+  ],
+  "pair-boomerang-faelde-plausible": [
+    0,
+    1
+  ],
+  "pair-boomerang-froe-plausible": [
+    0,
+    1
+  ],
+  "pair-boomerang-graes-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-boomerang-haandkile-inert": [
+    0,
+    1
+  ],
+  "pair-boomerang-hjul-plausible": [
+    0,
+    1
+  ],
+  "pair-boomerang-hulemaleri-absurd": [
+    0,
+    1
+  ],
+  "pair-boomerang-ler-plausible": [
+    0,
+    1
+  ],
+  "pair-boomerang-mudder-plausible": [
+    0,
+    1
+  ],
+  "pair-boomerang-mudderkage-absurd": [
+    0,
+    1
+  ],
+  "pair-boomerang-mursten-plausible": [
+    0,
+    1
+  ],
+  "pair-boomerang-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-boomerang-spyd-plausible": [
+    0,
+    1
+  ],
+  "pair-brydekamp-dyr-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-fugl-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-graes-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-larver-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-ler-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-nabo-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-pind-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-stamme-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-sten-absurd": [
+    0,
+    1
+  ],
+  "pair-brydekamp-vand-absurd": [
+    0,
+    1
+  ],
+  "pair-dyr-dyr-self": [
+    0,
+    1
+  ],
+  "pair-dyr-fjer-clash": [
+    0,
+    1
+  ],
+  "pair-dyr-larver-plausible": [
+    0,
+    1
+  ],
+  "pair-dyr-lerfigur-inert": [
+    0,
+    1
+  ],
+  "pair-dyr-mudder-absurd": [
+    0,
+    1
+  ],
+  "pair-dyr-pind-absurd": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-dyr-rullesten-absurd": [
+    0,
+    1
+  ],
+  "pair-dyr-stamme-plausible": [
+    0,
+    1
+  ],
+  "pair-dyr-tamsvin-plausible": [
+    0,
+    1
+  ],
+  "pair-dyr-toemmerflaade-plausible": [
+    0,
+    1
+  ],
+  "pair-dyr-vand-absurd": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-faelde-graes-plausible": [
+    0,
+    1
+  ],
+  "pair-faelde-ler-plausible": [
+    0,
+    1
+  ],
+  "pair-faelde-pind-plausible": [
+    0,
+    1
+  ],
+  "pair-faelde-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-faelde-vand-plausible": [
+    0,
+    1
+  ],
+  "pair-fisk-graes-plausible": [
+    0,
+    1
+  ],
+  "pair-fisk-ler-plausible": [
+    0,
+    1
+  ],
+  "pair-fisk-pind-plausible": [
+    0,
+    1
+  ],
+  "pair-fisk-spyd-plausible": [
+    0,
+    1
+  ],
+  "pair-fisk-sten-plausible": [
+    0,
+    1
+  ],
+  "pair-fisk-stenoekse-plausible": [
+    0,
+    1
+  ],
+  "pair-fisk-vand-plausible": [
+    0,
+    1
+  ],
+  "pair-fjer-fugl-clash": [
+    0,
+    1
+  ],
+  "pair-fjer-graes-plausible": [
+    0,
+    1
+  ],
+  "pair-fjer-honning-inert": [
+    0,
+    1
+  ],
+  "pair-fjer-larver-clash": [
+    0,
+    1
+  ],
+  "pair-fjer-ler-plausible": [
+    0,
+    1
+  ],
+  "pair-fjer-nabo-clash": [
+    0,
+    1
+  ],
+  "pair-fjer-pind-plausible": [
+    0,
+    1
+  ],
+  "pair-fjer-stamme-plausible": [
+    0,
+    1
+  ],
+  "pair-fjer-sten-plausible": [
+    0,
+    1
+  ],
+  "pair-fjer-vand-plausible": [
+    0,
+    1
+  ],
+  "pair-froe-froe-self": [
+    0,
+    1
+  ],
+  "pair-froe-fugl-plausible": [
+    0,
+    1
+  ],
+  "pair-froe-haandkile-plausible": [
+    0,
+    1
+  ],
+  "pair-froe-hulemaleri-absurd": [
+    0,
+    1
+  ],
+  "pair-froe-ler-clash": [
+    0,
+    1
+  ],
+  "pair-froe-nabo-absurd": [
+    0,
+    1
+  ],
+  "pair-froe-pind-plausible": [
+    0,
+    1
+  ],
+  "pair-froe-reb-plausible": [
+    0,
+    1
+  ],
+  "pair-fugl-fugl-self": [
+    0,
+    1
+  ],
+  "pair-fugl-gnister-absurd": [
+    0,
+    1
+  ],
+  "pair-fugl-graes-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-fugl-honning-inert": [
+    0,
+    1
+  ],
+  "pair-fugl-lerfigur-inert": [
+    0,
+    1
+  ],
+  "pair-fugl-mudder-absurd": [
+    0,
+    1
+  ],
+  "pair-fugl-pind-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-fugl-rullesten-absurd": [
+    0,
+    1
+  ],
+  "pair-fugl-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-fugl-stamme-absurd": [
+    0,
+    1
+  ],
+  "pair-fugl-toemmerflaade-absurd": [
+    0,
+    1
+  ],
+  "pair-fugl-vand-absurd": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-galleri-galleri-self": [
+    0,
+    1
+  ],
+  "pair-galleri-graes-inert": [
+    0,
+    1
+  ],
+  "pair-galleri-hulemaleri-inert": [
+    0,
+    1
+  ],
+  "pair-galleri-ler-inert": [
+    0,
+    1
+  ],
+  "pair-galleri-saft-inert": [
+    0,
+    1
+  ],
+  "pair-gnister-gnister-self": [
+    0,
+    1
+  ],
+  "pair-gnister-haandkile-absurd": [
+    0,
+    1
+  ],
+  "pair-gnister-hulemaleri-absurd": [
+    0,
+    1
+  ],
+  "pair-gnister-ild-absurd": [
+    0,
+    1
+  ],
+  "pair-gnister-larver-plausible": [
+    0,
+    1
+  ],
+  "pair-gnister-ler-clash": [
+    0,
+    1
+  ],
+  "pair-gnister-mudder-clash": [
+    0,
+    1
+  ],
+  "pair-gnister-nabo-absurd": [
+    0,
+    1
+  ],
+  "pair-gnister-reb-absurd": [
+    0,
+    1
+  ],
+  "pair-gnister-rullesten-absurd": [
+    0,
+    1
+  ],
+  "pair-gnister-sten-absurd": [
+    0,
+    1
+  ],
+  "pair-gnister-stenoekse-absurd": [
+    0,
+    1
+  ],
+  "pair-gnister-vand-clash": [
+    0,
+    1
+  ],
+  "pair-graes-haandkile-inert": [
+    0,
+    1
+  ],
+  "pair-graes-hammer-inert": [
+    0,
+    1
+  ],
+  "pair-graes-hjul-plausible": [
+    0,
+    1
+  ],
+  "pair-graes-hulemaleri-absurd": [
+    0,
+    1
+  ],
+  "pair-graes-ler-clash": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-graes-lerfigur-inert": [
+    0,
+    1
+  ],
+  "pair-graes-malm-plausible": [
+    0,
+    1
+  ],
+  "pair-graes-mursten-plausible": [
+    0,
+    1
+  ],
+  "pair-graes-nabo-absurd": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-graes-pind-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-graes-reb-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-graes-spyd-plausible": [
+    0,
+    1
+  ],
+  "pair-graes-spydspids-inert": [
+    0,
+    1
+  ],
+  "pair-graes-stenoekse-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-graes-stenspil-inert": [
+    0,
+    1
+  ],
+  "pair-graes-tamsvin-absurd": [
+    0,
+    1
+  ],
+  "pair-graes-toemmerflaade-plausible": [
+    0,
+    1
+  ],
+  "pair-graes-tromme-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-gravestok-ler-plausible": [
+    0,
+    1
+  ],
+  "pair-haandkile-haandkile-self": [
+    0,
+    1
+  ],
+  "pair-haandkile-hulemaleri-inert": [
+    0,
+    1
+  ],
+  "pair-haandkile-ler-inert": [
+    0,
+    1
+  ],
+  "pair-haandkile-saft-inert": [
+    0,
+    1
+  ],
+  "pair-haandkile-vand-inert": [
+    0,
+    1
+  ],
+  "pair-hammer-hammer-self": [
+    0,
+    1
+  ],
+  "pair-hammer-ler-inert": [
+    0,
+    1
+  ],
+  "pair-hammer-vand-inert": [
+    0,
+    1
+  ],
+  "pair-hjul-hulemaleri-absurd": [
+    0,
+    1
+  ],
+  "pair-hjul-ler-plausible": [
+    0,
+    1
+  ],
+  "pair-hjul-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-hjul-vand-plausible": [
+    0,
+    1
+  ],
+  "pair-honning-honning-self": [
+    0,
+    1
+  ],
+  "pair-honning-larver-inert": [
+    0,
+    1
+  ],
+  "pair-honning-ler-inert": [
+    0,
+    1
+  ],
+  "pair-honning-pind-inert": [
+    0,
+    1
+  ],
+  "pair-honning-stenoekse-inert": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-ild-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-ler-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-malm-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-mudder-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-mudderkage-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-mursten-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-pind-absurd": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-hulemaleri-reb-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-rullesten-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-spyd-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-stamme-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-sten-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-stenoekse-absurd": [
+    0,
+    1
+  ],
+  "pair-hulemaleri-vand-absurd": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-larver-larver-self": [
+    0,
+    1
+  ],
+  "pair-larver-ler-locked": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-larver-lerfigur-inert": [
+    0,
+    1
+  ],
+  "pair-larver-pind-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-larver-reb-plausible": [
+    0,
+    1
+  ],
+  "pair-larver-rullesten-plausible": [
+    0,
+    1
+  ],
+  "pair-larver-stamme-plausible": [
+    0,
+    1
+  ],
+  "pair-larver-tamsvin-plausible": [
+    0,
+    1
+  ],
+  "pair-larver-toemmerflaade-plausible": [
+    0,
+    1
+  ],
+  "pair-larver-vand-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-ler-ler-self": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-ler-lerfigur-inert": [
+    0,
+    1
+  ],
+  "pair-ler-malm-plausible": [
+    0,
+    1
+  ],
+  "pair-ler-mudderbad-inert": [
+    0,
+    1
+  ],
+  "pair-ler-mudderkage-plausible": [
+    0,
+    1
+  ],
+  "pair-ler-pind-clash": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-ler-reb-clash": [
+    0,
+    1
+  ],
+  "pair-ler-rullesten-plausible": [
+    0,
+    1
+  ],
+  "pair-ler-saft-plausible": [
+    0,
+    1
+  ],
+  "pair-ler-slynge-inert": [
+    0,
+    1
+  ],
+  "pair-ler-spyd-clash": [
+    0,
+    1
+  ],
+  "pair-ler-spydspids-inert": [
+    0,
+    1
+  ],
+  "pair-ler-stamme-clash": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-ler-sten-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-ler-stenoekse-clash": [
+    0,
+    1
+  ],
+  "pair-ler-stenspil-inert": [
+    0,
+    1
+  ],
+  "pair-ler-toemmerflaade-plausible": [
+    0,
+    1
+  ],
+  "pair-ler-tromme-clash": [
+    0,
+    1
+  ],
+  "pair-lerfigur-lerfigur-self": [
+    0,
+    1
+  ],
+  "pair-lerfigur-pind-inert": [
+    0,
+    1
+  ],
+  "pair-lerfigur-stamme-inert": [
+    0,
+    1
+  ],
+  "pair-lerfigur-sten-inert": [
+    0,
+    1
+  ],
+  "pair-lerfigur-tamsvin-inert": [
+    0,
+    1
+  ],
+  "pair-lerfigur-tromme-inert": [
+    0,
+    1
+  ],
+  "pair-malm-malm-self": [
+    0,
+    1
+  ],
+  "pair-malm-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-malm-stenoekse-plausible": [
+    0,
+    1
+  ],
+  "pair-mudder-mudderbad-inert": [
+    0,
+    1
+  ],
+  "pair-mudder-pind-clash": [
+    0,
+    1
+  ],
+  "pair-mudder-reb-clash": [
+    0,
+    1
+  ],
+  "pair-mudder-spyd-clash": [
+    0,
+    1
+  ],
+  "pair-mudder-stamme-clash": [
+    0,
+    1
+  ],
+  "pair-mudder-vand-plausible": [
+    0,
+    1
+  ],
+  "pair-mudderbad-mudderbad-self": [
+    0,
+    1
+  ],
+  "pair-mudderbad-pind-inert": [
+    0,
+    1
+  ],
+  "pair-mudderbad-saft-inert": [
+    0,
+    1
+  ],
+  "pair-mudderbad-vand-inert": [
+    0,
+    1
+  ],
+  "pair-mudderkage-mudderkage-self": [
+    0,
+    1
+  ],
+  "pair-mudderkage-pind-clash": [
+    0,
+    1
+  ],
+  "pair-mudderkage-reb-clash": [
+    0,
+    1
+  ],
+  "pair-mudderkage-rullesten-absurd": [
+    0,
+    1
+  ],
+  "pair-mudderkage-saft-plausible": [
+    0,
+    1
+  ],
+  "pair-mudderkage-stenoekse-absurd": [
+    0,
+    1
+  ],
+  "pair-mudderkage-vand-plausible": [
+    0,
+    1
+  ],
+  "pair-mursten-pind-plausible": [
+    0,
+    1
+  ],
+  "pair-mursten-rullesten-plausible": [
+    0,
+    1
+  ],
+  "pair-mursten-saft-clash": [
+    0,
+    1
+  ],
+  "pair-mursten-stenoekse-plausible": [
+    0,
+    1
+  ],
+  "pair-mursten-vand-clash": [
+    0,
+    1
+  ],
+  "pair-nabo-pind-absurd": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-nabo-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-nabo-stamme-absurd": [
+    0,
+    1
+  ],
+  "pair-nabo-toemmerflaade-absurd": [
+    0,
+    1
+  ],
+  "pair-nabo-vand-absurd": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-net-reb-plausible": [
+    0,
+    1
+  ],
+  "pair-pind-saft-clash": [
+    0,
+    1
+  ],
+  "pair-pind-spydspids-inert": [
+    0,
+    1
+  ],
+  "pair-pind-stenspil-absurd": [
+    0,
+    1
+  ],
+  "pair-pind-tamsvin-absurd": [
+    0,
+    1
+  ],
+  "pair-reb-saft-clash": [
+    0,
+    1
+  ],
+  "pair-reb-vand-clash": [
+    0,
+    1
+  ],
+  "pair-rullesten-saft-absurd": [
+    0,
+    1
+  ],
+  "pair-rullesten-stenspil-inert": [
+    0,
+    1
+  ],
+  "pair-rullesten-vand-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-saft-saft-self": [
+    0,
+    1
+  ],
+  "pair-saft-spyd-absurd": [
+    0,
+    1
+  ],
+  "pair-saft-stenoekse-absurd": [
+    0,
+    1
+  ],
+  "pair-saft-vand-plausible": [
+    0,
+    1
+  ],
+  "pair-spyd-spyd-self": [
+    0,
+    1
+  ],
+  "pair-stamme-stamme-self": [
+    0,
+    1
+  ],
+  "pair-stamme-tamsvin-plausible": [
+    0,
+    1
+  ],
+  "pair-sten-stenspil-inert": [
+    0,
+    1
+  ],
+  "pair-stenoekse-stenoekse-self": [
+    0,
+    1
+  ],
+  "pair-stenspil-stenspil-self": [
+    0,
+    1
+  ],
+  "pair-stenspil-vand-absurd": [
+    0,
+    1
+  ],
+  "pair-tamsvin-tamsvin-self": [
+    0,
+    1
+  ],
+  "pair-tamsvin-vand-absurd": [
+    0,
+    1
+  ],
+  "pair-toemmerflaade-toemmerflaade-self": [
+    0,
+    1
+  ],
+  "pair-toemmerflaade-vand-plausible": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pair-vand-vand-self": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "pull-ensomhed": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "pull-kedsomhed": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "pull-kulde": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "pull-mening": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "pull-sult": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "pull-vaerktoej": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
   ],
   "repeat-3": [
     0,
@@ -625,6 +1877,13 @@
     4
   ],
   "story-baalstegt-aeg": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-bautasten": [
     0,
     1,
     2,
@@ -897,6 +2156,13 @@
     3,
     4
   ],
+  "story-nabo": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
   "story-oesters": [
     0,
     1,
@@ -1010,6 +2276,13 @@
     4
   ],
   "story-toej": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "story-tromme": [
     0,
     1,
     2,

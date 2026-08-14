@@ -152,11 +152,50 @@ function selectBritishVoice(
   );
 }
 
+/**
+ * `getVoices()` er asynkron i Chrome: første kald returnerer en TOM liste,
+ * indtil browseren fyrer `voiceschanged`. Sætter man da `utterance.voice =
+ * null`, taler systemets STANDARDstemme — på en dansk Mac altså Karls
+ * engelske replik med dansk stemme. Derfor to regler:
+ *
+ *  1. Stemmelisten cachees, så snart den findes, og vi lytter efter
+ *     `voiceschanged` i stedet for at spørge én gang og opgive.
+ *  2. Findes ingen britisk stemme, TIER spillet (text-only) i stedet for at
+ *     tale i en tilfældig stemme. En manglende stemme er ærlig; en forkert
+ *     stemme er en fortællerfejl. Introen er indspillet, så det koster ikke
+ *     åbningen noget, at listen typisk først er varm efter første beat.
+ */
+let cachedVoice: SpeechSynthesisVoice | null = null;
+let listeningForVoices = false;
+
+function listenForVoices(synth: SpeechSynthesis): void {
+  if (listeningForVoices) return;
+  listeningForVoices = true;
+  const refresh = () => {
+    cachedVoice = selectBritishVoice(synth.getVoices?.() ?? []) ?? null;
+  };
+  if (typeof synth.addEventListener === "function") {
+    synth.addEventListener("voiceschanged", refresh);
+  } else {
+    synth.onvoiceschanged = refresh;
+  }
+}
+
+function britishVoice(synth: SpeechSynthesis): SpeechSynthesisVoice | undefined {
+  if (cachedVoice) return cachedVoice;
+  listenForVoices(synth);
+  cachedVoice = selectBritishVoice(synth.getVoices?.() ?? []) ?? null;
+  return cachedVoice ?? undefined;
+}
+
 function synthesizedPlayback(line: SpokenLine): NarrationPlayback | undefined {
   const synth = synthesis();
   if (!synth || typeof SpeechSynthesisUtterance === "undefined") {
     return undefined;
   }
+
+  const voice = britishVoice(synth);
+  if (!voice) return undefined;
 
   let settled = false;
   let resolveDone!: () => void;
@@ -175,7 +214,7 @@ function synthesizedPlayback(line: SpokenLine): NarrationPlayback | undefined {
 
   const utterance = new SpeechSynthesisUtterance(line.text);
   utterance.lang = "en-GB";
-  utterance.voice = selectBritishVoice(synth.getVoices()) ?? null;
+  utterance.voice = voice;
   utterance.rate = 0.95;
   utterance.pitch = 0.96;
   utterance.onend = settle;

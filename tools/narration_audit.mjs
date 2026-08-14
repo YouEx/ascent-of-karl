@@ -188,9 +188,24 @@ async function runAudit(baseUrl) {
     if (intro?.id !== "intro-act-1" || intro.audioMode !== "recorded") {
       throw new Error("Introen brugte ikke sin recorded lyd");
     }
-    if (pull?.id !== "pull-kulde" || pull.audioMode !== "synthesized") {
-      throw new Error("Åbningens pull blev ikke sagt via exact-text fallback");
+    // Pull'et må ALDRIG stå tavst — men om det er indspillet eller sagt af
+    // browseren afhænger af, hvor langt indtalingen er nået. Bandt vi
+    // auditten til "synthesized" her, ville den fejle hver gang en replik BLEV
+    // indtalt, altså straffe præcis den bevægelse projektet ønsker
+    // (docs/design/fortaelleren.md, "Stemmeenheden"). Kontrakten er, at
+    // beatet siges, og at det sagte er den synlige tekst.
+    if (pull?.id !== "pull-kulde") {
+      throw new Error("Åbningens andet beat var ikke pull-kulde");
     }
+    if (!["recorded", "synthesized"].includes(pull.audioMode)) {
+      throw new Error(`Åbningens pull stod tavst (${pull.audioMode})`);
+    }
+    if (pull.audioMode === "synthesized" && !result.synthesized.includes(pull.text)) {
+      throw new Error("Pull-teksten og den syntetiserede tale var forskellige");
+    }
+    // Bridge'en interpolerer begge elementnavne i spiltiden og kan derfor
+    // aldrig indtales på forhånd. Den er dermed auditens blivende bevis for,
+    // at exact-text-fallbacken virker.
     if (
       !bridge ||
       bridge.audioMode !== "synthesized" ||
@@ -199,9 +214,6 @@ async function runAudit(baseUrl) {
       !/warm|heat|cold/i.test(bridge.text)
     ) {
       throw new Error("Rope fik ikke en kontekstuel, oplæst story bridge");
-    }
-    if (!result.synthesized.includes(pull.text)) {
-      throw new Error("Pull-teksten og den syntetiserede tale var forskellige");
     }
     if (!result.synthesized.includes(bridge.text)) {
       throw new Error("Bridge-teksten og den syntetiserede tale var forskellige");

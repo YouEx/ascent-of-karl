@@ -31,12 +31,18 @@ class FakeUtterance {
   }
 }
 
+const voiceHandlers: Array<() => void> = [];
+const defaultVoices = [
+  { lang: "en-GB", name: "Daniel" } as SpeechSynthesisVoice,
+];
+
 const speech = {
   spoken: [] as FakeUtterance[],
   cancel: vi.fn(),
-  getVoices: vi.fn(() => [
-    { lang: "en-GB", name: "Daniel" } as SpeechSynthesisVoice,
-  ]),
+  addEventListener: vi.fn((type: string, listener: () => void) => {
+    if (type === "voiceschanged") voiceHandlers.push(listener);
+  }),
+  getVoices: vi.fn(() => defaultVoices),
   speak: vi.fn((utterance: FakeUtterance) => {
     speech.spoken.push(utterance);
   }),
@@ -81,6 +87,9 @@ beforeEach(() => {
   speech.spoken = [];
   speech.cancel.mockClear();
   speech.getVoices.mockClear();
+  speech.getVoices.mockReturnValue(defaultVoices);
+  speech.addEventListener.mockClear();
+  voiceHandlers.length = 0;
   speech.speak.mockClear();
 });
 
@@ -159,5 +168,54 @@ describe("fortællerens tekst/lyd-paritet", () => {
     expect(FakeAudio.instances[0]!.play).toHaveBeenCalledTimes(1);
     speech.spoken[0]!.onend?.(new Event("end"));
     await fallback.done;
+  });
+});
+
+describe("fortællerens stemmevalg", () => {
+  it("tier hellere end at tale i systemets standardstemme, når listen endnu er tom", async () => {
+    speech.getVoices.mockReturnValue([]);
+    const audio = await loadAudio({});
+
+    const playback = audio.playLine(pull, false);
+
+    expect(playback.mode).toBe("text-only");
+    expect(speech.speak).not.toHaveBeenCalled();
+  });
+
+  it("tier, når browseren slet ikke har en britisk stemme", async () => {
+    speech.getVoices.mockReturnValue([
+      { lang: "da-DK", name: "Sara" } as SpeechSynthesisVoice,
+      { lang: "en-US", name: "Samantha" } as SpeechSynthesisVoice,
+    ]);
+    const audio = await loadAudio({});
+
+    expect(audio.playLine(pull, false).mode).toBe("text-only");
+    expect(speech.speak).not.toHaveBeenCalled();
+  });
+
+  it("tager stemmen i brug, når Chrome udgiver listen bagefter (voiceschanged)", async () => {
+    speech.getVoices.mockReturnValue([]);
+    const audio = await loadAudio({});
+    expect(audio.playLine(pull, false).mode).toBe("text-only");
+
+    speech.getVoices.mockReturnValue([
+      { lang: "en-GB", name: "Daniel" } as SpeechSynthesisVoice,
+    ]);
+    voiceHandlers.forEach((handler) => handler());
+
+    const playback = audio.playLine(pull, false);
+    expect(playback.mode).toBe("synthesized");
+    expect(speech.spoken.at(-1)?.voice?.name).toBe("Daniel");
+  });
+
+  it("foretrækker den britiske dokumentarstemme frem for den første den bedste", async () => {
+    speech.getVoices.mockReturnValue([
+      { lang: "en-GB", name: "Arthur" } as SpeechSynthesisVoice,
+      { lang: "en-GB", name: "Daniel" } as SpeechSynthesisVoice,
+    ]);
+    const audio = await loadAudio({});
+
+    audio.playLine(pull, false);
+    expect(speech.spoken.at(-1)?.voice?.name).toBe("Daniel");
   });
 });

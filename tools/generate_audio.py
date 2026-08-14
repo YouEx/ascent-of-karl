@@ -34,12 +34,27 @@ AUDIO_DIR = ROOT / "public" / "audio"
 CONCURRENCY = 4
 RETRIES = 3
 
+# Hvert lag fortælleren kan sige HØJT står her ved navn. Listen er med vilje
+# EKSPLICIT og ikke et glob: et `glob("act-*.json")` udelod i månedsvis hele
+# det bagte lag (`pairs-act-1.json`) — 71,2 % af alle møder, altså spillets
+# hyppigst hørte replik — uden at nogen kunne se det på koden. Resultatet var,
+# at de håndskrevne akt-beats talte med den indspillede stemme, mens hvert
+# eneste mislykkede forsøg talte med browserens. Et nyt replik-lag skal
+# tilføjes her BEVIDST.
+#
+# Ikke med, og hvorfor:
+#   grammar-act-1.json        alle 312 varianter har {a}/{b} → kan aldrig
+#                             indtales på forhånd (se fortaelleren.md).
+#   improvisation-act-1.json  samme, og laget er slået fra i produktion.
+NARRATOR_SOURCES = ("act-1.json", "act-2.json", "pairs-act-1.json")
+
 
 def collect_jobs(force: bool) -> tuple[list[tuple[str, int, str, Path]], dict[str, list[int]]]:
     """Find (id, variant-index, tekst, sti) for alle voicebare varianter + fuldt manifest."""
     jobs: list[tuple[str, int, str, Path]] = []
     manifest: dict[str, list[int]] = {}
-    for path in sorted(NARRATOR_DIR.glob("act-*.json")):
+    for name in NARRATOR_SOURCES:
+        path = NARRATOR_DIR / name
         data = json.loads(path.read_text(encoding="utf-8"))
         for line in data["lines"]:
             for i, text in enumerate(line["variants"]):
