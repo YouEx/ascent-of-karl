@@ -141,8 +141,9 @@ stemme-gated replik uden netværk. Den valgfrie `/improvise`-Worker kan kun
 forbedre opfindelsens `name`/`flavor` og er uafhængig af både dommen og
 live-fortællerens `VITE_NARRATOR_URL`.
 
-Kilden er færdig, men produktionen sætter hverken
-`VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`. Tre agent-QA-runs fandt
+Kilden er færdig, men den offentlige production-root tvinges feature-off.
+Den særskilte `/playtest/improvisation/`-kandidat er feature-on og helt
+offline; begge builds tvinger Worker-URL'erne tomme. Tre agent-QA-runs fandt
 ingen source-defekt; de er ikke ekstern-human evidens. Production-enable
 afventer 5–10 explanation-free engelsktalende deltagere på tværs af
 crafting-game- og low-game-experience-grupper. Se

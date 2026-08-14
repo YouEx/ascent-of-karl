@@ -52,6 +52,15 @@ declare module "node:path" {
   export function resolve(...parts: string[]): string;
 }
 
+declare module "node:crypto" {
+  interface Hash {
+    update(data: string): Hash;
+    digest(encoding: "hex"): string;
+  }
+
+  export function createHash(algorithm: "sha256"): Hash;
+}
+
 declare module "node:url" {
   export function fileURLToPath(url: string): string;
 }

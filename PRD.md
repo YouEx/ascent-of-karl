@@ -51,10 +51,15 @@ uafhængigt, copy-only tilvalg.
   *low-game-experience* har spillet uden forklaring, og observationer/logs er
   dokumenteret efter `docs/playtest/README.md`.
 
-**Produktionssandhed pr. 2026-08-14:** deployet sætter hverken
-`VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`. Der er ingen
-provisioneret improvisations-Worker-URL, secrets eller trafik. Kildekoden er
-færdig; næste produkttrin er den eksterne playtest, ikke mere implementering.
+**Produktionssandhed pr. 2026-08-14:** Pages-buildet tvinger den eksisterende
+offentlige root til `VITE_IMPROVISE_ENABLED=false`. Samme artifact har en
+unlisted, ikke-produktions-playtest på
+<https://youex.github.io/ascent-of-karl/playtest/improvisation/>, hvor flaget
+er `true`, men både improvisations- og live-fortæller-URL tvinges tomme.
+Previewet er derfor deterministisk offline uden Worker-kald, secrets, trafik
+eller omkostning. Det er adgang til den åbne eksterne gate, ikke
+production-enable; root forbliver feature-off, indtil gaten ovenfor er
+dokumenteret.
 
 ---
 

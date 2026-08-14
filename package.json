@@ -7,6 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && npm run typecheck:worker && vite build && node tools/bundle_budget.mjs",
+    "build:pages": "tsc --noEmit && npm run typecheck:worker && node tools/build_pages.mjs",
+    "pages:verify": "node tools/verify_pages_artifact.mjs",
+    "verify:pages": "node tools/verify_pages_artifact.mjs",
     "typecheck:worker": "tsc --noEmit -p worker/tsconfig.json",
     "preview": "vite preview",
     "test": "vitest run",

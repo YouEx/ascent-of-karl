@@ -14,9 +14,11 @@ Recommend **1 summer per non-canonical attempt and at most 6 unique
 improvised inventions per run**.
 
 This is a source decision, not a deployment decision.
-`VITE_IMPROVISE_ENABLED` remains unset in production. TASK-030's three
-agent-controlled browser runs are complete with no source defect, but they
-are not external-human evidence. The exact remaining gate is 5–10
+The public production root is forcibly feature-off; the separate
+`/playtest/improvisation/` candidate is feature-on but offline, with Worker
+URLs forced empty. TASK-030's three agent-controlled browser runs are
+complete with no source defect, but they are not external-human evidence.
+The exact remaining gate is 5–10
 explanation-free English-speaking participants across crafting-game and
 low-game-experience groups. See the
 [agent-QA report](../playtest/task-030-improvisation-agent-qa-2026-08-13/README.md).

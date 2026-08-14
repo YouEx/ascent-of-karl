@@ -23,6 +23,8 @@ npm run improvise:report:check  # byte/hash/cap/cost mod committed facit
 npm run playtest:evidence:check # verificér TASK-030-agentbevisets WebP/referencer
 npm run harvest -- --input path/to/fixture.json --dry-run # offline høsteaudit
 npm run build        # typecheck + produktion-build
+npm run build:pages  # root feature-off + indlejret offline playtest-preview
+npm run verify:pages # kontrollér det allerede byggede Pages-artifact
 ```
 
 Produktionens `harvest` kræver en deployet Worker, en eksplicit betroet origin
@@ -129,13 +131,15 @@ og et admin-token i miljøet; brug aldrig token som CLI-argument. Se
     tags, løsning og turforbrug uden Worker. En model må kun forbedre
     `name`/`flavor` via UI-laget; den må aldrig levere `kind`, `stuff`,
     `traits`, `scale`, `solves`, flags, age-up eller ending.
-12. **Improvisation er production-off indtil ekstern gate.**
-    `.github/workflows/deploy.yml` må hverken sætte
-    `VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`, før 5–10
-    engelsktalende deltagere på tværs af crafting-game- og
-    low-game-experience-grupper har spillet uden forklaring, og evidensen er
-    dokumenteret. `VITE_IMPROVISE_URL` er copy-only, valgfri og uafhængig af
-    både produktflaget og `VITE_NARRATOR_URL`.
+12. **Improvisation er production-off indtil ekstern gate.** Pages-kontrakten
+    skal tvinge den offentlige root til `VITE_IMPROVISE_ENABLED=false`.
+    Den må gerne bygge den særskilte, unlisted
+    `/playtest/improvisation/`-kandidat med flaget `true`, men både
+    `VITE_IMPROVISE_URL` og `VITE_NARRATOR_URL` skal tvinges tomme i **begge**
+    builds. Previewet er ikke production-enable. Root må først vurderes
+    aktiveret, når 5–10 engelsktalende deltagere på tværs af crafting-game-
+    og low-game-experience-grupper har spillet uden forklaring, og evidensen
+    er dokumenteret.
 
 ## Tone (til indholdsarbejde)
 

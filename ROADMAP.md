@@ -41,6 +41,9 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
    frem for straffende? Materialet ligger i `docs/playtest/`, og agentbeviset
    i `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`.
    **Der skal ikke implementeres mere før denne runde.**
+   Den unlisted, deterministiske offline-kandidat er
+   <https://youex.github.io/ascent-of-karl/playtest/improvisation/>.
+   Den eksterne gate er fortsat åben; linket er ikke production-enable.
 3. **Bølge 2-content** efter playtest-læring (hvad leder folk efter, som
    ikke findes?). Superset-listen er idébanken.
 4. **Art-stilprøver** (PRD Step 4): Karl som synlig figur er nu **afgjort —
@@ -65,9 +68,9 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
   copy-only Worker-kilde, sikker harvest og balancecheck.
 - **Lokal QA:** kør
   `env -u VITE_IMPROVISE_URL VITE_IMPROVISE_ENABLED=true npm run dev`.
-- **Produktion:** off. `.github/workflows/deploy.yml` sætter hverken
-  `VITE_IMPROVISE_ENABLED` eller `VITE_IMPROVISE_URL`, og der er ingen
-  provisioneret improvisations-Worker-trafik.
+- **Produktion:** off. Pages-buildet tvinger den eksisterende offentlige root
+  til feature-off. Kun den indlejrede playtest-preview er feature-on, og begge
+  builds tvinger Worker-URL'erne tomme; der er ingen provisioneret trafik.
 - **Release-gate:** den eksterne playtest ovenfor. Først efter dokumenteret
   human evidens må production-enable vurderes.
 - **Høst:** værktøjet er færdigt, men faktisk output afventer deployet Worker,
