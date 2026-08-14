@@ -1,0 +1,458 @@
+{
+  "algorithm": "title-materials-v1",
+  "assets": {
+    "begin-center.webp": {
+      "bytes": 1194,
+      "display": {
+        "maxCssHeightDpr1": 106,
+        "maxCssHeightDpr2": 53.0,
+        "maxCssWidthDpr1": 168,
+        "maxCssWidthDpr2": 84.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 106,
+      "nativeWidth": 168,
+      "provenance": "caps and bevel are visible; icon and label bed is reconstructed from adjacent visible stone",
+      "sha256": "09021224a49afb59f1bc954fc17c98d20dffa16a986e06acbb94cb3f06f83106",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "begin-left.webp": {
+      "bytes": 1078,
+      "display": {
+        "maxCssHeightDpr1": 106,
+        "maxCssHeightDpr2": 53.0,
+        "maxCssWidthDpr1": 56,
+        "maxCssWidthDpr2": 28.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 106,
+      "nativeWidth": 56,
+      "provenance": "caps and bevel are visible; icon and label bed is reconstructed from adjacent visible stone",
+      "sha256": "8def7757dd3472322fb98ea19344425d14d88305d5a8fcabc33e823cfb348de3",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "begin-right.webp": {
+      "bytes": 1124,
+      "display": {
+        "maxCssHeightDpr1": 106,
+        "maxCssHeightDpr2": 53.0,
+        "maxCssWidthDpr1": 56,
+        "maxCssWidthDpr2": 28.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 106,
+      "nativeWidth": 56,
+      "provenance": "caps and bevel are visible; icon and label bed is reconstructed from adjacent visible stone",
+      "sha256": "f8d418e3660c6792be4fcb495d45e3a61b9b5132dc518873efa82fc32b934823",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "fates-center.webp": {
+      "bytes": 972,
+      "display": {
+        "maxCssHeightDpr1": 100,
+        "maxCssHeightDpr2": 50.0,
+        "maxCssWidthDpr1": 118,
+        "maxCssWidthDpr2": 59.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 100,
+      "nativeWidth": 118,
+      "provenance": "caps and bevel are visible; trophy and label bed is reconstructed from adjacent visible stone",
+      "sha256": "9434f78b4e2563dd079a1843356cbc4cf5b4b49519648465e3e9abe2701b07c4",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "fates-left.webp": {
+      "bytes": 814,
+      "display": {
+        "maxCssHeightDpr1": 100,
+        "maxCssHeightDpr2": 50.0,
+        "maxCssWidthDpr1": 48,
+        "maxCssWidthDpr2": 24.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 100,
+      "nativeWidth": 48,
+      "provenance": "caps and bevel are visible; trophy and label bed is reconstructed from adjacent visible stone",
+      "sha256": "9cd754ac2656737e4f897647794b10d7d6a283b5280f92312d63e751e9e282db",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "fates-right.webp": {
+      "bytes": 982,
+      "display": {
+        "maxCssHeightDpr1": 100,
+        "maxCssHeightDpr2": 50.0,
+        "maxCssWidthDpr1": 48,
+        "maxCssWidthDpr2": 24.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 100,
+      "nativeWidth": 48,
+      "provenance": "caps and bevel are visible; trophy and label bed is reconstructed from adjacent visible stone",
+      "sha256": "3a31857279ba37867b50c2cab8d5e4211851ac2a1bb1c6fb8bc0f28b74d5a465",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-divider.webp": {
+      "bytes": 1264,
+      "display": {
+        "maxCssHeightDpr1": 26,
+        "maxCssHeightDpr2": 13.0,
+        "maxCssWidthDpr1": 182,
+        "maxCssWidthDpr2": 91.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 26,
+      "nativeWidth": 182,
+      "provenance": "visible divider pigment",
+      "sha256": "45bd2dd13aed32390c1ecb08cddead60997d66797d235b86e67a86f5485f884e",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-hunt.webp": {
+      "bytes": 5140,
+      "display": {
+        "maxCssHeightDpr1": 97,
+        "maxCssHeightDpr2": 48.5,
+        "maxCssWidthDpr1": 110,
+        "maxCssWidthDpr2": 55.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 97,
+      "nativeWidth": 110,
+      "provenance": "visible hunt pigment",
+      "sha256": "a8cc760368b5d1f6877af263a3d769c0a08d1fdf71e04d0a89e82639e3d16d19",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-spiral.webp": {
+      "bytes": 2714,
+      "display": {
+        "maxCssHeightDpr1": 70,
+        "maxCssHeightDpr2": 35.0,
+        "maxCssWidthDpr1": 70,
+        "maxCssWidthDpr2": 35.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 70,
+      "nativeWidth": 70,
+      "provenance": "visible spiral pigment",
+      "sha256": "2ff7c274d7e290f25c515a8b442adabd3d78c54f93fb344ca010477dca6b867c",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-tap.webp": {
+      "bytes": 848,
+      "display": {
+        "maxCssHeightDpr1": 40,
+        "maxCssHeightDpr2": 20.0,
+        "maxCssWidthDpr1": 37,
+        "maxCssWidthDpr2": 18.5,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 40,
+      "nativeWidth": 37,
+      "provenance": "visible tap pigment",
+      "sha256": "256e0daf84a309de72ddade51ef27caa0bb00760331504d99084cd11959db2fa",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ornament-trophy.webp": {
+      "bytes": 784,
+      "display": {
+        "maxCssHeightDpr1": 70,
+        "maxCssHeightDpr2": 35.0,
+        "maxCssWidthDpr1": 38,
+        "maxCssWidthDpr2": 19.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 70,
+      "nativeWidth": 38,
+      "provenance": "visible trophy pigment",
+      "sha256": "9f0c05ae37728bc7bef3177bae6d0fdd52efa321531930e59ae4f5d5256dcb3e",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ribbon-center.webp": {
+      "bytes": 1612,
+      "display": {
+        "maxCssHeightDpr1": 61,
+        "maxCssHeightDpr2": 30.5,
+        "maxCssWidthDpr1": 380,
+        "maxCssWidthDpr2": 190.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 61,
+      "nativeWidth": 380,
+      "provenance": "caps are directly visible; text bed is reconstructed from the ribbon's visible row profiles",
+      "sha256": "708d132f8957a03330f9918e3ba75b317400c24577140a6cb016d7d536dda36b",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ribbon-left.webp": {
+      "bytes": 972,
+      "display": {
+        "maxCssHeightDpr1": 61,
+        "maxCssHeightDpr2": 30.5,
+        "maxCssWidthDpr1": 60,
+        "maxCssWidthDpr2": 30.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 61,
+      "nativeWidth": 60,
+      "provenance": "caps are directly visible; text bed is reconstructed from the ribbon's visible row profiles",
+      "sha256": "6f6cb61d99fa3a8943247e8c1b54a305063d874511cb3fa5e7b2d5fdd7daa369",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "ribbon-right.webp": {
+      "bytes": 1036,
+      "display": {
+        "maxCssHeightDpr1": 61,
+        "maxCssHeightDpr2": 30.5,
+        "maxCssWidthDpr1": 60,
+        "maxCssWidthDpr2": 30.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 61,
+      "nativeWidth": 60,
+      "provenance": "caps are directly visible; text bed is reconstructed from the ribbon's visible row profiles",
+      "sha256": "101ece88e3fca93d6681022a4b9572217c31c4e56b8fb1342c61228ace96022f",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "tip-card-frame.webp": {
+      "bytes": 2018,
+      "display": {
+        "maxCssHeightDpr1": 126,
+        "maxCssHeightDpr2": 63.0,
+        "maxCssWidthDpr1": 570,
+        "maxCssWidthDpr2": 285.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 126,
+      "nativeWidth": 570,
+      "provenance": "frame is visible; tile, copy, pagination and hunt beds are reconstructed from visible card material",
+      "sha256": "c0e69deb13fd9ec0d412b7c17761100b9a480887acb368f0fab1724ad2f155d8",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "tip-fire-tile.webp": {
+      "bytes": 1638,
+      "display": {
+        "maxCssHeightDpr1": 86,
+        "maxCssHeightDpr2": 43.0,
+        "maxCssWidthDpr1": 86,
+        "maxCssWidthDpr2": 43.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 86,
+      "nativeWidth": 86,
+      "provenance": "visible framed fire tile",
+      "sha256": "dd53c72e9a4c72c2868368fab431934b3973ff31c1a3d93c1cfcd3a67462e353",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "tool-frame.webp": {
+      "bytes": 770,
+      "display": {
+        "maxCssHeightDpr1": 76,
+        "maxCssHeightDpr2": 38.0,
+        "maxCssWidthDpr1": 74,
+        "maxCssWidthDpr2": 37.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 76,
+      "nativeWidth": 74,
+      "provenance": "frame is visible; trophy bed is reconstructed from visible tool material",
+      "sha256": "edcff4aea27111821667df375ae02793d1a1ec7365333f02bbb62660f9c8c1db",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "welcome-figure.webp": {
+      "bytes": 2368,
+      "display": {
+        "maxCssHeightDpr1": 61,
+        "maxCssHeightDpr2": 30.5,
+        "maxCssWidthDpr1": 69,
+        "maxCssWidthDpr2": 34.5,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 61,
+      "nativeWidth": 69,
+      "provenance": "visible welcome cave figure",
+      "sha256": "e922ca7be6ca553d64bdadb86b961f92e80328d8f6e44aec692bc4e0afc1f306",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "welcome-frame.webp": {
+      "bytes": 1774,
+      "display": {
+        "maxCssHeightDpr1": 80,
+        "maxCssHeightDpr2": 40.0,
+        "maxCssWidthDpr1": 340,
+        "maxCssWidthDpr2": 170.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 80,
+      "nativeWidth": 340,
+      "provenance": "outer frame is visible; figure and copy bed is reconstructed from visible chip material",
+      "sha256": "de103e5fa43324d48a85f6eb8007e33e444700ad1860a756d3c644f70864647b",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "wordmark-desktop.webp": {
+      "bytes": 28648,
+      "display": {
+        "maxCssHeightDpr1": 320,
+        "maxCssHeightDpr2": 160.0,
+        "maxCssWidthDpr1": 545,
+        "maxCssWidthDpr2": 272.5,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 320,
+      "nativeWidth": 545,
+      "provenance": "visible carved glyphs; blank parchment is estimated only for alpha recovery",
+      "sha256": "e286b12b55929f846647ef8ce9480dbc69b991ff513cc0d5be64d78a5b6ccce9",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    },
+    "wordmark-mobile.webp": {
+      "bytes": 29038,
+      "display": {
+        "maxCssHeightDpr1": 256,
+        "maxCssHeightDpr2": 128.0,
+        "maxCssWidthDpr1": 436,
+        "maxCssWidthDpr2": 218.0,
+        "maxPhysicalScale": 1
+      },
+      "nativeHeight": 256,
+      "nativeWidth": 436,
+      "provenance": "visible carved glyphs; blank parchment is estimated only for alpha recovery",
+      "sha256": "7ff24d14497f69f7afd87f555459c3c4e6b7b2763ed9c1915f03477222221c6a",
+      "sourcePath": "docs/design/reference/title-2026-08-11.webp"
+    }
+  },
+  "blocked": [
+    {
+      "id": "button-hover-state",
+      "reason": "The approved target contains only the resting button state."
+    },
+    {
+      "id": "button-pressed-state",
+      "reason": "The approved target contains only the resting button state."
+    },
+    {
+      "id": "sound-icon",
+      "reason": "The target shows a settings gear; the product's sound icon is not observable."
+    },
+    {
+      "id": "higher-resolution-detail",
+      "reason": "No source pixels exist above the approved 1586x992 master."
+    }
+  ],
+  "budgets": {
+    "desktopCriticalBytes": 180000,
+    "mobileCriticalBytes": 120000
+  },
+  "bundles": {
+    "desktop": {
+      "bytes": 57750,
+      "files": [
+        "wordmark-desktop.webp",
+        "ribbon-left.webp",
+        "ribbon-center.webp",
+        "ribbon-right.webp",
+        "begin-left.webp",
+        "begin-center.webp",
+        "begin-right.webp",
+        "fates-left.webp",
+        "fates-center.webp",
+        "fates-right.webp",
+        "welcome-frame.webp",
+        "tool-frame.webp",
+        "tip-card-frame.webp",
+        "ornament-spiral.webp",
+        "ornament-trophy.webp",
+        "ornament-tap.webp",
+        "ornament-divider.webp",
+        "ornament-hunt.webp",
+        "welcome-figure.webp",
+        "tip-fire-tile.webp"
+      ]
+    },
+    "mobile": {
+      "bytes": 53998,
+      "files": [
+        "wordmark-mobile.webp",
+        "ribbon-left.webp",
+        "ribbon-center.webp",
+        "ribbon-right.webp",
+        "begin-left.webp",
+        "begin-center.webp",
+        "begin-right.webp",
+        "fates-left.webp",
+        "fates-center.webp",
+        "fates-right.webp",
+        "tool-frame.webp",
+        "tip-card-frame.webp",
+        "ornament-spiral.webp",
+        "ornament-trophy.webp",
+        "ornament-tap.webp",
+        "ornament-divider.webp",
+        "ornament-hunt.webp",
+        "tip-fire-tile.webp"
+      ]
+    }
+  },
+  "configSha256": "01664d4aae0dd264b0cc4ba3f922830753768d0bba581dbc7cb933408e057086",
+  "measurements": {
+    "titleInkOccupancyPercent": 27.30138713745271
+  },
+  "nativePlacement": {
+    "wordmark": {
+      "height": 320,
+      "left": 150,
+      "maxOccupancyPercent": 28.5,
+      "minOccupancyPercent": 26.5,
+      "top": 130,
+      "viewportHeight": 992,
+      "viewportWidth": 1586,
+      "width": 545
+    }
+  },
+  "reconstructedRegions": [
+    "ribbon-text-bed",
+    "begin-icon-and-label-bed",
+    "fates-icon-and-label-bed",
+    "welcome-copy-bed",
+    "tool-icon-bed",
+    "tip-copy-and-pagination-bed"
+  ],
+  "slices": {
+    "begin": {
+      "centerWidth": 168
+    },
+    "fates": {
+      "centerWidth": 118
+    },
+    "ribbon": {
+      "centerWidth": 380
+    },
+    "tipCardFrame": {
+      "insets": [
+        24,
+        28,
+        24,
+        28
+      ]
+    },
+    "toolFrame": {
+      "insets": [
+        16,
+        16,
+        16,
+        16
+      ]
+    },
+    "welcomeFrame": {
+      "insets": [
+        18,
+        24,
+        18,
+        24
+      ]
+    }
+  },
+  "source": {
+    "height": 992,
+    "path": "docs/design/reference/title-2026-08-11.webp",
+    "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
+    "width": 1586
+  },
+  "version": 1
+}
