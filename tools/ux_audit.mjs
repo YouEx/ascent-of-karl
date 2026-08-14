@@ -466,6 +466,67 @@ async function auditGameMobileViewport(browser) {
   await page.close();
 }
 
+// ui-mobile.md: "Touch-targets: min. 44x44 pt (Apple HIG) / 48 dp (Material)".
+// Reglen gælder FINGEREN, ikke blækket. Højttaleren er malet 23x20 og bogfanen
+// er en 31 px plakette, begge målt direkte på Martins forlæg — vokser de,
+// falder fidelity-dommeren. De må derfor gerne stå små, men så skal fladen
+// udvides usynligt. Derfor måler denne check ikke elementets kasse, men hvad
+// der faktisk ligger under fingeren: en kontrol, der er malet mindre end 44 px,
+// SKAL svare i alle fire hjørner af sit 44x44-felt.
+async function auditMobileTapTargets(browser) {
+  const page = await freshGame(browser);
+  const probe = async (label) => {
+    const findings = await page.evaluate(() => {
+      const MIN = 44;
+      const out = [];
+      for (const el of document.querySelectorAll("button, [role=button]")) {
+        const b = el.getBoundingClientRect();
+        if (b.width < 1 || b.height < 1) continue;
+        if (getComputedStyle(el).visibility === "hidden") continue;
+        if (b.width >= MIN && b.height >= MIN) continue;
+        const cx = b.left + b.width / 2;
+        const cy = b.top + b.height / 2;
+        // Ligger kontrollen bag et åbent ark, svarer midten ikke — og så er
+        // den ikke for lille, den er dækket. Kun kontroller, man faktisk kan
+        // ramme i midten, bliver målt på hjørnerne.
+        const centre = document.elementFromPoint(cx, cy);
+        if (!centre || (centre !== el && !el.contains(centre))) continue;
+        const reach = MIN / 2 - 1;
+        const misses = [];
+        for (const [dx, dy] of [
+          [-reach, -reach],
+          [reach, -reach],
+          [-reach, reach],
+          [reach, reach],
+        ]) {
+          const hit = document.elementFromPoint(cx + dx, cy + dy);
+          if (!hit || (hit !== el && !el.contains(hit))) {
+            misses.push(`${dx},${dy}`);
+          }
+        }
+        if (misses.length) {
+          out.push(
+            `${el.id ? "#" + el.id : "." + String(el.className).split(" ")[0]} ${Math.round(b.width)}x${Math.round(b.height)}`,
+          );
+        }
+      }
+      return [...new Set(out)];
+    });
+    record(
+      "Mobilens berøringsflader",
+      label,
+      findings.length === 0,
+      findings.length ? findings.join(", ") : "alle når 44x44",
+    );
+  };
+
+  await probe("game-screen-reaches-44");
+  await page.locator("#book-btn").click();
+  await page.waitForTimeout(400);
+  await probe("archive-reaches-44");
+  await page.close();
+}
+
 async function freshGame(browser) {
   const page = await browser.newPage({ viewport: MOBILE, hasTouch: true });
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -652,6 +713,7 @@ for (const o of OVERLAYS) await auditOverlay(browser, o);
 await auditTitleFatesModal(browser);
 await auditTitleMobileViewport(browser);
 await auditGameMobileViewport(browser);
+await auditMobileTapTargets(browser);
 await auditLivingChronicle(browser);
 await browser.close();
 

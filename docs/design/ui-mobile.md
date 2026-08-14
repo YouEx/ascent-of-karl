@@ -39,8 +39,14 @@ Kilden er én DOM; CSS arrangerer den forskelligt. Ingen dublering af markup.
 
 **Mobil (< 820 px)**
 - Header (sticky, kompakt: titel, ⏳-tæller, 📖/🏆/↺ som ikon-knapper)
-- Fortæller-boblen (sticky under headeren — den er spillets stemme og må
-  aldrig scrolle væk)
+- ~~Fortæller-boblen (sticky under headeren — den er spillets stemme og må
+  aldrig scrolle væk)~~ **Ophævet 2026-08-14 (Martin).** Boblen blev til den
+  levende krønike: et opslag på to sider, 384 px højt på 390×844. Klæbede det,
+  lå det oven på element-griddet og opslugte tryk på brikkerne — Playwright
+  fangede det som "subtree intercepts pointer events". Krøniken følger derfor
+  siden i flow på mobil. Prisen er accepteret bevidst: griddet begynder under
+  folden, og spilleren scroller ned til brikkerne. Stemmen er stadig det første
+  man møder, den er bare ikke længere pinned.
 - Problem-chips, søgefelt (sticky), element-grid (scroller)
 - **Docken**: værkstedet (2 slots + Kombinér) er `position: fixed` i
   bunden — altid i tommelfinger-zonen, med `env(safe-area-inset-bottom)`

@@ -952,7 +952,12 @@ print(json.dumps({
     expect(parsed.failures).toEqual([]);
     expect(parsed.runLimit.length).toBeGreaterThanOrEqual(12);
     expect(parsed.runLimitFailures).toEqual([]);
-  }, 30_000);
+    // 90 s, ikke 30. De to stemmedommer-tests starter Python og kører hele
+    // familie-gaten; på en tomgangsmaskine tager de 24-25 s, altså 82 % af et
+    // 30-sekunders budget. De faldt ikke på en påstand, men på uret, så snart
+    // maskinen lavede andet samtidig. En gate, der svarer forskelligt alt
+    // efter hvor travlt værten har, måler værten og ikke spillet.
+  }, 90_000);
 
   it("afviser en lav-stemme improvisationsvariant gennem den samme gate som validate", async () => {
     const result = await runPython(`
@@ -968,5 +973,10 @@ print(json.dumps([f for f in failures if "improvisation:test-bad#0" in f]))
     const failures = JSON.parse(result.stdout) as string[];
     expect(failures).toHaveLength(1);
     expect(failures[0]).toContain("hård afvisning");
-  }, 30_000);
+    // 90 s, ikke 30. De to stemmedommer-tests starter Python og kører hele
+    // familie-gaten; på en tomgangsmaskine tager de 24-25 s, altså 82 % af et
+    // 30-sekunders budget. De faldt ikke på en påstand, men på uret, så snart
+    // maskinen lavede andet samtidig. En gate, der svarer forskelligt alt
+    // efter hvor travlt værten har, måler værten og ikke spillet.
+  }, 90_000);
 });

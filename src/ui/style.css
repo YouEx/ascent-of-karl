@@ -2439,7 +2439,14 @@ html[data-improvise-enabled] .invention-card .card-emoji {
     align-items: center;
   }
   .slot-empty b {
+    /* Etiketten skal BRYDE, ikke løbe ud af sin brønd. På 360 px er slottens
+       spalte ~89 px, og "Select an element" på én linje stak 4 px ud til
+       venstre for ruden. Slottens 68 px rummer to linjer uden at vokse. */
     font-size: 0.78rem;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
   }
   .slot-empty i {
     display: none;
@@ -2447,6 +2454,35 @@ html[data-improvise-enabled] .invention-card .card-emoji {
   .plus {
     width: 40px;
     height: 68px;
+  }
+  /* Berøringsflader, ikke nye størrelser. ui-mobile.md kræver 44x44, men
+     højttaleren er malet 23x20 og bogfanen er en 31 px plakette målt direkte
+     på referencen — vokser de, falder fidelity-dommeren. Flader udvides derfor
+     med et usynligt lag, så det MALEDE forbliver præcis så stort som forlægget
+     og fingeren alligevel rammer 44 px. */
+  #mute {
+    position: relative;
+  }
+  #mute::before {
+    content: "";
+    position: absolute;
+    inset: 50% 50%;
+    width: var(--tap);
+    height: var(--tap);
+    transform: translate(-50%, -50%);
+  }
+  #book-tabs {
+    /* 13 px luft, så de udvidede faner ikke overlapper hinanden, når rækken
+       bryder. 44 - 31 = 13, altså 6,5 px over og under hver fane. */
+    row-gap: 13px;
+  }
+  .book-tab {
+    position: relative;
+  }
+  .book-tab::before {
+    content: "";
+    position: absolute;
+    inset: -6.5px 0;
   }
   #combine {
     width: 118px;
