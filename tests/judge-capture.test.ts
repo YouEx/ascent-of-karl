@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { chromium } from "playwright";
 // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
 import { runCapture, stopServer } from "../tools/judge/capture.mjs";
 // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
@@ -11,6 +13,11 @@ import { runProcessGroup } from "../tools/judge/process-group.mjs";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SCRATCH_ROOT = join(HERE, "..", ".judge", "test-scratch");
 mkdirSync(SCRATCH_ROOT, { recursive: true });
+// Den rigtige Chromium-kørsel er fokuseret/opt-in ligesom test:visual. CI's
+// ux-audit kører selve package-gaten efter browserinstallationen.
+const FIDELITY_E2E =
+  (process as unknown as { env?: Record<string, string | undefined> }).env
+    ?.TITLE_FIDELITY_TESTS === "1";
 
 const registry = {
   screens: [
@@ -93,6 +100,149 @@ describe("capture.mjs — selvstændig ressourcelevetid", () => {
     expect(child.killed).toBe(true);
     expect(child.exitCode !== null || child.signalCode !== null).toBe(true);
   });
+});
+
+describe("capture.mjs — registrerede viewports og browserbevis (TASK-003)", () => {
+  it.runIf(FIDELITY_E2E)(
+    "skriver PNG, DPR/image-metadata og resource bytes for hver registreret viewport",
+    async () => {
+      const outDir = mkdtempSync(join(SCRATCH_ROOT, "registered-"));
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="80"><path fill="#6b4e32" d="M0 0h100v80H0z"/><path fill="#d6a45d" d="M45 10h35v60H45z"/></svg>`;
+      const html = `<!doctype html>
+        <html data-ready="true">
+          <head>
+            <style>
+              * { box-sizing:border-box }
+              html,body,#title-screen { width:100%;height:100%;margin:0 }
+              .title-stage { position:absolute;inset:0;--scene-src:url("/legacy-scene.svg");background:url("/bg.svg") }
+              .title-stage::after { content:"";position:absolute;inset:0;background:var(--scene-src) right center/auto 100% no-repeat }
+              .title-panel { position:absolute;left:12%;top:10%;width:36%;height:80%;background:#e8d7bd }
+              [data-title-layer] { position:absolute;width:10px;height:8px;object-fit:fill }
+            </style>
+          </head>
+          <body>
+            <div id="title-screen">
+              <div class="title-stage"><div class="title-panel"></div></div>
+              <img data-title-layer="scene" src="/scene.svg" style="left:1px;top:1px" alt="">
+              <img data-title-layer="foreground" src="/foreground.svg" style="left:12px;top:1px" alt="">
+              <img data-title-layer="parchment" src="/parchment.svg" style="left:23px;top:1px" alt="">
+              <img data-title-layer="wordmark" src="/wordmark.svg" style="left:34px;top:1px" alt="">
+            </div>
+          </body>
+        </html>`;
+      const server = createServer((request, response) => {
+        const body = request.url?.endsWith(".svg")
+          ? svg
+          : html;
+        response.statusCode = 200;
+        response.setHeader(
+          "content-type",
+          body === svg ? "image/svg+xml" : "text/html; charset=utf-8",
+        );
+        response.setHeader("content-length", String(body.length));
+        response.setHeader("cache-control", "no-store");
+        response.end(body);
+      });
+      await new Promise<void>((resolve) => {
+        server.listen(5199, "127.0.0.1", resolve);
+      });
+      let stopped = false;
+
+      const actualRegistry = JSON.parse(
+        readFileSync(join(HERE, "..", "docs/design/reference/registry.json"), "utf8"),
+      );
+      const fixtureRegistry = {
+        viewports: actualRegistry.viewports,
+        goalMetrics: {
+          capture: {
+            canonicalCharacterSize: { width: 64, height: 64 },
+            sceneAssetSelector: ".title-stage",
+            sceneCssVariable: "--scene-src",
+            characterRectNormalized: [0.4, 0.1, 0.4, 0.8],
+            requiredLayers: ["scene", "foreground", "parchment", "wordmark"],
+          },
+        },
+        screens: [
+          { id: "title", scenario: "title-fresh", nativeWidth: 100, nativeHeight: 100, regions: [] },
+        ],
+      };
+
+      try {
+        await runCapture({
+          want: "title",
+          viewports: "registered",
+          outDir,
+          loadRegistryFn: vi.fn().mockResolvedValue(fixtureRegistry),
+          startServerFn: vi.fn().mockResolvedValue(server),
+          launchBrowser: () => chromium.launch({ headless: true }),
+          stopServerFn: (fixtureServer: typeof server) =>
+            new Promise<void>((resolve, reject) => {
+              fixtureServer.close((error) => {
+                stopped = true;
+                if (error) reject(error);
+                else resolve();
+              });
+            }),
+        });
+
+        for (const viewport of fixtureRegistry.viewports) {
+          const metricsPath = join(outDir, "metrics", `title-${viewport.id}.json`);
+          const resourcesPath = join(outDir, "resources", `title-${viewport.id}.json`);
+          expect(existsSync(join(outDir, "render", `title-${viewport.id}.png`))).toBe(true);
+          expect(existsSync(metricsPath)).toBe(true);
+          expect(existsSync(resourcesPath)).toBe(true);
+
+          const metrics = JSON.parse(readFileSync(metricsPath, "utf8"));
+          expect(metrics.viewport).toEqual(viewport);
+          expect(metrics.capture).toEqual({
+            pixelWidth: viewport.width * viewport.dpr,
+            pixelHeight: viewport.height * viewport.dpr,
+          });
+          expect(metrics.layers.map((layer: any) => layer.layerId).sort()).toEqual([
+            "foreground",
+            "parchment",
+            "scene",
+            "wordmark",
+          ]);
+          expect(metrics.geometry.seam).toMatchObject({
+            axis: "vertical",
+            physicalX: expect.any(Number),
+            physicalHeight: expect.any(Number),
+          });
+          expect(metrics.geometry.character).toMatchObject({
+            measurementSource: "asset",
+            canonicalWidth: 64,
+            canonicalHeight: 64,
+            uiOverlapPixels: 0,
+          });
+          expect(
+            existsSync(join(outDir, "render", `title-${viewport.id}-character.png`)),
+          ).toBe(true);
+
+          const resources = JSON.parse(readFileSync(resourcesPath, "utf8"));
+          expect(resources.viewport).toEqual(viewport);
+          for (const layerId of ["scene", "foreground", "parchment", "wordmark"]) {
+            expect(resources.entries).toEqual(
+              expect.arrayContaining([
+                expect.objectContaining({
+                  url: expect.stringMatching(new RegExp(`/${layerId}\\.svg$`)),
+                  initiatorType: "img",
+                  transferSize: expect.any(Number),
+                  decodedBodySize: expect.any(Number),
+                }),
+              ]),
+            );
+          }
+        }
+      } finally {
+        if (!stopped) {
+          await new Promise<void>((resolve) => server.close(() => resolve()));
+        }
+        rmSync(outDir, { recursive: true, force: true });
+      }
+    },
+    30_000,
+  );
 });
 
 function processAlive(pid: number): boolean {

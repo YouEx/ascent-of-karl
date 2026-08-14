@@ -33,6 +33,7 @@
     "judge:report": "node tools/judge/report.mjs",
     "judge:apply": "node tools/judge/apply.mjs",
     "judge:determinism": "node tools/judge/determinism.mjs",
+    "judge:title-fidelity": "node tools/judge/title-fidelity.mjs",
     "judge": "node tools/judge/loop.mjs",
     "judge:once": "node tools/judge/loop.mjs --max 1",
     "pairs": "vite-node tools/pair_frequency.ts",

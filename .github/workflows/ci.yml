@@ -76,12 +76,24 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - run: npm ci
+      - name: Installér titel-dommerens Python-afhængigheder
+        run: python3 -m pip install -r tools/judge/requirements.txt
       # Uden version: bruger projektets egen playwright, så browser-build og
       # bibliotek matcher. En pinnet version her hentede v1155, mens
       # biblioteket ville have v1234, og jobbet fejlede.
       - name: Hent Chromium
         run: npx playwright install --with-deps chromium
+      - name: Test titel-fidelity-v2 med portable fixtures
+        run: TITLE_FIDELITY_TESTS=1 npx vitest run tests/title-fidelity-v2.test.ts tests/judge-capture.test.ts
+      # Safe stacked merge: Phase A auditerer og gemmer røde mål, men gør ikke
+      # main rød. Phase D ændrer dette kald til `-- --require-green`, efter at
+      # de fire krævede assetlag og asset-kontrakten er integreret.
+      - name: Auditér titel-fidelity på produktionscapturen
+        run: npm run judge:title-fidelity
       - name: Start dev-server
         run: |
           npx vite --port 5199 --strictPort &

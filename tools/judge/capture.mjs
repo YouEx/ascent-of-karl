@@ -28,7 +28,8 @@
  * shell høstes, og en optagelse mod en død server giver et hvidt billede og
  * en score der ser ud som et sammenbrud.
  *
- * Kør:  node tools/judge/capture.mjs [--screen game|title|all] [--out DIR]
+ * Kør:  node tools/judge/capture.mjs [--screen game|title|all]
+ *        [--viewports native|registered] [--out DIR]
  * Se plan/architecture-visual-judge-1.md fase 3 (TASK-012, TASK-013, CON-004).
  */
 import { chromium } from "playwright";
@@ -145,65 +146,315 @@ export async function loadRegistry() {
   return JSON.parse(await readFile(REGISTRY, "utf8"));
 }
 
+function captureName(screen, viewport) {
+  return viewport?.registered ? `${screen.id}-${viewport.id}` : screen.id;
+}
+
+function nativeViewport(screen) {
+  return {
+    id: `${screen.id}-native`,
+    width: screen.nativeWidth,
+    height: screen.nativeHeight,
+    dpr: 1,
+    payloadClass: "desktop",
+    registered: false,
+  };
+}
+
 /**
  * Optager én skærm. Returnerer måldata, så kalderen kan bruge dem uden at
  * læse dem tilbage fra disk.
  */
-export async function captureScreen(browser, screen, outDir) {
-  const page = await browser.newPage({
-    viewport: { width: screen.nativeWidth, height: screen.nativeHeight },
-    deviceScaleFactor: 1,
+export async function captureScreen(
+  browser,
+  screen,
+  outDir,
+  selectedViewport = nativeViewport(screen),
+  fidelityCapture = {},
+) {
+  const viewport = {
+    ...selectedViewport,
+    registered: selectedViewport.registered ?? false,
+  };
+  const context = await browser.newContext({
+    viewport: { width: viewport.width, height: viewport.height },
+    screen: { width: viewport.width, height: viewport.height },
+    deviceScaleFactor: viewport.dpr,
+    // Chromium's mobile emulation rasteriser can return height*dpr-1. Vi
+    // tester CSS-viewports og fysisk DPR, ikke browser-UA-emulering.
+    isMobile: false,
+    hasTouch: viewport.payloadClass === "mobile",
     // Reduceret bevægelse ville også fryse skrivemaskinen, men frysningen skal
     // komme fra ÉT sted (?freeze=1), så en fejl i den ene mekanisme ikke
     // skjules af den anden.
     reducedMotion: "no-preference",
   });
+  const page = await context.newPage();
+  const name = captureName(screen, viewport);
 
-  const url = `${ORIGIN}/?scenario=${screen.scenario}&freeze=1`;
-  await page.goto(url, { waitUntil: "load" });
-  // Venter på et FAKTUM (siden er malet), ikke på et gæt (en timeout).
-  await page.waitForSelector("html[data-ready='true']", { timeout: 20_000 });
+  try {
+    const url = `${ORIGIN}/?scenario=${screen.scenario}&freeze=1`;
+    await page.goto(url, { waitUntil: "load" });
+    // Venter på et FAKTUM (siden er malet), ikke på et gæt (en timeout).
+    await page.waitForSelector("html[data-ready='true']", { timeout: 20_000 });
 
-  await mkdir(join(outDir, "render", screen.id), { recursive: true });
-  await mkdir(join(outDir, "metrics"), { recursive: true });
+    await mkdir(join(outDir, "render", name), { recursive: true });
+    await mkdir(join(outDir, "metrics"), { recursive: true });
+    await mkdir(join(outDir, "resources"), { recursive: true });
 
-  await page.screenshot({ path: join(outDir, "render", `${screen.id}.png`) });
+    const screenshot = await page.screenshot();
+    const capture = {
+      pixelWidth: screenshot.readUInt32BE(16),
+      pixelHeight: screenshot.readUInt32BE(20),
+    };
+    await writeFile(join(outDir, "render", `${name}.png`), screenshot);
 
-  const metrics = { screen: screen.id, url, regions: {} };
-  for (const region of screen.regions) {
-    const loc = page.locator(region.anchor).first();
-    const count = await loc.count();
-    if (count === 0) {
-      // Et manglende anker er et RESULTAT, ikke en fejl: det er præcis, hvad
-      // "komponenten findes ikke endnu" ser ud som, og dommeren skal se det.
-      metrics.regions[region.id] = { anchor: region.anchor, missing: true };
-      continue;
-    }
-    const box = await loc.boundingBox();
-    const styles = await loc.evaluate((node, fields) => {
-      const cs = getComputedStyle(node);
-      const out = {};
-      for (const f of fields) out[f] = cs[f];
-      out.textContent = (node.textContent ?? "").trim().slice(0, 200);
-      out.childCount = node.children.length;
-      return out;
-    }, STYLE_FIELDS);
+    const browserEvidence = await page.evaluate(async ({ dpr, config, payloadClass }) => {
+      const titleRoot = document.querySelector("#title-screen");
+      const criticalSources = new Set();
+      const titleElements = titleRoot
+        ? [titleRoot, ...titleRoot.querySelectorAll("*")]
+        : [];
+      const addCssUrls = (backgroundImage) => {
+        for (const match of backgroundImage.matchAll(/url\((?:"|')?([^"')]+)(?:"|')?\)/g)) {
+          criticalSources.add(new URL(match[1], document.baseURI).href);
+        }
+      };
+      for (const element of titleElements) {
+        addCssUrls(getComputedStyle(element).backgroundImage);
+        addCssUrls(getComputedStyle(element, "::before").backgroundImage);
+        addCssUrls(getComputedStyle(element, "::after").backgroundImage);
+      }
 
-    metrics.regions[region.id] = { anchor: region.anchor, box, styles };
-
-    if (box && box.width > 0 && box.height > 0) {
-      await loc.screenshot({
-        path: join(outDir, "render", screen.id, `${region.id}.png`),
+      const selectorFor = (image) => {
+        if (image.id) return `#${image.id}`;
+        const classes = [...image.classList].map((name) => `.${name}`).join("");
+        return `${image.tagName.toLowerCase()}${classes}`;
+      };
+      const images = [...document.images].map((image) => {
+        const box = image.getBoundingClientRect();
+        const currentSrc = image.currentSrc || image.src;
+        const titleCritical = Boolean(titleRoot?.contains(image));
+        if (titleCritical && currentSrc) criticalSources.add(currentSrc);
+        return {
+          selector: selectorFor(image),
+          currentSrc,
+          naturalWidth: image.naturalWidth,
+          naturalHeight: image.naturalHeight,
+          renderedWidth: box.width,
+          renderedHeight: box.height,
+          physicalWidth: box.width * dpr,
+          physicalHeight: box.height * dpr,
+          titleCritical,
+        };
       });
-    }
-  }
 
-  await writeFile(
-    join(outDir, "metrics", `${screen.id}.json`),
-    JSON.stringify(metrics, null, 2),
-  );
-  await page.close();
-  return metrics;
+      const layers = [...document.querySelectorAll("img[data-title-layer]")].map((image) => {
+        const box = image.getBoundingClientRect();
+        return {
+          layerId: image.getAttribute("data-title-layer"),
+          selector: selectorFor(image),
+          sourceKind: "img",
+          currentSrc: image.currentSrc || image.src,
+          naturalWidth: image.naturalWidth,
+          naturalHeight: image.naturalHeight,
+          renderedWidth: box.width,
+          renderedHeight: box.height,
+          physicalWidth: box.width * dpr,
+          physicalHeight: box.height * dpr,
+          titleCritical: Boolean(titleRoot?.contains(image)),
+          complete: image.complete,
+        };
+      });
+
+      const parseUrl = (value) => {
+        const match = value?.match(/url\((?:"|')?([^"')]+)(?:"|')?\)/);
+        return match ? new URL(match[1], document.baseURI).href : "";
+      };
+      const stage = document.querySelector(config.sceneAssetSelector ?? ".title-stage");
+      const panel = document.querySelector(".title-panel");
+      let characterDataUrl = "";
+      let character = {
+        measurementSource: "asset",
+        canonicalWidth: config.canonicalCharacterSize?.width ?? 0,
+        canonicalHeight: config.canonicalCharacterSize?.height ?? 0,
+        uiOverlapPixels: 0,
+      };
+      let seam = {
+        axis: "vertical",
+        kind: "missing",
+        physicalX: -1,
+        physicalY: -1,
+        physicalHeight: 0,
+      };
+      if (stage) {
+        const stageStyle = getComputedStyle(stage);
+        const variable = stageStyle.getPropertyValue(config.sceneCssVariable ?? "--scene-src");
+        const sceneLayer = document.querySelector('img[data-title-layer="scene"]');
+        const sceneUrl = sceneLayer?.currentSrc
+          || parseUrl(getComputedStyle(stage, "::after").backgroundImage)
+          || parseUrl(stageStyle.backgroundImage)
+          || parseUrl(variable);
+        if (sceneUrl) {
+          const source = sceneLayer ?? new Image();
+          if (!sceneLayer) source.src = sceneUrl;
+          await source.decode();
+          const normalized = config.characterRectNormalized ?? [0, 0, 1, 1];
+          const sourceRect = {
+            x: normalized[0] * source.naturalWidth,
+            y: normalized[1] * source.naturalHeight,
+            width: normalized[2] * source.naturalWidth,
+            height: normalized[3] * source.naturalHeight,
+          };
+          const canvas = document.createElement("canvas");
+          canvas.width = character.canonicalWidth;
+          canvas.height = character.canonicalHeight;
+          canvas.getContext("2d").drawImage(
+            source,
+            sourceRect.x,
+            sourceRect.y,
+            sourceRect.width,
+            sourceRect.height,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+          );
+          characterDataUrl = canvas.toDataURL("image/png");
+          character = {
+            ...character,
+            assetUrl: sceneUrl,
+            naturalWidth: source.naturalWidth,
+            naturalHeight: source.naturalHeight,
+            sourceRect,
+          };
+
+          const stageBox = stage.getBoundingClientRect();
+          const panelBox = panel?.getBoundingClientRect();
+          const pseudo = getComputedStyle(stage, "::after");
+          if (payloadClass !== "mobile" && pseudo.display !== "none") {
+            const renderedSceneWidth =
+              source.naturalWidth * stageBox.height / source.naturalHeight;
+            const x = stageBox.right - renderedSceneWidth;
+            const y = stageBox.top + stageBox.height * 0.04;
+            const end = Math.min(
+              panelBox?.top ?? stageBox.top + stageBox.height * 0.16,
+              stageBox.top + stageBox.height * 0.16,
+            );
+            seam = {
+              axis: "vertical",
+              kind: "scene-extension",
+              physicalX: x * dpr,
+              physicalY: y * dpr,
+              physicalHeight: Math.max(1, end - y) * dpr,
+              physicalWidth: 200 * dpr,
+            };
+          } else if (panelBox) {
+            seam = {
+              axis: "vertical",
+              kind: "scene-parchment",
+              physicalX: panelBox.left * dpr,
+              physicalY: panelBox.top * dpr,
+              physicalHeight: panelBox.height * dpr,
+              physicalWidth: 1,
+            };
+          }
+        }
+      }
+
+      const resources = performance.getEntriesByType("resource").map((entry) => ({
+        url: entry.name,
+        transferSize: entry.transferSize,
+        decodedBodySize: entry.decodedBodySize,
+        encodedBodySize: entry.encodedBodySize,
+        initiatorType: entry.initiatorType,
+        criticalPayload: criticalSources.has(entry.name),
+      }));
+      return {
+        images,
+        layers,
+        geometry: { seam, character },
+        characterDataUrl,
+        criticalSources: [...criticalSources].sort(),
+        resources,
+      };
+    }, {
+      dpr: viewport.dpr,
+      config: fidelityCapture,
+      payloadClass: viewport.payloadClass,
+    });
+
+    const characterRelativePath = join("render", `${name}-character.png`);
+    if (browserEvidence.characterDataUrl) {
+      const encoded = browserEvidence.characterDataUrl.split(",", 2)[1];
+      await writeFile(join(outDir, characterRelativePath), Buffer.from(encoded, "base64"));
+      browserEvidence.geometry.character.cropPath = characterRelativePath;
+    }
+
+    const metrics = {
+      screen: screen.id,
+      url,
+      viewport: {
+        id: viewport.id,
+        width: viewport.width,
+        height: viewport.height,
+        dpr: viewport.dpr,
+        payloadClass: viewport.payloadClass,
+      },
+      capture,
+      images: browserEvidence.images,
+      layers: browserEvidence.layers,
+      geometry: browserEvidence.geometry,
+      criticalSources: browserEvidence.criticalSources,
+      regions: {},
+    };
+    for (const region of screen.regions) {
+      const loc = page.locator(region.anchor).first();
+      const count = await loc.count();
+      if (count === 0) {
+        // Et manglende anker er et RESULTAT, ikke en fejl: det er præcis, hvad
+        // "komponenten findes ikke endnu" ser ud som, og dommeren skal se det.
+        metrics.regions[region.id] = { anchor: region.anchor, missing: true };
+        continue;
+      }
+      const box = await loc.boundingBox();
+      const styles = await loc.evaluate((node, fields) => {
+        const cs = getComputedStyle(node);
+        const out = {};
+        for (const f of fields) out[f] = cs[f];
+        out.textContent = (node.textContent ?? "").trim().slice(0, 200);
+        out.childCount = node.children.length;
+        return out;
+      }, STYLE_FIELDS);
+
+      metrics.regions[region.id] = { anchor: region.anchor, box, styles };
+
+      if (box && box.width > 0 && box.height > 0) {
+        await loc.screenshot({
+          path: join(outDir, "render", name, `${region.id}.png`),
+        });
+      }
+    }
+
+    await writeFile(
+      join(outDir, "metrics", `${name}.json`),
+      JSON.stringify(metrics, null, 2),
+    );
+    await writeFile(
+      join(outDir, "resources", `${name}.json`),
+      JSON.stringify({
+        screen: screen.id,
+        url,
+        viewport: metrics.viewport,
+        entries: browserEvidence.resources,
+      }, null, 2),
+    );
+    return metrics;
+  } finally {
+    await context.close().catch((err) => {
+      console.error(`kunne ikke lukke viewport-contexten pænt: ${err.message}`);
+    });
+  }
 }
 
 /**
@@ -214,6 +465,7 @@ export async function captureScreen(browser, screen, outDir) {
  */
 export async function runCapture({
   want = "all",
+  viewports = "native",
   outDir,
   loadRegistryFn = loadRegistry,
   startServerFn = startServer,
@@ -236,8 +488,19 @@ export async function runCapture({
     browser = await launchBrowser();
     const results = [];
     for (const screen of screens) {
-      const metrics = await captureScreenFn(browser, screen, outDir);
-      results.push({ screen, metrics });
+      const selectedViewports = viewports === "registered"
+        ? registry.viewports.map((viewport) => ({ ...viewport, registered: true }))
+        : [nativeViewport(screen)];
+      for (const viewport of selectedViewports) {
+        const metrics = await captureScreenFn(
+          browser,
+          screen,
+          outDir,
+          viewport,
+          registry.goalMetrics?.capture ?? {},
+        );
+        results.push({ screen, viewport, metrics });
+      }
     }
     return results;
   } finally {
@@ -262,15 +525,19 @@ function valueOf(args, flag) {
 async function main() {
   const args = process.argv.slice(2);
   const want = valueOf(args, "--screen") ?? "all";
+  const viewports = valueOf(args, "--viewports") ?? "native";
+  if (!["native", "registered"].includes(viewports)) {
+    throw new Error(`Ukendt --viewports "${viewports}". Brug native eller registered.`);
+  }
   const outDir = resolve(ROOT, valueOf(args, "--out") ?? ".judge/latest");
 
-  const results = await runCapture({ want, outDir });
-  for (const { screen, metrics } of results) {
+  const results = await runCapture({ want, viewports, outDir });
+  for (const { screen, viewport, metrics } of results) {
     const missing = Object.entries(metrics.regions)
       .filter(([, value]) => value.missing)
       .map(([k]) => k);
     console.log(
-      `optaget ${screen.id} (${screen.nativeWidth}×${screen.nativeHeight})` +
+      `optaget ${screen.id}/${viewport.id} (${viewport.width}×${viewport.height} DPR${viewport.dpr})` +
         (missing.length ? `  — manglende ankre: ${missing.join(", ")}` : ""),
     );
   }
