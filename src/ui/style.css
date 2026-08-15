@@ -1995,9 +1995,12 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   stroke-linejoin: miter;
   stroke-miterlimit: 2.4;
 }
-/* Hulekroppen fyldes af gradienten i markup'en; regelen her er faldback, hvis
-   gradienten ikke kan males. */
-.title-chip .figure svg [data-part="cave"] { fill: var(--cave-dark); }
+/* Hulekroppen males af gradienten. Den skal stå her, ikke som attribut i
+   markup'en: præsentationsattributter har ingen specificitet og taber altid til
+   en stylesheet-regel, så `fill="url(#caveThroat)"` blev overskrevet af den
+   flade farve og dybden forsvandt. CSS' egen paint-faldback (url + farve)
+   dækker det tilfælde, hvor gradienten ikke kan males. */
+.title-chip .figure svg [data-part="cave"] { fill: url(#caveThroat) var(--cave-dark); }
 .title-chip .figure svg [data-part="figure"] {
   fill: var(--cave-body);
   stroke: var(--cave-body);

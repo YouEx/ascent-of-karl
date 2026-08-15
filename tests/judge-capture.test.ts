@@ -344,3 +344,54 @@ describe("stopServer — indpakning og server dør sammen", () => {
     }
   });
 });
+
+/**
+ * Testen ovenfor beviser, at stopServer dræber et helt træ — men den leverer
+ * selv `detached` til sin egen indpakning og importerer aldrig startServer.
+ * Fjernede nogen `detached` fra produktionskoden, ville den altså blive
+ * ubekymret grøn, mens CI hang igen. De to påstande her binder derfor kilden:
+ * previewen skal starte i sin egen procesgruppe, OG den gruppe skal have en
+ * vagt, der dræber den, når capture.mjs selv bliver dræbt. Uden vagten
+ * overlever previewen som forældreløs på port 5199, næste CI-trins bind fejler
+ * tavst, og ux-auditten måler den gamle server i stedet for det nye `dist/`
+ * (efterprøvet: uden vagten svarede porten stadig 200 efter drabet).
+ */
+describe("preview-serverens procesgruppe er fastholdt i kilden", () => {
+  const captureSource = readFileSync(
+    join(HERE, "..", "tools", "judge", "capture.mjs"),
+    "utf8",
+  );
+
+  it("startServer spawner previewen i sin egen gruppe", () => {
+    expect(captureSource).toMatch(
+      /"vite",\s*"preview"[\s\S]{0,900}?detached:\s*POSIX/,
+    );
+  });
+
+  it("gruppen får en vagt, så den ikke kan overleve sin forælder", () => {
+    expect(captureSource).toMatch(/armOrphanGuard\(proc\);/);
+    expect(captureSource).toMatch(/process\.on\("exit",\s*killLiveServers\)/);
+    expect(captureSource).toMatch(/SIGTERM:\s*143/);
+  });
+});
+
+/**
+ * Den kritiske fejl, denne fil skal forhindre i at komme igen: en ny funktion
+ * blev indsat MELLEM captureScreen's JSDoc og dens `function`-nøgleord, så
+ * `export` bandt sig til den nye funktion i stedet. `npm run judge`,
+ * `judge:once` og `judge:determinism` døde derefter allerede ved modulindlæsning
+ * — og CI så det ikke, fordi CI kun kører title-fidelity, som starter
+ * capture.mjs som KOMMANDO og aldrig importerer den. Testen importerer modulet
+ * præcis som scripts'ene gør.
+ */
+describe("capture.mjs' offentlige flade", () => {
+  it("eksporterer stadig alt, dommerens scripts importerer", async () => {
+    const mod = await import(
+      // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
+      "../tools/judge/capture.mjs"
+    );
+    for (const name of ["captureScreen", "runCapture", "startServer", "stopServer", "build"]) {
+      expect(typeof (mod as Record<string, unknown>)[name]).toBe("function");
+    }
+  });
+});

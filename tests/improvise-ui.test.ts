@@ -32,21 +32,40 @@ function escapeSelector(selector: string): string {
   return selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Klipper den responsive mobilblok ud af style.css, så en test kan udtale sig
+// Klipper de responsive mobilblokke ud af style.css, så en test kan udtale sig
 // om PRÆCIS de regler, en telefon får — ikke om filen som helhed.
+//
+// Alle blokke samles, ikke kun den sidste: style.css har tre
+// `@media (max-width: 819px)`-blokke, og en `lastIndexOf` ville kun kigge på
+// den nederste. En regel, der flyttede op i en af de to andre, ville dermed
+// forsvinde ud af testens synsfelt, mens telefonen stadig fik den.
 function mobileBlock(css: string): string {
   const marker = "@media (max-width: 819px) {";
-  const start = css.lastIndexOf(marker);
-  if (start < 0) throw new Error("mobilblokken findes ikke i style.css");
-  let depth = 0;
-  for (let i = start; i < css.length; i += 1) {
-    if (css[i] === "{") depth += 1;
-    else if (css[i] === "}") {
-      depth -= 1;
-      if (depth === 0) return css.slice(start, i + 1);
+  const blocks: string[] = [];
+  for (
+    let start = css.indexOf(marker);
+    start >= 0;
+    start = css.indexOf(marker, start + marker.length)
+  ) {
+    let depth = 0;
+    let closed = false;
+    for (let i = start; i < css.length; i += 1) {
+      if (css[i] === "{") depth += 1;
+      else if (css[i] === "}") {
+        depth -= 1;
+        if (depth === 0) {
+          blocks.push(css.slice(start, i + 1));
+          closed = true;
+          break;
+        }
+      }
     }
+    if (!closed) throw new Error("mobilblokken er ikke lukket");
   }
-  throw new Error("mobilblokken er ikke lukket");
+  if (blocks.length === 0) {
+    throw new Error("mobilblokken findes ikke i style.css");
+  }
+  return blocks.join("\n");
 }
 
 function invention(id: string, name = id): ElementDef {

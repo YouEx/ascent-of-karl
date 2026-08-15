@@ -462,3 +462,36 @@ describe("rå titel-farver er allerede dækket andetsteds (undgår dobbelt sandh
     expect(true).toBe(true);
   });
 });
+
+describe("hulens dybde males rent faktisk (regression: attribut tabte til CSS)", () => {
+  /**
+   * Gradienten stod oprindeligt som `fill="url(#caveThroat)"` i markup'en.
+   * Præsentationsattributter har ingen specificitet og virker som et
+   * forfatter-stylesheet indsat først, så stylesheet-regelen for
+   * [data-part="cave"] overskrev den uden videre: computed fill målte
+   * rgb(61,44,31) — den flade --cave-dark — og hele <defs>-blokken blev sendt
+   * med i bundtet uden nogensinde at male noget. Skærmbilledet så rigtigt ud,
+   * fordi den synlige søm var fjernet af en anden grund, så kun en måling
+   * afslørede det. Testen holder begge sider fast: paint hører til i CSS, og
+   * markup'en må ikke tage den tilbage.
+   */
+  const caveRule = stripComments(styles).match(
+    /\[data-part="cave"\]\s*\{([^}]*)\}/,
+  );
+
+  it("style.css maler hulen med gradienten og har en farve-faldback", () => {
+    expect(caveRule).not.toBeNull();
+    expect(caveRule?.[1]).toMatch(/fill:\s*url\(#caveThroat\)\s+var\(--cave-dark\)/);
+  });
+
+  it("icons.ts sætter ikke fill som attribut på hulekroppen", () => {
+    const cavePath = iconsSource.match(/<path data-part="cave"[^`]*/)?.[0] ?? "";
+    expect(cavePath).not.toBe("");
+    expect(cavePath).not.toMatch(/fill=/);
+  });
+
+  it("gradienten, CSS peger på, findes stadig i markup'en", () => {
+    expect(iconsSource).toMatch(/<radialGradient id="caveThroat"/);
+    expect(iconsSource).toMatch(/stop-color="var\(--cave-depth\)"/);
+  });
+});

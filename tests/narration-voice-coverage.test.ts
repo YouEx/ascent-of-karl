@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -20,6 +20,7 @@ import { describe, expect, it } from "vitest";
 
 const ROOT = resolve(fileURLToPath(import.meta.url), "../..");
 const AUDIO = join(ROOT, "public/audio");
+const NARRATOR = join(ROOT, "content/narrator");
 
 interface NarratorLine {
   id: string;
@@ -28,7 +29,7 @@ interface NarratorLine {
 
 function lines(file: string): NarratorLine[] {
   const data = JSON.parse(
-    readFileSync(join(ROOT, "content/narrator", file), "utf8"),
+    readFileSync(join(NARRATOR, file), "utf8"),
   ) as { lines: NarratorLine[] };
   return data.lines;
 }
@@ -37,11 +38,22 @@ const manifest = JSON.parse(
   readFileSync(join(AUDIO, "manifest.json"), "utf8"),
 ) as Record<string, number[]>;
 
-/** Kilder der skal være indtalt — spejler NARRATOR_SOURCES i generate_audio.py. */
-const VOICED_SOURCES = ["act-1.json", "act-2.json", "pairs-act-1.json"];
-
 /** En variant kan kun indtales på forhånd, hvis den ikke samles i spiltiden. */
 const isVoiceable = (text: string) => !text.includes("{");
+
+/**
+ * Kilderne udledes af disken, ikke af en håndholdt liste. En kopi af
+ * NARRATOR_SOURCES ville genindføre præcis den fejl, testen findes for: en ny
+ * `act-3.json` ville være usynlig for BEGGE sider, og manglen igen umulig at
+ * se. Her er sandheden "filen indeholder mindst én replik, der kan indtales".
+ */
+const ALL_SOURCES = readdirSync(NARRATOR)
+  .filter((name) => name.endsWith(".json"))
+  .sort();
+
+const VOICED_SOURCES = ALL_SOURCES.filter((file) =>
+  lines(file).some((line) => line.variants.some(isVoiceable)),
+);
 
 describe("fortællerens stemme er den samme hele vejen", () => {
   it("har en indspilning af hver replik der kan indtales", () => {
@@ -64,12 +76,29 @@ describe("fortællerens stemme er den samme hele vejen", () => {
     ).toEqual([]);
   });
 
+  it("generate_audio.py kender præcis de kilder, der kan indtales", () => {
+    // Uden denne påstand kan de to sider glide fra hinanden i tavshed: en ny
+    // aktfil ville blive indtalt af testen ovenfor (som læser disken), men
+    // aldrig af generatoren (som læser sin egen tuple) — eller omvendt.
+    const source = readFileSync(join(ROOT, "tools/generate_audio.py"), "utf8");
+    const tuple = source.match(/NARRATOR_SOURCES\s*=\s*\(([^)]*)\)/)?.[1] ?? "";
+    const declared = [...tuple.matchAll(/"([^"]+)"/g)].map((m) => m[1]).sort();
+
+    expect(declared).toEqual([...VOICED_SOURCES].sort());
+  });
+
   it("dækker det bagte lag, som spilleren hører oftest", () => {
+    // Sammenligningen er PR VARIANT, ikke pr. replik: en replik med fem
+    // varianter, hvor kun den første er indspillet, skal falde igennem her.
+    // Den tidligere udgave talte kun `manifest[id]?.length` og kunne derfor
+    // kun se en replik uden EN eneste indspilning.
     const baked = lines("pairs-act-1.json");
     const voiceable = baked.flatMap((line) =>
-      line.variants.filter(isVoiceable).map(() => line.id),
+      line.variants
+        .map((text, index) => ({ text, index, id: line.id }))
+        .filter((v) => isVoiceable(v.text)),
     );
-    const recorded = voiceable.filter((id) => manifest[id]?.length);
+    const recorded = voiceable.filter((v) => manifest[v.id]?.includes(v.index));
 
     expect(voiceable.length).toBeGreaterThan(0);
     expect(recorded.length).toBe(voiceable.length);

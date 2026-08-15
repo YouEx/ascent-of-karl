@@ -78,6 +78,14 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
 
 ## Bevidst udskudt
 
+- Spilheaderens `.mark` er stadig et bitmap (`src/assets/art/mark-figure.webp`,
+  81×68 RGBA). Det er samme hulemotiv som titelchippens SVG, så appen har to
+  gengivelser af samme tegning, og bitmappet skaleres en anelse op på retina.
+  Udskudt bevidst: det viser ingen synlig firkant, det ligger på den skærm
+  spilleren ser mest, og ROADMAP-punkt 2 forbyder implementering før
+  playtest-runden. Konverteres til `icons.titleCave` bagefter — bemærk at
+  gradientens `id="caveThroat"` så skal gøres unik eller flyttes til ét delt
+  `<defs>`, fordi ikonet dermed kan optræde to steder i DOM'en samtidig.
 - Akt II-V (design-dokumenter skrives først når Akt I-loopet er bevist)
 - Dansk lokalisering (engelsk er primærsprog nu)
 - Steam-integration, achievements, cloud saves

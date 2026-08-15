@@ -23,18 +23,24 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
  * Gzip-loft for hovedbundtet. Se den historiske baseline i git.
  *
  * Hævet fra 110 til 111 KB da titelskærmens illustrationer gik fra bitmap til
- * SVG (2026-08-14). Regnskabet, så hævelsen kan efterprøves:
+ * SVG (2026-08-14). Regnskabet, så hævelsen kan efterprøves — tallene er målt
+ * med `npm run bundle-budget` og `git cat-file -s` på det slettede blob:
  *
- *   hovedbundt   112.200 → 112.820 B gzip   (+620 B)
+ *   hovedbundt   112.200 → 113.029 B gzip   (+829 B)
  *   welcome-figure.webp                      (−2.368 B)
  *   ---------------------------------------------------
- *   første indlæsning                        −1.748 B
+ *   første indlæsning                        −1.539 B
  *
  * welcome-figure.webp var et 69x61 bitmap-udklip, der blev hentet EAGERLY som
  * `background-image` på titelskærmen. Det er nu tegnet i icons.ts og hentes
  * ikke længere. Loftet måler kun JS-chunken, så den flytning ser ud som vækst,
  * selv om det TEST-010 er sat til at beskytte — "første indlæsning vokser
  * ikke" — beviseligt faldt. Loftet flytter derfor med kunsten, én gang.
+ *
+ * Loftet må IKKE sænkes tilbage til 110 KB: 110 KB = 112.640 B, og bundtet har
+ * ikke været under det tal siden SVG-flytningen (målt 113.041 B ved 4423ea9 og
+ * 113.029 B nu). Et review har foreslået sænkningen ud fra 111.300 B — det tal
+ * kan ikke genskabes med en ren `vite build` på nogen af de to commits.
  *
  * Reglen for næste gang: loftet må kun hæves sammen med et regnskab som
  * ovenstående, hvor den samlede første indlæsning falder. Vokser den, er

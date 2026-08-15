@@ -88,7 +88,9 @@ export const icons = {
       `<stop offset="0" stop-color="var(--cave-depth)"/>` +
       `<stop offset=".55" stop-color="var(--cave-depth)"/>` +
       `<stop offset="1" stop-color="var(--cave-dark)"/></radialGradient></defs>` +
-      `<path data-part="cave" d="${dome}" fill="url(#caveThroat)"/>` +
+      // Paint sættes i style.css, ikke her: en præsentationsattribut har ingen
+      // specificitet og taber til stylesheet-regelen.
+      `<path data-part="cave" d="${dome}"/>` +
       // Figuren er hugget, ikke tegnet med streger: fyldt torso der smalner mod
       // hoften, og lemmer tykke nok til at læse som krop ved 69 px.
       `<g data-part="figure">` +

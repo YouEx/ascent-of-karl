@@ -25,6 +25,7 @@ import hashlib
 import json
 import os
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any, Iterable, Sequence
@@ -761,7 +762,14 @@ def publish_files_atomically(pairs: Sequence[tuple[Path, Path]]) -> bool:
             shutil.copyfile(staged, incoming)
             incoming_paths.append(incoming)
             os.replace(incoming, destination)
-    except OSError:
+    except OSError as error:
+        # En tavs False her var nok til at lade `--promote` afslutte med 0,
+        # mens intet blev skrevet: exitkoden blev udledt af portenes BESLUTNING,
+        # ikke af udfaldet. Fejlen skal både ses i loggen og tælles med nedenfor.
+        print(
+            f"publicering fejlede og blev rullet tilbage: {error}",
+            file=sys.stderr,
+        )
         for backup, destination in rollback:
             if backup is not None and backup.exists():
                 os.replace(backup, destination)
@@ -1244,6 +1252,10 @@ def build(
         }
 
     published: list[str] = []
+    # Skrivninger, der VAR besluttet, men ikke lykkedes. De skal kunne ses i
+    # manifestet og give en exitkode, ellers ligner en mislykket udgivelse en
+    # vellykket for alle andre end den, der kigger i mappen bagefter.
+    unpublished: list[str] = []
     if request_promotion:
         production = publication_paths_match_config(
             config,
@@ -1255,6 +1267,10 @@ def build(
             destination = config[name].get("output")
             if not production or destination is None:
                 continue
+            decided = (
+                promotion[name]["pass"] is True
+                and promotion[name]["manualApproval"]["valid"]
+            )
             if publish_promoted_candidate(
                 candidate_path,
                 resolve(destination),
@@ -1262,6 +1278,8 @@ def build(
                 approval_valid=promotion[name]["manualApproval"]["valid"],
             ):
                 published.append(destination)
+            elif decided:
+                unpublished.append(destination)
 
     manifest = {
         "version": config["version"],
@@ -1286,6 +1304,15 @@ def build(
     (evidence_dir / "metrics.json").write_text(
         json.dumps(manifest["metrics"], indent=2) + "\n"
     )
+    if unpublished:
+        # Rejses FØRST her, så beviset ligger på disken: en mislykket skrivning
+        # må ikke også koste den måling, der forklarer hvorfor. Uden dette kast
+        # afsluttede `--promote` med 0, fordi exitkoden blev udledt af portenes
+        # BESLUTNING og aldrig af, om filerne rent faktisk blev skrevet.
+        raise RuntimeError(
+            "promovering blev godkendt, men skrivningen fejlede for: "
+            + ", ".join(unpublished)
+        )
     return manifest
 
 

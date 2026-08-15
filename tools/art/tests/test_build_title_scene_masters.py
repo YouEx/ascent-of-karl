@@ -355,3 +355,58 @@ def test_committed_blocker_evidence_is_fresh_and_no_master_is_promoted(
     ).read_bytes()
     assert manifest["promotion"]["portrait"]["pass"] is False
     assert manifest["promotion"]["wide"]["pass"] is False
+
+
+def test_failed_publication_is_reported_not_swallowed(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    """En mislykket skrivning skal kunne ses.
+
+    Transaktionen rullede korrekt tilbage, men returnerede et tavst False. Med
+    exitkoden udledt af portenes BESLUTNING betød det, at `--promote` kunne
+    afslutte med 0, uden at en eneste fil var skrevet — den værst tænkelige
+    kombination for et værktøj, hvis hele formål er at udgive.
+    """
+    builder = load_builder()
+    staged = tmp_path / "staged"
+    destination = tmp_path / "out" / "production"
+    staged.write_bytes(b"new")
+    destination.parent.mkdir()
+    destination.write_bytes(b"old")
+
+    real_replace = builder.os.replace
+
+    def fail_forward_write(source, dest):
+        # Kun selve udgivelsen fejler. Rollback bruger samme os.replace, og en
+        # bredere attrap ville måle tilbagerulningen i stedet for skrivningen.
+        if str(source).endswith(".incoming"):
+            raise OSError("simulated write failure")
+        return real_replace(source, dest)
+
+    monkeypatch.setattr(builder.os, "replace", fail_forward_write)
+    assert builder.publish_files_atomically([(staged, destination)]) is False
+    assert destination.read_bytes() == b"old"
+    assert "simulated write failure" in capsys.readouterr().err
+
+
+def test_build_fails_closed_when_an_approved_publication_is_not_written() -> None:
+    """Beslutning og udfald skal hænge sammen.
+
+    Begge mestre er bevidst blokerede i dette repo (se
+    test_config_pins_sources_honestly_and_blocks_both_masters), så der findes
+    ingen bestået promovering at køre igennem end-to-end. Påstanden er derfor
+    strukturel: build() skal rejse, når noget godkendt ikke blev skrevet, og
+    kastet skal ligge EFTER at manifest og metrics er lagt på disken, så en
+    mislykket skrivning ikke også koster beviset for hvorfor.
+    """
+    source = SCRIPT.read_text(encoding="utf-8")
+    assert "unpublished: list[str] = []" in source
+    assert "elif decided:" in source
+
+    raise_at = source.index("if unpublished:")
+    metrics_at = source.index('(evidence_dir / "metrics.json").write_text')
+    manifest_at = source.index("manifest_path.write_text")
+    assert manifest_at < raise_at, "manifestet skal skrives før kastet"
+    assert metrics_at < raise_at, "metrics skal skrives før kastet"

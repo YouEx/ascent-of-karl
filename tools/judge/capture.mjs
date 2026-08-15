@@ -88,6 +88,50 @@ export function phase(message) {
   process.stderr.write(`[capture +${seconds}s] ${message}\n`);
 }
 
+/**
+ * Preview-serveren lever i sin EGEN procesgruppe (se `detached` nedenfor), og
+ * det er netop hvad der gør den farlig: når dommeren dræber capture.mjs' gruppe
+ * ved timeout, dør capture.mjs uden at køre sin `finally`, og previewen
+ * overlever som forældreløs med port 5199 i hånden. Næste CI-trin starter sin
+ * egen server på samme port, bind'et fejler i baggrunden, `wait-on` får svar fra
+ * den GAMLE server — og ux-auditten rapporterer grønt på et forældet `dist/`.
+ *
+ * Node kører hverken `exit`-hooks eller udestående `finally` på et rent SIGTERM,
+ * så signalet skal håndteres eksplicit: dræb træet, og kald derefter
+ * process.exit(), som får `exit`-hooken til at fange alt, der måtte være
+ * tilbage. Handlerne installeres én gang, uanset hvor mange servere der startes,
+ * så gentagne kald ikke lækker lyttere.
+ */
+const liveServers = new Set();
+let orphanGuardArmed = false;
+const SIGNAL_EXIT_CODE = { SIGINT: 130, SIGTERM: 143, SIGHUP: 129 };
+
+function killLiveServers() {
+  for (const server of liveServers) {
+    if (server.exitCode != null || server.signalCode != null) continue;
+    try {
+      signalTree(server, "SIGKILL");
+    } catch {
+      /* oprydning må aldrig skjule den fejl, der udløste nedlukningen */
+    }
+  }
+  liveServers.clear();
+}
+
+function armOrphanGuard(server) {
+  liveServers.add(server);
+  server.once?.("exit", () => liveServers.delete(server));
+  if (orphanGuardArmed) return;
+  orphanGuardArmed = true;
+  process.on("exit", killLiveServers);
+  for (const signal of Object.keys(SIGNAL_EXIT_CODE)) {
+    process.on(signal, () => {
+      killLiveServers();
+      process.exit(SIGNAL_EXIT_CODE[signal]);
+    });
+  }
+}
+
 export async function startServer() {
   phase("bygger produktionsbundtet");
   await build();
@@ -105,6 +149,7 @@ export async function startServer() {
     { cwd: ROOT, stdio: ["ignore", "ignore", "pipe"], detached: POSIX },
   );
   proc.stderr?.on("data", () => {});
+  armOrphanGuard(proc);
   const deadline = Date.now() + 30_000;
   while (Date.now() < deadline) {
     try {
@@ -182,10 +227,6 @@ function nativeViewport(screen) {
 }
 
 /**
- * Optager én skærm. Returnerer måldata, så kalderen kan bruge dem uden at
- * læse dem tilbage fra disk.
- */
-export /**
  * page.evaluate er den eneste Playwright-kald uden egen timeout: hænger et
  * `await` inde i browseren — her en decode() på et billede, der aldrig bliver
  * færdigt — venter Node for evigt. Løftet kan ikke annulleres, men kalderen
@@ -206,7 +247,11 @@ async function withDeadline(promise, timeoutMs, label) {
   }
 }
 
-async function captureScreen(
+/**
+ * Optager én skærm. Returnerer måldata, så kalderen kan bruge dem uden at
+ * læse dem tilbage fra disk.
+ */
+export async function captureScreen(
   browser,
   screen,
   outDir,
@@ -462,6 +507,7 @@ async function captureScreen(
         continue;
       }
       const box = await loc.boundingBox();
+      const visible = await loc.isVisible();
       const styles = await loc.evaluate((node, fields) => {
         const cs = getComputedStyle(node);
         const out = {};
@@ -471,11 +517,19 @@ async function captureScreen(
         return out;
       }, STYLE_FIELDS);
 
-      metrics.regions[region.id] = { anchor: region.anchor, box, styles };
+      metrics.regions[region.id] = { anchor: region.anchor, box, styles, visible };
 
-      if (box && box.width > 0 && box.height > 0) {
+      // Et skjult anker er også et RESULTAT, på linje med et manglende: krøniken
+      // fylder hele viewporten med `visibility: hidden`, indtil spilleren åbner
+      // den. Boksen er altså stor, mens elementet aldrig kan fotograferes —
+      // uden dette tjek venter loc.screenshot() sine fulde 30 s og river hele
+      // kørslen ned. Det ramte `npm run judge`, `judge:once` og
+      // `judge:determinism`; title-fidelity gik fri, fordi den kun tager
+      // titelskærme.
+      if (box && box.width > 0 && box.height > 0 && visible) {
         await loc.screenshot({
           path: join(outDir, "render", name, `${region.id}.png`),
+          timeout: 15_000,
         });
       }
     }
