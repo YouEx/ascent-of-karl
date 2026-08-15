@@ -89,6 +89,14 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Test titel-fidelity-v2 med portable fixtures
         run: TITLE_FIDELITY_TESTS=1 npx vitest run tests/title-fidelity-v2.test.ts tests/judge-capture.test.ts
+      # Kunstpipelinens pytest-suite var aldrig blevet kaldt i CI, selv om
+      # planens stack-tabel udpeger "Vitest + Python pytest" som portlaget — og
+      # selv om pytest hele tiden er blevet INSTALLERET her på linjen ovenfor.
+      # 138 tests, der bevogter promoveringsportene, godkendelsesbindingen og
+      # den atomare udgivelse, kørte altså kun når nogen huskede det lokalt.
+      # Afhængighederne er de samme som dommerens, så trinnet koster kun tid.
+      - name: Test kunstpipelinen (promoverings- og udgivelsesporte)
+        run: python3 -m pytest tools/art/tests -q
       # Safe stacked merge: Phase A auditerer og gemmer røde mål, men gør ikke
       # main rød. Phase D ændrer dette kald til `-- --require-green`, efter at
       # de fire krævede assetlag og asset-kontrakten er integreret.
