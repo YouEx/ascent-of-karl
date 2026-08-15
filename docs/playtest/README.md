@@ -28,8 +28,9 @@ npm run build:pages && npm run verify:live
 
 Grøn kørsel betyder, at previewet ovenfor ER nuværende `main`: hele artifactet,
 2.936 filer, byte for byte — også lyden, som ligger under stabile navne og
-derfor ikke afsløres af et hashet bundtnavn. En kølig kørsel tager 8-35
-sekunder — er den langsom, er det CDN-cachen, der er kold, ikke en fejl.
+derfor ikke afsløres af et hashet bundtnavn. Målt over 6 kørsler tager den 8-51
+sekunder — er den langsom, er det CDN-cachen, der er kold, ikke en fejl, og en
+kørsel lige efter et deploy ligger typisk i toppen af spændet.
 Rød betyder stop: vent på deployet, og send først invitationerne
 bagefter. Melder den kun filer "uden svar", er det CDN'et, ikke dit deploy —
 kør igen. Nævner den HTTP 429, har du kørt den for tæt på sidste gang: 2.936

@@ -88,8 +88,9 @@ under stabile navne — og sammenligner sha256 mod det lokale build. Den er
 fail-closed: 404, netværksfejl og en tom kørsel tæller alle som afvigelse,
 aldrig som bekræftelse; filer, der slet ikke svarer (429/5xx), forsøges igen og
 meldes adskilt fra ægte bytedrift, så en CDN-blip ikke sender dig ud i et
-unødigt gen-deploy. En kølig kørsel tager 8-35 sekunder — spredningen er
-CDN-cachens varme, ikke et problem; køres den flere gange i tæt rækkefølge,
+unødigt gen-deploy. Målt over 6 kørsler tager den 8-51 sekunder — spredningen
+er CDN-cachens varme, ikke et problem, og en kørsel umiddelbart efter et deploy
+ligger i toppen af spændet; køres den flere gange i tæt rækkefølge,
 hastighedsbegrænser Pages (HTTP 429), og værktøjet siger det
 med rene ord i stedet for at melde drift. Grøn kørsel betyder, at det
 deltagerne møder, ER nuværende `main` — hele vejen, ikke kun de hashede assets.
