@@ -100,6 +100,8 @@ declare module "node:child_process" {
     options?: {
       cwd?: string;
       stdio?: "ignore" | "pipe" | "inherit";
+      // Egen procesgruppe: uden den overlever et barnebarn sin indpakning.
+      detached?: boolean;
     },
   ): ChildProcess;
 }

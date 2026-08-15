@@ -311,3 +311,36 @@ describe("process-group — timeout/error efterlader ingen efterkommere", () => 
     }
   });
 });
+
+/**
+ * Regression: preview-serveren startes som `npx vite preview`, hvor `npx` blot
+ * er en indpakning. Da stopServer kun signalerede indpakningen, overlevede
+ * `vite` som forældreløs på CI's Linux, holdt de arvede pipes åbne og forhindrede
+ * capture.mjs i nogensinde at afslutte — dommeren brændte hele sit budget på et
+ * `close`, der aldrig kom, og døde tavst efter 240 s (CI-kørsel 31871036465).
+ */
+describe("stopServer — indpakning og server dør sammen", () => {
+  it("dræber også barnebarnet, ikke kun den npx-lignende indpakning", async () => {
+    const dir = mkdtempSync(join(SCRATCH_ROOT, "stop-server-tree-"));
+    const pidPath = join(dir, "pids.json");
+    try {
+      const wrapper = spawn(process.execPath, ["-e", TREE_SCRIPT, pidPath, "wait"], {
+        stdio: "ignore",
+        detached: (process as unknown as { platform: string }).platform !== "win32",
+      });
+      const deadline = Date.now() + 5_000;
+      while (!existsSync(pidPath) && Date.now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      const pids = JSON.parse(readFileSync(pidPath, "utf8"));
+      expect(processAlive(pids.grandchild)).toBe(true);
+
+      await stopServer(wrapper, { timeoutMs: 2_000 });
+
+      await waitForDead(pids.parent);
+      await waitForDead(pids.grandchild);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});

@@ -15,13 +15,24 @@ function treeAlive(child) {
   }
 }
 
-function signalTree(child, signal) {
+/**
+ * Signalerer hele gruppen, med barnet selv som fallback. Uden fallback ville et
+ * ikke-detached barn (eller en testdobbelt) give ESRCH på gruppe-id'et og blive
+ * tolket som "allerede død" — og så ville ingen nogensinde dræbe det.
+ */
+export function signalTree(child, signal) {
   if (!child?.pid) return false;
+  if (!POSIX) return child.kill(signal);
   try {
-    return POSIX ? (process.kill(-child.pid, signal), true) : child.kill(signal);
+    process.kill(-child.pid, signal);
+    return true;
   } catch (err) {
-    if (err?.code === "ESRCH") return false;
-    throw err;
+    if (err?.code !== "ESRCH") throw err;
+    try {
+      return child.kill(signal);
+    } catch {
+      return false;
+    }
   }
 }
 
@@ -48,6 +59,21 @@ export async function stopProcessGroup(child, {
   if (!(await waitUntilDead(child, killWaitMs))) {
     throw new Error(`procesgruppen ${child.pid} kunne ikke standses`);
   }
+}
+
+/**
+ * Et dødt barn efterlader kun det, det nåede at sige. Timeout-beskeden bar før
+ * kun stderr, så et barn der rapporterer fremdrift på stdout — som capture.mjs
+ * gør — døde tavst: CI viste 240 sekunders stilhed og derefter én linje uden
+ * spor af, hvilken fase der hang. Begge strømme kommer med nu, halen først,
+ * fordi det er de sidste linjer før døden, der peger på gerningsstedet.
+ */
+function transcript(stdout, stderr, limit = 4_000) {
+  const tail = (text) => (text.length > limit ? `…${text.slice(-limit)}` : text);
+  const parts = [];
+  if (stdout.trim()) parts.push(`--- stdout ---\n${tail(stdout).trimEnd()}`);
+  if (stderr.trim()) parts.push(`--- stderr ---\n${tail(stderr).trimEnd()}`);
+  return parts.length ? `:\n${parts.join("\n")}` : "";
 }
 
 /** Asynkron erstatning for execFileSync i langsomme browserkørsler. Ejer en
@@ -84,11 +110,13 @@ export function runProcessGroup(file, args = [], {
       }
 
       if (timedOut) {
-        reject(new Error(`${file} timeout efter ${timeoutMs} ms${stderr ? `:\n${stderr}` : ""}`));
+        reject(new Error(`${file} timeout efter ${timeoutMs} ms${transcript(stdout, stderr)}`));
       } else if (error) {
         reject(error);
       } else if (code !== 0) {
-        reject(new Error(`${file} fejlede (kode ${code ?? signal ?? "ukendt"}):\n${stderr}`));
+        reject(new Error(
+          `${file} fejlede (kode ${code ?? signal ?? "ukendt"})${transcript(stdout, stderr)}`,
+        ));
       } else {
         resolve({ stdout, stderr, code: 0 });
       }

@@ -37,6 +37,9 @@ import { spawn } from "node:child_process";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { runProcessGroup, signalTree } from "./process-group.mjs";
+
+const POSIX = process.platform !== "win32";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const PORT = 5199;
@@ -64,35 +67,52 @@ const STYLE_FIELDS = [
  *  empirisk 2026-08-12: genbyg ændrede `index-BMhE9eiG.css` til
  *  `index-GPzA5hkr.css` uden serverneutstart, og den nye fil bar den
  *  injicerede tokenværdi. */
-export async function build() {
-  await new Promise((res, rej) => {
-    const proc = spawn("npx", ["vite", "build"], {
-      cwd: ROOT,
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    let stderr = "";
-    proc.stderr.on("data", (d) => {
-      stderr += d;
-    });
-    proc.on("exit", (code) => {
-      if (code === 0) res();
-      else rej(new Error(`vite build fejlede (kode ${code}):\n${stderr}`));
-    });
-  });
+/**
+ * Byg via procesgruppe-køreren, ikke rå spawn. Den gamle kode åbnede en pipe
+ * på barnets stdout uden nogensinde at læse den: skriver vite mere end
+ * pipe-bufferen (64 KB) rummer, blokerer barnet for evigt på sin egen write,
+ * og build() — som ingen timeout havde — venter lige så længe. Køreren tømmer
+ * begge strømme, kører barnet i sin egen gruppe og har en øvre grænse, så en
+ * hængende build dør med et spor i stedet for at æde hele dommerens budget.
+ */
+export async function build({ timeoutMs = 180_000, runProcessFn = runProcessGroup } = {}) {
+  await runProcessFn("npx", ["vite", "build"], { cwd: ROOT, timeoutMs });
+}
+
+/** Fasemarkør på stderr med forbrugt tid. stderr, fordi en dræbt proces kun
+ * efterlader det, forælderen allerede har set — og fordi markørerne skal kunne
+ * læses i CI-loggen uden at forurene stdout, som dommeren videresender. */
+const startedAt = Date.now();
+export function phase(message) {
+  const seconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+  process.stderr.write(`[capture +${seconds}s] ${message}\n`);
 }
 
 export async function startServer() {
+  phase("bygger produktionsbundtet");
   await build();
+  phase("build færdig — starter vite preview");
   const proc = spawn(
     "npx",
     ["vite", "preview", "--port", String(PORT), "--strictPort", "--host", "127.0.0.1"],
-    { cwd: ROOT, stdio: ["ignore", "pipe", "pipe"] },
+    // detached: `npx` er en indpakning, ikke selve serveren. Et SIGTERM til
+    // indpakningen efterlader `vite` som forældreløs på Linux, og barnebarnet
+    // holder de arvede pipes åbne — så capture.mjs aldrig kan afslutte, og
+    // dommeren venter hele sit budget på et `close`, der aldrig kommer.
+    // Egen procesgruppe gør det muligt at dræbe hele træet.
+    // stdout ignoreres frem for at pipes: en pipe, ingen læser, er en
+    // deadlock, der venter på en tilstrækkelig snakkesalig server.
+    { cwd: ROOT, stdio: ["ignore", "ignore", "pipe"], detached: POSIX },
   );
+  proc.stderr?.on("data", () => {});
   const deadline = Date.now() + 30_000;
   while (Date.now() < deadline) {
     try {
       const res = await fetch(ORIGIN, { signal: AbortSignal.timeout(1500) });
-      if (res.ok) return proc;
+      if (res.ok) {
+        phase(`preview svarer på ${ORIGIN}`);
+        return proc;
+      }
     } catch {
       /* endnu ikke oppe */
     }
@@ -131,11 +151,11 @@ export async function stopServer(server, { timeoutMs = 5_000 } = {}) {
 
     server.once("exit", finish);
     forceTimer = setTimeout(() => {
-      try { server.kill("SIGKILL"); } catch { finish(); }
+      try { signalTree(server, "SIGKILL"); } catch { finish(); }
     }, timeoutMs);
 
     try {
-      if (!server.kill("SIGTERM")) finish();
+      if (!signalTree(server, "SIGTERM")) finish();
     } catch {
       finish();
     }
@@ -165,7 +185,28 @@ function nativeViewport(screen) {
  * Optager én skærm. Returnerer måldata, så kalderen kan bruge dem uden at
  * læse dem tilbage fra disk.
  */
-export async function captureScreen(
+export /**
+ * page.evaluate er den eneste Playwright-kald uden egen timeout: hænger et
+ * `await` inde i browseren — her en decode() på et billede, der aldrig bliver
+ * færdigt — venter Node for evigt. Løftet kan ikke annulleres, men kalderen
+ * lukker browseren i sin finally, så en overskredet frist ender som en navngiven
+ * fejl i stedet for tavs død i dommerens samlede budget.
+ */
+async function withDeadline(promise, timeoutMs, label) {
+  let timer;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, rej) => {
+        timer = setTimeout(() => rej(new Error(`${label} nåede ikke at svare inden ${timeoutMs} ms`)), timeoutMs);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function captureScreen(
   browser,
   screen,
   outDir,
@@ -194,9 +235,11 @@ export async function captureScreen(
 
   try {
     const url = `${ORIGIN}/?scenario=${screen.scenario}&freeze=1`;
+    phase(`${name}: åbner ${viewport.width}×${viewport.height}@${viewport.dpr}x`);
     await page.goto(url, { waitUntil: "load" });
     // Venter på et FAKTUM (siden er malet), ikke på et gæt (en timeout).
     await page.waitForSelector("html[data-ready='true']", { timeout: 20_000 });
+    phase(`${name}: siden er malet`);
 
     await mkdir(join(outDir, "render", name), { recursive: true });
     await mkdir(join(outDir, "metrics"), { recursive: true });
@@ -209,7 +252,7 @@ export async function captureScreen(
     };
     await writeFile(join(outDir, "render", `${name}.png`), screenshot);
 
-    const browserEvidence = await page.evaluate(async ({ dpr, config, payloadClass }) => {
+    const browserEvidence = await withDeadline(page.evaluate(async ({ dpr, config, payloadClass }) => {
       const titleRoot = document.querySelector("#title-screen");
       const criticalSources = new Set();
       const titleElements = titleRoot
@@ -382,7 +425,8 @@ export async function captureScreen(
       dpr: viewport.dpr,
       config: fidelityCapture,
       payloadClass: viewport.payloadClass,
-    });
+    }), 60_000, `${name}: browserbevis`);
+    phase(`${name}: bevis indsamlet`);
 
     const characterRelativePath = join("render", `${name}-character.png`);
     if (browserEvidence.characterDataUrl) {
