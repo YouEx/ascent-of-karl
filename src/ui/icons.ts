@@ -10,21 +10,37 @@
  * Alle ikoner arver farve via `stroke: currentColor` (sat i style.css).
  */
 
-const svg = (body: string): string =>
-  `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${body}</svg>`;
+const svg = (body: string, paint = "", viewBox = "0 0 24 24"): string =>
+  `<svg viewBox="${viewBox}"${paint ? ` data-paint="${paint}"` : ""} aria-hidden="true" focusable="false">${body}</svg>`;
+
+/* Solens 12 stråler ligger på en cirkel med fast inder- og yderradius. Skrevet
+   ud i hånden er de 48 tal uden nogen indbyrdes lighed — den slags ciffersuppe
+   komprimerer elendigt og kostede alene bundtbudgettets sidste luft. Regnet ud
+   her koster de én løkke, og formlen dokumenterer samtidig geometrien. */
+const rays = Array.from({ length: 12 }, (_, i) => {
+  const a = (i * Math.PI) / 6 - Math.PI / 2;
+  const c = Math.cos(a);
+  const s = Math.sin(a);
+  const at = (r: number) => `${(12 + c * r).toFixed(1)} ${(12 + s * r).toFixed(1)}`;
+  return `M${at(7.7)}L${at(9.9)}`;
+}).join("");
+
+/* Hulemundingens takkede krone tegnes ÉN gang og males to gange: først bred i
+   klippekantens tone, så smal i mørket ovenpå (se style.css). To hånd­tegnede
+   varianter af den samme takkede kontur ville koste fuld pris i bundtet, mens
+   den samme streng to gange er nærmest gratis efter gzip. */
+// Konturen er aftegnet fra referencens hulemund (mørkere end L<100, største
+// sammenhængende klat): en bue der er 32,5 bred og 30,8 høj — forhold 1,05,
+// målt til 1,0 i referencen. Buen er bevidst uregelmæssig: korte rette stykker
+// (klippeknuder) skifter med bløde Q-buer, så randen læses som hugget sten og
+// ikke som et blødt badge. Rene trappetrin blev prøvet og forkastet — de
+// læste som murtinder.
+const dome =
+  "M6.3 38 6.3 29.6Q6.9 25.4 8.4 22.1L9.9 20.4Q11.2 18.3 13.4 17L15.4 16.2 16.2 13.9Q17.1 11.6 18.8 10L20.2 8.9Q21.2 8.1 22.6 8.1L24.2 8.2Q25.4 8.4 26.2 9.7L27.9 11.5Q29.2 13.2 30.3 14.6L32.4 15.8Q34.6 17.1 35.9 19.4L37 21.6Q38.3 25.2 38.8 29.6L38.8 38Z";
 
 export const icons = {
   book: svg(
     `<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5z"/>`,
-  ),
-  help: svg(
-    `<path d="M9.6 8.4a2.7 2.7 0 1 1 4.3 2.2c-1.2.8-1.9 1.3-1.9 2.7"/><path d="M12 17.5h.01"/><circle cx="12" cy="12" r="9"/>`,
-  ),
-  trophy: svg(
-    `<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5H4.5v1.5A3.5 3.5 0 0 0 8 10"/><path d="M17 5h2.5v1.5A3.5 3.5 0 0 1 16 10"/><path d="M12 14v3"/><path d="M8.5 20h7"/><path d="M10 17h4l.7 3h-5.4z"/>`,
-  ),
-  spiral: svg(
-    `<path d="M12 2.75v2"/><path d="M12 19.25v2"/><path d="M2.75 12h2"/><path d="M19.25 12h2"/><path d="m5.46 5.46 1.42 1.42"/><path d="m17.12 17.12 1.42 1.42"/><path d="m18.54 5.46-1.42 1.42"/><path d="m6.88 17.12-1.42 1.42"/><path d="M12 8.1a3.9 3.9 0 1 1-3.78 4.84 2.85 2.85 0 1 1 3.53 2.03"/>`,
   ),
   restart: svg(`<path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/>`),
   close: svg(`<path d="M6 6l12 12"/><path d="M18 6L6 18"/>`),
@@ -33,5 +49,42 @@ export const icons = {
   ),
   soundOff: svg(
     `<path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M16.5 10l4 4"/><path d="M20.5 10l-4 4"/>`,
+  ),
+
+  /* Referencens sol: en tyk spiral på ~3 vindinger med 12 udstrålende stråler.
+     Spiralen er bygget som en kæde af halvcirkler med konstant tilvækst
+     (1,08 pr. halvcirkel), så mellemrummet mellem vindingerne er lige så
+     bredt som stregen selv — vokser tilvæksten ikke, smelter vindingerne
+     sammen til en klat. Strålerne står med en lille uregelmæssighed i vinkel
+     og længde, fordi referencens er hugget, ikke sat op med passer. */
+  titleSpiral: svg(
+    `<path d="M12.5 12A1.04 1.04 0 0 0 10.42 12A2.12 2.12 0 0 0 14.66 12A3.2 3.2 0 0 0 8.26 12A4.28 4.28 0 0 0 16.82 12A5.36 5.36 0 0 0 6.1 12A6.2 6.2 0 0 0 18.5 12"/><path stroke-width="1.35" d="${rays}"/>`,
+    "carve",
+  ),
+
+  /* Referencens trofæ: udfyldt metalsilhuet — rand, konisk skål, stilk,
+     udsvajet fod og sokkel — med to ÅBNE hanke, der er stregede, ikke
+     fyldte. Dråben i skålen er referencens egen prægning. */
+  titleTrophy: svg(
+    `<path d="M8.8 7.1h6.4v1.15H8.8z"/><path d="M9.25 8.25h5.5l-.6 3.5a2.15 2.15 0 0 1-4.3 0z"/><path d="M11.25 13.55h1.5v2h-1.5z"/><path d="M10.15 15.55h3.7l1.05 1.35h-5.8z"/><path d="M8.5 16.9h7v1.15h-7z"/><path d="M12 9.4a.86.86 0 0 1 .78 1.22l-.78 1.52-.78-1.52A.86.86 0 0 1 12 9.4z" data-paint="void"/><path d="M9.2 8.95H7.05a.95.95 0 0 0-.95.95c0 1.7 1.2 3.15 2.85 3.55" data-paint="stroke"/><path d="M14.8 8.95h2.15a.95.95 0 0 1 .95.95c0 1.7-1.2 3.15-2.85 3.55" data-paint="stroke"/>`,
+    "fill",
+  ),
+
+  /* Referencens velkomstmotiv: en hulemunding med takket klippekrone, to
+     klippespyd til side, en jordlinje med kviste — og en lys figur inde i
+     mørket. Figurens lemmer er streger med runde ender, ligesom referencens
+     tykke, malede arme og ben; hoved og krop er fyldte. Sammen læses de som
+     én silhuet. */
+  titleCave: svg(
+    `<path data-part="spur" d="M2.6 37.5 3.9 19.8 5 24.6 5.4 37.5ZM43.4 37.5 42.1 19.8 41 24.6 40.6 37.5Z"/>` +
+      `<path data-part="rim" d="${dome}"/><path data-part="cave" d="${dome}"/>` +
+      `<g data-part="figure">` +
+      `<circle cx="22.6" cy="19.5" r="2.35"/>` +
+      `<path d="M20.3 22.1h4.6v4.9a2.3 2.3 0 0 1-4.6 0z"/>` +
+      `<path data-limb d="M20.6 23 16.8 21M24.6 23 28.4 21M21.4 27.6 20.2 33.8M23.8 27.6 25 33.8"/>` +
+      `</g>` +
+      `<path data-part="ground" d="M3 37.4h40M7 39.3l4.6-1.4M39 39.3l-4.6-1.4M18.4 39.6l3.6-1.1"/>`,
+    "scene",
+    "0 0 46 42",
   ),
 } as const;

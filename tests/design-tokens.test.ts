@@ -232,11 +232,22 @@ describe("titelskærmens kontrastpar (overflader uden for de seks generiske papi
   // tokenændring, der umærkeligt sænker en af dem, fældes af testen — ikke
   // først opdaget ved næste visuelle gennemgang.
 
-  it("--ribbon-ink mod fanebåndets egen flade (--tile-edge) klarer AA (4.5:1)", () => {
-    // .title-sub i style.css: --tile-groove målte kun 4,19:1 og blev
-    // forkastet til fordel for --tile-edge, der holder 4,92:1.
+  it("--ribbon-ink mod fanebåndets egen flade (--ribbon-face) klarer AA (4.5:1)", () => {
+    // .title-sub i style.css: båndet lånte før --tile-edge (kortenes tone,
+    // 4,92:1), men den er koldere og blegere end referencens malede bånd.
+    // --ribbon-face er regionsmedianen fra referencen selv og holder 4,74:1.
     expect(
-      contrast(token("ribbon-ink"), token("tile-edge")),
+      contrast(token("ribbon-ink"), token("ribbon-face")),
+    ).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("--btn-ink mod primærknappens egen tavle (--slab-face) klarer AA (4.5:1)", () => {
+    // .title-actions .btn-stone er ikke længere en lys blanding tæt på
+    // papiret, men referencens målte materiale #b98d65. Både etiketten
+    // ("Begin") og helleristningen arver --btn-ink, så det ene tal dækker
+    // begge — og teksten er den strengeste af de to (4,5:1 mod ikonets 3:1).
+    expect(
+      contrast(token("btn-ink"), token("slab-face")),
     ).toBeGreaterThanOrEqual(4.5);
   });
 

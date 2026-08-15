@@ -157,6 +157,48 @@
   --field-groove: #c1a794;
   /* New finds er pergament, ikke kridt. Målt fyld i knappen: 227,206,185. */
   --btn-parchment: #e3ceb9;
+
+  /* Titlens primærknap er en MATERIALE-flade, ikke et omrids på papiret.
+     Målt som regionsmedian i docs/design/reference/title-2026-08-11.webp:
+     knapfladen (x 250-400, y 690-720) = #b98d65, den lyse overkantsskinne
+     (x 150-430, y 644-652) = #d4b492. Papiret omkring måler #dfc7af, så
+     referencens knap er ~34 % mørkere end arket den ligger på.
+     Hvorfor det er en egen token og ikke en blanding af flisetokens: den
+     gamle knap blandede --btn-parchment og --field-bevel og landede på
+     #dfcab3 — 2 % fra papiret. Når en flade kun adskiller sig fra sin
+     baggrund via sin egen kant, ER kanten det eneste øjet ser, og knappen
+     læses som en tegnet firkant i stedet for en fysisk tavle. Det var
+     præcis den fejl skærmbilledet 2026-08-14 viste. */
+  --slab-face: #b98d65;
+  --slab-rail: #d4b492;
+  /* Lyset falder ovenfra: referencens ØVERSTE skinne måler #e8c395, mens
+     venstre og nederste måler #ae825c og #ab805b — altså en oplyst kant, ikke
+     en ramme. Lægges skinnen ens hele vejen rundt, bliver den til et lyst
+     omrids om en mørk flade, og knappen læses igen som en firkant. */
+  --slab-rail-lit: #e8c395;
+  /* Fates-knappens egen flade og skinne, målt samme sted i referencen
+     (x 470-650, y 690-715 og x 444-655, y 652-660). Den lånte
+     --btn-parchment + lyse flisetokens og landede på #e7d4c0, for blegt. */
+  --quiet-face: #e0c8ab;
+  --quiet-rail: #e8d2b7;
+  /* Fanebåndets egen flade, målt samme sted (x 200-620, y 470-505) = #dbba95.
+     Båndet lånte før --tile-edge (#d8bfa5), som er kortenes tone: koldere og
+     blegere end referencens malede bånd. */
+  --ribbon-face: #dbba95;
+  /* Hulemaleriet i velkomst-chippen. Målt i referencen (x 46-112, y 25-88):
+     hulens indre #302319, den oplyste klippekant #8a715c, klippespydene til
+     side #7c6755, figuren #ead7bf og jordlinjen #9b836a.
+
+     Motivet lå før som welcome-figure.webp — et 69x61 bitmap med UGENNEMSIGTIGT
+     hjørne (alfa 255 i tre af fire hjørner), altså en bagt firkant med en
+     grå-lyserød himmel bagved. Referencen har ingen kasse overhovedet: hulen
+     står direkte på pergamentet. Derfor er motivet nu en tegnet SVG med
+     gennemsigtig baggrund. */
+  --cave-dark: #302319;
+  --cave-rim: #8a715c;
+  --cave-spur: #7c6755;
+  --cave-body: #ead7bf;
+  --cave-ground: #9b836a;
   --dashed: #cbb19e;
   --frame: #ccadab;
 

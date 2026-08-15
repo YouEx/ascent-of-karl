@@ -154,8 +154,8 @@ app.innerHTML = `
     <span id="act-label"></span>
     <span id="age"></span>
     <div class="header-actions">
-      <button id="book-btn" class="icon-btn" aria-label="Open the chronicle archive">${icons.help}<span id="book-badge"></span></button>
-      <button id="trophies" class="icon-btn" aria-label="Fates discovered">${icons.trophy}</button>
+      <button id="book-btn" class="icon-btn" aria-label="Open the chronicle archive">${icons.book}<span id="book-badge"></span></button>
+      <button id="trophies" class="icon-btn" aria-label="Fates discovered">${icons.titleTrophy}</button>
       <button id="restart" class="icon-btn" aria-label="Start over">${icons.restart}</button>
     </div>
   </header>
@@ -1250,7 +1250,7 @@ function showTitleScreen(): void {
         <div class="title-divider title-block" aria-hidden="true"></div>
         <div class="title-actions title-block${crowded}">
           <button id="t-primary" class="title-action btn-stone">
-            <span class="title-action-icon" aria-hidden="true">${icons.spiral}</span>
+            <span class="title-action-icon" aria-hidden="true">${icons.titleSpiral}</span>
             <span class="title-action-label">${canContinue ? "Continue" : "Begin"}</span>
           </button>
           ${canContinue ? `<button id="t-new" class="title-action btn-quiet">
@@ -1258,7 +1258,7 @@ function showTitleScreen(): void {
             <span class="title-action-label">New life</span>
           </button>` : ""}
           <button id="t-fates" class="title-action btn-quiet">
-            <span class="title-action-icon" aria-hidden="true">${icons.trophy}</span>
+            <span class="title-action-icon" aria-hidden="true">${icons.titleTrophy}</span>
             <span class="title-action-label">Fates</span>
             <span class="title-action-count fates-count">${unlocked}/${content.endings.length}</span>
           </button>
@@ -1270,14 +1270,14 @@ function showTitleScreen(): void {
       </div>
       ${canContinue ? "" : `
       <div class="title-chip">
-        <span class="figure" aria-hidden="true"></span>
+        <span class="figure" aria-hidden="true">${icons.titleCave}</span>
         <div>
           <strong>Welcome, inventor.</strong>
           <span>Ready to make history?</span>
         </div>
       </div>`}
       <div class="title-tools">
-        <button id="t-trophies" aria-label="Fates you have reached">${icons.trophy}</button>
+        <button id="t-trophies" aria-label="Fates you have reached">${icons.titleTrophy}</button>
         <button id="t-sound" aria-pressed="${muted}"
                 aria-label="${muted ? "Unmute the narrator" : "Mute the narrator"}">${muted ? icons.soundOff : icons.soundOn}</button>
       </div>

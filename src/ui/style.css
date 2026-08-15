@@ -1560,15 +1560,26 @@ html[data-improvise-enabled] .invention-entry .invention-label {
     94% 92%, 6% 92%,
     0% 68%, 5% 45%, 0% 18%
   );
-  background-color: var(--tile-edge);
+  background-color: var(--ribbon-face);
+  /* Referencens bånd er malet stof: enderne er FOLDER, der ligger i skygge,
+     og midten fanger lyset. Den gamle version lagde en flad tone på tværs og
+     satte en 1 px hård drop-shadow under — en skarp kant hele vejen rundt om
+     et lyst rektangel, altså netop en firkant. Nu bærer to gradienter
+     foldeskyggen ved 0-13 % og 87-100 %, og skyggen under er blød. */
   background-image:
     var(--grain),
     linear-gradient(to right,
-      var(--tile-contour) 0%, transparent 13%,
-      transparent 87%, var(--tile-contour) 100%),
-    linear-gradient(to bottom, var(--tile-bevel), var(--tile-edge));
-  background-blend-mode: overlay, multiply, normal;
-  filter: drop-shadow(0 1px 0 var(--tile-contour));
+      color-mix(in srgb, var(--valley-dark) 22%, var(--ribbon-face)) 0%,
+      transparent 13%,
+      transparent 87%,
+      color-mix(in srgb, var(--valley-dark) 22%, var(--ribbon-face)) 100%),
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--tile-lit) 52%, var(--ribbon-face)),
+      var(--ribbon-face) 55%,
+      color-mix(in srgb, var(--valley-dark) 10%, var(--ribbon-face)));
+  background-blend-mode: overlay, normal, normal;
+  filter: drop-shadow(0 min(0.4cqw, 3px) min(0.6cqw, 4px)
+    color-mix(in srgb, var(--valley-dark) 26%, transparent));
 }
 
 .title-tagline {
@@ -1632,15 +1643,24 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 }
 .title-actions button {
   position: relative;
+  --icon-void: var(--quiet-face);
+  /* Referencens knap har ÉN hævet skinne hele vejen rundt — ikke to ringe.
+     De to inset-ringe (2 px + 4 px) her tegnede en ramme inde i rammen, og
+     to koncentriske rektangler er præcis det, øjet aflæser som "en firkant".
+     Nu: 1 px kontur + én skinne, malet med en enkelt inset-skygge, så
+     kanten er ét materiale i stedet for to streger. */
   border: 1px solid var(--tile-contour);
   border-radius: min(3.2cqw, var(--radius-lg));
-  background-color: var(--btn-parchment);
+  --rail: var(--quiet-rail);
+  --rail-lit: var(--quiet-rail);
+  background-color: var(--quiet-face);
   background-image:
     var(--grain),
     linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--field-bevel) 72%, var(--tile-lit)),
-      color-mix(in srgb, var(--btn-parchment) 76%, var(--tile-shade))
+      color-mix(in srgb, var(--quiet-rail) 62%, var(--quiet-face)),
+      var(--quiet-face) 52%,
+      color-mix(in srgb, var(--valley-dark) 7%, var(--quiet-face))
     );
   background-blend-mode: overlay, normal;
   padding: 0 min(3.2cqw, 22px);
@@ -1656,9 +1676,13 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   cursor: pointer;
   white-space: nowrap;
   box-shadow:
-    inset 0 0 0 2px var(--field-bevel),
-    inset 0 0 0 4px var(--tile-groove),
-    inset 0 1px 0 color-mix(in srgb, var(--chronicle) 80%, transparent),
+    /* Rækkefølgen er lyset: øverste skinne malet FØR den ensartede skinne,
+       så den lægger sig oven på den. Derefter bundens skygge, og til sidst
+       selve skinnen som underlag. */
+    inset 0 min(0.9cqw, 6px) 0 var(--rail-lit),
+    inset 0 min(-0.55cqw, -4px) min(0.8cqw, 6px)
+      color-mix(in srgb, var(--valley-dark) 20%, transparent),
+    inset 0 0 0 min(0.9cqw, 6px) var(--rail),
     var(--shadow-paper);
   transition:
     transform var(--dur-press) var(--ease-out),
@@ -1685,14 +1709,24 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 .title-actions .btn-stone {
   width: min(39.31cqw, 274px);
   flex: none;
-  background-color: var(--tile-edge);
+  --icon-void: var(--slab-face);
+  /* Målt i referencen: knapfladen er #b98d65 mod papirets #dfc7af — altså en
+     tavle af ANDET materiale, ikke et omrids på arket. Den gamle blanding
+     landede på #dfcab3, 2 % fra papiret, og så bar kanten hele adskillelsen
+     alene. Farven er nu tokenet direkte, og gradienten spiller kun omkring
+     den i stedet for at trække den op mod papiret. */
+  background-color: var(--slab-face);
+  --rail: var(--slab-rail);
+  --rail-lit: var(--slab-rail-lit);
   background-image:
     var(--grain),
     linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--field-bevel) 64%, var(--tile-lit)),
-      color-mix(in srgb, var(--tile-edge) 70%, var(--tile-groove))
+      color-mix(in srgb, var(--slab-rail) 46%, var(--slab-face)),
+      var(--slab-face) 46%,
+      color-mix(in srgb, var(--valley-dark) 12%, var(--slab-face))
     );
+  color: var(--btn-ink);
   font-size: 5.6cqw;
   font-weight: 650;
   font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
@@ -1734,17 +1768,17 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   display: grid;
   place-items: center;
   flex: none;
-  color: var(--label-ink);
-  background: color-mix(in srgb, var(--tile-groove) 34%, transparent);
-  border: 1px solid color-mix(in srgb, var(--tile-contour) 72%, var(--btn-ink));
-  border-radius: min(2cqw, var(--radius));
-  box-shadow:
-    inset 0 1px 3px color-mix(in srgb, var(--valley-dark) 16%, transparent),
-    0 1px 0 color-mix(in srgb, var(--chronicle) 72%, transparent);
+  /* INGEN egen flade. Referencens ikoner er malet direkte på knappens tavle
+     — de har hverken ramme, fyld eller radius. Da de her havde alle tre, fik
+     hvert ikon sit eget lille rektangel oven på knappens rektangel, og det
+     var de "firkanter" skærmbilledet 2026-08-14 pegede på. Beholdes bevidst
+     som en tom boks (grid + place-items) udelukkende for at centrere SVG'en. */
+  color: inherit;
 }
 .title-action-icon svg {
-  width: 62%;
-  height: 62%;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.7;
@@ -1933,8 +1967,46 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 }
 .title-chip .figure {
   width: 69px; height: 61px;
-  background: url("../assets/art/title-materials/welcome-figure.webp") no-repeat center / contain;
   flex: none;
+  display: grid;
+  place-items: center;
+}
+/* Hulemaleriet har ingen egen baggrund: pergamentet i chippen ER motivets
+   baggrund, præcis som i referencen. Farverne kommer fra --cave-*, målt i
+   referencen — se tokens.css. */
+.title-chip .figure svg {
+  width: 100%; height: 100%;
+  overflow: visible;
+}
+.title-chip .figure svg [data-part="spur"] { fill: var(--cave-spur); }
+/* Kanten er den SAMME kontur som hulen, tegnet bred: en 1,6 enheder bred
+   klippekant hele vejen rundt om mørket, som referencens oplyste stenrand.
+   miter, ikke round: facetterne skal blive hjørner, ellers runder kanten
+   netop den huggede karakter væk igen. */
+.title-chip .figure svg [data-part="rim"] {
+  fill: var(--cave-rim);
+  stroke: var(--cave-rim);
+  stroke-width: 3.2;
+  stroke-linejoin: miter;
+  stroke-miterlimit: 2.4;
+}
+.title-chip .figure svg [data-part="cave"] { fill: var(--cave-dark); }
+.title-chip .figure svg [data-part="figure"] {
+  fill: var(--cave-body);
+  stroke: var(--cave-body);
+  stroke-width: 0;
+}
+.title-chip .figure svg [data-limb] {
+  fill: none;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.title-chip .figure svg [data-part="ground"] {
+  fill: none;
+  stroke: var(--cave-ground);
+  stroke-width: 1.1;
+  stroke-linecap: round;
 }
 .title-chip strong {
   display: block;
@@ -1981,6 +2053,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
     inset 0 0 0 4px var(--tile-groove),
     var(--shadow-paper);
   color: var(--label-ink);
+  --icon-void: var(--tile-shade);
   cursor: pointer;
   transition:
     transform var(--dur-press) var(--ease-out),
@@ -2618,4 +2691,31 @@ html[data-improvise-enabled] .invention-card .card-emoji {
 }
 @media (prefers-reduced-motion: reduce) {
   .challenge-inner.urgent { animation: none; box-shadow: 0 0 0 4px rgba(162, 75, 55, 0.18); }
+}
+
+/* --- Malede ikoner: data-paint er kontrakten ---------------------------- */
+/* icons.ts mærker et ikon som malet i stedet for streget, og krommet retter
+   sig efter mærket. Reglerne hænger derfor på attributten, ikke på ét sted i
+   layoutet: referencens trofæ er den SAMME malede silhuet på titelknappen og
+   på værktøjsknappen øverst til højre, og så skal den se ens ud begge steder.
+   Blokken står sidst, fordi .icon-btn svg og .title-action-icon svg vejer
+   præcis lige så meget — rækkefølgen er det, der afgør striden. */
+svg[data-paint="carve"] {
+  /* Helleristningen: tynd nok til at spiralens vindinger ikke rører hinanden. */
+  stroke-width: 1.2;
+}
+svg[data-paint="fill"] {
+  fill: currentColor;
+  stroke: none;
+}
+/* Hankene inde i silhuetten er stadig streg. */
+svg[data-paint="fill"] [data-paint="stroke"] {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.05;
+}
+/* Dråben i skålen er et hul: den lader værtens egen flade komme igennem.
+   Værten sætter --icon-void; --paper er kun et sikkerhedsnet. */
+svg[data-paint="fill"] [data-paint="void"] {
+  fill: var(--icon-void, var(--paper));
 }

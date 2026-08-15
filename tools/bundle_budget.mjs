@@ -19,8 +19,28 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-/** Gzip-loft for hovedbundtet. Se den historiske baseline i git. */
-export const MAIN_BUNDLE_GZIP_BUDGET = 110 * 1024;
+/**
+ * Gzip-loft for hovedbundtet. Se den historiske baseline i git.
+ *
+ * Hævet fra 110 til 111 KB da titelskærmens illustrationer gik fra bitmap til
+ * SVG (2026-08-14). Regnskabet, så hævelsen kan efterprøves:
+ *
+ *   hovedbundt   112.200 → 112.820 B gzip   (+620 B)
+ *   welcome-figure.webp                      (−2.368 B)
+ *   ---------------------------------------------------
+ *   første indlæsning                        −1.748 B
+ *
+ * welcome-figure.webp var et 69x61 bitmap-udklip, der blev hentet EAGERLY som
+ * `background-image` på titelskærmen. Det er nu tegnet i icons.ts og hentes
+ * ikke længere. Loftet måler kun JS-chunken, så den flytning ser ud som vækst,
+ * selv om det TEST-010 er sat til at beskytte — "første indlæsning vokser
+ * ikke" — beviseligt faldt. Loftet flytter derfor med kunsten, én gang.
+ *
+ * Reglen for næste gang: loftet må kun hæves sammen med et regnskab som
+ * ovenstående, hvor den samlede første indlæsning falder. Vokser den, er
+ * svaret at gøre ændringen billigere — ikke at flytte loftet.
+ */
+export const MAIN_BUNDLE_GZIP_BUDGET = 111 * 1024;
 
 /**
  * @param {{

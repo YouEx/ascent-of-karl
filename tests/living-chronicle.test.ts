@@ -28,11 +28,16 @@ describe("living chronicle structure", () => {
     expect(mainSource).toContain("renderActLabel();");
   });
 
-  it("opens the archive from a visible question-mark control", () => {
-    expect(mainSource).toContain(
-      'aria-label="Open the chronicle archive"',
-    );
-    expect(mainSource).toContain("icons.help");
+  it("opens the archive from a visible control with a book affordance", () => {
+    // Kontrakten er at arkivet har en SYNLIG knap, og at knappens ikon lover
+    // det knappen gør. Testen låste før `icons.help` og hed "question-mark
+    // control" — men spørgsmålstegnet kom ind ved et uheld i eb52d3e, som
+    // skiftede ikonet samtidig med at etiketten blev omdøbt til "Open the
+    // chronicle archive". Et "?" betyder hjælp overalt ellers, så knappen
+    // lovede hjælp og åbnede et arkiv. Testen holder nu på løftet.
+    expect(mainSource).toContain('aria-label="Open the chronicle archive"');
+    expect(mainSource).toContain("icons.book");
+    expect(mainSource).not.toContain("icons.help");
     expect(styles).not.toMatch(/#book-btn\s*\{[^}]*display:\s*none/s);
   });
 

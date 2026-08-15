@@ -295,7 +295,6 @@ describe("titlens krom er semantiske komponenter, ikke sammensyede screenshots",
 
   it("bevarer kun selvstændige illustrationer som billeder", () => {
     for (const asset of [
-      "welcome-figure.webp",
       "tip-fire-tile.webp",
       "ornament-tap.webp",
       "ornament-divider.webp",
@@ -303,6 +302,21 @@ describe("titlens krom er semantiske komponenter, ikke sammensyede screenshots",
     ]) {
       expect(stripped).toContain(`title-materials/${asset}`);
     }
+  });
+
+  it("tegner velkomstmotivet i stedet for at klistre et bitmap-udklip på", () => {
+    // welcome-figure.webp var et 69x61 udklip med UGENNEMSIGTIG baggrund —
+    // altså en bagt firkant med en fremmed himmel i, klistret oven på
+    // pergamentet. Referencen har ingen kasse: hulen står direkte på papiret.
+    // Denne test stod før på listen ovenfor og KRÆVEDE bitmappet; den ville
+    // altså have fældet rettelsen. Kontrakten er ikke "motivet er et
+    // billede", men "motivet er ikke et udklip".
+    expect(stripped).not.toContain("title-materials/welcome-figure.webp");
+    expect(showTitleScreenBody).toMatch(
+      /class="figure" aria-hidden="true">\$\{icons\.\w+\}/,
+    );
+    const scene = extractBlock(stripped, ".title-chip .figure {");
+    expect(scene).not.toMatch(/background/);
   });
 
   it("bruger ikke border-image på actions, tools, welcome eller tip card", () => {
@@ -319,15 +333,32 @@ describe("titlens krom er semantiske komponenter, ikke sammensyede screenshots",
   });
 
   it("giver alle titelhandlinger den samme ikon/label/count-struktur", () => {
+    // Testen holder på STRUKTUREN — ikon, etiket, tæller, i den rækkefølge —
+    // ikke på hvilket ikon der bruges. Den låste før `icons.spiral` og
+    // `icons.trophy` ved navn, og da referencens malede sol og trofæ skulle
+    // erstatte de generiske streg-ikoner, fældede testen forbedringen i
+    // stedet for en fejl. Ikonnavnet er en repræsentation; kontrakten er at
+    // hver handling har præcis ét ikon fra ikonsættet.
     expect(showTitleScreenBody).toMatch(
-      /id="t-primary" class="title-action btn-stone"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.spiral[\s\S]*?class="title-action-label"[\s\S]*?\$\{canContinue \? "Continue" : "Begin"\}/,
+      /id="t-primary" class="title-action btn-stone"[\s\S]*?class="title-action-icon"[^>]*>\$\{icons\.\w+\}[\s\S]*?class="title-action-label"[\s\S]*?\$\{canContinue \? "Continue" : "Begin"\}/,
     );
     expect(showTitleScreenBody).toMatch(
-      /id="t-new" class="title-action btn-quiet"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.restart[\s\S]*?class="title-action-label">New life/,
+      /id="t-new" class="title-action btn-quiet"[\s\S]*?class="title-action-icon"[^>]*>\$\{icons\.\w+\}[\s\S]*?class="title-action-label">New life/,
     );
     expect(showTitleScreenBody).toMatch(
-      /id="t-fates" class="title-action btn-quiet"[\s\S]*?class="title-action-icon"[\s\S]*?icons\.trophy[\s\S]*?class="title-action-label">Fates[\s\S]*?class="title-action-count fates-count"/,
+      /id="t-fates" class="title-action btn-quiet"[\s\S]*?class="title-action-icon"[^>]*>\$\{icons\.\w+\}[\s\S]*?class="title-action-label">Fates[\s\S]*?class="title-action-count fates-count"/,
     );
+  });
+
+  it("titelknappernes ikoner har ingen egen flade — de er malet på tavlen", () => {
+    // Referencens sol og trofæ ligger direkte på knappen. Får beholderen
+    // fyld, ramme eller radius, tegner hvert ikon sit eget rektangel oven i
+    // knappens, og skærmen fyldes med firkanter (rapporteret 2026-08-14).
+    const box = extractBlock(stripped, ".title-action-icon {");
+    expect(box).not.toMatch(/background(-color|-image)?:/);
+    expect(box).not.toMatch(/[^-]border:/);
+    expect(box).not.toMatch(/border-radius:/);
+    expect(box).not.toMatch(/box-shadow:/);
   });
 
   it("har rigtige hover-, pressed- og fokus-tilstande i CSS", () => {
