@@ -61,6 +61,18 @@ eller omkostning. Det er adgang til den åbne eksterne gate, ikke
 production-enable; root forbliver feature-off, indtil gaten ovenfor er
 dokumenteret.
 
+**Forudsætning tilføjet 2026-08-15 — deploy før rekruttering.** Det deployede
+artifact svarer til `origin/main` (`de4bcdb`, 2026-08-14); `main` er 25 commits
+foran. Målt på den live CSS mangler previewet 393 bytes regler i
+`@media(max-width:900px),(max-aspect-ratio:1/1)` — altså mobil-layoutet fra
+`738b8da`/`a093244` — og indeholder ingen af titelskærmens tokens
+(`--slab-face`, `--cave-dark`, `data-paint`). Det er desuden bygget før
+fortællerens stemmerettelse (`9ed780e`), hvor engelske replikker blev læst op
+med OS'ets danske stemme. **Push `main` og lad Pages-deployet køre, FØR de
+5–10 eksterne deltagere rekrutteres** — ellers testes en forældet build på
+engangsdeltagere, og observationerne kan ikke bruges til gaten. Deploy-stien er
+verificeret grøn lokalt (`npm run build:pages` + `npm run verify:pages`).
+
 ---
 
 ## 1. Vision & elevator pitch
