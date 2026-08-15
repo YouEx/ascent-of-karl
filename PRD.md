@@ -61,17 +61,23 @@ eller omkostning. Det er adgang til den åbne eksterne gate, ikke
 production-enable; root forbliver feature-off, indtil gaten ovenfor er
 dokumenteret.
 
-**Forudsætning tilføjet 2026-08-15 — deploy før rekruttering.** Det deployede
-artifact svarer til `origin/main` (`de4bcdb`, 2026-08-14); `main` er 25 commits
-foran. Målt på den live CSS mangler previewet 393 bytes regler i
-`@media(max-width:900px),(max-aspect-ratio:1/1)` — altså mobil-layoutet fra
-`738b8da`/`a093244` — og indeholder ingen af titelskærmens tokens
-(`--slab-face`, `--cave-dark`, `data-paint`). Det er desuden bygget før
-fortællerens stemmerettelse (`9ed780e`), hvor engelske replikker blev læst op
-med OS'ets danske stemme. **Push `main` og lad Pages-deployet køre, FØR de
-5–10 eksterne deltagere rekrutteres** — ellers testes en forældet build på
-engangsdeltagere, og observationerne kan ikke bruges til gaten. Deploy-stien er
-verificeret grøn lokalt (`npm run build:pages` + `npm run verify:pages`).
+**Forudsætning 2026-08-15 — deploy før rekruttering: OPFYLDT.** Reglen står
+ved magt for hver fremtidig runde: **push `main` og lad Pages-deployet køre,
+FØR deltagere rekrutteres** — ellers testes en forældet build på
+engangsdeltagere, og observationerne kan ikke bruges til gaten. Da reglen blev
+skrevet, svarede det deployede artifact til `de4bcdb`, mens `main` lå 25
+commits foran: den live CSS manglede 393 bytes regler i
+`@media(max-width:900px),(max-aspect-ratio:1/1)` — mobil-layoutet fra
+`738b8da`/`a093244` — havde ingen af titelskærmens tokens (`--slab-face`,
+`--cave-dark`, `data-paint`) og var bygget før stemmerettelsen (`9ed780e`),
+hvor engelske replikker blev læst op med OS'ets danske stemme.
+
+`main` er siden pushet og deployet. Verificeret 2026-08-15 mod et friskt
+`npm run build:pages`: `assets/index-B62ZhpBE.js` (root, feature-off),
+`assets/index-Cl54YakC.css` og playtestens `assets/index-bXXWFFEX.js` er alle
+tre **byte-identiske** med det, der ligger live (sha256 sammenlignet, ikke blot
+filnavne). Det, deltagerne møder, er derfor nuværende `main`. Gaten selv er
+uændret åben — den lukkes først af de 5–10 dokumenterede deltagere.
 
 ---
 
