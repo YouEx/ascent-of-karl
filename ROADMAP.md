@@ -114,8 +114,12 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
   skal skrives ned, ikke ties ihjel*. Derfor er baseline **ikke** genoptaget —
   det ville låse 0,60 fast som "accepteret" kvalitet uden at nogen har
   accepteret den. Suiten er ikke i CI, fordi den måler underpixel-rektangler og
-  screenshot-signaturer; samme platformafhængighed som allerede tvang to
-  Python-arttests til `--deselect` på Linux. Kør den lokalt: `npm run test:visual`.
+  screenshot-signaturer (`maxSignatureMeanDelta` 2). Det er en **vurdering, ikke
+  en måling på Linux**: præcedensen er, at to Python-arttests allerede måtte
+  `--deselect`es på Linux af samme grund. De to fejltyper der faktisk ramte os
+  er derimod platformuafhængige og ligger nu i `npm test` — bekræftet grønne på
+  Linux i CI-kørsel 31906480257.
+  Kør suiten lokalt: `npm run test:visual`.
 - **Layout-testen i samme suite var derimod i stykker og er rettet
   (2026-08-15).** Den slog op på `#narrator`, som blev til `#bubble` med
   spreadet, og `getComputedStyle(null)` gav en TypeError uden at nævne
