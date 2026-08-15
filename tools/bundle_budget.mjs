@@ -20,33 +20,93 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 /**
- * Gzip-loft for hovedbundtet. Se den historiske baseline i git.
+ * Gzip-lofter for hovedbundtet. Se den historiske baseline i git.
  *
- * Hævet fra 110 til 111 KB da titelskærmens illustrationer gik fra bitmap til
- * SVG (2026-08-14). Regnskabet, så hævelsen kan efterprøves — tallene er målt
- * med `npm run bundle-budget` og `git cat-file -s` på det slettede blob:
+ * Der bygges TO varianter (tools/build_pages.mjs' plan), og de er ikke lige
+ * store: produktionsroden har improvisationen slået fra, playtest-varianten har
+ * den slået til. Ét fælles loft ville derfor blive sat af den STØRSTE variant og
+ * lade den mindste — den offentlige første indlæsning, som TEST-010 findes for
+ * at beskytte — sejle med over 2 KB ubevogtet luft. Hver variant har sit eget
+ * loft af præcis den grund.
  *
- *   hovedbundt   112.200 → 113.029 B gzip   (+829 B)
- *   welcome-figure.webp                      (−2.368 B)
- *   ---------------------------------------------------
- *   første indlæsning                        −1.539 B
+ * Målt med værktøjets egen komprimering (level 9) efter `npm run build:pages`:
  *
- * welcome-figure.webp var et 69x61 bitmap-udklip, der blev hentet EAGERLY som
- * `background-image` på titelskærmen. Det er nu tegnet i icons.ts og hentes
- * ikke længere. Loftet måler kun JS-chunken, så den flytning ser ud som vækst,
- * selv om det TEST-010 er sat til at beskytte — "første indlæsning vokser
- * ikke" — beviseligt faldt. Loftet flytter derfor med kunsten, én gang.
+ *   produktionsrod  dist/assets/index-*.js                111.288 B  (loft 112.640)
+ *   playtest        dist/playtest/.../assets/index-*.js   112.895 B  (loft 113.664)
  *
- * Loftet må IKKE sænkes tilbage til 110 KB: 110 KB = 112.640 B, og bundtet har
- * ikke været under det tal siden SVG-flytningen (målt 113.041 B ved 4423ea9 og
- * 113.029 B nu). Et review har foreslået sænkningen ud fra 111.300 B — det tal
- * kan ikke genskabes med en ren `vite build` på nogen af de to commits.
+ * Historikken bag playtest-loftet: da titelskærmens illustrationer gik fra
+ * bitmap til SVG (2026-08-14), voksede JS-chunken, mens welcome-figure.webp —
+ * et 69x61 udklip, der blev hentet EAGERLY som `background-image` — forsvandt
+ * helt. Aktivet vejede 2.368 B (efterprøvet med `git cat-file -s` på blobben i
+ * a439cc6), så den samlede første indlæsning faldt, selv om loftet måler JS
+ * alene.
  *
- * Reglen for næste gang: loftet må kun hæves sammen med et regnskab som
- * ovenstående, hvor den samlede første indlæsning falder. Vokser den, er
- * svaret at gøre ændringen billigere — ikke at flytte loftet.
+ * Advarsel til den næste, der måler: `npx vite build` giver en TREDJE chunk,
+ * som ikke er nogen af de to udgivne varianter. Kun `npm run build:pages`
+ * producerer de tal, lofterne her handler om. En tidligere note i denne fil
+ * afviste en sænkning af produktionsloftet ud fra netop den forveksling — den
+ * afvisning var forkert, og sænkningen er gennemført her.
+ *
+ * Den tredje chunk har sit eget loft, fordi den findes i praksis: `npm run
+ * build`, `npm run preview` og `npm run judge:capture` bygger alle sådan en.
+ * Den udgives ingen steder, så loftet er en røgalarm — det fanger en løbsk
+ * import lokalt — ikke den kontrakt, TEST-010 håndhæver:
+ *
+ *   løst `vite build`  dist/assets/index-*.js                113.029 B  (loft 113.664)
+ *
+ * At måle den mod produktionsloftet ville melde rødt på en variant, ingen
+ * bruger nogensinde henter.
+ *
+ * Reglen for næste gang: et loft må kun hæves sammen med et regnskab, hvor den
+ * samlede første indlæsning for DEN variant falder. Vokser den, er svaret at
+ * gøre ændringen billigere — ikke at flytte loftet.
  */
-export const MAIN_BUNDLE_GZIP_BUDGET = 111 * 1024;
+export const MAIN_BUNDLE_GZIP_BUDGET = 110 * 1024;
+export const PLAYTEST_BUNDLE_GZIP_BUDGET = 111 * 1024;
+export const LOCAL_BUNDLE_GZIP_BUDGET = 111 * 1024;
+
+/**
+ * Loftet hører til VARIANTEN, ikke til stien.
+ *
+ * Stien alene er ikke nok, og det er ikke teoretisk: `npm run judge:capture`
+ * kører et rent `vite build`, som skriver improvisations-bundtet — det STORE —
+ * ind i `dist/`, hvor produktionsloftet ellers gælder. Målingen så da ud som en
+ * budgetoverskridelse, selv om produktionsvarianten var uændret. Den forveksling
+ * fik i første omgang en anmeldelses helt korrekte fund afvist.
+ *
+ * Er mappen bygget af build:pages, ved artifactet selv, hvad det er:
+ * `pages-build.json` navngiver varianten, og den afgør loftet.
+ *
+ * Findes kontrakten ikke, er mappen et løst `vite build`. Så er svaret hverken
+ * produktions- eller playtestloftet — begge ville måle den mod en variant, den
+ * ikke er — men LOCAL_BUNDLE_GZIP_BUDGET. Stien konsulteres aldrig: en
+ * kontraktløs `dist/playtest/`-mappe findes ikke i praksis, og et gæt ud fra
+ * mappenavne var netop den fejl, der skulle væk.
+ */
+export function budgetForOutDir(outDir = "dist", root = ROOT) {
+  const absolute = isAbsolute(outDir) ? outDir : resolve(root, outDir);
+  const contractPath = resolve(absolute, "pages-build.json");
+  if (existsSync(contractPath)) {
+    try {
+      const variant = JSON.parse(readFileSync(contractPath, "utf8")).variant;
+      if (typeof variant === "string") {
+        return variant.includes("playtest")
+          ? PLAYTEST_BUNDLE_GZIP_BUDGET
+          : MAIN_BUNDLE_GZIP_BUDGET;
+      }
+    } catch {
+      // Ulæselig kontrakt: mappen kan ikke gøre rede for sig selv, og så
+      // gælder røgalarmen — ikke et gæt på en udgivet variant.
+    }
+  }
+  return LOCAL_BUNDLE_GZIP_BUDGET;
+}
+
+/** Er mappen bygget af build:pages, eller er det et løst `vite build`? */
+export function isPagesArtifact(outDir = "dist", root = ROOT) {
+  const absolute = isAbsolute(outDir) ? outDir : resolve(root, outDir);
+  return existsSync(resolve(absolute, "pages-build.json"));
+}
 
 /**
  * @param {{
@@ -60,7 +120,7 @@ export function checkBundleBudget({
   root = ROOT,
   outDir = "dist",
   log = console.log,
-  budget = MAIN_BUNDLE_GZIP_BUDGET,
+  budget = budgetForOutDir(outDir, root),
 } = {}) {
   const absoluteOutDir = isAbsolute(outDir) ? outDir : resolve(root, outDir);
   const assets = resolve(absoluteOutDir, "assets");
@@ -150,7 +210,14 @@ function parseOutDir(argv) {
 const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : "";
 if (invokedPath === import.meta.url) {
   try {
-    checkBundleBudget({ outDir: parseOutDir(process.argv.slice(2)) });
+    const outDir = parseOutDir(process.argv.slice(2));
+    if (!isPagesArtifact(outDir)) {
+      console.warn(
+        `⚠️  ${outDir} har ingen pages-build.json — mappen er et løst \`vite build\`, ikke en udgivet ` +
+          "variant. Den måles mod det lokale røgalarmsloft; kør `npm run build:pages` for at måle det, der faktisk udgives.",
+      );
+    }
+    checkBundleBudget({ outDir });
   } catch (error) {
     console.error(`❌ ${error instanceof Error ? error.message : String(error)}`);
     process.exitCode = 1;

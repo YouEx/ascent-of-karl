@@ -82,12 +82,18 @@ hver runde:
 npm run build:pages && npm run verify:live
 ```
 
-`tools/verify_live_deploy.mjs` henter hver variants `index.html`, kontraktens
-moduler og CSS'en fra GitHub Pages og sammenligner sha256 mod det lokale
-artifact. Den er fail-closed: 404, netværksfejl og en tom kørsel tæller alle
-som afvigelse, aldrig som bekræftelse. Grøn kørsel betyder, at det deltagerne
-møder, ER nuværende `main`. Gaten selv er uændret åben — den lukkes først af de
-5–10 dokumenterede deltagere.
+`tools/verify_live_deploy.mjs` henter hver eneste fil i artifactet — begge
+varianter, 2.936 filer, inklusive de 1.415 lydfiler pr. variant, som ligger
+under stabile navne — og sammenligner sha256 mod det lokale build. Den er
+fail-closed: 404, netværksfejl og en tom kørsel tæller alle som afvigelse,
+aldrig som bekræftelse; filer, der slet ikke svarer (429/5xx), forsøges igen og
+meldes adskilt fra ægte bytedrift, så en CDN-blip ikke sender dig ud i et
+unødigt gen-deploy. En kølig kørsel tager 8-30 sekunder; køres den flere gange
+i tæt rækkefølge, hastighedsbegrænser Pages (HTTP 429), og værktøjet siger det
+med rene ord i stedet for at melde drift. Grøn kørsel betyder, at det
+deltagerne møder, ER nuværende `main` — hele vejen, ikke kun de hashede assets.
+Gaten selv er uændret åben — den lukkes først af de 5–10 dokumenterede
+deltagere.
 
 ---
 

@@ -37,6 +37,15 @@ jobs:
         run: npm run improvise:report:check
       - name: Typecheck + build
         run: npm run build
+      # `npm run build` måler et løst `vite build` — en variant, der udgives
+      # ingen steder. Uden dette trin blev de to bundter, brugerne faktisk
+      # henter, først budgetmålt i deploy.yml, altså EFTER merge til main. Her
+      # bygges og verificeres hele Pages-artifactet, så et budgetbrud i en
+      # udgivet variant stopper pull requesten i stedet for udgivelsen.
+      - name: Byg og verificér Pages-artifactet (begge udgivne varianter)
+        run: npm run build:pages
+      - name: Verificér artifactkontrakten
+        run: npm run pages:verify
 
   worker-typecheck:
     # Sikkerhedsrunde 2, punkt 6: worker/ er en selvstændig pakke med sin

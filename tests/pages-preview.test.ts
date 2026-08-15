@@ -247,6 +247,92 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
     );
   });
 
+  it("giver hver variant sit eget loft, så det mindste bundt ikke sejler med i det størstes luft", async () => {
+    const {
+      MAIN_BUNDLE_GZIP_BUDGET,
+      PLAYTEST_BUNDLE_GZIP_BUDGET,
+      budgetForOutDir,
+    } = await import("../tools/bundle_budget.mjs");
+
+    // Playtest-varianten har improvisationen slået til og er derfor større.
+    // Deler de to varianter loft, bliver det sat af den største, og
+    // produktionsroden — den offentlige første indlæsning — står ubevogtet.
+    expect(MAIN_BUNDLE_GZIP_BUDGET).toBeLessThan(PLAYTEST_BUNDLE_GZIP_BUDGET);
+
+    // Bygget mod et kunstigt artifact, ikke mod repoets `dist/`: hvad der
+    // ligger dér, afhænger af hvilket build der sidst kørte, og en test, der
+    // aflæser det, måler maskinen i stedet for koden.
+    const { createPagesBuildPlan } = await buildModule();
+    const plan = createPagesBuildPlan({
+      VITE_IMPROVISE_ENABLED: "true",
+      VITE_IMPROVISE_URL: "",
+      VITE_NARRATOR_URL: "",
+    });
+
+    const root = mkdtempSync(join(SCRATCH_ROOT, "budget-plan-"));
+    for (const step of plan) {
+      const dir = join(root, step.outDir);
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(
+        join(dir, "pages-build.json"),
+        JSON.stringify({ schema: 2, variant: step.variant }),
+      );
+    }
+
+    const budgets = plan.map((step) => budgetForOutDir(step.outDir, root));
+    expect(new Set(budgets).size).toBe(plan.length);
+    expect(budgetForOutDir("dist", root)).toBe(MAIN_BUNDLE_GZIP_BUDGET);
+    expect(budgetForOutDir("dist/playtest/improvisation", root)).toBe(
+      PLAYTEST_BUNDLE_GZIP_BUDGET,
+    );
+
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("læser varianten ud af artifactets egen kontrakt, ikke ud af stien", async () => {
+    const {
+      budgetForOutDir,
+      isPagesArtifact,
+      LOCAL_BUNDLE_GZIP_BUDGET,
+      MAIN_BUNDLE_GZIP_BUDGET,
+      PLAYTEST_BUNDLE_GZIP_BUDGET,
+    } = await import("../tools/bundle_budget.mjs");
+
+    const root = mkdtempSync(join(SCRATCH_ROOT, "budget-"));
+    const artifact = join(root, "dist");
+    mkdirSync(artifact, { recursive: true });
+
+    // `npm run build`, `npm run preview` og `npm run judge:capture` bygger alle
+    // et løst `vite build` ind i `dist/` — improvisationen slået TIL, altså det
+    // store bundt, i den mappe hvor produktionsvarianten ellers ligger. Blev
+    // stien troet på, ville den chunk blive målt mod produktionsloftet og melde
+    // rødt, uden at produktionsvarianten havde ændret sig én byte. Netop den
+    // forveksling fik i første omgang et korrekt review-fund afvist.
+    expect(isPagesArtifact("dist", root)).toBe(false);
+    expect(budgetForOutDir("dist", root)).toBe(LOCAL_BUNDLE_GZIP_BUDGET);
+    expect(LOCAL_BUNDLE_GZIP_BUDGET).not.toBe(MAIN_BUNDLE_GZIP_BUDGET);
+
+    // Stien konsulteres heller ikke den anden vej.
+    mkdirSync(join(root, "dist-playtest-uden-kontrakt"), { recursive: true });
+    expect(budgetForOutDir("dist-playtest-uden-kontrakt", root)).toBe(
+      LOCAL_BUNDLE_GZIP_BUDGET,
+    );
+
+    // Med kontrakt afgør varianten — også når stien siger noget andet.
+    writeFileSync(
+      join(artifact, "pages-build.json"),
+      JSON.stringify({ schema: 2, variant: "improvisation-playtest" }),
+    );
+    expect(isPagesArtifact("dist", root)).toBe(true);
+    expect(budgetForOutDir("dist", root)).toBe(PLAYTEST_BUNDLE_GZIP_BUDGET);
+
+    // En ulæselig kontrakt er ikke et gæt værd.
+    writeFileSync(join(artifact, "pages-build.json"), "{ ikke json");
+    expect(budgetForOutDir("dist", root)).toBe(LOCAL_BUNDLE_GZIP_BUDGET);
+
+    rmSync(root, { recursive: true, force: true });
+  });
+
   it("verificerer et komplet artifact og afviser mangler, stale og krydslinks", async () => {
     const { verifyPagesArtifact } = await verifierModule();
     const root = writeFixture();

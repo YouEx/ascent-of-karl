@@ -215,7 +215,7 @@
         {
           "id": "narrator",
           "rect": [237, 105, 978, 145],
-          "anchor": "#narrator",
+          "anchor": "#bubble",
           "weight": 3,
           "threshold": 0.85
         },
@@ -223,6 +223,7 @@
           "id": "chronicle",
           "rect": [237, 268, 978, 226],
           "anchor": "#book-panel",
+          "mode": "rect",
           "weight": 3,
           "threshold": 0.85
         },

@@ -251,6 +251,91 @@ async function withDeadline(promise, timeoutMs, label) {
  * Optager én skærm. Returnerer måldata, så kalderen kan bruge dem uden at
  * læse dem tilbage fra disk.
  */
+/**
+ * Måler hver region på en malet side og melder dem, der ikke kan fotograferes.
+ *
+ * Udskilt af `captureScreen`, fordi løkken ellers kun kunne nås gennem en ægte
+ * browser. Den eneste test af den var derfor en grep efter tekststrenge i denne
+ * fil — og den ville stadig være grøn, hvis `unrenderable` aldrig blev fyldt.
+ * En strukturel påstand, der ikke kan fejle, er ikke en test. Her tages `page`
+ * og `warn` ind, så adfærden kan efterprøves med en stub: hvad der havner i
+ * `unrenderable`, og at der faktisk råbes op.
+ *
+ * @param {{
+ *   page: any;
+ *   screen: any;
+ *   outDir: string;
+ *   name: string;
+ *   warn?: (message: string) => void;
+ * }} options
+ */
+export async function measureRegions({
+  page,
+  screen,
+  outDir,
+  name,
+  warn = console.error,
+}) {
+  /** @type {Record<string, any>} */
+  const regions = {};
+  const unrenderable = [];
+
+  for (const region of screen.regions) {
+    const loc = page.locator(region.anchor).first();
+    const count = await loc.count();
+    if (count === 0) {
+      // Et manglende anker er et RESULTAT, ikke en fejl: det er præcis, hvad
+      // "komponenten findes ikke endnu" ser ud som, og dommeren skal se det.
+      regions[region.id] = { anchor: region.anchor, missing: true };
+      if (region.mode !== "rect") unrenderable.push(`${region.id} (${region.anchor})`);
+      continue;
+    }
+    const box = await loc.boundingBox();
+    const visible = await loc.isVisible();
+    const styles = await loc.evaluate((node, fields) => {
+      const cs = getComputedStyle(node);
+      const out = {};
+      for (const f of fields) out[f] = cs[f];
+      out.textContent = (node.textContent ?? "").trim().slice(0, 200);
+      out.childCount = node.children.length;
+      return out;
+    }, STYLE_FIELDS);
+
+    regions[region.id] = { anchor: region.anchor, box, styles, visible };
+
+    // Et skjult anker er også et RESULTAT, på linje med et manglende: krøniken
+    // fylder hele viewporten med `visibility: hidden`, indtil spilleren åbner
+    // den. Boksen er altså stor, mens elementet aldrig kan fotograferes —
+    // uden dette tjek venter loc.screenshot() sine fulde 30 s og river hele
+    // kørslen ned. Det ramte `npm run judge`, `judge:once` og
+    // `judge:determinism`; title-fidelity gik fri, fordi den kun tager
+    // titelskærme.
+    if (box && box.width > 0 && box.height > 0 && visible) {
+      await loc.screenshot({
+        path: join(outDir, "render", name, `${region.id}.png`),
+        timeout: 15_000,
+      });
+    } else if (region.mode !== "rect") {
+      // …men et resultat, ingen ser, er ingen nytte til. Uden crop scorer
+      // metrics.py regionen som en flad 0 med `missing: true`, og fordi
+      // accept-gaten reagerer på ÆNDRINGER over 0,02, kan et fastlåst nul
+      // aldrig flytte sig igen. Regionen trækker altså skærmen ned for evigt,
+      // lydløst. Det ramte `narrator`, hvis anker `#narrator` slet ikke fandtes
+      // i DOM'en. Regioner i `rect`-tilstand klippes ud af helskærmsbilledet og
+      // har aldrig brug for et crop — de er undtaget.
+      unrenderable.push(`${region.id} (${region.anchor})`);
+    }
+  }
+
+  if (unrenderable.length > 0) {
+    warn(
+      `⚠️  ${screen.id}: ${unrenderable.length} region(er) kan ikke fotograferes og scorer 0 for altid — ${unrenderable.join(", ")}`,
+    );
+  }
+
+  return { regions, unrenderable };
+}
+
 export async function captureScreen(
   browser,
   screen,
@@ -497,42 +582,14 @@ export async function captureScreen(
       criticalSources: browserEvidence.criticalSources,
       regions: {},
     };
-    for (const region of screen.regions) {
-      const loc = page.locator(region.anchor).first();
-      const count = await loc.count();
-      if (count === 0) {
-        // Et manglende anker er et RESULTAT, ikke en fejl: det er præcis, hvad
-        // "komponenten findes ikke endnu" ser ud som, og dommeren skal se det.
-        metrics.regions[region.id] = { anchor: region.anchor, missing: true };
-        continue;
-      }
-      const box = await loc.boundingBox();
-      const visible = await loc.isVisible();
-      const styles = await loc.evaluate((node, fields) => {
-        const cs = getComputedStyle(node);
-        const out = {};
-        for (const f of fields) out[f] = cs[f];
-        out.textContent = (node.textContent ?? "").trim().slice(0, 200);
-        out.childCount = node.children.length;
-        return out;
-      }, STYLE_FIELDS);
-
-      metrics.regions[region.id] = { anchor: region.anchor, box, styles, visible };
-
-      // Et skjult anker er også et RESULTAT, på linje med et manglende: krøniken
-      // fylder hele viewporten med `visibility: hidden`, indtil spilleren åbner
-      // den. Boksen er altså stor, mens elementet aldrig kan fotograferes —
-      // uden dette tjek venter loc.screenshot() sine fulde 30 s og river hele
-      // kørslen ned. Det ramte `npm run judge`, `judge:once` og
-      // `judge:determinism`; title-fidelity gik fri, fordi den kun tager
-      // titelskærme.
-      if (box && box.width > 0 && box.height > 0 && visible) {
-        await loc.screenshot({
-          path: join(outDir, "render", name, `${region.id}.png`),
-          timeout: 15_000,
-        });
-      }
-    }
+    const { regions, unrenderable } = await measureRegions({
+      page,
+      screen,
+      outDir,
+      name,
+    });
+    metrics.regions = regions;
+    metrics.unrenderable = unrenderable;
 
     await writeFile(
       join(outDir, "metrics", `${name}.json`),

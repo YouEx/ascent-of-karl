@@ -1290,6 +1290,10 @@ def build(
             "wideCandidate": output_entry(wide_path, wide),
             "portraitCandidate": output_entry(portrait_path, portrait),
             "promoted": published,
+            # Tom ved en vellykket kørsel, men feltet FINDES altid: en
+            # mislykket udgivelse skal kunne læses ud af manifestet bagefter,
+            # ikke kun ud af exitkoden i en terminal, ingen gemte.
+            "unpublished": unpublished,
         },
         "gates": gates,
         "metrics": metrics,

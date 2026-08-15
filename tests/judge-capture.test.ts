@@ -385,13 +385,59 @@ describe("preview-serverens procesgruppe er fastholdt i kilden", () => {
  * præcis som scripts'ene gør.
  */
 describe("capture.mjs' offentlige flade", () => {
+  /**
+   * Listen håndskrives ikke. Første udgave af denne test opremsede fem navne
+   * og glemte `loadRegistry` — som ligger præcis der i filen, hvor det
+   * oprindelige `export` blev tabt. En håndholdt liste over en anden fils
+   * import er den samme driftklasse, den skal fange. Navnene læses derfor ud
+   * af importørerne selv.
+   */
+  const IMPORTERS = [
+    "tools/judge/determinism.mjs",
+    "tools/judge/loop.mjs",
+    "tests/judge-capture.test.ts",
+    "tests/visual.test.ts",
+  ];
+
+  function importedNames() {
+    const names = new Set<string>();
+    for (const file of IMPORTERS) {
+      const source = readFileSync(join(HERE, "..", file), "utf8");
+      for (const match of source.matchAll(
+        /import\s*\{([^}]*)\}\s*from\s*"[^"]*capture\.mjs"/g,
+      )) {
+        for (const raw of (match[1] ?? "").split(",")) {
+          const name = (raw.trim().split(/\s+as\s+/)[0] ?? "").trim();
+          if (name) names.add(name);
+        }
+      }
+    }
+    return [...names].sort();
+  }
+
   it("eksporterer stadig alt, dommerens scripts importerer", async () => {
-    const mod = await import(
+    const mod = (await import(
       // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
       "../tools/judge/capture.mjs"
-    );
-    for (const name of ["captureScreen", "runCapture", "startServer", "stopServer", "build"]) {
-      expect(typeof (mod as Record<string, unknown>)[name]).toBe("function");
-    }
+    )) as Record<string, unknown>;
+
+    const required = importedNames();
+    expect(required).toContain("loadRegistry");
+    expect(required.length).toBeGreaterThanOrEqual(6);
+
+    const missing = required.filter((name) => mod[name] === undefined);
+    expect(missing).toEqual([]);
+  });
+
+  it("holder ORIGIN som en brugbar oprindelse, ikke bare defineret", () => {
+    // ORIGIN er en const, ikke en funktion: en typeof-kontrol for "function"
+    // ville have blåstemplet en tabt eksport her.
+    return import(
+      // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
+      "../tools/judge/capture.mjs"
+    ).then((mod: Record<string, unknown>) => {
+      expect(typeof mod.ORIGIN).toBe("string");
+      expect(String(mod.ORIGIN)).toMatch(/^http:\/\/(localhost|127\.0\.0\.1):\d+/);
+    });
   });
 });

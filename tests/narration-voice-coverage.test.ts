@@ -30,7 +30,16 @@ interface NarratorLine {
 function lines(file: string): NarratorLine[] {
   const data = JSON.parse(
     readFileSync(join(NARRATOR, file), "utf8"),
-  ) as { lines: NarratorLine[] };
+  ) as { lines?: NarratorLine[] };
+  if (!Array.isArray(data.lines)) {
+    // Kilderne læses fra disken, så en ny fil i content/narrator/ uden
+    // `lines` ville ellers kaste `undefined.some` på modulniveau og tage HELE
+    // testfilen med sig — en manglende indspilning ville se ud som en
+    // importfejl. Sig i stedet, hvilken fil det er, og hvad der mangler.
+    throw new Error(
+      `content/narrator/${file} har ingen "lines"-liste. Hører filen ikke til fortællerens replikker, så flyt den ud af content/narrator/.`,
+    );
+  }
   return data.lines;
 }
 

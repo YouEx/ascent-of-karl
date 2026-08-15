@@ -5,6 +5,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import pytest
 import subprocess
 import sys
 from pathlib import Path
@@ -391,22 +392,65 @@ def test_failed_publication_is_reported_not_swallowed(
     assert "simulated write failure" in capsys.readouterr().err
 
 
-def test_build_fails_closed_when_an_approved_publication_is_not_written() -> None:
+def test_build_fails_closed_when_an_approved_publication_is_not_written(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     """Beslutning og udfald skal hænge sammen.
 
     Begge mestre er bevidst blokerede i dette repo (se
     test_config_pins_sources_honestly_and_blocks_both_masters), så der findes
-    ingen bestået promovering at køre igennem end-to-end. Påstanden er derfor
-    strukturel: build() skal rejse, når noget godkendt ikke blev skrevet, og
-    kastet skal ligge EFTER at manifest og metrics er lagt på disken, så en
-    mislykket skrivning ikke også koster beviset for hvorfor.
-    """
-    source = SCRIPT.read_text(encoding="utf-8")
-    assert "unpublished: list[str] = []" in source
-    assert "elif decided:" in source
+    ingen bestået promovering at køre igennem end-to-end. Portene skrues derfor
+    op ét sted ad gangen, og selve SKRIVNINGEN får lov at fejle — for det er
+    netop den kombination, fejlen bestod af: portene sagde ja, filen blev
+    aldrig skrevet, og exitkoden blev udledt af beslutningen.
 
-    raise_at = source.index("if unpublished:")
-    metrics_at = source.index('(evidence_dir / "metrics.json").write_text')
-    manifest_at = source.index("manifest_path.write_text")
-    assert manifest_at < raise_at, "manifestet skal skrives før kastet"
-    assert metrics_at < raise_at, "metrics skal skrives før kastet"
+    Testen er bevidst adfærdsmæssig. En tidligere udgave sammenlignede kun
+    tegnpositioner i kildeteksten og ville have bestået, selv om `raise` var
+    uopnåelig.
+    """
+    builder = load_builder()
+    real_config = builder.load_config()
+    for name in ("wide", "portrait"):
+        real_config[name]["promotion"]["approved"] = True
+        real_config[name]["output"] = f"public/{name}-master.webp"
+
+    monkeypatch.setattr(builder, "load_config", lambda: real_config)
+    monkeypatch.setattr(builder, "automated_gates_pass", lambda *_a, **_k: True)
+    monkeypatch.setattr(
+        builder,
+        "verify_manual_approval",
+        lambda *_a, **_k: {"valid": True, "reason": "test"},
+    )
+    monkeypatch.setattr(
+        builder, "publication_paths_match_config", lambda *_a, **_k: True
+    )
+    # Skrivningen fejler — præcis det, den tavse False dækkede over.
+    monkeypatch.setattr(
+        builder, "publish_promoted_candidate", lambda *_a, **_k: False
+    )
+
+    evidence_dir = tmp_path / "evidence"
+    manifest_path = tmp_path / "manifest.json"
+
+    with pytest.raises(RuntimeError) as failure:
+        builder.build(
+            output_dir=tmp_path / "output",
+            evidence_dir=evidence_dir,
+            manifest_path=manifest_path,
+            request_promotion=True,
+        )
+
+    assert "public/wide-master.webp" in str(failure.value)
+
+    # Beviset skal ligge på disken TRODS kastet: en mislykket skrivning må ikke
+    # også koste den måling, der forklarer hvorfor.
+    assert manifest_path.exists(), "manifestet skal skrives før kastet"
+    assert (evidence_dir / "metrics.json").exists(), "metrics skal skrives før kastet"
+
+    manifest = json.loads(manifest_path.read_text())
+    assert manifest["outputs"]["promoted"] == []
+    assert sorted(manifest["outputs"]["unpublished"]) == [
+        "public/portrait-master.webp",
+        "public/wide-master.webp",
+    ]

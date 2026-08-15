@@ -21,7 +21,7 @@
 // afvigelse (samme klasse som den eksisterende "Drag"/"Choose"-afvigelse for
 // slots+hint), ikke en visuel defekt.
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -244,5 +244,185 @@ describe("registry.json — titelens fidelitymål (TASK-001)", () => {
         expect(actual[regionId], `${screenId}/${regionId}`).toBeGreaterThanOrEqual(minimum);
       }
     }
+  });
+});
+
+/**
+ * Et anker, der ikke rammer noget, er ikke en manglende komponent — det er en
+ * ITU MÅLESTOK. metrics.py giver regionen `missing: true` og en flad 0, og
+ * fordi accept-gaten reagerer på ÆNDRINGER over 0,02, kan det nul aldrig
+ * flytte sig igen. Regionen trækker skærmen ned for evigt, lydløst.
+ *
+ * Det var ikke teoretisk: `narrator` pegede på `#narrator`, som slet ikke
+ * findes i DOM'en (elementerne hedder `#bubble`, `#narrator-label`,
+ * `#narrator-text`), og `chronicle` pegede på `#book-panel` — en skuffe med
+ * `visibility: hidden`, indtil spilleren åbner den. Begge vejer 3 af spillets
+ * 24 vægtenheder. Målt på en frisk optagelse understregede de to nuller
+ * spilskærmen med 14,4 point (0,461 mod 0,604), altså en fjerdedel af skærmen,
+ * der aldrig blev set på.
+ */
+describe("registry-ankre peger på noget, der findes", () => {
+  const MARKUP_SOURCES = ["src/ui/main.ts", "index.html"];
+
+  function markup() {
+    return MARKUP_SOURCES.filter((file) => existsSync(join(ROOT, file)))
+      .map((file) => readFileSync(join(ROOT, file), "utf8"))
+      .join("\n");
+  }
+
+  /**
+   * Klasseankre matches på TOKEN, ikke som understreng.
+   *
+   * `source.includes("title-mark")` er sandt, så længe blot ét `title-mark-
+   * semantic` står tilbage i filen — og det gør der: main.ts har begge klasser
+   * på to nabolinjer. Slettes den rigtige `.title-mark`, ville understrengs-
+   * varianten stadig melde grønt, mens `title/headline` (vægt 3) faldt til et
+   * permanent 0. Vagten ville altså svigte netop i det tilfælde, den er
+   * skrevet for at fange.
+   */
+  function classTokens(source: string) {
+    const tokens = new Set<string>();
+    for (const match of source.matchAll(/class(?:Name)?="([^"]*)"/g)) {
+      for (const token of (match[1] ?? "").split(/\s+/)) {
+        if (token) tokens.add(token);
+      }
+    }
+    return tokens;
+  }
+
+  function resolves(anchor: string, source: string, tokens: Set<string>) {
+    if (anchor.startsWith("#")) return source.includes(`id="${anchor.slice(1)}"`);
+    if (anchor.startsWith(".")) return tokens.has(anchor.slice(1));
+    return new RegExp(`<${anchor}[ >]`).test(source);
+  }
+
+  it("hvert eneste anker findes i markup'en", () => {
+    const source = markup();
+    const tokens = classTokens(source);
+    const registry = loadRegistry();
+    const dangling: string[] = [];
+    for (const screen of registry.screens) {
+      for (const region of screen.regions) {
+        if (!resolves(region.anchor, source, tokens)) {
+          dangling.push(`${screen.id}/${region.id} → ${region.anchor}`);
+        }
+      }
+    }
+    expect(dangling).toEqual([]);
+  });
+
+  it("et klasseanker overlever ikke på en navnefælle", () => {
+    // Beviset for at vagten ovenfor faktisk kan fejle: `title-mark-semantic`
+    // indeholder `title-mark` som understreng, men er ikke det samme token.
+    const tokens = classTokens('<h1 class="title-mark-semantic other-thing">');
+
+    expect(resolves(".title-mark-semantic", "", tokens)).toBe(true);
+    expect(resolves(".title-mark", "", tokens)).toBe(false);
+  });
+
+  it("en region, der ikke kan fotograferes, er i rect-tilstand", () => {
+    // `chronicle` MÅLES fortsat — den klippes bare ud af helskærmsbilledet på
+    // referencens eget rektangel, præcis som `scene` på titelskærmen. Det er
+    // forskellen på "ikke målt" og "målt til 0".
+    const registry = loadRegistry();
+    const chronicle = registry.screens
+      .find((screen: any) => screen.id === "game")
+      .regions.find((region: any) => region.id === "chronicle");
+
+    expect(chronicle.mode).toBe("rect");
+  });
+
+  it("capture melder højlydt, hvis en region alligevel ikke kan fotograferes", async () => {
+    // Kørt mod selve løkken, ikke mod filens tekst: en grep efter strengen
+    // "unrenderable" ville stadig være grøn, hvis listen aldrig blev fyldt.
+    const { measureRegions } = await import(
+      // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
+      "../tools/judge/capture.mjs"
+    );
+
+    const locators: Record<string, unknown> = {
+      "#findes-ikke": { count: async () => 0 },
+      "#er-der-ikke-heller": { count: async () => 0 },
+      "#skjult": {
+        count: async () => 1,
+        boundingBox: async () => ({ x: 0, y: 0, width: 390, height: 700 }),
+        isVisible: async () => false,
+        evaluate: async () => ({ textContent: "", childCount: 0 }),
+      },
+    };
+
+    const page = {
+      locator: (anchor: string) => ({ first: () => locators[anchor] }),
+    };
+
+    const warnings: string[] = [];
+    const { regions, unrenderable } = await measureRegions({
+      page,
+      screen: {
+        id: "game",
+        regions: [
+          { id: "narrator", anchor: "#findes-ikke" },
+          { id: "chronicle", anchor: "#er-der-ikke-heller", mode: "rect" },
+          { id: "book", anchor: "#skjult" },
+        ],
+      },
+      outDir: ".judge/aldrig-skrevet",
+      name: "stub",
+      warn: (message: string) => warnings.push(message),
+    });
+
+    // Manglende anker uden rect-tilstand: kan aldrig scores, skal meldes.
+    expect(unrenderable).toContain("narrator (#findes-ikke)");
+    // Skjult element med en stor boks: samme skæbne, samme melding.
+    expect(unrenderable).toContain("book (#skjult)");
+    // rect-regioner klippes ud af helskærmsbilledet og har intet crop at mangle.
+    expect(unrenderable).not.toContain("chronicle (#er-der-ikke-heller)");
+
+    expect(regions.narrator).toEqual({
+      anchor: "#findes-ikke",
+      missing: true,
+    });
+
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatch(/scorer 0 for altid/);
+    expect(warnings[0]).toContain("game");
+  });
+
+  it("tier stille, når hver region kan fotograferes", async () => {
+    // Modprøven: uden den ville testen ovenfor bestå, selv om advarslen blev
+    // fyret ubetinget.
+    const { measureRegions } = await import(
+      // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
+      "../tools/judge/capture.mjs"
+    );
+
+    const shots: string[] = [];
+    const page = {
+      locator: () => ({
+        first: () => ({
+          count: async () => 1,
+          boundingBox: async () => ({ x: 0, y: 0, width: 100, height: 40 }),
+          isVisible: async () => true,
+          evaluate: async () => ({ textContent: "Karl", childCount: 0 }),
+          screenshot: async (options: { path: string }) =>
+            shots.push(options.path),
+        }),
+      }),
+    };
+
+    const warnings: string[] = [];
+    const { unrenderable } = await measureRegions({
+      page,
+      screen: { id: "title", regions: [{ id: "headline", anchor: ".title-mark" }] },
+      outDir: ".judge/aldrig-skrevet",
+      name: "stub",
+      warn: (message: string) => warnings.push(message),
+    });
+
+    expect(unrenderable).toEqual([]);
+    expect(warnings).toEqual([]);
+    expect(shots).toEqual([
+      join(".judge/aldrig-skrevet", "render", "stub", "headline.png"),
+    ]);
   });
 });

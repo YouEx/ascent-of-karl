@@ -26,8 +26,13 @@ og Pages-deployet færdigt:
 npm run build:pages && npm run verify:live
 ```
 
-Grøn kørsel betyder, at previewet ovenfor ER nuværende `main`. Rød betyder
-stop: vent på deployet, og send først invitationerne bagefter.
+Grøn kørsel betyder, at previewet ovenfor ER nuværende `main`: hele artifactet,
+2.936 filer, byte for byte — også lyden, som ligger under stabile navne og
+derfor ikke afsløres af et hashet bundtnavn. En kølig kørsel tager 8-30
+sekunder. Rød betyder stop: vent på deployet, og send først invitationerne
+bagefter. Melder den kun filer "uden svar", er det CDN'et, ikke dit deploy —
+kør igen. Nævner den HTTP 429, har du kørt den for tæt på sidste gang: 2.936
+opslag i træk tåler Pages ikke, så vent et par minutter.
 
 Lokal kandidat:
 
