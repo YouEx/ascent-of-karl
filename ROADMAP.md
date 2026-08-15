@@ -62,6 +62,71 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
    Akt I føles komplet (wishlist-opbygning; PRD §8-mål justeres til
    én-akts-spillet).
 
+## Kendte, bevidste røde tal (ikke regressioner)
+
+- **Den visuelle dommer scorer alle 9 regioner på spilskærmen under tærsklen
+  (samlet 0,60).** Referencen `docs/design/reference/target-2026-08-11.webp` er
+  fra før to-siders story-spreadet, så den måler et layout spillet forlod med
+  vilje. Målt 2026-08-15 (`npm run judge:capture && npm run judge:score`):
+
+  | region | samlet | tærskel | geometri | ΔE | dy | dh |
+  | --- | --- | --- | --- | --- | --- | --- |
+  | app-frame | 0,721 | 0,82 | **1,000** | 6,5 | 0 | 0 |
+  | header | 0,794 | 0,85 | 0,970 | **0,5** | +1 | 0 |
+  | narrator | 0,525 | 0,85 | 0,081 | 1,8 | +16 | +88,1 |
+  | chronicle | 0,625 | 0,85 | — | 5,6 | — | — |
+  | chips | 0,392 | 0,85 | 0,009 | 4,1 | **−124,9** | 0 |
+  | slots | 0,667 | 0,85 | 0,100 | 1,7 | **−125,4** | 0 |
+  | combine | 0,716 | 0,80 | 0,096 | 0,5 | **−125,4** | 0 |
+  | search | 0,703 | 0,85 | 0,010 | 0,6 | **−125,4** | 0 |
+  | grid | 0,420 | 0,75 | 0,128 | **16,3** | **−125,4** | +143,4 |
+
+  Fem regioner er rykket **præcis −125 px** op med uændret bredde (dw −2…0) og
+  uændret højde — samme kunst, andet sted. Årsagen står i narratorens tal:
+  **−513 px bredde**, fordi krøniken flyttede op ved siden af den.
+  `app-frame` har et **identisk rektangel** (dx=dy=dw=dh=0) og dumper alligevel,
+  fordi den indeholder alt det, der flyttede. `chronicle` er `mode: rect` og
+  måles **slet ikke** på position — dens geometri 1,000 er en fripas, ikke et
+  bevis; den dumper rent på udseende inde i et fast referencerektangel, der er
+  fra før spreadet. `header` er reelt urørt (ΔE 0,5) og dumper kun på struktur.
+  `grid` er den eneste med stor farveafvigelse (ΔE 16,3), fordi den er 143 px
+  højere og derfor viser flere elementer.
+  Det er ét designvalg, der forplanter sig som ni dumpekarakterer, ikke ni fejl.
+  **Referencen må ikke bare udskiftes med en frisk optagelse:** 13 scripts i
+  `tools/art/` sampler fra netop den fil og genererer de 77 committede filer i
+  `src/assets/art/`. Den rigtige rettelse er et separat, aktuelt positionsmål
+  til dommeren, adskilt fra kunstkilden — feature-arbejde, udskudt af punkt 2.
+  Baggrund og side-om-side-bevis: se `$comment` i
+  `docs/design/reference/registry.json`.
+- **`judge:title-fidelity` melder røde mål i CI uden at gøre main rød.** Det er
+  bevidst (Phase A auditerer, Phase D skifter kaldet til `--require-green`);
+  porten findes og er testet begge veje i `tests/title-fidelity.test.ts`.
+- **`npm run test:visual` er rød på scoretesten og ligger bevidst uden for CI.**
+  Suiten optager live med rigtig Chromium og scorer mod
+  `tests/visual-baseline.json` (optaget 2026-08-13, commit `429849d`). Målt
+  2026-08-15: **58 fald** over `maxDrop` 0,02 — de største er
+  `game/chips/geometry` 0,98, `game/search/geometry` 0,96 og
+  `game/narrator/geometry` 0,89, altså præcis de regioner der flyttede med
+  to-siders spreadet, plus `title/actions/tone` 0,37 og `title/chip/tone` 0,36
+  fra omlægningen af titelskærmen til rigtige SVG'er. Begge dele er
+  menneskeskabte strukturændringer, og `tools/judge/apply.mjs` fastslår selv
+  reglen: en strukturel rettelse går uden om porten, *men det den afslører
+  skal skrives ned, ikke ties ihjel*. Derfor er baseline **ikke** genoptaget —
+  det ville låse 0,60 fast som "accepteret" kvalitet uden at nogen har
+  accepteret den. Suiten er ikke i CI, fordi den måler underpixel-rektangler og
+  screenshot-signaturer; samme platformafhængighed som allerede tvang to
+  Python-arttests til `--deselect` på Linux. Kør den lokalt: `npm run test:visual`.
+- **Layout-testen i samme suite var derimod i stykker og er rettet
+  (2026-08-15).** Den slog op på `#narrator`, som blev til `#bubble` med
+  spreadet, og `getComputedStyle(null)` gav en TypeError uden at nævne
+  selektoren. Værre: `tests/improvise-feature-off-layout.json` havde **frosset
+  en fejl** — `scrollWidth` 473 på et 390 px viewport, altså 83 px vandret
+  overløb på mobil, registreret som "forventet". Den ville have dumpet den
+  korrekte build og bestået den ødelagte. Baseline er nu genoptaget af
+  `tools/record_layout_baseline.mjs`, som **nægter** at skrive et layout med
+  overløb, og de to fejltyper er dækket af hurtige tests uden browser i
+  `tests/layout-baseline-recorder.test.ts`, så de kører i CI via `npm test`.
+
 ## Improvisationens release-status
 
 - **Source:** komplet — offline core, UI/Chronicle/playtest v2, narrator-dom,

@@ -135,21 +135,25 @@ describe("TASK-030: langsom visuel regression mod tests/visual-baseline.json", (
                 height: Number(rect.height.toFixed(3)),
               };
             }
-            const header = getComputedStyle(
-              document.querySelector("header")!,
-            );
-            const tools = getComputedStyle(
-              document.querySelector("#tools")!,
-            );
-            const dock = getComputedStyle(
-              document.querySelector("#dock")!,
-            );
-            const narrator = getComputedStyle(
-              document.querySelector("#narrator")!,
-            );
-            const book = getComputedStyle(
-              document.querySelector("#book-panel")!,
-            );
+            // Et omdøbt id gav før en nøgen "getComputedStyle: parameter 1 is
+            // not of type 'Element'" uden at nævne HVILKEN selektor der var
+            // væk. #narrator blev til #bubble med to-siders spreadet, og
+            // fejlen pegede på testens linje i stedet for på årsagen. Nu
+            // navngiver den den manglende selektor.
+            const need = (selector: string): CSSStyleDeclaration => {
+              const element = document.querySelector(selector);
+              if (!element) {
+                throw new Error(
+                  `layout-baseline peger på en selektor der ikke findes i DOM'en: ${selector}`,
+                );
+              }
+              return getComputedStyle(element);
+            };
+            const header = need("header");
+            const tools = need("#tools");
+            const dock = need("#dock");
+            const narrator = need("#bubble");
+            const book = need("#book-panel");
             return {
               featureEnabled:
                 document.documentElement.hasAttribute(
@@ -173,6 +177,13 @@ describe("TASK-030: langsom visuel regression mod tests/visual-baseline.json", (
           expect(actual.clientWidth, `${name}: clientWidth`).toBe(
             expected.clientWidth,
           );
+          // Invariant, ikke et optaget tal. Den forrige baseline havde frosset
+          // scrollWidth 473 på et 390 px viewport som "forventet" — altså 83 px
+          // vandret overløb. Et optaget tal kan fryse en fejl; det her kan ikke.
+          expect(
+            actual.scrollWidth,
+            `${name}: vandret overløb (scrollWidth ${actual.scrollWidth} > clientWidth ${actual.clientWidth})`,
+          ).toBeLessThanOrEqual(actual.clientWidth);
           expect(actual.scrollWidth, `${name}: scrollWidth`).toBe(
             expected.scrollWidth,
           );
