@@ -205,6 +205,20 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
     );
   });
 
+  it("budgetmåler de to udgivne varianter i pull request-porten, ikke først efter merge", () => {
+    const ci = read(".github/workflows/ci.yml");
+    const jobAt = ci.indexOf("\n  test-and-build:");
+    expect(jobAt).toBeGreaterThan(-1);
+
+    const nextJob = ci.slice(jobAt + 1).search(/\n {2}[a-z][a-z0-9_-]*:\s*\n/);
+    const job = nextJob === -1 ? ci.slice(jobAt) : ci.slice(jobAt, jobAt + 1 + nextJob);
+
+    // Et løst `vite build` producerer et tredje bundt, der udgives ingen
+    // steder. Uden dette kald blev de to bundter, deltagerne faktisk henter,
+    // først målt i deploy.yml — altså EFTER merge til main.
+    expect(job).toContain("run: npm run build:pages");
+  });
+
   it("tvinger root off og begge builds helt væk fra Worker-URL'er", async () => {
     const { createPagesBuildPlan } = await buildModule();
     const hostile = "https://hostile.invalid/improvise?bill=someone";

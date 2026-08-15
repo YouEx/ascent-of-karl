@@ -42,10 +42,12 @@ jobs:
       # henter, først budgetmålt i deploy.yml, altså EFTER merge til main. Her
       # bygges og verificeres hele Pages-artifactet, så et budgetbrud i en
       # udgivet variant stopper pull requesten i stedet for udgivelsen.
+      # `build_pages.mjs` kalder selv `verifyPagesArtifact` til sidst og falder
+      # med exit 1, hvis den fejler (målt), så et separat `pages:verify`-trin
+      # ville aldrig kunne fejle for sig — deploy.yml kører derfor også kun
+      # dette ene kald.
       - name: Byg og verificér Pages-artifactet (begge udgivne varianter)
         run: npm run build:pages
-      - name: Verificér artifactkontrakten
-        run: npm run pages:verify
 
   worker-typecheck:
     # Sikkerhedsrunde 2, punkt 6: worker/ er en selvstændig pakke med sin
