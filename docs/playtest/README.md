@@ -16,6 +16,19 @@ ikke-produktions-preview:
 feature-on, men deterministisk offline med tom Worker-URL. Den offentlige root
 på <https://youex.github.io/ascent-of-karl/> forbliver feature-off.
 
+### Før du inviterer nogen
+
+Deltagere er engangsressourcer: spiller de en forældet build, kan
+observationerne ikke bruges til gaten (PRD §0). Kør derfor, med `main` pushet
+og Pages-deployet færdigt:
+
+```bash
+npm run build:pages && npm run verify:live
+```
+
+Grøn kørsel betyder, at previewet ovenfor ER nuværende `main`. Rød betyder
+stop: vent på deployet, og send først invitationerne bagefter.
+
 Lokal kandidat:
 
 ```bash

@@ -72,12 +72,22 @@ commits foran: den live CSS manglede 393 bytes regler i
 `--cave-dark`, `data-paint`) og var bygget før stemmerettelsen (`9ed780e`),
 hvor engelske replikker blev læst op med OS'ets danske stemme.
 
-`main` er siden pushet og deployet. Verificeret 2026-08-15 mod et friskt
-`npm run build:pages`: `assets/index-B62ZhpBE.js` (root, feature-off),
-`assets/index-Cl54YakC.css` og playtestens `assets/index-bXXWFFEX.js` er alle
-tre **byte-identiske** med det, der ligger live (sha256 sammenlignet, ikke blot
-filnavne). Det, deltagerne møder, er derfor nuværende `main`. Gaten selv er
-uændret åben — den lukkes først af de 5–10 dokumenterede deltagere.
+`main` er siden pushet og deployet. Selve påstanden "live svarer til `main`"
+skrives ikke længere ned som hashes her — første udgave af dette afsnit gjorde
+netop det, og to commits senere var de forældede, så noten påstod noget usandt.
+En påstand om foranderlig tilstand hører hjemme i en kørsel. Kør derfor før
+hver runde:
+
+```
+npm run build:pages && npm run verify:live
+```
+
+`tools/verify_live_deploy.mjs` henter hver variants `index.html`, kontraktens
+moduler og CSS'en fra GitHub Pages og sammenligner sha256 mod det lokale
+artifact. Den er fail-closed: 404, netværksfejl og en tom kørsel tæller alle
+som afvigelse, aldrig som bekræftelse. Grøn kørsel betyder, at det deltagerne
+møder, ER nuværende `main`. Gaten selv er uændret åben — den lukkes først af de
+5–10 dokumenterede deltagere.
 
 ---
 
