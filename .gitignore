@@ -20,6 +20,11 @@ worker-configuration.d.ts
 # versionerede — de er systemets hukommelse på tværs af sessioner.
 .judge/
 
+# Kandidat- og bevismappe for tools/art/build_title_layers.py: iscenesatte
+# lagfiler og deres målinger, før noget publiceres til src/assets/art/.
+# Regenereres af værktøjet selv — kun de publicerede lag er versionerede.
+.art-evidence/
+
 # Midlertidigt outputrum for tools/voice/check_grammar_assembly.py — en
 # gensamlet grammar-act-1.json der kun bruges til at diffes mod facittet,
 # aldrig til at overskrive det. Ryddes selv efter hver kørsel.

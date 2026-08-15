@@ -1978,7 +1978,12 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   width: 100%; height: 100%;
   overflow: visible;
 }
-.title-chip .figure svg [data-part="spur"] { fill: var(--cave-spur); }
+.title-chip .figure svg [data-part="reed"] {
+  fill: none;
+  stroke: var(--cave-spur);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
 /* Kanten er den SAMME kontur som hulen, tegnet bred: en 1,6 enheder bred
    klippekant hele vejen rundt om mørket, som referencens oplyste stenrand.
    miter, ikke round: facetterne skal blive hjørner, ellers runder kanten
@@ -1990,6 +1995,8 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   stroke-linejoin: miter;
   stroke-miterlimit: 2.4;
 }
+/* Hulekroppen fyldes af gradienten i markup'en; regelen her er faldback, hvis
+   gradienten ikke kan males. */
 .title-chip .figure svg [data-part="cave"] { fill: var(--cave-dark); }
 .title-chip .figure svg [data-part="figure"] {
   fill: var(--cave-body);
@@ -1998,7 +2005,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 }
 .title-chip .figure svg [data-limb] {
   fill: none;
-  stroke-width: 1.9;
+  stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -2006,6 +2013,12 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   fill: none;
   stroke: var(--cave-ground);
   stroke-width: 1.1;
+  stroke-linecap: round;
+}
+.title-chip .figure svg [data-part="pebble"] {
+  fill: none;
+  stroke: var(--cave-ground);
+  stroke-width: 0.9;
   stroke-linecap: round;
 }
 .title-chip strong {

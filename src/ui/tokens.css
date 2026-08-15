@@ -194,11 +194,16 @@
      grå-lyserød himmel bagved. Referencen har ingen kasse overhovedet: hulen
      står direkte på pergamentet. Derfor er motivet nu en tegnet SVG med
      gennemsigtig baggrund. */
-  --cave-dark: #302319;
-  --cave-rim: #8a715c;
-  --cave-spur: #7c6755;
-  --cave-body: #ead7bf;
+  /* Målt i referencen (docs/design/reference/title-2026-08-11.webp, hulen ved
+     55,30–125,108), sorteret på luminans: hulen har TO indre toner, ikke én.
+     Fladt mørke fik motivet til at læse som et app-ikon i stedet for et
+     hulemaleri — dybden er hele forskellen. */
+  --cave-dark: #3d2c1f; /* hulekrop, 5-20% percentil */
+  --cave-depth: #20150d; /* svælget bagerst, mørkeste 5% */
+  --cave-rim: #7f654e; /* oplyst stenrand ved munden, 20-45% */
+  --cave-body: #e5cfb4; /* figuren, lyseste 8% */
   --cave-ground: #9b836a;
+  --cave-spur: #7c6755; /* siv langs klippefoden */
   --dashed: #cbb19e;
   --frame: #ccadab;
 

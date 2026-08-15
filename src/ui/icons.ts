@@ -76,14 +76,29 @@ export const icons = {
      tykke, malede arme og ben; hoved og krop er fyldte. Sammen læses de som
      én silhuet. */
   titleCave: svg(
-    `<path data-part="spur" d="M2.6 37.5 3.9 19.8 5 24.6 5.4 37.5ZM43.4 37.5 42.1 19.8 41 24.6 40.6 37.5Z"/>` +
-      `<path data-part="rim" d="${dome}"/><path data-part="cave" d="${dome}"/>` +
+    // Siv, ikke pæle: referencen har tre spredte strå i hver side, der vifter
+    // udad fra klippefoden. To lodrette bjælker læste som stakit.
+    `<path data-part="reed" d="M4.6 38.2 3.1 25.4M6.2 38.2 6.6 27.9M5.4 38.2 8.9 29.6M40.4 38.2 41.9 25.4M38.8 38.2 38.4 27.9M39.6 38.2 36.1 29.6"/>` +
+      `<path data-part="rim" d="${dome}"/>` +
+      // Svælget er en blød overgang, ikke en indsat form: en radial gradient
+      // fra mørkest i midten til hulekroppens tone ved munden. Et indsat,
+      // mørkere dome-omrids blev prøvet først og forkastet — dets kant læste
+      // som en klistermærke-ellipse inde i hulen.
+      `<defs><radialGradient id="caveThroat" gradientUnits="userSpaceOnUse" cx="22.5" cy="30" r="16">` +
+      `<stop offset="0" stop-color="var(--cave-depth)"/>` +
+      `<stop offset=".55" stop-color="var(--cave-depth)"/>` +
+      `<stop offset="1" stop-color="var(--cave-dark)"/></radialGradient></defs>` +
+      `<path data-part="cave" d="${dome}" fill="url(#caveThroat)"/>` +
+      // Figuren er hugget, ikke tegnet med streger: fyldt torso der smalner mod
+      // hoften, og lemmer tykke nok til at læse som krop ved 69 px.
       `<g data-part="figure">` +
-      `<circle cx="22.6" cy="19.5" r="2.35"/>` +
-      `<path d="M20.3 22.1h4.6v4.9a2.3 2.3 0 0 1-4.6 0z"/>` +
-      `<path data-limb d="M20.6 23 16.8 21M24.6 23 28.4 21M21.4 27.6 20.2 33.8M23.8 27.6 25 33.8"/>` +
+      `<circle cx="22.6" cy="18.6" r="2.7"/>` +
+      `<path d="M20.1 21.5Q22.6 20.5 25.1 21.5L24.2 28.4Q22.6 29.1 21 28.4Z"/>` +
+      `<path data-limb d="M21.1 22.4 17.2 19.3M24.1 22.4 28 19.3M21.7 28.2 20.1 34.3M23.5 28.2 25.1 34.3"/>` +
       `</g>` +
-      `<path data-part="ground" d="M3 37.4h40M7 39.3l4.6-1.4M39 39.3l-4.6-1.4M18.4 39.6l3.6-1.1"/>`,
+      // Jorden har småsten i referencen, ikke en ren streg.
+      `<path data-part="ground" d="M3 37.4h40M7 39.3l4.6-1.4M39 39.3l-4.6-1.4M18.4 39.6l3.6-1.1"/>` +
+      `<path data-part="pebble" d="M14.6 37.3q1.1-1 2.2 0M27.4 37.3q1.1-1 2.2 0M21.2 36.6q.9-.8 1.8 0"/>`,
     "scene",
     "0 0 46 42",
   ),
