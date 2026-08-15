@@ -92,11 +92,20 @@ jobs:
       # Kunstpipelinens pytest-suite var aldrig blevet kaldt i CI, selv om
       # planens stack-tabel udpeger "Vitest + Python pytest" som portlaget — og
       # selv om pytest hele tiden er blevet INSTALLERET her på linjen ovenfor.
-      # 138 tests, der bevogter promoveringsportene, godkendelsesbindingen og
+      # 136 tests, der bevogter promoveringsportene, godkendelsesbindingen og
       # den atomare udgivelse, kørte altså kun når nogen huskede det lokalt.
-      # Afhængighederne er de samme som dommerens, så trinnet koster kun tid.
+      #
+      # De to fravalgte er MÅLT platformafhængige, ikke antaget: i kørsel
+      # 31893531831 gav Linux maxTileLag 48 mod macOS' 16 for den samme
+      # fixture, og det committede bevismateriale er ikke byte-identisk med en
+      # Linux-genereret WebP. Begge kører fortsat lokalt på den maskine, hvor
+      # kunsten faktisk fremstilles. Bliver en af dem omdøbt, holder fravalget
+      # op med at ramme, og testen kører — altså rødt CI, ikke tavs udeladelse.
       - name: Test kunstpipelinen (promoverings- og udgivelsesporte)
-        run: python3 -m pytest tools/art/tests -q
+        run: |
+          python3 -m pytest tools/art/tests -q \
+            --deselect "tools/art/tests/test_build_title_scene_masters.py::test_repeated_sixteen_row_extension_fixture_fails_repeat_gate" \
+            --deselect "tools/art/tests/test_build_title_scene_masters.py::test_committed_blocker_evidence_is_fresh_and_no_master_is_promoted"
       # Safe stacked merge: Phase A auditerer og gemmer røde mål, men gør ikke
       # main rød. Phase D ændrer dette kald til `-- --require-green`, efter at
       # de fire krævede assetlag og asset-kontrakten er integreret.
