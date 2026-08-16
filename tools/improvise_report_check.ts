@@ -5,7 +5,7 @@ import {
 } from "./improvise_report";
 
 /** Opdateres kun sammen med den byte-identiske committed artefakt. */
-export const COMMITTED_IMPROVISE_REPORT_HASH = "fnv1a32:fa873b0e";
+export const COMMITTED_IMPROVISE_REPORT_HASH = "fnv1a32:247a53b4";
 
 export function checkReportArtifact(_options: {
   artifactText: string;
