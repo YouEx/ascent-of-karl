@@ -6,6 +6,7 @@ import { pairCacheKey, promptNamespace } from "../worker/src/cache-key";
 import { PROMPT_VERSION_INPUT, DEFAULT_MODEL } from "../worker/src/model";
 import { VOICE_PROFILE_HASH } from "../worker/src/voice/gate";
 import { INTERNAL_IP_HASH_HEADER, hashClientIp } from "../worker/src/ip";
+import { createRunCapability } from "../worker/src/run-auth";
 import type {
   DurableObjectId,
   DurableObjectNamespace,
@@ -125,6 +126,13 @@ function lavAnmodning(headers: Record<string, string>, body?: unknown): Request 
   });
 }
 
+function runCreateReservationRequest(ipHash: string): Request {
+  return new Request("https://internal.example/internal/run-create-reserve", {
+    method: "POST",
+    headers: { [INTERNAL_IP_HASH_HEADER]: ipHash },
+  });
+}
+
 describe("index.ts: identiteten fastslås ved kanten, ikke inde i objektet (sikkerhedsrunde 2, punkt 1)", () => {
   it("overskriver ALTID den interne header — en forfalsket header i den indkommende anmodning når aldrig igennem uændret", async () => {
     const stub = new FakeStub(async () => new Response(JSON.stringify({ text: "ok" }), { status: 200 }));
@@ -157,6 +165,109 @@ describe("index.ts: identiteten fastslås ved kanten, ikke inde i objektet (sikk
     const videresendt = stub.received[0]!;
     expect(videresendt.method).toBe("POST");
     expect(await videresendt.json()).toEqual({ aId: "x", bId: "y", verdict: "clash" });
+  });
+
+  it("fjerner altid klientens forsøg på at sætte generated-candidate-markøren", async () => {
+    const stub = new FakeStub(async () =>
+      new Response(JSON.stringify({ error: "missing internal candidates" }), {
+        status: 503,
+      }),
+    );
+    const env = {
+      ALLOWED_ORIGINS: "",
+      IP_HASH_SALT: SALT,
+      COORDINATOR: new FakeNamespace(stub),
+    };
+    const req = new Request("https://narrator.example/generated", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "https://karl.example",
+        "cf-connecting-ip": "203.0.113.7",
+        "x-internal-generated-candidates": "1",
+      },
+      body: JSON.stringify({ a: "graes", b: "pind", act: 1 }),
+    });
+
+    await worker.fetch(req, env as never);
+
+    expect(
+      stub.received[0]!.headers.get("x-internal-generated-candidates"),
+    ).toBeNull();
+  });
+
+  it("afviser offentlige /internal-ruter før Coordinator nås", async () => {
+    const stub = new FakeStub(async () => new Response("should not run"));
+    const env = {
+      ALLOWED_ORIGINS: "",
+      IP_HASH_SALT: SALT,
+      COORDINATOR: new FakeNamespace(stub),
+    };
+    const response = await worker.fetch(
+      new Request(
+        "https://narrator.example/internal/run-create-reserve",
+        {
+          method: "POST",
+          headers: {
+            origin: "https://karl.example",
+            "cf-connecting-ip": "203.0.113.7",
+          },
+        },
+      ),
+      env as never,
+    );
+
+    expect(response.status).toBe(404);
+    expect(stub.received).toHaveLength(0);
+  });
+
+  it("strips client-forged Run init and verified markers before the authenticated proxy", async () => {
+    const secret = "run-auth-test-secret";
+    const runId = "11111111-1111-1111-1111-111111111111";
+    const capability = await createRunCapability({
+      secret,
+      runId,
+      now: Date.now(),
+    });
+    const runStub = new FakeStub(async () =>
+      new Response(JSON.stringify({ schemaVersion: 1, revision: 0 }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+    const coordinatorStub = new FakeStub(async () => new Response(null));
+    const env = {
+      ALLOWED_ORIGINS: "",
+      IP_HASH_SALT: SALT,
+      RUN_AUTH_SECRET: secret,
+      COORDINATOR: new FakeNamespace(coordinatorStub),
+      RUNS: new FakeNamespace(runStub),
+    };
+    const response = await worker.fetch(
+      new Request(`https://narrator.example/api/v1/runs/${runId}`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${capability.token}`,
+          "content-type": "application/json",
+          origin: "https://karl.example",
+          "cf-connecting-ip": "203.0.113.7",
+          "x-karl-csrf": capability.capability.csrf,
+          "x-internal-run-init": "1",
+          "x-internal-run-verified": "forged",
+        },
+        body: JSON.stringify({ schemaVersion: 1 }),
+      }),
+      env as never,
+    );
+
+    expect(response.status).toBe(200);
+    expect(runStub.received).toHaveLength(1);
+    expect(
+      runStub.received[0]!.headers.get("x-internal-run-init"),
+    ).toBeNull();
+    expect(
+      runStub.received[0]!.headers.get("x-internal-run-verified"),
+    ).toBe("1");
   });
 
   it("fejler LUKKET (503) uden `cf-connecting-ip` — objektet kaldes aldrig", async () => {
@@ -354,6 +465,32 @@ describe("Coordinator: lager-livscyklus (sikkerhedsrunde 2, punkt 4 — 'no magi
     expect(nyAlarm!).toBeGreaterThan(now);
     expect(nyAlarm!).toBeLessThanOrEqual(now + CLEANUP_INTERVAL_MS + 1000);
   });
+
+  it("bevarer run-oprettelsesreservationer i hele deres eget timevindue", async () => {
+    const { coordinator, storage } = nyCoordinator({
+      RATE_LIMIT_WINDOW_SECONDS: "60",
+    });
+    const now = Date.now();
+    const quotaKey = "quota:run-create:v1";
+    const recentIp = "a".repeat(64);
+    const expiredIp = "b".repeat(64);
+    await storage.put(quotaKey, {
+      global: [now - 2 * 60_000, now - 60 * 60_000 - 1],
+      perIp: {
+        [recentIp]: [now - 30 * 60_000],
+        [expiredIp]: [now - 60 * 60_000 - 1],
+      },
+    });
+
+    await coordinator.alarm();
+
+    expect(await storage.get(quotaKey)).toEqual({
+      global: [now - 2 * 60_000],
+      perIp: {
+        [recentIp]: [now - 30 * 60_000],
+      },
+    });
+  });
 });
 
 describe("Coordinator: rate limit reserveres FØR kroppen læses/parses (sikkerhedsrunde 3, punkt 1)", () => {
@@ -434,5 +571,70 @@ describe("Coordinator: rate limit reserveres FØR kroppen læses/parses (sikkerh
       }),
     );
     expect(gyldig.status).toBe(200);
+  });
+});
+
+describe("Coordinator: oprettelse af authoritative runs er kvotebeskyttet", () => {
+  it("tillader højst fem run-oprettelser pr. IP-hash i timevinduet", async () => {
+    const { coordinator } = nyCoordinator();
+    const ipHash = "a".repeat(64);
+
+    for (let attempt = 0; attempt < 5; attempt++) {
+      expect(
+        (await coordinator.fetch(runCreateReservationRequest(ipHash))).status,
+      ).toBe(204);
+    }
+
+    const rejected = await coordinator.fetch(
+      runCreateReservationRequest(ipHash),
+    );
+    expect(rejected.status).toBe(429);
+    expect(await rejected.json()).toEqual({
+      error: "run creation rate limited",
+      scope: "ip",
+    });
+  });
+
+  it("håndhæver også det globale loft på tværs af forskellige IP-hashes", async () => {
+    const { coordinator } = nyCoordinator();
+
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const ipHash = attempt.toString(16).padStart(64, "0");
+      expect(
+        (await coordinator.fetch(runCreateReservationRequest(ipHash))).status,
+      ).toBe(204);
+    }
+
+    const rejected = await coordinator.fetch(
+      runCreateReservationRequest("f".repeat(64)),
+    );
+    expect(rejected.status).toBe(429);
+    expect(await rejected.json()).toEqual({
+      error: "run creation rate limited",
+      scope: "global",
+    });
+  });
+
+  it("does not spend global capacity when the per-IP quota rejects a request", async () => {
+    const { coordinator } = nyCoordinator();
+    const noisyIp = "a".repeat(64);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      expect(
+        (await coordinator.fetch(runCreateReservationRequest(noisyIp))).status,
+      ).toBe(204);
+    }
+    for (let attempt = 0; attempt < 100; attempt++) {
+      expect(
+        (await coordinator.fetch(runCreateReservationRequest(noisyIp))).status,
+      ).toBe(429);
+    }
+
+    expect(
+      (
+        await coordinator.fetch(
+          runCreateReservationRequest("b".repeat(64)),
+        )
+      ).status,
+    ).toBe(204);
   });
 });

@@ -1,0 +1,205 @@
+{
+  "fixture": {
+    "id": "ending-desktop",
+    "scenario": "act1-opening",
+    "width": 1366,
+    "height": 900,
+    "isMobile": false,
+    "scope": "#ending",
+    "screenshotScope": "#ending",
+    "flow": "ending",
+    "expectedEvents": [
+      "life.started"
+    ]
+  },
+  "snapshot": {
+    "schemaVersion": 2,
+    "title": "The Ascent of Karl — reinvent history, badly",
+    "html": {
+      "lang": "en",
+      "dataReady": "true"
+    },
+    "app": {
+      "tag": "div",
+      "attributes": {
+        "aria-label": "Karl's fate: A Whole Life",
+        "aria-modal": "true",
+        "id": "ending",
+        "role": "dialog"
+      },
+      "text": "",
+      "children": [
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "ending-inner tone-bittersweet"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "ending-emoji"
+              },
+              "text": "🕯️",
+              "children": []
+            },
+            {
+              "tag": "h2",
+              "attributes": {},
+              "text": "A Whole Life",
+              "children": []
+            },
+            {
+              "tag": "p",
+              "attributes": {
+                "class": "ending-line"
+              },
+              "text": "And then, one quiet evening, Karl's summers simply ran out. He sat by the fire, surrounded by everything he'd made, and closed his eyes. A whole life, spent wondering 'what if?'. There are worse ways. THE END.",
+              "children": []
+            },
+            {
+              "tag": "p",
+              "attributes": {
+                "class": "ending-stats"
+              },
+              "text": "1 summers lived · 12 discoveries · 0 quirks",
+              "children": []
+            },
+            {
+              "tag": "p",
+              "attributes": {
+                "class": "achievement"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "strong",
+                  "attributes": {},
+                  "text": "A Whole Life",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "p",
+              "attributes": {
+                "class": "achievement"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "strong",
+                  "attributes": {},
+                  "text": "Carl the Lucky",
+                  "children": []
+                },
+                {
+                  "tag": "br",
+                  "attributes": {},
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "small",
+                  "attributes": {},
+                  "text": "A whole life, and the world never once came for him.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "id": "ending-restart"
+              },
+              "text": "Live again",
+              "children": []
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "class": "secondary",
+                "id": "ending-stats"
+              },
+              "text": "Copy playtest log",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "focusOrder": [
+      "ending-restart",
+      "ending-stats"
+    ],
+    "activeElement": "ending-restart",
+    "save": {
+      "version": 1,
+      "state": {
+        "act": 1,
+        "discovered": [
+          "sten",
+          "pind",
+          "graes",
+          "vand",
+          "ler",
+          "baer",
+          "larver",
+          "dyr",
+          "stamme",
+          "nabo",
+          "fugl",
+          "gnister"
+        ],
+        "flags": [],
+        "solvedProblems": [],
+        "attempts": 1,
+        "ended": "et-helt-liv",
+        "seed": 20260811
+      }
+    },
+    "narrator": {
+      "rngState": -611574859,
+      "recentGrammar": [],
+      "spamCount": 1,
+      "lastPair": "sten+sten",
+      "lastPairElements": [
+        "sten",
+        "sten"
+      ],
+      "repeatCount": 1,
+      "failStreak": 0,
+      "fastStreak": 0,
+      "sweepElement": null,
+      "sweepCount": 0,
+      "failsSinceDiscovery": 0,
+      "hintLevel": {},
+      "lastLineId": "pull-kulde",
+      "lastVariant": {
+        "story-gnister": 1,
+        "pull-kulde": 2
+      },
+      "usedOnce": [],
+      "genericIndex": 0,
+      "discoveryIndex": 0,
+      "lastDiscoveryElement": "Sparks",
+      "pulledProblem": "kulde",
+      "lastPullAttempt": 1,
+      "defianceCount": 0,
+      "spokenDefianceTiers": [],
+      "lastDefianceAttempt": -100,
+      "recentSuggestions": [],
+      "attempts": 1,
+      "lastSlowAttempt": -100,
+      "slowUsed": false
+    },
+    "achievements": [
+      "carl-the-lucky",
+      "et-helt-liv"
+    ],
+    "productEvents": null,
+    "errors": [],
+    "failedRequests": []
+  }
+}

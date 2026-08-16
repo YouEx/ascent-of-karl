@@ -1,0 +1,80 @@
+{
+  "revision": 1,
+  "openings": [
+    {
+      "id": "riverbank",
+      "elementIds": [
+        "sten",
+        "pind",
+        "graes",
+        "vand",
+        "ler"
+      ],
+      "viabilityWitness": [
+        ["sten", "sten"],
+        ["gnister", "graes"],
+        ["sten", "pind"],
+        ["pind", "ild"],
+        ["gravestok", "graes"],
+        ["larver", "ild"],
+        ["stenoekse", "sten"],
+        ["malm", "ild"],
+        ["kobber", "malm"]
+      ]
+    },
+    {
+      "id": "berry-slope",
+      "elementIds": [
+        "sten",
+        "pind",
+        "graes",
+        "vand",
+        "baer"
+      ],
+      "viabilityWitness": [
+        ["sten", "sten"],
+        ["gnister", "graes"],
+        ["sten", "pind"],
+        ["pind", "ild"],
+        ["gravestok", "graes"],
+        ["larver", "ild"],
+        ["stenoekse", "sten"],
+        ["malm", "ild"],
+        ["kobber", "malm"]
+      ]
+    },
+    {
+      "id": "dry-clay-rise",
+      "elementIds": [
+        "sten",
+        "pind",
+        "graes",
+        "ler",
+        "baer"
+      ],
+      "viabilityWitness": [
+        ["sten", "sten"],
+        ["gnister", "graes"],
+        ["sten", "pind"],
+        ["pind", "ild"],
+        ["gravestok", "graes"],
+        ["larver", "ild"],
+        ["stenoekse", "sten"],
+        ["malm", "ild"],
+        ["kobber", "malm"]
+      ]
+    }
+  ],
+  "sidequestIds": [
+    "larvemanden",
+    "hulekunstner",
+    "overleveren"
+  ],
+  "sidequestsPerLife": 2,
+  "challengeIds": [
+    "ulve",
+    "toerke",
+    "sygdom"
+  ],
+  "challengesPerLife": 2
+}

@@ -59,8 +59,19 @@ import type { CoordinatorEnv } from "./coordinator-do";
 import { parseAllowedOrigins, isOriginAllowed, corsHeaders } from "./origin";
 import { clientIpFromRequest, hashClientIp, INTERNAL_IP_HASH_HEADER } from "./ip";
 import { isValidAdminToken, ADMIN_VERIFIED_HEADER } from "./admin";
+import {
+  createRunCapability,
+  verifyRunCapability,
+} from "./run-auth";
+import {
+  RUN_INTERNAL_INIT_HEADER,
+  RUN_INTERNAL_VERIFIED_HEADER,
+} from "./run-do";
+import { GENERATED_INTERNAL_CANDIDATES_HEADER } from "./generated-catalog";
+import { isBodyTooLarge, isJsonContentType } from "./validate";
 
 export { Coordinator } from "./coordinator-do";
+export { Run } from "./run-do";
 
 interface Env extends CoordinatorEnv {
   /** Kommasepareret liste. Tom = alle (kun til lokal brug, SEC-002). */
@@ -81,7 +92,10 @@ interface Env extends CoordinatorEnv {
    *   npx wrangler secret put ADMIN_EXPORT_TOKEN
    */
   ADMIN_EXPORT_TOKEN?: string;
+  /** HMAC secret for run capabilities. Production enable fails closed without it. */
+  RUN_AUTH_SECRET?: string;
   COORDINATOR: DurableObjectNamespace;
+  RUNS: DurableObjectNamespace;
 }
 
 /**
@@ -129,6 +143,19 @@ export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
 
+    if (url.pathname === "/healthz") {
+      const ready = Boolean(
+        env.RUN_AUTH_SECRET && env.OPENAI_API_KEY && env.IP_HASH_SALT,
+      );
+      return new Response(
+        JSON.stringify({ status: ready ? "ready" : "misconfigured" }),
+        {
+          status: ready ? 200 : 503,
+          headers: { "content-type": "application/json" },
+        },
+      );
+    }
+
     // Admin-eksporten omgår oprindelsespolitikken MED VILJE (se
     // fil-kommentaren) — tjekkes FØR Origin/CORS, som slet ikke er
     // relevante for et bearer-token-beskyttet server-til-server-kald.
@@ -137,6 +164,12 @@ export default {
       url.pathname === "/admin/improvisations"
     ) {
       return handleAdminExport(req, env);
+    }
+    if (url.pathname.startsWith("/internal/")) {
+      return new Response(JSON.stringify({ error: "not found" }), {
+        status: 404,
+        headers: { "content-type": "application/json" },
+      });
     }
 
     const origin = req.headers.get("origin");
@@ -172,11 +205,232 @@ export default {
     }
     const ipHash = await hashClientIp(ip, env.IP_HASH_SALT);
 
+    if (url.pathname === "/api/v1/session") {
+      if (req.method !== "GET") {
+        return new Response(JSON.stringify({ error: "GET only" }), {
+          status: 405,
+          headers: { ...kors, "content-type": "application/json" },
+        });
+      }
+      const activePlayAllowed = Boolean(
+        env.RUN_AUTH_SECRET && env.OPENAI_API_KEY,
+      );
+      return new Response(
+        JSON.stringify({
+          schemaVersion: 1,
+          onlineRequired: true,
+          status: activePlayAllowed ? "ready" : "network-unavailable",
+          activePlayAllowed,
+          archivesReadable: true,
+        }),
+        {
+          status: activePlayAllowed ? 200 : 503,
+          headers: { ...kors, "content-type": "application/json" },
+        },
+      );
+    }
+
+    if (url.pathname === "/api/v1/runs") {
+      if (req.method !== "POST") {
+        return new Response(JSON.stringify({ error: "POST only" }), {
+          status: 405,
+          headers: { ...kors, "content-type": "application/json" },
+        });
+      }
+      if (!env.RUN_AUTH_SECRET) {
+        return new Response(JSON.stringify({ error: "server misconfigured" }), {
+          status: 503,
+          headers: { ...kors, "content-type": "application/json" },
+        });
+      }
+      if (!isJsonContentType(req.headers.get("content-type"))) {
+        return new Response(
+          JSON.stringify({ error: "content type must be application/json" }),
+          {
+            status: 415,
+            headers: { ...kors, "content-type": "application/json" },
+          },
+        );
+      }
+      const rawText = await req.text();
+      if (isBodyTooLarge(rawText)) {
+        return new Response(JSON.stringify({ error: "body too large" }), {
+          status: 413,
+          headers: { ...kors, "content-type": "application/json" },
+        });
+      }
+      let body: { seed?: unknown };
+      try {
+        body = JSON.parse(rawText) as { seed?: unknown };
+      } catch {
+        return new Response(JSON.stringify({ error: "bad json" }), {
+          status: 400,
+          headers: { ...kors, "content-type": "application/json" },
+        });
+      }
+      const seed =
+        Number.isInteger(body.seed) &&
+        (body.seed as number) >= 0 &&
+        (body.seed as number) <= 0xffffffff
+          ? (body.seed as number)
+          : crypto.getRandomValues(new Uint32Array(1))[0]!;
+      const coordinatorId = env.COORDINATOR.idFromName("global");
+      const reservation = await env.COORDINATOR.get(coordinatorId).fetch(
+        new Request("https://internal.example/internal/run-create-reserve", {
+          method: "POST",
+          headers: { [INTERNAL_IP_HASH_HEADER]: ipHash },
+        }),
+      );
+      if (!reservation.ok) {
+        const headers = new Headers(reservation.headers);
+        for (const [key, value] of Object.entries(kors)) {
+          headers.set(key, value);
+        }
+        return new Response(reservation.body, {
+          status: reservation.status,
+          headers,
+        });
+      }
+      const runId = crypto.randomUUID();
+      const created = await createRunCapability({
+        secret: env.RUN_AUTH_SECRET,
+        runId,
+        now: Date.now(),
+      });
+      const id = env.RUNS.idFromName(runId);
+      const stub = env.RUNS.get(id);
+      const initialized = await stub.fetch(
+        new Request(`https://internal.example/api/v1/runs/${runId}`, {
+          method: "POST",
+          headers: {
+            [RUN_INTERNAL_INIT_HEADER]: "1",
+            [INTERNAL_IP_HASH_HEADER]: ipHash,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            schemaVersion: 1,
+            runId,
+            seed,
+            startedAt: new Date().toISOString(),
+          }),
+        }),
+      );
+      if (!initialized.ok) return initialized;
+      const snapshot = await initialized.json();
+      return new Response(
+        JSON.stringify({
+          schemaVersion: 1,
+          runId,
+          token: created.token,
+          csrf: created.capability.csrf,
+          expiresAt: created.capability.expiresAt,
+          ...snapshot,
+        }),
+        {
+          status: 201,
+          headers: { ...kors, "content-type": "application/json" },
+        },
+      );
+    }
+
+    const runMatch =
+      /^\/api\/v1\/runs\/([0-9a-f-]{36})(?:\/(attempts|capability))?$/.exec(
+        url.pathname,
+      );
+    if (runMatch) {
+      const runId = runMatch[1]!;
+      const auth = req.headers.get("authorization");
+      const token = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
+      const capability = await verifyRunCapability({
+        secret: env.RUN_AUTH_SECRET,
+        token,
+        csrf: req.headers.get("x-karl-csrf"),
+        runId,
+        now: Date.now(),
+      });
+      if (!capability) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...kors, "content-type": "application/json" },
+        });
+      }
+      if (runMatch[2] === "capability") {
+        if (req.method !== "POST" || !env.RUN_AUTH_SECRET) {
+          return new Response(JSON.stringify({ error: "POST only" }), {
+            status: 405,
+            headers: { ...kors, "content-type": "application/json" },
+          });
+        }
+        const rotated = await createRunCapability({
+          secret: env.RUN_AUTH_SECRET,
+          runId,
+          now: Date.now(),
+        });
+        return new Response(
+          JSON.stringify({
+            schemaVersion: 1,
+            runId,
+            token: rotated.token,
+            csrf: rotated.capability.csrf,
+            expiresAt: rotated.capability.expiresAt,
+          }),
+          {
+            status: 200,
+            headers: { ...kors, "content-type": "application/json" },
+          },
+        );
+      }
+      const headers = new Headers(req.headers);
+      headers.delete("authorization");
+      headers.delete("x-karl-csrf");
+      headers.delete(RUN_INTERNAL_INIT_HEADER);
+      headers.delete(RUN_INTERNAL_VERIFIED_HEADER);
+      headers.set(RUN_INTERNAL_VERIFIED_HEADER, "1");
+      headers.set(INTERNAL_IP_HASH_HEADER, ipHash);
+      let forwarded = req;
+      if (req.method === "POST") {
+        if (!isJsonContentType(req.headers.get("content-type"))) {
+          return new Response(
+            JSON.stringify({ error: "content type must be application/json" }),
+            {
+              status: 415,
+              headers: { ...kors, "content-type": "application/json" },
+            },
+          );
+        }
+        const rawText = await req.text();
+        if (isBodyTooLarge(rawText)) {
+          return new Response(JSON.stringify({ error: "body too large" }), {
+            status: 413,
+            headers: { ...kors, "content-type": "application/json" },
+          });
+        }
+        forwarded = new Request(req.url, {
+          method: req.method,
+          headers: req.headers,
+          body: rawText,
+        });
+      }
+      const id = env.RUNS.idFromName(runId);
+      const response = await env.RUNS.get(id).fetch(
+        new Request(forwarded, { headers }),
+      );
+      const responseHeaders = new Headers(response.headers);
+      for (const [key, value] of Object.entries(kors)) {
+        responseHeaders.set(key, value);
+      }
+      return new Response(response.body, {
+        status: response.status,
+        headers: responseHeaders,
+      });
+    }
+
     // Klon anmodningen og overskriv den interne header BETINGELSESLØST —
     // uanset om en klient selv forsøgte at sætte den (forfalskning af en
     // andens rate-limit-spand, eller et forsøg på at omgå hashing helt),
     // fjernes/erstattes den her, hver eneste gang, uden undtagelse.
     const internalHeaders = new Headers(req.headers);
+    internalHeaders.delete(GENERATED_INTERNAL_CANDIDATES_HEADER);
     internalHeaders.set(INTERNAL_IP_HASH_HEADER, ipHash);
     const forwarded = new Request(req, { headers: internalHeaders });
 

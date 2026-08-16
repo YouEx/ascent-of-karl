@@ -46,7 +46,17 @@ describe("optageren af layout-baseline", () => {
 
   it("peger kun på selektorer der findes i spillets markup", () => {
     const baseline = JSON.parse(readFileSync(BASELINE_PATH, "utf8"));
-    const markup = readFileSync(join(ROOT, "src/ui/main.ts"), "utf8");
+    const markup = [
+      "src/ui/main.ts",
+      "src/ui/App.svelte",
+      "src/ui/components/game/GameHeader.svelte",
+      "src/ui/components/game/LivingChronicle.svelte",
+      "src/ui/components/game/Workshop.svelte",
+      "src/ui/components/chronicle/ChronicleDrawer.svelte",
+      "src/ui/components/overlays/OverlayHosts.svelte",
+    ]
+      .map((file) => readFileSync(join(ROOT, file), "utf8"))
+      .join("\n");
     for (const selector of baseline.selectors as string[]) {
       if (!selector.startsWith("#")) continue;
       expect(

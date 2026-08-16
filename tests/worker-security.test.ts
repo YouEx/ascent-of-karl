@@ -246,6 +246,18 @@ describe("origin (SEC-002/RISK-001)", () => {
     const headers = corsHeaders("https://youex.github.io", ["https://youex.github.io"]);
     expect(headers["access-control-expose-headers"]).toContain("retry-after");
   });
+
+  it("tillader run-API'ets browsermetoder og autentificeringsheadere", () => {
+    const headers = corsHeaders("https://youex.github.io", [
+      "https://youex.github.io",
+    ]);
+    expect(headers["access-control-allow-methods"]).toBe(
+      "GET, POST, DELETE, OPTIONS",
+    );
+    expect(headers["access-control-allow-headers"]).toBe(
+      "authorization, content-type, x-karl-csrf",
+    );
+  });
 });
 
 describe("validate (form og grænser, TASK-002 + sikkerhedsrunde 2 punkt 3)", () => {

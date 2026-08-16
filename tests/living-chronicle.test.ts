@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import mainSource from "../src/ui/main.ts?raw";
+import headerSource from "../src/ui/components/game/GameHeader.svelte?raw";
+import chronicleSource from "../src/ui/components/game/LivingChronicle.svelte?raw";
 import bookSource from "../src/ui/book.ts?raw";
 import styles from "../src/ui/style.css?raw";
 
@@ -13,17 +15,20 @@ function sourceBetween(start: string, end: string): string {
 
 describe("living chronicle structure", () => {
   it("has one merged semantic story book and no standalone narrator section", () => {
-    expect(mainSource).toContain(
-      '<section id="story-book" aria-label="Karl\'s living chronicle">',
+    expect(chronicleSource).toContain('id="story-book"');
+    expect(chronicleSource).toContain(
+      'aria-label="Karl\'s living chronicle"',
     );
-    expect(mainSource).not.toContain('<section id="narrator"');
-    expect(mainSource).toContain('id="narrator-text"');
-    expect(mainSource).toContain('id="story-outcome"');
-    expect(mainSource).toContain('class="story-turn-leaf" aria-hidden="true"');
+    expect(chronicleSource).not.toContain('<section id="narrator"');
+    expect(chronicleSource).toContain('id="narrator-text"');
+    expect(chronicleSource).toContain('id="story-outcome"');
+    expect(chronicleSource).toContain(
+      'class="story-turn-leaf" aria-hidden="true"',
+    );
   });
 
   it("moves the current act into the header", () => {
-    expect(mainSource).toContain('id="act-label"');
+    expect(headerSource).toContain('id="act-label"');
     expect(mainSource).toContain("function renderActLabel()");
     expect(mainSource).toContain("renderActLabel();");
   });
@@ -35,9 +40,11 @@ describe("living chronicle structure", () => {
     // skiftede ikonet samtidig med at etiketten blev omdøbt til "Open the
     // chronicle archive". Et "?" betyder hjælp overalt ellers, så knappen
     // lovede hjælp og åbnede et arkiv. Testen holder nu på løftet.
-    expect(mainSource).toContain('aria-label="Open the chronicle archive"');
-    expect(mainSource).toContain("icons.book");
-    expect(mainSource).not.toContain("icons.help");
+    expect(headerSource).toContain(
+      'aria-label="Open the chronicle archive"',
+    );
+    expect(headerSource).toContain("bookIcon");
+    expect(headerSource).not.toContain("help");
     expect(styles).not.toMatch(/#book-btn\s*\{[^}]*display:\s*none/s);
   });
 
@@ -53,7 +60,7 @@ describe("living chronicle structure", () => {
   });
 
   it("does not create native title tooltips in the game or archive", () => {
-    expect(mainSource).not.toContain(" title=");
+    expect(mainSource + headerSource + chronicleSource).not.toContain(" title=");
     expect(mainSource).not.toMatch(/\.title\s*=/);
     expect(bookSource).not.toMatch(/\.title\s*=/);
   });
@@ -76,5 +83,42 @@ describe("living chronicle structure", () => {
     expect(styles).not.toMatch(
       /#story-book[^}]*(?:narrator-paper|chronicle-paper)/s,
     );
+  });
+
+  it("archives only the active life's event buffer and resumes that buffer explicitly", () => {
+    expect(mainSource).toContain("productEvents.startLifeJournal(");
+    expect(mainSource).toContain("events: productEvents.lifeJournal()");
+    expect(mainSource).not.toContain("events: productEvents.journal()");
+  });
+
+  it("persists every completed attempt and each asynchronously queued narrator beat", () => {
+    const presentLine = sourceBetween(
+      "function presentLine",
+      "function renderMute",
+    );
+    const performCombine = sourceBetween(
+      "async function performCombine",
+      "function selectElement",
+    );
+    expect(presentLine).toContain("void persistActiveLife();");
+    expect(performCombine).toContain("await persistActiveLife();");
+    expect(performCombine).toContain(
+      "shouldPersistAttemptState(GENERATED_GAMEPLAY_ENABLED",
+    );
+  });
+
+  it("updates the persistent compendium during play and renders its invention gallery", () => {
+    expect(mainSource).toContain("applyLiveProgress(");
+    expect(mainSource).toContain('class="compendium-inventions"');
+    expect(mainSource).toContain("profile.compendium.inventions");
+  });
+
+  it("renders archived lives from causal events rather than a flat discovery-name list", () => {
+    const archivedLife = sourceBetween(
+      "async function renderArchivedLife",
+      "// --- Achievements",
+    );
+    expect(archivedLife).toContain("chronicleEntriesForArchive(");
+    expect(archivedLife).not.toContain("canonical.map");
   });
 });

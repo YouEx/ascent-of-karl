@@ -50,8 +50,14 @@
     "product:graph:enrich": "node tools/product-knowledge/enrich.mjs",
     "product:context": "node tools/product-knowledge/context.mjs",
     "product:known-answers": "node tools/product-knowledge/known-answers.mjs",
-    "product:check": "npm run product:validate && npm run product:graph:check && npm run product:known-answers",
-    "check:svelte": "svelte-check --tsconfig ./tsconfig.json"
+    "product:generate": "node tools/product-knowledge/generate-contracts.mjs",
+    "product:generate:check": "node tools/product-knowledge/generate-contracts.mjs --check",
+    "product:check": "npm run product:validate && npm run product:generate:check && npm run completion:check && npm run product:graph:check && npm run product:known-answers",
+    "check:svelte": "svelte-check --tsconfig ./tsconfig.json",
+    "completion:generate": "node tools/generate_completion_manifest.mjs",
+    "completion:check": "node tools/generate_completion_manifest.mjs --check",
+    "parity:capture": "node tools/parity/capture.mjs",
+    "parity:check": "node tools/parity/compare.mjs"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "6.2.4",

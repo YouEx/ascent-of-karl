@@ -1,0 +1,57 @@
+[
+  {
+    "id": "larvemanden",
+    "title": "The Larva Years",
+    "act": 1,
+    "importance": "major",
+    "trigger": {
+      "kind": "flag",
+      "id": "larver"
+    },
+    "replayHint": {
+      "label": "Choose the edible path nobody recommends",
+      "area": "food"
+    }
+  },
+  {
+    "id": "hulekunstner",
+    "title": "Karl Leaves a Mark",
+    "act": 1,
+    "importance": "major",
+    "trigger": {
+      "kind": "discovery",
+      "id": "hulemaleri"
+    },
+    "replayHint": {
+      "label": "Pursue expression instead of survival",
+      "area": "culture"
+    }
+  },
+  {
+    "id": "overleveren",
+    "title": "Against All Available Evidence",
+    "act": 1,
+    "importance": "major",
+    "trigger": {
+      "kind": "allOf",
+      "predicates": [
+        {
+          "kind": "solvedNeed",
+          "id": "kulde"
+        },
+        {
+          "kind": "solvedNeed",
+          "id": "vaerktoej"
+        },
+        {
+          "kind": "solvedNeed",
+          "id": "sult"
+        }
+      ]
+    },
+    "replayHint": {
+      "label": "Solve every immediate problem in one life",
+      "area": "survival"
+    }
+  }
+]

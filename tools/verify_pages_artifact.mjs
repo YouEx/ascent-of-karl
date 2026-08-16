@@ -86,7 +86,10 @@ function contractAt(dir, expected) {
     contract.env.VITE_IMPROVISE_ENABLED !==
       (shouldEnable ? "true" : "false") ||
     contract.env.VITE_IMPROVISE_URL !== "" ||
-    contract.env.VITE_NARRATOR_URL !== ""
+    contract.env.VITE_NARRATOR_URL !== "" ||
+    contract.env.VITE_GAME_API_URL !== "" ||
+    contract.env.VITE_ONLINE_REQUIRED !== "false" ||
+    contract.env.VITE_ONLINE_TARGET_READY !== "false"
   ) {
     fail(`${expected} har en ugyldig resolveret feature-/Worker-kontrakt`);
   }
@@ -531,6 +534,7 @@ if (invokedPath === import.meta.url) {
       forbiddenStrings: [
         process.env.VITE_IMPROVISE_URL ?? "",
         process.env.VITE_NARRATOR_URL ?? "",
+        process.env.VITE_GAME_API_URL ?? "",
       ],
     });
   } catch (error) {

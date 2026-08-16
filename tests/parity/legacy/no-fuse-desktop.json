@@ -1,0 +1,205 @@
+{
+  "fixture": {
+    "id": "no-fuse-desktop",
+    "scenario": "act1-opening",
+    "width": 1366,
+    "height": 900,
+    "isMobile": false,
+    "scope": "#story-book",
+    "screenshotScope": "#story-book",
+    "flow": "no-fuse",
+    "expectedEvents": [
+      "combination.attempted",
+      "chronicle.entry-recorded"
+    ]
+  },
+  "snapshot": {
+    "schemaVersion": 2,
+    "title": "The Ascent of Karl — reinvent history, badly",
+    "html": {
+      "lang": "en",
+      "dataReady": "true"
+    },
+    "app": {
+      "tag": "section",
+      "attributes": {
+        "aria-label": "Karl's living chronicle",
+        "id": "story-book"
+      },
+      "text": "",
+      "children": [
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "story-cover"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "article",
+              "attributes": {
+                "class": "story-page story-page-narrator",
+                "id": "bubble"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "id": "bubble-head"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "span",
+                      "attributes": {
+                        "id": "narrator-label"
+                      },
+                      "text": "The Narrator",
+                      "children": []
+                    },
+                    {
+                      "tag": "button",
+                      "attributes": {
+                        "aria-label": "Mute the narrator",
+                        "aria-pressed": "false",
+                        "class": "icon-btn",
+                        "id": "mute"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "svg",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "focusable": "false",
+                            "viewBox": "0 0 24 24"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M16 9a4 4 0 0 1 0 6"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M18.5 6.5a7.5 7.5 0 0 1 0 11"
+                              },
+                              "text": "",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attributes": {
+                    "aria-live": "polite",
+                    "id": "narrator-text"
+                  },
+                  "text": "The clay is, undeniably, mouldable. The berries are, probably, edible. Mouldable and probably-edible do not, on their own, add up to a container worth trusting.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "story-gutter"
+              },
+              "text": "",
+              "children": []
+            },
+            {
+              "tag": "article",
+              "attributes": {
+                "aria-live": "polite",
+                "class": "story-page story-page-outcome",
+                "id": "story-outcome"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "class": "story-entry story-entry-attempt"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-pair"
+                      },
+                      "text": "Berries + Clay",
+                      "children": []
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-kicker"
+                      },
+                      "text": "Attempt",
+                      "children": []
+                    },
+                    {
+                      "tag": "h2",
+                      "attributes": {
+                        "class": "story-title"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attributes": {},
+                          "text": "No new discovery",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "story-turn-leaf"
+              },
+              "text": "",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "focusOrder": [
+      "mute"
+    ],
+    "activeElement": "BODY",
+    "save": null,
+    "narrator": null,
+    "achievements": null,
+    "productEvents": null,
+    "errors": [],
+    "failedRequests": []
+  }
+}

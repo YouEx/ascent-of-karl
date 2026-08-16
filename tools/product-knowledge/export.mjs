@@ -35,9 +35,13 @@ const INPUT_PATHS = Object.freeze([
   CONTRACT_PATHS.capabilities,
   CONTRACT_PATHS.scenarios,
   CONTRACT_PATHS.relations,
+  CONTRACT_PATHS.events,
+  CONTRACT_PATHS.semanticUi,
   SCHEMA_PATHS.capabilities,
   SCHEMA_PATHS.scenarios,
   SCHEMA_PATHS.relations,
+  SCHEMA_PATHS.events,
+  SCHEMA_PATHS.semanticUi,
   "tools/product-knowledge/schema.mjs",
   "tools/product-knowledge/validate.mjs",
   "tools/product-knowledge/relations.mjs",
@@ -79,7 +83,16 @@ function addFileNode(nodeMap, root, file, role = "source") {
 function buildGraph(root, data) {
   const nodeMap = new Map();
   const edgeMap = new Map();
-  const { capabilities: manifest, scenarios, relations } = data;
+  const {
+    capabilities: manifest,
+    scenarios,
+    relations,
+    events,
+    semanticUi,
+  } = data;
+  const eventContracts = new Map(
+    events.events.map((event) => [event.id, event]),
+  );
 
   addNode(
     nodeMap,
@@ -179,7 +192,16 @@ function buildGraph(root, data) {
     }
     for (const event of capability.semanticEvents) {
       const eventId = eventNodeId(event);
-      addNode(nodeMap, makeNode(eventId, "semantic-event", event, { event }));
+      const contract = eventContracts.get(event);
+      addNode(
+        nodeMap,
+        makeNode(eventId, "semantic-event", event, {
+          event,
+          description: contract?.description ?? "",
+          payloadRequired: contract?.payloadRequired ?? [],
+          scenarios: contract?.scenarios ?? [],
+        }),
+      );
       addEdge(edgeMap, makeEdge(id, eventId, "emits", "CONTRACT"));
     }
     for (const file of capability.ownershipHints.sourceEntrypoints) {
@@ -227,6 +249,40 @@ function buildGraph(root, data) {
           capabilityNodeId(capability),
           id,
           "has_scenario",
+          "CONTRACT",
+        ),
+      );
+    }
+
+    for (const state of semanticUi.states) {
+      addNode(nodeMap, makeNode(`state:${state}`, "ui-state", state, { state }));
+    }
+    for (const entry of semanticUi.scenarioStates) {
+      addEdge(
+        edgeMap,
+        makeEdge(
+          scenarioNodeId(entry.scenario),
+          `state:${entry.state}`,
+          "has_ui_state",
+          "CONTRACT",
+        ),
+      );
+    }
+    for (const action of semanticUi.actions) {
+      const id = `action:${action.id}`;
+      addNode(
+        nodeMap,
+        makeNode(id, "ui-action", action.id, {
+          actionId: action.id,
+          capabilityId: action.capability,
+        }),
+      );
+      addEdge(
+        edgeMap,
+        makeEdge(
+          capabilityNodeId(action.capability),
+          id,
+          "owns_action",
           "CONTRACT",
         ),
       );
@@ -330,6 +386,9 @@ function buildMetadata(root, graph, graphText) {
     capabilityCount: graph.nodes.filter((node) => node.type === "capability")
       .length,
     scenarioCount: graph.nodes.filter((node) => node.type === "scenario").length,
+    eventCount: graph.nodes.filter((node) => node.type === "semantic-event")
+      .length,
+    actionCount: graph.nodes.filter((node) => node.type === "ui-action").length,
     provenanceCounts: provenance,
     inputSha256: inputDigests(root),
     semanticEnrichment: {

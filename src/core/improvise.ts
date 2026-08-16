@@ -42,6 +42,15 @@ const SAVED_COPY_LIMITS = {
   emoji: 32,
   flavor: 1000,
 } as const;
+const GENERATED_OPERATIONS = [
+  "cut",
+  "heat",
+  "soak",
+  "bind",
+  "work",
+  "join",
+  "hybrid",
+] as const;
 
 function safeCommon(value: string): boolean {
   return (
@@ -286,7 +295,9 @@ export function sanitizeImprovisedElement(value: unknown): ElementDef | null {
     value.traits.length === 0 ||
     !value.traits.every((trait) => isAllowed(trait, TRAIT_ORDER)) ||
     (value.flavor !== undefined &&
-      !isSafeSavedText(value.flavor, SAVED_COPY_LIMITS.flavor))
+      !isSafeSavedText(value.flavor, SAVED_COPY_LIMITS.flavor)) ||
+    (value.generatedOperation !== undefined &&
+      !isAllowed(value.generatedOperation, GENERATED_OPERATIONS))
   ) {
     return null;
   }
@@ -309,6 +320,9 @@ export function sanitizeImprovisedElement(value: unknown): ElementDef | null {
     traits: TRAIT_ORDER.filter((trait) => traits.has(trait)),
     scale: value.scale,
     flavor: value.flavor as string | undefined,
+    generatedOperation: value.generatedOperation as
+      | ElementDef["generatedOperation"]
+      | undefined,
   };
 }
 

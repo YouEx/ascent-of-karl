@@ -11,9 +11,17 @@ compatibility_date = "2025-01-01"
 name = "COORDINATOR"
 class_name = "Coordinator"
 
+[[durable_objects.bindings]]
+name = "RUNS"
+class_name = "Run"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["Coordinator"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["Run"]
 
 [vars]
 # Kun spillets egen adresse må kalde. Tom værdi = alle, hvilket kun bør bruges
@@ -98,3 +106,7 @@ IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP = "25"
 
 # Nøglen sættes som secret, aldrig i denne fil:
 #   npx wrangler secret put OPENAI_API_KEY
+#
+# Run-capabilities for /api/v1/runs are HMAC-signed with a separate secret:
+#   npx wrangler secret put RUN_AUTH_SECRET
+# Missing secret keeps /healthz red and run creation closed.

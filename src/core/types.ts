@@ -147,6 +147,14 @@ export interface ElementDef {
    * `improvised` eksplicit.
    */
   origin?: ElementOrigin;
+  generatedOperation?:
+    | "cut"
+    | "heat"
+    | "soak"
+    | "bind"
+    | "work"
+    | "join"
+    | "hybrid";
   /** Det ordnede, stabile forældrepar. Findes kun på improviserede elementer. */
   parents?: [string, string];
   /** Visningsnavn på dansk */
@@ -532,6 +540,72 @@ export interface DecisionDef {
   responses: Record<string, DecisionResponse>;
 }
 
+export interface LifeOpeningDef {
+  id: string;
+  elementIds: string[];
+  viabilityWitness: [string, string][];
+}
+
+export interface LifeVariationDef {
+  revision: 1;
+  openings: LifeOpeningDef[];
+  sidequestIds: string[];
+  sidequestsPerLife: number;
+  challengeIds: string[];
+  challengesPerLife: number;
+}
+
+export type BranchPredicate =
+  | { kind: "flag"; id: string }
+  | { kind: "discovery"; id: string }
+  | { kind: "solvedNeed"; id: string }
+  | { kind: "challengeSolved"; id: string }
+  | { kind: "challengeFailed"; id: string }
+  | { kind: "ending"; id: string }
+  | { kind: "allOf"; predicates: BranchPredicate[] }
+  | { kind: "anyOf"; predicates: BranchPredicate[] };
+
+export interface AuthoredBranchDef {
+  id: string;
+  title: string;
+  act: number;
+  importance: "major" | "minor";
+  trigger: BranchPredicate;
+  replayHint: {
+    label: string;
+    area: string;
+  };
+}
+
+export interface InventionConsequenceDef {
+  id: string;
+  predicateId: string;
+  unlocksBranchId?: string;
+  unlocksEndingId?: string;
+}
+
+export interface InventionConsequencesDef {
+  schemaVersion: 1;
+  rules: InventionConsequenceDef[];
+}
+
+export interface ContentMigrationsDef {
+  schemaVersion: 1;
+  targetRevision: string;
+  supportedSourceRevisions: string[];
+  elementAliases: Record<string, string>;
+  branchAliases: Record<string, string>;
+  endingAliases: Record<string, string>;
+}
+
+export interface CompletionManifestDef {
+  schemaVersion: 1;
+  contentRevision: string;
+  discoveries: string[];
+  branches: string[];
+  endings: string[];
+}
+
 export interface ContentBundle {
   elements: ElementDef[];
   combos: ComboDef[];
@@ -540,6 +614,11 @@ export interface ContentBundle {
   endings: EndingDef[];
   challenges: ChallengeDef[];
   decisions: DecisionDef[];
+  lifeVariation?: LifeVariationDef;
+  branches?: AuthoredBranchDef[];
+  inventionConsequences?: InventionConsequencesDef;
+  completionManifest?: CompletionManifestDef;
+  migrations?: ContentMigrationsDef;
   /**
    * Prædikater pr. nød-id (content/predicates.json). Nøglen er problemets
    * eller challengets id. Kommentarnøgler med _-præfiks filtreres fra ved

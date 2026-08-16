@@ -1403,6 +1403,221 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   background: var(--valley-dark);
   overflow: hidden;
 }
+
+#network-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--ink-veil);
+}
+
+#network-gate[hidden] {
+  display: none;
+}
+
+#persistence-error {
+  position: fixed;
+  inset-inline: 16px;
+  bottom: 96px;
+  z-index: 130;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 12px 16px;
+  border: 1px solid var(--rust-warm);
+  border-radius: var(--radius);
+  background: var(--parchment);
+  color: var(--rust-warm);
+  box-shadow: var(--shadow-lift);
+}
+
+#persistence-error[hidden] {
+  display: none;
+}
+
+#persistence-retry {
+  min-height: 44px;
+  flex: 0 0 auto;
+}
+
+.network-gate-card {
+  width: min(100%, 32rem);
+  padding: 32px;
+  border: 1px solid var(--tile-edge);
+  border-radius: var(--radius-lg);
+  background: var(--parchment);
+  box-shadow: var(--shadow-lift);
+  color: var(--ink-warm);
+}
+
+.network-gate-card h2,
+.network-gate-card p {
+  max-width: var(--measure);
+}
+
+.network-gate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+#life-archive,
+#compendium {
+  width: min(100%, 1120px);
+  margin: 24px auto 0;
+  padding: 24px;
+  border: 1px solid var(--tile-edge);
+  border-radius: var(--radius-lg);
+  background:
+    var(--grain),
+    linear-gradient(100deg, var(--chronicle), var(--parchment));
+  background-blend-mode: overlay, normal;
+  box-shadow: var(--shadow-paper);
+}
+
+#life-archive h2,
+#compendium h2 {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  color: var(--ink-warm);
+}
+
+.life-archive-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--faint-rule);
+}
+
+.life-archive-row button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-color: var(--tile-edge);
+  background: var(--tile);
+  color: var(--ink-warm);
+}
+
+.compendium-meter {
+  display: grid;
+  gap: 8px;
+  color: var(--ink-warm-soft);
+}
+
+.compendium-meter progress {
+  width: 100%;
+  height: 12px;
+  accent-color: var(--ochre-ink);
+}
+
+.replay-targets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.replay-targets h3 {
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+  font-family: var(--font-display);
+  color: var(--ink-warm);
+}
+
+.replay-targets button {
+  min-height: 44px;
+  padding: 10px 14px;
+  border-color: var(--tile-edge);
+  border-radius: var(--radius-sm);
+  background: var(--tile);
+  color: var(--ink-warm);
+  font-family: var(--font-sans);
+  line-height: 1.35;
+  text-align: left;
+  box-shadow: inset 0 1px 0 var(--chronicle);
+}
+
+.replay-targets button:hover {
+  background:
+    linear-gradient(var(--ochre-tint), var(--ochre-tint)),
+    var(--tile);
+}
+
+.compendium-inventions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--faint-rule);
+}
+
+.compendium-inventions h3 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  color: var(--ink-warm);
+}
+
+.compendium-inventions ul,
+.archive-chronicle {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.compendium-inventions li,
+.archive-chronicle li {
+  padding: 10px 12px;
+  border: 1px dashed var(--dashed);
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(var(--ochre-tint), var(--ochre-tint)),
+    var(--tile);
+}
+
+.compendium-inventions li {
+  display: grid;
+  gap: 3px;
+}
+
+.compendium-inventions li span,
+.archive-chronicle li > span {
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+}
+
+.archive-detail {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--faint-rule);
+}
+
+.archive-chronicle {
+  margin-top: 12px;
+}
+
+.archive-chronicle p {
+  margin: 4px 0 0;
+}
+
+@media (max-width: 819px) {
+  #life-archive,
+  #compendium {
+    padding: 18px;
+  }
+
+  .replay-targets {
+    grid-template-columns: 1fr;
+  }
+}
+
 #title-screen[hidden] { display: none; }
 
 .title-stage {

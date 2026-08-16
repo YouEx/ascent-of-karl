@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "storageKey": "karl-product-events-v1",
+  "maxEntries": 500,
+  "events": [
+    {
+      "id": "life.started",
+      "capability": "life.begin",
+      "scenarios": [
+        "life.fresh-start",
+        "life.continue",
+        "replay.named-target"
+      ],
+      "description": "A new, resumed, or replayed life becomes the active life.",
+      "payloadRequired": [
+        "mode",
+        "seed",
+        "saveVersion",
+        "act"
+      ]
+    },
+    {
+      "id": "combination.attempted",
+      "capability": "craft.combine",
+      "scenarios": [
+        "attempt.canonical-discovery",
+        "attempt.known-result",
+        "attempt.no-fuse",
+        "attempt.invention",
+        "attempt.invention-rejected"
+      ],
+      "description": "The authoritative combination transition completed.",
+      "payloadRequired": [
+        "pair",
+        "outcome",
+        "resultId",
+        "verdict",
+        "rejectionReason"
+      ]
+    },
+    {
+      "id": "discovery.canonical",
+      "capability": "collection.canonical-discovery",
+      "scenarios": [
+        "attempt.canonical-discovery"
+      ],
+      "description": "A canonical authored discovery entered the active life.",
+      "payloadRequired": [
+        "pair",
+        "elementId",
+        "solvedNeedId",
+        "ageUp",
+        "endingDeflected"
+      ]
+    },
+    {
+      "id": "invention.accepted",
+      "capability": "sandbox.invention",
+      "scenarios": [
+        "attempt.invention"
+      ],
+      "description": "A validated run-local invention entered the active life.",
+      "payloadRequired": [
+        "pair",
+        "elementId",
+        "reused",
+        "solvedNeedId",
+        "solvedChallengeId",
+        "copySource",
+        "historicalClaim"
+      ]
+    },
+    {
+      "id": "narrator.presented",
+      "capability": "narrator.react",
+      "scenarios": [
+        "attempt.known-result",
+        "attempt.no-fuse",
+        "attempt.invention-rejected",
+        "need.active",
+        "progress.age-up-blocked",
+        "challenge.active",
+        "ending.unlocked"
+      ],
+      "description": "A visible narrator beat was presented with its product roles.",
+      "payloadRequired": [
+        "lineId",
+        "variant",
+        "text",
+        "roles",
+        "audioMode"
+      ]
+    },
+    {
+      "id": "need.updated",
+      "capability": "guidance.needs",
+      "scenarios": [
+        "need.active",
+        "progress.age-up-blocked"
+      ],
+      "description": "The active authored needs changed after a life transition.",
+      "payloadRequired": [
+        "cause",
+        "activeNeedId",
+        "needs"
+      ]
+    },
+    {
+      "id": "challenge.updated",
+      "capability": "story.challenges",
+      "scenarios": [
+        "challenge.active"
+      ],
+      "description": "A selected challenge spawned, ticked, resolved, or failed.",
+      "payloadRequired": [
+        "challengeId",
+        "status",
+        "turnsLeft",
+        "resolvedByElementId"
+      ]
+    },
+    {
+      "id": "chronicle.entry-recorded",
+      "capability": "chronicle.life",
+      "scenarios": [
+        "attempt.canonical-discovery",
+        "attempt.known-result",
+        "attempt.no-fuse",
+        "attempt.invention",
+        "progress.age-up-blocked",
+        "ending.unlocked",
+        "chronicle.read-life"
+      ],
+      "description": "One causal entry was appended to the active life Chronicle.",
+      "payloadRequired": [
+        "entryId",
+        "kind",
+        "relatedId",
+        "canonical"
+      ]
+    },
+    {
+      "id": "compendium.progressed",
+      "capability": "collection.compendium",
+      "scenarios": [
+        "compendium.review-gap",
+        "attempt.canonical-discovery",
+        "attempt.invention",
+        "ending.unlocked"
+      ],
+      "description": "Persistent authored completion changed or was loaded.",
+      "payloadRequired": [
+        "reason",
+        "completed",
+        "total"
+      ]
+    },
+    {
+      "id": "fate.unlocked",
+      "capability": "fate.ending",
+      "scenarios": [
+        "ending.unlocked"
+      ],
+      "description": "An authored fate resolved for the active life.",
+      "payloadRequired": [
+        "endingId",
+        "newlyUnlocked",
+        "cause",
+        "totalUnlocked"
+      ]
+    },
+    {
+      "id": "life.archived",
+      "capability": "chronicle.life",
+      "scenarios": [
+        "ending.unlocked",
+        "replay.named-target"
+      ],
+      "description": "An immutable ended or abandoned life entered the archive.",
+      "payloadRequired": [
+        "lifeId",
+        "outcome",
+        "historyCompleteness"
+      ]
+    },
+    {
+      "id": "life.replay-started",
+      "capability": "replay.share",
+      "scenarios": [
+        "replay.named-target"
+      ],
+      "description": "A player started another life with an optional authored target.",
+      "payloadRequired": [
+        "fromEndingId",
+        "target",
+        "nextSeed"
+      ]
+    },
+    {
+      "id": "platform.session-ready",
+      "capability": "platform.cross-device",
+      "scenarios": [
+        "platform.session-ready",
+        "network.unavailable"
+      ],
+      "description": "The application established whether active play is available.",
+      "payloadRequired": [
+        "status",
+        "onlineRequired",
+        "activePlayAllowed",
+        "archivesReadable"
+      ]
+    }
+  ]
+}

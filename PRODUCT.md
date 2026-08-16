@@ -146,8 +146,9 @@ quickly.
 **Player outcome:** The player understands the available starting possibilities
 and begins a viable but meaningfully varied life.
 
-**Current truth:** New, continue, and restart flows exist; starting elements and
-sidequests are not governed by a formal seeded viability contract.
+**Current truth:** New, continue, and restart flows use a stored deterministic
+LifePlan with five starting elements, two authored sidequests, two challenges,
+and exhaustively validated opening witnesses.
 
 **Approved target:** A stored deterministic seed selects a bounded starting
 subset and sidequests while guaranteeing viable authored progression.
@@ -171,8 +172,8 @@ sidequest viability before implementation.
 consequence, or clue.
 
 **Current truth:** The player selects two elements. Canonical recipes win;
-otherwise the engine returns a specific verdict and optional bounded
-improvisation.
+otherwise local compatibility returns a specific verdict and optional bounded
+invention, while online mode commits through a revisioned authoritative run.
 
 **Approved target:** Every valid attempt produces meaningful yield: a new
 outcome or a specific humour, guidance, or story response.
@@ -196,8 +197,8 @@ possibilities.
 **Player outcome:** The player recognises a new canonical result, sees collection
 progress, and understands that the world has expanded.
 
-**Current truth:** Canonical discoveries can carry flavor, historical notes,
-flags, need resolution, rarity, and age-up effects.
+**Current truth:** Canonical discoveries carry authored effects and now update
+both the active life record and finite persistent completion.
 
 **Approved target:** The discovery's newness, future utility, Chronicle entry,
 and persistent completion effect are immediately legible.
@@ -221,8 +222,10 @@ plausible or productively absurd.
 **Player outcome:** A player-owned invention remains distinct from canon and can
 meaningfully affect this life.
 
-**Current truth:** A deterministic offline invention floor exists behind a
-production-off flag. Optional network copy may improve name and flavor only.
+**Current truth:** The deterministic invention floor remains available for local
+compatibility; the Worker can now select a closed generated candidate whose
+taxonomy, effects, history rights, and run-local identity are validated
+deterministically.
 
 **Approved target:** A model may propose typed run-local gameplay under
 deterministic validation; accepted inventions may solve needs and unlock
@@ -247,8 +250,8 @@ story of this Karl.
 **Player outcome:** The player laughs, receives useful guidance, and recognises a
 coherent character arc across the life.
 
-**Current truth:** The narrator prioritises authored story, behavior, memory,
-baked pair lines, optional live copy, grammar, and generic fallback.
+**Current truth:** The narrator retains its full priority chain and emits typed
+humour/guidance/story evidence into each life journal.
 
 **Approved target:** Humour, guidance, and story continuity remain equally
 required across generated gameplay, seeded lives, longer memory, and online
@@ -273,8 +276,8 @@ prescribed recipe.
 **Player outcome:** The player can name the next need and imagine multiple
 possible solutions.
 
-**Current truth:** Current Act problems, predicates, hints, and alternative
-canonical solutions guide progression.
+**Current truth:** Current Act problems, predicates, hints, canonical
+discoveries, and validated inventions use the same deterministic solve rules.
 
 **Approved target:** Canonical discoveries and validated inventions can provide
 multiple legible paths to the same need.
@@ -297,8 +300,8 @@ predicates as canonical elements.
 **Player outcome:** The player notices an interruption, chooses deliberately,
 and later recognises its consequence.
 
-**Current truth:** Timed challenges can spawn, tick, resolve, fail, and affect
-endings. Sidequest variation is not yet governed by the life seed.
+**Current truth:** Each LifePlan selects a deterministic challenge subset and
+authored branch-sidequests; their outcomes feed branch and Chronicle state.
 
 **Approved target:** Seeded sidequests and challenges interrupt plans without
 replacing the main story, and their consequences remain visible later.
@@ -321,8 +324,9 @@ and causal evidence.
 **Player outcome:** The player can reconstruct what this Karl tried, discovered,
 invented, solved, and became.
 
-**Current truth:** The Living Chronicle shows the narrator, latest outcome,
-canonical archive, timeline, and—when enabled—a separate invention section.
+**Current truth:** The Living Chronicle keeps its live pages and canonical
+archive, while ProfileV2 stores immutable ended/abandoned lives and exposes
+them read-only.
 
 **Approved target:** Every archived life can be reconstructed from attempts,
 discoveries, inventions, needs, challenges, branches, and fate.
@@ -346,8 +350,9 @@ without revealing exact recipes.
 **Player outcome:** The player understands completion, identifies a broad gap,
 and chooses another life to pursue it.
 
-**Current truth:** Discoveries and fates persist locally, but there is no unified
-authored-content percentage or archived-life model.
+**Current truth:** The master compendium persists a 197-entry authored
+denominator across canonical discoveries, three major branches, and fifteen
+fates; inventions remain a separate unbounded gallery.
 
 **Approved target:** The compendium combines canonical discoveries, major
 branches, and endings into a percentage while inventions remain in a separate
@@ -371,8 +376,8 @@ persistence, and migration before implementation.
 **Player outcome:** The player unlocks a memorable fate, understands its cause,
 and becomes curious about undiscovered endings.
 
-**Current truth:** Authored endings unlock from deterministic state and appear
-as persistent fates.
+**Current truth:** Authored endings unlock from deterministic state, archive the
+completed life once, and update persistent fate completion.
 
 **Approved target:** Each ending remains surprising but causally traceable, and
 its rarity/conditions never require fabricated statistics.
@@ -397,8 +402,8 @@ required for progression.
 **Player outcome:** The player names a new target and voluntarily begins another
 life; sharing remains optional expression.
 
-**Current truth:** Players can start a new life and copy a run summary. Life
-archives and shareable seeds are not yet implemented.
+**Current truth:** Players can archive lives, inspect seed-coded summaries,
+choose broad non-spoiler replay targets, and begin a new seeded life.
 
 **Approved target:** Endings and compendium gaps present meaningful replay
 targets; life summaries and seeds remain understandable outside the running
@@ -423,8 +428,9 @@ even when layout and input differ.
 **Player outcome:** The player understands the same story, choices, feedback,
 and collection on supported devices.
 
-**Current truth:** One Vite web application serves responsive mobile and desktop
-layouts. Local saves are browser-local.
+**Current truth:** A Svelte 5 semantic shell now serves the same responsive
+mobile/desktop product; typed sessions, IndexedDB profiles, and Worker run APIs
+exist, while production online-required mode remains readiness-gated.
 
 **Approved target:** The Svelte replacement preserves meaning, behavior,
 accessibility, events, and save compatibility across supported devices.
@@ -453,11 +459,14 @@ advancement gates name it; it is no longer an implementation blocker.
 
 - TypeScript + Vite.
 - Deterministic core and content-driven gameplay.
-- Vanilla TypeScript DOM UI.
-- Complete authored gameplay can run without a backend.
-- Public root forces improvisation off.
-- Unlisted playtest enables the deterministic offline invention floor.
-- Worker URLs are absent from shipped bundles.
+- Svelte 5 owns the semantic DOM shell; the existing controller preserves
+  behavior and side-effect ordering.
+- Seeded LifePlans, ProfileV2 archives, authored compendium, replay targets, and
+  typed local product events are implemented.
+- Worker source includes run/session APIs, HMAC+CSRF capabilities, revisioned
+  idempotent attempts, and bounded generated-gameplay selection.
+- Public Pages builds keep online-required and Worker endpoints off until
+  production readiness is externally established.
 
 ### Approved target
 

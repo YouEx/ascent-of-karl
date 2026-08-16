@@ -130,3 +130,7 @@ jobs:
           npx wait-on http://localhost:5199/ --timeout 60000
       - name: UX-audit
         run: npm run ux
+      - name: Differential parity (legacy → Svelte)
+        run: npm run parity:check
+      - name: Online outage remains read-only
+        run: OUTAGE_BROWSER_TESTS=1 npx vitest run tests/network-outage-browser.test.ts

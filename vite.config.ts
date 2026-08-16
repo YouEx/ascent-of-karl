@@ -97,6 +97,10 @@ function pagesBuildContract(): Plugin {
             config.env.VITE_IMPROVISE_ENABLED ?? "",
           VITE_IMPROVISE_URL: config.env.VITE_IMPROVISE_URL ?? "",
           VITE_NARRATOR_URL: config.env.VITE_NARRATOR_URL ?? "",
+          VITE_GAME_API_URL: config.env.VITE_GAME_API_URL ?? "",
+          VITE_ONLINE_REQUIRED: config.env.VITE_ONLINE_REQUIRED ?? "",
+          VITE_ONLINE_TARGET_READY:
+            config.env.VITE_ONLINE_TARGET_READY ?? "",
         },
         modules,
       };
@@ -108,10 +112,26 @@ function pagesBuildContract(): Plugin {
   };
 }
 
+function onlineTargetGate(): Plugin {
+  return {
+    name: "karl-online-target-readiness",
+    configResolved(config) {
+      if (
+        config.env.VITE_ONLINE_REQUIRED === "true" &&
+        config.env.VITE_ONLINE_TARGET_READY !== "true"
+      ) {
+        throw new Error(
+          "VITE_ONLINE_REQUIRED requires VITE_ONLINE_TARGET_READY=true after external production gates pass",
+        );
+      }
+    },
+  };
+}
+
 export default defineConfig({
   // Relative stier, så builds virker under en underssti (GitHub Pages)
   base: "./",
-  plugins: [svelte(), pagesBuildContract()],
+  plugins: [svelte(), onlineTargetGate(), pagesBuildContract()],
   test: {
     // Vitest stubber som udgangspunkt CSS-importer til tom streng. Uden denne
     // linje ville tests/design-tokens.test.ts læse tokens.css som "" og BESTÅ

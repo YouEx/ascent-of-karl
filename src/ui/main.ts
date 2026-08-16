@@ -1,13 +1,18 @@
 import { Engine } from "../core/engine";
 import { improvisedElementId } from "../core/improvise";
 import { judgePair } from "../core/verdict";
-import { deserialize, serialize } from "../core/save";
+import {
+  deserialize,
+  migrateLegacyProfile,
+  serialize,
+} from "../core/save";
 import { Narrator, freshNarratorState } from "../narrator/narrator";
 import { LiveNarrator } from "../narrator/live";
 import { loadPairs } from "../narrator/pairs";
 import type { NarratorState, SpokenLine } from "../narrator/narrator";
 import { loadContent } from "../content";
 import type { CombineOutcome, ElementDef } from "../core/types";
+import type { GameState } from "../core/engine";
 import { BookView } from "./book";
 import { initAudio, playLine, stopAudio } from "./audio";
 import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
@@ -38,6 +43,37 @@ import {
   type ImproviseCopyState,
 } from "./improvise-client";
 import { summarizeInventions } from "./run-summary";
+import { deriveLifePlan, randomSeed } from "../core/seed";
+import { createBrowserProductEventBus } from "../product/events";
+import { SessionClient } from "./session-client";
+import { RunRevisionConflict } from "./session-client";
+import type { RunCredentials } from "../product/session";
+import {
+  applyArchivedLife,
+  archiveLife,
+  createActiveLife,
+  freshProfile,
+  type ProfileV2,
+} from "../core/life";
+import {
+  applyLiveProgress,
+  completionStatus,
+} from "../core/compendium";
+import { chronicleEntriesForArchive } from "../core/chronicle";
+import {
+  migrateArchivedLifeToCurrentContent,
+  migrateProfileToCurrentContent,
+} from "../core/content-migrations";
+import {
+  selectReplayTargets,
+  type ReplayTarget,
+} from "../core/replay";
+import {
+  InMemoryProfileStore,
+  type ProfileStore,
+} from "../persistence/profile-store";
+import { IndexedDbProfileStore } from "../persistence/indexeddb-profile-store";
+import { SerialWriteQueue } from "../persistence/write-queue";
 import { StoryBook } from "./story-book";
 import { openingStoryPage, storyPageForOutcome } from "./story-page";
 import { ImprovisationPlaytestLog } from "./improvise-playtest";
@@ -48,6 +84,8 @@ import {
   markReadyWhenPainted,
   resetStorageForScenario,
 } from "./scenario";
+import { mount } from "svelte";
+import App from "./App.svelte";
 
 // Nøglerne beholder deres oprindelige "kolde-karl"-navn selv om spillet er
 // omdøbt til The Ascent of Karl: de står i spillernes browsere, og en omdøbning
@@ -56,23 +94,81 @@ const SAVE_KEY = "kolde-karl-save-v1";
 const NARRATOR_SAVE_KEY = "kolde-karl-narrator-v1";
 const MUTE_KEY = "kolde-karl-muted";
 const ACHIEVEMENTS_KEY = "kolde-karl-achievements";
+const REPLAY_TARGET_KEY = "karl-replay-target-v1";
+const RUN_CREDENTIALS_KEY = "karl-run-capability-v1";
+let profileStore: ProfileStore = new InMemoryProfileStore();
+const profileWrites = new SerialWriteQueue();
+let profile: ProfileV2 = freshProfile();
+let persistenceError: string | null = null;
+let profileMigrationError: string | null = null;
+let runCredentials: RunCredentials | null = readRunCredentials();
+let runRevision = 0;
+
+function readRunCredentials(): RunCredentials | null {
+  try {
+    const parsed = JSON.parse(
+      localStorage.getItem(RUN_CREDENTIALS_KEY) ?? "null",
+    ) as Partial<RunCredentials> | null;
+    if (
+      !parsed ||
+      typeof parsed.runId !== "string" ||
+      typeof parsed.token !== "string" ||
+      typeof parsed.csrf !== "string" ||
+      typeof parsed.expiresAt !== "number"
+    ) {
+      return null;
+    }
+    return parsed as RunCredentials;
+  } catch {
+    return null;
+  }
+}
+
+function storeRunCredentials(credentials: RunCredentials | null): void {
+  runCredentials = credentials;
+  if (credentials) {
+    localStorage.setItem(RUN_CREDENTIALS_KEY, JSON.stringify(credentials));
+  } else {
+    localStorage.removeItem(RUN_CREDENTIALS_KEY);
+  }
+}
 
 // Et scenarie må ikke arve browserens historik: en maskine med et halvspillet
 // run ville måle noget helt andet end en ren. Ryddes FØR engine bygges.
 resetStorageForScenario([SAVE_KEY, NARRATOR_SAVE_KEY, ACHIEVEMENTS_KEY]);
 
 const content = loadContent();
-const engine = new Engine(content);
+const initialSeed = bootSeed();
+const engine = new Engine(content, undefined, {
+  lifePlan: deriveLifePlan(
+    content.lifeVariation!,
+    content.completionManifest!.contentRevision,
+    initialSeed,
+  ),
+});
+const productEvents = createBrowserProductEventBus();
+const sessionClient = new SessionClient({
+  baseUrl: import.meta.env.VITE_GAME_API_URL ?? "",
+  onlineRequired: import.meta.env.VITE_ONLINE_REQUIRED === "true",
+  credentialsUpdated: storeRunCredentials,
+});
+let activePlayBlocked = sessionClient.onlineRequired;
+if (
+  sessionClient.onlineRequired &&
+  import.meta.env.VITE_ONLINE_TARGET_READY !== "true"
+) {
+  throw new Error(
+    "VITE_ONLINE_REQUIRED requires VITE_ONLINE_TARGET_READY=true after external production gates pass",
+  );
+}
+const GENERATED_GAMEPLAY_ENABLED =
+  IMPROVISE_ENABLED || sessionClient.onlineRequired;
 const playtest = new PlaytestLog();
-const improvisationPlaytest = IMPROVISE_ENABLED
+const improvisationPlaytest = GENERATED_GAMEPLAY_ENABLED
   ? new ImprovisationPlaytestLog()
   : null;
-// Challenges spawner ud fra dette seed — nyt pr. liv, gemt i saven, så et
-// genindlæst run ikke kan ryste terningerne igen. bootSeed() er fast under
-// frysning, så to optagelser af samme scenarie er identiske.
-engine.loadState({ ...engine.getState(), seed: bootSeed() });
 // Nyt seed pr. playthrough → nye variantvalg hver gang (docs/design/fortaelleren.md)
-const narrator = new Narrator(engine, freshNarratorState(bootSeed()));
+const narrator = new Narrator(engine, freshNarratorState(initialSeed));
 
 // De bagte par-replikker hentes i deres eget bundt (CON-003), så første
 // indlæsning ikke vokser. Hentningen startes med det samme og venter ikke på
@@ -92,7 +188,7 @@ if (live.enabled) narrator.attachLive(live);
 // Produktflag og endpoint er to uafhængige kontrakter. Flaget åbner den
 // deterministiske feature; URL'en forbedrer kun copy, hvis den findes.
 const improviseClient = IMPROVISE_ENABLED ? new ImproviseClient() : null;
-if (IMPROVISE_ENABLED) {
+if (GENERATED_GAMEPLAY_ENABLED) {
   document.documentElement.dataset.improviseEnabled = "true";
 }
 
@@ -100,28 +196,396 @@ if (IMPROVISE_ENABLED) {
 function save(): void {
   localStorage.setItem(SAVE_KEY, serialize(engine.getState(), new Date().toISOString()));
   localStorage.setItem(NARRATOR_SAVE_KEY, JSON.stringify(narrator.getState()));
+  void persistActiveLife();
 }
 
 function hasSave(): boolean {
-  return localStorage.getItem(SAVE_KEY) !== null;
+  return (
+    (sessionClient.onlineRequired && runCredentials !== null) ||
+    profile.activeLife !== null ||
+    localStorage.getItem(SAVE_KEY) !== null
+  );
 }
 
 function tryLoad(): boolean {
   const raw = localStorage.getItem(SAVE_KEY);
-  if (!raw) return false;
-  try {
-    engine.loadState(deserialize(raw));
-    const nRaw = localStorage.getItem(NARRATOR_SAVE_KEY);
-    narrator.loadState(nRaw ? (JSON.parse(nRaw) as NarratorState) : freshNarratorState());
+  if (raw) {
+    try {
+      engine.loadState(deserialize(raw));
+      const nRaw = localStorage.getItem(NARRATOR_SAVE_KEY);
+      narrator.loadState(
+        nRaw ? (JSON.parse(nRaw) as NarratorState) : freshNarratorState(),
+      );
+      return true;
+    } catch {
+      // A valid ProfileV2 active life may still exist.
+    }
+  }
+  if (profile.activeLife) {
+    engine.loadState(profile.activeLife.engine);
+    narrator.loadState(profile.activeLife.narrator);
     return true;
+  }
+  return false;
+}
+
+async function clearSave(): Promise<boolean> {
+  if (activePlayBlocked || profileMigrationError) return false;
+  if (profile.activeLife) {
+    const archived = await archiveCurrentLife({ kind: "abandoned" });
+    if (!archived) return false;
+  }
+  if (runCredentials) {
+    await sessionClient.deleteRun(runCredentials).catch(() => undefined);
+  }
+  storeRunCredentials(null);
+  localStorage.removeItem(SAVE_KEY);
+  localStorage.removeItem(NARRATOR_SAVE_KEY);
+  return true;
+}
+
+async function initializeProfile(): Promise<void> {
+  try {
+    profileStore = await IndexedDbProfileStore.open();
   } catch {
-    return false;
+    profileStore = new InMemoryProfileStore();
+  }
+  const stored = await profileStore.loadProfile();
+  if (stored) {
+    const storedArchives = await profileStore.listArchives();
+    try {
+      const migratedProfile = migrateProfileToCurrentContent(
+        content,
+        stored,
+      );
+      const migratedArchives = storedArchives.map((archive) =>
+        migrateArchivedLifeToCurrentContent(content, archive),
+      );
+      if (
+        JSON.stringify(migratedProfile) !== JSON.stringify(stored) ||
+        JSON.stringify(migratedArchives) !== JSON.stringify(storedArchives)
+      ) {
+        await profileWrites.run(() =>
+          profileStore.replaceAll(migratedProfile, migratedArchives),
+        );
+      }
+      profile = migratedProfile;
+      profileMigrationError = null;
+      if (migratedProfile.activeLife) {
+        productEvents.startLifeJournal(migratedProfile.activeLife.events);
+        engine.loadState(migratedProfile.activeLife.engine);
+        narrator.loadState(migratedProfile.activeLife.narrator);
+      } else {
+        productEvents.endLifeJournal();
+      }
+    } catch (error) {
+      profile = stored;
+      productEvents.endLifeJournal();
+      profileMigrationError =
+        error instanceof Error ? error.message : String(error);
+      showPersistenceError(
+        "This save uses unsupported content. It remains untouched and read-only.",
+      );
+      setActivePlayBlocked(true);
+    }
+    await renderProfileMeta();
+    return;
+  }
+
+  const legacySave = localStorage.getItem(SAVE_KEY);
+  if (!legacySave) {
+    profile = freshProfile();
+    productEvents.endLifeJournal();
+    const snapshot = structuredClone(profile);
+    await profileWrites.run(() => profileStore.saveProfile(snapshot));
+    await renderProfileMeta();
+    return;
+  }
+  let startedAt = new Date().toISOString();
+  try {
+    const parsed = JSON.parse(legacySave) as { savedAt?: string };
+    if (typeof parsed.savedAt === "string") startedAt = parsed.savedAt;
+  } catch {
+    // migrateLegacyProfile reports the real malformed-save error below.
+  }
+  try {
+    const migrated = migrateLegacyProfile({
+      saveJson: legacySave,
+      narrator: (() => {
+        try {
+          return JSON.parse(
+            localStorage.getItem(NARRATOR_SAVE_KEY) ?? "null",
+          ) ?? freshNarratorState();
+        } catch {
+          return freshNarratorState();
+        }
+      })(),
+      achievements: loadAchievements(),
+      content,
+      lifeId: crypto.randomUUID(),
+      startedAt,
+      migratedAt: new Date().toISOString(),
+    });
+    if (migrated.archives.length > 0) {
+      for (const archive of migrated.archives) {
+        await profileStore.finalizeLife(migrated.profile, archive);
+      }
+    } else {
+      await profileStore.saveProfile(migrated.profile);
+    }
+    profile = migrated.profile;
+    if (profile.activeLife) {
+      productEvents.startLifeJournal(profile.activeLife.events);
+      engine.loadState(profile.activeLife.engine);
+      narrator.loadState(profile.activeLife.narrator);
+    } else {
+      productEvents.endLifeJournal();
+    }
+  } catch {
+    // Keep the source V1 save untouched. A transient storage failure must not
+    // let an empty ProfileV2 shadow a recoverable life on the next boot.
+    profile = freshProfile();
+    showPersistenceError("Could not migrate this life. The original save is still intact.");
+  }
+  await renderProfileMeta();
+}
+
+function beginProfileLife(
+  seed = engine.getState().seed,
+  target: ReplayTarget | null = null,
+): void {
+  if (activePlayBlocked || profileMigrationError) return;
+  const active = createActiveLife({
+    content,
+    lifeId: crypto.randomUUID(),
+    startedAt: new Date().toISOString(),
+    seed,
+    target,
+  });
+  productEvents.startLifeJournal();
+  profile = { ...profile, activeLife: active };
+  engine.loadState(active.engine);
+  narrator.loadState(active.narrator);
+  const snapshot = structuredClone(profile);
+  void profileWrites
+    .run(() => profileStore.saveProfile(snapshot))
+    .catch(() => {
+      showPersistenceError(
+        "Could not save the new life. Local recovery remains available.",
+      );
+    });
+}
+
+async function persistActiveLife(): Promise<void> {
+  if (!profile.activeLife) return;
+  profile = {
+    ...profile,
+    activeLife: {
+      ...profile.activeLife,
+      engine: engine.getState(),
+      narrator: narrator.getState(),
+      events: productEvents.lifeJournal(),
+    },
+  };
+  const snapshot = structuredClone(profile);
+  try {
+    await profileWrites.run(() => profileStore.saveProfile(snapshot));
+  } catch {
+    // localStorage V1 remains a synchronous compatibility save.
+    showPersistenceError("Could not save the life archive. Local recovery remains available.");
   }
 }
 
-function clearSave(): void {
-  localStorage.removeItem(SAVE_KEY);
-  localStorage.removeItem(NARRATOR_SAVE_KEY);
+async function archiveCurrentLife(
+  outcome:
+    | { kind: "ending"; endingId: string }
+    | { kind: "abandoned" },
+): Promise<boolean> {
+  const active = profile.activeLife;
+  if (!active) return true;
+  const current = {
+    ...active,
+    engine: engine.getState(),
+    narrator: narrator.getState(),
+    events: productEvents.lifeJournal(),
+  };
+  const archive = archiveLife(current, outcome, new Date().toISOString());
+  const nextProfile = applyArchivedLife(
+    { ...profile, activeLife: current },
+    content,
+    archive,
+  );
+  try {
+    await profileWrites.run(() =>
+      profileStore.finalizeLife(nextProfile, archive),
+    );
+  } catch {
+    showPersistenceError(
+      "Could not archive this life. Nothing was deleted; retry before starting another.",
+    );
+    return false;
+  }
+  profile = nextProfile;
+  productEvents.emit({
+    type: "life.archived",
+    scenario:
+      outcome.kind === "ending" ? "ending.unlocked" : "replay.named-target",
+    turn: engine.getState().attempts,
+    payload: {
+      lifeId: archive.lifeId,
+      outcome: outcome.kind,
+      historyCompleteness: archive.historyCompleteness,
+    },
+  });
+  productEvents.endLifeJournal();
+  persistenceError = null;
+  renderPersistenceError();
+  await renderProfileMeta();
+  return true;
+}
+
+function showPersistenceError(message: string): void {
+  persistenceError = message;
+  renderPersistenceError();
+}
+
+function renderPersistenceError(): void {
+  el.persistenceError.hidden = persistenceError === null;
+  el.persistenceErrorText.textContent = persistenceError ?? "";
+}
+
+async function renderProfileMeta(): Promise<void> {
+  const archives = await profileStore.listArchives();
+  el.lifeArchive.dataset.state = archives.length ? "filled" : "empty";
+  el.lifeArchiveList.innerHTML = archives.length
+    ? archives
+        .map(
+          (archive) => `<div class="life-archive-row">
+            <div>
+              <strong>${escapeHTML(archiveTitle(archive.outcome))}</strong>
+              <span>${escapeHTML(archive.plan.seedCode)}</span>
+            </div>
+            <button data-action="archive.open-life" data-life-id="${escapeHTML(
+              archive.lifeId,
+            )}">Read life</button>
+          </div>`,
+        )
+        .join("")
+    : `<p>No archived lives yet. Karl is working on that.</p>`;
+  for (const button of el.lifeArchiveList.querySelectorAll<HTMLButtonElement>(
+    "[data-life-id]",
+  )) {
+    button.addEventListener("click", () => {
+      void renderArchivedLife(button.dataset.lifeId ?? "");
+    });
+  }
+
+  function archiveTitle(
+    outcome:
+      | { kind: "ending"; endingId: string }
+      | { kind: "abandoned" },
+  ): string {
+    if (outcome.kind === "abandoned") return "Abandoned life";
+    return (
+      content.endings.find((ending) => ending.id === outcome.endingId)?.title ??
+      outcome.endingId
+    );
+  }
+  const status = completionStatus(content.completionManifest!, profile.compendium);
+  const inventionNames = new Map([
+    ...content.elements.map((element) => [element.id, element.name] as const),
+    ...profile.compendium.inventions.map(
+      (invention) => [invention.id, invention.name] as const,
+    ),
+  ]);
+  el.compendium.dataset.state = status.found ? "filled" : "empty";
+  el.compendiumStatus.innerHTML = `<div class="compendium-meter">
+    <strong>${status.found}/${status.total} authored entries</strong>
+    <progress value="${status.found}" max="${status.total}" aria-label="Authored completion"></progress>
+    <span>${(status.basisPoints / 100).toFixed(2)}% complete</span>
+  </div>
+  <section class="replay-targets" aria-labelledby="replay-targets-title">
+    <h3 id="replay-targets-title">Paths still open</h3>
+    ${selectReplayTargets(content, profile.compendium)
+      .slice(0, 3)
+      .map(
+        (target, index) =>
+          `<button data-replay-target="${index}">${escapeHTML(target.label)}</button>`,
+      )
+      .join("")}
+  </section>
+  <section class="compendium-inventions" aria-labelledby="compendium-inventions-title">
+    <h3 id="compendium-inventions-title">Invention gallery</h3>
+    ${
+      profile.compendium.inventions.length
+        ? `<ul>${profile.compendium.inventions
+            .map(
+              (invention) => `<li>
+                <strong>${escapeHTML(invention.name)}</strong>
+                <span>${escapeHTML(
+                  invention.parents
+                    .map((id) => inventionNames.get(id) ?? id)
+                    .join(" + "),
+                )}</span>
+              </li>`,
+            )
+            .join("")}</ul>`
+        : "<p>No inventions archived yet.</p>"
+    }
+  </section>`;
+  const targets = selectReplayTargets(content, profile.compendium).slice(0, 3);
+  for (const button of el.compendiumStatus.querySelectorAll<HTMLButtonElement>(
+    "[data-replay-target]",
+  )) {
+    button.disabled = activePlayBlocked || profileMigrationError !== null;
+    button.addEventListener("click", () => {
+      if (activePlayBlocked || profileMigrationError) return;
+      const target = targets[Number(button.dataset.replayTarget)];
+      if (!target) return;
+      const lastOutcome = profile.archives.at(-1)?.outcome;
+      sessionStorage.setItem(
+        REPLAY_TARGET_KEY,
+        JSON.stringify({
+          target,
+          fromEndingId:
+            lastOutcome?.kind === "ending"
+              ? lastOutcome.endingId
+              : "unknown",
+        }),
+      );
+      localStorage.removeItem(SAVE_KEY);
+      localStorage.removeItem(NARRATOR_SAVE_KEY);
+      location.reload();
+    });
+  }
+}
+
+async function renderArchivedLife(lifeId: string): Promise<void> {
+  const archive = await profileStore.loadArchive(lifeId);
+  if (!archive) return;
+  const entries = chronicleEntriesForArchive(content, archive);
+  el.lifeArchiveList.innerHTML += `<article class="archive-detail">
+    <h3>${escapeHTML(archive.plan.seedCode)}</h3>
+    <p>${
+      archive.finalState.discovered.filter((id) =>
+        content.completionManifest!.discoveries.includes(id),
+      ).length
+    } canonical discoveries · ${
+      archive.finalState.completedBranchIds?.length ?? 0
+    } major branches</p>
+    ${
+      entries.length
+        ? `<ol class="archive-chronicle">${entries
+            .map(
+              (entry) => `<li data-entry-kind="${entry.kind}">
+                <span>Summer ${entry.turn}</span>
+                <p>${escapeHTML(entry.text)}</p>
+              </li>`,
+            )
+            .join("")}</ol>`
+        : "<p>No causal event history is available for this legacy life.</p>"
+    }
+  </article>`;
 }
 
 // --- Achievements: skæbner overlever på tværs af runs ---
@@ -147,66 +611,14 @@ function unlockAchievement(endingId: string): boolean {
  * tommelfinger-zonen på mobil, og bogen åbnes som fuldskærms-sheet.
  */
 const app = document.querySelector<HTMLDivElement>("#app")!;
-app.innerHTML = `
-  <header>
-    <span class="mark" aria-hidden="true"></span>
-    <h1>The Ascent of Karl</h1>
-    <span id="act-label"></span>
-    <span id="age"></span>
-    <div class="header-actions">
-      <button id="book-btn" class="icon-btn" aria-label="Open the chronicle archive">${icons.book}<span id="book-badge"></span></button>
-      <button id="trophies" class="icon-btn" aria-label="Fates discovered">${icons.titleTrophy}</button>
-      <button id="restart" class="icon-btn" aria-label="Start over">${icons.restart}</button>
-    </div>
-  </header>
-
-  <section id="story-book" aria-label="Karl's living chronicle">
-    <div class="story-cover">
-      <article id="bubble" class="story-page story-page-narrator">
-      <div id="bubble-head">
-        <span id="narrator-label">The Narrator</span>
-        <button id="mute" class="icon-btn" aria-pressed="false" aria-label="Mute the narrator">${icons.soundOn}</button>
-      </div>
-        <p id="narrator-text" aria-live="polite"></p>
-      </article>
-      <div class="story-gutter" aria-hidden="true"></div>
-      <article id="story-outcome" class="story-page story-page-outcome" aria-live="polite"></article>
-      <div class="story-turn-leaf" aria-hidden="true"></div>
-    </div>
-  </section>
-
-  <section id="challenge" hidden aria-live="assertive"></section>
-  <section id="problems" aria-label="Karl's problems"></section>
-
-  <div id="tools">
-    <input id="search" type="search" placeholder="Search elements…" aria-label="Search elements" autocomplete="off">
-    <button id="filter-new" class="chip-btn" aria-pressed="false">New finds</button>
-    <button id="filter-done" class="chip-btn" aria-pressed="false"
-            aria-label="Hide finished elements that lead nowhere further">Hide finished</button>
-  </div>
-
-  <section id="grid" aria-label="Elements"></section>
-  <p id="grid-empty" hidden>Nothing matches that. Karl checked twice.</p>
-
-  <div id="dock">
-    <div class="slot" id="slot-a"></div>
-    <span class="plus">+</span>
-    <div class="slot" id="slot-b"></div>
-    <button id="combine" disabled>Combine</button>
-  </div>
-  ${IMPROVISE_ENABLED ? '<div id="improvise-status-host"></div>' : ""}
-
-  <aside id="book-panel" aria-label="Chronicle archive">
-    <button id="book-close" class="icon-btn" aria-label="Close the chronicle archive">${icons.close}</button>
-    <section id="book"></section>
-  </aside>
-
-  <div id="banner" hidden></div>
-  <div id="card" hidden></div>
-  <div id="ending" hidden></div>
-  <div id="trophy-modal" hidden></div>
-  <div id="title-screen"></div>
-`;
+app.dataset.capability = "platform.cross-device";
+mount(App, {
+  target: app,
+  props: {
+    icons,
+    improvisationEnabled: GENERATED_GAMEPLAY_ENABLED,
+  },
+});
 
 const el = {
   age: document.getElementById("age")!,
@@ -236,6 +648,20 @@ const el = {
   trophiesBtn: document.getElementById("trophies")!,
   restart: document.getElementById("restart")!,
   titleScreen: document.getElementById("title-screen")!,
+  networkGate: document.getElementById("network-gate")!,
+  networkRetry: document.getElementById("network-retry") as HTMLButtonElement,
+  networkArchives: document.getElementById(
+    "network-archives",
+  ) as HTMLButtonElement,
+  lifeArchive: document.getElementById("life-archive")!,
+  lifeArchiveList: document.getElementById("life-archive-list")!,
+  compendium: document.getElementById("compendium")!,
+  compendiumStatus: document.getElementById("compendium-status")!,
+  persistenceError: document.getElementById("persistence-error")!,
+  persistenceErrorText: document.getElementById("persistence-error-text")!,
+  persistenceRetry: document.getElementById(
+    "persistence-retry",
+  ) as HTMLButtonElement,
 };
 
 // Sjældenhed udledes én gang af indholdet — den kan ikke ændre sig i et run
@@ -244,7 +670,7 @@ const rarity = computeRarity(content);
 const book = new BookView(
   engine,
   document.getElementById("book")!,
-  IMPROVISE_ENABLED,
+  GENERATED_GAMEPLAY_ENABLED,
 );
 
 /**
@@ -390,6 +816,32 @@ function speak(text: string): Promise<void> {
 function presentLine(line: SpokenLine): Promise<void> {
   const playback = playLine(line, muted);
   const textDone = speak(line.text);
+  const roles = new Set<"humour" | "guidance" | "story">();
+  if (/hint|gate|pull|need/i.test(line.id)) roles.add("guidance");
+  if (/intro|story|ageup|ending|challenge|decision/i.test(line.id)) {
+    roles.add("story");
+  }
+  if (roles.size === 0 || /pair|fail|generic|improv/i.test(line.id)) {
+    roles.add("humour");
+  }
+  const narratorScenario = engine.activeEnding()
+    ? "ending.unlocked"
+    : engine.activeChallenge()
+      ? "challenge.active"
+      : "need.active";
+  productEvents.emit({
+    type: "narrator.presented",
+    scenario: narratorScenario,
+    turn: engine.getState().attempts,
+    payload: {
+      lineId: line.id,
+      variant: line.variant,
+      text: line.text,
+      roles: [...roles],
+      audioMode: playback.mode,
+    },
+  });
+  void persistActiveLife();
   window.dispatchEvent(
     new CustomEvent("narration:beat-start", {
       detail: {
@@ -611,8 +1063,13 @@ function renderSlots(): void {
   el.slotB.innerHTML = b ? renderSlotContent(engine.element(b)) : EMPTY_SLOT;
   el.slotA.classList.toggle("filled", !!a);
   el.slotB.classList.toggle("filled", !!b);
+  const dock = document.getElementById("dock")!;
+  dock.dataset.state =
+    a && b ? "selected-twice" : a || b ? "selected-once" : "empty";
   for (const [slot, id] of [[el.slotA, a], [el.slotB, b]] as const) {
     if (id) {
+      slot.dataset.action = "selection.remove";
+      slot.dataset.entityId = id;
       slot.setAttribute("role", "button");
       slot.setAttribute("tabindex", "0");
       slot.setAttribute(
@@ -620,6 +1077,8 @@ function renderSlots(): void {
         `Remove ${engine.element(id).name} from the combination`,
       );
     } else {
+      delete slot.dataset.action;
+      delete slot.dataset.entityId;
       slot.removeAttribute("role");
       slot.removeAttribute("tabindex");
       slot.removeAttribute("aria-label");
@@ -698,17 +1157,19 @@ function renderGrid(): void {
   el.grid.innerHTML = "";
   for (const def of visible) {
     const btn = document.createElement("button");
-    btn.className = `element ${elementOriginClass(def, IMPROVISE_ENABLED)} ${
+    btn.className = `element ${elementOriginClass(def, GENERATED_GAMEPLAY_ENABLED)} ${
       freshFinds.has(def.id) ? "is-new" : ""
     } ${def.terminal ? "is-done" : ""}`;
     btn.dataset.id = def.id;
+    btn.dataset.action = "element.select";
+    btn.dataset.entityId = def.id;
     if (def.terminal) {
       btn.setAttribute(
         "aria-label",
         `${def.name}. Finished; nothing combines with it.`,
       );
     }
-    btn.innerHTML = renderElementTileContent(def, IMPROVISE_ENABLED);
+    btn.innerHTML = renderElementTileContent(def, GENERATED_GAMEPLAY_ENABLED);
     attachSelect(btn, def);
     el.grid.appendChild(btn);
   }
@@ -749,11 +1210,18 @@ function openBook(): void {
   el.bookPanel.classList.add("open");
   document.body.classList.add("book-open");
   book.render();
+  void renderProfileMeta();
   openOverlay(el.bookPanel, {
     label: "Chronicle archive",
     onClose: () => {
       el.bookPanel.classList.remove("open");
       document.body.classList.remove("book-open");
+      if (activePlayBlocked) {
+        queueMicrotask(() => {
+          el.networkGate.hidden = false;
+          document.body.classList.add("overlay-open");
+        });
+      }
     },
   });
 }
@@ -889,7 +1357,7 @@ function showEndingScreen(): void {
       <h2>${ending.title}</h2>
       <p class="ending-line">${lastLineText}</p>
       <p class="ending-stats">${state.attempts} summers lived · ${state.discovered.length} discoveries · ${state.flags.length} quirks</p>
-      ${renderInventionSummaryHTML(inventionSummary, IMPROVISE_ENABLED)}
+      ${renderInventionSummaryHTML(inventionSummary, GENERATED_GAMEPLAY_ENABLED)}
       ${isNew
         ? `<p class="achievement">Achievement unlocked: <strong>${ending.achievement}</strong></p>`
         : `<p class="achievement known">${ending.achievement}</p>`}
@@ -912,14 +1380,15 @@ function showEndingScreen(): void {
     },
   });
   document.getElementById("ending-restart")!.addEventListener("click", () => {
-    clearSave();
-    location.reload();
+    void clearSave().then((cleared) => {
+      if (cleared) location.reload();
+    });
   });
   // Playtest-hjælp (ROADMAP prioritet 2): hele loggen, ikke kun dette run.
   // En tester der spiller tre gange skal kunne nøjes med at kopiere én gang.
   document.getElementById("ending-stats")!.addEventListener("click", async (e) => {
     const payload = JSON.stringify(
-      IMPROVISE_ENABLED
+      GENERATED_GAMEPLAY_ENABLED
         ? {
             base: playtest.read(),
             improvisation: improvisationPlaytest?.read() ?? {
@@ -947,7 +1416,192 @@ function showEndingScreen(): void {
 }
 
 // --- Spil-loop ---
-function performCombine(a: string, b: string): void {
+function outcomeScenario(outcome: CombineOutcome) {
+  switch (outcome.kind) {
+    case "discovery":
+      return "attempt.canonical-discovery" as const;
+    case "known":
+      return "attempt.known-result" as const;
+    case "gated":
+      return "progress.age-up-blocked" as const;
+    case "nofuse":
+      return "attempt.no-fuse" as const;
+    case "improvised":
+      return "attempt.invention" as const;
+    case "improvise-rejected":
+      return "attempt.invention-rejected" as const;
+  }
+}
+
+function emitAttemptProductEvents(
+  a: string,
+  b: string,
+  outcome: CombineOutcome,
+  copySource: "fallback" | "worker-copy",
+): void {
+  const state = engine.getState();
+  const scenario = outcomeScenario(outcome);
+  const pair = [a, b].sort() as [string, string];
+  const resultId =
+    outcome.kind === "discovery" ||
+    outcome.kind === "known" ||
+    outcome.kind === "improvised"
+      ? outcome.element.id
+      : null;
+  productEvents.emit({
+    type: "combination.attempted",
+    scenario,
+    turn: state.attempts,
+    payload: {
+      pair,
+      outcome: outcome.kind,
+      resultId,
+      verdict:
+        outcome.kind === "nofuse" ||
+        (outcome.kind === "improvise-rejected" && "verdict" in outcome)
+          ? outcome.verdict ?? null
+          : null,
+      rejectionReason:
+        outcome.kind === "improvise-rejected" ? outcome.reason : null,
+    },
+  });
+
+  if (outcome.kind === "discovery") {
+    productEvents.emit({
+      type: "discovery.canonical",
+      scenario,
+      turn: state.attempts,
+      payload: {
+        pair,
+        elementId: outcome.element.id,
+        solvedNeedId: outcome.solved?.id ?? null,
+        ageUp: outcome.ageUp,
+        endingDeflected: outcome.endingDeflected ?? false,
+      },
+    });
+  } else if (outcome.kind === "improvised") {
+    productEvents.emit({
+      type: "invention.accepted",
+      scenario,
+      turn: state.attempts,
+      payload: {
+        pair,
+        elementId: outcome.element.id,
+        reused: outcome.reused,
+        solvedNeedId: outcome.solved?.id ?? null,
+        solvedChallengeId:
+          outcome.challenge?.kind === "solved"
+            ? outcome.challenge.def.id
+            : null,
+        copySource,
+        historicalClaim: false,
+      },
+    });
+  }
+
+  productEvents.emit({
+    type: "need.updated",
+    scenario: outcome.kind === "gated" ? "progress.age-up-blocked" : "need.active",
+    turn: state.attempts,
+    payload: {
+      cause: outcome.kind === "discovery" && outcome.ageUp ? "age-up" : "attempt",
+      activeNeedId: narrator.currentPull()?.id ?? null,
+      needs: engine.currentActProblems().map((problem) => ({
+        id: problem.id,
+        required: problem.required,
+        status: engine.isSolved(problem.id) ? "solved" : "active",
+      })),
+    },
+  });
+
+  if (outcome.challenge) {
+    productEvents.emit({
+      type: "challenge.updated",
+      scenario: "challenge.active",
+      turn: state.attempts,
+      payload: {
+        challengeId: outcome.challenge.def.id,
+        status: outcome.challenge.kind,
+        turnsLeft:
+          outcome.challenge.kind === "ticking"
+            ? outcome.challenge.turnsLeft
+            : null,
+        resolvedByElementId:
+          outcome.challenge.kind === "solved"
+            ? outcome.challenge.by.id
+            : null,
+      },
+    });
+  }
+
+  productEvents.emit({
+    type: "chronicle.entry-recorded",
+    scenario,
+    turn: state.attempts,
+    payload: {
+      entryId: `${state.seed}:${state.attempts}:${outcome.kind}`,
+      kind:
+        outcome.kind === "discovery"
+          ? "canonical-discovery"
+          : outcome.kind === "improvised"
+            ? "invention"
+            : outcome.kind === "known"
+              ? "known-result"
+              : outcome.kind === "gated"
+                ? "blocked-progress"
+                : "attempt",
+      relatedId: resultId,
+      canonical: outcome.kind === "discovery" || outcome.kind === "known",
+    },
+  });
+}
+
+function updateLiveCompendium(outcome: CombineOutcome): void {
+  const active = profile.activeLife;
+  if (!active) return;
+  const before = profile.compendium;
+  const beforeKeys = new Set(Object.keys(before.unlocks));
+  const next = applyLiveProgress(before, content, engine.getState(), {
+    firstLifeId: active.lifeId,
+    unlockedAt: new Date().toISOString(),
+    viaInvention: outcome.kind === "improvised",
+  });
+  const addedKeys = Object.keys(next.unlocks).filter(
+    (key) => !beforeKeys.has(key),
+  );
+  const inventionsChanged =
+    next.inventions.length !== before.inventions.length;
+  if (addedKeys.length === 0 && !inventionsChanged) return;
+
+  profile = { ...profile, compendium: next };
+  if (addedKeys.length > 0) {
+    const status = completionStatus(content.completionManifest!, next);
+    const reason = addedKeys.some((key) => key.startsWith("ending:"))
+      ? "fate"
+      : addedKeys.some((key) => key.startsWith("branch:"))
+        ? "branch"
+        : "discovery";
+    productEvents.emit({
+      type: "compendium.progressed",
+      scenario:
+        reason === "fate"
+          ? "ending.unlocked"
+          : outcome.kind === "improvised"
+            ? "attempt.invention"
+            : "attempt.canonical-discovery",
+      turn: engine.getState().attempts,
+      payload: {
+        reason,
+        completed: status.found,
+        total: status.total,
+      },
+    });
+  }
+  void renderProfileMeta();
+}
+
+async function performCombine(a: string, b: string): Promise<void> {
+  if (activePlayBlocked) return;
   if (engine.activeEnding()) return;
   const now = performance.now();
   const elapsedMs = lastAttemptAt === null ? undefined : now - lastAttemptAt;
@@ -955,22 +1609,62 @@ function performCombine(a: string, b: string): void {
 
   const actAtAttempt = engine.currentAct().act;
   const attemptedImprovisation =
-    IMPROVISE_ENABLED && !engine.matchCombo(a, b);
+    GENERATED_GAMEPLAY_ENABLED && !engine.matchCombo(a, b);
   const copyState = attemptedImprovisation
     ? improviseClient?.state(a, b, actAtAttempt)
     : undefined;
   const readyCopy = copyState?.status === "ready"
     ? copyState.copy
     : undefined;
-  const outcome = performPlayerAttempt(
-    engine,
-    a,
-    b,
-    IMPROVISE_ENABLED,
-    readyCopy,
-  );
+  let outcome: CombineOutcome;
+  if (sessionClient.onlineRequired) {
+    if (!runCredentials) {
+      showNetworkOutage();
+      return;
+    }
+    el.combineBtn.disabled = true;
+    document.getElementById("dock")!.dataset.state = "busy";
+    try {
+      const remote = await sessionClient.attempt<GameState, CombineOutcome>(
+        runCredentials,
+        {
+          attemptId: crypto.randomUUID(),
+          expectedRevision: runRevision,
+          pair: [a, b],
+        },
+      );
+      runRevision = remote.revision;
+      engine.loadState(remote.snapshot);
+      outcome = remote.outcome;
+    } catch (error) {
+      if (error instanceof RunRevisionConflict) {
+        runRevision = error.revision;
+        engine.loadState(error.snapshot as GameState);
+        renderAll();
+      } else {
+        showNetworkOutage();
+      }
+      renderSlots();
+      return;
+    }
+  } else {
+    outcome = performPlayerAttempt(
+      engine,
+      a,
+      b,
+      IMPROVISE_ENABLED,
+      readyCopy,
+    );
+  }
   const line = narrator.react(a, b, outcome, elapsedMs);
   const ending = engine.activeEnding();
+  emitAttemptProductEvents(
+    a,
+    b,
+    outcome,
+    readyCopy ? "worker-copy" : "fallback",
+  );
+  updateLiveCompendium(outcome);
 
   // Ét sideskift pr. afsluttet forsøg — her, ikke i udfaldsgrenene nedenfor.
   // Lå kaldet i grenene, ville "no fuse" og afviste indfald ingen side få, og
@@ -1059,7 +1753,7 @@ function performCombine(a: string, b: string): void {
   if (outcome.kind === "improvise-rejected") {
     settleImproviseStatus(improvisationRejectionStatus(outcome), "is-rejected");
   }
-  if (shouldPersistAttemptState(IMPROVISE_ENABLED, outcome)) save();
+  if (shouldPersistAttemptState(GENERATED_GAMEPLAY_ENABLED, outcome)) save();
   if (line) say(line);
   // Anden takt: fortælleren peger videre — eller bemærker at han lige blev
   // ignoreret. Køes bag historiereplikken, så den ikke overskriver sin optakt.
@@ -1067,7 +1761,27 @@ function performCombine(a: string, b: string): void {
   renderAge();
   renderActLabel();
   renderChallenge();
+  if (!ending) await persistActiveLife();
   if (ending) {
+    const achievements = loadAchievements();
+    productEvents.emit({
+      type: "fate.unlocked",
+      scenario: "ending.unlocked",
+      turn: engine.getState().attempts,
+      payload: {
+        endingId: ending.id,
+        newlyUnlocked: !Object.hasOwn(achievements, ending.id),
+        cause:
+          outcome.challenge?.kind === "failed"
+            ? "challenge"
+            : engine.remainingTurns() === 0
+              ? "turn-limit"
+              : "combination",
+        totalUnlocked:
+          Object.keys(achievements).length +
+          (Object.hasOwn(achievements, ending.id) ? 0 : 1),
+      },
+    });
     // Runnet slutter HER, ikke når skærmen vises: en genindlæsning på
     // slutskærmen viser den igen, og så ville runnet blive talt to gange
     // med en varighed på nul minutter.
@@ -1086,6 +1800,14 @@ function performCombine(a: string, b: string): void {
       ),
     });
     save();
+    const archived = await archiveCurrentLife({
+      kind: "ending",
+      endingId: ending.id,
+    });
+    if (archived) {
+      localStorage.removeItem(SAVE_KEY);
+      localStorage.removeItem(NARRATOR_SAVE_KEY);
+    }
     showEndingScreen();
   }
 
@@ -1102,6 +1824,7 @@ function performCombine(a: string, b: string): void {
  * noget op. Tap-tap kan begge dele uden at slås om den samme bevægelse.
  */
 function selectElement(def: ElementDef): void {
+  if (activePlayBlocked) return;
   settledImproviseStatus = null;
   if (!selected[0]) {
     copyGenerations.abandon();
@@ -1125,7 +1848,7 @@ function attachSelect(btn: HTMLButtonElement, def: ElementDef): void {
 
 el.combineBtn.addEventListener("click", () => {
   const [a, b] = selected;
-  if (a && b) performCombine(a, b);
+  if (a && b) void performCombine(a, b);
 });
 
 // Tryk på en fyldt slot for at tømme den
@@ -1144,9 +1867,11 @@ for (const [slot, index] of [[el.slotA, 0], [el.slotB, 1]] as const) {
 }
 
 el.restart.addEventListener("click", () => {
+  if (activePlayBlocked) return;
   if (!confirm("Start over completely? Karl forgets everything. He's good at that.")) return;
-  clearSave();
-  location.reload();
+  void clearSave().then((cleared) => {
+    if (cleared) location.reload();
+  });
 });
 
 // --- Titelskærm: første interaktion låser også lyd op (autoplay-politik) ---
@@ -1218,6 +1943,37 @@ function setBackgroundInert(inert: boolean): void {
   }
 }
 
+function setActivePlayBlocked(blocked: boolean): void {
+  const locked = blocked || profileMigrationError !== null;
+  activePlayBlocked = locked;
+  for (const selector of [
+    "#challenge",
+    "#problems",
+    "#tools",
+    "#grid",
+    "#grid-empty",
+    "#dock",
+    "#improvise-status-host",
+  ]) {
+    document.querySelector(selector)?.toggleAttribute("inert", locked);
+  }
+  el.restart.toggleAttribute("inert", locked);
+  for (const button of document.querySelectorAll<HTMLButtonElement>(
+    "[data-replay-target]",
+  )) {
+    button.disabled = locked;
+  }
+  document.documentElement.dataset.activePlay =
+    locked ? "blocked" : "available";
+}
+
+function showNetworkOutage(): void {
+  setActivePlayBlocked(true);
+  el.networkGate.hidden = false;
+  el.titleScreen.hidden = true;
+  document.body.classList.add("overlay-open");
+}
+
 function showTitleScreen(): void {
   const canContinue = hasSave();
   const unlocked = Object.keys(loadAchievements()).length;
@@ -1249,15 +2005,15 @@ function showTitleScreen(): void {
         </p>
         <div class="title-divider title-block" aria-hidden="true"></div>
         <div class="title-actions title-block${crowded}">
-          <button id="t-primary" class="title-action btn-stone">
+          <button id="t-primary" class="title-action btn-stone" data-action="${canContinue ? "life.continue" : "life.begin"}">
             <span class="title-action-icon" aria-hidden="true">${icons.titleSpiral}</span>
             <span class="title-action-label">${canContinue ? "Continue" : "Begin"}</span>
           </button>
-          ${canContinue ? `<button id="t-new" class="title-action btn-quiet">
+          ${canContinue ? `<button id="t-new" class="title-action btn-quiet" data-action="life.new">
             <span class="title-action-icon" aria-hidden="true">${icons.restart}</span>
             <span class="title-action-label">New life</span>
           </button>` : ""}
-          <button id="t-fates" class="title-action btn-quiet">
+          <button id="t-fates" class="title-action btn-quiet" data-action="fates.open">
             <span class="title-action-icon" aria-hidden="true">${icons.titleTrophy}</span>
             <span class="title-action-label">Fates</span>
             <span class="title-action-count fates-count">${unlocked}/${content.endings.length}</span>
@@ -1277,12 +2033,16 @@ function showTitleScreen(): void {
         </div>
       </div>`}
       <div class="title-tools">
-        <button id="t-trophies" aria-label="Fates you have reached">${icons.titleTrophy}</button>
+        <button id="t-trophies" aria-label="Fates you have reached" data-action="fates.open">${icons.titleTrophy}</button>
         <button id="t-sound" aria-pressed="${muted}"
-                aria-label="${muted ? "Unmute the narrator" : "Mute the narrator"}">${muted ? icons.soundOff : icons.soundOn}</button>
+                aria-label="${muted ? "Unmute the narrator" : "Mute the narrator"}" data-action="narrator.mute">${muted ? icons.soundOff : icons.soundOn}</button>
       </div>
     </div>`;
   el.titleScreen.hidden = false;
+  el.titleScreen.dataset.scenario = canContinue
+    ? "life.continue"
+    : "life.fresh-start";
+  el.titleScreen.dataset.state = canContinue ? "resumable" : "fresh";
   setBackgroundInert(true);
 
   renderTip();
@@ -1297,13 +2057,15 @@ function showTitleScreen(): void {
   }
 
   document.getElementById("t-primary")!.addEventListener("click", () => {
-    if (canContinue) return startGame(true);
-    clearSave();
-    startGame(false);
+    if (canContinue) return void startGame(true);
+    void clearSave().then((cleared) => {
+      if (cleared) void startGame(false);
+    });
   });
   document.getElementById("t-new")?.addEventListener("click", () => {
-    clearSave();
-    startGame(false);
+    void clearSave().then((cleared) => {
+      if (cleared) void startGame(false);
+    });
   });
   document.getElementById("t-fates")!.addEventListener("click", renderTrophyModal);
   document.getElementById("t-trophies")!.addEventListener("click", renderTrophyModal);
@@ -1317,13 +2079,97 @@ function showTitleScreen(): void {
   });
 }
 
-function startGame(resume: boolean): void {
-  const resumed = resume && tryLoad();
+async function startGame(resume: boolean): Promise<void> {
+  if (activePlayBlocked || profileMigrationError) {
+    if (profileMigrationError) {
+      showPersistenceError(
+        "This save cannot be resumed on the current content revision. The original data is untouched.",
+      );
+    }
+    return;
+  }
+  let resumed = false;
+  let replay:
+    | { target: ReplayTarget; fromEndingId: string }
+    | null = null;
+  if (!resumed) {
+    try {
+      replay = JSON.parse(sessionStorage.getItem(REPLAY_TARGET_KEY) ?? "null");
+    } catch {
+      replay = null;
+    }
+  }
+  if (sessionClient.onlineRequired) {
+    try {
+      if (resume && runCredentials) {
+        const remote = await sessionClient.loadRun<GameState>(runCredentials);
+        runRevision = remote.revision;
+        engine.loadState(remote.snapshot);
+        resumed = true;
+        if (!profile.activeLife) {
+          beginProfileLife(remote.snapshot.seed, null);
+          engine.loadState(remote.snapshot);
+        }
+      } else {
+        const seed = isFrozen() ? initialSeed : randomSeed();
+        const remote = await sessionClient.createRun(seed);
+        storeRunCredentials(remote.credentials);
+        runRevision = remote.revision;
+        beginProfileLife(seed, replay?.target ?? null);
+        engine.loadState(remote.snapshot as GameState);
+      }
+    } catch {
+      showNetworkOutage();
+      return;
+    }
+  } else {
+    resumed = resume && tryLoad();
+    if (!resumed) {
+      const seed = isFrozen() ? initialSeed : randomSeed();
+      beginProfileLife(seed, replay?.target ?? null);
+    }
+  }
+  if (!resumed) {
+    const seed = engine.getState().seed;
+    if (replay) {
+      productEvents.emit({
+        type: "life.replay-started",
+        scenario: "replay.named-target",
+        turn: 0,
+        payload: {
+          fromEndingId: replay.fromEndingId,
+          target:
+            replay.target.kind === "ending"
+              ? { kind: "fate", id: replay.target.endingId }
+              : replay.target.kind === "branch"
+                ? { kind: "branch", id: replay.target.branchId }
+                : {
+                    kind: "discovery",
+                    id: `act-${replay.target.act}:${replay.target.area}`,
+                  },
+          nextSeed: seed,
+        },
+      });
+      sessionStorage.removeItem(REPLAY_TARGET_KEY);
+    }
+  }
   if (tipTimer) clearInterval(tipTimer);
   tipTimer = undefined;
   el.titleScreen.hidden = true;
   setBackgroundInert(false);
   runStartedAt = performance.now();
+  const state = engine.getState();
+  productEvents.emit({
+    type: "life.started",
+    scenario: resumed ? "life.continue" : "life.fresh-start",
+    turn: state.attempts,
+    payload: {
+      mode: resumed ? "continue" : replay ? "replay" : "new",
+      seed: state.seed,
+      saveVersion: 1,
+      act: state.act,
+    },
+  });
   renderAll();
   const resumedEnding = engine.activeEnding();
   if (resumedEnding) {
@@ -1358,8 +2204,10 @@ function renderChallenge(): void {
   const ch = engine.activeChallenge();
   if (!ch) {
     el.challenge.hidden = true;
+    el.challenge.dataset.state = "idle";
     return;
   }
+  el.challenge.dataset.state = "active";
   const { def, active } = ch;
   const urgent = active.turnsLeft <= 2;
   el.challenge.innerHTML = `
@@ -1387,9 +2235,58 @@ function renderAll(): void {
 
 // --- Opstart ---
 initOverlays();
-renderAll();
-showTitleScreen();
-applyScenario();
+el.networkRetry.addEventListener("click", () => void establishSession());
+el.networkArchives.addEventListener("click", () => {
+  el.networkGate.hidden = true;
+  openBook();
+});
+el.persistenceRetry.addEventListener("click", () => {
+  void (async () => {
+    if (profileMigrationError) return;
+    try {
+      const snapshot = structuredClone(profile);
+      await profileWrites.run(() => profileStore.saveProfile(snapshot));
+      persistenceError = null;
+      renderPersistenceError();
+    } catch {
+      showPersistenceError("Saving still failed. The compatibility save remains intact.");
+    }
+  })();
+});
+const profileInitialized = initializeProfile();
+void establishSession();
+
+async function establishSession(): Promise<void> {
+  await profileInitialized;
+  el.networkRetry.disabled = true;
+  const readiness = await sessionClient.readiness();
+  productEvents.emit({
+    type: "platform.session-ready",
+    scenario:
+      readiness.status === "ready"
+        ? "platform.session-ready"
+        : "network.unavailable",
+    turn: engine.getState().attempts,
+    payload: {
+      status: readiness.status,
+      onlineRequired: readiness.onlineRequired,
+      activePlayAllowed: readiness.activePlayAllowed,
+      archivesReadable: readiness.archivesReadable,
+    },
+  });
+  el.networkRetry.disabled = false;
+  renderAll();
+  if (!readiness.activePlayAllowed) {
+    showNetworkOutage();
+    void markReadyWhenPainted();
+    return;
+  }
+  setActivePlayBlocked(false);
+  el.networkGate.hidden = true;
+  document.body.classList.remove("overlay-open");
+  showTitleScreen();
+  applyScenario();
+}
 
 /**
  * Sætter spillet i den tilstand en reference viser, og melder klar.

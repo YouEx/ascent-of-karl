@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import mainSource from "../src/ui/main.ts?raw";
+import headerSource from "../src/ui/components/game/GameHeader.svelte?raw";
 import iconsSource from "../src/ui/icons.ts?raw";
 import styles from "../src/ui/style.css?raw";
 import titleArtSource from "../src/ui/title-art.ts?raw";
@@ -171,7 +172,9 @@ describe("titelskærmens egen h1 er den ENESTE, en skærmlæser møder (TASK-011
     // fjernet — kun visuelt dækket). Falder dette tal til 1 eller stiger
     // til 3, er en af antagelserne herunder ikke længere sand, og næste
     // test's ræsonnement (inert fjerner præcis ÉN ekstra h1) holder ikke.
-    const h1Count = (code.match(/<h1[\s>]/g) ?? []).length;
+    const h1Count =
+      (code.match(/<h1[\s>]/g) ?? []).length +
+      (headerSource.match(/<h1[\s>]/g) ?? []).length;
     expect(h1Count).toBe(2);
   });
 

@@ -1,0 +1,118 @@
+{
+  "fixture": {
+    "id": "select-desktop",
+    "scenario": "act1-opening",
+    "width": 1366,
+    "height": 900,
+    "isMobile": false,
+    "scope": "#dock",
+    "screenshotScope": "#dock",
+    "flow": "select"
+  },
+  "snapshot": {
+    "schemaVersion": 2,
+    "title": "The Ascent of Karl — reinvent history, badly",
+    "html": {
+      "lang": "en",
+      "dataReady": "true"
+    },
+    "app": {
+      "tag": "div",
+      "attributes": {
+        "id": "dock"
+      },
+      "text": "",
+      "children": [
+        {
+          "tag": "div",
+          "attributes": {
+            "aria-label": "Remove Stone from the combination",
+            "class": "slot filled",
+            "id": "slot-a",
+            "role": "button",
+            "tabindex": "0"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "img",
+              "attributes": {
+                "alt": "",
+                "aria-hidden": "true",
+                "class": "slot-glyph slot-glyph-art",
+                "draggable": "false",
+                "src": "/assets/sten-NUWooAC1.webp"
+              },
+              "text": "",
+              "children": []
+            },
+            {
+              "tag": "span",
+              "attributes": {},
+              "text": "Stone",
+              "children": []
+            }
+          ]
+        },
+        {
+          "tag": "span",
+          "attributes": {
+            "class": "plus"
+          },
+          "text": "+",
+          "children": []
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "slot",
+            "id": "slot-b"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "span",
+              "attributes": {
+                "class": "slot-empty"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "b",
+                  "attributes": {},
+                  "text": "Select an element",
+                  "children": []
+                },
+                {
+                  "tag": "i",
+                  "attributes": {},
+                  "text": "Choose from below",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "button",
+          "attributes": {
+            "disabled": "",
+            "id": "combine"
+          },
+          "text": "Combine",
+          "children": []
+        }
+      ]
+    },
+    "focusOrder": [
+      "slot-a"
+    ],
+    "activeElement": "BUTTON",
+    "save": null,
+    "narrator": null,
+    "achievements": null,
+    "productEvents": null,
+    "errors": [],
+    "failedRequests": []
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ascent-of-karl.local/schema/semantic-ui.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "attributes",
+    "capabilityRoots",
+    "scenarioStates",
+    "actions",
+    "states"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability",
+        "scenario",
+        "action",
+        "state",
+        "entity"
+      ],
+      "properties": {
+        "capability": {
+          "const": "data-capability"
+        },
+        "scenario": {
+          "const": "data-scenario"
+        },
+        "action": {
+          "const": "data-action"
+        },
+        "state": {
+          "const": "data-state"
+        },
+        "entity": {
+          "const": "data-entity-id"
+        }
+      }
+    },
+    "capabilityRoots": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "scenarioStates": {
+      "type": "array",
+      "minItems": 16,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scenario",
+          "state"
+        ],
+        "properties": {
+          "scenario": {
+            "$ref": "#/$defs/id"
+          },
+          "state": {
+            "$ref": "#/$defs/state"
+          }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "minItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "capability"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "capability": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "states": {
+      "type": "array",
+      "minItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/state"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    }
+  }
+}

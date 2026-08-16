@@ -59,6 +59,17 @@ import {
   type CachedImprovisation,
   type ImproviseStatsRecord,
 } from "./improvise-stats";
+import {
+  createGeneratedDeps,
+  decideGeneratedSelection,
+  type GeneratedDeps,
+  type GeneratedResponse,
+} from "./generated";
+import { GENERATED_INTERNAL_CANDIDATES_HEADER } from "./generated-catalog";
+import {
+  callGeneratedOpenAI,
+  GENERATED_PROMPT_VERSION_INPUT,
+} from "./generated-model";
 
 export interface CoordinatorEnv extends ModelEnv {
   /** Sekunder i det rullende vindue (TASK-002). Se wrangler.toml for den målte default. */
@@ -134,6 +145,15 @@ export const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000; // 1 døgn
  */
 const ADMIN_RATE_LIMIT_SENTINEL = "admin:pairs-export";
 const ADMIN_IMPROVISE_RATE_LIMIT_SENTINEL = "admin:improvisations-export";
+const RUN_CREATE_QUOTA_KEY = "quota:run-create:v1";
+const RUN_CREATE_WINDOW_MS = 60 * 60 * 1000;
+const RUN_CREATE_MAX_PER_IP = 5;
+const RUN_CREATE_MAX_GLOBAL = 100;
+
+interface RunCreateQuota {
+  global: number[];
+  perIp: Record<string, number[]>;
+}
 
 interface AdapterResponse {
   status: number;
@@ -184,9 +204,28 @@ function responseForImprovise(result: ImproviseResponse): AdapterResponse {
   return { status: 502, body: { error: "upstream", reason: result.reason } };
 }
 
+function responseForGenerated(result: GeneratedResponse): AdapterResponse {
+  if (result.status === 200) return { status: 200, body: result.value };
+  if (result.status === 400) {
+    return { status: 400, body: { error: "bad request", reason: result.reason } };
+  }
+  if (result.status === 429 || result.status === 503) {
+    return {
+      status: result.status,
+      body: { error: result.status === 429 ? "rate limited" : "daily budget exhausted", reason: result.reason },
+      retryAfterSeconds: result.retryAfterSeconds,
+    };
+  }
+  return {
+    status: result.status,
+    body: { error: "upstream", reason: result.reason },
+  };
+}
+
 export class Coordinator {
   private deps: CoordinatorDeps | undefined;
   private improviseDeps: ImproviseDeps | undefined;
+  private generatedDeps: GeneratedDeps | undefined;
 
   constructor(
     private readonly state: DurableObjectState,
@@ -258,6 +297,31 @@ export class Coordinator {
     return this.improviseDeps;
   }
 
+  private getGeneratedDeps(): GeneratedDeps {
+    if (!this.generatedDeps) {
+      const cacheNamespace = promptNamespace(
+        GENERATED_PROMPT_VERSION_INPUT,
+        this.env.MODEL ?? DEFAULT_MODEL,
+      );
+      this.generatedDeps = createGeneratedDeps({
+        store: this.state.storage,
+        callUpstream: (body) => callGeneratedOpenAI(body, this.env),
+        config: {
+          dailyMax: toNonNegativeInt(
+            this.env.IMPROVISE_DAILY_MAX_UPSTREAM_CALLS,
+            DEFAULT_IMPROVISE_DAILY_MAX_UPSTREAM_CALLS,
+          ),
+          dailyMaxPerIp: toNonNegativeInt(
+            this.env.IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
+            DEFAULT_IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
+          ),
+          cacheNamespace,
+        },
+      });
+    }
+    return this.generatedDeps;
+  }
+
   /**
    * Sikrer at en oprydningsalarm er sat, uden at genplante en der allerede
    * tikker. Kaldes ved hver forespørgsel, men er selv-helbredende og billig
@@ -299,6 +363,30 @@ export class Coordinator {
       );
       for (const key of findStaleRateLimitKeys(rlEntries, now, deps.config.rateLimitWindowMs)) {
         await this.state.storage.delete(key);
+      }
+      const runCreateQuota =
+        await this.state.storage.get<RunCreateQuota>(RUN_CREATE_QUOTA_KEY);
+      if (runCreateQuota) {
+        const global = runCreateQuota.global.filter(
+          (timestamp) => now - timestamp < RUN_CREATE_WINDOW_MS,
+        );
+        const perIp: Record<string, number[]> = {};
+        for (const [ipHash, timestamps] of Object.entries(
+          runCreateQuota.perIp,
+        )) {
+          const recent = timestamps.filter(
+            (timestamp) => now - timestamp < RUN_CREATE_WINDOW_MS,
+          );
+          if (recent.length > 0) perIp[ipHash] = recent;
+        }
+        if (global.length === 0) {
+          await this.state.storage.delete(RUN_CREATE_QUOTA_KEY);
+        } else {
+          await this.state.storage.put(RUN_CREATE_QUOTA_KEY, {
+            global,
+            perIp,
+          } satisfies RunCreateQuota);
+        }
       }
 
       const cacheEntries = await this.state.storage.list<CachedLine>({ prefix: CACHE_KEY_PREFIX });
@@ -506,6 +594,101 @@ export class Coordinator {
     return this.toHttpResponse(status, body, retryAfterSeconds);
   }
 
+  private async handleRunCreateReserve(req: Request): Promise<Response> {
+    if (req.method !== "POST") {
+      return this.toHttpResponse(405, { error: "POST only" });
+    }
+    const ipHash = req.headers.get(INTERNAL_IP_HASH_HEADER);
+    if (!isValidIpHash(ipHash)) {
+      return this.toHttpResponse(503, { error: "missing or invalid identity" });
+    }
+    const now = Date.now();
+    return this.getDeps().gate.run(async () => {
+      const stored =
+        (await this.state.storage.get<RunCreateQuota>(
+          RUN_CREATE_QUOTA_KEY,
+        )) ?? { global: [], perIp: {} };
+      const global = stored.global.filter(
+        (timestamp) => now - timestamp < RUN_CREATE_WINDOW_MS,
+      );
+      const perIp = (stored.perIp[ipHash] ?? []).filter(
+        (timestamp) => now - timestamp < RUN_CREATE_WINDOW_MS,
+      );
+      if (perIp.length >= RUN_CREATE_MAX_PER_IP) {
+        return this.toHttpResponse(
+          429,
+          { error: "run creation rate limited", scope: "ip" },
+          3600,
+        );
+      }
+      if (global.length >= RUN_CREATE_MAX_GLOBAL) {
+        return this.toHttpResponse(
+          429,
+          { error: "run creation rate limited", scope: "global" },
+          3600,
+        );
+      }
+      global.push(now);
+      perIp.push(now);
+      await this.state.storage.put(RUN_CREATE_QUOTA_KEY, {
+        global,
+        perIp: {
+          ...stored.perIp,
+          [ipHash]: perIp,
+        },
+      } satisfies RunCreateQuota);
+      return new Response(null, { status: 204 });
+    });
+  }
+
+  private async handleGenerated(req: Request): Promise<Response> {
+    if (req.method !== "POST") {
+      return this.toHttpResponse(405, { error: "POST only" });
+    }
+    if (req.headers.get(GENERATED_INTERNAL_CANDIDATES_HEADER) !== "1") {
+      return this.toHttpResponse(503, {
+        error: "missing internal generated candidates",
+      });
+    }
+    const ipHash = req.headers.get(INTERNAL_IP_HASH_HEADER);
+    if (!isValidIpHash(ipHash)) {
+      return this.toHttpResponse(503, { error: "missing or invalid identity" });
+    }
+    const rateLimit = await reserveImproviseRateLimitSlot(
+      ipHash,
+      this.getImproviseDeps(),
+    );
+    if (!rateLimit.allowed) {
+      return this.toHttpResponse(
+        429,
+        { error: "rate limited", reason: "rate limit" },
+        rateLimit.retryAfterSeconds,
+      );
+    }
+    if (!isJsonContentType(req.headers.get("content-type"))) {
+      return this.toHttpResponse(415, {
+        error: "content type must be application/json",
+      });
+    }
+    const rawText = await req.text();
+    if (isBodyTooLarge(rawText)) {
+      return this.toHttpResponse(400, { error: "body too large" });
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch {
+      return this.toHttpResponse(400, { error: "bad json" });
+    }
+    const result = await decideGeneratedSelection(
+      parsed,
+      ipHash,
+      this.getGeneratedDeps(),
+    );
+    const { status, body, retryAfterSeconds } = responseForGenerated(result);
+    return this.toHttpResponse(status, body, retryAfterSeconds);
+  }
+
   /** Bygger det færdige HTTP-svar — ét sted, så `fetch()`s tidlige
    * afvisninger (405/503/429 før kroppen overhovedet læses) og den sene,
    * `decide()`-afledte afvisning bygger deres `Response` PRÆCIS ens. */
@@ -531,6 +714,12 @@ export class Coordinator {
     }
     if (url.pathname === "/improvise") {
       return this.handleImprovise(req);
+    }
+    if (url.pathname === "/generated") {
+      return this.handleGenerated(req);
+    }
+    if (url.pathname === "/internal/run-create-reserve") {
+      return this.handleRunCreateReserve(req);
     }
 
     if (req.method !== "POST") {

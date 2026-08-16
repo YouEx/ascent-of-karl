@@ -1,0 +1,265 @@
+{
+  "fixture": {
+    "id": "resume-desktop",
+    "scenario": "title-fresh",
+    "width": 1366,
+    "height": 900,
+    "isMobile": false,
+    "scope": "#story-book",
+    "screenshotScope": "#story-book",
+    "flow": "resume",
+    "expectedEvents": [
+      "life.started"
+    ],
+    "ignoreSaveFields": [
+      "discovered"
+    ]
+  },
+  "snapshot": {
+    "schemaVersion": 2,
+    "title": "The Ascent of Karl — reinvent history, badly",
+    "html": {
+      "lang": "en",
+      "dataReady": "true"
+    },
+    "app": {
+      "tag": "section",
+      "attributes": {
+        "aria-label": "Karl's living chronicle",
+        "id": "story-book"
+      },
+      "text": "",
+      "children": [
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "story-cover"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "article",
+              "attributes": {
+                "class": "story-page story-page-narrator",
+                "id": "bubble"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "id": "bubble-head"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "span",
+                      "attributes": {
+                        "id": "narrator-label"
+                      },
+                      "text": "The Narrator",
+                      "children": []
+                    },
+                    {
+                      "tag": "button",
+                      "attributes": {
+                        "aria-label": "Mute the narrator",
+                        "aria-pressed": "false",
+                        "class": "icon-btn",
+                        "id": "mute"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "svg",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "focusable": "false",
+                            "viewBox": "0 0 24 24"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M16 9a4 4 0 0 1 0 6"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M18.5 6.5a7.5 7.5 0 0 1 0 11"
+                              },
+                              "text": "",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attributes": {
+                    "aria-live": "polite",
+                    "id": "narrator-text"
+                  },
+                  "text": "Back again? Excellent. Karl spent the interim breathing loudly and losing a staring contest with the boar.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "story-gutter"
+              },
+              "text": "",
+              "children": []
+            },
+            {
+              "tag": "article",
+              "attributes": {
+                "aria-live": "polite",
+                "class": "story-page story-page-outcome",
+                "id": "story-outcome"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "class": "story-entry story-entry-opening"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-pair"
+                      },
+                      "text": "The first page",
+                      "children": []
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-kicker"
+                      },
+                      "text": "Karl's story",
+                      "children": []
+                    },
+                    {
+                      "tag": "h2",
+                      "attributes": {
+                        "class": "story-title"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attributes": {},
+                          "text": "The page is waiting",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-body"
+                      },
+                      "text": "Combine two elements to write what happens next.",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "story-turn-leaf"
+              },
+              "text": "",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "focusOrder": [
+      "mute"
+    ],
+    "activeElement": "BODY",
+    "save": {
+      "version": 1,
+      "state": {
+        "act": 1,
+        "discovered": [
+          "sten",
+          "pind",
+          "graes",
+          "vand",
+          "ler",
+          "baer"
+        ],
+        "flags": [],
+        "solvedProblems": [],
+        "attempts": 0,
+        "ended": null,
+        "seed": 20260811
+      }
+    },
+    "narrator": {
+      "rngState": 1219990954,
+      "recentGrammar": [],
+      "spamCount": 0,
+      "lastPair": null,
+      "lastPairElements": null,
+      "repeatCount": 0,
+      "failStreak": 0,
+      "fastStreak": 0,
+      "sweepElement": null,
+      "sweepCount": 0,
+      "failsSinceDiscovery": 0,
+      "hintLevel": {},
+      "lastLineId": "resume-1",
+      "lastVariant": {
+        "intro-act-1": 1,
+        "pull-kulde": 2,
+        "resume-1": 2
+      },
+      "usedOnce": [],
+      "genericIndex": 0,
+      "discoveryIndex": 0,
+      "lastDiscoveryElement": null,
+      "pulledProblem": "kulde",
+      "lastPullAttempt": 0,
+      "defianceCount": 0,
+      "spokenDefianceTiers": [],
+      "lastDefianceAttempt": -100,
+      "recentSuggestions": [],
+      "attempts": 0,
+      "lastSlowAttempt": -100,
+      "slowUsed": false
+    },
+    "achievements": null,
+    "productEvents": null,
+    "errors": [],
+    "failedRequests": []
+  }
+}

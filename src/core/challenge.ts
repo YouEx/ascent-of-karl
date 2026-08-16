@@ -5,6 +5,7 @@ import type {
   SolvePredicate,
 } from "./types";
 import { solvesNeed } from "./solves";
+import { hash01 } from "./seed";
 
 /**
  * Challenges (docs/design/challenges.md).
@@ -77,20 +78,6 @@ export function freshChallengeState(): ChallengeState {
   return { active: null, gap: 0, seen: [], lastSeenAt: {}, everSpawned: false };
 }
 
-/** Deterministisk hash → [0,1). Samme input giver altid samme tal. */
-function hash01(...parts: (string | number)[]): number {
-  let h = 2166136261;
-  for (const p of parts) {
-    const s = String(p);
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    h ^= 0x9e3779b9;
-  }
-  return (h >>> 0) / 4294967296;
-}
-
 export function spawnChanceForGap(gap: number): number {
   return SPAWN_RATES.find((r) => gap >= r.afterGap)!.chance;
 }
@@ -104,12 +91,14 @@ export function rollChallenge(
   state: ChallengeState,
   page: number,
   seed: number,
+  allowedChallengeIds?: ReadonlySet<string>,
 ): ChallengeDef | null {
   if (state.active) return null;
   // En trussel er ude af puljen, indtil dens afkøling er gået — og for altid,
   // hvis den ikke er repeatable. Uden afkølingen kunne ulvene komme igen to
   // somre efter, de gik.
   const pool = content.challenges.filter((c) => {
+    if (allowedChallengeIds && !allowedChallengeIds.has(c.id)) return false;
     if (page < (c.minPage ?? 1)) return false;
     if (!state.seen.includes(c.id)) return true;
     if (!c.repeatable) return false;

@@ -35,8 +35,9 @@ export function corsHeaders(origin: string | null, allowed: readonly string[]): 
   const ok = isOriginAllowed(origin, allowed);
   return {
     "access-control-allow-origin": ok && origin ? origin : (allowed[0] ?? "*"),
-    "access-control-allow-methods": "POST, OPTIONS",
-    "access-control-allow-headers": "content-type",
+    "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
+    "access-control-allow-headers":
+      "authorization, content-type, x-karl-csrf",
     "access-control-expose-headers": "retry-after",
     "access-control-max-age": "86400",
   };

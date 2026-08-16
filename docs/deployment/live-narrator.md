@@ -1,38 +1,34 @@
 # Udrulning af live-fortælleren
 
-Denne opskrift er **kold reserve, ikke en instruks om at bruge den**.
-TASK-006 (`plan/feature-live-narrator-1.md`) blev afgjort 13-08-2026:
-laget udrulles ikke nu. Den gratis fortællerkæde er allerede målt komplet
-(71,2 % bagt, 28,8 % grammatik, 0 % tavshed), og der findes ingen playtest-
-eller spillerdata, der retfærdiggør den ekstra betalte driftsflade.
+Kilden implementerer nu hele target-runtime: live narrator, bounded generated
+gameplay, HMAC+CSRF run-capabilities og ét revisioneret `Run` Durable Object pr.
+liv. **Det er stadig ikke production-enable.** Ingen rigtig Worker-URL eller
+secrets er provisioneret, og begge offentlige Pages-varianter tvinger
+`VITE_GAME_API_URL=""`, `VITE_ONLINE_REQUIRED=false` og
+`VITE_ONLINE_TARGET_READY=false`.
 
-Ingen af trinene herunder er udført: der er ikke deployet noget, der er ikke
-sat en rigtig `OPENAI_API_KEY`, og buildet har ingen `VITE_NARRATOR_URL`.
-Improvisationsruten, som nu ligger i samme kilde, er heller ikke deployet,
-og den offentlige production-root tvinges feature-off. Det samme Pages-
-artifact rummer en unlisted feature-on playtest på
-<https://youex.github.io/ascent-of-karl/playtest/improvisation/>, men både
-improvisations- og live-fortæller-URL tvinges tomme i begge builds. Der er
-ingen provisioneret Worker-URL, secrets, trafik eller omkostning. Previewet
-er en offline kandidat til den åbne eksterne gate, ikke production-enable.
-Runbooken bevares, fordi beslutningen er reversibel, hvis senere data viser
-en konkret kvalitetskløft i grammatikhalen.
+Online-required kan kun bygges med både `VITE_ONLINE_REQUIRED=true` og den
+eksplicitte readiness-attestation `VITE_ONLINE_TARGET_READY=true`. Den sidste
+må først sættes efter Worker-deploy, observability, privacy-review,
+load/failure-evidence og ekstern produktvalidering. Uden den fejler klienten
+lukket ved boot.
 
-Spillet er **fuldstændig komplet uden dette lag** — uden en sat
-`VITE_NARRATOR_URL` gør hele klientmodulet ingenting, og fortælleren taler
-udelukkende ud fra de bagte replikker og grammatikken, præcis som i dag.
+Offline-kompatibilitet består indtil da. Når target-mode senere aktiveres,
+erstattes den af en ærlig outage-state: aktivt spil pauses, mens arkiverede liv
+og compendium forbliver read-only.
 
 ## Arkitektur i to sætninger
 
-Én Cloudflare Worker (`worker/`) rummer de to uafhængige, valgfrie
-modelruter (`/narrate`/den eksisterende rodsti og `/improvise`), så nøglen
+Én Cloudflare Worker (`worker/`) rummer narrator, copy-improvisation,
+bounded gameplay-selection og `/api/v1/runs`, så nøglen
 aldrig kommer i nærheden af browseren. Foran modellen sidder ét globalt, navngivet Durable
 Object (`Coordinator`, se `worker/src/coordinator-do.ts`) som den ENESTE
 stateful komponent: det håndhæver et rullende rate-limit pr. IP-hash
 (TASK-002), et dagligt UTC-udgiftsloft over kald der når modellen (TASK-003),
 og en delt cache nøglet på par + dom (TASK-004). Improvisation har egne
-kvote-/budget-/cache-nøgler i samme storage. Alt ligger i objektets egen
-SQLite-baserede storage, uden en KV ved siden af.
+kvote-/budget-/cache-nøgler i samme storage. Hvert aktivt liv har desuden sit
+eget `Run` Durable Object med revision, idempotency-log og autoritativ state.
+Alt ligger i objekternes egen SQLite-baserede storage, uden en KV ved siden af.
 
 ## 1. Forudsætninger
 
@@ -83,6 +79,7 @@ Cloudflare — den står aldrig i `wrangler.toml`, aldrig i git, og
 
 ```bash
 npx wrangler secret put IP_HASH_SALT
+npx wrangler secret put RUN_AUTH_SECRET
 ```
 
 Denne anden secret er **OBLIGATORISK, ikke valgfri** (sikkerhedsrunde 2,
@@ -94,6 +91,10 @@ opslagstabel væk fra klartekst (IPv4-rummet er lille nok til at regne alle
 hashes ud på forhånd) — "hashet, men usaltet" er reelt ingen beskyttelse.
 Vælg en tilfældig, lang værdi (fx `openssl rand -hex 32`); den behøver ikke
 huskes af et menneske, kun genbruges konsistent af workeren selv.
+
+`RUN_AUTH_SECRET` skal være en anden tilfældig værdi. Den HMAC-signerer de
+kortlivede run-capabilities, som bindes til `runId`, CSRF-token og udløbstid.
+Mangler den, er `/healthz` rød, og nye runs fejler lukket.
 
 ## 4. Sikre `[vars]`
 

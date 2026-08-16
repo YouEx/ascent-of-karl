@@ -9,6 +9,11 @@ import narrator2 from "../content/narrator/act-2.json";
 import endings from "../content/endings.json";
 import challenges from "../content/challenges.json";
 import decisions from "../content/decisions.json";
+import lifeVariation from "../content/life-variation.json";
+import branches from "../content/branches.json";
+import inventionConsequences from "../content/invention-consequences.json";
+import completionManifest from "../content/completion-manifest.json";
+import migrations from "../content/migrations.json";
 import predicates from "../content/predicates.json";
 import config from "../content/config.json";
 import type { ContentBundle, SolvePredicate } from "./core/types";
@@ -91,6 +96,11 @@ export function loadContent(): ContentBundle {
     endings,
     challenges,
     decisions,
+    lifeVariation,
+    branches,
+    inventionConsequences,
+    completionManifest,
+    migrations,
     predicates: solvePredicates,
     config,
   } as unknown as ContentBundle;

@@ -1,0 +1,297 @@
+{
+  "fixture": {
+    "id": "discovery-desktop",
+    "scenario": "act1-opening",
+    "width": 1366,
+    "height": 900,
+    "isMobile": false,
+    "scope": "#story-book",
+    "screenshotScope": "#story-book",
+    "flow": "discovery",
+    "expectedEvents": [
+      "combination.attempted",
+      "discovery.canonical",
+      "chronicle.entry-recorded"
+    ]
+  },
+  "snapshot": {
+    "schemaVersion": 2,
+    "title": "The Ascent of Karl — reinvent history, badly",
+    "html": {
+      "lang": "en",
+      "dataReady": "true"
+    },
+    "app": {
+      "tag": "section",
+      "attributes": {
+        "aria-label": "Karl's living chronicle",
+        "id": "story-book"
+      },
+      "text": "",
+      "children": [
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "story-cover"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "article",
+              "attributes": {
+                "class": "story-page story-page-narrator",
+                "id": "bubble"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "id": "bubble-head"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "span",
+                      "attributes": {
+                        "id": "narrator-label"
+                      },
+                      "text": "The Narrator",
+                      "children": []
+                    },
+                    {
+                      "tag": "button",
+                      "attributes": {
+                        "aria-label": "Mute the narrator",
+                        "aria-pressed": "false",
+                        "class": "icon-btn",
+                        "id": "mute"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "svg",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "focusable": "false",
+                            "viewBox": "0 0 24 24"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M16 9a4 4 0 0 1 0 6"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M18.5 6.5a7.5 7.5 0 0 1 0 11"
+                              },
+                              "text": "",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attributes": {
+                    "aria-live": "polite",
+                    "id": "narrator-text"
+                  },
+                  "text": "Karl requires heat. The steppe offers stones, grass and indifference. Two of those will get him there, though not in one step and not in one another's company.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "story-gutter"
+              },
+              "text": "",
+              "children": []
+            },
+            {
+              "tag": "article",
+              "attributes": {
+                "aria-live": "polite",
+                "class": "story-page story-page-outcome",
+                "id": "story-outcome"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "class": "story-entry story-entry-discovery"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-pair"
+                      },
+                      "text": "Stone + Stone",
+                      "children": []
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-kicker"
+                      },
+                      "text": "Discovery",
+                      "children": []
+                    },
+                    {
+                      "tag": "h2",
+                      "attributes": {
+                        "class": "story-title"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attributes": {
+                            "class": "story-glyph"
+                          },
+                          "text": "✨",
+                          "children": []
+                        },
+                        {
+                          "tag": "span",
+                          "attributes": {},
+                          "text": "Sparks",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-body"
+                      },
+                      "text": "Tiny stars that live for half a second. Karl applauds every time.",
+                      "children": []
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "story-note"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attributes": {
+                            "class": "story-note-label"
+                          },
+                          "text": "Note",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "story-turn-leaf"
+              },
+              "text": "",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "focusOrder": [
+      "mute"
+    ],
+    "activeElement": "BODY",
+    "save": {
+      "version": 1,
+      "state": {
+        "act": 1,
+        "discovered": [
+          "sten",
+          "pind",
+          "graes",
+          "vand",
+          "ler",
+          "baer",
+          "larver",
+          "dyr",
+          "stamme",
+          "nabo",
+          "fugl",
+          "gnister"
+        ],
+        "flags": [],
+        "solvedProblems": [],
+        "attempts": 1,
+        "ended": null,
+        "seed": 20260811
+      }
+    },
+    "narrator": {
+      "rngState": -611574859,
+      "recentGrammar": [],
+      "spamCount": 1,
+      "lastPair": "sten+sten",
+      "lastPairElements": [
+        "sten",
+        "sten"
+      ],
+      "repeatCount": 1,
+      "failStreak": 0,
+      "fastStreak": 0,
+      "sweepElement": null,
+      "sweepCount": 0,
+      "failsSinceDiscovery": 0,
+      "hintLevel": {},
+      "lastLineId": "pull-kulde",
+      "lastVariant": {
+        "story-gnister": 1,
+        "pull-kulde": 2
+      },
+      "usedOnce": [],
+      "genericIndex": 0,
+      "discoveryIndex": 0,
+      "lastDiscoveryElement": "Sparks",
+      "pulledProblem": "kulde",
+      "lastPullAttempt": 1,
+      "defianceCount": 0,
+      "spokenDefianceTiers": [],
+      "lastDefianceAttempt": -100,
+      "recentSuggestions": [],
+      "attempts": 1,
+      "lastSlowAttempt": -100,
+      "slowUsed": false
+    },
+    "achievements": null,
+    "productEvents": null,
+    "errors": [],
+    "failedRequests": []
+  }
+}

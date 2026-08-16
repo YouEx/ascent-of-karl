@@ -1,0 +1,1925 @@
+{
+  "fixture": {
+    "id": "game-mobile",
+    "scenario": "act1-opening",
+    "width": 390,
+    "height": 844,
+    "isMobile": true,
+    "scope": "#app",
+    "flow": "none"
+  },
+  "snapshot": {
+    "schemaVersion": 2,
+    "title": "The Ascent of Karl — reinvent history, badly",
+    "html": {
+      "lang": "en",
+      "dataReady": "true"
+    },
+    "app": {
+      "tag": "div",
+      "attributes": {
+        "id": "app"
+      },
+      "text": "",
+      "children": [
+        {
+          "tag": "header",
+          "attributes": {},
+          "text": "",
+          "children": [
+            {
+              "tag": "span",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "mark"
+              },
+              "text": "",
+              "children": []
+            },
+            {
+              "tag": "h1",
+              "attributes": {},
+              "text": "The Ascent of Karl",
+              "children": []
+            },
+            {
+              "tag": "span",
+              "attributes": {
+                "id": "act-label"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "act-name"
+                  },
+                  "text": "· The Stone Age",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "span",
+              "attributes": {
+                "aria-label": "Summer 1 of 50 — every attempt costs one",
+                "id": "age"
+              },
+              "text": "1/50",
+              "children": []
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "header-actions"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "button",
+                  "attributes": {
+                    "aria-label": "Open the chronicle archive",
+                    "class": "icon-btn",
+                    "id": "book-btn"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "svg",
+                      "attributes": {
+                        "aria-hidden": "true",
+                        "focusable": "false",
+                        "viewBox": "0 0 24 24"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5z"
+                          },
+                          "text": "",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attributes": {
+                        "hidden": "",
+                        "id": "book-badge"
+                      },
+                      "text": "0",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "tag": "button",
+                  "attributes": {
+                    "aria-label": "Fates discovered",
+                    "class": "icon-btn",
+                    "id": "trophies"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "svg",
+                      "attributes": {
+                        "aria-hidden": "true",
+                        "data-paint": "fill",
+                        "focusable": "false",
+                        "viewBox": "0 0 24 24"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M8.8 7.1h6.4v1.15H8.8z"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M9.25 8.25h5.5l-.6 3.5a2.15 2.15 0 0 1-4.3 0z"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M11.25 13.55h1.5v2h-1.5z"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M10.15 15.55h3.7l1.05 1.35h-5.8z"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M8.5 16.9h7v1.15h-7z"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M12 9.4a.86.86 0 0 1 .78 1.22l-.78 1.52-.78-1.52A.86.86 0 0 1 12 9.4z",
+                            "data-paint": "void"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M9.2 8.95H7.05a.95.95 0 0 0-.95.95c0 1.7 1.2 3.15 2.85 3.55",
+                            "data-paint": "stroke"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M14.8 8.95h2.15a.95.95 0 0 1 .95.95c0 1.7-1.2 3.15-2.85 3.55",
+                            "data-paint": "stroke"
+                          },
+                          "text": "",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "button",
+                  "attributes": {
+                    "aria-label": "Start over",
+                    "class": "icon-btn",
+                    "id": "restart"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "svg",
+                      "attributes": {
+                        "aria-hidden": "true",
+                        "focusable": "false",
+                        "viewBox": "0 0 24 24"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M4 12a8 8 0 1 0 2.5-5.8"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M4 4v4h4"
+                          },
+                          "text": "",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "aria-label": "Karl's living chronicle",
+            "id": "story-book"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "story-cover"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "article",
+                  "attributes": {
+                    "class": "story-page story-page-narrator",
+                    "id": "bubble"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attributes": {
+                        "id": "bubble-head"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attributes": {
+                            "id": "narrator-label"
+                          },
+                          "text": "The Narrator",
+                          "children": []
+                        },
+                        {
+                          "tag": "button",
+                          "attributes": {
+                            "aria-label": "Mute the narrator",
+                            "aria-pressed": "false",
+                            "class": "icon-btn",
+                            "id": "mute"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "svg",
+                              "attributes": {
+                                "aria-hidden": "true",
+                                "focusable": "false",
+                                "viewBox": "0 0 24 24"
+                              },
+                              "text": "",
+                              "children": [
+                                {
+                                  "tag": "path",
+                                  "attributes": {
+                                    "d": "M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"
+                                  },
+                                  "text": "",
+                                  "children": []
+                                },
+                                {
+                                  "tag": "path",
+                                  "attributes": {
+                                    "d": "M16 9a4 4 0 0 1 0 6"
+                                  },
+                                  "text": "",
+                                  "children": []
+                                },
+                                {
+                                  "tag": "path",
+                                  "attributes": {
+                                    "d": "M18.5 6.5a7.5 7.5 0 0 1 0 11"
+                                  },
+                                  "text": "",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "aria-live": "polite",
+                        "id": "narrator-text"
+                      },
+                      "text": "Every great story begins somewhere. This one begins with a shivering man staring at a rock as if it owed him money. Onward, humanity.",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "aria-hidden": "true",
+                    "class": "story-gutter"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "article",
+                  "attributes": {
+                    "aria-live": "polite",
+                    "class": "story-page story-page-outcome",
+                    "id": "story-outcome"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attributes": {
+                        "class": "story-entry story-entry-opening"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "p",
+                          "attributes": {
+                            "class": "story-pair"
+                          },
+                          "text": "The first page",
+                          "children": []
+                        },
+                        {
+                          "tag": "p",
+                          "attributes": {
+                            "class": "story-kicker"
+                          },
+                          "text": "Karl's story",
+                          "children": []
+                        },
+                        {
+                          "tag": "h2",
+                          "attributes": {
+                            "class": "story-title"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "span",
+                              "attributes": {},
+                              "text": "The page is waiting",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "p",
+                          "attributes": {
+                            "class": "story-body"
+                          },
+                          "text": "Combine two elements to write what happens next.",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "aria-hidden": "true",
+                    "class": "story-turn-leaf"
+                  },
+                  "text": "",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "aria-live": "assertive",
+            "hidden": "",
+            "id": "challenge"
+          },
+          "text": "",
+          "children": []
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "aria-label": "Karl's problems",
+            "id": "problems"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "span",
+              "attributes": {
+                "aria-label": "Karl is freezing. It's cold on the steppe. Karl's goosebumps have goosebumps.",
+                "class": "problem wanted tint-cold",
+                "data-problem": "kulde"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "problem-icon problem-icon-art",
+                    "draggable": "false",
+                    "height": "24",
+                    "src": "/assets/kulde-BSRnn-9n.webp",
+                    "width": "23"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {},
+                  "text": "Karl is freezing",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "tools"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "input",
+              "attributes": {
+                "aria-label": "Search elements",
+                "autocomplete": "off",
+                "id": "search",
+                "placeholder": "Search elements…",
+                "type": "search"
+              },
+              "text": "",
+              "children": []
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "chip-btn",
+                "id": "filter-new"
+              },
+              "text": "New finds",
+              "children": []
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "aria-label": "Elements",
+            "id": "grid"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "sten"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/sten-NUWooAC1.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Stone",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "pind"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/pind-Cy8EZZjR.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Stick",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "graes"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/graes-83MJkbUA.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Dry grass",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "vand"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/vand-Deu93x_H.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Water",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "ler"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/ler-B4N_93O3.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Clay",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "baer"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/baer-DuA81cbM.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Berries",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "larver"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/larver-CX6oEFyk.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Grubs",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "dyr"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/dyr-DE9G9qJw.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Wild boar",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "stamme"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/stamme-Dt7fix7I.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Log",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "nabo"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/nabo-DWxkIspI.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Neighbour",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-pressed": "false",
+                "class": "element   ",
+                "data-id": "fugl"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "emoji emoji-art",
+                    "draggable": "false",
+                    "src": "/assets/fugl-CWaBjToQ.webp"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "name"
+                  },
+                  "text": "Bird",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "p",
+          "attributes": {
+            "hidden": "",
+            "id": "grid-empty"
+          },
+          "text": "Nothing matches that. Karl checked twice.",
+          "children": []
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "dock"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "slot",
+                "id": "slot-a"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "slot-empty"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "b",
+                      "attributes": {},
+                      "text": "Select an element",
+                      "children": []
+                    },
+                    {
+                      "tag": "i",
+                      "attributes": {},
+                      "text": "Choose from below",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "span",
+              "attributes": {
+                "class": "plus"
+              },
+              "text": "+",
+              "children": []
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "slot",
+                "id": "slot-b"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "slot-empty"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "b",
+                      "attributes": {},
+                      "text": "Select an element",
+                      "children": []
+                    },
+                    {
+                      "tag": "i",
+                      "attributes": {},
+                      "text": "Choose from below",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "disabled": "",
+                "id": "combine"
+              },
+              "text": "Combine",
+              "children": []
+            }
+          ]
+        },
+        {
+          "tag": "aside",
+          "attributes": {
+            "aria-label": "Chronicle archive",
+            "id": "book-panel"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-label": "Close the chronicle archive",
+                "class": "icon-btn",
+                "id": "book-close"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "svg",
+                  "attributes": {
+                    "aria-hidden": "true",
+                    "focusable": "false",
+                    "viewBox": "0 0 24 24"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "path",
+                      "attributes": {
+                        "d": "M6 6l12 12"
+                      },
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "path",
+                      "attributes": {
+                        "d": "M18 6L6 18"
+                      },
+                      "text": "",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "section",
+              "attributes": {
+                "id": "book"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "id": "book-tabs"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "button",
+                      "attributes": {
+                        "class": "book-tab active"
+                      },
+                      "text": "Act 1 · The Stone Age",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "id": "book-entry"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attributes": {
+                        "class": "entry blank"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "div",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "class": "entry-emoji entry-book"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "div",
+                          "attributes": {
+                            "class": "entry-body"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "h3",
+                              "attributes": {},
+                              "text": "The Chronicle of Mankind",
+                              "children": []
+                            },
+                            {
+                              "tag": "p",
+                              "attributes": {},
+                              "text": "Blank pages, waiting to be filled. Combine something below and history will write itself. Badly, probably, but it will.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "id": "book-chips"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "button",
+                  "attributes": {
+                    "aria-expanded": "false",
+                    "id": "timeline-toggle"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "span",
+                      "attributes": {
+                        "aria-hidden": "true",
+                        "class": "timeline-watch"
+                      },
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "0/174",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "hidden": "",
+                    "id": "timeline-wrap"
+                  },
+                  "text": "",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "hidden": "",
+            "id": "banner"
+          },
+          "text": "",
+          "children": []
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "hidden": "",
+            "id": "card"
+          },
+          "text": "",
+          "children": []
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "hidden": "",
+            "id": "ending"
+          },
+          "text": "",
+          "children": []
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "hidden": "",
+            "id": "trophy-modal"
+          },
+          "text": "",
+          "children": []
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "hidden": "",
+            "id": "title-screen"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "title-stage"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "class": "title-panel"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "h1",
+                      "attributes": {
+                        "class": "title-mark title-block"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attributes": {
+                            "class": "title-mark-semantic"
+                          },
+                          "text": "The Ascent of Karl",
+                          "children": []
+                        },
+                        {
+                          "tag": "picture",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "class": "title-wordmark"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "source",
+                              "attributes": {
+                                "height": "256",
+                                "media": "(max-width: 900px)",
+                                "srcset": "/assets/wordmark-mobile-CgIH2Raf.webp",
+                                "width": "436"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "img",
+                              "attributes": {
+                                "alt": "",
+                                "aria-hidden": "true",
+                                "class": "title-wordmark-art",
+                                "data-title-layer": "wordmark",
+                                "fetchpriority": "high",
+                                "height": "320",
+                                "loading": "eager",
+                                "sizes": "(max-width: 900px) min(61vw, 218px), min(34.36vw, 545px)",
+                                "src": "/assets/wordmark-desktop-1WktSkDJ.webp",
+                                "width": "545"
+                              },
+                              "text": "",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "title-sub title-block"
+                      },
+                      "text": "reinvent history, badly",
+                      "children": []
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "title-tagline title-block"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "br",
+                          "attributes": {},
+                          "text": "",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attributes": {
+                        "aria-hidden": "true",
+                        "class": "title-divider title-block"
+                      },
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "div",
+                      "attributes": {
+                        "class": "title-actions title-block"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "button",
+                          "attributes": {
+                            "class": "title-action btn-stone",
+                            "id": "t-primary"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "span",
+                              "attributes": {
+                                "aria-hidden": "true",
+                                "class": "title-action-icon"
+                              },
+                              "text": "",
+                              "children": [
+                                {
+                                  "tag": "svg",
+                                  "attributes": {
+                                    "aria-hidden": "true",
+                                    "data-paint": "carve",
+                                    "focusable": "false",
+                                    "viewBox": "0 0 24 24"
+                                  },
+                                  "text": "",
+                                  "children": [
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M12.5 12A1.04 1.04 0 0 0 10.42 12A2.12 2.12 0 0 0 14.66 12A3.2 3.2 0 0 0 8.26 12A4.28 4.28 0 0 0 16.82 12A5.36 5.36 0 0 0 6.1 12A6.2 6.2 0 0 0 18.5 12"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M12.0 4.3L12.0 2.1M15.8 5.3L16.9 3.4M18.7 8.2L20.6 7.0M19.7 12.0L21.9 12.0M18.7 15.8L20.6 16.9M15.8 18.7L16.9 20.6M12.0 19.7L12.0 21.9M8.2 18.7L7.1 20.6M5.3 15.9L3.4 17.0M4.3 12.0L2.1 12.0M5.3 8.1L3.4 7.0M8.1 5.3L7.0 3.4",
+                                        "stroke-width": "1.35"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "span",
+                              "attributes": {
+                                "class": "title-action-label"
+                              },
+                              "text": "Begin",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "button",
+                          "attributes": {
+                            "class": "title-action btn-quiet",
+                            "id": "t-fates"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "span",
+                              "attributes": {
+                                "aria-hidden": "true",
+                                "class": "title-action-icon"
+                              },
+                              "text": "",
+                              "children": [
+                                {
+                                  "tag": "svg",
+                                  "attributes": {
+                                    "aria-hidden": "true",
+                                    "data-paint": "fill",
+                                    "focusable": "false",
+                                    "viewBox": "0 0 24 24"
+                                  },
+                                  "text": "",
+                                  "children": [
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M8.8 7.1h6.4v1.15H8.8z"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M9.25 8.25h5.5l-.6 3.5a2.15 2.15 0 0 1-4.3 0z"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M11.25 13.55h1.5v2h-1.5z"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M10.15 15.55h3.7l1.05 1.35h-5.8z"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M8.5 16.9h7v1.15h-7z"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M12 9.4a.86.86 0 0 1 .78 1.22l-.78 1.52-.78-1.52A.86.86 0 0 1 12 9.4z",
+                                        "data-paint": "void"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M9.2 8.95H7.05a.95.95 0 0 0-.95.95c0 1.7 1.2 3.15 2.85 3.55",
+                                        "data-paint": "stroke"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "path",
+                                      "attributes": {
+                                        "d": "M14.8 8.95h2.15a.95.95 0 0 1 .95.95c0 1.7-1.2 3.15-2.85 3.55",
+                                        "data-paint": "stroke"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "span",
+                              "attributes": {
+                                "class": "title-action-label"
+                              },
+                              "text": "Fates",
+                              "children": []
+                            },
+                            {
+                              "tag": "span",
+                              "attributes": {
+                                "class": "title-action-count fates-count"
+                              },
+                              "text": "0/15",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "title-hint title-block"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "class": "orn-tap"
+                          },
+                          "text": "",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attributes": {
+                        "class": "title-tip title-block",
+                        "id": "t-tip"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "div",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "class": "tile tile-fire"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "div",
+                          "attributes": {
+                            "class": "tip-text"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "strong",
+                              "attributes": {},
+                              "text": "Fire: Best invention. Ever.",
+                              "children": []
+                            },
+                            {
+                              "tag": "span",
+                              "attributes": {},
+                              "text": "Some combinations change everything.",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "attributes": {
+                            "aria-label": "Tips",
+                            "class": "tip-dots",
+                            "role": "tablist"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "button",
+                              "attributes": {
+                                "aria-label": "Tip 1 of 3",
+                                "aria-selected": "true",
+                                "data-tip": "0",
+                                "role": "tab"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "button",
+                              "attributes": {
+                                "aria-label": "Tip 2 of 3",
+                                "aria-selected": "false",
+                                "data-tip": "1",
+                                "role": "tab"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "button",
+                              "attributes": {
+                                "aria-label": "Tip 3 of 3",
+                                "aria-selected": "false",
+                                "data-tip": "2",
+                                "role": "tab"
+                              },
+                              "text": "",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "class": "title-chip"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "span",
+                      "attributes": {
+                        "aria-hidden": "true",
+                        "class": "figure"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "svg",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "data-paint": "scene",
+                            "focusable": "false",
+                            "viewBox": "0 0 46 42"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M4.6 38.2 3.1 25.4M6.2 38.2 6.6 27.9M5.4 38.2 8.9 29.6M40.4 38.2 41.9 25.4M38.8 38.2 38.4 27.9M39.6 38.2 36.1 29.6",
+                                "data-part": "reed"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M6.3 38 6.3 29.6Q6.9 25.4 8.4 22.1L9.9 20.4Q11.2 18.3 13.4 17L15.4 16.2 16.2 13.9Q17.1 11.6 18.8 10L20.2 8.9Q21.2 8.1 22.6 8.1L24.2 8.2Q25.4 8.4 26.2 9.7L27.9 11.5Q29.2 13.2 30.3 14.6L32.4 15.8Q34.6 17.1 35.9 19.4L37 21.6Q38.3 25.2 38.8 29.6L38.8 38Z",
+                                "data-part": "rim"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "defs",
+                              "attributes": {},
+                              "text": "",
+                              "children": [
+                                {
+                                  "tag": "radialgradient",
+                                  "attributes": {
+                                    "cx": "22.5",
+                                    "cy": "30",
+                                    "gradientUnits": "userSpaceOnUse",
+                                    "id": "caveThroat",
+                                    "r": "16"
+                                  },
+                                  "text": "",
+                                  "children": [
+                                    {
+                                      "tag": "stop",
+                                      "attributes": {
+                                        "offset": "0",
+                                        "stop-color": "var(--cave-depth)"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "stop",
+                                      "attributes": {
+                                        "offset": ".55",
+                                        "stop-color": "var(--cave-depth)"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "stop",
+                                      "attributes": {
+                                        "offset": "1",
+                                        "stop-color": "var(--cave-dark)"
+                                      },
+                                      "text": "",
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M6.3 38 6.3 29.6Q6.9 25.4 8.4 22.1L9.9 20.4Q11.2 18.3 13.4 17L15.4 16.2 16.2 13.9Q17.1 11.6 18.8 10L20.2 8.9Q21.2 8.1 22.6 8.1L24.2 8.2Q25.4 8.4 26.2 9.7L27.9 11.5Q29.2 13.2 30.3 14.6L32.4 15.8Q34.6 17.1 35.9 19.4L37 21.6Q38.3 25.2 38.8 29.6L38.8 38Z",
+                                "data-part": "cave"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "g",
+                              "attributes": {
+                                "data-part": "figure"
+                              },
+                              "text": "",
+                              "children": [
+                                {
+                                  "tag": "circle",
+                                  "attributes": {
+                                    "cx": "22.6",
+                                    "cy": "18.6",
+                                    "r": "2.7"
+                                  },
+                                  "text": "",
+                                  "children": []
+                                },
+                                {
+                                  "tag": "path",
+                                  "attributes": {
+                                    "d": "M20.1 21.5Q22.6 20.5 25.1 21.5L24.2 28.4Q22.6 29.1 21 28.4Z"
+                                  },
+                                  "text": "",
+                                  "children": []
+                                },
+                                {
+                                  "tag": "path",
+                                  "attributes": {
+                                    "d": "M21.1 22.4 17.2 19.3M24.1 22.4 28 19.3M21.7 28.2 20.1 34.3M23.5 28.2 25.1 34.3",
+                                    "data-limb": ""
+                                  },
+                                  "text": "",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M3 37.4h40M7 39.3l4.6-1.4M39 39.3l-4.6-1.4M18.4 39.6l3.6-1.1",
+                                "data-part": "ground"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M14.6 37.3q1.1-1 2.2 0M27.4 37.3q1.1-1 2.2 0M21.2 36.6q.9-.8 1.8 0",
+                                "data-part": "pebble"
+                              },
+                              "text": "",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attributes": {},
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "strong",
+                          "attributes": {},
+                          "text": "Welcome, inventor.",
+                          "children": []
+                        },
+                        {
+                          "tag": "span",
+                          "attributes": {},
+                          "text": "Ready to make history?",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "class": "title-tools"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "button",
+                      "attributes": {
+                        "aria-label": "Fates you have reached",
+                        "id": "t-trophies"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "svg",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "data-paint": "fill",
+                            "focusable": "false",
+                            "viewBox": "0 0 24 24"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M8.8 7.1h6.4v1.15H8.8z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M9.25 8.25h5.5l-.6 3.5a2.15 2.15 0 0 1-4.3 0z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M11.25 13.55h1.5v2h-1.5z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M10.15 15.55h3.7l1.05 1.35h-5.8z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M8.5 16.9h7v1.15h-7z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M12 9.4a.86.86 0 0 1 .78 1.22l-.78 1.52-.78-1.52A.86.86 0 0 1 12 9.4z",
+                                "data-paint": "void"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M9.2 8.95H7.05a.95.95 0 0 0-.95.95c0 1.7 1.2 3.15 2.85 3.55",
+                                "data-paint": "stroke"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M14.8 8.95h2.15a.95.95 0 0 1 .95.95c0 1.7-1.2 3.15-2.85 3.55",
+                                "data-paint": "stroke"
+                              },
+                              "text": "",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "button",
+                      "attributes": {
+                        "aria-label": "Mute the narrator",
+                        "aria-pressed": "false",
+                        "id": "t-sound"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "svg",
+                          "attributes": {
+                            "aria-hidden": "true",
+                            "focusable": "false",
+                            "viewBox": "0 0 24 24"
+                          },
+                          "text": "",
+                          "children": [
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M16 9a4 4 0 0 1 0 6"
+                              },
+                              "text": "",
+                              "children": []
+                            },
+                            {
+                              "tag": "path",
+                              "attributes": {
+                                "d": "M18.5 6.5a7.5 7.5 0 0 1 0 11"
+                              },
+                              "text": "",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "focusOrder": [
+      "book-btn",
+      "trophies",
+      "restart",
+      "mute",
+      "search",
+      "filter-new",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "BUTTON",
+      "book-close",
+      "BUTTON",
+      "timeline-toggle",
+      "t-primary",
+      "t-fates",
+      "Tip 1 of 3",
+      "Tip 2 of 3",
+      "Tip 3 of 3",
+      "t-trophies",
+      "t-sound"
+    ],
+    "activeElement": "BODY",
+    "save": null,
+    "narrator": null,
+    "achievements": null,
+    "productEvents": null,
+    "errors": [],
+    "failedRequests": []
+  }
+}

@@ -186,9 +186,136 @@ def main() -> int:
             err(f"{p.name}: {gz / 1024:.1f} KB gzip — over bundtbudgettet på 60 KB (CON-003)")
     endings = load(CONTENT / "endings.json") or []
     challenges = load(CONTENT / "challenges.json") or []
+    life_variation = load(CONTENT / "life-variation.json") or {}
+    branches = load(CONTENT / "branches.json") or []
+    completion_manifest = load(CONTENT / "completion-manifest.json") or {}
+    migrations = load(CONTENT / "migrations.json") or {}
     config = load(CONTENT / "config.json") or {}
 
     element_ids = {e["id"] for e in elements}
+    challenge_ids = {challenge["id"] for challenge in challenges}
+    branch_ids = {branch["id"] for branch in branches}
+    ending_ids = {ending["id"] for ending in endings}
+    opening_ids: set[str] = set()
+    for opening in life_variation.get("openings", []):
+        opening_id = opening.get("id")
+        if not isinstance(opening_id, str) or not opening_id:
+            err("life-variation: opening mangler id")
+            continue
+        if opening_id in opening_ids:
+            err(f"life-variation: duplikeret opening {opening_id}")
+        opening_ids.add(opening_id)
+        starting_ids = opening.get("elementIds", [])
+        if len(starting_ids) < 2:
+            err(f"life-variation {opening_id}: kræver mindst to startelementer")
+        for element_id in starting_ids:
+            if element_id not in element_ids:
+                err(f"life-variation {opening_id}: ukendt startelement {element_id}")
+        known = set(starting_ids)
+        for pair in opening.get("viabilityWitness", []):
+            if not isinstance(pair, list) or len(pair) != 2:
+                err(f"life-variation {opening_id}: ugyldigt witness-par {pair!r}")
+                continue
+            if pair[0] not in known or pair[1] not in known:
+                err(
+                    f"life-variation {opening_id}: witness bruger utilgængeligt "
+                    f"{pair[0]}+{pair[1]}"
+                )
+                continue
+            candidates = combos_by_pair_raw.get(frozenset(pair), [])
+            open_candidates = [
+                combo
+                for combo in candidates
+                if not combo.get("requiresFlags") and not combo.get("blockedByFlags")
+            ]
+            if not open_candidates:
+                err(
+                    f"life-variation {opening_id}: witness {pair[0]}+{pair[1]} "
+                    "har ingen ubetinget canonical opskrift"
+                )
+                continue
+            known.add(open_candidates[0]["result"])
+    for challenge_id in life_variation.get("challengeIds", []):
+        if challenge_id not in challenge_ids:
+            err(f"life-variation: ukendt challenge {challenge_id}")
+    if life_variation.get("challengesPerLife", 0) > len(
+        life_variation.get("challengeIds", [])
+    ):
+        err("life-variation: challengesPerLife er større end challenge-puljen")
+    for sidequest_id in life_variation.get("sidequestIds", []):
+        if sidequest_id not in branch_ids:
+            err(f"life-variation: ukendt sidequest/branch {sidequest_id}")
+    if life_variation.get("sidequestsPerLife", 0) > len(
+        life_variation.get("sidequestIds", [])
+    ):
+        err("life-variation: sidequestsPerLife er større end sidequest-puljen")
+
+    manifest_discoveries = completion_manifest.get("discoveries", [])
+    manifest_branches = completion_manifest.get("branches", [])
+    manifest_endings = completion_manifest.get("endings", [])
+    expected_discoveries = sorted(
+        element["id"] for element in elements if not element.get("base")
+    )
+    expected_branches = sorted(
+        branch["id"]
+        for branch in branches
+        if branch.get("importance") == "major"
+    )
+    expected_endings = sorted(ending_ids)
+    if manifest_discoveries != expected_discoveries:
+        err("completion-manifest: discovery-listen er stale")
+    if manifest_branches != expected_branches:
+        err("completion-manifest: branch-listen er stale")
+    if manifest_endings != expected_endings:
+        err("completion-manifest: ending-listen er stale")
+    if any(entry not in element_ids for entry in manifest_discoveries):
+        err("completion-manifest: ukendt canonical discovery")
+    if any(entry not in branch_ids for entry in manifest_branches):
+        err("completion-manifest: ukendt authored branch")
+    if any(entry not in ending_ids for entry in manifest_endings):
+        err("completion-manifest: ukendt ending")
+
+    revision = completion_manifest.get("contentRevision")
+    if migrations.get("schemaVersion") != 1:
+        err("migrations: schemaVersion skal være 1")
+    if migrations.get("targetRevision") != revision:
+        err("migrations: targetRevision skal matche completion-manifest")
+    source_revisions = migrations.get("supportedSourceRevisions", [])
+    if not isinstance(source_revisions, list) or any(
+        not isinstance(entry, str) or len(entry) != 16
+        for entry in source_revisions
+    ):
+        err("migrations: supportedSourceRevisions skal være 16-tegns revisions-id'er")
+    elif len(source_revisions) != len(set(source_revisions)):
+        err("migrations: supportedSourceRevisions indeholder dubletter")
+
+    def validate_aliases(name: str, current_ids: set[str]) -> None:
+        aliases = migrations.get(name, {})
+        if not isinstance(aliases, dict):
+            err(f"migrations: {name} skal være et objekt")
+            return
+        for source, target in aliases.items():
+            if not isinstance(source, str) or not isinstance(target, str):
+                err(f"migrations: {name} skal mappe strenge til strenge")
+                continue
+            seen: set[str] = set()
+            candidate = source
+            while candidate in aliases:
+                if candidate in seen:
+                    err(f"migrations: cyklisk {name}-alias ved {candidate}")
+                    break
+                seen.add(candidate)
+                candidate = aliases[candidate]
+            else:
+                if candidate not in current_ids:
+                    err(
+                        f"migrations: {name} {source} ender i ukendt id {candidate}"
+                    )
+
+    validate_aliases("elementAliases", element_ids)
+    validate_aliases("branchAliases", branch_ids)
+    validate_aliases("endingAliases", ending_ids)
+
     # Opslag for fortællerens `suggests`: rækkefølgen i et par er ligegyldig.
     combo_pairs = {frozenset(c["pair"]) for c in combos if len(c.get("pair", [])) == 2}
     if len(element_ids) != len(elements):

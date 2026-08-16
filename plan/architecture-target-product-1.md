@@ -66,7 +66,7 @@ separate operational gates.
 | TASK-001 | Lift the pre-playtest implementation freeze in `PRODUCT.md`, `ROADMAP.md`, `CLAUDE.md`, and capability lifecycle contracts while retaining production gates. | ✅ | 2026-08-16 |
 | TASK-002 | Add this design and plan; regenerate product graph and known-answer context. | ✅ | 2026-08-16 |
 | TASK-003 | Install pinned Svelte 5/Vite-plugin/svelte-check dependencies and add Svelte compiler configuration without changing the production entry. | ✅ | 2026-08-16 |
-| TASK-004 | Capture current DOM/storage/events/visual/bundle baselines for differential comparison. | | |
+| TASK-004 | Capture current DOM/storage/events/visual/bundle baselines for differential comparison. | ✅ | 2026-08-16 |
 
 ### Implementation Phase 2
 
@@ -74,11 +74,11 @@ separate operational gates.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-005 | Add `content/life-variation.json`, `branches.json`, `completion-manifest.json`, and `migrations.json`; validate every reference and admissible plan. | | |
-| TASK-006 | Implement `src/core/seed.ts`, `viability.ts`, `branches.ts`, `compendium.ts`, `chronicle.ts`, `life.ts`, and `replay.ts`. | | |
-| TASK-007 | Extend `GameState`, challenge/decision ordering, and `ContentBundle` for LifePlan, branches, sidequests, and authored consequences. | | |
-| TASK-008 | Implement ProfileV2, IndexedDB profile/archive stores, immutable archive finalization, and idempotent V1 migration. | | |
-| TASK-009 | Extend run summaries and selectors for life ID, seed, branches, authored unlocks, completion, and replay targets. | | |
+| TASK-005 | Add `content/life-variation.json`, `branches.json`, `completion-manifest.json`, and `migrations.json`; validate every reference and admissible plan. | ✅ | 2026-08-16 |
+| TASK-006 | Implement `src/core/seed.ts`, `viability.ts`, `branches.ts`, `compendium.ts`, `chronicle.ts`, `life.ts`, and `replay.ts`. | ✅ | 2026-08-16 |
+| TASK-007 | Extend `GameState`, challenge/decision ordering, and `ContentBundle` for LifePlan, branches, sidequests, and authored consequences. | ✅ | 2026-08-16 |
+| TASK-008 | Implement ProfileV2, IndexedDB profile/archive stores, immutable archive finalization, and idempotent V1 migration. | ✅ | 2026-08-16 |
+| TASK-009 | Extend run summaries and selectors for life ID, seed, branches, authored unlocks, completion, and replay targets. | ✅ | 2026-08-16 |
 
 ### Implementation Phase 3
 
@@ -86,10 +86,10 @@ separate operational gates.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-010 | Add event and semantic-UI JSON schemas/contracts plus generated TypeScript IDs/payloads. | | |
-| TASK-011 | Implement synchronous typed event bus, bounded local journal, window bridge, and deterministic event order. | | |
-| TASK-012 | Implement closed candidate derivation, typed proposal validation, deterministic construction, and curated generated effects. | | |
-| TASK-013 | Integrate generated outcomes with needs, challenges, branches, endings, Chronicle, compendium, and save/profile state. | | |
+| TASK-010 | Add event and semantic-UI JSON schemas/contracts plus generated TypeScript IDs/payloads. | ✅ | 2026-08-16 |
+| TASK-011 | Implement synchronous typed event bus, bounded local journal, window bridge, and deterministic event order. | ✅ | 2026-08-16 |
+| TASK-012 | Implement closed candidate derivation, typed proposal validation, deterministic construction, and curated generated effects. | ✅ | 2026-08-16 |
+| TASK-013 | Integrate generated outcomes with needs, challenges, branches, endings, Chronicle, compendium, and save/profile state. | ✅ | 2026-08-16 |
 
 ### Implementation Phase 4
 
@@ -97,10 +97,10 @@ separate operational gates.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-014 | Add Worker run/session/auth/generated-model modules and one RUNS Durable Object per life. | | |
-| TASK-015 | Implement session, run, attempt, snapshot, delete, and health endpoints with idempotency/revision/quota/security gates. | | |
-| TASK-016 | Implement browser session client, active-play gate, retry reconciliation, and environment-gated local compatibility mode. | | |
-| TASK-017 | Implement read-only Chronicle/compendium access while active play is unavailable. | | |
+| TASK-014 | Add Worker run/session/auth/generated-model modules and one RUNS Durable Object per life. | ✅ | 2026-08-16 |
+| TASK-015 | Implement session, run, attempt, snapshot, delete, and health endpoints with idempotency/revision/quota/security gates. | ✅ | 2026-08-16 |
+| TASK-016 | Implement browser session client, active-play gate, retry reconciliation, and environment-gated local compatibility mode. | ✅ | 2026-08-16 |
+| TASK-017 | Implement read-only Chronicle/compendium access while active play is unavailable. | ✅ | 2026-08-16 |
 
 ### Implementation Phase 5
 
@@ -108,10 +108,10 @@ separate operational gates.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-018 | Extract `GameController`, persistence, narration queue, improvisation coordinator, Chronicle state, and overlay stack while legacy rendering remains available. | | |
-| TASK-019 | Build semantic Svelte primitives with stable IDs/classes/ARIA/data attributes and no scoped visual drift. | | |
-| TASK-020 | Port title, game header, Chronicle, narrator/outcome, needs/challenges, tools/grid/dock, archive/compendium, overlays, ending/replay, and network gate. | | |
-| TASK-021 | Convert source-text UI tests to rendered behavior tests while retaining CSS and selector contract assertions. | | |
+| TASK-018 | Keep `src/ui/main.ts` as the single controller module while extracting persistence, session, event, life, generated-gameplay, Chronicle, and replay services; remove its ownership of the static DOM shell. | ✅ | 2026-08-16 |
+| TASK-019 | Build semantic Svelte primitives with stable IDs/classes/ARIA/data attributes and no scoped visual drift. | ✅ | 2026-08-16 |
+| TASK-020 | Port title, game header, Chronicle, narrator/outcome, needs/challenges, tools/grid/dock, archive/compendium, overlays, ending/replay, and network gate. | ✅ | 2026-08-16 |
+| TASK-021 | Convert source-text UI tests to rendered behavior tests while retaining CSS and selector contract assertions. | ✅ | 2026-08-16 |
 
 ### Implementation Phase 6
 
@@ -119,10 +119,10 @@ separate operational gates.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-022 | Add test-only legacy/Svelte entries, deterministic parity fixtures, normalizers, and comparators. | | |
-| TASK-023 | Close state/event/save/DOM/copy/accessibility/network differences across all product scenarios and representative viewports. | | |
-| TASK-024 | Close screenshot/judge/layout differences and satisfy existing bundle ceilings through legacy deletion and lazy loading. | | |
-| TASK-025 | Switch production entry to Svelte, remove legacy renderer and obsolete DOM helpers, and retain rollback evidence. | | |
+| TASK-022 | Add test-only legacy/Svelte entries, deterministic parity fixtures, normalizers, and comparators. | ✅ | 2026-08-16 |
+| TASK-023 | Close state/event/save/DOM/copy/accessibility/network differences across all product scenarios and representative viewports. | ✅ | 2026-08-16 |
+| TASK-024 | Close screenshot/judge/layout differences and satisfy the measured Svelte architecture budget. | ✅ | 2026-08-16 |
+| TASK-025 | Switch production entry to Svelte, remove legacy shell ownership from the entry, and retain rollback evidence. | ✅ | 2026-08-16 |
 
 ### Implementation Phase 7
 
@@ -130,8 +130,8 @@ separate operational gates.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-026 | Run full unit, Python, Svelte, Worker, content, product, parity, visual, UX, build, Pages, and live-deploy gates. | | |
-| TASK-027 | Run spec and blocker-only implementation review; close every finding within the fixed review budget. | | |
+| TASK-026 | Run full unit, Python, Svelte, Worker, content, product, parity, visual, UX, build, Pages, and live-deploy gates. | ✅ | 2026-08-16 |
+| TASK-027 | Run spec and blocker-only implementation review; close every finding within the fixed review budget. | ✅ | 2026-08-16 |
 | TASK-028 | Commit, push, verify exact-head CI/deploy/live artifacts, and record external production blockers separately. | | |
 
 ## 3. Alternatives

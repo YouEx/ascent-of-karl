@@ -40,10 +40,10 @@
     },
     "currentArchitecture": [
       "TypeScript and Vite with a deterministic content-driven core.",
-      "Vanilla TypeScript DOM UI.",
-      "Complete authored gameplay can run without a backend.",
-      "Public root forces improvisation off; the unlisted playtest enables the deterministic offline invention floor.",
-      "Worker URLs are absent from shipped bundles."
+      "Svelte 5 owns the semantic DOM shell while the existing controller preserves behavior and side-effect ordering.",
+      "Seeded LifePlans, ProfileV2 archives, authored compendium, replay targets, and typed local product events are implemented.",
+      "Worker source includes run/session APIs, HMAC+CSRF capabilities, revisioned idempotent attempts, and bounded generated-gameplay selection.",
+      "Public Pages builds keep online-required and Worker endpoints off until production readiness is externally established."
     ],
     "targetArchitecture": [
       "Product truth infrastructure precedes and governs player-facing changes.",
@@ -76,7 +76,7 @@
       "name": "Begin a life",
       "purpose": "Start one distinct archived Karl life and reach meaningful play quickly.",
       "playerOutcome": "The player understands the available starting possibilities and begins a viable but meaningfully varied life.",
-      "currentTruth": "New, continue, and restart flows exist; starting elements and sidequests are not governed by a formal seeded viability contract.",
+      "currentTruth": "New, continue, and restart flows use a stored deterministic LifePlan with five starting elements, two authored sidequests, two challenges, and exhaustively validated opening witnesses.",
       "approvedTarget": "A stored deterministic seed selects a bounded starting subset and sidequests while guaranteeing viable authored progression.",
       "qualitativeAcceptance": [
         "Players notice that a new life differs.",
@@ -122,7 +122,7 @@
       "name": "Choose and combine",
       "purpose": "Give the player the primary language for deciding what Karl tries.",
       "playerOutcome": "A selected pair produces a meaningful result, reaction, consequence, or clue.",
-      "currentTruth": "The player selects two elements. Canonical recipes win; otherwise the engine returns a specific verdict and optional bounded improvisation.",
+      "currentTruth": "The player selects two elements. Canonical recipes win; otherwise local compatibility returns a specific verdict and optional bounded invention, while online mode commits through a revisioned authoritative run.",
       "approvedTarget": "Every valid attempt produces meaningful yield: a new outcome or a specific humour, guidance, or story response.",
       "qualitativeAcceptance": [
         "Most valid attempts produce meaningful yield.",
@@ -171,7 +171,7 @@
       "name": "Canonical discovery",
       "purpose": "Deliver a collectible authored story milestone that expands future possibilities.",
       "playerOutcome": "The player recognises a new canonical result, sees collection progress, and understands that the world has expanded.",
-      "currentTruth": "Canonical discoveries can carry flavor, historical notes, flags, need resolution, rarity, and age-up effects.",
+      "currentTruth": "Canonical discoveries carry authored effects and now update both the active life record and finite persistent completion.",
       "approvedTarget": "The discovery's newness, future utility, Chronicle entry, and persistent completion effect are immediately legible.",
       "qualitativeAcceptance": [
         "Players recognise the result as new.",
@@ -218,7 +218,7 @@
       "name": "Invention",
       "purpose": "Provide alternative progression when a player's unscripted idea is plausible or productively absurd.",
       "playerOutcome": "A player-owned invention remains distinct from canon and can meaningfully affect this life.",
-      "currentTruth": "A deterministic offline invention floor exists behind a production-off flag. Optional network copy may improve name and flavor only.",
+      "currentTruth": "The deterministic invention floor remains available for local compatibility; the Worker can now select a closed generated candidate whose taxonomy, effects, history rights, and run-local identity are validated deterministically.",
       "approvedTarget": "A model may propose typed run-local gameplay under deterministic validation; accepted inventions may solve needs and unlock authored consequences without historical claims.",
       "qualitativeAcceptance": [
         "Inventions offer credible alternative progress.",
@@ -266,7 +266,7 @@
       "name": "Narrator",
       "purpose": "Make the game funny, keep the player moving, and turn play into the story of this Karl.",
       "playerOutcome": "The player laughs, receives useful guidance, and recognises a coherent character arc across the life.",
-      "currentTruth": "The narrator prioritises authored story, behavior, memory, baked pair lines, optional live copy, grammar, and generic fallback.",
+      "currentTruth": "The narrator retains its full priority chain and emits typed humour/guidance/story evidence into each life journal.",
       "approvedTarget": "Humour, guidance, and story continuity remain equally required across generated gameplay, seeded lives, longer memory, and online production.",
       "qualitativeAcceptance": [
         "Players laugh at or quote a reaction.",
@@ -315,7 +315,7 @@
       "name": "Pursue needs",
       "purpose": "Give clear short-term goals without reducing the game to one prescribed recipe.",
       "playerOutcome": "The player can name the next need and imagine multiple possible solutions.",
-      "currentTruth": "Current Act problems, predicates, hints, and alternative canonical solutions guide progression.",
+      "currentTruth": "Current Act problems, predicates, hints, canonical discoveries, and validated inventions use the same deterministic solve rules.",
       "approvedTarget": "Canonical discoveries and validated inventions can provide multiple legible paths to the same need.",
       "qualitativeAcceptance": [
         "Players can name the current goal.",
@@ -364,7 +364,7 @@
       "name": "Face challenges and sidequests",
       "purpose": "Create temporary priority conflicts that make lives diverge.",
       "playerOutcome": "The player notices an interruption, chooses deliberately, and later recognises its consequence.",
-      "currentTruth": "Timed challenges can spawn, tick, resolve, fail, and affect endings. Sidequest variation is not yet governed by the life seed.",
+      "currentTruth": "Each LifePlan selects a deterministic challenge subset and authored branch-sidequests; their outcomes feed branch and Chronicle state.",
       "approvedTarget": "Seeded sidequests and challenges interrupt plans without replacing the main story, and their consequences remain visible later.",
       "qualitativeAcceptance": [
         "Players notice the priority conflict.",
@@ -412,7 +412,7 @@
       "name": "Read one life's Chronicle",
       "purpose": "Preserve the causal story of one distinct Karl life.",
       "playerOutcome": "The player can reconstruct what this Karl tried, discovered, invented, solved, and became.",
-      "currentTruth": "The Living Chronicle shows the narrator, latest outcome, canonical archive, timeline, and—when enabled—a separate invention section.",
+      "currentTruth": "The Living Chronicle keeps its live pages and canonical archive, while ProfileV2 stores immutable ended/abandoned lives and exposes them read-only.",
       "approvedTarget": "Every archived life can be reconstructed from attempts, discoveries, inventions, needs, challenges, branches, and fate.",
       "qualitativeAcceptance": [
         "Players reconstruct the causal story of one life.",
@@ -432,7 +432,8 @@
         "story.challenges"
       ],
       "semanticEvents": [
-        "chronicle.entry-recorded"
+        "chronicle.entry-recorded",
+        "life.archived"
       ],
       "ownershipHints": {
         "sourceEntrypoints": [
@@ -463,7 +464,7 @@
       "name": "Complete the master compendium",
       "purpose": "Make finite authored completion legible and motivate another life without revealing exact recipes.",
       "playerOutcome": "The player understands completion, identifies a broad gap, and chooses another life to pursue it.",
-      "currentTruth": "Discoveries and fates persist locally, but there is no unified authored-content percentage or archived-life model.",
+      "currentTruth": "The master compendium persists a 197-entry authored denominator across canonical discoveries, three major branches, and fifteen fates; inventions remain a separate unbounded gallery.",
       "approvedTarget": "The compendium combines canonical discoveries, major branches, and endings into a percentage while inventions remain in a separate unbounded gallery.",
       "qualitativeAcceptance": [
         "Players understand what the completion percentage includes.",
@@ -513,7 +514,7 @@
       "name": "Unlock a fate",
       "purpose": "Reward exploration with a surprising, collectible ending.",
       "playerOutcome": "The player unlocks a memorable fate, understands its cause, and becomes curious about undiscovered endings.",
-      "currentTruth": "Authored endings unlock from deterministic state and appear as persistent fates.",
+      "currentTruth": "Authored endings unlock from deterministic state, archive the completed life once, and update persistent fate completion.",
       "approvedTarget": "Each ending remains surprising but causally traceable, and its rarity/conditions never require fabricated statistics.",
       "qualitativeAcceptance": [
         "The ending surprises the player.",
@@ -561,7 +562,7 @@
       "name": "Replay and optionally share",
       "purpose": "Turn completion gaps, new seeds, sidequests, and alternative progression into another distinct life. Sharing expresses the result but is not required for progression.",
       "playerOutcome": "The player names a new target and voluntarily begins another life; sharing remains optional expression.",
-      "currentTruth": "Players can start a new life and copy a run summary. Life archives and shareable seeds are not yet implemented.",
+      "currentTruth": "Players can archive lives, inspect seed-coded summaries, choose broad non-spoiler replay targets, and begin a new seeded life.",
       "approvedTarget": "Endings and compendium gaps present meaningful replay targets; life summaries and seeds remain understandable outside the running game.",
       "qualitativeAcceptance": [
         "Players name a different target or path.",
@@ -608,7 +609,7 @@
       "name": "Play across devices",
       "purpose": "Deliver the same meaningful, completable game on phone and desktop, even when layout and input differ.",
       "playerOutcome": "The player understands the same story, choices, feedback, and collection on supported devices.",
-      "currentTruth": "One Vite web application serves responsive mobile and desktop layouts. Local saves are browser-local.",
+      "currentTruth": "A Svelte 5 semantic shell now serves the same responsive mobile/desktop product; typed sessions, IndexedDB profiles, and Worker run APIs exist, while production online-required mode remains readiness-gated.",
       "approvedTarget": "The Svelte replacement preserves meaning, behavior, accessibility, events, and save compatibility across supported devices.",
       "qualitativeAcceptance": [
         "The same life is completable on phone and desktop.",

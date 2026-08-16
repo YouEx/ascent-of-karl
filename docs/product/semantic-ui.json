@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "attributes": {
+    "capability": "data-capability",
+    "scenario": "data-scenario",
+    "action": "data-action",
+    "state": "data-state",
+    "entity": "data-entity-id"
+  },
+  "capabilityRoots": [
+    "life.begin",
+    "craft.combine",
+    "collection.canonical-discovery",
+    "sandbox.invention",
+    "narrator.react",
+    "guidance.needs",
+    "story.challenges",
+    "chronicle.life",
+    "collection.compendium",
+    "fate.ending",
+    "replay.share",
+    "platform.cross-device"
+  ],
+  "scenarioStates": [
+    {
+      "scenario": "life.fresh-start",
+      "state": "fresh"
+    },
+    {
+      "scenario": "life.continue",
+      "state": "resumable"
+    },
+    {
+      "scenario": "attempt.canonical-discovery",
+      "state": "new"
+    },
+    {
+      "scenario": "attempt.known-result",
+      "state": "known"
+    },
+    {
+      "scenario": "attempt.no-fuse",
+      "state": "retryable"
+    },
+    {
+      "scenario": "attempt.invention",
+      "state": "new"
+    },
+    {
+      "scenario": "attempt.invention-rejected",
+      "state": "retryable"
+    },
+    {
+      "scenario": "need.active",
+      "state": "active"
+    },
+    {
+      "scenario": "progress.age-up-blocked",
+      "state": "blocked"
+    },
+    {
+      "scenario": "challenge.active",
+      "state": "active"
+    },
+    {
+      "scenario": "chronicle.read-life",
+      "state": "open"
+    },
+    {
+      "scenario": "compendium.review-gap",
+      "state": "open"
+    },
+    {
+      "scenario": "ending.unlocked",
+      "state": "terminal"
+    },
+    {
+      "scenario": "replay.named-target",
+      "state": "ready"
+    },
+    {
+      "scenario": "network.unavailable",
+      "state": "unavailable"
+    },
+    {
+      "scenario": "platform.session-ready",
+      "state": "ready"
+    }
+  ],
+  "actions": [
+    {
+      "id": "life.begin",
+      "capability": "life.begin"
+    },
+    {
+      "id": "life.continue",
+      "capability": "life.begin"
+    },
+    {
+      "id": "life.new",
+      "capability": "life.begin"
+    },
+    {
+      "id": "life.restart",
+      "capability": "life.begin"
+    },
+    {
+      "id": "life.replay",
+      "capability": "replay.share"
+    },
+    {
+      "id": "element.select",
+      "capability": "craft.combine"
+    },
+    {
+      "id": "selection.remove",
+      "capability": "craft.combine"
+    },
+    {
+      "id": "combination.submit",
+      "capability": "craft.combine"
+    },
+    {
+      "id": "elements.search",
+      "capability": "craft.combine"
+    },
+    {
+      "id": "elements.filter-new",
+      "capability": "craft.combine"
+    },
+    {
+      "id": "elements.filter-finished",
+      "capability": "craft.combine"
+    },
+    {
+      "id": "chronicle.open",
+      "capability": "chronicle.life"
+    },
+    {
+      "id": "chronicle.close",
+      "capability": "chronicle.life"
+    },
+    {
+      "id": "compendium.open",
+      "capability": "collection.compendium"
+    },
+    {
+      "id": "fates.open",
+      "capability": "fate.ending"
+    },
+    {
+      "id": "overlay.close",
+      "capability": "platform.cross-device"
+    },
+    {
+      "id": "narrator.mute",
+      "capability": "narrator.react"
+    },
+    {
+      "id": "playtest.copy",
+      "capability": "replay.share"
+    },
+    {
+      "id": "connection.retry",
+      "capability": "platform.cross-device"
+    },
+    {
+      "id": "archive.open-life",
+      "capability": "chronicle.life"
+    },
+    {
+      "id": "persistence.retry",
+      "capability": "chronicle.life"
+    }
+  ],
+  "states": [
+    "idle",
+    "ready",
+    "busy",
+    "disabled",
+    "fresh",
+    "resumable",
+    "available",
+    "selected-once",
+    "selected-twice",
+    "new",
+    "known",
+    "finished",
+    "empty",
+    "filled",
+    "active",
+    "solved",
+    "blocked",
+    "open",
+    "closed",
+    "retryable",
+    "informational",
+    "terminal",
+    "available-offline",
+    "unavailable"
+  ]
+}

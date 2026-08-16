@@ -262,7 +262,16 @@ describe("registry.json — titelens fidelitymål (TASK-001)", () => {
  * der aldrig blev set på.
  */
 describe("registry-ankre peger på noget, der findes", () => {
-  const MARKUP_SOURCES = ["src/ui/main.ts", "index.html"];
+  const MARKUP_SOURCES = [
+    "src/ui/main.ts",
+    "src/ui/App.svelte",
+    "src/ui/components/game/GameHeader.svelte",
+    "src/ui/components/game/LivingChronicle.svelte",
+    "src/ui/components/game/Workshop.svelte",
+    "src/ui/components/chronicle/ChronicleDrawer.svelte",
+    "src/ui/components/overlays/OverlayHosts.svelte",
+    "index.html",
+  ];
 
   function markup() {
     return MARKUP_SOURCES.filter((file) => existsSync(join(ROOT, file)))
@@ -293,7 +302,7 @@ describe("registry-ankre peger på noget, der findes", () => {
   function resolves(anchor: string, source: string, tokens: Set<string>) {
     if (anchor.startsWith("#")) return source.includes(`id="${anchor.slice(1)}"`);
     if (anchor.startsWith(".")) return tokens.has(anchor.slice(1));
-    return new RegExp(`<${anchor}[ >]`).test(source);
+    return new RegExp(`<${anchor}(?:\\s|>)`).test(source);
   }
 
   it("hvert eneste anker findes i markup'en", () => {

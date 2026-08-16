@@ -120,4 +120,20 @@ describe("product truth contracts", () => {
     expect(numbered.has("Begin a life")).toBe(true);
     expect(unnumbered.has("Begin a life")).toBe(true);
   });
+
+  it("fails when an event payload contract or semantic root drifts", () => {
+    const eventData = clone(validateProductContracts(ROOT).data);
+    eventData.events.events.find(
+      (event) => event.id === "life.started",
+    )!.capability = "missing.capability";
+    expect(validateProductData(ROOT, eventData)).toContain(
+      "life.started: unknown event capability missing.capability",
+    );
+
+    const semanticData = clone(validateProductContracts(ROOT).data);
+    semanticData.semanticUi.capabilityRoots[0] = "missing.capability";
+    expect(validateProductData(ROOT, semanticData)).toContain(
+      "life.begin: missing semantic capability root",
+    );
+  });
 });

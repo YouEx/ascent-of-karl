@@ -52,12 +52,15 @@ export function decisionForPage(
   page: number,
   taken: DecisionRecord[],
 ): DecisionDef | null {
-  if (taken.some((t) => t.id === pageId(content, page))) return null;
-  return content.decisions.find((d) => d.page === page) ?? null;
-}
-
-function pageId(content: ContentBundle, page: number): string | undefined {
-  return content.decisions.find((d) => d.page === page)?.id;
+  const takenIds = new Set(taken.map((record) => record.id));
+  return (
+    content.decisions
+      .filter((decision) => decision.page <= page && !takenIds.has(decision.id))
+      .sort(
+        (left, right) =>
+          left.page - right.page || left.id.localeCompare(right.id),
+      )[0] ?? null
+  );
 }
 
 /**

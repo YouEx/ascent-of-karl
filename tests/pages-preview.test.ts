@@ -89,6 +89,9 @@ function writeFixture(): string {
         VITE_IMPROVISE_ENABLED: "false",
         VITE_IMPROVISE_URL: "",
         VITE_NARRATOR_URL: "",
+        VITE_GAME_API_URL: "",
+        VITE_ONLINE_REQUIRED: "false",
+        VITE_ONLINE_TARGET_READY: "false",
       },
       modules: {
         "assets/index-root.js": moduleContract(rootEntry, {
@@ -123,6 +126,9 @@ function writeFixture(): string {
         VITE_IMPROVISE_ENABLED: "true",
         VITE_IMPROVISE_URL: "",
         VITE_NARRATOR_URL: "",
+        VITE_GAME_API_URL: "",
+        VITE_ONLINE_REQUIRED: "false",
+        VITE_ONLINE_TARGET_READY: "false",
       },
       modules: {
         "assets/index-preview.js": moduleContract(previewEntry, {
@@ -240,6 +246,9 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
       VITE_IMPROVISE_ENABLED: "false",
       VITE_IMPROVISE_URL: "",
       VITE_NARRATOR_URL: "",
+      VITE_GAME_API_URL: "",
+      VITE_ONLINE_REQUIRED: "false",
+      VITE_ONLINE_TARGET_READY: "false",
     });
     expect(plan[1]?.env).toMatchObject({
       NODE_ENV: "production",
@@ -247,6 +256,9 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
       VITE_IMPROVISE_ENABLED: "true",
       VITE_IMPROVISE_URL: "",
       VITE_NARRATOR_URL: "",
+      VITE_GAME_API_URL: "",
+      VITE_ONLINE_REQUIRED: "false",
+      VITE_ONLINE_TARGET_READY: "false",
     });
     expect(JSON.stringify(plan)).not.toContain(hostile);
   });
@@ -281,6 +293,9 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
       VITE_IMPROVISE_ENABLED: "true",
       VITE_IMPROVISE_URL: "",
       VITE_NARRATOR_URL: "",
+      VITE_GAME_API_URL: "",
+      VITE_ONLINE_REQUIRED: "false",
+      VITE_ONLINE_TARGET_READY: "false",
     });
 
     const root = mkdtempSync(join(SCRATCH_ROOT, "budget-plan-"));
@@ -376,6 +391,9 @@ describe("GitHub Pages playtest-buildkontrakt", () => {
           VITE_IMPROVISE_ENABLED: "true",
           VITE_IMPROVISE_URL: "",
           VITE_NARRATOR_URL: "",
+          VITE_GAME_API_URL: "",
+          VITE_ONLINE_REQUIRED: "false",
+          VITE_ONLINE_TARGET_READY: "false",
         },
         modules: {},
       }),

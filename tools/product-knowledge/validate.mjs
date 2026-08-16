@@ -12,6 +12,8 @@ export const CONTRACT_PATHS = Object.freeze({
   capabilities: "docs/product/capabilities.json",
   scenarios: "docs/product/scenarios.json",
   relations: "docs/product/product-graph-relations.json",
+  events: "docs/product/events.json",
+  semanticUi: "docs/product/semantic-ui.json",
   knownAnswers: "docs/product/context-known-answers.json",
 });
 
@@ -19,6 +21,8 @@ export const SCHEMA_PATHS = Object.freeze({
   capabilities: "docs/product/schema/capabilities.schema.json",
   scenarios: "docs/product/schema/scenarios.schema.json",
   relations: "docs/product/schema/relations.schema.json",
+  events: "docs/product/schema/events.schema.json",
+  semanticUi: "docs/product/schema/semantic-ui.schema.json",
   knownAnswers: "docs/product/schema/known-answers.schema.json",
 });
 
@@ -196,7 +200,14 @@ function validateAuthority(root, manifest, errors) {
 }
 
 function validateCrossContracts(root, data, errors) {
-  const { capabilities: manifest, scenarios, relations, knownAnswers } = data;
+  const {
+    capabilities: manifest,
+    scenarios,
+    relations,
+    events,
+    semanticUi,
+    knownAnswers,
+  } = data;
   const capabilities = manifest.capabilities;
   const capabilityIds = new Set(capabilities.map((entry) => entry.id));
   const scenarioIds = new Set(scenarios.scenarios.map((entry) => entry.id));
@@ -284,6 +295,84 @@ function validateCrossContracts(root, data, errors) {
     }
   }
 
+  const eventIds = new Set();
+  const declaredCapabilityEvents = new Set(
+    capabilities.flatMap((capability) => capability.semanticEvents),
+  );
+  for (const event of events.events) {
+    if (eventIds.has(event.id)) errors.push(`duplicate product event id: ${event.id}`);
+    eventIds.add(event.id);
+    if (!capabilityIds.has(event.capability)) {
+      errors.push(`${event.id}: unknown event capability ${event.capability}`);
+    }
+    if (!declaredCapabilityEvents.has(event.id)) {
+      errors.push(`${event.id}: event is not declared by any capability`);
+    }
+    const owner = capabilities.find(
+      (capability) => capability.id === event.capability,
+    );
+    if (!owner?.semanticEvents.includes(event.id)) {
+      errors.push(
+        `${event.id}: event capability ${event.capability} does not own event`,
+      );
+    }
+    for (const scenarioId of event.scenarios) {
+      if (!scenarioIds.has(scenarioId)) {
+        errors.push(`${event.id}: unknown event scenario ${scenarioId}`);
+      }
+    }
+  }
+  for (const eventId of declaredCapabilityEvents) {
+    if (!eventIds.has(eventId)) {
+      errors.push(`${eventId}: capability event has no payload contract`);
+    }
+  }
+  for (const scenario of scenarios.scenarios) {
+    const event = events.events.find((entry) => entry.id === scenario.semanticEvent);
+    if (!event) {
+      errors.push(`${scenario.id}: semantic event has no event contract`);
+    } else if (!event.scenarios.includes(scenario.id)) {
+      errors.push(
+        `${scenario.id}: event ${scenario.semanticEvent} does not list scenario`,
+      );
+    }
+  }
+
+  const semanticCapabilityIds = new Set(semanticUi.capabilityRoots);
+  for (const capabilityId of capabilityIds) {
+    if (!semanticCapabilityIds.has(capabilityId)) {
+      errors.push(`${capabilityId}: missing semantic capability root`);
+    }
+  }
+  for (const capabilityId of semanticCapabilityIds) {
+    if (!capabilityIds.has(capabilityId)) {
+      errors.push(`semantic UI has unknown capability root ${capabilityId}`);
+    }
+  }
+  const semanticScenarioIds = new Set();
+  for (const entry of semanticUi.scenarioStates) {
+    if (semanticScenarioIds.has(entry.scenario)) {
+      errors.push(`duplicate semantic scenario state ${entry.scenario}`);
+    }
+    semanticScenarioIds.add(entry.scenario);
+    if (!scenarioIds.has(entry.scenario)) {
+      errors.push(`semantic UI has unknown scenario ${entry.scenario}`);
+    }
+  }
+  for (const scenarioId of scenarioIds) {
+    if (!semanticScenarioIds.has(scenarioId)) {
+      errors.push(`${scenarioId}: missing semantic UI state`);
+    }
+  }
+  const actionIds = new Set();
+  for (const action of semanticUi.actions) {
+    if (actionIds.has(action.id)) errors.push(`duplicate semantic action ${action.id}`);
+    actionIds.add(action.id);
+    if (!capabilityIds.has(action.capability)) {
+      errors.push(`${action.id}: unknown action capability ${action.capability}`);
+    }
+  }
+
   const allowedNodeIds = new Set([
     "product:carl",
     ...capabilities.map((entry) => `capability:${entry.id}`),
@@ -329,7 +418,13 @@ function validateCrossContracts(root, data, errors) {
 
 export function validateProductContracts(root = REPO_ROOT) {
   const data = {};
-  for (const name of ["capabilities", "scenarios", "relations"]) {
+  for (const name of [
+    "capabilities",
+    "scenarios",
+    "relations",
+    "events",
+    "semanticUi",
+  ]) {
     data[name] = readJson(root, CONTRACT_PATHS[name]);
   }
 
@@ -341,7 +436,13 @@ export function validateProductContracts(root = REPO_ROOT) {
 
 export function validateProductData(root, data) {
   const errors = [];
-  for (const name of ["capabilities", "scenarios", "relations"]) {
+  for (const name of [
+    "capabilities",
+    "scenarios",
+    "relations",
+    "events",
+    "semanticUi",
+  ]) {
     const schema = readJson(root, SCHEMA_PATHS[name]);
     errors.push(
       ...validateSchema(data[name], schema).map(

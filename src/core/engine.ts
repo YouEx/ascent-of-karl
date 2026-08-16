@@ -15,6 +15,23 @@ import {
   withImprovisedCopy,
 } from "./improvise";
 import type { ImproviseCopy } from "./improvise";
+import {
+  freshDecisionState,
+  type DecisionState,
+} from "./decision";
+import { newlyCompletedBranches } from "./branches";
+import {
+  applyGeneratedPresentation,
+  validateGeneratedGameplayProposal,
+  type GeneratedGameplayProposal,
+  type GeneratedProposalValidation,
+} from "./generated-validator";
+import { validateGeneratedEffects } from "./generated-effects";
+import { migrateGameStateToCurrentContent } from "./content-migrations";
+import {
+  legacyLifePlan,
+  type StoredLifePlan,
+} from "./seed";
 import { explainSatisfaction, solvesNeed } from "./solves";
 import { judgePair } from "./verdict";
 import type {
@@ -45,6 +62,15 @@ export interface GameState {
   challenges: ChallengeState;
   /** Run-seed — styrer hvornår challenges spawner og hvad der løser dem */
   seed: number;
+  /** Hele den afledte plan gemmes; resume må aldrig genrulle åbningen. */
+  lifePlan?: StoredLifePlan;
+  /** Sidequests/beslutninger i dette liv. */
+  decisions?: DecisionState;
+  /** Authored branches that this life has causally completed. */
+  completedBranchIds?: string[];
+  /** Challenge provenance for branch/Chronicle reconstruction. */
+  solvedChallengeIds?: string[];
+  failedChallengeIds?: string[];
   /** Runets improviserede elementregistry. Canon lever fortsat i content. */
   improvisedElements?: ElementDef[];
   /** Improviserede elementer der faktisk løste et problem eller challenge. */
@@ -53,10 +79,21 @@ export interface GameState {
 
 export type RuntimeGameState = Omit<
   GameState,
-  "improvisedElements" | "creditedImprovised"
+  | "improvisedElements"
+  | "creditedImprovised"
+  | "lifePlan"
+  | "decisions"
+  | "completedBranchIds"
+  | "solvedChallengeIds"
+  | "failedChallengeIds"
 > & {
   improvisedElements: ElementDef[];
   creditedImprovised: string[];
+  lifePlan: StoredLifePlan;
+  decisions: DecisionState;
+  completedBranchIds: string[];
+  solvedChallengeIds: string[];
+  failedChallengeIds: string[];
 };
 
 export interface EngineOptions {
@@ -64,6 +101,8 @@ export interface EngineOptions {
   improvisationRunCap?: number | null;
   /** Pris for et ikke-canonical forsøg; canonical kombinationer beholder combo.cost. */
   improvisationSummerCost?: number;
+  /** Deterministic prevalidated opening and selected sidequest/challenge set. */
+  lifePlan?: StoredLifePlan;
 }
 
 export function pairKey(a: string, b: string): string {
@@ -87,6 +126,7 @@ export class Engine {
   private predicates: Record<string, SolvePredicate>;
   private readonly improvisationRunCap: number | null;
   private readonly improvisationSummerCost: number;
+  private readonly initialLifePlan: StoredLifePlan;
 
   constructor(
     content: ContentBundle,
@@ -101,6 +141,8 @@ export class Engine {
         : options.improvisationRunCap;
     this.improvisationSummerCost =
       options.improvisationSummerCost ?? IMPROVISE_SUMMER_COST;
+    this.initialLifePlan =
+      options.lifePlan ?? legacyLifePlan(content, 1);
     if (
       (this.improvisationRunCap !== null &&
         (!Number.isInteger(this.improvisationRunCap) ||
@@ -144,15 +186,18 @@ export class Engine {
     const firstAct = Math.min(...this.content.acts.map((a) => a.act));
     return {
       act: firstAct,
-      discovered: this.content.elements
-        .filter((e) => e.base && e.act === firstAct)
-        .map((e) => e.id),
+      discovered: [...this.initialLifePlan.startingElementIds],
       flags: [],
       solvedProblems: [],
       attempts: 0,
       ended: null,
       challenges: freshChallengeState(),
-      seed: 1,
+      seed: this.initialLifePlan.seed,
+      lifePlan: structuredClone(this.initialLifePlan),
+      decisions: freshDecisionState(),
+      completedBranchIds: [],
+      solvedChallengeIds: [],
+      failedChallengeIds: [],
       improvisedElements: [],
       creditedImprovised: [],
     };
@@ -163,7 +208,7 @@ export class Engine {
   }
 
   loadState(state: GameState): void {
-    const s = structuredClone(state);
+    const s = migrateGameStateToCurrentContent(this.content, state);
     const improvisedElements = this.sanitizeImprovisedRegistry(
       s.improvisedElements,
       s.discovered,
@@ -181,6 +226,17 @@ export class Engine {
       ended: s.ended ?? null,
       challenges: s.challenges ?? freshChallengeState(),
       seed: s.seed ?? 1,
+      lifePlan: s.lifePlan ?? legacyLifePlan(this.content, s.seed ?? 1),
+      decisions: s.decisions ?? freshDecisionState(),
+      completedBranchIds: [...new Set(s.completedBranchIds ?? [])].filter((id) =>
+        (this.content.branches ?? []).some((branch) => branch.id === id),
+      ),
+      solvedChallengeIds: [
+        ...new Set(s.solvedChallengeIds ?? []),
+      ].filter((id) => this.content.challenges.some((entry) => entry.id === id)),
+      failedChallengeIds: [
+        ...new Set(s.failedChallengeIds ?? []),
+      ].filter((id) => this.content.challenges.some((entry) => entry.id === id)),
       improvisedElements,
       creditedImprovised: [
         ...new Set(
@@ -459,6 +515,37 @@ export class Engine {
   }
 
   /**
+   * Online target path: the model may only select one freshly derived closed
+   * candidate. Invalid proposals throw BEFORE a turn is consumed or state is
+   * changed; infrastructure/model protocol failure is not gameplay.
+   */
+  attemptGenerated(
+    a: string,
+    b: string,
+    proposal: GeneratedGameplayProposal,
+  ): CombineOutcome {
+    this.assertTurnAllowed(a, b);
+    if (this.matchCombo(a, b)) {
+      this.state.attempts++;
+      return this.completeTurn(this.resolve(a, b));
+    }
+    const first = this.element(a);
+    const second = this.element(b);
+    const validation = validateGeneratedGameplayProposal(
+      proposal,
+      first,
+      second,
+    );
+    if (!validation.ok) {
+      throw new Error(`Invalid generated gameplay proposal: ${validation.reason}`);
+    }
+    this.state.attempts += this.improvisationSummerCost;
+    return this.completeTurn(
+      this.resolveImprovisation(a, b, undefined, validation),
+    );
+  }
+
+  /**
    * Atomisk improvisation: portvagt, registry, problemløsning og challenge
    * sker i én transition og koster præcis én sommer.
    */
@@ -485,6 +572,7 @@ export class Engine {
     a: string,
     b: string,
     copy?: ImproviseCopy,
+    generated?: Extract<GeneratedProposalValidation, { ok: true }>,
   ): CombineOutcome {
     const first = this.element(a);
     const second = this.element(b);
@@ -532,7 +620,14 @@ export class Engine {
     }
 
     const reused = known?.origin === "improvised";
-    let element = reused ? known : buildFallbackElement(first, second);
+    let element = reused
+      ? known
+      : generated
+        ? applyGeneratedPresentation(
+            generated.candidate,
+            generated.proposal.presentationKey,
+          )
+        : buildFallbackElement(first, second);
     if (copy) element = withImprovisedCopy(element, copy);
     if (!reused) {
       this.state.improvisedElements.push(element);
@@ -543,6 +638,13 @@ export class Engine {
     }
 
     const act = this.currentAct();
+    const generatedEffects = generated
+      ? validateGeneratedEffects(
+          this,
+          element,
+          this.content.inventionConsequences?.rules ?? [],
+        )
+      : undefined;
     const needExplanations = this.explainCurrentNeeds(element);
     let solved: ProblemDef | undefined;
     for (const problem of act.problems) {
@@ -551,6 +653,18 @@ export class Engine {
       this.state.solvedProblems.push(problem.id);
       solved = problem;
       break;
+    }
+    for (const branchId of generatedEffects?.authoredBranchIds ?? []) {
+      if (!this.state.completedBranchIds.includes(branchId)) {
+        this.state.completedBranchIds.push(branchId);
+      }
+    }
+    if (
+      generatedEffects?.unlockedEndingId &&
+      this.endingsUnlocked() &&
+      !this.state.ended
+    ) {
+      this.state.ended = generatedEffects.unlockedEndingId;
     }
 
     return {
@@ -599,6 +713,15 @@ export class Engine {
 
   private completeTurn(outcome: CombineOutcome): CombineOutcome {
     const challenge = this.tickChallenge(outcome);
+    if (challenge?.kind === "solved") {
+      if (!this.state.solvedChallengeIds.includes(challenge.def.id)) {
+        this.state.solvedChallengeIds.push(challenge.def.id);
+      }
+    } else if (challenge?.kind === "failed") {
+      if (!this.state.failedChallengeIds.includes(challenge.def.id)) {
+        this.state.failedChallengeIds.push(challenge.def.id);
+      }
+    }
     if (outcome.kind === "improvised") {
       if (outcome.solved) this.creditImprovised(outcome.element.id);
     }
@@ -619,7 +742,31 @@ export class Engine {
       const oldAge = this.content.endings.find((e) => e.automatic);
       if (oldAge) this.state.ended = oldAge.id;
     }
+    this.updateCompletedBranches();
     return challenge ? { ...completed, challenge } : completed;
+  }
+
+  private updateCompletedBranches(): void {
+    const added = newlyCompletedBranches(
+      {
+        ...this.content,
+        branches: (this.content.branches ?? []).filter(
+          (branch) =>
+            !this.state.lifePlan.sidequestIds.length ||
+            this.state.lifePlan.sidequestIds.includes(branch.id),
+        ),
+      },
+      this.state.completedBranchIds,
+      {
+        discovered: new Set(this.state.discovered),
+        flags: new Set(this.state.flags),
+        solvedProblems: new Set(this.state.solvedProblems),
+        solvedChallenges: new Set(this.state.solvedChallengeIds),
+        failedChallenges: new Set(this.state.failedChallengeIds),
+        endingId: this.state.ended,
+      },
+    );
+    this.state.completedBranchIds.push(...added);
   }
 
   private creditImprovised(id: string): void {
@@ -707,7 +854,13 @@ export class Engine {
     }
 
     cs.gap++;
-    const spawned = rollChallenge(this.content, cs, page, this.state.seed);
+    const spawned = rollChallenge(
+      this.content,
+      cs,
+      page,
+      this.state.seed,
+      new Set(this.state.lifePlan.challengeIds),
+    );
     if (!spawned) return undefined;
     cs.active = {
       id: spawned.id,

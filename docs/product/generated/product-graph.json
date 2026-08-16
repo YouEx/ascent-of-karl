@@ -45,6 +45,12 @@
       "target": "event:chronicle.entry-recorded"
     },
     {
+      "provenance": "CONTRACT",
+      "relation": "emits",
+      "source": "capability:chronicle.life",
+      "target": "event:life.archived"
+    },
+    {
       "provenance": "CURATED",
       "rationale": "Immutable life records provide provenance for persistent authored completion.",
       "relation": "feeds",
@@ -104,6 +110,30 @@
       "relation": "implemented_by",
       "source": "capability:chronicle.life",
       "target": "file:src/ui/story-page.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:chronicle.life",
+      "target": "action:archive.open-life"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:chronicle.life",
+      "target": "action:chronicle.close"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:chronicle.life",
+      "target": "action:chronicle.open"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:chronicle.life",
+      "target": "action:persistence.retry"
     },
     {
       "provenance": "CONTRACT",
@@ -289,6 +319,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:collection.compendium",
+      "target": "action:compendium.open"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "specified_by",
       "source": "capability:collection.compendium",
       "target": "file:content/decisions.json"
@@ -398,6 +434,42 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:craft.combine",
+      "target": "action:combination.submit"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:craft.combine",
+      "target": "action:element.select"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:craft.combine",
+      "target": "action:elements.filter-finished"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:craft.combine",
+      "target": "action:elements.filter-new"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:craft.combine",
+      "target": "action:elements.search"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:craft.combine",
+      "target": "action:selection.remove"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "specified_by",
       "source": "capability:craft.combine",
       "target": "file:content/combos.json"
@@ -480,6 +552,12 @@
       "relation": "implemented_by",
       "source": "capability:fate.ending",
       "target": "file:src/ui/run-summary.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:fate.ending",
+      "target": "action:fates.open"
     },
     {
       "provenance": "CONTRACT",
@@ -677,6 +755,30 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:life.begin",
+      "target": "action:life.begin"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:life.begin",
+      "target": "action:life.continue"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:life.begin",
+      "target": "action:life.new"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:life.begin",
+      "target": "action:life.restart"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "specified_by",
       "source": "capability:life.begin",
       "target": "file:content/challenges.json"
@@ -777,6 +879,12 @@
       "relation": "implemented_by",
       "source": "capability:narrator.react",
       "target": "file:src/ui/audio.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:narrator.react",
+      "target": "action:narrator.mute"
     },
     {
       "provenance": "CONTRACT",
@@ -924,6 +1032,18 @@
       "target": "file:src/ui/style.css"
     },
     {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:platform.cross-device",
+      "target": "action:connection.retry"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:platform.cross-device",
+      "target": "action:overlay.close"
+    },
+    {
       "gate": "Differential old/new parity must pass before Svelte replaces the current UI.",
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
@@ -1001,6 +1121,18 @@
       "relation": "implemented_by",
       "source": "capability:replay.share",
       "target": "file:src/ui/run-summary.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:replay.share",
+      "target": "action:life.replay"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "owns_action",
+      "source": "capability:replay.share",
+      "target": "action:playtest.copy"
     },
     {
       "provenance": "CONTRACT",
@@ -1242,6 +1374,13 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/content.ts",
+      "specifier": "../content/branches.json",
+      "target": "file:content/branches.json"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/content.ts",
       "specifier": "../content/challenges.json",
       "target": "file:content/challenges.json"
     },
@@ -1251,6 +1390,13 @@
       "source": "file:src/content.ts",
       "specifier": "../content/combos.json",
       "target": "file:content/combos.json"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/content.ts",
+      "specifier": "../content/completion-manifest.json",
+      "target": "file:content/completion-manifest.json"
     },
     {
       "provenance": "SOURCE",
@@ -1279,6 +1425,27 @@
       "source": "file:src/content.ts",
       "specifier": "../content/endings.json",
       "target": "file:content/endings.json"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/content.ts",
+      "specifier": "../content/invention-consequences.json",
+      "target": "file:content/invention-consequences.json"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/content.ts",
+      "specifier": "../content/life-variation.json",
+      "target": "file:content/life-variation.json"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/content.ts",
+      "specifier": "../content/migrations.json",
+      "target": "file:content/migrations.json"
     },
     {
       "provenance": "SOURCE",
@@ -1332,6 +1499,20 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:src/core/branches.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/challenge.ts",
+      "specifier": "./seed",
+      "target": "file:src/core/seed.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:src/core/challenge.ts",
       "specifier": "./solves",
       "target": "file:src/core/solves.ts"
@@ -1346,9 +1527,93 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:src/core/chronicle.ts",
+      "specifier": "./life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/chronicle.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/chronicle.ts",
+      "specifier": "../product/events",
+      "target": "file:src/product/events.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/compendium.ts",
+      "specifier": "./engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/compendium.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/content-migrations.ts",
+      "specifier": "./compendium",
+      "target": "file:src/core/compendium.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/content-migrations.ts",
+      "specifier": "./engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/content-migrations.ts",
+      "specifier": "./improvise",
+      "target": "file:src/core/improvise.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/content-migrations.ts",
+      "specifier": "./replay",
+      "target": "file:src/core/replay.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/content-migrations.ts",
+      "specifier": "./seed",
+      "target": "file:src/core/seed.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/content-migrations.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:src/core/decision.ts",
       "specifier": "./types",
       "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/engine.ts",
+      "specifier": "./branches",
+      "target": "file:src/core/branches.ts"
     },
     {
       "provenance": "SOURCE",
@@ -1361,8 +1626,43 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/core/engine.ts",
+      "specifier": "./content-migrations",
+      "target": "file:src/core/content-migrations.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/engine.ts",
+      "specifier": "./decision",
+      "target": "file:src/core/decision.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/engine.ts",
+      "specifier": "./generated-effects",
+      "target": "file:src/core/generated-effects.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/engine.ts",
+      "specifier": "./generated-validator",
+      "target": "file:src/core/generated-validator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/engine.ts",
       "specifier": "./improvise",
       "target": "file:src/core/improvise.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/engine.ts",
+      "specifier": "./seed",
+      "target": "file:src/core/seed.ts"
     },
     {
       "provenance": "SOURCE",
@@ -1388,6 +1688,55 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:src/core/generated-candidates.ts",
+      "specifier": "./improvise",
+      "target": "file:src/core/improvise.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/generated-candidates.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/generated-effects.ts",
+      "specifier": "./engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/generated-effects.ts",
+      "specifier": "./solves",
+      "target": "file:src/core/solves.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/generated-effects.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/generated-validator.ts",
+      "specifier": "./generated-candidates",
+      "target": "file:src/core/generated-candidates.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/generated-validator.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:src/core/improvise.ts",
       "specifier": "./types",
       "target": "file:src/core/types.ts"
@@ -1395,9 +1744,86 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:src/core/life.ts",
+      "specifier": "./compendium",
+      "target": "file:src/core/compendium.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/life.ts",
+      "specifier": "./engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/life.ts",
+      "specifier": "./replay",
+      "target": "file:src/core/replay.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/life.ts",
+      "specifier": "./seed",
+      "target": "file:src/core/seed.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/life.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/life.ts",
+      "specifier": "../narrator/narrator",
+      "target": "file:src/narrator/narrator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/life.ts",
+      "specifier": "../product/events",
+      "target": "file:src/product/events.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:src/core/rarity.ts",
       "specifier": "./types",
       "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/replay.ts",
+      "specifier": "./compendium",
+      "target": "file:src/core/compendium.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/replay.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/save.ts",
+      "specifier": "./compendium",
+      "target": "file:src/core/compendium.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/save.ts",
+      "specifier": "./content-migrations",
+      "target": "file:src/core/content-migrations.ts"
     },
     {
       "provenance": "SOURCE",
@@ -1412,6 +1838,41 @@
       "source": "file:src/core/save.ts",
       "specifier": "./improvise",
       "target": "file:src/core/improvise.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/save.ts",
+      "specifier": "./life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/save.ts",
+      "specifier": "./seed",
+      "target": "file:src/core/seed.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/save.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/save.ts",
+      "specifier": "../narrator/narrator",
+      "target": "file:src/narrator/narrator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/seed.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
     },
     {
       "provenance": "SOURCE",
@@ -1431,6 +1892,27 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/core/verdict.ts",
+      "specifier": "./types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/viability.ts",
+      "specifier": "./engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/viability.ts",
+      "specifier": "./seed",
+      "target": "file:src/core/seed.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/core/viability.ts",
       "specifier": "./types",
       "target": "file:src/core/types.ts"
     },
@@ -1503,6 +1985,62 @@
       "source": "file:src/narrator/pairs.ts",
       "specifier": "../core/types",
       "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/persistence/indexeddb-profile-store.ts",
+      "specifier": "../core/life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/persistence/indexeddb-profile-store.ts",
+      "specifier": "./profile-store",
+      "target": "file:src/persistence/profile-store.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/persistence/profile-store.ts",
+      "specifier": "../core/life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/product/events.ts",
+      "specifier": "./generated/contracts",
+      "target": "file:src/product/generated/contracts.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/product/events.ts",
+      "specifier": "./local-event-store",
+      "target": "file:src/product/local-event-store.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/product/local-event-store.ts",
+      "specifier": "./events",
+      "target": "file:src/product/events.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/product/local-event-store.ts",
+      "specifier": "./generated/contracts",
+      "target": "file:src/product/generated/contracts.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/product/semantic.ts",
+      "specifier": "./generated/contracts",
+      "target": "file:src/product/generated/contracts.ts"
     },
     {
       "provenance": "SOURCE",
@@ -1655,6 +2193,27 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/ui/main.ts",
+      "specifier": "../core/chronicle",
+      "target": "file:src/core/chronicle.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "../core/compendium",
+      "target": "file:src/core/compendium.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "../core/content-migrations",
+      "target": "file:src/core/content-migrations.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
       "specifier": "../core/engine",
       "target": "file:src/core/engine.ts"
     },
@@ -1669,6 +2228,13 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/ui/main.ts",
+      "specifier": "../core/life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
       "specifier": "../core/rarity",
       "target": "file:src/core/rarity.ts"
     },
@@ -1676,8 +2242,22 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/ui/main.ts",
+      "specifier": "../core/replay",
+      "target": "file:src/core/replay.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
       "specifier": "../core/save",
       "target": "file:src/core/save.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "../core/seed",
+      "target": "file:src/core/seed.ts"
     },
     {
       "provenance": "SOURCE",
@@ -1713,6 +2293,48 @@
       "source": "file:src/ui/main.ts",
       "specifier": "../narrator/pairs",
       "target": "file:src/narrator/pairs.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "../persistence/indexeddb-profile-store",
+      "target": "file:src/persistence/indexeddb-profile-store.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "../persistence/profile-store",
+      "target": "file:src/persistence/profile-store.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "../persistence/write-queue",
+      "target": "file:src/persistence/write-queue.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "../product/events",
+      "target": "file:src/product/events.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "../product/session",
+      "target": "file:src/product/session.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
+      "specifier": "./App.svelte",
+      "target": "file:src/ui/App.svelte"
     },
     {
       "provenance": "SOURCE",
@@ -1802,6 +2424,13 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/ui/main.ts",
+      "specifier": "./session-client",
+      "target": "file:src/ui/session-client.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/main.ts",
       "specifier": "./story-book",
       "target": "file:src/ui/story-book.ts"
     },
@@ -1830,6 +2459,27 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/ui/run-summary.ts",
+      "specifier": "../core/compendium",
+      "target": "file:src/core/compendium.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/run-summary.ts",
+      "specifier": "../core/life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/run-summary.ts",
+      "specifier": "../core/replay",
+      "target": "file:src/core/replay.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/run-summary.ts",
       "specifier": "../core/types",
       "target": "file:src/core/types.ts"
     },
@@ -1839,6 +2489,13 @@
       "source": "file:src/ui/scenario.ts",
       "specifier": "./scenario-config",
       "target": "file:src/ui/scenario-config.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/session-client.ts",
+      "specifier": "../product/session",
+      "target": "file:src/product/session.ts"
     },
     {
       "provenance": "SOURCE",
@@ -1934,6 +2591,104 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:tests/chronicle.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/chronicle.test.ts",
+      "specifier": "../src/core/chronicle",
+      "target": "file:src/core/chronicle.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/chronicle.test.ts",
+      "specifier": "../src/core/life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/chronicle.test.ts",
+      "specifier": "../src/product/events",
+      "target": "file:src/product/events.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/compendium.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/compendium.test.ts",
+      "specifier": "../src/core/compendium",
+      "target": "file:src/core/compendium.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/compendium.test.ts",
+      "specifier": "../src/core/engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/content-migrations.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/content-migrations.test.ts",
+      "specifier": "../src/core/content-migrations",
+      "target": "file:src/core/content-migrations.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/content-migrations.test.ts",
+      "specifier": "../src/core/engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/content-migrations.test.ts",
+      "specifier": "../src/core/improvise",
+      "target": "file:src/core/improvise.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/content-migrations.test.ts",
+      "specifier": "../src/core/seed",
+      "target": "file:src/core/seed.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/content-migrations.test.ts",
+      "specifier": "../src/core/types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/content-migrations.test.ts",
+      "specifier": "../src/narrator/narrator",
+      "target": "file:src/narrator/narrator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:tests/decision.test.ts",
       "specifier": "../src/core/decision",
       "target": "file:src/core/decision.ts"
@@ -1993,6 +2748,34 @@
       "source": "file:tests/engine.test.ts",
       "specifier": "./helpers",
       "target": "file:tests/helpers.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/generated-gameplay.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/generated-gameplay.test.ts",
+      "specifier": "../src/core/engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/generated-gameplay.test.ts",
+      "specifier": "../src/core/generated-candidates",
+      "target": "file:src/core/generated-candidates.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/generated-gameplay.test.ts",
+      "specifier": "../src/core/generated-validator",
+      "target": "file:src/core/generated-validator.ts"
     },
     {
       "provenance": "SOURCE",
@@ -2354,6 +3137,41 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:tests/life.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/life.test.ts",
+      "specifier": "../src/core/engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/life.test.ts",
+      "specifier": "../src/core/life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/life.test.ts",
+      "specifier": "../src/narrator/narrator",
+      "target": "file:src/narrator/narrator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/life.test.ts",
+      "specifier": "../src/persistence/profile-store",
+      "target": "file:src/persistence/profile-store.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:tests/live-pair-export.test.ts",
       "specifier": "../tools/live_pair_export_lib.mjs",
       "target": "file:tools/live_pair_export_lib.mjs"
@@ -2550,6 +3368,13 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:tests/network-outage-browser.test.ts",
+      "specifier": "../tools/judge/capture.mjs",
+      "target": "file:tools/judge/capture.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:tests/pages-preview.test.ts",
       "specifier": "../tools/bundle_budget.mjs",
       "target": "file:tools/bundle_budget.mjs"
@@ -2634,6 +3459,13 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:tests/parity-harness.test.ts",
+      "specifier": "../tools/parity/harness.mjs",
+      "target": "file:tools/parity/harness.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:tests/playtest.test.ts",
       "specifier": "../src/ui/playtest",
       "target": "file:src/ui/playtest.ts"
@@ -2683,6 +3515,27 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:tests/product-events.test.ts",
+      "specifier": "../src/product/events",
+      "target": "file:src/product/events.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/product-events.test.ts",
+      "specifier": "../src/product/generated/contracts",
+      "target": "file:src/product/generated/contracts.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/product-events.test.ts",
+      "specifier": "../src/product/local-event-store",
+      "target": "file:src/product/local-event-store.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:tests/product-graph.test.ts",
       "specifier": "../tools/product-knowledge/export.mjs",
       "target": "file:tools/product-knowledge/export.mjs"
@@ -2693,6 +3546,27 @@
       "source": "file:tests/product-graph.test.ts",
       "specifier": "../tools/product-knowledge/relations.mjs",
       "target": "file:tools/product-knowledge/relations.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/product-semantic.test.ts",
+      "specifier": "../src/product/generated/contracts",
+      "target": "file:src/product/generated/contracts.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/product-semantic.test.ts",
+      "specifier": "../src/product/semantic",
+      "target": "file:src/product/semantic.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/profile-write-queue.test.ts",
+      "specifier": "../src/persistence/write-queue",
+      "target": "file:src/persistence/write-queue.ts"
     },
     {
       "provenance": "SOURCE",
@@ -2711,6 +3585,76 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:tests/replay.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/replay.test.ts",
+      "specifier": "../src/core/compendium",
+      "target": "file:src/core/compendium.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/replay.test.ts",
+      "specifier": "../src/core/replay",
+      "target": "file:src/core/replay.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/run-summary.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/run-summary.test.ts",
+      "specifier": "../src/core/life",
+      "target": "file:src/core/life.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/run-summary.test.ts",
+      "specifier": "../src/ui/run-summary",
+      "target": "file:src/ui/run-summary.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/save-migration.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/save-migration.test.ts",
+      "specifier": "../src/core/engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/save-migration.test.ts",
+      "specifier": "../src/core/save",
+      "target": "file:src/core/save.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/save-migration.test.ts",
+      "specifier": "../src/narrator/narrator",
+      "target": "file:src/narrator/narrator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:tests/scenario.test.ts",
       "specifier": "../src/ui/scenario-config",
       "target": "file:src/ui/scenario-config.ts"
@@ -2721,6 +3665,27 @@
       "source": "file:tests/score-tolerance.test.ts",
       "specifier": "../tools/judge/score-tolerance.mjs",
       "target": "file:tools/judge/score-tolerance.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/seed.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/seed.test.ts",
+      "specifier": "../src/core/seed",
+      "target": "file:src/core/seed.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/session-client.test.ts",
+      "specifier": "../src/ui/session-client",
+      "target": "file:src/ui/session-client.ts"
     },
     {
       "provenance": "SOURCE",
@@ -2847,6 +3812,20 @@
       "source": "file:tests/verify-live-deploy.test.ts",
       "specifier": "../tools/verify_live_deploy.mjs",
       "target": "file:tools/verify_live_deploy.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/viability.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/viability.test.ts",
+      "specifier": "../src/core/viability",
+      "target": "file:src/core/viability.ts"
     },
     {
       "provenance": "SOURCE",
@@ -3055,8 +4034,64 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:tests/worker-edge.test.ts",
+      "specifier": "../worker/src/run-auth",
+      "target": "file:worker/src/run-auth.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-edge.test.ts",
       "specifier": "../worker/src/voice/gate",
       "target": "file:worker/src/voice/gate.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-generated.test.ts",
+      "specifier": "../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-generated.test.ts",
+      "specifier": "../src/core/generated-candidates",
+      "target": "file:src/core/generated-candidates.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-generated.test.ts",
+      "specifier": "../src/core/improvise",
+      "target": "file:src/core/improvise.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-generated.test.ts",
+      "specifier": "../worker/src/generated-catalog",
+      "target": "file:worker/src/generated-catalog.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-generated.test.ts",
+      "specifier": "../worker/src/generated-model",
+      "target": "file:worker/src/generated-model.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-generated.test.ts",
+      "specifier": "../worker/src/generated",
+      "target": "file:worker/src/generated.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-generated.test.ts",
+      "specifier": "../worker/src/store",
+      "target": "file:worker/src/store.ts"
     },
     {
       "provenance": "SOURCE",
@@ -3141,6 +4176,27 @@
       "source": "file:tests/worker-improvise.test.ts",
       "specifier": "../worker/src/store",
       "target": "file:worker/src/store.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-run.test.ts",
+      "specifier": "../worker/src/cf-types",
+      "target": "file:worker/src/cf-types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-run.test.ts",
+      "specifier": "../worker/src/run-auth",
+      "target": "file:worker/src/run-auth.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tests/worker-run.test.ts",
+      "specifier": "../worker/src/run-do",
+      "target": "file:worker/src/run-do.ts"
     },
     {
       "provenance": "SOURCE",
@@ -3586,6 +4642,27 @@
     {
       "provenance": "SOURCE",
       "relation": "imports",
+      "source": "file:tools/parity/capture.mjs",
+      "specifier": "./harness.mjs",
+      "target": "file:tools/parity/harness.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tools/parity/compare.mjs",
+      "specifier": "../judge/capture.mjs",
+      "target": "file:tools/judge/capture.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tools/parity/compare.mjs",
+      "specifier": "./harness.mjs",
+      "target": "file:tools/parity/harness.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
       "source": "file:tools/playability.ts",
       "specifier": "../src/content",
       "target": "file:src/content.ts"
@@ -3692,6 +4769,13 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:tools/product-knowledge/export.mjs",
+      "specifier": "./validate.mjs",
+      "target": "file:tools/product-knowledge/validate.mjs"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:tools/product-knowledge/generate-contracts.mjs",
       "specifier": "./validate.mjs",
       "target": "file:tools/product-knowledge/validate.mjs"
     },
@@ -3853,6 +4937,27 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:worker/src/coordinator-do.ts",
+      "specifier": "./generated-catalog",
+      "target": "file:worker/src/generated-catalog.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/coordinator-do.ts",
+      "specifier": "./generated-model",
+      "target": "file:worker/src/generated-model.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/coordinator-do.ts",
+      "specifier": "./generated",
+      "target": "file:worker/src/generated.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/coordinator-do.ts",
       "specifier": "./improvise-model",
       "target": "file:worker/src/improvise-model.ts"
     },
@@ -3960,6 +5065,111 @@
       "source": "file:worker/src/coordinator.ts",
       "specifier": "./validate",
       "target": "file:worker/src/validate.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated-catalog.ts",
+      "specifier": "../../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated-catalog.ts",
+      "specifier": "../../src/core/generated-candidates",
+      "target": "file:src/core/generated-candidates.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated-catalog.ts",
+      "specifier": "../../src/core/improvise",
+      "target": "file:src/core/improvise.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated-catalog.ts",
+      "specifier": "../../src/core/types",
+      "target": "file:src/core/types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated-catalog.ts",
+      "specifier": "./improvise-validate",
+      "target": "file:worker/src/improvise-validate.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated-model.ts",
+      "specifier": "../../src/core/generated-validator",
+      "target": "file:src/core/generated-validator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated-model.ts",
+      "specifier": "./generated-catalog",
+      "target": "file:worker/src/generated-catalog.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated-model.ts",
+      "specifier": "./model",
+      "target": "file:worker/src/model.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated.ts",
+      "specifier": "../../src/core/generated-validator",
+      "target": "file:src/core/generated-validator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated.ts",
+      "specifier": "./budget",
+      "target": "file:worker/src/budget.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated.ts",
+      "specifier": "./concurrency",
+      "target": "file:worker/src/concurrency.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated.ts",
+      "specifier": "./generated-catalog",
+      "target": "file:worker/src/generated-catalog.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated.ts",
+      "specifier": "./generated-model",
+      "target": "file:worker/src/generated-model.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated.ts",
+      "specifier": "./improvise-validate",
+      "target": "file:worker/src/improvise-validate.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/generated.ts",
+      "specifier": "./store",
+      "target": "file:worker/src/store.ts"
     },
     {
       "provenance": "SOURCE",
@@ -4077,6 +5287,13 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:worker/src/index.ts",
+      "specifier": "./generated-catalog",
+      "target": "file:worker/src/generated-catalog.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/index.ts",
       "specifier": "./ip",
       "target": "file:worker/src/ip.ts"
     },
@@ -4086,6 +5303,27 @@
       "source": "file:worker/src/index.ts",
       "specifier": "./origin",
       "target": "file:worker/src/origin.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/index.ts",
+      "specifier": "./run-auth",
+      "target": "file:worker/src/run-auth.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/index.ts",
+      "specifier": "./run-do",
+      "target": "file:worker/src/run-do.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/index.ts",
+      "specifier": "./validate",
+      "target": "file:worker/src/validate.ts"
     },
     {
       "provenance": "SOURCE",
@@ -4114,6 +5352,69 @@
       "source": "file:worker/src/model.ts",
       "specifier": "./voice/gate",
       "target": "file:worker/src/voice/gate.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "../../src/content",
+      "target": "file:src/content.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "../../src/core/engine",
+      "target": "file:src/core/engine.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "../../src/core/generated-candidates",
+      "target": "file:src/core/generated-candidates.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "../../src/core/generated-validator",
+      "target": "file:src/core/generated-validator.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "../../src/core/seed",
+      "target": "file:src/core/seed.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "./cf-types",
+      "target": "file:worker/src/cf-types.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "./concurrency",
+      "target": "file:worker/src/concurrency.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "./generated-catalog",
+      "target": "file:worker/src/generated-catalog.ts"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:worker/src/run-do.ts",
+      "specifier": "./ip",
+      "target": "file:worker/src/ip.ts"
     },
     {
       "provenance": "SOURCE",
@@ -4516,6 +5817,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:attempt.canonical-discovery",
+      "target": "state:new"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:attempt.canonical-discovery",
       "target": "scenario:chronicle.read-life"
@@ -4558,6 +5865,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:attempt.invention-rejected",
+      "target": "state:retryable"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:attempt.invention-rejected",
       "target": "scenario:need.active"
@@ -4585,6 +5898,12 @@
       "relation": "evidenced_by",
       "source": "scenario:attempt.invention",
       "target": "file:tests/improvise-engine.test.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:attempt.invention",
+      "target": "state:new"
     },
     {
       "provenance": "CONTRACT",
@@ -4630,6 +5949,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:attempt.known-result",
+      "target": "state:known"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:attempt.known-result",
       "target": "scenario:need.active"
@@ -4657,6 +5982,12 @@
       "relation": "evidenced_by",
       "source": "scenario:attempt.no-fuse",
       "target": "file:tests/verdict.test.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:attempt.no-fuse",
+      "target": "state:retryable"
     },
     {
       "provenance": "CONTRACT",
@@ -4702,6 +6033,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:challenge.active",
+      "target": "state:active"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:challenge.active",
       "target": "scenario:ending.unlocked"
@@ -4735,6 +6072,12 @@
       "relation": "evidenced_by",
       "source": "scenario:chronicle.read-life",
       "target": "file:tests/living-chronicle.test.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:chronicle.read-life",
+      "target": "state:open"
     },
     {
       "provenance": "CONTRACT",
@@ -4774,6 +6117,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:compendium.review-gap",
+      "target": "state:open"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:compendium.review-gap",
       "target": "scenario:replay.named-target"
@@ -4801,6 +6150,12 @@
       "relation": "evidenced_by",
       "source": "scenario:ending.unlocked",
       "target": "file:src/ui/main.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:ending.unlocked",
+      "target": "state:terminal"
     },
     {
       "provenance": "CONTRACT",
@@ -4846,6 +6201,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:life.continue",
+      "target": "state:resumable"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:life.continue",
       "target": "scenario:need.active"
@@ -4882,6 +6243,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:life.fresh-start",
+      "target": "state:fresh"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:life.fresh-start",
       "target": "scenario:need.active"
@@ -4915,6 +6282,12 @@
       "relation": "evidenced_by",
       "source": "scenario:need.active",
       "target": "file:tests/solves.test.ts"
+    },
+    {
+      "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:need.active",
+      "target": "state:active"
     },
     {
       "provenance": "CONTRACT",
@@ -4978,6 +6351,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:network.unavailable",
+      "target": "state:unavailable"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:network.unavailable",
       "target": "scenario:chronicle.read-life"
@@ -5020,6 +6399,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:platform.session-ready",
+      "target": "state:ready"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:platform.session-ready",
       "target": "scenario:life.continue"
@@ -5056,6 +6441,12 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:progress.age-up-blocked",
+      "target": "state:blocked"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:progress.age-up-blocked",
       "target": "scenario:need.active"
@@ -5086,12 +6477,165 @@
     },
     {
       "provenance": "CONTRACT",
+      "relation": "has_ui_state",
+      "source": "scenario:replay.named-target",
+      "target": "state:ready"
+    },
+    {
+      "provenance": "CONTRACT",
       "relation": "transitions_to",
       "source": "scenario:replay.named-target",
       "target": "scenario:life.fresh-start"
     }
   ],
   "nodes": [
+    {
+      "actionId": "archive.open-life",
+      "capabilityId": "chronicle.life",
+      "id": "action:archive.open-life",
+      "label": "archive.open-life",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "chronicle.close",
+      "capabilityId": "chronicle.life",
+      "id": "action:chronicle.close",
+      "label": "chronicle.close",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "chronicle.open",
+      "capabilityId": "chronicle.life",
+      "id": "action:chronicle.open",
+      "label": "chronicle.open",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "combination.submit",
+      "capabilityId": "craft.combine",
+      "id": "action:combination.submit",
+      "label": "combination.submit",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "compendium.open",
+      "capabilityId": "collection.compendium",
+      "id": "action:compendium.open",
+      "label": "compendium.open",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "connection.retry",
+      "capabilityId": "platform.cross-device",
+      "id": "action:connection.retry",
+      "label": "connection.retry",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "element.select",
+      "capabilityId": "craft.combine",
+      "id": "action:element.select",
+      "label": "element.select",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "elements.filter-finished",
+      "capabilityId": "craft.combine",
+      "id": "action:elements.filter-finished",
+      "label": "elements.filter-finished",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "elements.filter-new",
+      "capabilityId": "craft.combine",
+      "id": "action:elements.filter-new",
+      "label": "elements.filter-new",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "elements.search",
+      "capabilityId": "craft.combine",
+      "id": "action:elements.search",
+      "label": "elements.search",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "fates.open",
+      "capabilityId": "fate.ending",
+      "id": "action:fates.open",
+      "label": "fates.open",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "life.begin",
+      "capabilityId": "life.begin",
+      "id": "action:life.begin",
+      "label": "life.begin",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "life.continue",
+      "capabilityId": "life.begin",
+      "id": "action:life.continue",
+      "label": "life.continue",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "life.new",
+      "capabilityId": "life.begin",
+      "id": "action:life.new",
+      "label": "life.new",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "life.replay",
+      "capabilityId": "replay.share",
+      "id": "action:life.replay",
+      "label": "life.replay",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "life.restart",
+      "capabilityId": "life.begin",
+      "id": "action:life.restart",
+      "label": "life.restart",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "narrator.mute",
+      "capabilityId": "narrator.react",
+      "id": "action:narrator.mute",
+      "label": "narrator.mute",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "overlay.close",
+      "capabilityId": "platform.cross-device",
+      "id": "action:overlay.close",
+      "label": "overlay.close",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "persistence.retry",
+      "capabilityId": "chronicle.life",
+      "id": "action:persistence.retry",
+      "label": "persistence.retry",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "playtest.copy",
+      "capabilityId": "replay.share",
+      "id": "action:playtest.copy",
+      "label": "playtest.copy",
+      "type": "ui-action"
+    },
+    {
+      "actionId": "selection.remove",
+      "capabilityId": "craft.combine",
+      "id": "action:selection.remove",
+      "label": "selection.remove",
+      "type": "ui-action"
+    },
     {
       "id": "boundary:01-implementation-may-proceed-across-approved-targets-but-no-target-behavior-is-production-until-its-advancement-gate-passes",
       "label": "Implementation may proceed across approved targets, but no target behavior is `production` until its advancement gate passes.",
@@ -5131,7 +6675,7 @@
     {
       "approvedTarget": "Every archived life can be reconstructed from attempts, discoveries, inventions, needs, challenges, branches, and fate.",
       "capabilityId": "chronicle.life",
-      "currentTruth": "The Living Chronicle shows the narrator, latest outcome, canonical archive, timeline, and—when enabled—a separate invention section.",
+      "currentTruth": "The Living Chronicle keeps its live pages and canonical archive, while ProfileV2 stores immutable ended/abandoned lives and exposes them read-only.",
       "id": "capability:chronicle.life",
       "label": "Read one life's Chronicle",
       "lifecycle": {
@@ -5158,7 +6702,7 @@
     {
       "approvedTarget": "The discovery's newness, future utility, Chronicle entry, and persistent completion effect are immediately legible.",
       "capabilityId": "collection.canonical-discovery",
-      "currentTruth": "Canonical discoveries can carry flavor, historical notes, flags, need resolution, rarity, and age-up effects.",
+      "currentTruth": "Canonical discoveries carry authored effects and now update both the active life record and finite persistent completion.",
       "id": "capability:collection.canonical-discovery",
       "label": "Canonical discovery",
       "lifecycle": {
@@ -5185,7 +6729,7 @@
     {
       "approvedTarget": "The compendium combines canonical discoveries, major branches, and endings into a percentage while inventions remain in a separate unbounded gallery.",
       "capabilityId": "collection.compendium",
-      "currentTruth": "Discoveries and fates persist locally, but there is no unified authored-content percentage or archived-life model.",
+      "currentTruth": "The master compendium persists a 197-entry authored denominator across canonical discoveries, three major branches, and fifteen fates; inventions remain a separate unbounded gallery.",
       "id": "capability:collection.compendium",
       "label": "Complete the master compendium",
       "lifecycle": {
@@ -5212,7 +6756,7 @@
     {
       "approvedTarget": "Every valid attempt produces meaningful yield: a new outcome or a specific humour, guidance, or story response.",
       "capabilityId": "craft.combine",
-      "currentTruth": "The player selects two elements. Canonical recipes win; otherwise the engine returns a specific verdict and optional bounded improvisation.",
+      "currentTruth": "The player selects two elements. Canonical recipes win; otherwise local compatibility returns a specific verdict and optional bounded invention, while online mode commits through a revisioned authoritative run.",
       "id": "capability:craft.combine",
       "label": "Choose and combine",
       "lifecycle": {
@@ -5241,7 +6785,7 @@
     {
       "approvedTarget": "Each ending remains surprising but causally traceable, and its rarity/conditions never require fabricated statistics.",
       "capabilityId": "fate.ending",
-      "currentTruth": "Authored endings unlock from deterministic state and appear as persistent fates.",
+      "currentTruth": "Authored endings unlock from deterministic state, archive the completed life once, and update persistent fate completion.",
       "id": "capability:fate.ending",
       "label": "Unlock a fate",
       "lifecycle": {
@@ -5268,7 +6812,7 @@
     {
       "approvedTarget": "Canonical discoveries and validated inventions can provide multiple legible paths to the same need.",
       "capabilityId": "guidance.needs",
-      "currentTruth": "Current Act problems, predicates, hints, and alternative canonical solutions guide progression.",
+      "currentTruth": "Current Act problems, predicates, hints, canonical discoveries, and validated inventions use the same deterministic solve rules.",
       "id": "capability:guidance.needs",
       "label": "Pursue needs",
       "lifecycle": {
@@ -5296,7 +6840,7 @@
     {
       "approvedTarget": "A stored deterministic seed selects a bounded starting subset and sidequests while guaranteeing viable authored progression.",
       "capabilityId": "life.begin",
-      "currentTruth": "New, continue, and restart flows exist; starting elements and sidequests are not governed by a formal seeded viability contract.",
+      "currentTruth": "New, continue, and restart flows use a stored deterministic LifePlan with five starting elements, two authored sidequests, two challenges, and exhaustively validated opening witnesses.",
       "id": "capability:life.begin",
       "label": "Begin a life",
       "lifecycle": {
@@ -5324,7 +6868,7 @@
     {
       "approvedTarget": "Humour, guidance, and story continuity remain equally required across generated gameplay, seeded lives, longer memory, and online production.",
       "capabilityId": "narrator.react",
-      "currentTruth": "The narrator prioritises authored story, behavior, memory, baked pair lines, optional live copy, grammar, and generic fallback.",
+      "currentTruth": "The narrator retains its full priority chain and emits typed humour/guidance/story evidence into each life journal.",
       "id": "capability:narrator.react",
       "label": "Narrator",
       "lifecycle": {
@@ -5353,7 +6897,7 @@
     {
       "approvedTarget": "The Svelte replacement preserves meaning, behavior, accessibility, events, and save compatibility across supported devices.",
       "capabilityId": "platform.cross-device",
-      "currentTruth": "One Vite web application serves responsive mobile and desktop layouts. Local saves are browser-local.",
+      "currentTruth": "A Svelte 5 semantic shell now serves the same responsive mobile/desktop product; typed sessions, IndexedDB profiles, and Worker run APIs exist, while production online-required mode remains readiness-gated.",
       "id": "capability:platform.cross-device",
       "label": "Play across devices",
       "lifecycle": {
@@ -5388,7 +6932,7 @@
     {
       "approvedTarget": "Endings and compendium gaps present meaningful replay targets; life summaries and seeds remain understandable outside the running game.",
       "capabilityId": "replay.share",
-      "currentTruth": "Players can start a new life and copy a run summary. Life archives and shareable seeds are not yet implemented.",
+      "currentTruth": "Players can archive lives, inspect seed-coded summaries, choose broad non-spoiler replay targets, and begin a new seeded life.",
       "id": "capability:replay.share",
       "label": "Replay and optionally share",
       "lifecycle": {
@@ -5415,7 +6959,7 @@
     {
       "approvedTarget": "A model may propose typed run-local gameplay under deterministic validation; accepted inventions may solve needs and unlock authored consequences without historical claims.",
       "capabilityId": "sandbox.invention",
-      "currentTruth": "A deterministic offline invention floor exists behind a production-off flag. Optional network copy may improve name and flavor only.",
+      "currentTruth": "The deterministic invention floor remains available for local compatibility; the Worker can now select a closed generated candidate whose taxonomy, effects, history rights, and run-local identity are validated deterministically.",
       "id": "capability:sandbox.invention",
       "label": "Invention",
       "lifecycle": {
@@ -5443,7 +6987,7 @@
     {
       "approvedTarget": "Seeded sidequests and challenges interrupt plans without replacing the main story, and their consequences remain visible later.",
       "capabilityId": "story.challenges",
-      "currentTruth": "Timed challenges can spawn, tick, resolve, fail, and affect endings. Sidequest variation is not yet governed by the life seed.",
+      "currentTruth": "Each LifePlan selects a deterministic challenge subset and authored branch-sidequests; their outcomes feed branch and Chronicle state.",
       "id": "capability:story.challenges",
       "label": "Face challenges and sidequests",
       "lifecycle": {
@@ -5498,75 +7042,237 @@
       "type": "open-decision"
     },
     {
+      "description": "A selected challenge spawned, ticked, resolved, or failed.",
       "event": "challenge.updated",
       "id": "event:challenge.updated",
       "label": "challenge.updated",
+      "payloadRequired": [
+        "challengeId",
+        "status",
+        "turnsLeft",
+        "resolvedByElementId"
+      ],
+      "scenarios": [
+        "challenge.active"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "One causal entry was appended to the active life Chronicle.",
       "event": "chronicle.entry-recorded",
       "id": "event:chronicle.entry-recorded",
       "label": "chronicle.entry-recorded",
+      "payloadRequired": [
+        "entryId",
+        "kind",
+        "relatedId",
+        "canonical"
+      ],
+      "scenarios": [
+        "attempt.canonical-discovery",
+        "attempt.known-result",
+        "attempt.no-fuse",
+        "attempt.invention",
+        "progress.age-up-blocked",
+        "ending.unlocked",
+        "chronicle.read-life"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "The authoritative combination transition completed.",
       "event": "combination.attempted",
       "id": "event:combination.attempted",
       "label": "combination.attempted",
+      "payloadRequired": [
+        "pair",
+        "outcome",
+        "resultId",
+        "verdict",
+        "rejectionReason"
+      ],
+      "scenarios": [
+        "attempt.canonical-discovery",
+        "attempt.known-result",
+        "attempt.no-fuse",
+        "attempt.invention",
+        "attempt.invention-rejected"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "Persistent authored completion changed or was loaded.",
       "event": "compendium.progressed",
       "id": "event:compendium.progressed",
       "label": "compendium.progressed",
+      "payloadRequired": [
+        "reason",
+        "completed",
+        "total"
+      ],
+      "scenarios": [
+        "compendium.review-gap",
+        "attempt.canonical-discovery",
+        "attempt.invention",
+        "ending.unlocked"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "A canonical authored discovery entered the active life.",
       "event": "discovery.canonical",
       "id": "event:discovery.canonical",
       "label": "discovery.canonical",
+      "payloadRequired": [
+        "pair",
+        "elementId",
+        "solvedNeedId",
+        "ageUp",
+        "endingDeflected"
+      ],
+      "scenarios": [
+        "attempt.canonical-discovery"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "An authored fate resolved for the active life.",
       "event": "fate.unlocked",
       "id": "event:fate.unlocked",
       "label": "fate.unlocked",
+      "payloadRequired": [
+        "endingId",
+        "newlyUnlocked",
+        "cause",
+        "totalUnlocked"
+      ],
+      "scenarios": [
+        "ending.unlocked"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "A validated run-local invention entered the active life.",
       "event": "invention.accepted",
       "id": "event:invention.accepted",
       "label": "invention.accepted",
+      "payloadRequired": [
+        "pair",
+        "elementId",
+        "reused",
+        "solvedNeedId",
+        "solvedChallengeId",
+        "copySource",
+        "historicalClaim"
+      ],
+      "scenarios": [
+        "attempt.invention"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "An immutable ended or abandoned life entered the archive.",
+      "event": "life.archived",
+      "id": "event:life.archived",
+      "label": "life.archived",
+      "payloadRequired": [
+        "lifeId",
+        "outcome",
+        "historyCompleteness"
+      ],
+      "scenarios": [
+        "ending.unlocked",
+        "replay.named-target"
+      ],
+      "type": "semantic-event"
+    },
+    {
+      "description": "A player started another life with an optional authored target.",
       "event": "life.replay-started",
       "id": "event:life.replay-started",
       "label": "life.replay-started",
+      "payloadRequired": [
+        "fromEndingId",
+        "target",
+        "nextSeed"
+      ],
+      "scenarios": [
+        "replay.named-target"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "A new, resumed, or replayed life becomes the active life.",
       "event": "life.started",
       "id": "event:life.started",
       "label": "life.started",
+      "payloadRequired": [
+        "mode",
+        "seed",
+        "saveVersion",
+        "act"
+      ],
+      "scenarios": [
+        "life.fresh-start",
+        "life.continue",
+        "replay.named-target"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "A visible narrator beat was presented with its product roles.",
       "event": "narrator.presented",
       "id": "event:narrator.presented",
       "label": "narrator.presented",
+      "payloadRequired": [
+        "lineId",
+        "variant",
+        "text",
+        "roles",
+        "audioMode"
+      ],
+      "scenarios": [
+        "attempt.known-result",
+        "attempt.no-fuse",
+        "attempt.invention-rejected",
+        "need.active",
+        "progress.age-up-blocked",
+        "challenge.active",
+        "ending.unlocked"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "The active authored needs changed after a life transition.",
       "event": "need.updated",
       "id": "event:need.updated",
       "label": "need.updated",
+      "payloadRequired": [
+        "cause",
+        "activeNeedId",
+        "needs"
+      ],
+      "scenarios": [
+        "need.active",
+        "progress.age-up-blocked"
+      ],
       "type": "semantic-event"
     },
     {
+      "description": "The application established whether active play is available.",
       "event": "platform.session-ready",
       "id": "event:platform.session-ready",
       "label": "platform.session-ready",
+      "payloadRequired": [
+        "status",
+        "onlineRequired",
+        "activePlayAllowed",
+        "archivesReadable"
+      ],
+      "scenarios": [
+        "platform.session-ready",
+        "network.unavailable"
+      ],
       "type": "semantic-event"
     },
     {
@@ -5582,6 +7288,12 @@
       "type": "file"
     },
     {
+      "id": "file:content/branches.json",
+      "label": "content/branches.json",
+      "path": "content/branches.json",
+      "type": "file"
+    },
+    {
       "id": "file:content/challenges.json",
       "label": "content/challenges.json",
       "path": "content/challenges.json",
@@ -5591,6 +7303,12 @@
       "id": "file:content/combos.json",
       "label": "content/combos.json",
       "path": "content/combos.json",
+      "type": "file"
+    },
+    {
+      "id": "file:content/completion-manifest.json",
+      "label": "content/completion-manifest.json",
+      "path": "content/completion-manifest.json",
       "type": "file"
     },
     {
@@ -5615,6 +7333,24 @@
       "id": "file:content/endings.json",
       "label": "content/endings.json",
       "path": "content/endings.json",
+      "type": "file"
+    },
+    {
+      "id": "file:content/invention-consequences.json",
+      "label": "content/invention-consequences.json",
+      "path": "content/invention-consequences.json",
+      "type": "file"
+    },
+    {
+      "id": "file:content/life-variation.json",
+      "label": "content/life-variation.json",
+      "path": "content/life-variation.json",
+      "type": "file"
+    },
+    {
+      "id": "file:content/migrations.json",
+      "label": "content/migrations.json",
+      "path": "content/migrations.json",
       "type": "file"
     },
     {
@@ -5714,9 +7450,33 @@
       "type": "file"
     },
     {
+      "id": "file:src/core/branches.ts",
+      "label": "src/core/branches.ts",
+      "path": "src/core/branches.ts",
+      "type": "file"
+    },
+    {
       "id": "file:src/core/challenge.ts",
       "label": "src/core/challenge.ts",
       "path": "src/core/challenge.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/core/chronicle.ts",
+      "label": "src/core/chronicle.ts",
+      "path": "src/core/chronicle.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/core/compendium.ts",
+      "label": "src/core/compendium.ts",
+      "path": "src/core/compendium.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/core/content-migrations.ts",
+      "label": "src/core/content-migrations.ts",
+      "path": "src/core/content-migrations.ts",
       "type": "file"
     },
     {
@@ -5732,9 +7492,33 @@
       "type": "file"
     },
     {
+      "id": "file:src/core/generated-candidates.ts",
+      "label": "src/core/generated-candidates.ts",
+      "path": "src/core/generated-candidates.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/core/generated-effects.ts",
+      "label": "src/core/generated-effects.ts",
+      "path": "src/core/generated-effects.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/core/generated-validator.ts",
+      "label": "src/core/generated-validator.ts",
+      "path": "src/core/generated-validator.ts",
+      "type": "file"
+    },
+    {
       "id": "file:src/core/improvise.ts",
       "label": "src/core/improvise.ts",
       "path": "src/core/improvise.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/core/life.ts",
+      "label": "src/core/life.ts",
+      "path": "src/core/life.ts",
       "type": "file"
     },
     {
@@ -5744,9 +7528,21 @@
       "type": "file"
     },
     {
+      "id": "file:src/core/replay.ts",
+      "label": "src/core/replay.ts",
+      "path": "src/core/replay.ts",
+      "type": "file"
+    },
+    {
       "id": "file:src/core/save.ts",
       "label": "src/core/save.ts",
       "path": "src/core/save.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/core/seed.ts",
+      "label": "src/core/seed.ts",
+      "path": "src/core/seed.ts",
       "type": "file"
     },
     {
@@ -5774,6 +7570,12 @@
       "type": "file"
     },
     {
+      "id": "file:src/core/viability.ts",
+      "label": "src/core/viability.ts",
+      "path": "src/core/viability.ts",
+      "type": "file"
+    },
+    {
       "id": "file:src/narrator/grammar.ts",
       "label": "src/narrator/grammar.ts",
       "path": "src/narrator/grammar.ts",
@@ -5795,6 +7597,60 @@
       "id": "file:src/narrator/pairs.ts",
       "label": "src/narrator/pairs.ts",
       "path": "src/narrator/pairs.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/persistence/indexeddb-profile-store.ts",
+      "label": "src/persistence/indexeddb-profile-store.ts",
+      "path": "src/persistence/indexeddb-profile-store.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/persistence/profile-store.ts",
+      "label": "src/persistence/profile-store.ts",
+      "path": "src/persistence/profile-store.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/persistence/write-queue.ts",
+      "label": "src/persistence/write-queue.ts",
+      "path": "src/persistence/write-queue.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/product/events.ts",
+      "label": "src/product/events.ts",
+      "path": "src/product/events.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/product/generated/contracts.ts",
+      "label": "src/product/generated/contracts.ts",
+      "path": "src/product/generated/contracts.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/product/local-event-store.ts",
+      "label": "src/product/local-event-store.ts",
+      "path": "src/product/local-event-store.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/product/semantic.ts",
+      "label": "src/product/semantic.ts",
+      "path": "src/product/semantic.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/product/session.ts",
+      "label": "src/product/session.ts",
+      "path": "src/product/session.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:src/ui/App.svelte",
+      "label": "src/ui/App.svelte",
+      "path": "src/ui/App.svelte",
       "type": "file"
     },
     {
@@ -5882,6 +7738,12 @@
       "type": "file"
     },
     {
+      "id": "file:src/ui/session-client.ts",
+      "label": "src/ui/session-client.ts",
+      "path": "src/ui/session-client.ts",
+      "type": "file"
+    },
+    {
       "id": "file:src/ui/story-book.ts",
       "label": "src/ui/story-book.ts",
       "path": "src/ui/story-book.ts",
@@ -5936,6 +7798,24 @@
       "type": "file"
     },
     {
+      "id": "file:tests/chronicle.test.ts",
+      "label": "tests/chronicle.test.ts",
+      "path": "tests/chronicle.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/compendium.test.ts",
+      "label": "tests/compendium.test.ts",
+      "path": "tests/compendium.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/content-migrations.test.ts",
+      "label": "tests/content-migrations.test.ts",
+      "path": "tests/content-migrations.test.ts",
+      "type": "file"
+    },
+    {
       "id": "file:tests/decision.test.ts",
       "label": "tests/decision.test.ts",
       "path": "tests/decision.test.ts",
@@ -5963,6 +7843,12 @@
       "id": "file:tests/fixtures/voice-parity-fixture.json",
       "label": "tests/fixtures/voice-parity-fixture.json",
       "path": "tests/fixtures/voice-parity-fixture.json",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/generated-gameplay.test.ts",
+      "label": "tests/generated-gameplay.test.ts",
+      "path": "tests/generated-gameplay.test.ts",
       "type": "file"
     },
     {
@@ -6086,6 +7972,12 @@
       "type": "file"
     },
     {
+      "id": "file:tests/life.test.ts",
+      "label": "tests/life.test.ts",
+      "path": "tests/life.test.ts",
+      "type": "file"
+    },
+    {
       "id": "file:tests/live-pair-export.test.ts",
       "label": "tests/live-pair-export.test.ts",
       "path": "tests/live-pair-export.test.ts",
@@ -6152,9 +8044,21 @@
       "type": "file"
     },
     {
+      "id": "file:tests/network-outage-browser.test.ts",
+      "label": "tests/network-outage-browser.test.ts",
+      "path": "tests/network-outage-browser.test.ts",
+      "type": "file"
+    },
+    {
       "id": "file:tests/node-builtins.d.ts",
       "label": "tests/node-builtins.d.ts",
       "path": "tests/node-builtins.d.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/online-readiness.test.ts",
+      "label": "tests/online-readiness.test.ts",
+      "path": "tests/online-readiness.test.ts",
       "type": "file"
     },
     {
@@ -6173,6 +8077,12 @@
       "id": "file:tests/pairs.test.ts",
       "label": "tests/pairs.test.ts",
       "path": "tests/pairs.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/parity-harness.test.ts",
+      "label": "tests/parity-harness.test.ts",
+      "path": "tests/parity-harness.test.ts",
       "type": "file"
     },
     {
@@ -6200,9 +8110,27 @@
       "type": "file"
     },
     {
+      "id": "file:tests/product-events.test.ts",
+      "label": "tests/product-events.test.ts",
+      "path": "tests/product-events.test.ts",
+      "type": "file"
+    },
+    {
       "id": "file:tests/product-graph.test.ts",
       "label": "tests/product-graph.test.ts",
       "path": "tests/product-graph.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/product-semantic.test.ts",
+      "label": "tests/product-semantic.test.ts",
+      "path": "tests/product-semantic.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/profile-write-queue.test.ts",
+      "label": "tests/profile-write-queue.test.ts",
+      "path": "tests/profile-write-queue.test.ts",
       "type": "file"
     },
     {
@@ -6224,6 +8152,24 @@
       "type": "file"
     },
     {
+      "id": "file:tests/replay.test.ts",
+      "label": "tests/replay.test.ts",
+      "path": "tests/replay.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/run-summary.test.ts",
+      "label": "tests/run-summary.test.ts",
+      "path": "tests/run-summary.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/save-migration.test.ts",
+      "label": "tests/save-migration.test.ts",
+      "path": "tests/save-migration.test.ts",
+      "type": "file"
+    },
+    {
       "id": "file:tests/scenario.test.ts",
       "label": "tests/scenario.test.ts",
       "path": "tests/scenario.test.ts",
@@ -6233,6 +8179,18 @@
       "id": "file:tests/score-tolerance.test.ts",
       "label": "tests/score-tolerance.test.ts",
       "path": "tests/score-tolerance.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/seed.test.ts",
+      "label": "tests/seed.test.ts",
+      "path": "tests/seed.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/session-client.test.ts",
+      "label": "tests/session-client.test.ts",
+      "path": "tests/session-client.test.ts",
       "type": "file"
     },
     {
@@ -6290,6 +8248,12 @@
       "type": "file"
     },
     {
+      "id": "file:tests/viability.test.ts",
+      "label": "tests/viability.test.ts",
+      "path": "tests/viability.test.ts",
+      "type": "file"
+    },
+    {
       "id": "file:tests/visual-harness.test.ts",
       "label": "tests/visual-harness.test.ts",
       "path": "tests/visual-harness.test.ts",
@@ -6332,9 +8296,21 @@
       "type": "file"
     },
     {
+      "id": "file:tests/worker-generated.test.ts",
+      "label": "tests/worker-generated.test.ts",
+      "path": "tests/worker-generated.test.ts",
+      "type": "file"
+    },
+    {
       "id": "file:tests/worker-improvise.test.ts",
       "label": "tests/worker-improvise.test.ts",
       "path": "tests/worker-improvise.test.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tests/worker-run.test.ts",
+      "label": "tests/worker-run.test.ts",
+      "path": "tests/worker-run.test.ts",
       "type": "file"
     },
     {
@@ -6395,6 +8371,12 @@
       "id": "file:tools/echo_report.ts",
       "label": "tools/echo_report.ts",
       "path": "tools/echo_report.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:tools/generate_completion_manifest.mjs",
+      "label": "tools/generate_completion_manifest.mjs",
+      "path": "tools/generate_completion_manifest.mjs",
       "type": "file"
     },
     {
@@ -6536,6 +8518,24 @@
       "type": "file"
     },
     {
+      "id": "file:tools/parity/capture.mjs",
+      "label": "tools/parity/capture.mjs",
+      "path": "tools/parity/capture.mjs",
+      "type": "file"
+    },
+    {
+      "id": "file:tools/parity/compare.mjs",
+      "label": "tools/parity/compare.mjs",
+      "path": "tools/parity/compare.mjs",
+      "type": "file"
+    },
+    {
+      "id": "file:tools/parity/harness.mjs",
+      "label": "tools/parity/harness.mjs",
+      "path": "tools/parity/harness.mjs",
+      "type": "file"
+    },
+    {
       "id": "file:tools/playability.ts",
       "label": "tools/playability.ts",
       "path": "tools/playability.ts",
@@ -6587,6 +8587,12 @@
       "id": "file:tools/product-knowledge/export.mjs",
       "label": "tools/product-knowledge/export.mjs",
       "path": "tools/product-knowledge/export.mjs",
+      "type": "file"
+    },
+    {
+      "id": "file:tools/product-knowledge/generate-contracts.mjs",
+      "label": "tools/product-knowledge/generate-contracts.mjs",
+      "path": "tools/product-knowledge/generate-contracts.mjs",
       "type": "file"
     },
     {
@@ -6752,6 +8758,24 @@
       "type": "file"
     },
     {
+      "id": "file:worker/src/generated-catalog.ts",
+      "label": "worker/src/generated-catalog.ts",
+      "path": "worker/src/generated-catalog.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:worker/src/generated-model.ts",
+      "label": "worker/src/generated-model.ts",
+      "path": "worker/src/generated-model.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:worker/src/generated.ts",
+      "label": "worker/src/generated.ts",
+      "path": "worker/src/generated.ts",
+      "type": "file"
+    },
+    {
       "id": "file:worker/src/generated/voice-profile.json",
       "label": "worker/src/generated/voice-profile.json",
       "path": "worker/src/generated/voice-profile.json",
@@ -6815,6 +8839,18 @@
       "id": "file:worker/src/origin.ts",
       "label": "worker/src/origin.ts",
       "path": "worker/src/origin.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:worker/src/run-auth.ts",
+      "label": "worker/src/run-auth.ts",
+      "path": "worker/src/run-auth.ts",
+      "type": "file"
+    },
+    {
+      "id": "file:worker/src/run-do.ts",
+      "label": "worker/src/run-do.ts",
+      "path": "worker/src/run-do.ts",
       "type": "file"
     },
     {
@@ -6941,10 +8977,10 @@
       ],
       "currentArchitecture": [
         "TypeScript and Vite with a deterministic content-driven core.",
-        "Vanilla TypeScript DOM UI.",
-        "Complete authored gameplay can run without a backend.",
-        "Public root forces improvisation off; the unlisted playtest enables the deterministic offline invention floor.",
-        "Worker URLs are absent from shipped bundles."
+        "Svelte 5 owns the semantic DOM shell while the existing controller preserves behavior and side-effect ordering.",
+        "Seeded LifePlans, ProfileV2 archives, authored compendium, replay targets, and typed local product events are implemented.",
+        "Worker source includes run/session APIs, HMAC+CSRF capabilities, revisioned idempotent attempts, and bounded generated-gameplay selection.",
+        "Public Pages builds keep online-required and Worker endpoints off until production readiness is externally established."
       ],
       "id": "product:carl",
       "label": "The Ascent of Karl",
@@ -7231,6 +9267,150 @@
       "targetBehavior": "The selected broad target and new viable seed are recorded without revealing exact solutions.",
       "trigger": "the player chooses another discovery, branch, fate, seed, or invention path to pursue",
       "type": "scenario"
+    },
+    {
+      "id": "state:active",
+      "label": "active",
+      "state": "active",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:available",
+      "label": "available",
+      "state": "available",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:available-offline",
+      "label": "available-offline",
+      "state": "available-offline",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:blocked",
+      "label": "blocked",
+      "state": "blocked",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:busy",
+      "label": "busy",
+      "state": "busy",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:closed",
+      "label": "closed",
+      "state": "closed",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:disabled",
+      "label": "disabled",
+      "state": "disabled",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:empty",
+      "label": "empty",
+      "state": "empty",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:filled",
+      "label": "filled",
+      "state": "filled",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:finished",
+      "label": "finished",
+      "state": "finished",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:fresh",
+      "label": "fresh",
+      "state": "fresh",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:idle",
+      "label": "idle",
+      "state": "idle",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:informational",
+      "label": "informational",
+      "state": "informational",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:known",
+      "label": "known",
+      "state": "known",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:new",
+      "label": "new",
+      "state": "new",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:open",
+      "label": "open",
+      "state": "open",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:ready",
+      "label": "ready",
+      "state": "ready",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:resumable",
+      "label": "resumable",
+      "state": "resumable",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:retryable",
+      "label": "retryable",
+      "state": "retryable",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:selected-once",
+      "label": "selected-once",
+      "state": "selected-once",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:selected-twice",
+      "label": "selected-twice",
+      "state": "selected-twice",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:solved",
+      "label": "solved",
+      "state": "solved",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:terminal",
+      "label": "terminal",
+      "state": "terminal",
+      "type": "ui-state"
+    },
+    {
+      "id": "state:unavailable",
+      "label": "unavailable",
+      "state": "unavailable",
+      "type": "ui-state"
     }
   ],
   "schemaVersion": 1

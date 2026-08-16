@@ -95,6 +95,26 @@ export interface ProductContractData {
     schemaVersion: number;
     edges: ProductRelation[];
   };
+  events: {
+    schemaVersion: number;
+    storageKey: string;
+    maxEntries: number;
+    events: Array<{
+      id: string;
+      capability: string;
+      scenarios: string[];
+      description: string;
+      payloadRequired: string[];
+    }>;
+  };
+  semanticUi: {
+    schemaVersion: number;
+    attributes: Record<string, string>;
+    capabilityRoots: string[];
+    scenarioStates: Array<{ scenario: string; state: string }>;
+    actions: Array<{ id: string; capability: string }>;
+    states: string[];
+  };
   knownAnswers: {
     schemaVersion: number;
     queries: KnownAnswer[];
@@ -106,12 +126,16 @@ export const CONTRACT_PATHS: Readonly<{
   capabilities: string;
   scenarios: string;
   relations: string;
+  events: string;
+  semanticUi: string;
   knownAnswers: string;
 }>;
 export const SCHEMA_PATHS: Readonly<{
   capabilities: string;
   scenarios: string;
   relations: string;
+  events: string;
+  semanticUi: string;
   knownAnswers: string;
 }>;
 

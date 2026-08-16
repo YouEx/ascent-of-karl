@@ -1,0 +1,199 @@
+{
+  "fixture": {
+    "id": "archive-desktop",
+    "scenario": "act1-opening",
+    "width": 1366,
+    "height": 900,
+    "isMobile": false,
+    "scope": "#book-panel",
+    "screenshotScope": "#book-panel",
+    "flow": "archive"
+  },
+  "snapshot": {
+    "schemaVersion": 2,
+    "title": "The Ascent of Karl — reinvent history, badly",
+    "html": {
+      "lang": "en",
+      "dataReady": "true"
+    },
+    "app": {
+      "tag": "aside",
+      "attributes": {
+        "aria-label": "Chronicle archive",
+        "aria-modal": "true",
+        "class": "open",
+        "id": "book-panel",
+        "role": "dialog"
+      },
+      "text": "",
+      "children": [
+        {
+          "tag": "button",
+          "attributes": {
+            "aria-label": "Close the chronicle archive",
+            "class": "icon-btn",
+            "id": "book-close"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "svg",
+              "attributes": {
+                "aria-hidden": "true",
+                "focusable": "false",
+                "viewBox": "0 0 24 24"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "path",
+                  "attributes": {
+                    "d": "M6 6l12 12"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "path",
+                  "attributes": {
+                    "d": "M18 6L6 18"
+                  },
+                  "text": "",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "id": "book"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "div",
+              "attributes": {
+                "id": "book-tabs"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "button",
+                  "attributes": {
+                    "class": "book-tab active"
+                  },
+                  "text": "Act 1 · The Stone Age",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "id": "book-entry"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {
+                    "class": "entry blank"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attributes": {
+                        "aria-hidden": "true",
+                        "class": "entry-emoji entry-book"
+                      },
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "div",
+                      "attributes": {
+                        "class": "entry-body"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "h3",
+                          "attributes": {},
+                          "text": "The Chronicle of Mankind",
+                          "children": []
+                        },
+                        {
+                          "tag": "p",
+                          "attributes": {},
+                          "text": "Blank pages, waiting to be filled. Combine something below and history will write itself. Badly, probably, but it will.",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "id": "book-chips"
+              },
+              "text": "",
+              "children": []
+            },
+            {
+              "tag": "button",
+              "attributes": {
+                "aria-expanded": "false",
+                "id": "timeline-toggle"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "aria-hidden": "true",
+                    "class": "timeline-watch"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "strong",
+                  "attributes": {},
+                  "text": "0/174",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "hidden": "",
+                "id": "timeline-wrap"
+              },
+              "text": "",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "focusOrder": [
+      "book-close",
+      "BUTTON",
+      "timeline-toggle"
+    ],
+    "activeElement": "book-close",
+    "save": null,
+    "narrator": null,
+    "achievements": null,
+    "productEvents": null,
+    "errors": [],
+    "failedRequests": []
+  }
+}

@@ -1,0 +1,749 @@
+{
+  "fixture": {
+    "id": "modal-desktop",
+    "scenario": "title-fresh",
+    "width": 1366,
+    "height": 900,
+    "isMobile": false,
+    "scope": "#trophy-modal",
+    "screenshotScope": "#trophy-modal",
+    "flow": "modal"
+  },
+  "snapshot": {
+    "schemaVersion": 2,
+    "title": "The Ascent of Karl — reinvent history, badly",
+    "html": {
+      "lang": "en",
+      "dataReady": "true"
+    },
+    "app": {
+      "tag": "div",
+      "attributes": {
+        "aria-label": "Karl's fates",
+        "aria-modal": "true",
+        "id": "trophy-modal",
+        "role": "dialog"
+      },
+      "text": "",
+      "children": [
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "modal-inner"
+          },
+          "text": "",
+          "children": [
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "modal-head"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "h2",
+                      "attributes": {},
+                      "text": "Karl's fates",
+                      "children": []
+                    },
+                    {
+                      "tag": "p",
+                      "attributes": {
+                        "class": "modal-sub"
+                      },
+                      "text": "0/15 discovered — each run can end differently",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "tag": "button",
+                  "attributes": {
+                    "aria-label": "Close",
+                    "class": "icon-btn",
+                    "id": "trophy-close"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "svg",
+                      "attributes": {
+                        "aria-hidden": "true",
+                        "focusable": "false",
+                        "viewBox": "0 0 24 24"
+                      },
+                      "text": "",
+                      "children": [
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M6 6l12 12"
+                          },
+                          "text": "",
+                          "children": []
+                        },
+                        {
+                          "tag": "path",
+                          "attributes": {
+                            "d": "M18 6L6 18"
+                          },
+                          "text": "",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attributes": {
+                "class": "trophy locked"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "span",
+                  "attributes": {
+                    "class": "t-emoji"
+                  },
+                  "text": "❓",
+                  "children": []
+                },
+                {
+                  "tag": "div",
+                  "attributes": {},
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "strong",
+                      "attributes": {},
+                      "text": "???",
+                      "children": []
+                    },
+                    {
+                      "tag": "br",
+                      "attributes": {},
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "small",
+                      "attributes": {},
+                      "text": "An undiscovered fate",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "focusOrder": [
+      "trophy-close"
+    ],
+    "activeElement": "trophy-close",
+    "save": null,
+    "narrator": null,
+    "achievements": null,
+    "productEvents": null,
+    "errors": [],
+    "failedRequests": []
+  }
+}

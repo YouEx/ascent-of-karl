@@ -32,6 +32,9 @@ function safeEnvironment(parent, enabled) {
     VITE_IMPROVISE_ENABLED: enabled ? "true" : "false",
     VITE_IMPROVISE_URL: "",
     VITE_NARRATOR_URL: "",
+    VITE_GAME_API_URL: "",
+    VITE_ONLINE_REQUIRED: "false",
+    VITE_ONLINE_TARGET_READY: "false",
   };
 }
 
@@ -108,6 +111,7 @@ export async function buildPages({
   const forbiddenStrings = [
     parentEnv.VITE_IMPROVISE_URL ?? "",
     parentEnv.VITE_NARRATOR_URL ?? "",
+    parentEnv.VITE_GAME_API_URL ?? "",
   ].filter(Boolean);
 
   for (const step of plan) {
