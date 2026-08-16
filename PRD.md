@@ -41,7 +41,7 @@ uafhængigt, copy-only tilvalg.
 - Et run kan skabe højst **6 unikke improviserede elementer**. Genbrug er
   fortsat tilladt; et syvende nyt element afvises og bruger stadig sommeren.
 - Beslutningen er valgt af den robuste, reproducerbare balancekørsel
-  `fnv1a32:fa873b0e`; se
+  `fnv1a32:247a53b4`; se
   `docs/design/improvisation-balance.md`.
 - Tre agentstyrede browser-runs fandt ingen source-defekt, men er **ikke**
   ekstern-human evidens. Se

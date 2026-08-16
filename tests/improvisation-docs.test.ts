@@ -88,7 +88,7 @@ describe("improvisationens dokumentationskontrakt", () => {
   it("binder docs til den valgte cap, pris og reproducerbarhedshash", () => {
     expect(IMPROVISE_RUN_CAP).toBe(6);
     expect(IMPROVISE_SUMMER_COST).toBe(1);
-    expect(COMMITTED_IMPROVISE_REPORT_HASH).toBe("fnv1a32:fa873b0e");
+    expect(COMMITTED_IMPROVISE_REPORT_HASH).toBe("fnv1a32:247a53b4");
 
     const artifact = JSON.parse(
       read("docs/design/improvisation-balance-results.json"),
@@ -101,7 +101,7 @@ describe("improvisationens dokumentationskontrakt", () => {
 
     for (const path of ["PRD.md", BALANCE, EVIDENCE]) {
       const text = read(path);
-      expect(text, path).toContain("fnv1a32:fa873b0e");
+      expect(text, path).toContain("fnv1a32:247a53b4");
       expect(text, path).toMatch(/cap 6|højst \*\*6|at most 6/i);
       expect(text, path).toMatch(/one summer|én sommer|1 summer/i);
     }

@@ -1,12 +1,12 @@
 # Improvisation balance
 
-**Version:** 1.1
+**Version:** 1.2
 
-**Measured:** 2026-08-13
+**Measured:** 2026-08-16
 
 **Artifact:** `docs/design/improvisation-balance-results.json`
 
-**Reproducibility hash:** `fnv1a32:fa873b0e`
+**Reproducibility hash:** `fnv1a32:247a53b4`
 
 ## Decision
 
@@ -140,7 +140,7 @@ run-limit rejection therefore preserve both the spent summer and any challenge
 tick across reload. Feature-off persistence behavior is unchanged.
 
 `npm run improvise:report:check` regenerates the report, byte-compares the
-committed artifact, verifies `fnv1a32:fa873b0e`, requires the selected row to be
+committed artifact, verifies `fnv1a32:247a53b4`, requires the selected row to be
 robust, and checks production cost/cap constants. The existing
 `test-and-build` CI job runs this check.
 

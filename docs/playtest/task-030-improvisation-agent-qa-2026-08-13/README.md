@@ -6,9 +6,12 @@
 `VITE_IMPROVISE_URL` explicitly absent  
 **Artifact root:** `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`
 
-**Balance contract:** cap 6, one summer and reproducibility hash
-`fnv1a32:fa873b0e` come from
+**Current balance contract:** cap 6, one summer and reproducibility hash
+`fnv1a32:247a53b4` come from
 [`docs/design/improvisation-balance.md`](../../design/improvisation-balance.md).
+This historical QA run originally recorded `fnv1a32:fa873b0e`; the complete
+target implementation changed the deterministic state surface, so the report
+was regenerated on 2026-08-16 while retaining the same cap and cost.
 
 ## Method
 
@@ -179,7 +182,7 @@ Product observations, not fix requests:
 | Feature-off UX audit | 38/38 passed |
 | Feature-on UX audit | 40/40 passed |
 | `npm run test:visual` | 2/2 passed |
-| `npm run improvise:report:check` | Passed, `fnv1a32:fa873b0e` |
+| `npm run improvise:report:check` | Passed then at `fnv1a32:fa873b0e`; current contract revalidated at `fnv1a32:247a53b4` |
 
 The first visual command was deliberately not accepted as evidence: it found
 the still-running feature-on playtest server on the audit port and therefore
