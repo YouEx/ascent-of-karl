@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ascent-of-karl.local/schema/capabilities.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "authority",
+    "product",
+    "lifecycleStates",
+    "capabilities"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "authority": {
+      "const": "PRODUCT.md"
+    },
+    "product": {
+      "$ref": "#/$defs/product"
+    },
+    "lifecycleStates": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/lifecycle"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/capability"
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "event": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "repoPath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\./)[A-Za-z0-9_.@/-]+$"
+    },
+    "stringList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      }
+    },
+    "pathList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/repoPath"
+      }
+    },
+    "lifecycle": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "approved-target",
+        "implementing",
+        "playtest",
+        "production",
+        "retired"
+      ]
+    },
+    "product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "promise",
+        "primaryPurpose",
+        "northStar",
+        "completionDefinition",
+        "hardBoundaries",
+        "openDecisions",
+        "crossCutting",
+        "currentArchitecture",
+        "targetArchitecture",
+        "authorityAnchors"
+      ],
+      "properties": {
+        "name": {
+          "const": "The Ascent of Karl"
+        },
+        "promise": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "primaryPurpose": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "northStar": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "completionDefinition": {
+          "$ref": "#/$defs/stringList"
+        },
+        "hardBoundaries": {
+          "$ref": "#/$defs/stringList"
+        },
+        "openDecisions": {
+          "$ref": "#/$defs/stringList"
+        },
+        "crossCutting": {
+          "type": "object",
+          "minProperties": 8,
+          "additionalProperties": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "currentArchitecture": {
+          "$ref": "#/$defs/stringList"
+        },
+        "targetArchitecture": {
+          "$ref": "#/$defs/stringList"
+        },
+        "authorityAnchors": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "purpose",
+        "playerOutcome",
+        "currentTruth",
+        "approvedTarget",
+        "qualitativeAcceptance",
+        "lifecycle",
+        "dependencies",
+        "semanticEvents",
+        "ownershipHints",
+        "searchTerms"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "purpose": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "playerOutcome": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "currentTruth": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "approvedTarget": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "qualitativeAcceptance": {
+          "$ref": "#/$defs/stringList"
+        },
+        "lifecycle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "current",
+            "target",
+            "advancementGate"
+          ],
+          "properties": {
+            "current": {
+              "$ref": "#/$defs/lifecycle"
+            },
+            "target": {
+              "$ref": "#/$defs/lifecycle"
+            },
+            "advancementGate": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "semanticEvents": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        },
+        "ownershipHints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sourceEntrypoints",
+            "contentEntrypoints",
+            "testEntrypoints"
+          ],
+          "properties": {
+            "sourceEntrypoints": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/repoPath"
+              }
+            },
+            "contentEntrypoints": {
+              "$ref": "#/$defs/pathList"
+            },
+            "testEntrypoints": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/repoPath"
+              }
+            }
+          }
+        },
+        "searchTerms": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@
     "build:pages": "tsc --noEmit && npm run typecheck:worker && node tools/build_pages.mjs",
     "pages:verify": "node tools/verify_pages_artifact.mjs",
     "verify:pages": "node tools/verify_pages_artifact.mjs",
-  "verify:live": "node tools/verify_live_deploy.mjs",
+    "verify:live": "node tools/verify_live_deploy.mjs",
     "typecheck:worker": "tsc --noEmit -p worker/tsconfig.json",
     "preview": "vite preview",
     "test": "vitest run",
@@ -43,7 +43,14 @@
     "harvest": "node tools/harvest.mjs",
     "pairs:assemble": "python3 tools/assemble_pairs.py",
     "coverage": "node tools/coverage_report.mjs",
-    "bundle-budget": "node tools/bundle_budget.mjs"
+    "bundle-budget": "node tools/bundle_budget.mjs",
+    "product:validate": "node tools/product-knowledge/validate.mjs",
+    "product:graph": "node tools/product-knowledge/export.mjs",
+    "product:graph:check": "node tools/product-knowledge/export.mjs --check",
+    "product:graph:enrich": "node tools/product-knowledge/enrich.mjs",
+    "product:context": "node tools/product-knowledge/context.mjs",
+    "product:known-answers": "node tools/product-knowledge/known-answers.mjs",
+    "product:check": "npm run product:validate && npm run product:graph:check && npm run product:known-answers"
   },
   "devDependencies": {
     "playwright": "^1.62.1",

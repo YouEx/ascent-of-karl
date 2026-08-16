@@ -1,6 +1,21 @@
 # The Ascent of Karl — udviklerguide
 
-Læs `PRD.md` først — det er den styrende reference for al udvikling.
+Læs `PRODUCT.md` først — det er den styrende reference for produktformål,
+capabilities, current-vs-target og succes. `PRD.md` er vigtig detalje og
+historik, men må ikke overtrumfe `PRODUCT.md`.
+
+Før en spiller-vendt ændring: kompilér den relevante kontekst:
+
+```bash
+npm run product:context -- "beskriv ændringen"
+# eller entydigt:
+npm run product:context -- --capability sandbox.invention
+```
+
+Ændrer opgaven formål, current truth, approved target eller kvalitativ
+acceptance, opdatér `PRODUCT.md` og kontrakten i `docs/product/` FØR kode.
+`npm run product:check` skal være grøn. Den genererede graf er evidens og
+agentkontekst — aldrig autoritet.
 
 ## Stack-beslutning (Step 0, afklaret)
 
@@ -26,6 +41,8 @@ npm run audit:narration # browseraudit: synlig tekst = faktisk lyd, korrekt beat
 npm run build        # typecheck + produktion-build
 npm run build:pages  # root feature-off + indlejret offline playtest-preview
 npm run verify:pages # kontrollér det allerede byggede Pages-artifact
+npm run product:check # produktkontrakter + grafdrift + kendte agentsvar
+npm run product:context -- "opgave" # formålsførst kontekstpakke
 ```
 
 Produktionens `harvest` kræver en deployet Worker, en eksplicit betroet origin
@@ -89,6 +106,9 @@ og et admin-token i miljøet; brug aldrig token som CLI-argument. Se
   `registry.json` er samtidig dommerens maskinlæsbare skærm-, region-,
   anker-, vægt- og tærskelkontrakt.
 - `plan/` — implementeringsplaner for større visuelle/strukturelle spor.
+- `docs/product/` + `tools/product-knowledge/` — validerede capabilities,
+  tvetydige scenarier, deterministisk produktgraf og task-aware agentkontekst.
+  `PRODUCT.md` er menneskeautoriteten; grafen er afledt.
 
 ## Regler
 
@@ -148,6 +168,11 @@ og et admin-token i miljøet; brug aldrig token som CLI-argument. Se
     må aldrig lade den forrige lyd fortsætte. Den siges med exact-text
     browser-TTS eller markeres ærligt text-only, og `npm run audit:narration`
     skal bevise start/complete-rækkefølgen over spilstart og kombinationer.
+14. **Produktformål før implementering.** Enhver spiller-vendt capability har
+    current truth, approved target, kvalitativ acceptance og lifecycle/gate i
+    `docs/product/capabilities.json`. Brug kontekstkompilatoren før ændringen.
+    En target-state er ikke shipped behavior, og Graphify må aldrig omskrive
+    produktets autoritet.
 
 ## Tone (til indholdsarbejde)
 

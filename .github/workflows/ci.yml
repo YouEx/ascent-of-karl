@@ -31,6 +31,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Kontrollér produktformål, kontrakter, graf og agentkontekst
+        run: npm run product:check
       - name: Unit tests
         run: npm test
       - name: Kontrollér improvisationsbalance

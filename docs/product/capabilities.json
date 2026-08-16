@@ -1,0 +1,670 @@
+{
+  "schemaVersion": 1,
+  "authority": "PRODUCT.md",
+  "product": {
+    "name": "The Ascent of Karl",
+    "promise": "Shape Karl's journey through what you combine, collect the history and fates you uncover, and hear the narrator turn every success and disaster into his story.",
+    "primaryPurpose": "An interactive story where combining is how the player chooses what Karl tries, discovers, invents, solves, and becomes.",
+    "northStar": "Authored-content completion percentage across archived lives.",
+    "completionDefinition": [
+      "Canonical discoveries count.",
+      "Major authored story branches count.",
+      "Authored fates and endings count.",
+      "Generated inventions do not enter the denominator; authored consequences they unlock count."
+    ],
+    "hardBoundaries": [
+      "Before the external playtest gate closes, implementation is limited to product truth, contracts, graph, and context infrastructure; no player-facing, gameplay, Svelte, online-required, or telemetry changes may ship.",
+      "The product is entertainment, not curriculum or assessment.",
+      "Historical claims require curated canonical content and verified sources.",
+      "Generated graphs and implementation evidence never override human product authority.",
+      "Accessibility is a release gate across every capability.",
+      "Current truth and approved target must remain explicitly separate."
+    ],
+    "openDecisions": [
+      "Monetisation model.",
+      "Final voice production method.",
+      "Production model provider and hosting architecture.",
+      "Numerical thresholds before measured playtest baselines.",
+      "Exact post-playtest Svelte migration release.",
+      "Long-term breadth of open-ended sandbox play."
+    ],
+    "crossCutting": {
+      "collectionRecordsStory": "Collection is the visible record of the story the player authored.",
+      "narratorThreeDimensions": "Humour, guidance, and the account of who Karl becomes are equally required narrator outcomes.",
+      "history": "Historical logic makes the story world credible; generated inventions carry no historical claim.",
+      "karl": "Karl is the recognisable comic mascot, visibly marked by accumulated choices.",
+      "accessibility": "Equivalent information and action channels plus WCAG AA gate every capability.",
+      "sandbox": "Open-ended experimentation is a secondary objective integrated into authored progression.",
+      "generatedGameplay": "Models propose typed run-local gameplay; deterministic validation owns truth and effects.",
+      "onlineTarget": "Active play may become online-required only after the production-readiness gate.",
+      "svelteParity": "The post-playtest Svelte replacement preserves behavior, semantics, visuals, accessibility, events, and saves before redesign."
+    },
+    "currentArchitecture": [
+      "TypeScript and Vite with a deterministic content-driven core.",
+      "Vanilla TypeScript DOM UI.",
+      "Complete authored gameplay can run without a backend.",
+      "Public root forces improvisation off; the unlisted playtest enables the deterministic offline invention floor.",
+      "Worker URLs are absent from shipped bundles."
+    ],
+    "targetArchitecture": [
+      "Product truth infrastructure precedes player-facing changes.",
+      "After external playtest, replace the UI with Svelte in one parity-first coordinated migration.",
+      "Generated gameplay remains typed, deterministic-validated, run-local, and historically non-authoritative.",
+      "Active play becomes online-required only after backend production readiness.",
+      "Typed product events remain local until telemetry hosting and consent are approved."
+    ],
+    "authorityAnchors": [
+      "Shape Karl's journey through what you combine, collect the history and fates you uncover, and hear the narrator turn every success and disaster into his story.",
+      "The Ascent of Karl is an **interactive story**.",
+      "The product north star is the player's **authored-content completion percentage**",
+      "The narrator's humour, guidance, and account of who Karl becomes are equally important.",
+      "The approved target is online-required active play.",
+      "After the external playtest, replace the UI with Svelte in one coordinated migration.",
+      "Before the external playtest gate closes, implementation is limited to product truth, contracts, graph, and context infrastructure; no player-facing, gameplay, Svelte, online-required, or telemetry changes may ship."
+    ]
+  },
+  "lifecycleStates": [
+    "proposed",
+    "approved-target",
+    "implementing",
+    "playtest",
+    "production",
+    "retired"
+  ],
+  "capabilities": [
+    {
+      "id": "life.begin",
+      "name": "Begin a life",
+      "purpose": "Start one distinct archived Karl life and reach meaningful play quickly.",
+      "playerOutcome": "The player understands the available starting possibilities and begins a viable but meaningfully varied life.",
+      "currentTruth": "New, continue, and restart flows exist; starting elements and sidequests are not governed by a formal seeded viability contract.",
+      "approvedTarget": "A stored deterministic seed selects a bounded starting subset and sidequests while guaranteeing viable authored progression.",
+      "qualitativeAcceptance": [
+        "Players notice that a new life differs.",
+        "Players understand the starting possibilities without explanation.",
+        "Every generated seed retains a viable authored path."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "Define and exhaustively verify seeded starting-pool and sidequest viability before implementation."
+      },
+      "dependencies": [],
+      "semanticEvents": [
+        "life.started"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/ui/main.ts",
+          "src/core/engine.ts",
+          "src/core/save.ts"
+        ],
+        "contentEntrypoints": [
+          "content/elements.json",
+          "content/challenges.json"
+        ],
+        "testEntrypoints": [
+          "tests/title-screen.test.ts",
+          "tests/engine.test.ts",
+          "tests/scenario.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "new life",
+        "start",
+        "continue",
+        "seed",
+        "starting elements",
+        "sidequests"
+      ]
+    },
+    {
+      "id": "craft.combine",
+      "name": "Choose and combine",
+      "purpose": "Give the player the primary language for deciding what Karl tries.",
+      "playerOutcome": "A selected pair produces a meaningful result, reaction, consequence, or clue.",
+      "currentTruth": "The player selects two elements. Canonical recipes win; otherwise the engine returns a specific verdict and optional bounded improvisation.",
+      "approvedTarget": "Every valid attempt produces meaningful yield: a new outcome or a specific humour, guidance, or story response.",
+      "qualitativeAcceptance": [
+        "Most valid attempts produce meaningful yield.",
+        "Generic silence never follows an attempt.",
+        "The player can distinguish result, reaction, and next possibility."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "External playtest must establish where attempts still feel empty or arbitrary."
+      },
+      "dependencies": [
+        "life.begin"
+      ],
+      "semanticEvents": [
+        "combination.attempted"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/core/engine.ts",
+          "src/core/verdict.ts",
+          "src/ui/main.ts"
+        ],
+        "contentEntrypoints": [
+          "content/combos.json",
+          "content/elements.json"
+        ],
+        "testEntrypoints": [
+          "tests/engine.test.ts",
+          "tests/verdict.test.ts",
+          "tests/pairs.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "combine",
+        "combining",
+        "combination",
+        "attempt",
+        "pair",
+        "yield",
+        "nofuse"
+      ]
+    },
+    {
+      "id": "collection.canonical-discovery",
+      "name": "Canonical discovery",
+      "purpose": "Deliver a collectible authored story milestone that expands future possibilities.",
+      "playerOutcome": "The player recognises a new canonical result, sees collection progress, and understands that the world has expanded.",
+      "currentTruth": "Canonical discoveries can carry flavor, historical notes, flags, need resolution, rarity, and age-up effects.",
+      "approvedTarget": "The discovery's newness, future utility, Chronicle entry, and persistent completion effect are immediately legible.",
+      "qualitativeAcceptance": [
+        "Players recognise the result as new.",
+        "Players understand that it expands future possibilities.",
+        "Visible collection progress feels valuable."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "The dual collection model must define canonical completion and save compatibility."
+      },
+      "dependencies": [
+        "craft.combine"
+      ],
+      "semanticEvents": [
+        "discovery.canonical"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/core/engine.ts",
+          "src/ui/story-page.ts",
+          "src/ui/book.ts"
+        ],
+        "contentEntrypoints": [
+          "content/elements.json",
+          "content/combos.json"
+        ],
+        "testEntrypoints": [
+          "tests/engine.test.ts",
+          "tests/story-page.test.ts",
+          "tests/rarity.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "canonical",
+        "discovery",
+        "historical note",
+        "collection",
+        "rarity"
+      ]
+    },
+    {
+      "id": "sandbox.invention",
+      "name": "Invention",
+      "purpose": "Provide alternative progression when a player's unscripted idea is plausible or productively absurd.",
+      "playerOutcome": "A player-owned invention remains distinct from canon and can meaningfully affect this life.",
+      "currentTruth": "A deterministic offline invention floor exists behind a production-off flag. Optional network copy may improve name and flavor only.",
+      "approvedTarget": "A model may propose typed run-local gameplay under deterministic validation; accepted inventions may solve needs and unlock authored consequences without historical claims.",
+      "qualitativeAcceptance": [
+        "Inventions offer credible alternative progress.",
+        "Players understand inventions are not historical canon.",
+        "The result feels caused by the player's unscripted choice."
+      ],
+      "lifecycle": {
+        "current": "playtest",
+        "target": "approved-target",
+        "advancementGate": "External improvisation playtest, deterministic gameplay validator, and production backend readiness must all pass."
+      },
+      "dependencies": [
+        "craft.combine"
+      ],
+      "semanticEvents": [
+        "invention.accepted"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/core/improvise.ts",
+          "src/ui/improvise-flow.ts",
+          "worker/src/improvise.ts"
+        ],
+        "contentEntrypoints": [
+          "content/taxonomy.json",
+          "content/predicates.json"
+        ],
+        "testEntrypoints": [
+          "tests/improvise.test.ts",
+          "tests/improvise-engine.test.ts",
+          "tests/worker-improvise.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "invention",
+        "improvisation",
+        "sandbox",
+        "generated gameplay",
+        "alternative progression",
+        "AI"
+      ]
+    },
+    {
+      "id": "narrator.react",
+      "name": "Narrator",
+      "purpose": "Make the game funny, keep the player moving, and turn play into the story of this Karl.",
+      "playerOutcome": "The player laughs, receives useful guidance, and recognises a coherent character arc across the life.",
+      "currentTruth": "The narrator prioritises authored story, behavior, memory, baked pair lines, optional live copy, grammar, and generic fallback.",
+      "approvedTarget": "Humour, guidance, and story continuity remain equally required across generated gameplay, seeded lives, longer memory, and online production.",
+      "qualitativeAcceptance": [
+        "Players laugh at or quote a reaction.",
+        "Players act on narrator guidance when stuck.",
+        "Players can describe who their Karl became."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "Playtest must independently evidence humour, guidance, and story continuity."
+      },
+      "dependencies": [
+        "craft.combine"
+      ],
+      "semanticEvents": [
+        "narrator.presented"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/narrator/narrator.ts",
+          "src/narrator/grammar.ts",
+          "src/ui/audio.ts"
+        ],
+        "contentEntrypoints": [
+          "content/narrator/act-1.json",
+          "content/narrator/grammar-act-1.json"
+        ],
+        "testEntrypoints": [
+          "tests/narrator.test.ts",
+          "tests/narrator-regression.test.ts",
+          "tests/narration-audio.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "narrator",
+        "humor",
+        "humour",
+        "guidance",
+        "hint",
+        "Karl becomes",
+        "voice"
+      ]
+    },
+    {
+      "id": "guidance.needs",
+      "name": "Pursue needs",
+      "purpose": "Give clear short-term goals without reducing the game to one prescribed recipe.",
+      "playerOutcome": "The player can name the next need and imagine multiple possible solutions.",
+      "currentTruth": "Current Act problems, predicates, hints, and alternative canonical solutions guide progression.",
+      "approvedTarget": "Canonical discoveries and validated inventions can provide multiple legible paths to the same need.",
+      "qualitativeAcceptance": [
+        "Players can name the current goal.",
+        "Players perceive multiple possible solution paths.",
+        "Players do not feel railroaded."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "Generated solutions must pass the same deterministic solve predicates as canonical elements."
+      },
+      "dependencies": [
+        "collection.canonical-discovery",
+        "sandbox.invention"
+      ],
+      "semanticEvents": [
+        "need.updated"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/core/solves.ts",
+          "src/narrator/narrator.ts",
+          "src/ui/main.ts"
+        ],
+        "contentEntrypoints": [
+          "content/acts/act-1.json",
+          "content/predicates.json"
+        ],
+        "testEntrypoints": [
+          "tests/solves.test.ts",
+          "tests/narrator.test.ts",
+          "tests/story-book.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "needs",
+        "problems",
+        "objectives",
+        "hints",
+        "multiple paths",
+        "solve"
+      ]
+    },
+    {
+      "id": "story.challenges",
+      "name": "Face challenges and sidequests",
+      "purpose": "Create temporary priority conflicts that make lives diverge.",
+      "playerOutcome": "The player notices an interruption, chooses deliberately, and later recognises its consequence.",
+      "currentTruth": "Timed challenges can spawn, tick, resolve, fail, and affect endings. Sidequest variation is not yet governed by the life seed.",
+      "approvedTarget": "Seeded sidequests and challenges interrupt plans without replacing the main story, and their consequences remain visible later.",
+      "qualitativeAcceptance": [
+        "Players notice the priority conflict.",
+        "Players deliberately change or preserve their plan.",
+        "Players connect a later outcome to the choice."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "Seeded challenge selection must preserve life viability and causal evidence."
+      },
+      "dependencies": [
+        "life.begin",
+        "craft.combine"
+      ],
+      "semanticEvents": [
+        "challenge.updated"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/core/challenge.ts",
+          "src/core/engine.ts",
+          "src/ui/main.ts"
+        ],
+        "contentEntrypoints": [
+          "content/challenges.json",
+          "content/endings.json"
+        ],
+        "testEntrypoints": [
+          "tests/challenge.test.ts",
+          "tests/challenge-rates.test.ts",
+          "tests/engine.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "challenge",
+        "sidequest",
+        "priority",
+        "turns left",
+        "divergent"
+      ]
+    },
+    {
+      "id": "chronicle.life",
+      "name": "Read one life's Chronicle",
+      "purpose": "Preserve the causal story of one distinct Karl life.",
+      "playerOutcome": "The player can reconstruct what this Karl tried, discovered, invented, solved, and became.",
+      "currentTruth": "The Living Chronicle shows the narrator, latest outcome, canonical archive, timeline, and—when enabled—a separate invention section.",
+      "approvedTarget": "Every archived life can be reconstructed from attempts, discoveries, inventions, needs, challenges, branches, and fate.",
+      "qualitativeAcceptance": [
+        "Players reconstruct the causal story of one life.",
+        "Players distinguish one archived Karl from another.",
+        "Canonical history and inventions remain visibly distinct."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "Versioned per-life archives and save migration must be specified and tested."
+      },
+      "dependencies": [
+        "collection.canonical-discovery",
+        "sandbox.invention",
+        "narrator.react",
+        "guidance.needs",
+        "story.challenges"
+      ],
+      "semanticEvents": [
+        "chronicle.entry-recorded"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/ui/story-book.ts",
+          "src/ui/story-page.ts",
+          "src/ui/book.ts"
+        ],
+        "contentEntrypoints": [
+          "content/elements.json",
+          "content/endings.json"
+        ],
+        "testEntrypoints": [
+          "tests/living-chronicle.test.ts",
+          "tests/story-page.test.ts",
+          "tests/timeline.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "Chronicle",
+        "life archive",
+        "story memory",
+        "timeline",
+        "reconstruct"
+      ]
+    },
+    {
+      "id": "collection.compendium",
+      "name": "Complete the master compendium",
+      "purpose": "Make finite authored completion legible and motivate another life without revealing exact recipes.",
+      "playerOutcome": "The player understands completion, identifies a broad gap, and chooses another life to pursue it.",
+      "currentTruth": "Discoveries and fates persist locally, but there is no unified authored-content percentage or archived-life model.",
+      "approvedTarget": "The compendium combines canonical discoveries, major branches, and endings into a percentage while inventions remain in a separate unbounded gallery.",
+      "qualitativeAcceptance": [
+        "Players understand what the completion percentage includes.",
+        "Players identify an unexplored area without receiving an exact solution.",
+        "Players choose another life to pursue the gap."
+      ],
+      "lifecycle": {
+        "current": "proposed",
+        "target": "approved-target",
+        "advancementGate": "Define branch identity, completion denominator, persistence, and migration before implementation."
+      },
+      "dependencies": [
+        "chronicle.life",
+        "collection.canonical-discovery",
+        "fate.ending"
+      ],
+      "semanticEvents": [
+        "compendium.progressed"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/ui/book.ts",
+          "src/ui/main.ts",
+          "src/core/timeline.ts"
+        ],
+        "contentEntrypoints": [
+          "content/elements.json",
+          "content/endings.json",
+          "content/decisions.json"
+        ],
+        "testEntrypoints": [
+          "tests/timeline.test.ts",
+          "tests/rarity.test.ts",
+          "tests/decision.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "compendium",
+        "completion",
+        "percentage",
+        "persistent collection",
+        "missing content"
+      ]
+    },
+    {
+      "id": "fate.ending",
+      "name": "Unlock a fate",
+      "purpose": "Reward exploration with a surprising, collectible ending.",
+      "playerOutcome": "The player unlocks a memorable fate, understands its cause, and becomes curious about undiscovered endings.",
+      "currentTruth": "Authored endings unlock from deterministic state and appear as persistent fates.",
+      "approvedTarget": "Each ending remains surprising but causally traceable, and its rarity/conditions never require fabricated statistics.",
+      "qualitativeAcceptance": [
+        "The ending surprises the player.",
+        "The player can trace why this life produced it.",
+        "The player wants to collect more fates."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "Persistent compendium semantics and ending provenance must be defined."
+      },
+      "dependencies": [
+        "guidance.needs",
+        "story.challenges"
+      ],
+      "semanticEvents": [
+        "fate.unlocked"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/core/engine.ts",
+          "src/ui/main.ts",
+          "src/ui/run-summary.ts"
+        ],
+        "contentEntrypoints": [
+          "content/endings.json",
+          "content/decisions.json"
+        ],
+        "testEntrypoints": [
+          "tests/engine.test.ts",
+          "tests/decision.test.ts",
+          "tests/playtest.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "fate",
+        "ending",
+        "rare unlock",
+        "causal",
+        "achievement"
+      ]
+    },
+    {
+      "id": "replay.share",
+      "name": "Replay and optionally share",
+      "purpose": "Turn completion gaps, new seeds, sidequests, and alternative progression into another distinct life. Sharing expresses the result but is not required for progression.",
+      "playerOutcome": "The player names a new target and voluntarily begins another life; sharing remains optional expression.",
+      "currentTruth": "Players can start a new life and copy a run summary. Life archives and shareable seeds are not yet implemented.",
+      "approvedTarget": "Endings and compendium gaps present meaningful replay targets; life summaries and seeds remain understandable outside the running game.",
+      "qualitativeAcceptance": [
+        "Players name a different target or path.",
+        "Players voluntarily begin another life.",
+        "Shared summaries remain understandable without being required for progress."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "Seed format, life archive, and compendium targets must be implemented and playtested."
+      },
+      "dependencies": [
+        "fate.ending",
+        "collection.compendium"
+      ],
+      "semanticEvents": [
+        "life.replay-started"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/ui/main.ts",
+          "src/ui/run-summary.ts",
+          "src/core/save.ts"
+        ],
+        "contentEntrypoints": [
+          "content/endings.json"
+        ],
+        "testEntrypoints": [
+          "tests/playtest.test.ts",
+          "tests/title-screen.test.ts",
+          "tests/engine.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "replay",
+        "share",
+        "run summary",
+        "new target",
+        "seed"
+      ]
+    },
+    {
+      "id": "platform.cross-device",
+      "name": "Play across devices",
+      "purpose": "Deliver the same meaningful, completable game on phone and desktop, even when layout and input differ.",
+      "playerOutcome": "The player understands the same story, choices, feedback, and collection on supported devices.",
+      "currentTruth": "One Vite web application serves responsive mobile and desktop layouts. Local saves are browser-local.",
+      "approvedTarget": "The Svelte replacement preserves meaning, behavior, accessibility, events, and save compatibility across supported devices.",
+      "qualitativeAcceptance": [
+        "The same life is completable on phone and desktop.",
+        "Layout differences do not change product meaning.",
+        "Every capability passes equivalent-channel accessibility and WCAG AA."
+      ],
+      "lifecycle": {
+        "current": "production",
+        "target": "approved-target",
+        "advancementGate": "Differential old/new parity must pass before Svelte replaces the current UI."
+      },
+      "dependencies": [
+        "life.begin",
+        "craft.combine",
+        "collection.canonical-discovery",
+        "sandbox.invention",
+        "narrator.react",
+        "guidance.needs",
+        "story.challenges",
+        "chronicle.life",
+        "collection.compendium",
+        "fate.ending",
+        "replay.share"
+      ],
+      "semanticEvents": [
+        "platform.session-ready"
+      ],
+      "ownershipHints": {
+        "sourceEntrypoints": [
+          "src/ui/main.ts",
+          "src/ui/style.css",
+          "src/ui/overlay.ts"
+        ],
+        "contentEntrypoints": [],
+        "testEntrypoints": [
+          "tests/app-frame.test.ts",
+          "tests/layout-baseline-recorder.test.ts",
+          "tests/improvise-ui.test.ts"
+        ]
+      },
+      "searchTerms": [
+        "mobile",
+        "desktop",
+        "cross-device",
+        "responsive",
+        "Svelte",
+        "accessibility",
+        "parity",
+        "network",
+        "online required",
+        "offline",
+        "production readiness",
+        "browser saves",
+        "saves"
+      ]
+    }
+  ]
+}

@@ -20,6 +20,12 @@ worker-configuration.d.ts
 # versionerede — de er systemets hukommelse på tværs af sessioner.
 .judge/
 
+# Optional Graphify semantic enrichment. The compact deterministic product graph
+# under docs/product/generated/ is committed; extraction caches, logs, chunks,
+# reports and visualisations are local evidence only.
+graphify-out/
+.graphify-build/
+
 # Kandidat- og bevismappe for tools/art/build_title_layers.py: iscenesatte
 # lagfiler og deres målinger, før noget publiceres til src/assets/art/.
 # Regenereres af værktøjet selv — kun de publicerede lag er versionerede.

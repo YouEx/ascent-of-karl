@@ -1,0 +1,546 @@
+{
+  "schemaVersion": 1,
+  "capabilityContract": "docs/product/capabilities.json",
+  "scenarios": [
+    {
+      "id": "life.fresh-start",
+      "capabilities": [
+        "life.begin"
+      ],
+      "actor": "player beginning without a resumable life",
+      "trigger": "the title screen starts a new life",
+      "playerJob": "understand that a distinct Karl life is beginning and enter play",
+      "intendedOutcome": "a viable life starts with explicit seed identity and bounded variation",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Begin",
+        "destination": "life.opening"
+      },
+      "currentBehavior": "The engine creates a fresh state and opens the authored Act opening.",
+      "targetBehavior": "The engine stores a deterministic viable seed that selects starting elements and sidequests.",
+      "adjacentScenarios": {
+        "previous": [],
+        "next": [
+          "need.active"
+        ]
+      },
+      "semanticEvent": "life.started",
+      "evidenceSources": [
+        "src/ui/main.ts",
+        "src/core/engine.ts",
+        "tests/title-screen.test.ts"
+      ]
+    },
+    {
+      "id": "life.continue",
+      "capabilities": [
+        "life.begin"
+      ],
+      "actor": "player with a resumable saved life",
+      "trigger": "the title screen detects a valid save",
+      "playerJob": "return to the same Karl life without losing causal state",
+      "intendedOutcome": "saved engine, narrator, collection, and future seed state resume together",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Continue",
+        "destination": "life.current-state"
+      },
+      "currentBehavior": "Engine and narrator state restore from localStorage.",
+      "targetBehavior": "Versioned life state restores engine, narrator, seed, per-life Chronicle, and validated generated results.",
+      "adjacentScenarios": {
+        "previous": [],
+        "next": [
+          "need.active"
+        ]
+      },
+      "semanticEvent": "life.started",
+      "evidenceSources": [
+        "src/ui/main.ts",
+        "src/core/save.ts",
+        "tests/engine.test.ts"
+      ]
+    },
+    {
+      "id": "attempt.canonical-discovery",
+      "capabilities": [
+        "craft.combine",
+        "collection.canonical-discovery",
+        "chronicle.life"
+      ],
+      "actor": "player combining a pair with an eligible authored recipe",
+      "trigger": "Engine.attempt resolves a previously undiscovered canonical result",
+      "playerJob": "understand what was discovered and how the world changed",
+      "intendedOutcome": "the discovery enters this life and authored completion with truthful story context",
+      "primaryAction": {
+        "kind": "automatic",
+        "label": null,
+        "destination": "chronicle.latest-outcome"
+      },
+      "currentBehavior": "The engine records the discovery; the story page and archive show its flavor and optional historical note.",
+      "targetBehavior": "The same result emits stable capability events and updates both life Chronicle and persistent compendium.",
+      "adjacentScenarios": {
+        "previous": [
+          "need.active"
+        ],
+        "next": [
+          "need.active",
+          "ending.unlocked"
+        ]
+      },
+      "semanticEvent": "discovery.canonical",
+      "evidenceSources": [
+        "src/core/engine.ts",
+        "src/ui/story-page.ts",
+        "tests/story-page.test.ts"
+      ]
+    },
+    {
+      "id": "attempt.known-result",
+      "capabilities": [
+        "craft.combine",
+        "narrator.react",
+        "chronicle.life"
+      ],
+      "actor": "player repeating a canonical recipe already discovered in this life",
+      "trigger": "Engine.attempt resolves kind known",
+      "playerJob": "understand that the pair is valid but adds no new collection entry",
+      "intendedOutcome": "the attempt still receives specific narrative yield without false progress",
+      "primaryAction": {
+        "kind": "automatic",
+        "label": null,
+        "destination": "chronicle.latest-outcome"
+      },
+      "currentBehavior": "The known element is shown as already written and the narrator may react to repetition.",
+      "targetBehavior": "Semantic events distinguish valid repetition from discovery while preserving narrator story memory.",
+      "adjacentScenarios": {
+        "previous": [
+          "need.active"
+        ],
+        "next": [
+          "need.active"
+        ]
+      },
+      "semanticEvent": "combination.attempted",
+      "evidenceSources": [
+        "src/core/engine.ts",
+        "src/ui/story-page.ts",
+        "tests/engine.test.ts"
+      ]
+    },
+    {
+      "id": "attempt.no-fuse",
+      "capabilities": [
+        "craft.combine",
+        "narrator.react",
+        "guidance.needs"
+      ],
+      "actor": "player combining a pair with no eligible canonical result",
+      "trigger": "the verdict system returns locked, near-miss, self, inert, clash, plausible, or absurd",
+      "playerJob": "understand why the attempt failed or what to try next",
+      "intendedOutcome": "the attempt yields specific humour, guidance, or story response",
+      "primaryAction": {
+        "kind": "automatic",
+        "label": null,
+        "destination": "workshop.ready"
+      },
+      "currentBehavior": "Verdict evidence selects baked, live, grammar, or generic narrator response.",
+      "targetBehavior": "Typed product events expose the verdict and response role without exposing hidden recipes.",
+      "adjacentScenarios": {
+        "previous": [
+          "need.active"
+        ],
+        "next": [
+          "need.active",
+          "attempt.invention"
+        ]
+      },
+      "semanticEvent": "narrator.presented",
+      "evidenceSources": [
+        "src/core/verdict.ts",
+        "src/narrator/narrator.ts",
+        "tests/verdict.test.ts"
+      ]
+    },
+    {
+      "id": "attempt.invention",
+      "capabilities": [
+        "craft.combine",
+        "sandbox.invention",
+        "chronicle.life"
+      ],
+      "actor": "player making a validated unscripted combination",
+      "trigger": "the invention path accepts a plausible or productively absurd candidate",
+      "playerJob": "understand what Karl invented and how it can affect this life",
+      "intendedOutcome": "a run-local non-canonical result provides alternative progress",
+      "primaryAction": {
+        "kind": "automatic",
+        "label": null,
+        "destination": "chronicle.invention"
+      },
+      "currentBehavior": "The deterministic offline invention floor creates a bounded element when the playtest flag is enabled.",
+      "targetBehavior": "A typed model proposal passes deterministic gameplay validation, remains run-local, carries no historical claim, and may unlock authored consequences.",
+      "adjacentScenarios": {
+        "previous": [
+          "attempt.no-fuse"
+        ],
+        "next": [
+          "need.active",
+          "ending.unlocked"
+        ]
+      },
+      "semanticEvent": "invention.accepted",
+      "evidenceSources": [
+        "src/core/improvise.ts",
+        "src/ui/improvise-flow.ts",
+        "tests/improvise-engine.test.ts"
+      ]
+    },
+    {
+      "id": "attempt.invention-rejected",
+      "capabilities": [
+        "craft.combine",
+        "sandbox.invention",
+        "narrator.react"
+      ],
+      "actor": "player whose unscripted candidate fails a deterministic invention gate",
+      "trigger": "the invention path rejects canonical recipe, verdict, depth, run limit, or future gameplay validation",
+      "playerJob": "understand the rejection without losing the original attempt's narrative yield",
+      "intendedOutcome": "the player receives an honest mechanical reason and remains ready to act",
+      "primaryAction": {
+        "kind": "none",
+        "label": null,
+        "destination": "workshop.ready"
+      },
+      "currentBehavior": "A non-blocking status/toast explains rejection while Combine remains available.",
+      "targetBehavior": "The validator exposes a stable reason code and the narrator still supplies humour or guidance.",
+      "adjacentScenarios": {
+        "previous": [
+          "attempt.no-fuse"
+        ],
+        "next": [
+          "need.active"
+        ]
+      },
+      "semanticEvent": "combination.attempted",
+      "evidenceSources": [
+        "src/core/improvise.ts",
+        "src/ui/improvise-view.ts",
+        "tests/improvise-ui.test.ts"
+      ]
+    },
+    {
+      "id": "need.active",
+      "capabilities": [
+        "guidance.needs",
+        "narrator.react"
+      ],
+      "actor": "player with at least one current unresolved need",
+      "trigger": "the active Act exposes its current narrator pull",
+      "playerJob": "choose a plausible next objective and possible pair",
+      "intendedOutcome": "one clear goal remains visible while multiple solution paths stay possible",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Select two elements",
+        "destination": "workshop.selection"
+      },
+      "currentBehavior": "The problem rail shows at most the current pull and the narrator escalates hints after failures.",
+      "targetBehavior": "Canonical and validated generated elements are evaluated by the same solve predicates and guidance contract.",
+      "adjacentScenarios": {
+        "previous": [
+          "life.fresh-start",
+          "life.continue",
+          "attempt.canonical-discovery",
+          "attempt.known-result",
+          "attempt.no-fuse",
+          "attempt.invention",
+          "attempt.invention-rejected",
+          "challenge.active"
+        ],
+        "next": [
+          "attempt.canonical-discovery",
+          "attempt.known-result",
+          "attempt.no-fuse",
+          "challenge.active",
+          "ending.unlocked"
+        ]
+      },
+      "semanticEvent": "need.updated",
+      "evidenceSources": [
+        "src/narrator/narrator.ts",
+        "src/core/solves.ts",
+        "tests/solves.test.ts"
+      ]
+    },
+    {
+      "id": "progress.age-up-blocked",
+      "capabilities": [
+        "guidance.needs",
+        "narrator.react"
+      ],
+      "actor": "player who found an age-up recipe before resolving required needs",
+      "trigger": "Engine.attempt resolves kind gated",
+      "playerJob": "understand that the recipe is valid but the current life is not ready",
+      "intendedOutcome": "the player returns to unresolved goals with specific guidance",
+      "primaryAction": {
+        "kind": "automatic",
+        "label": null,
+        "destination": "need.active"
+      },
+      "currentBehavior": "The outcome lists unresolved problems and the narrator supplies the gate line.",
+      "targetBehavior": "Svelte semantics distinguish valid recipe, blocked progression, and next required goals.",
+      "adjacentScenarios": {
+        "previous": [
+          "need.active"
+        ],
+        "next": [
+          "need.active"
+        ]
+      },
+      "semanticEvent": "need.updated",
+      "evidenceSources": [
+        "src/core/engine.ts",
+        "src/ui/story-page.ts",
+        "tests/engine.test.ts"
+      ]
+    },
+    {
+      "id": "challenge.active",
+      "capabilities": [
+        "story.challenges",
+        "guidance.needs"
+      ],
+      "actor": "player interrupted by a timed challenge or seeded sidequest",
+      "trigger": "a challenge spawns while ordinary needs remain available",
+      "playerJob": "decide whether and how to change priorities",
+      "intendedOutcome": "the temporary conflict creates a deliberate divergent choice",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Choose what Karl tries next",
+        "destination": "workshop.selection"
+      },
+      "currentBehavior": "The challenge displays its remaining turns and can resolve or fail through deterministic engine state.",
+      "targetBehavior": "The life seed selects viable challenge/sidequest variation and later surfaces the consequence in the Chronicle.",
+      "adjacentScenarios": {
+        "previous": [
+          "need.active"
+        ],
+        "next": [
+          "need.active",
+          "ending.unlocked"
+        ]
+      },
+      "semanticEvent": "challenge.updated",
+      "evidenceSources": [
+        "src/core/challenge.ts",
+        "src/ui/main.ts",
+        "tests/challenge.test.ts"
+      ]
+    },
+    {
+      "id": "chronicle.read-life",
+      "capabilities": [
+        "chronicle.life"
+      ],
+      "actor": "player reviewing the current or an archived life",
+      "trigger": "the Living Chronicle or archive is opened",
+      "playerJob": "reconstruct what happened and why this Karl became distinct",
+      "intendedOutcome": "attempts, discoveries, inventions, needs, challenges, branches, and fate read as one causal life",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Return to the workshop",
+        "destination": "workshop.ready"
+      },
+      "currentBehavior": "The default book shows narrator and latest outcome; the archive shows canonical entries, timeline, and optional inventions.",
+      "targetBehavior": "Archived immutable life records remain separately browsable and causally complete.",
+      "adjacentScenarios": {
+        "previous": [
+          "attempt.canonical-discovery",
+          "attempt.invention",
+          "ending.unlocked"
+        ],
+        "next": [
+          "need.active",
+          "compendium.review-gap"
+        ]
+      },
+      "semanticEvent": "chronicle.entry-recorded",
+      "evidenceSources": [
+        "src/ui/story-book.ts",
+        "src/ui/book.ts",
+        "tests/living-chronicle.test.ts"
+      ]
+    },
+    {
+      "id": "compendium.review-gap",
+      "capabilities": [
+        "collection.compendium",
+        "replay.share"
+      ],
+      "actor": "player reviewing persistent authored completion",
+      "trigger": "the master compendium is opened after at least one life",
+      "playerJob": "understand what counts and choose a broad target for another life",
+      "intendedOutcome": "finite progress is legible without revealing exact recipes",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Begin another life",
+        "destination": "life.fresh-start"
+      },
+      "currentBehavior": "Discoveries and fates persist separately; no unified percentage or gap model exists.",
+      "targetBehavior": "Canonical discoveries, major branches, and endings form one denominator; inventions remain a separate unbounded gallery.",
+      "adjacentScenarios": {
+        "previous": [
+          "chronicle.read-life",
+          "ending.unlocked"
+        ],
+        "next": [
+          "replay.named-target"
+        ]
+      },
+      "semanticEvent": "compendium.progressed",
+      "evidenceSources": [
+        "PRODUCT.md",
+        "src/ui/book.ts",
+        "tests/timeline.test.ts"
+      ]
+    },
+    {
+      "id": "ending.unlocked",
+      "capabilities": [
+        "fate.ending",
+        "chronicle.life",
+        "collection.compendium"
+      ],
+      "actor": "player whose accumulated state resolves an authored fate",
+      "trigger": "the engine reaches an eligible ending",
+      "playerJob": "understand the surprising fate, why it happened, and that it was collected",
+      "intendedOutcome": "the life feels complete and creates curiosity about undiscovered fates",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Review this life",
+        "destination": "chronicle.read-life"
+      },
+      "currentBehavior": "The ending screen shows authored fate, run summary, and persistent achievement state.",
+      "targetBehavior": "The fate records causal provenance, closes an immutable life archive, and updates authored completion.",
+      "adjacentScenarios": {
+        "previous": [
+          "attempt.canonical-discovery",
+          "attempt.invention",
+          "challenge.active"
+        ],
+        "next": [
+          "chronicle.read-life",
+          "compendium.review-gap",
+          "replay.named-target"
+        ]
+      },
+      "semanticEvent": "fate.unlocked",
+      "evidenceSources": [
+        "src/core/engine.ts",
+        "src/ui/main.ts",
+        "content/endings.json"
+      ]
+    },
+    {
+      "id": "replay.named-target",
+      "capabilities": [
+        "replay.share",
+        "life.begin"
+      ],
+      "actor": "player who has reviewed an ending or completion gap",
+      "trigger": "the player chooses another discovery, branch, fate, seed, or invention path to pursue",
+      "playerJob": "begin a distinct life with an intentional target",
+      "intendedOutcome": "replay is voluntary and directed by curiosity rather than reset friction",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Begin another life",
+        "destination": "life.fresh-start"
+      },
+      "currentBehavior": "The player can start a new life but no target or seed is preserved.",
+      "targetBehavior": "The selected broad target and new viable seed are recorded without revealing exact solutions.",
+      "adjacentScenarios": {
+        "previous": [
+          "ending.unlocked",
+          "compendium.review-gap"
+        ],
+        "next": [
+          "life.fresh-start"
+        ]
+      },
+      "semanticEvent": "life.replay-started",
+      "evidenceSources": [
+        "src/ui/main.ts",
+        "src/ui/run-summary.ts",
+        "tests/title-screen.test.ts"
+      ]
+    },
+    {
+      "id": "network.unavailable",
+      "capabilities": [
+        "platform.cross-device",
+        "life.begin",
+        "chronicle.life",
+        "collection.compendium"
+      ],
+      "actor": "player opening or resuming after active play becomes online-required",
+      "trigger": "the production backend cannot be reached or trusted",
+      "playerJob": "understand why active play is unavailable without losing prior lives",
+      "intendedOutcome": "active play remains blocked while local archives stay safely readable",
+      "primaryAction": {
+        "kind": "control",
+        "label": "Retry connection",
+        "destination": "platform.session-ready"
+      },
+      "currentBehavior": "This target state is not active; current authored gameplay can run offline.",
+      "targetBehavior": "Active play does not start or resume; saves remain intact and Chronicles/compendium remain read-only.",
+      "adjacentScenarios": {
+        "previous": [
+          "life.fresh-start",
+          "life.continue"
+        ],
+        "next": [
+          "platform.session-ready",
+          "chronicle.read-life",
+          "compendium.review-gap"
+        ]
+      },
+      "semanticEvent": "platform.session-ready",
+      "evidenceSources": [
+        "PRODUCT.md",
+        "worker/src/index.ts",
+        "docs/deployment/live-narrator.md"
+      ]
+    },
+    {
+      "id": "platform.session-ready",
+      "capabilities": [
+        "platform.cross-device"
+      ],
+      "actor": "player on a supported phone or desktop browser",
+      "trigger": "the application has loaded required local and target online state",
+      "playerJob": "play the same meaningful game through device-appropriate layout and input",
+      "intendedOutcome": "device differences do not change story meaning, choice, feedback, collection, or completion",
+      "primaryAction": {
+        "kind": "automatic",
+        "label": null,
+        "destination": "life.fresh-start"
+      },
+      "currentBehavior": "One responsive Vite application adapts the vanilla DOM UI across viewport sizes.",
+      "targetBehavior": "Svelte preserves identical product semantics and saves across supported devices after differential parity.",
+      "adjacentScenarios": {
+        "previous": [
+          "network.unavailable"
+        ],
+        "next": [
+          "life.fresh-start",
+          "life.continue"
+        ]
+      },
+      "semanticEvent": "platform.session-ready",
+      "evidenceSources": [
+        "src/ui/main.ts",
+        "src/ui/style.css",
+        "tests/layout-baseline-recorder.test.ts"
+      ]
+    }
+  ]
+}

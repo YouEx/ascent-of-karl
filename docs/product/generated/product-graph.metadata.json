@@ -1,0 +1,34 @@
+{
+  "authority": "PRODUCT.md",
+  "capabilityCount": 12,
+  "edgeCount": 775,
+  "generatorVersion": 1,
+  "graphPath": "docs/product/generated/product-graph.json",
+  "graphSha256": "167b7b9ae61988e72b404161acad4b3307a16c95a4fca91fb5d8d3074d7f9810",
+  "inputSha256": {
+    "PRODUCT.md": "3631cc9c39bc0b0d15659280b294d0f6cebcca8b01556ba12d4a47989586a6c3",
+    "docs/product/capabilities.json": "427f79449bae0568bd676297fdcac27c64a2a8911e3603b9da2b2364972fef31",
+    "docs/product/product-graph-relations.json": "95ba73761e4a3b211aab7747c1070cb7f477cb3c41d7843ebf43e038c0d54f87",
+    "docs/product/scenarios.json": "edd9b9aba2cae5f9e15b9ef47a9a1f4e00599a2557d025527c0314217e7a2bd9",
+    "docs/product/schema/capabilities.schema.json": "e1eb32af678735a77ac7af9294c3ac1b8022d02921a8d1916e4ed122d539b809",
+    "docs/product/schema/relations.schema.json": "75f5e38bccc8d772f851365f78d2da4127ca22386e20ab4527a47323afaad05d",
+    "docs/product/schema/scenarios.schema.json": "b38f4e698194231e4e51d22288a181fa87298323170011e1720557ad526ab5d7",
+    "tools/product-knowledge/export.mjs": "72883f652a1b6722f3810c33ee74569db3c101e7bdc0376b381c655406df8201",
+    "tools/product-knowledge/relations.mjs": "da774b7e80f99460600a3347aaca44b0f9ee241b0b8cbb72f9fdd28968bdeeee",
+    "tools/product-knowledge/schema.mjs": "60708ce40ffc00d22b6e1e4c4a29bac5efb41072528caed826b97bc4ef80b0da",
+    "tools/product-knowledge/validate.mjs": "edfccc046d2e6d6b84b7a6ba2cfc486f9d2c73b577313025a5a64dad8959beda"
+  },
+  "nodeCount": 281,
+  "provenanceCounts": {
+    "CONTRACT": 343,
+    "CURATED": 16,
+    "SOURCE": 416
+  },
+  "scenarioCount": 16,
+  "schemaVersion": 1,
+  "semanticEnrichment": {
+    "authoritative": false,
+    "path": "graphify-out/graph.json",
+    "status": "manual-optional"
+  }
+}

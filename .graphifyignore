@@ -1,0 +1,27 @@
+# Product code and truth-bearing documents only. Generated media and runtime
+# artefacts are not product knowledge and can make semantic extraction unsafe.
+node_modules/
+worker/node_modules/
+dist/
+.git/
+.judge/
+.wrangler/
+.art-evidence/
+graphify-out/
+.graphify-build/
+
+# Generated/binary product media. Their contracts and manifests remain scanned.
+public/audio/
+public/*.mp3
+public/*.wav
+public/*.m4a
+src/assets/art/
+docs/design/reference/*.webp
+docs/design/reference/*.png
+docs/design/evidence/
+tools/art/raw/
+tools/art/model-output/
+tools/art/.review/
+
+# Deterministic generated product graph; contracts and tools are the inputs.
+docs/product/generated/

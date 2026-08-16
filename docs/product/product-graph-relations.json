@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "edges": [
+    {
+      "source": "product:carl",
+      "target": "capability:sandbox.invention",
+      "relation": "has_secondary_objective",
+      "rationale": "Open-ended experimentation is a current secondary objective inside the interactive story.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:collection-records-story",
+      "target": "capability:chronicle.life",
+      "relation": "defines_success_for",
+      "rationale": "The life Chronicle is the visible causal record of one authored Karl story.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:collection-records-story",
+      "target": "capability:collection.compendium",
+      "relation": "defines_success_for",
+      "rationale": "Persistent completion records authored story content across lives.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:narrator-three-dimensions",
+      "target": "capability:narrator.react",
+      "relation": "defines_success_for",
+      "rationale": "Humour, guidance, and story continuity are independently required narrator outcomes.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "capability:sandbox.invention",
+      "target": "capability:guidance.needs",
+      "relation": "can_advance",
+      "rationale": "Validated inventions may solve authored needs as alternative progression.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "capability:sandbox.invention",
+      "target": "capability:story.challenges",
+      "relation": "can_advance",
+      "rationale": "Validated inventions may resolve or alter authored challenge outcomes.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "capability:sandbox.invention",
+      "target": "capability:fate.ending",
+      "relation": "can_unlock",
+      "rationale": "An invention may unlock an authored ending while remaining outside the completion denominator.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "capability:chronicle.life",
+      "target": "capability:collection.compendium",
+      "relation": "feeds",
+      "rationale": "Immutable life records provide provenance for persistent authored completion.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:history",
+      "target": "capability:collection.canonical-discovery",
+      "relation": "constrains",
+      "rationale": "Canonical historical claims require curated content and verified sources.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:history",
+      "target": "capability:sandbox.invention",
+      "relation": "constrains",
+      "rationale": "Generated inventions may affect gameplay but carry no historical claim.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:generated-gameplay",
+      "target": "capability:sandbox.invention",
+      "relation": "constrains",
+      "rationale": "Typed model proposals remain run-local and require deterministic validation.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:sandbox",
+      "target": "capability:sandbox.invention",
+      "relation": "defines_objective_for",
+      "rationale": "Open-ended experimentation is a current secondary objective integrated into authored progression.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:accessibility",
+      "target": "product:carl",
+      "relation": "gates_release",
+      "rationale": "Equivalent channels and WCAG AA gate every player capability.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:online-target",
+      "target": "capability:platform.cross-device",
+      "relation": "gates_target",
+      "rationale": "Online-required active play cannot ship before production backend readiness and honest outage behavior.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:svelte-parity",
+      "target": "capability:platform.cross-device",
+      "relation": "gates_target",
+      "rationale": "Differential parity must pass before the Svelte UI replaces the current UI.",
+      "provenance": "CURATED"
+    },
+    {
+      "source": "principle:karl",
+      "target": "product:carl",
+      "relation": "defines_character",
+      "rationale": "Karl remains the recognisable comic mascot while choices accumulate visible scars.",
+      "provenance": "CURATED"
+    }
+  ]
+}

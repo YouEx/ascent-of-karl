@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ascent-of-karl.local/schema/scenarios.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "capabilityContract",
+    "scenarios"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "capabilityContract": {
+      "const": "docs/product/capabilities.json"
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 12,
+      "items": {
+        "$ref": "#/$defs/scenario"
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "event": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "repoPath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\./)[A-Za-z0-9_.@/-]+$"
+    },
+    "stringOrNull": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "capabilities",
+        "actor",
+        "trigger",
+        "playerJob",
+        "intendedOutcome",
+        "primaryAction",
+        "currentBehavior",
+        "targetBehavior",
+        "adjacentScenarios",
+        "semanticEvent",
+        "evidenceSources"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "actor": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "trigger": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "playerJob": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "intendedOutcome": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "primaryAction": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "label",
+            "destination"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "automatic",
+                "control",
+                "none"
+              ]
+            },
+            "label": {
+              "$ref": "#/$defs/stringOrNull"
+            },
+            "destination": {
+              "$ref": "#/$defs/stringOrNull"
+            }
+          }
+        },
+        "currentBehavior": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "targetBehavior": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "adjacentScenarios": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "previous",
+            "next"
+          ],
+          "properties": {
+            "previous": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "next": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            }
+          }
+        },
+        "semanticEvent": {
+          "$ref": "#/$defs/event"
+        },
+        "evidenceSources": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/repoPath"
+          }
+        }
+      }
+    }
+  }
+}

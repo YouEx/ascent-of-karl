@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "queries": [
+    {
+      "id": "product-purpose",
+      "question": "How do combining, narrator, and the master compendium serve the purpose of the app?",
+      "expectedCapabilities": [
+        "craft.combine",
+        "narrator.react",
+        "collection.compendium"
+      ],
+      "requiredNodes": [
+        "product:carl",
+        "principle:collection-records-story",
+        "principle:narrator-three-dimensions"
+      ],
+      "requiredSources": [
+        "PRODUCT.md"
+      ],
+      "requiredTerms": [
+        "interactive story",
+        "authored-content completion percentage"
+      ]
+    },
+    {
+      "id": "completion-definition",
+      "question": "What defines collection completion and do inventions count?",
+      "expectedCapabilities": [
+        "collection.compendium",
+        "sandbox.invention"
+      ],
+      "requiredNodes": [
+        "principle:collection-records-story",
+        "principle:sandbox"
+      ],
+      "requiredSources": [
+        "PRODUCT.md",
+        "src/ui/book.ts"
+      ],
+      "requiredTerms": [
+        "inventions remain in a separate unbounded gallery",
+        "completion percentage"
+      ]
+    },
+    {
+      "id": "invention-purpose",
+      "question": "Why does improvisation exist and what can an invention change?",
+      "expectedCapabilities": [
+        "sandbox.invention"
+      ],
+      "requiredNodes": [
+        "principle:generated-gameplay",
+        "principle:history"
+      ],
+      "requiredSources": [
+        "src/core/improvise.ts",
+        "worker/src/improvise.ts"
+      ],
+      "requiredTerms": [
+        "alternative progression",
+        "no historical claim"
+      ]
+    },
+    {
+      "id": "narrator-dimensions",
+      "question": "How do we know the narrator succeeds?",
+      "expectedCapabilities": [
+        "narrator.react"
+      ],
+      "requiredNodes": [
+        "principle:narrator-three-dimensions"
+      ],
+      "requiredSources": [
+        "src/narrator/narrator.ts",
+        "tests/narrator.test.ts"
+      ],
+      "requiredTerms": [
+        "laugh",
+        "guidance",
+        "describe who their Karl became"
+      ]
+    },
+    {
+      "id": "network-unavailable",
+      "question": "What happens when the required network is unavailable?",
+      "expectedCapabilities": [
+        "platform.cross-device"
+      ],
+      "requiredNodes": [
+        "scenario:network.unavailable",
+        "principle:online-target"
+      ],
+      "requiredSources": [
+        "PRODUCT.md",
+        "worker/src/index.ts"
+      ],
+      "requiredTerms": [
+        "active play does not start or resume",
+        "read-only"
+      ]
+    },
+    {
+      "id": "online-release-gate",
+      "question": "What must be true before online-required active play can ship?",
+      "expectedCapabilities": [
+        "platform.cross-device"
+      ],
+      "requiredNodes": [
+        "principle:online-target"
+      ],
+      "requiredSources": [
+        "PRODUCT.md",
+        "docs/deployment/live-narrator.md"
+      ],
+      "requiredTerms": [
+        "production-readiness gate",
+        "differential old/new parity"
+      ]
+    },
+    {
+      "id": "generated-gameplay-authority",
+      "question": "What authority may AI have over generated gameplay and history?",
+      "expectedCapabilities": [
+        "sandbox.invention"
+      ],
+      "requiredNodes": [
+        "principle:generated-gameplay",
+        "principle:history"
+      ],
+      "requiredSources": [
+        "PRODUCT.md",
+        "src/core/improvise.ts"
+      ],
+      "requiredTerms": [
+        "deterministic validation",
+        "run-local",
+        "no historical claim"
+      ]
+    },
+    {
+      "id": "seeded-lives",
+      "question": "How should starting elements and sidequests vary between lives?",
+      "expectedCapabilities": [
+        "life.begin",
+        "story.challenges"
+      ],
+      "requiredNodes": [
+        "scenario:life.fresh-start",
+        "scenario:challenge.active"
+      ],
+      "requiredSources": [
+        "src/core/engine.ts",
+        "content/challenges.json"
+      ],
+      "requiredTerms": [
+        "deterministic seed",
+        "viable"
+      ]
+    },
+    {
+      "id": "svelte-parity",
+      "question": "What must the Svelte migration preserve before cutover?",
+      "expectedCapabilities": [
+        "platform.cross-device"
+      ],
+      "requiredNodes": [
+        "principle:svelte-parity"
+      ],
+      "requiredSources": [
+        "PRODUCT.md",
+        "tests/layout-baseline-recorder.test.ts"
+      ],
+      "requiredTerms": [
+        "Differential old/new parity",
+        "save compatibility"
+      ]
+    },
+    {
+      "id": "accessibility-gate",
+      "question": "Who owns accessibility and what blocks capability completion?",
+      "expectedCapabilities": [
+        "platform.cross-device"
+      ],
+      "requiredNodes": [
+        "principle:accessibility"
+      ],
+      "requiredSources": [
+        "PRODUCT.md",
+        "src/ui/overlay.ts"
+      ],
+      "requiredTerms": [
+        "Equivalent information and action channels",
+        "WCAG AA"
+      ]
+    }
+  ]
+}
