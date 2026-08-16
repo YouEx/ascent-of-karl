@@ -1,13 +1,13 @@
 {
   "authority": "PRODUCT.md",
   "capabilityCount": 12,
-  "edgeCount": 775,
+  "edgeCount": 774,
   "generatorVersion": 1,
   "graphPath": "docs/product/generated/product-graph.json",
-  "graphSha256": "167b7b9ae61988e72b404161acad4b3307a16c95a4fca91fb5d8d3074d7f9810",
+  "graphSha256": "18dda885b0496f47d1e54be40ce855529a0d45fc8aad262c5cebd421e4492315",
   "inputSha256": {
-    "PRODUCT.md": "3631cc9c39bc0b0d15659280b294d0f6cebcca8b01556ba12d4a47989586a6c3",
-    "docs/product/capabilities.json": "427f79449bae0568bd676297fdcac27c64a2a8911e3603b9da2b2364972fef31",
+    "PRODUCT.md": "81e0460993c801391bfb9bde416aa4e27164bed1e48d48402859c0703a6a5934",
+    "docs/product/capabilities.json": "9df367535953893f8781232e13a1b7e56041afb07410779c0d280a297ccd8e0e",
     "docs/product/product-graph-relations.json": "95ba73761e4a3b211aab7747c1070cb7f477cb3c41d7843ebf43e038c0d54f87",
     "docs/product/scenarios.json": "edd9b9aba2cae5f9e15b9ef47a9a1f4e00599a2557d025527c0314217e7a2bd9",
     "docs/product/schema/capabilities.schema.json": "e1eb32af678735a77ac7af9294c3ac1b8022d02921a8d1916e4ed122d539b809",
@@ -18,9 +18,9 @@
     "tools/product-knowledge/schema.mjs": "60708ce40ffc00d22b6e1e4c4a29bac5efb41072528caed826b97bc4ef80b0da",
     "tools/product-knowledge/validate.mjs": "edfccc046d2e6d6b84b7a6ba2cfc486f9d2c73b577313025a5a64dad8959beda"
   },
-  "nodeCount": 281,
+  "nodeCount": 280,
   "provenanceCounts": {
-    "CONTRACT": 343,
+    "CONTRACT": 342,
     "CURATED": 16,
     "SOURCE": 416
   },

@@ -58,7 +58,7 @@ describe("purpose-first agent product context", () => {
     expect(pack.text).toContain("Equivalent information and action channels");
     expect(pack.text).toContain("## Product-wide boundaries");
     expect(pack.text).toContain(
-      "Before the external playtest gate closes",
+      "Implementation may proceed across approved targets",
     );
     expect(pack.text).toContain("## Open decisions — do not guess");
     expect(pack.text).toContain("Monetisation model.");

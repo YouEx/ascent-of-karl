@@ -13,7 +13,7 @@
       "Generated inventions do not enter the denominator; authored consequences they unlock count."
     ],
     "hardBoundaries": [
-      "Before the external playtest gate closes, implementation is limited to product truth, contracts, graph, and context infrastructure; no player-facing, gameplay, Svelte, online-required, or telemetry changes may ship.",
+      "Implementation may proceed across approved targets, but no target behavior is `production` until its advancement gate passes.",
       "The product is entertainment, not curriculum or assessment.",
       "Historical claims require curated canonical content and verified sources.",
       "Generated graphs and implementation evidence never override human product authority.",
@@ -25,7 +25,6 @@
       "Final voice production method.",
       "Production model provider and hosting architecture.",
       "Numerical thresholds before measured playtest baselines.",
-      "Exact post-playtest Svelte migration release.",
       "Long-term breadth of open-ended sandbox play."
     ],
     "crossCutting": {
@@ -47,8 +46,8 @@
       "Worker URLs are absent from shipped bundles."
     ],
     "targetArchitecture": [
-      "Product truth infrastructure precedes player-facing changes.",
-      "After external playtest, replace the UI with Svelte in one parity-first coordinated migration.",
+      "Product truth infrastructure precedes and governs player-facing changes.",
+      "Replace the UI with Svelte in one coordinated migration now.",
       "Generated gameplay remains typed, deterministic-validated, run-local, and historically non-authoritative.",
       "Active play becomes online-required only after backend production readiness.",
       "Typed product events remain local until telemetry hosting and consent are approved."
@@ -59,8 +58,8 @@
       "The product north star is the player's **authored-content completion percentage**",
       "The narrator's humour, guidance, and account of who Karl becomes are equally important.",
       "The approved target is online-required active play.",
-      "After the external playtest, replace the UI with Svelte in one coordinated migration.",
-      "Before the external playtest gate closes, implementation is limited to product truth, contracts, graph, and context infrastructure; no player-facing, gameplay, Svelte, online-required, or telemetry changes may ship."
+      "Martin explicitly lifted the pre-playtest implementation freeze on 2026-08-16.",
+      "Implementation may proceed across approved targets, but no target behavior is `production` until its advancement gate passes."
     ]
   },
   "lifecycleStates": [
@@ -86,7 +85,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Define and exhaustively verify seeded starting-pool and sidequest viability before implementation."
       },
       "dependencies": [],
@@ -132,7 +131,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "External playtest must establish where attempts still feel empty or arbitrary."
       },
       "dependencies": [
@@ -181,7 +180,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "The dual collection model must define canonical completion and save compatibility."
       },
       "dependencies": [
@@ -228,7 +227,7 @@
       ],
       "lifecycle": {
         "current": "playtest",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "External improvisation playtest, deterministic gameplay validator, and production backend readiness must all pass."
       },
       "dependencies": [
@@ -276,7 +275,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Playtest must independently evidence humour, guidance, and story continuity."
       },
       "dependencies": [
@@ -325,7 +324,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Generated solutions must pass the same deterministic solve predicates as canonical elements."
       },
       "dependencies": [
@@ -374,7 +373,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Seeded challenge selection must preserve life viability and causal evidence."
       },
       "dependencies": [
@@ -422,7 +421,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Versioned per-life archives and save migration must be specified and tested."
       },
       "dependencies": [
@@ -473,7 +472,7 @@
       ],
       "lifecycle": {
         "current": "proposed",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Define branch identity, completion denominator, persistence, and migration before implementation."
       },
       "dependencies": [
@@ -523,7 +522,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Persistent compendium semantics and ending provenance must be defined."
       },
       "dependencies": [
@@ -571,7 +570,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Seed format, life archive, and compendium targets must be implemented and playtested."
       },
       "dependencies": [
@@ -618,7 +617,7 @@
       ],
       "lifecycle": {
         "current": "production",
-        "target": "approved-target",
+        "target": "implementing",
         "advancementGate": "Differential old/new parity must pass before Svelte replaces the current UI."
       },
       "dependencies": [

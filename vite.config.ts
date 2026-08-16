@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { OutputChunk } from "rollup";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 import type { Plugin, ResolvedConfig } from "vite";
 import { defaultExclude, defineConfig } from "vitest/config";
 
@@ -110,7 +111,7 @@ function pagesBuildContract(): Plugin {
 export default defineConfig({
   // Relative stier, så builds virker under en underssti (GitHub Pages)
   base: "./",
-  plugins: [pagesBuildContract()],
+  plugins: [svelte(), pagesBuildContract()],
   test: {
     // Vitest stubber som udgangspunkt CSS-importer til tom streng. Uden denne
     // linje ville tests/design-tokens.test.ts læse tokens.css som "" og BESTÅ

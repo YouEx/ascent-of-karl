@@ -33,14 +33,16 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
    (2026-08-10). Actions-nedbruddet fra 2026-08-06 er ovre; både `ci.yml` og
    `deploy.yml` er grønne. Delekortet er på plads og genereres nu fra
    designsystemet (`npm run social`), så linket kan sendes direkte til testere.
-2. **Ekstern improvisationsplaytest** — **NÆSTE**: source er færdig, og tre
+2. **Ekstern improvisationsplaytest** — source er færdig, og tre
    agent-QA-runs fandt ingen source-defekt. Det er ikke human evidens. Rekruttér
    præcis **5–10 engelsktalende deltagere** på tværs af crafting-game- og
    low-game-experience-grupper; de spiller uden forklaring. Mål: søger de
    absurditeten frivilligt, lander narratorens dom, og føles cap 6 beskyttende
    frem for straffende? Materialet ligger i `docs/playtest/`, og agentbeviset
    i `docs/playtest/task-030-improvisation-agent-qa-2026-08-13/`.
-   **Der skal ikke implementeres mere før denne runde.**
+   **Implementeringsstoppet er ophævet af Martin 2026-08-16.** Runden er stadig
+   nødvendig som produktionsbevis for humor, guidance, story continuity og
+   improvisationens progression, men den blokerer ikke kildeimplementeringen.
    Den unlisted, deterministiske offline-kandidat er
    <https://youex.github.io/ascent-of-karl/playtest/improvisation/>.
    Den eksterne gate er fortsat åben; linket er ikke production-enable.

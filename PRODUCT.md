@@ -158,7 +158,7 @@ subset and sidequests while guaranteeing viable authored progression.
 - Players understand the starting possibilities without explanation.
 - Every generated seed retains a viable authored path.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** Define and exhaustively verify seeded starting-pool and
 sidequest viability before implementation.
@@ -183,7 +183,7 @@ outcome or a specific humour, guidance, or story response.
 - Generic silence never follows an attempt.
 - The player can distinguish result, reaction, and next possibility.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** External playtest must establish where attempts still feel
 empty or arbitrary.
@@ -208,7 +208,7 @@ and persistent completion effect are immediately legible.
 - Players understand that it expands future possibilities.
 - Visible collection progress feels valuable.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** The dual collection model must define canonical completion
 and save compatibility.
@@ -234,7 +234,7 @@ authored consequences without historical claims.
 - Players understand inventions are not historical canon.
 - The result feels caused by the player's unscripted choice.
 
-**Lifecycle:** playtest → approved-target
+**Lifecycle:** playtest → implementing
 
 **Advancement gate:** External improvisation playtest, deterministic gameplay
 validator, and production backend readiness must all pass.
@@ -260,7 +260,7 @@ production.
 - Players act on narrator guidance when stuck.
 - Players can describe who their Karl became.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** Playtest must independently evidence humour, guidance, and
 story continuity.
@@ -285,7 +285,7 @@ multiple legible paths to the same need.
 - Players perceive multiple possible solution paths.
 - Players do not feel railroaded.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** Generated solutions must pass the same deterministic solve
 predicates as canonical elements.
@@ -309,7 +309,7 @@ replacing the main story, and their consequences remain visible later.
 - Players deliberately change or preserve their plan.
 - Players connect a later outcome to the choice.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** Seeded challenge selection must preserve life viability
 and causal evidence.
@@ -333,7 +333,7 @@ discoveries, inventions, needs, challenges, branches, and fate.
 - Players distinguish one archived Karl from another.
 - Canonical history and inventions remain visibly distinct.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** Versioned per-life archives and save migration must be
 specified and tested.
@@ -359,7 +359,7 @@ unbounded gallery.
 - Players identify an unexplored area without receiving an exact solution.
 - Players choose another life to pursue the gap.
 
-**Lifecycle:** proposed → approved-target
+**Lifecycle:** proposed → implementing
 
 **Advancement gate:** Define branch identity, completion denominator,
 persistence, and migration before implementation.
@@ -383,7 +383,7 @@ its rarity/conditions never require fabricated statistics.
 - The player can trace why this life produced it.
 - The player wants to collect more fates.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** Persistent compendium semantics and ending provenance must
 be defined.
@@ -410,7 +410,7 @@ game.
 - Players voluntarily begin another life.
 - Shared summaries remain understandable without being required for progress.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** Seed format, life archive, and compendium targets must be
 implemented and playtested.
@@ -435,10 +435,17 @@ accessibility, events, and save compatibility across supported devices.
 - Layout differences do not change product meaning.
 - Every capability passes equivalent-channel accessibility and WCAG AA.
 
-**Lifecycle:** production → approved-target
+**Lifecycle:** production → implementing
 
 **Advancement gate:** Differential old/new parity must pass before Svelte
 replaces the current UI.
+
+## Active execution decision
+
+Martin explicitly lifted the pre-playtest implementation freeze on 2026-08-16.
+All approved target capabilities are now **implementing**. The external
+playtest remains required production evidence for the capabilities whose
+advancement gates name it; it is no longer an implementation blocker.
 
 ## Current and target architecture
 
@@ -454,9 +461,8 @@ replaces the current UI.
 
 ### Approved target
 
-- Product truth infrastructure precedes player-facing changes.
-- After the external playtest, replace the UI with Svelte in one coordinated
-  migration.
+- Product truth infrastructure precedes and governs player-facing changes.
+- Replace the UI with Svelte in one coordinated migration now.
 - The first Svelte release preserves visual and behavioral parity; redesign and
   new target gameplay do not hide inside the framework migration.
 - Cutover requires differential old/new parity across behavior, semantic DOM,
@@ -476,9 +482,8 @@ Every capability and scenario uses one of:
 
 ## Hard product boundaries
 
-- Before the external playtest gate closes, implementation is limited to product
-  truth, contracts, graph, and context infrastructure; no player-facing,
-  gameplay, Svelte, online-required, or telemetry changes may ship.
+- Implementation may proceed across approved targets, but no target behavior is
+  `production` until its advancement gate passes.
 - The product is entertainment, not curriculum or assessment.
 - Historical claims require curated canonical content and verified sources.
 - Generated graphs, screenshots, old references, and implementation comments
@@ -495,7 +500,6 @@ These are intentionally unresolved and must not be guessed by agents:
 - final voice production method;
 - production model/provider and hosting architecture;
 - numerical feature thresholds before measured playtest baselines;
-- the exact post-playtest Svelte migration release;
 - the long-term breadth of open-ended sandbox play.
 
 ## Change protocol

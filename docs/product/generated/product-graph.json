@@ -122,7 +122,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:chronicle.life",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -201,7 +201,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:collection.canonical-discovery",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -310,7 +310,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:collection.compendium",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -413,7 +413,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:craft.combine",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -498,7 +498,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:fate.ending",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -601,7 +601,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:guidance.needs",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -692,7 +692,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:life.begin",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -795,7 +795,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:narrator.react",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -928,7 +928,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:platform.cross-device",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -1013,7 +1013,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:replay.share",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -1119,7 +1119,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:sandbox.invention",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -1204,7 +1204,7 @@
       "provenance": "CONTRACT",
       "relation": "target_lifecycle",
       "source": "capability:story.challenges",
-      "target": "lifecycle:approved-target"
+      "target": "lifecycle:implementing"
     },
     {
       "provenance": "CONTRACT",
@@ -4295,7 +4295,7 @@
       "provenance": "CONTRACT",
       "relation": "has_boundary",
       "source": "product:carl",
-      "target": "boundary:01-before-the-external-playtest-gate-closes-implementation-is-limited-to-product-truth-contracts-graph-and-context-infrastructure-no-player-facing-gameplay-svelte-online-required-or-telemetry-changes-may-ship"
+      "target": "boundary:01-implementation-may-proceed-across-approved-targets-but-no-target-behavior-is-production-until-its-advancement-gate-passes"
     },
     {
       "provenance": "CONTRACT",
@@ -4355,13 +4355,7 @@
       "provenance": "CONTRACT",
       "relation": "has_open_decision",
       "source": "product:carl",
-      "target": "decision:05-exact-post-playtest-svelte-migration-release"
-    },
-    {
-      "provenance": "CONTRACT",
-      "relation": "has_open_decision",
-      "source": "product:carl",
-      "target": "decision:06-long-term-breadth-of-open-ended-sandbox-play"
+      "target": "decision:05-long-term-breadth-of-open-ended-sandbox-play"
     },
     {
       "provenance": "CONTRACT",
@@ -5099,9 +5093,9 @@
   ],
   "nodes": [
     {
-      "id": "boundary:01-before-the-external-playtest-gate-closes-implementation-is-limited-to-product-truth-contracts-graph-and-context-infrastructure-no-player-facing-gameplay-svelte-online-required-or-telemetry-changes-may-ship",
-      "label": "Before the external playtest gate closes, implementation is limited to product truth, contracts, graph, and context infrastructure; no player-facing, gameplay, Svelte, online-required, or telemetry changes may ship.",
-      "text": "Before the external playtest gate closes, implementation is limited to product truth, contracts, graph, and context infrastructure; no player-facing, gameplay, Svelte, online-required, or telemetry changes may ship.",
+      "id": "boundary:01-implementation-may-proceed-across-approved-targets-but-no-target-behavior-is-production-until-its-advancement-gate-passes",
+      "label": "Implementation may proceed across approved targets, but no target behavior is `production` until its advancement gate passes.",
+      "text": "Implementation may proceed across approved targets, but no target behavior is `production` until its advancement gate passes.",
       "type": "hard-boundary"
     },
     {
@@ -5143,7 +5137,7 @@
       "lifecycle": {
         "advancementGate": "Versioned per-life archives and save migration must be specified and tested.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player can reconstruct what this Karl tried, discovered, invented, solved, and became.",
       "purpose": "Preserve the causal story of one distinct Karl life.",
@@ -5170,7 +5164,7 @@
       "lifecycle": {
         "advancementGate": "The dual collection model must define canonical completion and save compatibility.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player recognises a new canonical result, sees collection progress, and understands that the world has expanded.",
       "purpose": "Deliver a collectible authored story milestone that expands future possibilities.",
@@ -5197,7 +5191,7 @@
       "lifecycle": {
         "advancementGate": "Define branch identity, completion denominator, persistence, and migration before implementation.",
         "current": "proposed",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player understands completion, identifies a broad gap, and chooses another life to pursue it.",
       "purpose": "Make finite authored completion legible and motivate another life without revealing exact recipes.",
@@ -5224,7 +5218,7 @@
       "lifecycle": {
         "advancementGate": "External playtest must establish where attempts still feel empty or arbitrary.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "A selected pair produces a meaningful result, reaction, consequence, or clue.",
       "purpose": "Give the player the primary language for deciding what Karl tries.",
@@ -5253,7 +5247,7 @@
       "lifecycle": {
         "advancementGate": "Persistent compendium semantics and ending provenance must be defined.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player unlocks a memorable fate, understands its cause, and becomes curious about undiscovered endings.",
       "purpose": "Reward exploration with a surprising, collectible ending.",
@@ -5280,7 +5274,7 @@
       "lifecycle": {
         "advancementGate": "Generated solutions must pass the same deterministic solve predicates as canonical elements.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player can name the next need and imagine multiple possible solutions.",
       "purpose": "Give clear short-term goals without reducing the game to one prescribed recipe.",
@@ -5308,7 +5302,7 @@
       "lifecycle": {
         "advancementGate": "Define and exhaustively verify seeded starting-pool and sidequest viability before implementation.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player understands the available starting possibilities and begins a viable but meaningfully varied life.",
       "purpose": "Start one distinct archived Karl life and reach meaningful play quickly.",
@@ -5336,7 +5330,7 @@
       "lifecycle": {
         "advancementGate": "Playtest must independently evidence humour, guidance, and story continuity.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player laughs, receives useful guidance, and recognises a coherent character arc across the life.",
       "purpose": "Make the game funny, keep the player moving, and turn play into the story of this Karl.",
@@ -5365,7 +5359,7 @@
       "lifecycle": {
         "advancementGate": "Differential old/new parity must pass before Svelte replaces the current UI.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player understands the same story, choices, feedback, and collection on supported devices.",
       "purpose": "Deliver the same meaningful, completable game on phone and desktop, even when layout and input differ.",
@@ -5400,7 +5394,7 @@
       "lifecycle": {
         "advancementGate": "Seed format, life archive, and compendium targets must be implemented and playtested.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player names a new target and voluntarily begins another life; sharing remains optional expression.",
       "purpose": "Turn completion gaps, new seeds, sidequests, and alternative progression into another distinct life. Sharing expresses the result but is not required for progression.",
@@ -5427,7 +5421,7 @@
       "lifecycle": {
         "advancementGate": "External improvisation playtest, deterministic gameplay validator, and production backend readiness must all pass.",
         "current": "playtest",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "A player-owned invention remains distinct from canon and can meaningfully affect this life.",
       "purpose": "Provide alternative progression when a player's unscripted idea is plausible or productively absurd.",
@@ -5455,7 +5449,7 @@
       "lifecycle": {
         "advancementGate": "Seeded challenge selection must preserve life viability and causal evidence.",
         "current": "production",
-        "target": "approved-target"
+        "target": "implementing"
       },
       "playerOutcome": "The player notices an interruption, chooses deliberately, and later recognises its consequence.",
       "purpose": "Create temporary priority conflicts that make lives diverge.",
@@ -5498,13 +5492,7 @@
       "type": "open-decision"
     },
     {
-      "id": "decision:05-exact-post-playtest-svelte-migration-release",
-      "label": "Exact post-playtest Svelte migration release.",
-      "text": "Exact post-playtest Svelte migration release.",
-      "type": "open-decision"
-    },
-    {
-      "id": "decision:06-long-term-breadth-of-open-ended-sandbox-play",
+      "id": "decision:05-long-term-breadth-of-open-ended-sandbox-play",
       "label": "Long-term breadth of open-ended sandbox play.",
       "text": "Long-term breadth of open-ended sandbox play.",
       "type": "open-decision"
@@ -6964,8 +6952,8 @@
       "primaryPurpose": "An interactive story where combining is how the player chooses what Karl tries, discovers, invents, solves, and becomes.",
       "promise": "Shape Karl's journey through what you combine, collect the history and fates you uncover, and hear the narrator turn every success and disaster into his story.",
       "targetArchitecture": [
-        "Product truth infrastructure precedes player-facing changes.",
-        "After external playtest, replace the UI with Svelte in one parity-first coordinated migration.",
+        "Product truth infrastructure precedes and governs player-facing changes.",
+        "Replace the UI with Svelte in one coordinated migration now.",
         "Generated gameplay remains typed, deterministic-validated, run-local, and historically non-authoritative.",
         "Active play becomes online-required only after backend production readiness.",
         "Typed product events remain local until telemetry hosting and consent are approved."

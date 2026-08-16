@@ -155,7 +155,8 @@ og et admin-token i miljøet; brug aldrig token som CLI-argument. Se
     tags, løsning og turforbrug uden Worker. En model må kun forbedre
     `name`/`flavor` via UI-laget; den må aldrig levere `kind`, `stuff`,
     `traits`, `scale`, `solves`, flags, age-up eller ending.
-12. **Improvisation er production-off indtil ekstern gate.** Pages-kontrakten
+12. **Improvisation er production-off indtil ekstern gate, men implementation
+    er aktiv.** Pages-kontrakten
     skal tvinge den offentlige root til `VITE_IMPROVISE_ENABLED=false`.
     Den må gerne bygge den særskilte, unlisted
     `/playtest/improvisation/`-kandidat med flaget `true`, men både
@@ -172,7 +173,9 @@ og et admin-token i miljøet; brug aldrig token som CLI-argument. Se
     current truth, approved target, kvalitativ acceptance og lifecycle/gate i
     `docs/product/capabilities.json`. Brug kontekstkompilatoren før ændringen.
     En target-state er ikke shipped behavior, og Graphify må aldrig omskrive
-    produktets autoritet.
+    produktets autoritet. Martin ophævede implementeringsstoppet 2026-08-16;
+    alle target-capabilities er nu `implementing`, mens deres produktionsporte
+    består.
 
 ## Tone (til indholdsarbejde)
 
