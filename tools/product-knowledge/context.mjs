@@ -349,12 +349,7 @@ export function assertContextArtifactsCurrent(
   assertArtifactCurrent(metadataText, artifacts.metadataText, METADATA_PATH);
 }
 
-export function compileProductContext({
-  root = REPO_ROOT,
-  query = "",
-  capabilityId = null,
-  maxCapabilities = 3,
-} = {}) {
+export function prepareProductContext(root = REPO_ROOT) {
   const validation = validateProductContracts(root);
   if (validation.errors.length > 0) {
     throw new Error(validation.errors.join("\n"));
@@ -362,9 +357,23 @@ export function compileProductContext({
   const graphText = readFileSync(path.join(root, GRAPH_PATH), "utf8");
   const metadataText = readFileSync(path.join(root, METADATA_PATH), "utf8");
   assertContextArtifactsCurrent(root, graphText, metadataText);
-  const graph = JSON.parse(graphText);
-  const manifest = validation.data.capabilities;
-  const scenarios = validation.data.scenarios;
+  return {
+    root,
+    manifest: validation.data.capabilities,
+    scenarios: validation.data.scenarios,
+    graph: JSON.parse(graphText),
+  };
+}
+
+export function compilePreparedProductContext(
+  prepared,
+  {
+    query = "",
+    capabilityId = null,
+    maxCapabilities = 3,
+  } = {},
+) {
+  const { manifest, scenarios, graph } = prepared;
   const selected = selectCapabilities(
     manifest,
     query,
@@ -391,6 +400,19 @@ export function compileProductContext({
   };
   pack.text = markdown(pack);
   return pack;
+}
+
+export function compileProductContext({
+  root = REPO_ROOT,
+  query = "",
+  capabilityId = null,
+  maxCapabilities = 3,
+} = {}) {
+  return compilePreparedProductContext(prepareProductContext(root), {
+    query,
+    capabilityId,
+    maxCapabilities,
+  });
 }
 
 function parseArgs(argv) {

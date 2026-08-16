@@ -2,7 +2,10 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { compileProductContext } from "./context.mjs";
+import {
+  compilePreparedProductContext,
+  prepareProductContext,
+} from "./context.mjs";
 import { REPO_ROOT, validateProductContracts } from "./validate.mjs";
 
 function missing(expected, actual) {
@@ -14,9 +17,9 @@ export function checkKnownAnswers(root = REPO_ROOT) {
   const validation = validateProductContracts(root);
   if (validation.errors.length > 0) return validation.errors;
   const errors = [];
+  const prepared = prepareProductContext(root);
   for (const fixture of validation.data.knownAnswers.queries) {
-    const pack = compileProductContext({
-      root,
+    const pack = compilePreparedProductContext(prepared, {
       query: fixture.question,
       maxCapabilities: 4,
     });
