@@ -4,13 +4,13 @@ version: 1.0
 date_created: 2026-08-16
 last_updated: 2026-08-16
 owner: Martin
-status: 'In progress'
+status: 'Complete'
 tags: [architecture, svelte, gameplay, backend, persistence, migration]
 ---
 
 # Introduction
 
-![Status: In progress](https://img.shields.io/badge/status-In_progress-yellow)
+![Status: Complete](https://img.shields.io/badge/status-Complete-brightgreen)
 
 Implement every approved target capability in dependency order: domain model,
 generated gameplay, online runtime, semantic events, Svelte UI, differential
@@ -132,7 +132,7 @@ separate operational gates.
 |------|-------------|-----------|------|
 | TASK-026 | Run full unit, Python, Svelte, Worker, content, product, parity, visual, UX, build, Pages, and live-deploy gates. | ✅ | 2026-08-16 |
 | TASK-027 | Run spec and blocker-only implementation review; close every finding within the fixed review budget. | ✅ | 2026-08-16 |
-| TASK-028 | Commit, push, verify exact-head CI/deploy/live artifacts, and record external production blockers separately. | | |
+| TASK-028 | Commit, push, verify exact-head CI/deploy/live artifacts, and record external production blockers separately. | ✅ | 2026-08-16 |
 
 ## 3. Alternatives
 
