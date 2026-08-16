@@ -52,6 +52,7 @@ describe("causal archived Chronicle", () => {
         text: "Karl has discovered fire's administrative assistant.",
         roles: ["humour", "story"],
         audioMode: "text-only",
+        source: "authored",
       },
     });
     const active = createActiveLife({

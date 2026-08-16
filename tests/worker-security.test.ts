@@ -245,6 +245,12 @@ describe("origin (SEC-002/RISK-001)", () => {
   it("eksponerer Retry-After, så browserens JS må læse den (ellers virker klientens ro-periode ikke)", () => {
     const headers = corsHeaders("https://youex.github.io", ["https://youex.github.io"]);
     expect(headers["access-control-expose-headers"]).toContain("retry-after");
+    expect(headers["access-control-expose-headers"]).toContain(
+      "x-audio-sample-rate",
+    );
+    expect(headers["access-control-expose-headers"]).toContain(
+      "x-audio-encoding",
+    );
   });
 
   it("tillader run-API'ets browsermetoder og autentificeringsheadere", () => {

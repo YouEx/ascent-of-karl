@@ -25,6 +25,7 @@ export interface RunSnapshot<TState = unknown> {
   revision: number;
   snapshot: TState;
   status?: "active" | "ended";
+  commentaryCue?: RuntimeCommentaryCue;
 }
 
 export interface RunAttemptResult<TState = unknown, TOutcome = unknown>
@@ -32,3 +33,9 @@ export interface RunAttemptResult<TState = unknown, TOutcome = unknown>
   attemptId: string;
   outcome: TOutcome;
 }
+
+export type { RuntimeCommentaryResult };
+import type {
+  RuntimeCommentaryCue,
+  RuntimeCommentaryResult,
+} from "./runtime-commentary";

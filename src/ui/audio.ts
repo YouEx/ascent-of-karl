@@ -25,12 +25,21 @@ interface PendingPlayback {
   settle: () => void;
 }
 
+interface RuntimePcmPlayback {
+  reader: ReadableStreamDefaultReader<Uint8Array> | null;
+  sources: Set<AudioBufferSourceNode>;
+  cancelled: boolean;
+  settle: () => void;
+}
+
 let manifest: Record<string, number[]> | null = null;
 let currentAudio: HTMLAudioElement | null = null;
 let currentUtterance: SpeechSynthesisUtterance | null = null;
 let currentSettle: (() => void) | null = null;
 let pending: PendingPlayback | null = null;
 let unlocked = false;
+let runtimeAudioContext: AudioContext | null = null;
+let currentRuntimePlayback: RuntimePcmPlayback | null = null;
 
 function resolved(mode: NarrationPlaybackMode): NarrationPlayback {
   return { mode, done: Promise.resolve() };
@@ -61,6 +70,22 @@ function settleCurrent(): void {
  * forhindre.
  */
 function stopCurrentPlayback(): void {
+  const runtime = currentRuntimePlayback;
+  currentRuntimePlayback = null;
+  if (runtime) {
+    runtime.cancelled = true;
+    void runtime.reader?.cancel().catch(() => undefined);
+    for (const source of runtime.sources) {
+      try {
+        source.stop();
+      } catch {
+        // A source that already ended needs no further action.
+      }
+    }
+    runtime.sources.clear();
+    runtime.settle();
+  }
+
   pending?.settle();
   pending = null;
 
@@ -71,9 +96,22 @@ function stopCurrentPlayback(): void {
     } catch {
       // Safari kan afvise currentTime før metadata; pause er nok.
     }
+
   }
   synthesis()?.cancel();
   settleCurrent();
+}
+
+function getRuntimeAudioContext(): AudioContext | null {
+  if (runtimeAudioContext) return runtimeAudioContext;
+  const Context = globalThis.AudioContext;
+  if (typeof Context !== "function") return null;
+  try {
+    runtimeAudioContext = new Context();
+    return runtimeAudioContext;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -246,6 +284,144 @@ export function playLine(
   }
 
   return synthesizedPlayback(line) ?? resolved("text-only");
+}
+
+function pcmSamples(
+  chunk: Uint8Array,
+  remainder: number | null,
+): { samples: Float32Array; remainder: number | null } {
+  const bytes =
+    remainder === null
+      ? chunk
+      : new Uint8Array([remainder, ...chunk]);
+  const completeLength = bytes.length - (bytes.length % 2);
+  const samples = new Float32Array(completeLength / 2);
+  const view = new DataView(
+    bytes.buffer,
+    bytes.byteOffset,
+    completeLength,
+  );
+  for (let index = 0; index < samples.length; index++) {
+    samples[index] = view.getInt16(index * 2, true) / 32768;
+  }
+  return {
+    samples,
+    remainder:
+      completeLength < bytes.length ? bytes[bytes.length - 1]! : null,
+  };
+}
+
+/**
+ * Plays Cartesia's authenticated raw PCM response incrementally. The line is
+ * already visible and accepted before this runs; provider failure therefore
+ * falls back to the same exact browser-TTS/text behavior as any other dynamic
+ * narrator line.
+ */
+export function playRuntimeLine(
+  line: SpokenLine,
+  response: Response,
+  muted: boolean,
+): NarrationPlayback {
+  stopCurrentPlayback();
+  if (muted) return resolved("muted");
+  if (!response.ok || !response.body) {
+    return synthesizedPlayback(line) ?? resolved("text-only");
+  }
+  const context = getRuntimeAudioContext();
+  const sampleRate = Number(
+    response.headers.get("x-audio-sample-rate") ?? "24000",
+  );
+  if (
+    !context ||
+    !Number.isInteger(sampleRate) ||
+    sampleRate < 8000 ||
+    sampleRate > 48000
+  ) {
+    return synthesizedPlayback(line) ?? resolved("text-only");
+  }
+
+  let settled = false;
+  let resolveDone!: () => void;
+  const done = new Promise<void>((resolve) => {
+    resolveDone = resolve;
+  });
+  const state: RuntimePcmPlayback = {
+    reader: response.body.getReader(),
+    sources: new Set(),
+    cancelled: false,
+    settle() {
+      if (settled) return;
+      settled = true;
+      if (currentRuntimePlayback === state) {
+        currentRuntimePlayback = null;
+      }
+      resolveDone();
+    },
+  };
+  currentRuntimePlayback = state;
+
+  void (async () => {
+    try {
+      await context.resume();
+      let nextStart = context.currentTime + 0.03;
+      let remainder: number | null = null;
+      let streamEnded = false;
+      const finishIfDone = () => {
+        if (
+          streamEnded &&
+          state.sources.size === 0 &&
+          !state.cancelled
+        ) {
+          state.settle();
+        }
+      };
+      while (!state.cancelled) {
+        const result = await state.reader!.read();
+        if (result.done) {
+          streamEnded = true;
+          finishIfDone();
+          break;
+        }
+        const converted = pcmSamples(result.value, remainder);
+        remainder = converted.remainder;
+        if (converted.samples.length === 0) continue;
+        const buffer = context.createBuffer(
+          1,
+          converted.samples.length,
+          sampleRate,
+        );
+        buffer.getChannelData(0).set(converted.samples);
+        const source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(context.destination);
+        state.sources.add(source);
+        source.onended = () => {
+          state.sources.delete(source);
+          finishIfDone();
+        };
+        source.start(nextStart);
+        nextStart += converted.samples.length / sampleRate;
+      }
+    } catch {
+      if (state.cancelled) return;
+      void state.reader?.cancel().catch(() => undefined);
+      state.reader = null;
+      for (const source of state.sources) {
+        try {
+          source.stop();
+        } catch {
+          // A source that already ended needs no further action.
+        }
+      }
+      state.sources.clear();
+      currentRuntimePlayback = null;
+      const fallback =
+        synthesizedPlayback(line) ?? resolved("text-only");
+      void fallback.done.then(state.settle);
+    }
+  })();
+
+  return { mode: "synthesized", done };
 }
 
 /** Stop igangværende recorded/synthesized audio (bruges ved mute/nyt beat). */

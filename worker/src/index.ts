@@ -66,8 +66,10 @@ import {
 import {
   RUN_INTERNAL_INIT_HEADER,
   RUN_INTERNAL_VERIFIED_HEADER,
+  RUNTIME_COMMENTARY_INTERNAL_HEADER,
 } from "./run-do";
 import { GENERATED_INTERNAL_CANDIDATES_HEADER } from "./generated-catalog";
+import { RUNTIME_TTS_INTERNAL_HEADER } from "./runtime-tts";
 import { isBodyTooLarge, isJsonContentType } from "./validate";
 
 export { Coordinator } from "./coordinator-do";
@@ -148,7 +150,11 @@ export default {
         env.RUN_AUTH_SECRET && env.OPENAI_API_KEY && env.IP_HASH_SALT,
       );
       return new Response(
-        JSON.stringify({ status: ready ? "ready" : "misconfigured" }),
+        JSON.stringify({
+          status: ready ? "ready" : "misconfigured",
+          runtimeCommentaryAvailable: Boolean(env.OPENAI_API_KEY),
+          runtimeVoiceAvailable: Boolean(env.CARTESIA_API_KEY),
+        }),
         {
           status: ready ? 200 : 503,
           headers: { "content-type": "application/json" },
@@ -222,6 +228,8 @@ export default {
           status: activePlayAllowed ? "ready" : "network-unavailable",
           activePlayAllowed,
           archivesReadable: true,
+          runtimeCommentaryAvailable: Boolean(env.OPENAI_API_KEY),
+          runtimeVoiceAvailable: Boolean(env.CARTESIA_API_KEY),
         }),
         {
           status: activePlayAllowed ? 200 : 503,
@@ -334,7 +342,7 @@ export default {
     }
 
     const runMatch =
-      /^\/api\/v1\/runs\/([0-9a-f-]{36})(?:\/(attempts|capability))?$/.exec(
+      /^\/api\/v1\/runs\/([0-9a-f-]{36})(?:\/(attempts|capability|commentary)(?:\/([^/]+)\/(audio))?)?$/.exec(
         url.pathname,
       );
     if (runMatch) {
@@ -431,6 +439,8 @@ export default {
     // fjernes/erstattes den her, hver eneste gang, uden undtagelse.
     const internalHeaders = new Headers(req.headers);
     internalHeaders.delete(GENERATED_INTERNAL_CANDIDATES_HEADER);
+    internalHeaders.delete(RUNTIME_COMMENTARY_INTERNAL_HEADER);
+    internalHeaders.delete(RUNTIME_TTS_INTERNAL_HEADER);
     internalHeaders.set(INTERNAL_IP_HASH_HEADER, ipHash);
     const forwarded = new Request(req, { headers: internalHeaders });
 

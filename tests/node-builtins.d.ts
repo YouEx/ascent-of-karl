@@ -109,6 +109,7 @@ declare module "node:child_process" {
 declare module "node:http" {
   interface IncomingMessage {
     url?: string;
+    method?: string;
     headers: Record<string, string | string[] | undefined>;
   }
 
@@ -131,5 +132,6 @@ declare module "node:http" {
 
 declare const process: {
   execPath: string;
+  env: Record<string, string | undefined>;
   kill(pid: number, signal?: number | string): boolean;
 };

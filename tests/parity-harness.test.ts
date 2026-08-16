@@ -62,5 +62,8 @@ describe("legacy-to-Svelte differential parity harness", () => {
     expect(uxJob).toContain(
       "OUTAGE_BROWSER_TESTS=1 npx vitest run tests/network-outage-browser.test.ts",
     );
+    expect(uxJob).toContain(
+      "RUNTIME_COMMENTARY_BROWSER_TESTS=1 npx vitest run tests/runtime-commentary-browser.test.ts",
+    );
   });
 });

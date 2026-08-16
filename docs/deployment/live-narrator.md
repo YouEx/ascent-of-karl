@@ -1,9 +1,10 @@
 # Udrulning af live-fortælleren
 
-Kilden implementerer nu hele target-runtime: live narrator, bounded generated
-gameplay, HMAC+CSRF run-capabilities og ét revisioneret `Run` Durable Object pr.
-liv. **Det er stadig ikke production-enable.** Ingen rigtig Worker-URL eller
-secrets er provisioneret, og begge offentlige Pages-varianter tvinger
+Kilden implementerer nu hele target-runtime: live pair-copy, run-specifik
+LLM-kommentar, streamet Cartesia-stemme, bounded generated gameplay,
+HMAC+CSRF run-capabilities og ét revisioneret `Run` Durable Object pr. liv.
+**Det er stadig ikke production-enable.** Ingen rigtig Worker-URL eller
+provider-secrets er provisioneret, og begge offentlige Pages-varianter tvinger
 `VITE_GAME_API_URL=""`, `VITE_ONLINE_REQUIRED=false` og
 `VITE_ONLINE_TARGET_READY=false`.
 
@@ -19,8 +20,8 @@ og compendium forbliver read-only.
 
 ## Arkitektur i to sætninger
 
-Én Cloudflare Worker (`worker/`) rummer narrator, copy-improvisation,
-bounded gameplay-selection og `/api/v1/runs`, så nøglen
+Én Cloudflare Worker (`worker/`) rummer narrator, run-specifik kommentar,
+Cartesia-TTS, copy-improvisation, bounded gameplay-selection og `/api/v1/runs`, så nøglerne
 aldrig kommer i nærheden af browseren. Foran modellen sidder ét globalt, navngivet Durable
 Object (`Coordinator`, se `worker/src/coordinator-do.ts`) som den ENESTE
 stateful komponent: det håndhæver et rullende rate-limit pr. IP-hash
@@ -40,6 +41,9 @@ Alt ligger i objekternes egen SQLite-baserede storage, uden en KV ved siden af.
   planopgradering er nødvendig for denne skala.
 - En OpenAI API-nøgle til rådighed — **den sættes aldrig i en fil i dette
   repo**, kun som Worker-secret (trin 3).
+- En Cartesia API-nøgle til den valgfrie streamede Archie en-GB-stemme.
+  Mangler den, virker gameplay og runtime-tekst fortsat; browseren bruger
+  exact-text lokal British TTS eller text-only.
 - `worker/` har sin egen `package-lock.json` (checket ind, se afsnit 10) —
   kør `npm ci` (ikke `npm install`) inde i `worker/`, før noget af det
   følgende (`wrangler dev`/`wrangler deploy`/`npm run typecheck`) kan køre,
@@ -80,6 +84,7 @@ Cloudflare — den står aldrig i `wrangler.toml`, aldrig i git, og
 ```bash
 npx wrangler secret put IP_HASH_SALT
 npx wrangler secret put RUN_AUTH_SECRET
+npx wrangler secret put CARTESIA_API_KEY
 ```
 
 Denne anden secret er **OBLIGATORISK, ikke valgfri** (sikkerhedsrunde 2,
@@ -96,6 +101,12 @@ huskes af et menneske, kun genbruges konsistent af workeren selv.
 kortlivede run-capabilities, som bindes til `runId`, CSRF-token og udløbstid.
 Mangler den, er `/healthz` rød, og nye runs fejler lukket.
 
+`CARTESIA_API_KEY` bruges kun server-side til `POST /tts/bytes`. Modellen er
+låst til `sonic-3.5-2026-05-04`, stemmen til Archie en-GB
+`ef191366-f52f-447a-a398-ed8c0f2943a1`, og output til mono
+`pcm_s16le` ved 24 kHz. Mangler nøglen, er `/healthz` stadig grøn for aktivt
+spil men rapporterer `runtimeVoiceAvailable: false`.
+
 ## 4. Sikre `[vars]`
 
 `worker/wrangler.toml`'s `[vars]`-blok har allerede alle tal, med
@@ -111,6 +122,28 @@ udledningen skrevet ind som kommentarer (se også
 | `IMPROVISE_RATE_LIMIT_WINDOW_SECONDS` / `IMPROVISE_RATE_LIMIT_MAX` | `60` / `10` | Eget rullende vindue for `/improvise`, med samme kant-fastslåede IP-hash men en separat storage-spand. Konservativ før-trafik-standard, ikke en måling. |
 | `IMPROVISE_DAILY_MAX_UPSTREAM_CALLS` | `100` | Eget globalt UTC-døgnloft for improvisations-cache-misses. Konservativ før-trafik-standard; ingen trafik findes endnu. |
 | `IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP` | `25` | Egen dagsandel pr. IP-hash for improvisation. En fremtidig klient-cap er UX/balance og må aldrig regnes som sikkerhed. |
+| `RUNTIME_COMMENTARY_MODEL` | `gpt-4.1-nano-2025-04-14` | Pinned low-latency model for strict `{text, roles}` run-specific commentary. |
+| `RUNTIME_COMMENTARY_RATE_LIMIT_WINDOW_SECONDS` / `RUNTIME_COMMENTARY_RATE_LIMIT_MAX` | `60` / `12` | Eget rullende loft for betydningsfulde run-cues. |
+| `RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS` / `_PER_IP` | `500` / `100` | Eget globalt og pr.-IP døgnloft for runtime-tekst. |
+| `RUNTIME_TTS_RATE_LIMIT_WINDOW_SECONDS` / `RUNTIME_TTS_RATE_LIMIT_MAX` | `60` / `12` | Eget rullende loft for Cartesia-syntese. |
+| `RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS` / `_PER_IP` | `500` / `100` | Eget globalt og pr.-IP døgnloft for TTS. |
+
+### 4d. Run-specifik kommentar og stemme
+
+Run Durable Object'et udleder selv cues med prioriteten ending → challenge →
+major branch → invention → discovery. Browseren sender kun et `eventId`.
+Objektet beholder hver accepteret linje uden eviction inden for det hårde loft
+på 51 event-id'er (opening + 50 turns) og giver de seneste otte til modellen;
+samme event er idempotent, og normaliserede dubletter afvises.
+
+Den umiddelbare håndskrevne fortæller taler altid først. Runtime-linjen er et
+additivt follow-up beat, ankommer højst 2,5 sekunder efter cue'et, og kasseres
+hvis spilleren allerede er gået videre. Gameplay venter aldrig.
+
+Kun accepteret, lagret tekst kan sendes til `/commentary/<eventId>/audio`.
+Run-objektet videresender den internt til Coordinator, som håndhæver TTS-kvoter
+og streamer Cartesias raw PCM tilbage. Klienttekst, voice-id, model-id og
+generation-parametre ignoreres fuldstændigt.
 
 Ret kun `ALLOWED_ORIGINS`, hvis spillets rigtige URL ændrer sig. De fire
 tal-vars bør ikke ændres uden ny måling — se plan-dokumentet for hvordan de

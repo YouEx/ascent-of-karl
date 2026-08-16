@@ -124,6 +124,8 @@ jobs:
       # de fire krævede assetlag og asset-kontrakten er integreret.
       - name: Auditér titel-fidelity på produktionscapturen
         run: npm run judge:title-fidelity
+      - name: Runtime-kommentar må aldrig blokere gameplay
+        run: RUNTIME_COMMENTARY_BROWSER_TESTS=1 npx vitest run tests/runtime-commentary-browser.test.ts
       - name: Start dev-server
         run: |
           npx vite --port 5199 --strictPort &

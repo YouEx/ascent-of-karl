@@ -14,7 +14,12 @@ import { loadContent } from "../content";
 import type { CombineOutcome, ElementDef } from "../core/types";
 import type { GameState } from "../core/engine";
 import { BookView } from "./book";
-import { initAudio, playLine, stopAudio } from "./audio";
+import {
+  initAudio,
+  playLine,
+  playRuntimeLine,
+  stopAudio,
+} from "./audio";
 import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
@@ -48,6 +53,11 @@ import { createBrowserProductEventBus } from "../product/events";
 import { SessionClient } from "./session-client";
 import { RunRevisionConflict } from "./session-client";
 import type { RunCredentials } from "../product/session";
+import type { RuntimeCommentaryCue } from "../product/runtime-commentary";
+import {
+  prepareRuntimeCommentary,
+  waitForRuntimePresentation,
+} from "./runtime-commentary-client";
 import {
   applyArchivedLife,
   archiveLife,
@@ -727,6 +737,7 @@ let queueTimer: ReturnType<typeof setTimeout> | undefined;
 let queueScheduled = false;
 let beatGeneration = 0;
 let currentBeatDone: Promise<void> = Promise.resolve();
+const runtimeAudio = new Map<string, Response>();
 /** Pause mellem to takter, så det læses som et åndedrag og ikke som én tekst */
 const BEAT_PAUSE_MS = 900;
 // Tipkortet skal kunne læses færdigt af en langsom læser, før det bladrer.
@@ -746,6 +757,16 @@ function sayAfter(line: SpokenLine | undefined): void {
   if (!line) return;
   lineQueue.push(line);
   scheduleNextBeat();
+}
+
+function cancelQueuedRuntimeLine(lineId: string): void {
+  lineQueue = lineQueue.filter((line) => line.id !== lineId);
+  runtimeAudio.delete(lineId);
+  if (lineQueue.length === 0 && queueTimer) {
+    clearTimeout(queueTimer);
+    queueTimer = undefined;
+    queueScheduled = false;
+  }
 }
 
 function scheduleNextBeat(): void {
@@ -814,15 +835,23 @@ function speak(text: string): Promise<void> {
 }
 
 function presentLine(line: SpokenLine): Promise<void> {
-  const playback = playLine(line, muted);
+  const streamed = runtimeAudio.get(line.id);
+  if (streamed) runtimeAudio.delete(line.id);
+  const playback = streamed
+    ? playRuntimeLine(line, streamed, muted)
+    : playLine(line, muted);
   const textDone = speak(line.text);
-  const roles = new Set<"humour" | "guidance" | "story">();
-  if (/hint|gate|pull|need/i.test(line.id)) roles.add("guidance");
-  if (/intro|story|ageup|ending|challenge|decision/i.test(line.id)) {
-    roles.add("story");
-  }
-  if (roles.size === 0 || /pair|fail|generic|improv/i.test(line.id)) {
-    roles.add("humour");
+  const roles = new Set<"humour" | "guidance" | "story">(
+    line.roles ?? [],
+  );
+  if (!line.roles) {
+    if (/hint|gate|pull|need/i.test(line.id)) roles.add("guidance");
+    if (/intro|story|ageup|ending|challenge|decision/i.test(line.id)) {
+      roles.add("story");
+    }
+    if (roles.size === 0 || /pair|fail|generic|improv/i.test(line.id)) {
+      roles.add("humour");
+    }
   }
   const narratorScenario = engine.activeEnding()
     ? "ending.unlocked"
@@ -839,8 +868,10 @@ function presentLine(line: SpokenLine): Promise<void> {
       text: line.text,
       roles: [...roles],
       audioMode: playback.mode,
+      source: line.source ?? "authored",
     },
   });
+  line.onPresent?.();
   void persistActiveLife();
   window.dispatchEvent(
     new CustomEvent("narration:beat-start", {
@@ -864,6 +895,45 @@ function presentLine(line: SpokenLine): Promise<void> {
       }),
     );
   });
+}
+
+async function queueRuntimeCommentary(
+  cue: RuntimeCommentaryCue | undefined,
+  waitForPresentation = false,
+): Promise<boolean> {
+  if (
+    !cue ||
+    !sessionClient.onlineRequired ||
+    !runCredentials
+  ) {
+    return false;
+  }
+  const credentials = structuredClone(runCredentials);
+  const prepared = await prepareRuntimeCommentary({
+    client: sessionClient,
+    credentials,
+    cue,
+    currentTurn: () => engine.getState().attempts,
+    audioEnabled: !muted,
+  });
+  if (
+    !prepared ||
+    runCredentials?.runId !== credentials.runId
+  ) {
+    return false;
+  }
+  if (prepared.audio) {
+    runtimeAudio.set(prepared.line.id, prepared.audio);
+  }
+  if (waitForPresentation) {
+    return waitForRuntimePresentation({
+      line: prepared.line,
+      enqueue: (line) => sayAfter(line),
+      cancel: cancelQueuedRuntimeLine,
+    });
+  }
+  sayAfter(prepared.line);
+  return true;
 }
 
 function renderMute(): void {
@@ -1617,6 +1687,7 @@ async function performCombine(a: string, b: string): Promise<void> {
     ? copyState.copy
     : undefined;
   let outcome: CombineOutcome;
+  let commentaryCue: RuntimeCommentaryCue | undefined;
   if (sessionClient.onlineRequired) {
     if (!runCredentials) {
       showNetworkOutage();
@@ -1636,6 +1707,7 @@ async function performCombine(a: string, b: string): Promise<void> {
       runRevision = remote.revision;
       engine.loadState(remote.snapshot);
       outcome = remote.outcome;
+      commentaryCue = remote.commentaryCue;
     } catch (error) {
       if (error instanceof RunRevisionConflict) {
         runRevision = error.revision;
@@ -1758,10 +1830,17 @@ async function performCombine(a: string, b: string): Promise<void> {
   // Anden takt: fortælleren peger videre — eller bemærker at han lige blev
   // ignoreret. Køes bag historiereplikken, så den ikke overskriver sin optakt.
   sayAfter(followUp);
+  const runtimeCommentaryPresentation = queueRuntimeCommentary(
+    commentaryCue,
+    ending !== null,
+  );
   renderAge();
   renderActLabel();
   renderChallenge();
-  if (!ending) await persistActiveLife();
+  if (!ending) {
+    void runtimeCommentaryPresentation;
+    await persistActiveLife();
+  }
   if (ending) {
     const achievements = loadAchievements();
     productEvents.emit({
@@ -1800,6 +1879,10 @@ async function performCombine(a: string, b: string): Promise<void> {
       ),
     });
     save();
+    showEndingScreen();
+    selected = [null, null];
+    renderSlots();
+    await runtimeCommentaryPresentation;
     const archived = await archiveCurrentLife({
       kind: "ending",
       endingId: ending.id,
@@ -1808,7 +1891,7 @@ async function performCombine(a: string, b: string): Promise<void> {
       localStorage.removeItem(SAVE_KEY);
       localStorage.removeItem(NARRATOR_SAVE_KEY);
     }
-    showEndingScreen();
+    return;
   }
 
   selected = [null, null];
@@ -2089,6 +2172,7 @@ async function startGame(resume: boolean): Promise<void> {
     return;
   }
   let resumed = false;
+  let commentaryCue: RuntimeCommentaryCue | undefined;
   let replay:
     | { target: ReplayTarget; fromEndingId: string }
     | null = null;
@@ -2117,6 +2201,7 @@ async function startGame(resume: boolean): Promise<void> {
         runRevision = remote.revision;
         beginProfileLife(seed, replay?.target ?? null);
         engine.loadState(remote.snapshot as GameState);
+        commentaryCue = remote.commentaryCue;
       }
     } catch {
       showNetworkOutage();
@@ -2191,6 +2276,7 @@ async function startGame(resume: boolean): Promise<void> {
     // første takt er de første kombinationer bare famlen — og der er intet
     // at trodse.
     sayAfter(narrator.openingPull());
+    void queueRuntimeCommentary(commentaryCue);
     save();
   });
 }

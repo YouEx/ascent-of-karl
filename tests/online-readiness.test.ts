@@ -28,7 +28,7 @@ describe("online-required production readiness gate", () => {
       "env.RUN_AUTH_SECRET && env.OPENAI_API_KEY && env.IP_HASH_SALT",
     );
     expect(workerSource).toContain(
-      'JSON.stringify({ status: ready ? "ready" : "misconfigured" })',
+      "runtimeVoiceAvailable: Boolean(env.CARTESIA_API_KEY)",
     );
   });
 

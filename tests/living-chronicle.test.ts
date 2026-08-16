@@ -107,6 +107,22 @@ describe("living chronicle structure", () => {
     );
   });
 
+  it("waits for an accepted runtime ending beat to enter the life journal before archiving", () => {
+    const performCombine = sourceBetween(
+      "async function performCombine",
+      "function selectElement",
+    );
+    expect(performCombine).toMatch(
+      /queueRuntimeCommentary\(\s*commentaryCue,\s*ending !== null,\s*\)/,
+    );
+    expect(performCombine).toContain(
+      "await runtimeCommentaryPresentation",
+    );
+    expect(
+      performCombine.indexOf("await runtimeCommentaryPresentation"),
+    ).toBeLessThan(performCombine.indexOf("archiveCurrentLife"));
+  });
+
   it("updates the persistent compendium during play and renders its invention gallery", () => {
     expect(mainSource).toContain("applyLiveProgress(");
     expect(mainSource).toContain('class="compendium-inventions"');

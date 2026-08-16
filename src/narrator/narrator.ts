@@ -177,6 +177,9 @@ export interface SpokenLine {
   id: string;
   variant: number;
   text: string;
+  roles?: readonly ("humour" | "guidance" | "story")[];
+  source?: "authored" | "runtime-llm";
+  onPresent?: () => void;
 }
 
 /** Efter så mange fiaskoer siden sidste opdagelse begynder fortælleren at hinte, og eskalerer for hver `HINT_STEP` yderligere. */

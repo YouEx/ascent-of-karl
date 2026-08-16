@@ -139,4 +139,52 @@ describe("online-required session client", () => {
     const headers = fetch.mock.calls[1]?.[1]?.headers as Headers;
     expect(headers.get("authorization")).toBe("Bearer rotated");
   });
+
+  it("requests idempotent commentary and its authenticated PCM stream", async () => {
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(
+        json({
+          schemaVersion: 1,
+          eventId: "attempt:abc",
+          text: "Karl files the invention under avoidable.",
+          roles: ["humour"],
+          audioAvailable: true,
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(new Uint8Array([1, 2]), {
+          status: 200,
+          headers: { "content-type": "audio/pcm" },
+        }),
+      );
+    const client = new SessionClient({
+      baseUrl: "https://api.example",
+      onlineRequired: true,
+      fetch,
+    });
+
+    expect(
+      await client.commentary(credentials, "attempt:abc"),
+    ).toMatchObject({
+      eventId: "attempt:abc",
+      audioAvailable: true,
+    });
+    const audio = await client.commentaryAudio(
+      credentials,
+      "attempt:abc",
+    );
+    expect(audio.headers.get("content-type")).toBe("audio/pcm");
+    expect(fetch.mock.calls[0]?.[0]).toBe(
+      `https://api.example/api/v1/runs/${credentials.runId}/commentary`,
+    );
+    expect(fetch.mock.calls[1]?.[0]).toBe(
+      `https://api.example/api/v1/runs/${credentials.runId}/commentary/attempt%3Aabc/audio`,
+    );
+    for (const call of fetch.mock.calls) {
+      const callHeaders = call[1]?.headers as Headers;
+      expect(callHeaders.get("authorization")).toBe("Bearer token");
+      expect(callHeaders.get("x-karl-csrf")).toBe("csrf");
+    }
+  });
 });

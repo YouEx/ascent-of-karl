@@ -40,7 +40,7 @@ outageDescribe("online-required outage browser behavior", () => {
     else environment.VITE_ONLINE_REQUIRED = prior.required;
     if (prior.ready === undefined) delete environment.VITE_ONLINE_TARGET_READY;
     else environment.VITE_ONLINE_TARGET_READY = prior.ready;
-  });
+  }, 30_000);
 
   it("makes active play inert while Retry and archived reading remain operable", async () => {
     const controls = await page.evaluate(() => ({

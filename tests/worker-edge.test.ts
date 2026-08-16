@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import worker from "../worker/src/index";
 import { Coordinator, CACHE_MAX_AGE_MS, CLEANUP_INTERVAL_MS } from "../worker/src/coordinator-do";
 import { BUDGET_KEY, CACHE_KEY_PREFIX, IP_BUDGET_KEY_PREFIX } from "../worker/src/coordinator";
@@ -134,6 +134,26 @@ function runCreateReservationRequest(ipHash: string): Request {
 }
 
 describe("index.ts: identiteten fastslås ved kanten, ikke inde i objektet (sikkerhedsrunde 2, punkt 1)", () => {
+  it("keeps active play ready without Cartesia while reporting runtime voice separately", async () => {
+    const stub = new FakeStub(async () => new Response(null));
+    const response = await worker.fetch(
+      new Request("https://narrator.example/healthz"),
+      {
+        OPENAI_API_KEY: "test-openai",
+        RUN_AUTH_SECRET: "test-run-auth",
+        IP_HASH_SALT: SALT,
+        COORDINATOR: new FakeNamespace(stub),
+        RUNS: new FakeNamespace(stub),
+      } as never,
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      status: "ready",
+      runtimeCommentaryAvailable: true,
+      runtimeVoiceAvailable: false,
+    });
+  });
+
   it("overskriver ALTID den interne header — en forfalsket header i den indkommende anmodning når aldrig igennem uændret", async () => {
     const stub = new FakeStub(async () => new Response(JSON.stringify({ text: "ok" }), { status: 200 }));
     const env = {
@@ -193,6 +213,70 @@ describe("index.ts: identiteten fastslås ved kanten, ikke inde i objektet (sikk
 
     expect(
       stub.received[0]!.headers.get("x-internal-generated-candidates"),
+    ).toBeNull();
+  });
+
+  it("fjerner altid klientens forsøg på at sætte runtime-commentary-markøren", async () => {
+    const stub = new FakeStub(async () =>
+      new Response(JSON.stringify({ error: "missing internal commentary" }), {
+        status: 503,
+      }),
+    );
+    const env = {
+      ALLOWED_ORIGINS: "",
+      IP_HASH_SALT: SALT,
+      COORDINATOR: new FakeNamespace(stub),
+    };
+    const request = new Request(
+      "https://narrator.example/runtime-commentary",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "https://karl.example",
+          "cf-connecting-ip": "203.0.113.7",
+          "x-internal-runtime-commentary": "1",
+        },
+        body: JSON.stringify({ schemaVersion: 1 }),
+      },
+    );
+
+    await worker.fetch(request, env as never);
+
+    expect(
+      stub.received[0]!.headers.get("x-internal-runtime-commentary"),
+    ).toBeNull();
+  });
+
+  it("fjerner altid klientens forsøg på at sætte runtime-TTS-markøren", async () => {
+    const stub = new FakeStub(async () =>
+      new Response(JSON.stringify({ error: "missing internal tts" }), {
+        status: 503,
+      }),
+    );
+    await worker.fetch(
+      new Request("https://narrator.example/runtime-tts", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "https://karl.example",
+          "cf-connecting-ip": "203.0.113.7",
+          "x-internal-runtime-tts": "1",
+        },
+        body: JSON.stringify({
+          schemaVersion: 1,
+          text: "Karl waits for history to notice.",
+        }),
+      }),
+      {
+        ALLOWED_ORIGINS: "",
+        IP_HASH_SALT: SALT,
+        COORDINATOR: new FakeNamespace(stub),
+      } as never,
+    );
+
+    expect(
+      stub.received[0]!.headers.get("x-internal-runtime-tts"),
     ).toBeNull();
   });
 
@@ -265,6 +349,53 @@ describe("index.ts: identiteten fastslås ved kanten, ikke inde i objektet (sikk
     expect(
       runStub.received[0]!.headers.get("x-internal-run-init"),
     ).toBeNull();
+    expect(
+      runStub.received[0]!.headers.get("x-internal-run-verified"),
+    ).toBe("1");
+  });
+
+  it("routes authenticated commentary audio to the Run object without exposing capability headers", async () => {
+    const secret = "run-auth-test-secret";
+    const runId = "11111111-1111-1111-1111-111111111111";
+    const capability = await createRunCapability({
+      secret,
+      runId,
+      now: Date.now(),
+    });
+    const runStub = new FakeStub(async () =>
+      new Response(new Uint8Array([1, 2, 3]), {
+        status: 200,
+        headers: { "content-type": "audio/pcm" },
+      }),
+    );
+    const coordinatorStub = new FakeStub(async () => new Response(null));
+    const response = await worker.fetch(
+      new Request(
+        `https://narrator.example/api/v1/runs/${runId}/commentary/attempt%3Aabc/audio`,
+        {
+          method: "GET",
+          headers: {
+            authorization: `Bearer ${capability.token}`,
+            origin: "https://karl.example",
+            "cf-connecting-ip": "203.0.113.7",
+            "x-karl-csrf": capability.capability.csrf,
+          },
+        },
+      ),
+      {
+        ALLOWED_ORIGINS: "",
+        IP_HASH_SALT: SALT,
+        RUN_AUTH_SECRET: secret,
+        COORDINATOR: new FakeNamespace(coordinatorStub),
+        RUNS: new FakeNamespace(runStub),
+      } as never,
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toBe("audio/pcm");
+    expect(runStub.received).toHaveLength(1);
+    expect(runStub.received[0]!.headers.get("authorization")).toBeNull();
+    expect(runStub.received[0]!.headers.get("x-karl-csrf")).toBeNull();
     expect(
       runStub.received[0]!.headers.get("x-internal-run-verified"),
     ).toBe("1");
@@ -593,6 +724,7 @@ describe("Coordinator: oprettelse af authoritative runs er kvotebeskyttet", () =
       error: "run creation rate limited",
       scope: "ip",
     });
+
   });
 
   it("håndhæver også det globale loft på tværs af forskellige IP-hashes", async () => {
@@ -612,6 +744,92 @@ describe("Coordinator: oprettelse af authoritative runs er kvotebeskyttet", () =
     expect(await rejected.json()).toEqual({
       error: "run creation rate limited",
       scope: "global",
+    });
+  });
+
+  describe("Coordinator: runtime commentary is internal and quota-protected", () => {
+    const body = {
+      schemaVersion: 1,
+      seedCode: "K1.CE4BAF925C7ACA21.00000007",
+      commentaryIndex: 0,
+      cue: {
+        schemaVersion: 1,
+        eventId: "opening",
+        kind: "opening",
+        turn: 0,
+        context: "Opening berry-slope. Karl begins with Stone and Stick.",
+        requiredTerms: ["Karl", "Stone", "Stick"],
+      },
+      run: {
+        act: 1,
+        attempts: 0,
+        discoveredCount: 5,
+        solvedNeedIds: [],
+        completedBranchIds: [],
+        endingId: null,
+      },
+      recentLines: [],
+    };
+
+    it("rejects direct calls without the Run-owned internal marker", async () => {
+      const { coordinator } = nyCoordinator();
+      const response = await coordinator.fetch(
+        new Request("https://internal/runtime-commentary", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            [INTERNAL_IP_HASH_HEADER]: "a".repeat(64),
+          },
+          body: JSON.stringify(body),
+        }),
+      );
+      expect(response.status).toBe(503);
+    });
+
+    it("returns only validated structured commentary for a marked Run request", async () => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(async () =>
+          new Response(
+            JSON.stringify({
+              choices: [
+                {
+                  message: {
+                    content: JSON.stringify({
+                      schemaVersion: 1,
+                      text: "Karl surveys the stone and stick as if they had applied for the position.",
+                      roles: ["humour", "story"],
+                    }),
+                  },
+                },
+              ],
+            }),
+            { status: 200 },
+          ),
+        ),
+      );
+      try {
+        const { coordinator } = nyCoordinator();
+        const response = await coordinator.fetch(
+          new Request("https://internal/runtime-commentary", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              [INTERNAL_IP_HASH_HEADER]: "a".repeat(64),
+              "x-internal-runtime-commentary": "1",
+            },
+            body: JSON.stringify(body),
+          }),
+        );
+        expect(response.status).toBe(200);
+        expect(await response.json()).toEqual({
+          schemaVersion: 1,
+          text: "Karl surveys the stone and stick as if they had applied for the position.",
+          roles: ["humour", "story"],
+        });
+      } finally {
+        vi.unstubAllGlobals();
+      }
     });
   });
 

@@ -82,13 +82,14 @@
         "challenge.active",
         "ending.unlocked"
       ],
-      "description": "A visible narrator beat was presented with its product roles.",
+      "description": "A visible authored or runtime-LLM narrator beat was presented with its product roles and actual audio mode.",
       "payloadRequired": [
         "lineId",
         "variant",
         "text",
         "roles",
-        "audioMode"
+        "audioMode",
+        "source"
       ]
     },
     {

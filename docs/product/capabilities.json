@@ -266,17 +266,19 @@
       "name": "Narrator",
       "purpose": "Make the game funny, keep the player moving, and turn play into the story of this Karl.",
       "playerOutcome": "The player laughs, receives useful guidance, and recognises a coherent character arc across the life.",
-      "currentTruth": "The narrator retains its full priority chain and emits typed humour/guidance/story evidence into each life journal.",
-      "approvedTarget": "Humour, guidance, and story continuity remain equally required across generated gameplay, seeded lives, longer memory, and online production.",
+      "currentTruth": "The narrator retains its full immediate priority chain and emits typed humour/guidance/story evidence into each life journal. The online source now also derives authoritative significant-moment cues, retains every accepted line without eviction within the 51-event life ceiling, and can stream their exact text through a pinned British Cartesia voice. Public Pages remains offline-compatible, so this provider-backed layer is not production-enabled.",
+      "approvedTarget": "Significant opening, discovery, invention, challenge, major-branch, and ending moments may receive one additional run-specific commentary beat. A pinned low-latency hosted text model writes bounded text from server-owned run context; a pinned hosted British voice streams the exact text. Gameplay and the authored narrator never wait for either provider.",
       "qualitativeAcceptance": [
         "Players laugh at or quote a reaction.",
         "Players act on narrator guidance when stuck.",
-        "Players can describe who their Karl became."
+        "Players can describe who their Karl became.",
+        "Runtime lines are specific to this run, do not repeat earlier lines in the life, and never introduce gameplay effects or historical claims.",
+        "Provider failure is invisible: the immediate authored beat and exact-text browser voice/text fallback remain complete."
       ],
       "lifecycle": {
         "current": "production",
         "target": "implementing",
-        "advancementGate": "Playtest must independently evidence humour, guidance, and story continuity."
+        "advancementGate": "Deploy and observe the provider-backed Worker, pass privacy/load/failure checks, and independently evidence humour, guidance, story continuity, latency, and non-repetition in external playtests."
       },
       "dependencies": [
         "craft.combine"
@@ -288,7 +290,11 @@
         "sourceEntrypoints": [
           "src/narrator/narrator.ts",
           "src/narrator/grammar.ts",
-          "src/ui/audio.ts"
+          "src/ui/audio.ts",
+          "src/product/runtime-commentary.ts",
+          "src/ui/runtime-commentary-client.ts",
+          "worker/src/runtime-commentary-model.ts",
+          "worker/src/runtime-tts.ts"
         ],
         "contentEntrypoints": [
           "content/narrator/act-1.json",
@@ -297,7 +303,11 @@
         "testEntrypoints": [
           "tests/narrator.test.ts",
           "tests/narrator-regression.test.ts",
-          "tests/narration-audio.test.ts"
+          "tests/narration-audio.test.ts",
+          "tests/runtime-commentary.test.ts",
+          "tests/runtime-commentary-ui.test.ts",
+          "tests/worker-runtime-commentary.test.ts",
+          "tests/worker-runtime-tts.test.ts"
         ]
       },
       "searchTerms": [

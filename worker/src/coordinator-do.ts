@@ -70,8 +70,34 @@ import {
   callGeneratedOpenAI,
   GENERATED_PROMPT_VERSION_INPUT,
 } from "./generated-model";
+import {
+  createRuntimeCommentaryDeps,
+  decideRuntimeCommentary,
+  RUNTIME_COMMENTARY_IP_BUDGET_PREFIX,
+  RUNTIME_COMMENTARY_RATE_PREFIX,
+  type RuntimeCommentaryDeps,
+  type RuntimeCommentaryResponse,
+} from "./runtime-commentary";
+import {
+  callRuntimeCommentaryOpenAI,
+  type RuntimeCommentaryModelEnv,
+} from "./runtime-commentary-model";
+import { RUNTIME_COMMENTARY_INTERNAL_HEADER } from "./run-do";
+import {
+  callRuntimeTts,
+  createRuntimeTtsDeps,
+  decideRuntimeTts,
+  RUNTIME_TTS_INTERNAL_HEADER,
+  RUNTIME_TTS_IP_BUDGET_PREFIX,
+  RUNTIME_TTS_RATE_PREFIX,
+  type RuntimeTtsDeps,
+  type RuntimeTtsEnv,
+} from "./runtime-tts";
 
-export interface CoordinatorEnv extends ModelEnv {
+export interface CoordinatorEnv
+  extends ModelEnv,
+    RuntimeCommentaryModelEnv,
+    RuntimeTtsEnv {
   /** Sekunder i det rullende vindue (TASK-002). Se wrangler.toml for den målte default. */
   RATE_LIMIT_WINDOW_SECONDS?: string;
   /** Kald tilladt pr. IP-hash pr. vindue (TASK-002). */
@@ -89,6 +115,14 @@ export interface CoordinatorEnv extends ModelEnv {
   IMPROVISE_RATE_LIMIT_MAX?: string;
   IMPROVISE_DAILY_MAX_UPSTREAM_CALLS?: string;
   IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP?: string;
+  RUNTIME_COMMENTARY_RATE_LIMIT_WINDOW_SECONDS?: string;
+  RUNTIME_COMMENTARY_RATE_LIMIT_MAX?: string;
+  RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS?: string;
+  RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS_PER_IP?: string;
+  RUNTIME_TTS_RATE_LIMIT_WINDOW_SECONDS?: string;
+  RUNTIME_TTS_RATE_LIMIT_MAX?: string;
+  RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS?: string;
+  RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS_PER_IP?: string;
 }
 
 // Konservative defaults, brugt hvis en var mangler i wrangler.toml. De
@@ -107,6 +141,14 @@ const DEFAULT_IMPROVISE_RATE_LIMIT_WINDOW_SECONDS = 60;
 const DEFAULT_IMPROVISE_RATE_LIMIT_MAX = 10;
 const DEFAULT_IMPROVISE_DAILY_MAX_UPSTREAM_CALLS = 100;
 const DEFAULT_IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP = 25;
+const DEFAULT_RUNTIME_COMMENTARY_RATE_LIMIT_WINDOW_SECONDS = 60;
+const DEFAULT_RUNTIME_COMMENTARY_RATE_LIMIT_MAX = 12;
+const DEFAULT_RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS = 500;
+const DEFAULT_RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS_PER_IP = 100;
+const DEFAULT_RUNTIME_TTS_RATE_LIMIT_WINDOW_SECONDS = 60;
+const DEFAULT_RUNTIME_TTS_RATE_LIMIT_MAX = 12;
+const DEFAULT_RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS = 500;
+const DEFAULT_RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS_PER_IP = 100;
 
 /**
  * Hvor længe en cache-post må ligge, før oprydningen fjerner den
@@ -222,10 +264,43 @@ function responseForGenerated(result: GeneratedResponse): AdapterResponse {
   };
 }
 
+function responseForRuntimeCommentary(
+  result: RuntimeCommentaryResponse,
+): AdapterResponse {
+  if (result.status === 200) {
+    return { status: 200, body: result.value };
+  }
+  if (result.status === 400) {
+    return {
+      status: 400,
+      body: { error: "bad request", reason: result.reason },
+    };
+  }
+  if (result.status === 429 || result.status === 503) {
+    return {
+      status: result.status,
+      body: {
+        error:
+          result.status === 429
+            ? "rate limited"
+            : "daily budget exhausted",
+        reason: result.reason,
+      },
+      retryAfterSeconds: result.retryAfterSeconds,
+    };
+  }
+  return {
+    status: result.status,
+    body: { error: "upstream", reason: result.reason },
+  };
+}
+
 export class Coordinator {
   private deps: CoordinatorDeps | undefined;
   private improviseDeps: ImproviseDeps | undefined;
   private generatedDeps: GeneratedDeps | undefined;
+  private runtimeCommentaryDeps: RuntimeCommentaryDeps | undefined;
+  private runtimeTtsDeps: RuntimeTtsDeps | undefined;
 
   constructor(
     private readonly state: DurableObjectState,
@@ -320,6 +395,69 @@ export class Coordinator {
       });
     }
     return this.generatedDeps;
+  }
+
+  private getRuntimeCommentaryDeps(): RuntimeCommentaryDeps {
+    if (!this.runtimeCommentaryDeps) {
+      this.runtimeCommentaryDeps = createRuntimeCommentaryDeps({
+        store: this.state.storage,
+        callUpstream: (body) =>
+          callRuntimeCommentaryOpenAI(body, this.env),
+        config: {
+          rateLimitWindowMs:
+            toPositiveInt(
+              this.env
+                .RUNTIME_COMMENTARY_RATE_LIMIT_WINDOW_SECONDS,
+              DEFAULT_RUNTIME_COMMENTARY_RATE_LIMIT_WINDOW_SECONDS,
+            ) * 1000,
+          rateLimitMax: toPositiveInt(
+            this.env.RUNTIME_COMMENTARY_RATE_LIMIT_MAX,
+            DEFAULT_RUNTIME_COMMENTARY_RATE_LIMIT_MAX,
+          ),
+          dailyMax: toNonNegativeInt(
+            this.env
+              .RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS,
+            DEFAULT_RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS,
+          ),
+          dailyMaxPerIp: toNonNegativeInt(
+            this.env
+              .RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
+            DEFAULT_RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
+          ),
+        },
+      });
+    }
+    return this.runtimeCommentaryDeps;
+  }
+
+  private getRuntimeTtsDeps(): RuntimeTtsDeps {
+    if (!this.runtimeTtsDeps) {
+      this.runtimeTtsDeps = createRuntimeTtsDeps({
+        store: this.state.storage,
+        callUpstream: (text) => callRuntimeTts(text, this.env),
+        config: {
+          rateLimitWindowMs:
+            toPositiveInt(
+              this.env.RUNTIME_TTS_RATE_LIMIT_WINDOW_SECONDS,
+              DEFAULT_RUNTIME_TTS_RATE_LIMIT_WINDOW_SECONDS,
+            ) * 1000,
+          rateLimitMax: toPositiveInt(
+            this.env.RUNTIME_TTS_RATE_LIMIT_MAX,
+            DEFAULT_RUNTIME_TTS_RATE_LIMIT_MAX,
+          ),
+          dailyMax: toNonNegativeInt(
+            this.env.RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS,
+            DEFAULT_RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS,
+          ),
+          dailyMaxPerIp: toNonNegativeInt(
+            this.env
+              .RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
+            DEFAULT_RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS_PER_IP,
+          ),
+        },
+      });
+    }
+    return this.runtimeTtsDeps;
   }
 
   /**
@@ -440,6 +578,53 @@ export class Coordinator {
         prefix: IMPROVISE_STATS_KEY_PREFIX,
       });
       for (const key of findStaleImproviseStatsKeys(improviseStats, now)) {
+        await this.state.storage.delete(key);
+      }
+
+      const runtimeCommentaryDeps =
+        this.getRuntimeCommentaryDeps();
+      const runtimeCommentaryRates =
+        await this.state.storage.list<number[]>({
+          prefix: RUNTIME_COMMENTARY_RATE_PREFIX,
+        });
+      for (const key of findStaleRateLimitKeys(
+        runtimeCommentaryRates,
+        now,
+        runtimeCommentaryDeps.config.rateLimitWindowMs,
+      )) {
+        await this.state.storage.delete(key);
+      }
+      const runtimeCommentaryIpBudgets =
+        await this.state.storage.list<{ date: string }>({
+          prefix: RUNTIME_COMMENTARY_IP_BUDGET_PREFIX,
+        });
+      for (const key of findStaleIpBudgetKeys(
+        runtimeCommentaryIpBudgets,
+        now,
+      )) {
+        await this.state.storage.delete(key);
+      }
+
+      const runtimeTtsDeps = this.getRuntimeTtsDeps();
+      const runtimeTtsRates =
+        await this.state.storage.list<number[]>({
+          prefix: RUNTIME_TTS_RATE_PREFIX,
+        });
+      for (const key of findStaleRateLimitKeys(
+        runtimeTtsRates,
+        now,
+        runtimeTtsDeps.config.rateLimitWindowMs,
+      )) {
+        await this.state.storage.delete(key);
+      }
+      const runtimeTtsIpBudgets =
+        await this.state.storage.list<{ date: string }>({
+          prefix: RUNTIME_TTS_IP_BUDGET_PREFIX,
+        });
+      for (const key of findStaleIpBudgetKeys(
+        runtimeTtsIpBudgets,
+        now,
+      )) {
         await this.state.storage.delete(key);
       }
     } finally {
@@ -689,6 +874,105 @@ export class Coordinator {
     return this.toHttpResponse(status, body, retryAfterSeconds);
   }
 
+  private async handleRuntimeCommentary(
+    req: Request,
+  ): Promise<Response> {
+    if (req.method !== "POST") {
+      return this.toHttpResponse(405, { error: "POST only" });
+    }
+    if (
+      req.headers.get(RUNTIME_COMMENTARY_INTERNAL_HEADER) !== "1"
+    ) {
+      return this.toHttpResponse(503, {
+        error: "missing internal runtime commentary",
+      });
+    }
+    const ipHash = req.headers.get(INTERNAL_IP_HASH_HEADER);
+    if (!isValidIpHash(ipHash)) {
+      return this.toHttpResponse(503, {
+        error: "missing or invalid identity",
+      });
+    }
+    if (!isJsonContentType(req.headers.get("content-type"))) {
+      return this.toHttpResponse(415, {
+        error: "content type must be application/json",
+      });
+    }
+    const rawText = await req.text();
+    if (isBodyTooLarge(rawText)) {
+      return this.toHttpResponse(400, { error: "body too large" });
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch {
+      return this.toHttpResponse(400, { error: "bad json" });
+    }
+    const result = await decideRuntimeCommentary(
+      parsed,
+      ipHash,
+      this.getRuntimeCommentaryDeps(),
+    );
+    const { status, body, retryAfterSeconds } =
+      responseForRuntimeCommentary(result);
+    return this.toHttpResponse(status, body, retryAfterSeconds);
+  }
+
+  private async handleRuntimeTts(req: Request): Promise<Response> {
+    if (req.method !== "POST") {
+      return this.toHttpResponse(405, { error: "POST only" });
+    }
+    if (req.headers.get(RUNTIME_TTS_INTERNAL_HEADER) !== "1") {
+      return this.toHttpResponse(503, {
+        error: "missing internal runtime tts",
+      });
+    }
+    const ipHash = req.headers.get(INTERNAL_IP_HASH_HEADER);
+    if (!isValidIpHash(ipHash)) {
+      return this.toHttpResponse(503, {
+        error: "missing or invalid identity",
+      });
+    }
+    if (!isJsonContentType(req.headers.get("content-type"))) {
+      return this.toHttpResponse(415, {
+        error: "content type must be application/json",
+      });
+    }
+    const rawText = await req.text();
+    if (isBodyTooLarge(rawText)) {
+      return this.toHttpResponse(400, { error: "body too large" });
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch {
+      return this.toHttpResponse(400, { error: "bad json" });
+    }
+    const result = await decideRuntimeTts(
+      parsed,
+      ipHash,
+      this.getRuntimeTtsDeps(),
+    );
+    if (result.status === 200) {
+      return new Response(result.response.body, {
+        status: 200,
+        headers: {
+          "content-type": "audio/pcm",
+          "cache-control": "private, no-store",
+          "x-audio-encoding": "pcm_s16le",
+          "x-audio-sample-rate": "24000",
+        },
+      });
+    }
+    return this.toHttpResponse(
+      result.status,
+      { error: result.reason },
+      "retryAfterSeconds" in result
+        ? result.retryAfterSeconds
+        : undefined,
+    );
+  }
+
   /** Bygger det færdige HTTP-svar — ét sted, så `fetch()`s tidlige
    * afvisninger (405/503/429 før kroppen overhovedet læses) og den sene,
    * `decide()`-afledte afvisning bygger deres `Response` PRÆCIS ens. */
@@ -717,6 +1001,12 @@ export class Coordinator {
     }
     if (url.pathname === "/generated") {
       return this.handleGenerated(req);
+    }
+    if (url.pathname === "/runtime-commentary") {
+      return this.handleRuntimeCommentary(req);
+    }
+    if (url.pathname === "/runtime-tts") {
+      return this.handleRuntimeTts(req);
     }
     if (url.pathname === "/internal/run-create-reserve") {
       return this.handleRunCreateReserve(req);

@@ -38,7 +38,8 @@ export function corsHeaders(origin: string | null, allowed: readonly string[]): 
     "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
     "access-control-allow-headers":
       "authorization, content-type, x-karl-csrf",
-    "access-control-expose-headers": "retry-after",
+    "access-control-expose-headers":
+      "retry-after, x-audio-encoding, x-audio-sample-rate",
     "access-control-max-age": "86400",
   };
 }

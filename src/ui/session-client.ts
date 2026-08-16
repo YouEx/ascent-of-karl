@@ -1,6 +1,7 @@
 import type {
   RunAttemptResult,
   RunCredentials,
+  RuntimeCommentaryResult,
   RunSnapshot,
   SessionReadiness,
 } from "../product/session";
@@ -120,6 +121,7 @@ export class SessionClient {
     credentials: RunCredentials;
     snapshot: RunSnapshot["snapshot"];
     revision: number;
+    commentaryCue?: RunSnapshot["commentaryCue"];
   }> {
     const response = await this.request("/api/v1/runs", {
       method: "POST",
@@ -137,6 +139,7 @@ export class SessionClient {
       },
       snapshot: body.snapshot,
       revision: body.revision,
+      commentaryCue: body.commentaryCue,
     };
   }
 
@@ -220,5 +223,50 @@ export class SessionClient {
       { method: "DELETE", headers: this.authHeaders(credentials) },
     );
     if (!response.ok) throw new Error(`Run delete failed (${response.status})`);
+  }
+
+  async commentary(
+    credentials: RunCredentials,
+    eventId: string,
+  ): Promise<RuntimeCommentaryResult> {
+    credentials = await this.ensureCredentials(credentials);
+    const headers = this.authHeaders(credentials);
+    headers.set("content-type", "application/json");
+    const response = await this.request(
+      `/api/v1/runs/${credentials.runId}/commentary`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ schemaVersion: 1, eventId }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Runtime commentary failed (${response.status})`,
+      );
+    }
+    return (await response.json()) as RuntimeCommentaryResult;
+  }
+
+  async commentaryAudio(
+    credentials: RunCredentials,
+    eventId: string,
+  ): Promise<Response> {
+    credentials = await this.ensureCredentials(credentials);
+    const response = await this.request(
+      `/api/v1/runs/${credentials.runId}/commentary/${encodeURIComponent(
+        eventId,
+      )}/audio`,
+      {
+        method: "GET",
+        headers: this.authHeaders(credentials),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Runtime commentary audio failed (${response.status})`,
+      );
+    }
+    return response;
   }
 }

@@ -69,6 +69,7 @@ export interface ProductEventMap {
     text: string;
     roles: readonly ("humour" | "guidance" | "story")[];
     audioMode: "recorded" | "synthesized" | "text-only" | "muted";
+    source: "authored" | "runtime-llm";
   };
   "need.updated": {
     cause: "life-started" | "attempt" | "age-up" | "challenge";

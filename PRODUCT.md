@@ -250,23 +250,32 @@ story of this Karl.
 **Player outcome:** The player laughs, receives useful guidance, and recognises a
 coherent character arc across the life.
 
-**Current truth:** The narrator retains its full priority chain and emits typed
-humour/guidance/story evidence into each life journal.
+**Current truth:** The narrator retains its full immediate priority chain and
+emits typed humour/guidance/story evidence into each life journal. The online
+source now also derives authoritative significant-moment cues, retains every
+accepted line without eviction within the 51-event life ceiling, and can stream their exact text through a
+pinned British Cartesia voice. Public Pages remains offline-compatible, so this
+provider-backed layer is not production-enabled.
 
-**Approved target:** Humour, guidance, and story continuity remain equally
-required across generated gameplay, seeded lives, longer memory, and online
-production.
+**Approved target:** Significant opening, discovery, invention, challenge,
+major-branch, and ending moments may receive one additional run-specific
+commentary beat. A pinned low-latency hosted text model writes bounded text from
+server-owned run context; a pinned hosted British voice streams the exact text.
+Gameplay and the authored narrator never wait for either provider.
 
 **Qualitative acceptance:**
 
 - Players laugh at or quote a reaction.
 - Players act on narrator guidance when stuck.
 - Players can describe who their Karl became.
+- Runtime lines are specific to this run, do not repeat earlier lines in the life, and never introduce gameplay effects or historical claims.
+- Provider failure is invisible: the immediate authored beat and exact-text browser voice/text fallback remain complete.
 
 **Lifecycle:** production → implementing
 
-**Advancement gate:** Playtest must independently evidence humour, guidance, and
-story continuity.
+**Advancement gate:** Deploy and observe the provider-backed Worker, pass
+privacy/load/failure checks, and independently evidence humour, guidance, story
+continuity, latency, and non-repetition in external playtests.
 
 ### 6. Pursue needs
 

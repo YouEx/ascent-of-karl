@@ -28,6 +28,7 @@ new_sqlite_classes = ["Run"]
 # lokalt: nøglen er workerens, og den betaler for hvert kald.
 ALLOWED_ORIGINS = "https://youex.github.io"
 MODEL = "gpt-4o-mini"
+RUNTIME_COMMENTARY_MODEL = "gpt-4.1-nano-2025-04-14"
 
 # --- Rate limit pr. IP-hash, rullende vindue (TASK-002, SEC-001) ---
 # Grundlaget er IKKE en gættet rund tal, men heller ikke en direkte målt
@@ -93,6 +94,21 @@ IMPROVISE_RATE_LIMIT_MAX = "10"
 IMPROVISE_DAILY_MAX_UPSTREAM_CALLS = "100"
 IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP = "25"
 
+# --- Run-specifik fortællerkommentar: separat fra pair-copy og gameplay ---
+# Kun betydningsfulde cues kan nå denne sti, og Run Durable Object'et
+# konstruerer hele promptkonteksten. Tallene er konservative før-trafik-
+# standarder og skal genmåles før production-enable.
+RUNTIME_COMMENTARY_RATE_LIMIT_WINDOW_SECONDS = "60"
+RUNTIME_COMMENTARY_RATE_LIMIT_MAX = "12"
+RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS = "500"
+RUNTIME_COMMENTARY_DAILY_MAX_UPSTREAM_CALLS_PER_IP = "100"
+
+# --- Streamet runtime-TTS: egen udgiftsgrænse ---
+RUNTIME_TTS_RATE_LIMIT_WINDOW_SECONDS = "60"
+RUNTIME_TTS_RATE_LIMIT_MAX = "12"
+RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS = "500"
+RUNTIME_TTS_DAILY_MAX_UPSTREAM_CALLS_PER_IP = "100"
+
 # IP-hashens saltning (sikkerhedsrunde 2, punkt 1) — OBLIGATORISK, ingen
 # fallback. Uden salt er en SHA-256-hash af en IP i praksis en opslagstabel
 # væk fra at være "klar tekst": IPv4-rummet er lille nok til at regne alle
@@ -110,3 +126,8 @@ IMPROVISE_DAILY_MAX_UPSTREAM_CALLS_PER_IP = "25"
 # Run-capabilities for /api/v1/runs are HMAC-signed with a separate secret:
 #   npx wrangler secret put RUN_AUTH_SECRET
 # Missing secret keeps /healthz red and run creation closed.
+#
+# Cartesia streams the accepted runtime line through the pinned Archie en-GB
+# voice. Missing secret keeps gameplay and text commentary available; health
+# reports runtimeVoiceAvailable=false and the browser uses exact-text local TTS.
+#   npx wrangler secret put CARTESIA_API_KEY

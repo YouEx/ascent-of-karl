@@ -2,15 +2,15 @@
   "actionCount": 21,
   "authority": "PRODUCT.md",
   "capabilityCount": 12,
-  "edgeCount": 979,
+  "edgeCount": 1035,
   "eventCount": 13,
   "generatorVersion": 1,
   "graphPath": "docs/product/generated/product-graph.json",
-  "graphSha256": "fc3552093d8ff5dfb4e5b27d2d1480ac8d9b8162caae8113c798f6ce1633f6d6",
+  "graphSha256": "5c27cf2f2a4b095471a52ec4b5741a189fd90c08b72e5addc5c0dd458c4a05b8",
   "inputSha256": {
-    "PRODUCT.md": "b1deaac374c41c5e42939ade5509255c12a664f27f5e0390478c6ef8f68a7222",
-    "docs/product/capabilities.json": "a0882b779d04c203e8fe77cf47db232f7248c9cf861220f0f9b0cce423adbf89",
-    "docs/product/events.json": "fb8ced20b0747b2c07b33781dcd6f2bf66406baa322ec311132a3ced8616a005",
+    "PRODUCT.md": "3db4bc8b2ca8099094a358b7b2154609823e9325b8cbab4226bff4ef8422c753",
+    "docs/product/capabilities.json": "c702e26b25ab0d8fe595e671296fca429e4f62c14e81fcc9ae09fe1e3022b51c",
+    "docs/product/events.json": "474b741d0dc26298db341c7eb91465dd66addf10b52aae7c8f2a804877e9a908",
     "docs/product/product-graph-relations.json": "95ba73761e4a3b211aab7747c1070cb7f477cb3c41d7843ebf43e038c0d54f87",
     "docs/product/scenarios.json": "edd9b9aba2cae5f9e15b9ef47a9a1f4e00599a2557d025527c0314217e7a2bd9",
     "docs/product/schema/capabilities.schema.json": "e1eb32af678735a77ac7af9294c3ac1b8022d02921a8d1916e4ed122d539b809",
@@ -24,11 +24,11 @@
     "tools/product-knowledge/schema.mjs": "60708ce40ffc00d22b6e1e4c4a29bac5efb41072528caed826b97bc4ef80b0da",
     "tools/product-knowledge/validate.mjs": "14e1253e0713ee5363dc8d9176c998f1fdadf241b3d9316ffa87d403cf121cc5"
   },
-  "nodeCount": 381,
+  "nodeCount": 392,
   "provenanceCounts": {
-    "CONTRACT": 380,
+    "CONTRACT": 388,
     "CURATED": 16,
-    "SOURCE": 583
+    "SOURCE": 631
   },
   "scenarioCount": 16,
   "schemaVersion": 1,
