@@ -4,13 +4,13 @@ version: 1.0
 date_created: 2026-08-16
 last_updated: 2026-08-16
 owner: Martin
-status: 'In progress'
+status: 'Complete'
 tags: [feature, narrator, llm, tts, worker, audio]
 ---
 
 # Introduction
 
-![Status: In progress](https://img.shields.io/badge/status-In_progress-yellow)
+![Status: Complete](https://img.shields.io/badge/status-Complete-brightgreen)
 
 Implement hosted run-specific narrator commentary with a pinned low-latency
 OpenAI text model and pinned Cartesia British voice. Preserve immediate authored
@@ -92,7 +92,7 @@ beats, deterministic gameplay, local evidence, and fail-silent fallback.
 | TASK-013 | Update `worker/wrangler.toml`, health/session capability fields, CORS audio headers, and `docs/deployment/live-narrator.md`; no new browser build variable is required because the layer follows the existing online-runtime gate. | ✅ | 2026-08-16 |
 | TASK-014 | Add Worker, client, audio, browser, product-contract, and security tests; wire any browser-only gate into CI. | ✅ | 2026-08-16 |
 | TASK-015 | Run full unit, product, content, Svelte, Worker dry-run, Pages, parity, narration, UX, outage, and visual-layout gates. | ✅ | 2026-08-16 |
-| TASK-016 | Run one blocker-only review, close findings, commit, push, and verify exact-head CI/deploy/live artifacts. | | |
+| TASK-016 | Run one blocker-only review, close findings, commit, push, and verify exact-head CI/deploy/live artifacts. | ✅ | 2026-08-16 |
 
 ## 3. Alternatives
 
