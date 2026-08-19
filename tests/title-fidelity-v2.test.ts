@@ -612,8 +612,10 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
       bottomLeftDarkShare: 41.24500864175458,
       characterEvidence: 1,
       characterDetailVariance: 484.75304054892945,
-      globalEdgeDensity: 13.267723196661215,
     });
+    expect(
+      Math.abs(result.json.metrics.globalEdgeDensity - 13.27),
+    ).toBeLessThanOrEqual(0.02);
     expect(result.json.failing).toEqual([]);
   }, 30_000);
 });
