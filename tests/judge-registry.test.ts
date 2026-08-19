@@ -178,9 +178,9 @@ describe("registry.json — titelens fidelitymål (TASK-001)", () => {
     expect(actual).toEqual(EXPECTED_VIEWPORTS);
   });
 
-  it("pinner v2, portable provenance, geometri og de fire obligatoriske lag", () => {
+  it("pinner v3, portable provenance, geometri og de fire obligatoriske lag", () => {
     const metrics = loadRegistry().goalMetrics;
-    expect(metrics.algorithmVersion).toBe("title-fidelity-v2");
+    expect(metrics.algorithmVersion).toBe("title-fidelity-v3");
     expect(metrics.sources).toEqual({
       approvedOriginal: {
         sha256: "8d37bca638f53d90a996c551183d721877419ebe73f3e81a1c67da120dc1a770",
@@ -193,8 +193,7 @@ describe("registry.json — titelens fidelitymål (TASK-001)", () => {
     expect(JSON.stringify(metrics)).not.toMatch(/\/Users\/|session-state|currentCalibration/);
     expect(metrics.capture).toMatchObject({
       canonicalCharacterSize: { width: 512, height: 554 },
-      sceneAssetSelector: ".title-stage",
-      sceneCssVariable: "--scene-src",
+      sceneAssetSelector: 'img[data-title-layer="scene"]',
       requiredLayers: ["scene", "foreground", "parchment", "wordmark"],
     });
     expect(metrics.referenceGeometry).toMatchObject({
@@ -213,6 +212,7 @@ describe("registry.json — titelens fidelitymål (TASK-001)", () => {
       "desktop-2560",
     ]);
     expect(metrics.gates.characterEvidence.viewports).toBe("all");
+    expect(metrics.gates.globalEdgeDensity.min).toBeGreaterThanOrEqual(7);
     expect(metrics.gates.layerManifest).toMatchObject({
       viewports: "all",
       forbidCss: true,
@@ -223,12 +223,11 @@ describe("registry.json — titelens fidelitymål (TASK-001)", () => {
       "scene-target-native": [1586, 992],
     });
     expect(metrics.gates.assetContracts.parchmentRetention.required).toEqual({
-      "parchment-desktop": [700, 992],
+      "parchment-desktop": [692, 907],
     });
     expect(metrics.gates.assetContracts.alphaEdges.required).toEqual({
-      scene: [1586, 992],
       foreground: [1586, 992],
-      parchment: [700, 992],
+      parchment: [692, 907],
       wordmark: [545, 320],
     });
   });

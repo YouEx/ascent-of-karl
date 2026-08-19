@@ -2633,6 +2633,90 @@
       "provenance": "SOURCE",
       "relation": "imports",
       "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/bg-wide-2560.webp",
+      "target": "file:src/assets/art/bg-wide-2560.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/backdrop-large.webp",
+      "target": "file:src/assets/art/title-layers/backdrop-large.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/backdrop-mobile.webp",
+      "target": "file:src/assets/art/title-layers/backdrop-mobile.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/foreground-overlay-large.webp",
+      "target": "file:src/assets/art/title-layers/foreground-overlay-large.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/foreground-overlay-mobile.webp",
+      "target": "file:src/assets/art/title-layers/foreground-overlay-mobile.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/foreground-overlay.webp",
+      "target": "file:src/assets/art/title-layers/foreground-overlay.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/parchment-layer-large.webp",
+      "target": "file:src/assets/art/title-layers/parchment-layer-large.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/parchment-layer.webp",
+      "target": "file:src/assets/art/title-layers/parchment-layer.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/scene-overlay-desktop.webp",
+      "target": "file:src/assets/art/title-layers/scene-overlay-desktop.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/scene-overlay-large.webp",
+      "target": "file:src/assets/art/title-layers/scene-overlay-large.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/scene-overlay-mobile.webp",
+      "target": "file:src/assets/art/title-layers/scene-overlay-mobile.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
+      "specifier": "../assets/art/title-layers/wordmark-large.webp",
+      "target": "file:src/assets/art/title-layers/wordmark-large.webp"
+    },
+    {
+      "provenance": "SOURCE",
+      "relation": "imports",
+      "source": "file:src/ui/title-art.ts",
       "specifier": "../assets/art/title-materials/wordmark-desktop.webp",
       "target": "file:src/assets/art/title-materials/wordmark-desktop.webp"
     },
@@ -7813,9 +7897,81 @@
       "type": "file"
     },
     {
+      "id": "file:src/assets/art/bg-wide-2560.webp",
+      "label": "src/assets/art/bg-wide-2560.webp",
+      "path": "src/assets/art/bg-wide-2560.webp",
+      "type": "file"
+    },
+    {
       "id": "file:src/assets/art/problems/sizes.json",
       "label": "src/assets/art/problems/sizes.json",
       "path": "src/assets/art/problems/sizes.json",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/backdrop-large.webp",
+      "label": "src/assets/art/title-layers/backdrop-large.webp",
+      "path": "src/assets/art/title-layers/backdrop-large.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/backdrop-mobile.webp",
+      "label": "src/assets/art/title-layers/backdrop-mobile.webp",
+      "path": "src/assets/art/title-layers/backdrop-mobile.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/foreground-overlay-large.webp",
+      "label": "src/assets/art/title-layers/foreground-overlay-large.webp",
+      "path": "src/assets/art/title-layers/foreground-overlay-large.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/foreground-overlay-mobile.webp",
+      "label": "src/assets/art/title-layers/foreground-overlay-mobile.webp",
+      "path": "src/assets/art/title-layers/foreground-overlay-mobile.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/foreground-overlay.webp",
+      "label": "src/assets/art/title-layers/foreground-overlay.webp",
+      "path": "src/assets/art/title-layers/foreground-overlay.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/parchment-layer-large.webp",
+      "label": "src/assets/art/title-layers/parchment-layer-large.webp",
+      "path": "src/assets/art/title-layers/parchment-layer-large.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/parchment-layer.webp",
+      "label": "src/assets/art/title-layers/parchment-layer.webp",
+      "path": "src/assets/art/title-layers/parchment-layer.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/scene-overlay-desktop.webp",
+      "label": "src/assets/art/title-layers/scene-overlay-desktop.webp",
+      "path": "src/assets/art/title-layers/scene-overlay-desktop.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/scene-overlay-large.webp",
+      "label": "src/assets/art/title-layers/scene-overlay-large.webp",
+      "path": "src/assets/art/title-layers/scene-overlay-large.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/scene-overlay-mobile.webp",
+      "label": "src/assets/art/title-layers/scene-overlay-mobile.webp",
+      "path": "src/assets/art/title-layers/scene-overlay-mobile.webp",
+      "type": "file"
+    },
+    {
+      "id": "file:src/assets/art/title-layers/wordmark-large.webp",
+      "label": "src/assets/art/title-layers/wordmark-large.webp",
+      "path": "src/assets/art/title-layers/wordmark-large.webp",
       "type": "file"
     },
     {

@@ -64,7 +64,7 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
    Akt I føles komplet (wishlist-opbygning; PRD §8-mål justeres til
    én-akts-spillet).
 
-## Kendte, bevidste røde tal (ikke regressioner)
+## Kendte, bevidste afvigelser og røde tal
 
 - **Den visuelle dommer scorer alle 9 regioner på spilskærmen under tærsklen
   (samlet 0,60).** Referencen `docs/design/reference/target-2026-08-11.webp` er
@@ -100,13 +100,20 @@ et dokumenteret pastel-designsystem — se `DESIGN.md` (lov for alt visuelt) og
   til dommeren, adskilt fra kunstkilden — feature-arbejde, udskudt af punkt 2.
   Baggrund og side-om-side-bevis: se `$comment` i
   `docs/design/reference/registry.json`.
-- **`judge:title-fidelity` melder røde mål i CI uden at gøre main rød.** Det er
-  bevidst (Phase A auditerer, Phase D skifter kaldet til `--require-green`);
-  porten findes og er testet begge veje i `tests/title-fidelity.test.ts`.
+- **Titelskærmens fidelity-port er lukket (2026-08-19).**
+  `title-fidelity-v3` kræver nu grøn scene-søm, wordmarkbredde, mørk
+  forgrund, Karl-detalje, multiskala kanttæthed, fire billedlag, faktisk
+  title-critical payload og ingen fysisk opskalering på alle seks viewports.
+  CI kører `npm run judge:title-fidelity -- --require-green`.
 - **`npm run test:visual` er rød på scoretesten og ligger bevidst uden for CI.**
   Suiten optager live med rigtig Chromium og scorer mod
   `tests/visual-baseline.json` (optaget 2026-08-13, commit `429849d`). Målt
-  2026-08-15: **58 fald** over `maxDrop` 0,02 — de største er
+  igen 2026-08-19: main har fortsat **58 fald** (43 game, 15 title);
+  titel-lukningen har **72** (samme 43 game, 29 title), fordi baselinefilen
+  beskriver den gamle titelkomposition. Ingen baselineværdi er sænket for at
+  skjule det. Titlens aktive release-port er nu den grønne, referencepinnede
+  `title-fidelity-v3`; modernisering af den globale baseline er et separat
+  arbejde. De største gamle fald er
   `game/chips/geometry` 0,98, `game/search/geometry` 0,96 og
   `game/narrator/geometry` 0,89, altså præcis de regioner der flyttede med
   to-siders spreadet, plus `title/actions/tone` 0,37 og `title/chip/tone` 0,36

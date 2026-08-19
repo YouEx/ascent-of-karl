@@ -1621,94 +1621,74 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 #title-screen[hidden] { display: none; }
 
 .title-stage {
-  position: absolute; top: 0; bottom: 0;
-  left: var(--bar); right: var(--bar);
-  /* Scenepladen er stående (896x992). Fylder man en liggende rude med
-     `cover`, forstørres Karl til det dobbelte, og maleriets dybde forsvinder.
-     Derfor lægges pladen i sin naturlige højde klods op ad højre kant —
-     bredden bliver da 90.4vh — og resten af ruden fyldes med pladens egen
-     venstre kant, sløret vandret og strakt. Sløringen bevarer dalens lodrette
-     lagdeling og opløser alt genkendeligt, så der hverken bliver et spejlbillede
-     eller en anden Karl. Feltet ligger under pergamentarket. */
-  --seam: calc(100% - 90.4dvh);
-  /* Pladen findes i tre bredder (897/640/448 px, samme beskæring). Under
-     900 px rude vælges den, der faktisk matcher visningsstørrelsen, i
-     stedet for altid at hente den bredeste — se media queries forneden.
-     Variablen arves ned til ::after og til portrættets egen baggrundsregel. */
-  --scene-src: url("../assets/art/title-scene-897.webp");
-  /* Faldbaggrunden er skærmens egen dæmringstone (samme lærred som
-     spilskærmens himmel, DESIGN.md's målpalet) — ikke seks løse hex-tal.
-     Den ses kun, hvis scenebilledet ikke når at male sig ind. */
-  background:
-    url("../assets/art/scene-ext.webp") left center / calc(var(--seam) + 200px) 100% no-repeat,
-    var(--canvas-fallback);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--bar);
+  right: var(--bar);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--canvas-fallback);
 }
-/* Den skarpe plade fades ind over 200 px, ellers står der en lige, lodret
-   kant mellem den slørede forlængelse og maleriet. */
-.title-stage::after {
-  content: "";
-  position: absolute; inset: 0;
-  /* --valley-dark bagved, så et udeblevet billede efterlader dalens egen
-     mørke tone i stedet for hvidt hul — masken skjuler feltet alligevel,
-     der hvor pladen ikke selv når ud, så farven ses kun ved en fejlet hentning. */
-  background: var(--scene-src) right center / auto 100% no-repeat, var(--valley-dark);
-  -webkit-mask-image: linear-gradient(to right, transparent var(--seam), #000 calc(var(--seam) + 200px));
-  mask-image: linear-gradient(to right, transparent var(--seam), #000 calc(var(--seam) + 200px));
+.title-backdrop,
+.title-scene,
+.title-foreground {
+  position: absolute;
+  display: block;
   pointer-events: none;
+}
+.title-backdrop {
+  z-index: 0;
+  inset: 0;
+}
+.title-backdrop-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.title-scene,
+.title-foreground {
+  z-index: 1;
+  top: 0;
+  right: 0;
+  width: auto;
+  height: min(100%, 992px);
+  aspect-ratio: 896 / 992;
+}
+.title-foreground { z-index: 2; }
+.title-scene-art,
+.title-foreground-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .title-panel {
   position: absolute;
-  /* Over `.title-stage::after`. Pseudoelementet er sidste barn i kassetræet
-     og ville ellers male hen over arket, hver gang masken er uigennemsigtig
-     — hvilket den er i portræt, hvor `--seam` bliver negativ. */
-  z-index: 1;
+  z-index: 3;
   left: calc(var(--bar) + 1.1vw); bottom: 0;
-  height: 92%;
+  height: min(92%, 907px);
   aspect-ratio: 692 / 907;
-  max-width: 46%;
+  max-width: min(46%, 692px);
   container-type: inline-size;
-  /* Samme fil som 1x og 2x-descriptor var en påstået skarphed, arket ikke
-     har — fjernet. Bredden vælges ærligt efter ruden (media queries
-     forneden). */
-  --parchment-src: url("../assets/art/title-parchment-692.webp");
-  /* TASK-009 mod TASK-008: kanten er pladens EGEN alfa (revet silhuet, ikke
-     et rent rektangel) — boksen er nødvendigvis bredere end silhuetten, så
-     de takkede flige kan stikke ud uden at blive beskåret. Stod her tidligere
-     `--parchment` som ÉN baggrundsfarve under hele boksen (TASK-008's egen
-     ordlyd); det fyldte de indrykkede hak MELLEM fligene med en flad,
-     utekstureret firkant — en lys "sømkant" langs en lige linje ved alle tre
-     kontrolstørrelser (1280/1600/2560px), som ikke findes i referencen (der
-     viser SCENEN i hakkene). Men at fjerne farven helt bryder TASK-008's
-     egen begrundelse: "panelet skal blive læsbart, hvis billedet fejler" —
-     uden nogen bundfarve ville ALT tekstindhold miste sin garanterede
-     pergament-baggrund, ikke kun de dekorative hak.
-     Løsningen er to lag: pixelmålt (build af `title-parchment-692.webp`) er
-     silhuetten uigennemsigtig i HELE tekstzonen — x 15-96 % af bredden,
-     samme sideinset som `.title-block` selv bruger — og kun den yderste
-     margen mod venstre (ornamenterne, ingen tekst) har ægte alfa under 250
-     (målt værste indhak 14,6 %). Lag 2 er derfor en hård-stoppet gradient,
-     flad `--parchment` mellem 15-96 %, transparent udenfor: usynlig i
-     normal drift (billedets egen uigennemsigtige pixels dækker den
-     fuldstændig der), men den eneste garanti, al brødtekst har, hvis
-     billedet fejler helt. `background-size: 100% 100%` på begge lag er
-     bevidst — en `background-position`-forskydning under 100 % måler sin
-     procent af (boks minus billede), ikke af boksen selv, og ville derfor
-     ikke ramme 15 % (afprøvet, landede reelt på ~2,9 %); en gradient der
-     selv fylder hele boksen har ingen af den slags omregning, kun sine
-     egne stop i lige linje. Den dekorative margen uden for zonen har
-     fortsat ingen bundfarve, så scenen (via `.title-stage::after` eller
-     dens egne `--valley-dark`/`--canvas-fallback`, to lag længere nede)
-     skinner igennem hakkene i stedet for en tilfældig papirfirkant —
-     TASK-009 løst uden at koste TASK-008 noget. */
-  background-image:
-    var(--parchment-src),
-    linear-gradient(to right,
-      transparent 15%, var(--parchment) 15%,
-      var(--parchment) 96%, transparent 96%);
-  background-repeat: no-repeat, no-repeat;
-  background-position: center, center;
-  background-size: 100% 100%, 100% 100%;
+}
+.title-parchment-art {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+.title-parchment {
+  position: absolute;
+  inset: 0;
+  display: block;
 }
 
 /* Blokkene sidder på faste pladser i procent af panelet, ikke i flow.
@@ -1717,6 +1697,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
    ville lande neden for sit eget bånd. */
 .title-block {
   position: absolute;
+  z-index: 1;
   left: 15%; right: 4%;
   text-align: center;
 }
@@ -2146,7 +2127,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 /* --- Velkomstchippen svæver over himlen, ikke på arket ------------------ */
 .title-chip {
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   left: calc(var(--bar) + 1.26vw); top: 2.5%;
   display: flex; align-items: center; gap: 24px;
   width: 340px;
@@ -2257,7 +2238,7 @@ html[data-improvise-enabled] .invention-entry .invention-label {
 /* --- Trofæ og lyd øverst til højre i maleriet -------------------------- */
 .title-tools {
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   /* Målt: knapparret står 38 px fra kanten, referencen vil have 21. To
      knapper à 2,9rem med 0,6rem imellem giver 102x46 px mod registerets
      180x70. 4,4rem + 2,45rem rammer det. */
@@ -2338,6 +2319,20 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   stroke-linecap: round; stroke-linejoin: round;
 }
 
+@media (min-width: 1900px) and (min-height: 1100px) {
+  .title-scene,
+  .title-foreground {
+    height: min(100%, 1440px);
+  }
+  .title-panel {
+    height: min(92%, 1300px);
+    max-width: none;
+  }
+  .title-mark {
+    width: min(78.27%, 800px);
+  }
+}
+
 /* --------------------------------------------------------------------------
    Smalt: maleriet bliver baggrund for hele ruden, og arket bliver et kort,
    der ligger midt i den. Pladen beholdes som fladen — den ER papiret — men
@@ -2345,20 +2340,24 @@ html[data-improvise-enabled] .invention-entry .invention-label {
    dæmpede lag at stå på.
    -------------------------------------------------------------------------- */
 @media (max-width: 900px), (max-aspect-ratio: 1/1) {
-  /* Stående rude: her er der ingen plads ved siden af arket, så maleriet
-     bliver ren baggrund. `cover` fra midten viser dal til venstre og klippe
-     til højre; Karl selv ligger bag arket i stedet for at blive skåret over
-     midt i ansigtet. Det brede felt og dets maske hører liggende ruder til. */
-  .title-stage {
-    background: var(--scene-src) 50% center / cover no-repeat,
-                var(--valley-dark);
+  .title-backdrop-art {
+    object-position: 68% center;
   }
-  .title-stage::after { display: none; }
+  .title-scene,
+  .title-foreground {
+    top: 0;
+    left: 50%;
+    right: auto;
+    width: auto;
+    height: 100%;
+    translate: -50% 0;
+  }
   .title-panel {
     left: 50%; bottom: auto; top: 50%;
     translate: -50% -50%;
-    height: min(92%, 128vw);
-    max-width: min(92%, 27rem);
+    width: min(92%, 346px);
+    height: auto;
+    max-width: none;
   }
   .title-mark {
     left: 10%;
@@ -2377,19 +2376,6 @@ html[data-improvise-enabled] .invention-entry .invention-label {
   .title-tools button { width: 44px; height: 44px; }
   .title-tools button::before { inset: 4px; }
   .title-tools svg { width: 1.25rem; height: 1.25rem; }
-}
-
-/* Tre bredder findes for scene og pergament (897/640/448 og 692/520/360 px,
-   samme beskæring). Under 900 px vises kortet ved omtrent disse to
-   trin, så det er ærligt disse filer, der hentes — ikke den bredeste skaleret
-   ned, og ikke en påstået 2x af den samme fil (TASK-007/008). */
-@media (max-width: 480px) {
-  .title-stage { --scene-src: url("../assets/art/title-scene-448.webp"); }
-  .title-panel { --parchment-src: url("../assets/art/title-parchment-360.webp"); }
-}
-@media (min-width: 481px) and (max-width: 900px) {
-  .title-stage { --scene-src: url("../assets/art/title-scene-640.webp"); }
-  .title-panel { --parchment-src: url("../assets/art/title-parchment-520.webp"); }
 }
 
 @media (prefers-reduced-motion: reduce) {

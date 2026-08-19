@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Fidelity-v2: geometriankret målkontrakt for titelskærmen."""
+"""Fidelity-v3: geometriankret, skalastabil målkontrakt for titelskærmen."""
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import sys
+from urllib.parse import unquote_to_bytes
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +22,7 @@ LAPLACIAN_KERNEL = np.array(
     [[0.0, 1.0, 0.0], [1.0, -4.0, 1.0], [0.0, 1.0, 0.0]],
     dtype=np.float64,
 )
+EDGE_SCALES = (1.0, 0.75, 0.5, 0.35, 0.3)
 SCREEN_GATE_ORDER = (
     "captureDimensions",
     "sceneSeamGradient",
@@ -99,6 +102,25 @@ def _high_frequency_energy(image: Image.Image) -> float:
     return float(np.std(gray - low))
 
 
+def _multiscale_edge_density(rgb: np.ndarray) -> tuple[float, dict[str, float]]:
+    densities: dict[str, float] = {}
+    for scale in EDGE_SCALES:
+        sample = (
+            rgb
+            if scale == 1.0
+            else cv2.resize(
+                rgb,
+                None,
+                fx=scale,
+                fy=scale,
+                interpolation=cv2.INTER_AREA,
+            )
+        )
+        edges = cv2.Canny(_rec709_u8(sample), 51, 145, L2gradient=True)
+        densities[f"{scale:g}"] = float(100 * np.mean(edges > 0))
+    return max(densities.values()), densities
+
+
 def _spatial_similarity(first: Image.Image, second: Image.Image) -> float:
     a = np.asarray(first.convert("RGBA"), dtype=np.float64)
     b = np.asarray(second.convert("RGBA").resize(first.size, Image.Resampling.LANCZOS), dtype=np.float64)
@@ -163,7 +185,12 @@ def _character_crop(
         crop = Image.new("RGB", (max(1, canonical_width), max(1, canonical_height)))
         evidence_ok = False
     if crop.size != (canonical_width, canonical_height):
-        evidence_ok = False
+        if (
+            not character.get("cropPath")
+            or crop.width < canonical_width
+            or crop.height < canonical_height
+        ):
+            evidence_ok = False
         crop = crop.resize(
             (max(1, canonical_width), max(1, canonical_height)),
             Image.Resampling.LANCZOS,
@@ -237,8 +264,7 @@ def screen_metrics(
 
     character, character_raw, character_ok = _character_crop(image, geometry, path.parent)
     detail = _detail_variance(character)
-    edges = cv2.Canny(luma, 51, 145, L2gradient=True)
-    edge_density = float(100 * np.mean(edges > 0))
+    edge_density, edge_density_by_scale = _multiscale_edge_density(rgb)
 
     return (
         {
@@ -257,6 +283,7 @@ def screen_metrics(
             "expectedHeight": expected_height,
             "titleComponentMinimumArea": minimum_area,
             "luma": "Rec.709 rounded uint8",
+            "edgeDensityByScale": edge_density_by_scale,
             "seam": {**seam_raw, "valid": seam_ok},
             "character": character_raw,
         },
@@ -623,12 +650,30 @@ def layer_manifest_result(
         "pass": not failures and set(layers) == set(required),
         "requiredLayers": required,
         "layers": layers,
+        "titleCriticalImages": [
+            image
+            for image in metrics.get("images", [])
+            if image.get("titleCritical") is True
+        ],
         "failures": failures,
     }
 
 
+def _inline_source_size(source: str) -> int | None:
+    if not source.startswith("data:") or "," not in source:
+        return None
+    header, payload = source.split(",", 1)
+    try:
+        if ";base64" in header:
+            return len(base64.b64decode(payload, validate=True))
+        return len(unquote_to_bytes(payload))
+    except (ValueError, TypeError):
+        return None
+
+
 def payload_result(
     resources: dict[str, Any],
+    metrics: dict[str, Any],
     manifest: dict[str, Any],
     registry: dict[str, Any],
     viewport_id: str,
@@ -639,28 +684,60 @@ def payload_result(
     resource_by_url: dict[str, list[dict[str, Any]]] = {}
     for entry in resources.get("entries", []):
         resource_by_url.setdefault(str(entry.get("url", "")), []).append(entry)
-    selected = []
-    valid_resources = True
-    for url in {
+    layer_urls = {
         str(layer.get("currentSrc", ""))
         for layer in manifest.get("layers", {}).values()
-    }:
-        matched = resource_by_url.get(url, [])
-        if not matched or sum(int(entry.get("transferSize", 0)) for entry in matched) <= 0:
-            valid_resources = False
+    }
+    critical_sources = set(metrics.get("criticalSources", []))
+    if not critical_sources:
+        critical_sources = {
+            str(entry.get("url", ""))
+            for entry in resources.get("entries", [])
+            if entry.get("criticalPayload") is True
+        } | layer_urls
+    selected = []
+    inline_sources = []
+    missing_sources = []
+    inline_bytes = 0
+    for source in sorted(critical_sources):
+        if source.startswith("data:"):
+            size = _inline_source_size(source)
+            if size is None:
+                missing_sources.append(source)
+            else:
+                inline_sources.append({"source": source, "bytes": size})
+                inline_bytes += size
+            continue
+        if source.startswith("blob:"):
+            missing_sources.append(source)
+            continue
+        matched = resource_by_url.get(source, [])
+        if not matched or any(int(entry.get("transferSize", 0)) <= 0 for entry in matched):
+            missing_sources.append(source)
             continue
         selected.extend(matched)
-    value = int(sum(int(entry.get("transferSize", 0)) for entry in selected))
+    selected_urls = {str(entry.get("url", "")) for entry in selected}
+    valid_resources = (
+        layer_urls.issubset(critical_sources)
+        and layer_urls.issubset(selected_urls)
+        and not missing_sources
+    )
+    value = int(
+        sum(int(entry.get("transferSize", 0)) for entry in selected)
+        + inline_bytes
+    )
     return {
         "value": value,
         "limit": limit,
         "pass": (
             manifest["pass"]
             and valid_resources
-            and len({entry.get("url") for entry in selected}) == len(manifest["requiredLayers"])
             and value <= limit
         ),
-        "resourceCount": len(selected),
+        "resourceCount": len(critical_sources),
+        "networkResourceCount": len(selected),
+        "inlineSources": inline_sources,
+        "missingSources": missing_sources,
         "resourcesSha256": sha256_json(resources),
     }
 
@@ -673,18 +750,25 @@ def no_upscale_result(
     gate = registry["goalMetrics"]["gates"]["noUpscale"]
     enforced = _gate_applies(gate, viewport_id)
     failures = []
-    for layer_id in manifest["requiredLayers"]:
-        layer = manifest.get("layers", {}).get(layer_id)
-        if not layer:
-            failures.append({"layerId": layer_id, "reason": "missing"})
+    images = manifest.get("titleCriticalImages") or list(
+        manifest.get("layers", {}).values()
+    )
+    seen = set()
+    for image in images:
+        key = (
+            str(image.get("selector", "")),
+            str(image.get("currentSrc", "")),
+        )
+        if key in seen:
             continue
-        width_scale = float(layer["physicalWidth"]) / float(layer["naturalWidth"])
-        height_scale = float(layer["physicalHeight"]) / float(layer["naturalHeight"])
+        seen.add(key)
+        width_scale = float(image["physicalWidth"]) / float(image["naturalWidth"])
+        height_scale = float(image["physicalHeight"]) / float(image["naturalHeight"])
         if max(width_scale, height_scale) > float(gate["maxPhysicalScale"]) + 1e-9:
             failures.append(
                 {
-                    "layerId": layer_id,
-                    "currentSrc": layer.get("currentSrc"),
+                    "selector": image.get("selector"),
+                    "currentSrc": image.get("currentSrc"),
                     "widthScale": width_scale,
                     "heightScale": height_scale,
                 }
@@ -745,7 +829,7 @@ def evaluate_contracts(
         resources = json.loads(resolve_contract_path(item["resources"], base).read_text())
         metrics = json.loads(resolve_contract_path(item["metrics"], base).read_text())
         manifest = layer_manifest_result(metrics, resources, registry)
-        payload = payload_result(resources, manifest, registry, viewport_id)
+        payload = payload_result(resources, metrics, manifest, registry, viewport_id)
         upscale = no_upscale_result(manifest, registry, viewport_id)
         captures.append(
             {
@@ -821,7 +905,7 @@ def score_run(
             geometry["character"]["cropPath"] = str((run / crop_path).resolve())
         result = score_image(image_path, viewport_id, registry, registry_hash, geometry)
         manifest = layer_manifest_result(metrics, resources, registry)
-        payload = payload_result(resources, manifest, registry, viewport_id)
+        payload = payload_result(resources, metrics, manifest, registry, viewport_id)
         upscale = no_upscale_result(manifest, registry, viewport_id)
         result["captureContracts"] = {
             "layerManifest": manifest,

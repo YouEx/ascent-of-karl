@@ -165,13 +165,11 @@ Er et ornament læsbart som information, er det tegnet forkert. Se §8.
 
 ### Titelskærmen (overskrift, fanebånd og sten-knapper)
 
-Titlens egen overskrift, fanebånd ("reinvent history, badly") og de to sten-knapper
-(Begin/Continue/New life, Fates) bruger fem nye tokens, ingen delt med resten af
-spillet — hugget i samme motiv som Combine-knappen ovenfor, men i titlens egne,
-mørkere toner. Panel, ramme og redskabsknapper genbruger derimod bevidst papirets
-og flisernes egne, allerede dokumenterede tokens (`Parchment`, `Tile Edge`,
-`Valley Dark` og spillets "hugget flise"-opskrift) — titelskærmen er samme flade,
-ikke en ny en:
+Titlens synlige wordmark er sourceafledt billedkunst. Fanebåndet
+("reinvent history, badly") og sten-knapperne (Begin/Continue/New life, Fates)
+er fortsat semantisk HTML/CSS med titlens egne mørkere toner. Panel, ramme og
+redskabsknapper genbruger papirets og flisernes dokumenterede tokens
+(`Parchment`, `Tile Edge`, `Valley Dark` og spillets "hugget flise"-opskrift):
 
 - **Title Stone Hi** `#6A4B30` — overskriftens lyseste facet, toppen af bogstavernes
   lodrette gradient
@@ -180,12 +178,11 @@ ikke en ny en:
 - **Ribbon Ink** `#6D4118` — fanebåndets tekst
 - **Btn Ink** `#42240C` — knappernes tekst (Begin/Continue/New life/Fates)
 
-> **Overskriften er ikke én farve.** Bogstaverne fyldes med en lodret gradient
-> (`background-clip: text`, 177°) fra `Title Stone Hi` gennem `Title Stone` til
-> `Title Stone Lo` — samme "hugget i sten"-motiv som Combine-knappen, men egne
-> toner, fordi overskriften står på pergament, ikke på en fritstående sten-flade.
-> Værste kontrast-tilfælde er den LYSESTE ende: `Title Stone Hi` mod `Parchment`
-> giver **5,87:1** — over både stor teksts 3:1-grænse og normalteksts 4,5:1.
+> **Wordmarken er kunst, headingen er tekst.** `showTitleScreen()` indeholder
+> præcis ét semantisk `h1` med navnet *The Ascent of Karl*. Den synlige,
+> sourceafledte WebP er dekorativ (`alt=""`, `aria-hidden="true"`) og vælges
+> responsivt uden fysisk opskalering. `Title Stone`-tokens bevares som
+> dokumenteret farveproveniens og fallback, ikke som `background-clip:text`.
 >
 > **Fanebåndet og knapperne sidder ikke på pergamentet, og deres tekst måles derfor
 > mod deres EGEN flade, ikke mod papirtrinnene ovenfor.** `Ribbon Ink` mod fanebåndets
@@ -325,6 +322,13 @@ wordmark og selvstændige illustrationer må forblive billeder. Det samme gælde
 ornamenter, der er komplette motiver i sig selv, fx skillelinje, tap-hånd,
 jagtscene, velkomstfigur og ildflise. Skellet er funktionelt: **en illustration
 kan være et billede; en interaktiv kontrol eller komponentramme kan ikke.**
+
+Titlens verdenslag bygges deterministisk af
+`tools/art/build_title_runtime_layers.py`: landskabet er backdrop, mens
+`scene`, `foreground`, `parchment` og `wordmark` er eksplicitte `<picture>`-
+lag med native dimensioner. Mobil må højst hente 350 kB title-critical kunst,
+desktop 600 kB. `title-fidelity-v3` måler faktisk hentede bytes, fysisk
+opskalering, Karl-detalje og multiskala kanttæthed på seks viewports.
 
 **Combine-knappen** er undtagelsen: udskåret sten (`Stone` med `Stone Edge`-facet
 foroven), lyse bogstaver, chevron-ornament langs underkanten. Den løses med
@@ -699,6 +703,7 @@ npm run test:visual
 
 | Dato       | Ændring                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 19-08-2026 | Titlen bruger nu responsive scene-, foreground-, pergament- og wordmarklag med native mål, faktisk payloadbudget og `title-fidelity-v3`; den slørede sceneudvidelse og den fuldhøje papirbaggrund er fjernet. |
 | 14-08-2026 | §2/§3/§4/§8: titlens krom er nu semantisk HTML/CSS, ikke sammensyede komponentudsnit. Fanebånd, handlinger, redskaber, velkomstchip og tipkort får kontinuerlige tokenbyggede flader med rigtige interaktionstilstande; scene, pergament, source-wordmark og selvstændige illustrationer bevares som billeder. |
 | 13-08-2026 | §10: den visuelle dommer er nu den gældende lukningsmetode: commit-identificeret baseline, rigtig produktions-capture, fem regionsmetrikker, obligatoriske overlays, 0,02-regressionsgrænse og en langsom opt-in-test uden for `npm test`. |
 | 13-08-2026 | §4: spillerens improviserede elementer er dokumenteret som samme pergamentmateriale med stiplet blæk og markøren "Karl's invention"; bogen holder dem i en separat sektion uden note, kilde eller canonical tidslinjenode, og copy-status er inline og ikke-blokerende. |

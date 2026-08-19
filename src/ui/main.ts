@@ -24,7 +24,22 @@ import { closeTopOverlay, initOverlays, openOverlay } from "./overlay";
 import { RARITY_LABEL, computeRarity } from "../core/rarity";
 import { icons } from "./icons";
 import { glyphHTML, problemGlyphHTML } from "./art";
-import { TITLE_WORDMARKS } from "./title-art";
+import {
+  TITLE_BACKDROP_LARGE,
+  TITLE_BACKDROP_MOBILE,
+  TITLE_BACKDROP_WIDE,
+  TITLE_FOREGROUND_DESKTOP,
+  TITLE_FOREGROUND_LARGE,
+  TITLE_FOREGROUND_MOBILE,
+  TITLE_PARCHMENT_DESKTOP,
+  TITLE_PARCHMENT_LARGE,
+  TITLE_SCENE_DESKTOP,
+  TITLE_SCENE_LARGE,
+  TITLE_SCENE_MOBILE,
+  TITLE_WORDMARK_DESKTOP,
+  TITLE_WORDMARK_LARGE,
+  TITLE_WORDMARK_MOBILE,
+} from "./title-art";
 import { PlaytestLog } from "./playtest";
 import {
   IMPROVISE_ENABLED,
@@ -2063,19 +2078,86 @@ function showTitleScreen(): void {
   const crowded = canContinue ? " crowded" : "";
   el.titleScreen.innerHTML = `
     <div class="title-stage">
+      <picture class="title-backdrop" aria-hidden="true">
+        <source media="(min-width: 1900px) and (min-height: 1100px)"
+                srcset="${TITLE_BACKDROP_LARGE}"
+                width="2560"
+                height="1440">
+        <source media="(max-width: 900px)"
+                srcset="${TITLE_BACKDROP_MOBILE}"
+                width="896"
+                height="1984">
+        <img class="title-backdrop-art"
+             src="${TITLE_BACKDROP_WIDE}"
+             width="2560"
+             height="1097"
+             alt="" aria-hidden="true"
+             loading="eager" fetchpriority="high">
+      </picture>
+      <picture class="title-scene" aria-hidden="true">
+        <source media="(min-width: 1900px) and (min-height: 1100px)"
+                srcset="${TITLE_SCENE_LARGE}"
+                width="1792"
+                height="1984">
+        <source media="(max-width: 900px), (max-aspect-ratio: 1/1)"
+                srcset="${TITLE_SCENE_MOBILE}"
+                width="1792"
+                height="1984">
+        <img class="title-scene-art"
+             data-title-layer="scene"
+             src="${TITLE_SCENE_DESKTOP}"
+             width="896"
+             height="992"
+             alt="" aria-hidden="true"
+             loading="eager" fetchpriority="high">
+      </picture>
+      <picture class="title-foreground" aria-hidden="true">
+        <source media="(min-width: 1900px) and (min-height: 1100px)"
+                srcset="${TITLE_FOREGROUND_LARGE}"
+                width="1792"
+                height="1984">
+        <source media="(max-width: 900px), (max-aspect-ratio: 1/1)"
+                srcset="${TITLE_FOREGROUND_MOBILE}"
+                width="1792"
+                height="1984">
+        <img class="title-foreground-art"
+             data-title-layer="foreground"
+             src="${TITLE_FOREGROUND_DESKTOP}"
+             width="896"
+             height="992"
+             alt="" aria-hidden="true"
+             loading="eager" fetchpriority="high">
+      </picture>
       <div class="title-panel">
+        <picture class="title-parchment" aria-hidden="true">
+          <source media="(min-width: 1900px) and (min-height: 1100px)"
+                  srcset="${TITLE_PARCHMENT_LARGE}"
+                  width="1384"
+                  height="1814">
+          <img class="title-parchment-art"
+               data-title-layer="parchment"
+               src="${TITLE_PARCHMENT_DESKTOP}"
+               width="692"
+               height="907"
+               alt="" aria-hidden="true"
+               loading="eager" fetchpriority="high">
+        </picture>
         <h1 class="title-mark title-block">
           <span class="title-mark-semantic">The Ascent of Karl</span>
           <picture class="title-wordmark" aria-hidden="true">
+            <source media="(min-width: 1900px) and (min-height: 1100px)"
+                    srcset="${TITLE_WORDMARK_LARGE}"
+                    width="1090"
+                    height="640">
             <source media="(max-width: 900px)"
-                    srcset="${TITLE_WORDMARKS.mobile.src}"
-                    width="${TITLE_WORDMARKS.mobile.width}"
-                    height="${TITLE_WORDMARKS.mobile.height}">
+                    srcset="${TITLE_WORDMARK_MOBILE}"
+                    width="436"
+                    height="256">
             <img class="title-wordmark-art"
                  data-title-layer="wordmark"
-                 src="${TITLE_WORDMARKS.desktop.src}"
-                 width="${TITLE_WORDMARKS.desktop.width}"
-                 height="${TITLE_WORDMARKS.desktop.height}"
+                 src="${TITLE_WORDMARK_DESKTOP}"
+                 width="545"
+                 height="320"
                  sizes="(max-width: 900px) min(61vw, 218px), min(34.36vw, 545px)"
                  alt="" aria-hidden="true"
                  loading="eager" fetchpriority="high">

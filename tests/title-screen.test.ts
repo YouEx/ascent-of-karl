@@ -117,52 +117,78 @@ describe("Fates-tallet er data-drevet, ikke en hardkodet konstant (TASK-014)", (
   });
 });
 
-describe("responsive aktiv-referencer (TASK-007/008)", () => {
-  // Tre trin findes for både scene og pergament (897/640/448 og
-  // 692/520/360 px, samme beskæring) — under 900 px skal disse ÆGTE,
-  // mindre filer hentes, ikke den bredeste skaleret ned og ikke en påstået
-  // 2x af samme fil.
+describe("responsive titelkunst er rigtige billedlag", () => {
   const stripped = stripComments(styles);
 
-  it("erklærer alle tre scene-bredder (897/640/448)", () => {
-    expect(stripped).toContain('url("../assets/art/title-scene-897.webp")');
-    expect(stripped).toContain('url("../assets/art/title-scene-640.webp")');
-    expect(stripped).toContain('url("../assets/art/title-scene-448.webp")');
+  it("renderer præcis scene, foreground, parchment og wordmark som lag", () => {
+    for (const layer of ["scene", "foreground", "parchment", "wordmark"]) {
+      expect(showTitleScreenBody).toContain(`data-title-layer="${layer}"`);
+    }
+    expect(showTitleScreenBody.match(/data-title-layer=/g)).toHaveLength(4);
+    expect(showTitleScreenBody).toContain('class="title-backdrop-art"');
   });
 
-  it("erklærer alle tre pergament-bredder (692/520/360)", () => {
-    expect(stripped).toContain(
-      'url("../assets/art/title-parchment-692.webp")',
+  it("deklarerer mobile, desktop og store scenevarianter med native mål", () => {
+    for (const asset of [
+      "scene-overlay-desktop.webp",
+      "scene-overlay-mobile.webp",
+      "scene-overlay-large.webp",
+      "backdrop-mobile.webp",
+      "backdrop-large.webp",
+      "foreground-overlay.webp",
+      "foreground-overlay-mobile.webp",
+      "foreground-overlay-large.webp",
+      "parchment-layer.webp",
+      "parchment-layer-large.webp",
+      "wordmark-large.webp",
+    ]) {
+      expect(titleArtSource).toContain(asset);
+    }
+    expect(titleArtSource).toMatch(
+      /TITLE_SCENE_DESKTOP\s*=\s*sceneDesktopUrl/,
     );
-    expect(stripped).toContain(
-      'url("../assets/art/title-parchment-520.webp")',
+    expect(titleArtSource).toMatch(
+      /TITLE_BACKDROP_MOBILE\s*=\s*backdropMobileUrl/,
     );
-    expect(stripped).toContain(
-      'url("../assets/art/title-parchment-360.webp")',
+    expect(titleArtSource).toMatch(
+      /TITLE_BACKDROP_LARGE\s*=\s*backdropLargeUrl/,
+    );
+    expect(titleArtSource).toMatch(
+      /TITLE_SCENE_MOBILE\s*=\s*sceneMobileUrl/,
+    );
+    expect(titleArtSource).toMatch(
+      /TITLE_PARCHMENT_DESKTOP\s*=\s*parchmentUrl/,
+    );
+    expect(titleArtSource).toMatch(
+      /TITLE_PARCHMENT_LARGE\s*=\s*parchmentLargeUrl/,
+    );
+    expect(showTitleScreenBody).toMatch(
+      /srcset="\$\{TITLE_BACKDROP_MOBILE\}"[\s\S]*?width="896"[\s\S]*?height="1984"/,
+    );
+    expect(showTitleScreenBody).toMatch(
+      /src="\$\{TITLE_SCENE_DESKTOP\}"[\s\S]*?width="896"[\s\S]*?height="992"/,
     );
   });
 
-  it("skifter --scene-src OG --parchment-src ved både 480px og 900px", () => {
-    const narrow = extractBlock(stripped, "@media (max-width: 480px) {");
-    expect(narrow).toContain("title-scene-448.webp");
-    expect(narrow).toContain("title-parchment-360.webp");
+  it("fjerner den slørede scene-forlængelse og de gamle CSS-baggrunde", () => {
+    expect(stripped).not.toContain("scene-ext.webp");
+    expect(stripped).not.toContain("title-scene-897.webp");
+    expect(stripped).not.toContain("title-parchment-692.webp");
+    expect(stripped).not.toContain("--scene-src");
+    expect(stripped).not.toContain("--parchment-src");
+  });
 
-    const mid = extractBlock(
+  it("kapper mobilpanelet ved 346px, så 692px-kilden aldrig opskaleres ved DPR2", () => {
+    const mobile = extractBlock(
       stripped,
-      "@media (min-width: 481px) and (max-width: 900px) {",
+      "@media (max-width: 900px), (max-aspect-ratio: 1/1) {",
     );
-    expect(mid).toContain("title-scene-640.webp");
-    expect(mid).toContain("title-parchment-520.webp");
-  });
-
-  it("bruger IKKE image-set()/2x-tæthedsmærker som en påstået skarphedsgevinst", () => {
-    // REQ-004/TASK-007: en mindre fil er et andet MOTIV (cover-beskæring),
-    // ikke en 2x-udgave af samme billede — image-set()'s tætheds-syntaks
-    // ville påstå noget, filerne ikke er.
-    const titleStage = extractBlock(stripped, ".title-stage {");
-    const titlePanel = extractBlock(stripped, ".title-panel {");
-    expect(titleStage + titlePanel).not.toMatch(/image-set\(/);
-    expect(titleStage + titlePanel).not.toMatch(/\d+x\)/); // "...897.webp) 2x)"
+    expect(mobile).toMatch(
+      /\.title-panel\s*\{[\s\S]*?width:\s*min\(92%,\s*346px\)/,
+    );
+    expect(mobile).toMatch(
+      /\.title-scene,\s*\.title-foreground\s*\{[\s\S]*?width:\s*auto;[\s\S]*?height:\s*100%/,
+    );
   });
 });
 
@@ -187,15 +213,26 @@ describe("titelskærmens egen h1 er den ENESTE, en skærmlæser møder (TASK-011
       '<span class="title-mark-semantic">The Ascent of Karl</span>',
     );
     expect(showTitleScreenBody).toMatch(
-      /<picture class="title-wordmark" aria-hidden="true">[\s\S]*?<source[\s\S]*?TITLE_WORDMARKS\.mobile[\s\S]*?<img[\s\S]*?data-title-layer="wordmark"[\s\S]*?alt=""[\s\S]*?aria-hidden="true"/,
+      /<picture class="title-wordmark" aria-hidden="true">[\s\S]*?<source[\s\S]*?TITLE_WORDMARK_MOBILE[\s\S]*?<img[\s\S]*?data-title-layer="wordmark"[\s\S]*?alt=""[\s\S]*?aria-hidden="true"/,
     );
   });
 
   it("deklarerer begge wordmarks med deres godkendte native mål", () => {
     expect(titleArtSource).toContain("wordmark-desktop.webp");
     expect(titleArtSource).toContain("wordmark-mobile.webp");
-    expect(titleArtSource).toMatch(/desktop:[\s\S]*?width:\s*545[\s\S]*?height:\s*320/);
-    expect(titleArtSource).toMatch(/mobile:[\s\S]*?width:\s*436[\s\S]*?height:\s*256/);
+    expect(titleArtSource).toContain("wordmark-large.webp");
+    expect(titleArtSource).toMatch(
+      /TITLE_WORDMARK_DESKTOP\s*=\s*wordmarkDesktopUrl/,
+    );
+    expect(titleArtSource).toMatch(
+      /TITLE_WORDMARK_MOBILE\s*=\s*wordmarkMobileUrl/,
+    );
+    expect(titleArtSource).toMatch(
+      /TITLE_WORDMARK_LARGE\s*=\s*wordmarkLargeUrl/,
+    );
+    expect(showTitleScreenBody).toMatch(
+      /src="\$\{TITLE_WORDMARK_DESKTOP\}"[\s\S]*?width="545"[\s\S]*?height="320"/,
+    );
   });
 
   it("holder wordmarken på native 545px desktop / 218px ved DPR2 og bruger ikke CSS-tekstfyld", () => {
@@ -447,10 +484,15 @@ describe("titlen bindes til den synlige mobilrude, ikke spilskærmens bredere la
     expect(rule).toMatch(/height:\s*100dvh/);
   });
 
-  it("scenens bredde og slørede samling følger dynamic viewport-højden", () => {
+  it("scenen og dens source-faithful overlay er bundet til den synlige rude", () => {
     const stripped = stripComments(styles);
-    const rule = extractBlock(stripped, ".title-stage {");
-    expect(rule).toMatch(/--seam:\s*calc\(100%\s*-\s*90\.4dvh\)/);
+    const backdrop = extractBlock(stripped, ".title-backdrop {");
+    const backdropArt = extractBlock(stripped, ".title-backdrop-art {");
+    expect(backdrop).toMatch(/inset:\s*0/);
+    expect(backdropArt).toMatch(/object-fit:\s*cover/);
+    expect(stripped).toMatch(
+      /\.title-scene,\s*\.title-foreground\s*\{[\s\S]*?right:\s*0;[\s\S]*?height:\s*min\(100%,\s*992px\)/,
+    );
   });
 });
 

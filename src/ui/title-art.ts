@@ -1,19 +1,30 @@
+import backdropWideUrl from "../assets/art/bg-wide-2560.webp";
+import backdropLargeUrl from "../assets/art/title-layers/backdrop-large.webp";
+import backdropMobileUrl from "../assets/art/title-layers/backdrop-mobile.webp";
+import foregroundLargeUrl from "../assets/art/title-layers/foreground-overlay-large.webp";
+import foregroundMobileUrl from "../assets/art/title-layers/foreground-overlay-mobile.webp";
+import foregroundUrl from "../assets/art/title-layers/foreground-overlay.webp";
+import parchmentLargeUrl from "../assets/art/title-layers/parchment-layer-large.webp";
+import parchmentUrl from "../assets/art/title-layers/parchment-layer.webp";
+import sceneDesktopUrl from "../assets/art/title-layers/scene-overlay-desktop.webp";
+import sceneLargeUrl from "../assets/art/title-layers/scene-overlay-large.webp";
+import sceneMobileUrl from "../assets/art/title-layers/scene-overlay-mobile.webp";
+import wordmarkLargeUrl from "../assets/art/title-layers/wordmark-large.webp";
 import wordmarkDesktopUrl from "../assets/art/title-materials/wordmark-desktop.webp";
 import wordmarkMobileUrl from "../assets/art/title-materials/wordmark-mobile.webp";
 
-/**
- * Vite-resolverede titelaktiver med de native mål fra
- * tools/art/title-materials.manifest.json. UI'et må skalere ned, aldrig op.
- */
-export const TITLE_WORDMARKS = {
-  desktop: {
-    src: wordmarkDesktopUrl,
-    width: 545,
-    height: 320,
-  },
-  mobile: {
-    src: wordmarkMobileUrl,
-    width: 436,
-    height: 256,
-  },
-} as const;
+/** Vite-resolverede URL'er. Native mål står ved de renderede billednoder. */
+export const TITLE_BACKDROP_WIDE = backdropWideUrl;
+export const TITLE_BACKDROP_MOBILE = backdropMobileUrl;
+export const TITLE_BACKDROP_LARGE = backdropLargeUrl;
+export const TITLE_SCENE_DESKTOP = sceneDesktopUrl;
+export const TITLE_SCENE_MOBILE = sceneMobileUrl;
+export const TITLE_SCENE_LARGE = sceneLargeUrl;
+export const TITLE_FOREGROUND_DESKTOP = foregroundUrl;
+export const TITLE_FOREGROUND_MOBILE = foregroundMobileUrl;
+export const TITLE_FOREGROUND_LARGE = foregroundLargeUrl;
+export const TITLE_PARCHMENT_DESKTOP = parchmentUrl;
+export const TITLE_PARCHMENT_LARGE = parchmentLargeUrl;
+export const TITLE_WORDMARK_DESKTOP = wordmarkDesktopUrl;
+export const TITLE_WORDMARK_MOBILE = wordmarkMobileUrl;
+export const TITLE_WORDMARK_LARGE = wordmarkLargeUrl;
