@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 // @ts-expect-error — parityværktøjet er ren JavaScript uden typedeklaration.
-import {
-  FIXTURES,
-  normalizeParitySnapshot,
-  normalizeSave,
-} from "../tools/parity/harness.mjs";
+import { FIXTURES, normalizeParitySnapshot, normalizeSave } from "../tools/parity/harness.mjs";
 import ciSource from "../.github/workflows/ci.yml?raw";
 
 describe("legacy-to-Svelte differential parity harness", () => {
