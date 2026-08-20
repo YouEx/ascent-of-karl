@@ -20,6 +20,7 @@ import {
   containsOrderedSubsequence,
   createDiagnostics,
   eventTypes,
+  normalizeParitySnapshot,
   runFixtureFlow,
   urlFor,
 } from "./harness.mjs";
@@ -36,15 +37,6 @@ let succeeded = false;
 
 function stable(value) {
   return JSON.stringify(value);
-}
-
-function comparableSnapshot(snapshot, baseline, fixture) {
-  const comparable = structuredClone(snapshot);
-  if (baseline.productEvents === null) comparable.productEvents = null;
-  for (const field of fixture.ignoreSaveFields ?? []) {
-    if (comparable.save?.state) delete comparable.save.state[field];
-  }
-  return comparable;
 }
 
 if (!requestedOrigin) ownedServer = await startServer();
@@ -84,9 +76,9 @@ try {
       );
     }
     if (
-      stable(comparableSnapshot(snapshot, baseline.snapshot, fixture)) !==
+      stable(normalizeParitySnapshot(snapshot, baseline.snapshot, fixture)) !==
       stable(
-        comparableSnapshot(
+        normalizeParitySnapshot(
           baseline.snapshot,
           baseline.snapshot,
           fixture,

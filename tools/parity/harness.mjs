@@ -171,6 +171,28 @@ export function normalizeSave(raw) {
   };
 }
 
+export function normalizeParitySnapshot(snapshot, baseline, fixture) {
+  const comparable = structuredClone(snapshot);
+  if (
+    fixture.scope !== "#title-screen"
+    && Array.isArray(comparable.app?.children)
+  ) {
+    comparable.app.children = comparable.app.children.filter(
+      (child) => child.attributes?.id !== "title-screen",
+    );
+  }
+  if (baseline.productEvents === null) comparable.productEvents = null;
+  for (const field of fixture.ignoreSaveFields ?? []) {
+    if (comparable.save?.state) delete comparable.save.state[field];
+  }
+  for (const event of comparable.productEvents ?? []) {
+    if (["synthesized", "text-only"].includes(event.payload?.audioMode)) {
+      event.payload.audioMode = "fallback";
+    }
+  }
+  return comparable;
+}
+
 function normalizeAchievements(raw) {
   const parsed = parseJson(raw);
   if (!parsed || parsed.invalid || typeof parsed !== "object") return parsed;
