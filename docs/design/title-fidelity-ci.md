@@ -1,19 +1,19 @@
 # Titel-fidelity i CI
 
-Phase A kan merges som et selvstændigt led i en stacked ændringsrække.
-`npm run judge:title-fidelity` kører da i audit-mode: den optager alle seks
-viewports, skriver de røde mål og består processen, så eksisterende main forbliver
-grøn. Den portable v2-provenance- og algoritmesuite kører stadig i `ux-audit`.
+Titel-fidelity er nu en krævet release-port. CI optager alle seks registrerede
+viewports fra produktionsbundtet og kræver de fire billedlag `scene`,
+`foreground`, `parchment` og `wordmark`.
 
-Phase B/C leverer de versionerede assetkontrakter og de fire obligatoriske lag:
-`scene`, `foreground`, `parchment` og `wordmark`.
+Den portable v3-suite bruger geometriankret karakterbevis, multiskala
+kanttæthed og den faktiske samlede title-critical netværkspayload. Derfor er
+DPR2, ultrabredt lærred og responsive art-directions sammenlignelige uden at
+skjule ekstra billedbytes.
 
-Først i Phase D ændres CI-kaldet til:
+CI-kaldet er:
 
 ```bash
 npm run judge:title-fidelity -- --require-green
 ```
 
-`--require-green` er den afsluttende kontrakt: enhver rød billed-, manifest-,
-payload-, dimensions-, retention-, alpha- eller no-upscale-gate giver exit 1.
-Flaget må ikke aktiveres tidligere og må ikke erstattes af lavere tærskler.
+Enhver rød billed-, manifest-, payload-, dimensions- eller no-upscale-gate giver
+exit 1. De aktuelle payloadlofter er 350 kB på mobil og 600 kB på desktop.

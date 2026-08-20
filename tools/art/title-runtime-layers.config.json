@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "algorithm": "title-runtime-layers-v1",
+  "sources": {
+    "titleReference": {
+      "path": "docs/design/reference/title-2026-08-11.webp",
+      "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
+      "sceneCrop": [690, 0, 1586, 992],
+      "role": "approved-scene-and-karl"
+    },
+    "landscapeDonor": {
+      "path": "docs/design/reference/bg-wide.png",
+      "sha256": "e4c12992241cf6048f07f5fb9ea8ab8443ceee986c78e917d6f6c48576ffd8eb",
+      "role": "responsive-backdrop-source"
+    },
+    "parchmentPrior": {
+      "path": "src/assets/art/title-parchment-692.webp",
+      "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a",
+      "role": "existing-source-derived-runtime-parchment"
+    },
+    "wordmarkPrior": {
+      "path": "src/assets/art/title-materials/wordmark-desktop.webp",
+      "sha256": "e286b12b55929f846647ef8ce9480dbc69b991ff513cc0d5be64d78a5b6ccce9",
+      "role": "approved-source-derived-wordmark"
+    }
+  },
+  "toolOcclusions": [
+    [680, 10, 780, 110],
+    [780, 10, 896, 110]
+  ],
+  "toolMask": {
+    "radius": 22,
+    "dilationPixels": 5,
+    "featherSigma": 1.2
+  },
+  "character": {
+    "sceneRect": [189, 180, 600, 650]
+  },
+  "scene": {
+    "desktopLeftFade": 190,
+    "largeLeftFade": 550,
+    "mobileFades": {
+      "left": 90,
+      "right": 70,
+      "top": 72,
+      "bottom": 120
+    }
+  },
+  "backdrop": {
+    "mobileCrop": [1000, 0, 1372, 822],
+    "largeCrop": [225, 0, 1687, 822]
+  },
+  "foreground": {
+    "bottomStart": 610,
+    "bottomLumaMax": 174,
+    "rightStart": 700,
+    "rightLumaMax": 166,
+    "blurSigma": 3.2,
+    "mobileAlphaMin": 32
+  },
+  "parchment": {
+    "fadeStart": 724,
+    "transparentAfter": 774
+  },
+  "outputs": {
+    "backdrop-mobile": {
+      "file": "backdrop-mobile.webp",
+      "dimensions": [896, 1984],
+      "quality": 20,
+      "byteBudget": 70000
+    },
+    "backdrop-large": {
+      "file": "backdrop-large.webp",
+      "dimensions": [2560, 1440],
+      "quality": 60,
+      "byteBudget": 180000
+    },
+    "scene-desktop": {
+      "file": "scene-overlay-desktop.webp",
+      "dimensions": [896, 992],
+      "quality": 92,
+      "byteBudget": 190000
+    },
+    "scene-mobile": {
+      "file": "scene-overlay-mobile.webp",
+      "dimensions": [1792, 1984],
+      "quality": 64,
+      "byteBudget": 155000
+    },
+    "scene-large": {
+      "file": "scene-overlay-large.webp",
+      "dimensions": [1792, 1984],
+      "quality": 75,
+      "byteBudget": 250000
+    },
+    "foreground": {
+      "file": "foreground-overlay.webp",
+      "dimensions": [896, 992],
+      "quality": 88,
+      "byteBudget": 100000
+    },
+    "foreground-mobile": {
+      "file": "foreground-overlay-mobile.webp",
+      "dimensions": [1792, 1984],
+      "quality": 0,
+      "byteBudget": 33000
+    },
+    "foreground-large": {
+      "file": "foreground-overlay-large.webp",
+      "dimensions": [1792, 1984],
+      "quality": 25,
+      "byteBudget": 90000
+    },
+    "parchment": {
+      "file": "parchment-layer.webp",
+      "dimensions": [692, 907],
+      "quality": 86,
+      "byteBudget": 80000
+    },
+    "parchment-large": {
+      "file": "parchment-layer-large.webp",
+      "dimensions": [1384, 1814],
+      "quality": 78,
+      "byteBudget": 120000
+    },
+    "wordmark-large": {
+      "file": "wordmark-large.webp",
+      "dimensions": [1090, 640],
+      "quality": 55,
+      "byteBudget": 90000
+    }
+  }
+}

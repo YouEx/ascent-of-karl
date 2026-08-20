@@ -5,6 +5,7 @@ import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
+import captureSource from "../tools/judge/capture.mjs?raw";
 // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
 import { runCapture, stopServer } from "../tools/judge/capture.mjs";
 // @ts-expect-error — dommerværktøjet er ren JavaScript uden typedeklaration.
@@ -18,6 +19,14 @@ mkdirSync(SCRATCH_ROOT, { recursive: true });
 const FIDELITY_E2E =
   (process as unknown as { env?: Record<string, string | undefined> }).env
     ?.TITLE_FIDELITY_TESTS === "1";
+
+describe("capture.mjs — karakterbevis", () => {
+  it("resampler asset-croppet med høj browserkvalitet", () => {
+    expect(captureSource).toContain("imageSmoothingEnabled = true");
+    expect(captureSource).toContain('imageSmoothingQuality = "high"');
+    expect(captureSource).toContain("pixelData.data[index + 3] = 255");
+  });
+});
 
 const registry = {
   screens: [

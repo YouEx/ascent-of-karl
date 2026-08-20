@@ -100,7 +100,7 @@ jobs:
       # biblioteket ville have v1234, og jobbet fejlede.
       - name: Hent Chromium
         run: npx playwright install --with-deps chromium
-      - name: Test titel-fidelity-v2 med portable fixtures
+      - name: Test titel-fidelity-v3 med portable fixtures
         run: TITLE_FIDELITY_TESTS=1 npx vitest run tests/title-fidelity-v2.test.ts tests/judge-capture.test.ts
       # Kunstpipelinens pytest-suite var aldrig blevet kaldt i CI, selv om
       # planens stack-tabel udpeger "Vitest + Python pytest" som portlaget — og
@@ -119,11 +119,8 @@ jobs:
           python3 -m pytest tools/art/tests -q \
             --deselect "tools/art/tests/test_build_title_scene_masters.py::test_repeated_sixteen_row_extension_fixture_fails_repeat_gate" \
             --deselect "tools/art/tests/test_build_title_scene_masters.py::test_committed_blocker_evidence_is_fresh_and_no_master_is_promoted"
-      # Safe stacked merge: Phase A auditerer og gemmer røde mål, men gør ikke
-      # main rød. Phase D ændrer dette kald til `-- --require-green`, efter at
-      # de fire krævede assetlag og asset-kontrakten er integreret.
-      - name: Auditér titel-fidelity på produktionscapturen
-        run: npm run judge:title-fidelity
+      - name: Kræv grøn titel-fidelity på produktionscapturen
+        run: npm run judge:title-fidelity -- --require-green
       - name: Runtime-kommentar må aldrig blokere gameplay
         run: RUNTIME_COMMENTARY_BROWSER_TESTS=1 npx vitest run tests/runtime-commentary-browser.test.ts
       - name: Start dev-server

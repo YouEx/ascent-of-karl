@@ -480,9 +480,12 @@ export async function captureScreen(
             height: normalized[3] * source.naturalHeight,
           };
           const canvas = document.createElement("canvas");
-          canvas.width = character.canonicalWidth;
-          canvas.height = character.canonicalHeight;
-          canvas.getContext("2d").drawImage(
+          canvas.width = Math.max(1, Math.round(sourceRect.width));
+          canvas.height = Math.max(1, Math.round(sourceRect.height));
+          const context = canvas.getContext("2d");
+          context.imageSmoothingEnabled = true;
+          context.imageSmoothingQuality = "high";
+          context.drawImage(
             source,
             sourceRect.x,
             sourceRect.y,
@@ -493,6 +496,16 @@ export async function captureScreen(
             canvas.width,
             canvas.height,
           );
+          const pixelData = context.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+          );
+          for (let index = 0; index < pixelData.data.length; index += 4) {
+            pixelData.data[index + 3] = 255;
+          }
+          context.putImageData(pixelData, 0, 0);
           characterDataUrl = canvas.toDataURL("image/png");
           character = {
             ...character,

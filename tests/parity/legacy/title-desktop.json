@@ -30,12 +30,192 @@
           "text": "",
           "children": [
             {
+              "tag": "picture",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "title-backdrop"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "source",
+                  "attributes": {
+                    "height": "1440",
+                    "media": "(min-width: 1900px) and (min-height: 1100px)",
+                    "srcset": "/assets/backdrop-large-CKkONJid.webp",
+                    "width": "2560"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "source",
+                  "attributes": {
+                    "height": "1984",
+                    "media": "(max-width: 900px)",
+                    "srcset": "/assets/backdrop-mobile-CQNMZMcm.webp",
+                    "width": "896"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "title-backdrop-art",
+                    "fetchpriority": "high",
+                    "height": "1097",
+                    "loading": "eager",
+                    "src": "/assets/bg-wide-2560-C--XvaOP.webp",
+                    "width": "2560"
+                  },
+                  "text": "",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "picture",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "title-scene"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "source",
+                  "attributes": {
+                    "height": "1984",
+                    "media": "(min-width: 1900px) and (min-height: 1100px)",
+                    "srcset": "/assets/scene-overlay-large-D7uc1iz6.webp",
+                    "width": "1792"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "source",
+                  "attributes": {
+                    "height": "1984",
+                    "media": "(max-width: 900px), (max-aspect-ratio: 1/1)",
+                    "srcset": "/assets/scene-overlay-mobile-BiJcdeHl.webp",
+                    "width": "1792"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "title-scene-art",
+                    "data-title-layer": "scene",
+                    "fetchpriority": "high",
+                    "height": "992",
+                    "loading": "eager",
+                    "src": "/assets/scene-overlay-desktop-D7GyHLz7.webp",
+                    "width": "896"
+                  },
+                  "text": "",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "tag": "picture",
+              "attributes": {
+                "aria-hidden": "true",
+                "class": "title-foreground"
+              },
+              "text": "",
+              "children": [
+                {
+                  "tag": "source",
+                  "attributes": {
+                    "height": "1984",
+                    "media": "(min-width: 1900px) and (min-height: 1100px)",
+                    "srcset": "/assets/foreground-overlay-large-C3cRjWhe.webp",
+                    "width": "1792"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "source",
+                  "attributes": {
+                    "height": "1984",
+                    "media": "(max-width: 900px), (max-aspect-ratio: 1/1)",
+                    "srcset": "/assets/foreground-overlay-mobile-D3W2GxoE.webp",
+                    "width": "1792"
+                  },
+                  "text": "",
+                  "children": []
+                },
+                {
+                  "tag": "img",
+                  "attributes": {
+                    "alt": "",
+                    "aria-hidden": "true",
+                    "class": "title-foreground-art",
+                    "data-title-layer": "foreground",
+                    "fetchpriority": "high",
+                    "height": "992",
+                    "loading": "eager",
+                    "src": "/assets/foreground-overlay-DxC6YAAN.webp",
+                    "width": "896"
+                  },
+                  "text": "",
+                  "children": []
+                }
+              ]
+            },
+            {
               "tag": "div",
               "attributes": {
                 "class": "title-panel"
               },
               "text": "",
               "children": [
+                {
+                  "tag": "picture",
+                  "attributes": {
+                    "aria-hidden": "true",
+                    "class": "title-parchment"
+                  },
+                  "text": "",
+                  "children": [
+                    {
+                      "tag": "source",
+                      "attributes": {
+                        "height": "1814",
+                        "media": "(min-width: 1900px) and (min-height: 1100px)",
+                        "srcset": "/assets/parchment-layer-large-BsGRfk_z.webp",
+                        "width": "1384"
+                      },
+                      "text": "",
+                      "children": []
+                    },
+                    {
+                      "tag": "img",
+                      "attributes": {
+                        "alt": "",
+                        "aria-hidden": "true",
+                        "class": "title-parchment-art",
+                        "data-title-layer": "parchment",
+                        "fetchpriority": "high",
+                        "height": "907",
+                        "loading": "eager",
+                        "src": "/assets/parchment-layer-D4Yahijm.webp",
+                        "width": "692"
+                      },
+                      "text": "",
+                      "children": []
+                    }
+                  ]
+                },
                 {
                   "tag": "h1",
                   "attributes": {
@@ -59,6 +239,17 @@
                       },
                       "text": "",
                       "children": [
+                        {
+                          "tag": "source",
+                          "attributes": {
+                            "height": "640",
+                            "media": "(min-width: 1900px) and (min-height: 1100px)",
+                            "srcset": "/assets/wordmark-large-Bq6U2CU2.webp",
+                            "width": "1090"
+                          },
+                          "text": "",
+                          "children": []
+                        },
                         {
                           "tag": "source",
                           "attributes": {
@@ -747,7 +938,19 @@
     "save": null,
     "narrator": null,
     "achievements": null,
-    "productEvents": null,
+    "productEvents": [
+      {
+        "sequence": 1,
+        "type": "platform.session-ready",
+        "turn": 0,
+        "payload": {
+          "status": "ready",
+          "onlineRequired": false,
+          "activePlayAllowed": true,
+          "archivesReadable": true
+        }
+      }
+    ],
     "errors": [],
     "failedRequests": []
   }

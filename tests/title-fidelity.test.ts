@@ -68,7 +68,7 @@ describe("title-fidelity.mjs — sikker orkestrering", () => {
     const outDir = mkdtempSync(join(SCRATCH_ROOT, "title-orchestrator-"));
     writeFileSync(join(outDir, "stale.txt"), "må ikke overleve");
     const resultFixture = {
-      algorithmVersion: "title-fidelity-v2",
+      algorithmVersion: "title-fidelity-v3",
       viewports: {},
       failing: ["target-native/sceneSeamGradient"],
     };
@@ -126,7 +126,7 @@ describe("title-fidelity.mjs — sikker orkestrering", () => {
 });
 
 describe("titel-fidelity — CI- og provenancekontrakt", () => {
-  it("pinner miljøet og kører den portable suite uden at gøre Phase A-main rød", () => {
+  it("pinner miljøet og kræver den grønne v3-port i CI", () => {
     const requirements = readFileSync(
       join(ROOT, "tools/judge/requirements.txt"),
       "utf8",
@@ -155,9 +155,8 @@ describe("titel-fidelity — CI- og provenancekontrakt", () => {
     expect(uxJob).toMatch(
       /TITLE_FIDELITY_TESTS=1 npx vitest run tests\/title-fidelity-v2\.test\.ts tests\/judge-capture\.test\.ts/,
     );
-    expect(uxJob).toMatch(/npm run judge:title-fidelity/);
-    expect(uxJob).not.toMatch(
-      /run: npm run judge:title-fidelity[^\n]*--require-green/,
+    expect(uxJob).toMatch(
+      /run: npm run judge:title-fidelity -- --require-green/,
     );
     expect(uxJob).not.toMatch(/continue-on-error|Fæld jobbet på titel-fidelity/);
   });
@@ -175,6 +174,6 @@ describe("titel-fidelity — CI- og provenancekontrakt", () => {
     expect(sources).not.toContain("currentCalibration");
     expect(
       readFileSync(join(ROOT, "docs/design/title-fidelity-ci.md"), "utf8"),
-    ).toMatch(/stacked|Phase A|--require-green|Phase D/i);
+    ).toMatch(/release-port|--require-green|payload/i);
   });
 });

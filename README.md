@@ -8,7 +8,8 @@ Du kombinerer elementer for at genopfinde civilisationens milepæle — mens en
 sarkastisk fortæller kommenterer alle dine valg. Dine dumme beslutninger
 (larver i stedet for stegt kød) bliver til historie-grene i stedet for fejl.
 
-📖 **[PRD.md](PRD.md)** er den styrende reference for al udvikling.
+📖 **[PRODUCT.md](PRODUCT.md)** er den styrende reference for produktretning;
+**[PRD.md](PRD.md)** bevarer detalje og historik.
 🛠 **[CLAUDE.md](CLAUDE.md)** har kodestandarder og arkitektur.
 
 Fortælleren kan valgfrit skrive replikker live via en model (se

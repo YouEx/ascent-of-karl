@@ -67,6 +67,7 @@ SCRIPTS = [
     "build_mark.py",
     "build_narrator_paper.py",
     "build_parchment.py",
+    "build_title_runtime_layers.py",
     "build_problem_icons.py",
     "build_sparkle.py",
     "build_ui.py",

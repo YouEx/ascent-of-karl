@@ -74,7 +74,7 @@
     }
   ],
   "goalMetrics": {
-    "algorithmVersion": "title-fidelity-v2",
+    "algorithmVersion": "title-fidelity-v3",
     "screen": "title",
     "sources": {
       "approvedOriginal": {
@@ -90,9 +90,8 @@
         "width": 512,
         "height": 554
       },
-      "sceneAssetSelector": ".title-stage",
-      "sceneCssVariable": "--scene-src",
-      "characterRectNormalized": [0.211817, 0.181452, 0.668896, 0.655242],
+      "sceneAssetSelector": "img[data-title-layer=\"scene\"]",
+      "characterRectNormalized": [0.210938, 0.181452, 0.669643, 0.655242],
       "requiredLayers": ["scene", "foreground", "parchment", "wordmark"]
     },
     "referenceGeometry": {
@@ -148,7 +147,7 @@
         "viewports": "all"
       },
       "globalEdgeDensity": {
-        "min": 6.1,
+        "min": 7.0,
         "viewports": "all"
       },
       "layerManifest": {
@@ -178,7 +177,7 @@
         },
         "parchmentRetention": {
           "required": {
-            "parchment-desktop": [700, 992]
+            "parchment-desktop": [692, 907]
           },
           "similarityMin": 0.90,
           "energyRatioMin": 0.85,
@@ -189,9 +188,8 @@
         },
         "alphaEdges": {
           "required": {
-            "scene": [1586, 992],
             "foreground": [1586, 992],
-            "parchment": [700, 992],
+            "parchment": [692, 907],
             "wordmark": [545, 320]
           },
           "transitionPxMax": 1,

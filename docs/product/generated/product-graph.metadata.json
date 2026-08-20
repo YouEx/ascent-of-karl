@@ -2,11 +2,11 @@
   "actionCount": 21,
   "authority": "PRODUCT.md",
   "capabilityCount": 12,
-  "edgeCount": 1035,
+  "edgeCount": 1047,
   "eventCount": 13,
   "generatorVersion": 1,
   "graphPath": "docs/product/generated/product-graph.json",
-  "graphSha256": "5c27cf2f2a4b095471a52ec4b5741a189fd90c08b72e5addc5c0dd458c4a05b8",
+  "graphSha256": "b9a95bf9a960570e4c7e3687b17d983088c84ef0ead8d3c1750f9e22f8c44084",
   "inputSha256": {
     "PRODUCT.md": "3db4bc8b2ca8099094a358b7b2154609823e9325b8cbab4226bff4ef8422c753",
     "docs/product/capabilities.json": "c702e26b25ab0d8fe595e671296fca429e4f62c14e81fcc9ae09fe1e3022b51c",
@@ -24,11 +24,11 @@
     "tools/product-knowledge/schema.mjs": "60708ce40ffc00d22b6e1e4c4a29bac5efb41072528caed826b97bc4ef80b0da",
     "tools/product-knowledge/validate.mjs": "14e1253e0713ee5363dc8d9176c998f1fdadf241b3d9316ffa87d403cf121cc5"
   },
-  "nodeCount": 392,
+  "nodeCount": 404,
   "provenanceCounts": {
     "CONTRACT": 388,
     "CURATED": 16,
-    "SOURCE": 631
+    "SOURCE": 643
   },
   "scenarioCount": 16,
   "schemaVersion": 1,

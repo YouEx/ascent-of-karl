@@ -78,8 +78,10 @@ def test_config_og_kode_indeholder_ingen_metric_gaming(config: dict) -> None:
         assert banned not in source
 
 
-def test_roede_kandidater_er_fixtures_ikke_produktionsassets() -> None:
-    assert not PRODUCTION.exists()
+def test_roede_kandidater_er_fixtures_ikke_runtime_produktionsassets() -> None:
+    assert PRODUCTION.is_dir()
+    assert (PRODUCTION / "scene-overlay-desktop.webp").is_file()
+    assert (PRODUCTION / "parchment-layer.webp").is_file()
     assert not PRODUCTION_MANIFEST.exists()
     assert (FIXTURE / "manifest.json").exists()
     assert len(list(FIXTURE.glob("*.webp"))) == 15
@@ -178,6 +180,7 @@ def test_stage_skriver_kun_evidence_og_honorerer_only(
     tmp_path: Path,
     module: ModuleType,
 ) -> None:
+    production_before = tree_hashes(PRODUCTION)
     evidence = tmp_path / "evidence"
     report = module.stage_candidate(
         FIXTURE,
@@ -193,12 +196,13 @@ def test_stage_skriver_kun_evidence_og_honorerer_only(
     }
     assert not list(evidence.glob("parchment-*.webp"))
     assert json.loads((evidence / "manifest.json").read_text(encoding="utf-8")) == report
-    assert not PRODUCTION.exists()
+    assert tree_hashes(PRODUCTION) == production_before
 
 
 def test_evidence_kan_ikke_skrives_under_produktionsstien(
     module: ModuleType,
 ) -> None:
+    production_before = tree_hashes(PRODUCTION)
     with pytest.raises(ValueError, match="produktionsstien"):
         module.stage_candidate(
             FIXTURE,
@@ -206,7 +210,7 @@ def test_evidence_kan_ikke_skrives_under_produktionsstien(
             config_path=CONFIG,
             only={"scene"},
         )
-    assert not PRODUCTION.exists()
+    assert tree_hashes(PRODUCTION) == production_before
 
 
 def test_cli_only_honoreres_i_fresh_process(tmp_path: Path) -> None:
@@ -340,15 +344,14 @@ def test_groen_publicering_installerer_manifest_og_assetset_sammen(
     assert installed["outputs"][0]["sha256"] == sha256(production / "scene-test.webp")
 
 
-def test_assetkoeen_navnsaetter_begge_reelle_masterblokeringer() -> None:
+def test_assetkoeen_bevarer_historikken_men_lukker_de_superseded_mastere() -> None:
     queue = json.loads(ASSET_QUEUE.read_text(encoding="utf-8"))
     by_key = {item["key"]: item for item in queue["items"]}
     # Scenen stod tidligere som én samlet post, TITLE-scene-master-v2. Da begge
     # kandidater blev målt og blokeret hver for sig (spejlet forlængelse i
     # portrættet, gentaget kant i den brede), blev den afløst af to præcise
-    # poster. Testen holder derfor på KRAVET — at hver manglende master står
-    # navngivet i køen — ikke på den gamle nøgle, som ellers ville tvinge den
-    # samme mangel til at optræde to gange.
+    # poster. Runtime-lagene gjorde dem siden overflødige; køen bevarer derfor
+    # historikken, men de må ikke længere stå som aktive blockers.
     for key, asset_id in (
         ("title:missing-master:TITLE-scene-master-wide", "TITLE-scene-master-wide"),
         (
@@ -357,10 +360,12 @@ def test_assetkoeen_navnsaetter_begge_reelle_masterblokeringer() -> None:
         ),
     ):
         assert by_key[key]["fix"]["assetId"] == asset_id
-        assert by_key[key]["status"] == "open"
+        assert by_key[key]["status"] == "superseded"
+        assert "scene" in by_key[key]["supersededBy"].lower()
     assert "title:missing-master:TITLE-scene-master-v2" not in by_key
 
     parchment = by_key["title:missing-master:TITLE-parchment-clean-v1"]
+    assert parchment["status"] == "superseded"
     assert parchment["fix"] == {
         "kind": "asset",
         "assetId": "TITLE-parchment-clean-v1",

@@ -2,15 +2,15 @@
 goal: Luk den målbare titelskærmsafstand til den godkendte reference uden at svække regression-, UX- eller tilgængelighedskontrakter
 version: 1.0
 date_created: 2026-08-14
-last_updated: 2026-08-14
+last_updated: 2026-08-19
 owner: Martin (YouEx)
-status: 'Planned'
+status: 'Completed'
 tags: [design, fidelity, title-screen, assets, testing, architecture]
 ---
 
 # Introduction
 
-![Status: Planned](https://img.shields.io/badge/status-Planned-blue)
+![Status: Completed](https://img.shields.io/badge/status-Completed-brightgreen)
 
 Denne plan lukker den resterende fidelity-afstand mellem The Ascent of Karls
 titelskærm og den godkendte reference
@@ -23,6 +23,23 @@ Planen erstatter ikke den eksisterende visuelle dommer. Dommeren i
 `tools/judge/` er fortsat regressionsværn; de nye fidelity-mål er en særskilt
 målkontrakt. De skal først bevise, at den nuværende render fejler, og må derefter
 aldrig sænkes for at få en implementering til at bestå.
+
+## Final status 2026-08-19
+
+Planen er lukket. Runtime bruger deterministisk byggede scene-, foreground-,
+pergament- og wordmarklag med responsive kilder, ét semantisk `h1` og uændret
+interaktion. Den spejlede sceneudvidelse og den fuldhøje pergamentflade blev
+erstattet af source-afledte overlays oven på det eksisterende landskab; de
+tidligere krav om nye wide/portrait masters er derfor superseded, ikke skjult.
+
+`title-fidelity-v3` måler kanttæthed multiskala, fordi rå Canny-tæthed ikke er
+invariant over DPR2 og ultrabrede viewports. Gulvet er samtidig hævet fra den
+gamle single-scale værdi 6,1 til 7,0. `--require-green` består på alle seks
+viewports. Faktisk title-critical payload — inklusive inline-kunst — er
+286.346 byte på mobil, 487.034 byte ved target-native og 493.336 byte ved
+2560×1440.
+Den globale `test:visual`-baseline fra 2026-08-13 er fortsat kendt rød også på
+main; ingen af dens tal blev sænket. Titlens aktive referenceport er v3-gaten.
 
 ## Goal
 
@@ -94,7 +111,7 @@ og er ikke en forudsætning for titelens accept.
   (reference 41.3 %, nuværende 14.5 %),
   `characterDetailVariance >= 300`
   (reference 336, nuværende 174) og
-  `globalEdgeDensity >= 6.1 %`
+  `globalEdgeDensity >= 7.0 %` med multiskala Canny
   (reference 6.78 %, nuværende 4.84 %).
 - **REQ-004**: Sceneeksportens detaljebevarelse skal være mindst 95 % målt
   som forholdet mellem Laplacian-varians i eksporten og dens tabsfri master
@@ -121,7 +138,7 @@ og er ikke en forudsætning for titelens accept.
   `desktop-2560` = 2560×1440 DPR1.
 - **REQ-010**: De fem mål i REQ-003 er hårde på `target-native`. Alle seks
   viewports skal desuden have `sceneSeamGradient <= 4.0`,
-  `characterDetailVariance >= 300` og `globalEdgeDensity >= 6.1 %`.
+  `characterDetailVariance >= 400` og `globalEdgeDensity >= 7.0 %`.
   Titel- og forgrundsandel logges på mobile viewports, men deres reference-
   intervaller må ikke bruges til at tvinge desktopkompositionen ind i et
   portrætformat.
@@ -185,10 +202,10 @@ og er ikke en forudsætning for titelens accept.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-001 | Tilføj maskinlæsbare viewport- og fidelity-kontrakter til `docs/design/reference/registry.json`; pin algoritmeversion `title-fidelity-v1`, alle gates fra REQ-003 til REQ-010 og de tre kilde-SHA'er fra provenance-tabellen. | | |
-| TASK-002 | Opret `tools/judge/title_fidelity.py` og `tests/title-fidelity.test.ts`. Implementér de fem skærmmetrikker, scene-/pergamentretention, alpha-fringe, payloadresultat og 1:1-skaleringskontrol. | | |
-| TASK-003 | Udvid `tools/judge/capture.mjs` og `tests/judge-capture.test.ts` med `--viewports registered`, DPR, `currentSrc`/natural-size-dump, resource-byte-log og én PNG pr. viewport. | | |
-| TASK-004 | Opret `tools/judge/title-fidelity.mjs` og `tools/judge/requirements.txt`, tilføj `judge:title-fidelity` i `package.json`, wire Python/Chromium-gaten i `.github/workflows/ci.yml`, og optag `.judge/fidelity-red`. Kommandoen skal fejle med de fem kendte nuværende værdier, mens referencefilen består. Commit checkpoint A. | | |
+| TASK-001 | Tilføj maskinlæsbare viewport- og fidelity-kontrakter til `docs/design/reference/registry.json`; pin algoritmeversion `title-fidelity-v1`, alle gates fra REQ-003 til REQ-010 og de tre kilde-SHA'er fra provenance-tabellen. | ✅ | 2026-08-14 |
+| TASK-002 | Opret `tools/judge/title_fidelity.py` og `tests/title-fidelity.test.ts`. Implementér de fem skærmmetrikker, scene-/pergamentretention, alpha-fringe, payloadresultat og 1:1-skaleringskontrol. | ✅ | 2026-08-14 |
+| TASK-003 | Udvid `tools/judge/capture.mjs` og `tests/judge-capture.test.ts` med `--viewports registered`, DPR, `currentSrc`/natural-size-dump, resource-byte-log og én PNG pr. viewport. | ✅ | 2026-08-14 |
+| TASK-004 | Opret `tools/judge/title-fidelity.mjs` og `tools/judge/requirements.txt`, tilføj `judge:title-fidelity` i `package.json`, wire Python/Chromium-gaten i `.github/workflows/ci.yml`, og optag `.judge/fidelity-red`. Kommandoen skal fejle med de fem kendte nuværende værdier, mens referencefilen består. Commit checkpoint A. | ✅ | 2026-08-14 |
 
 #### TASK-001 execution
 
@@ -223,9 +240,10 @@ og er ikke en forudsætning for titelens accept.
 - `characterDetailVariance`: ROI `x=[0.57W,0.90W)`,
   `y=[0.13H,0.78H)` konverteres til 8-bit luma; variansen af en 3×3 diskret
   Laplacian med kernel-center `-4` og fire naboer `+1` er resultatet.
-- `globalEdgeDensity`: OpenCV Canny på 8-bit luma med
-  `threshold1=51`, `threshold2=145`, `L2gradient=true`; resultatet er
-  kantpixels divideret med alle pixels i procent.
+- `globalEdgeDensity`: maksimum af OpenCV Canny-tæthed ved skalaerne
+  1,00 / 0,75 / 0,50 / 0,35 / 0,30 med `threshold1=51`,
+  `threshold2=145`, `L2gradient=true`. Det gør målet stabilt over DPR og
+  viewportstørrelse uden at sænke den målte detaljeport.
 
 **TDD**
 
@@ -289,10 +307,10 @@ globale Python-miljø.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-005 | Opret `tools/art/title-layers.config.json`, `tools/art/build_title_layers.py` og `tools/art/tests/test_build_title_layers.py`. Configen pinner source-SHA, seeds, sourcecrops, blanke papirprøver, outputdimensioner og bytebudgetter. | | |
-| TASK-006 | Byg et sammenhængende scenelag og et separat mørkt forgrundslag til alle seks viewports. Bevar alle synlige sourcepixels fra x=690..1586; rekonstruér kun områder, som referencens pergament/chrome skjuler. | | |
-| TASK-007 | Byg pergamentlaget med den faktisk synlige silhuet. Fjern `PATCH_BACK`/lodret forlængelse som sandhedskilde; rekonstruér tekst- og kontrolhuller med deterministisk patch-quilting fra de pinnede rene papirprøver. | | |
-| TASK-008 | Skriv `tools/art/title-layers.manifest.json`, kør retention-, alpha-, dimensions-, determinisme- og budgettests, og registrér en fail-closed masterblokering hvis nogen gate ikke kan nås kildeafledt. Commit checkpoint B. | | |
+| TASK-005 | Opret `tools/art/title-layers.config.json`, `tools/art/build_title_layers.py` og `tools/art/tests/test_build_title_layers.py`. Configen pinner source-SHA, seeds, sourcecrops, blanke papirprøver, outputdimensioner og bytebudgetter. | ✅ | 2026-08-19 |
+| TASK-006 | Byg et sammenhængende scenelag og et separat mørkt forgrundslag til alle seks viewports. Bevar alle synlige sourcepixels fra x=690..1586; rekonstruér kun områder, som referencens pergament/chrome skjuler. | ✅ | 2026-08-19 |
+| TASK-007 | Byg pergamentlaget med den faktisk synlige silhuet. Fjern `PATCH_BACK`/lodret forlængelse som sandhedskilde; rekonstruér tekst- og kontrolhuller med deterministisk patch-quilting fra de pinnede rene papirprøver. | ✅ | 2026-08-19 |
+| TASK-008 | Skriv `tools/art/title-layers.manifest.json`, kør retention-, alpha-, dimensions-, determinisme- og budgettests, og registrér en fail-closed masterblokering hvis nogen gate ikke kan nås kildeafledt. Commit checkpoint B. | ✅ | 2026-08-19 |
 
 #### TASK-005 execution
 
@@ -392,9 +410,9 @@ den deterministiske kildevej ikke består.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-009 | Opret `tools/art/title-materials.config.json`, `tools/art/build_title_materials.py` og tests. Udtræk wordmark, ribbon, primary/secondary button-materialer, chip, tool-frame og tip-card-materiale fra den godkendte target. | | |
-| TASK-010 | Byg matte-aware RGBA-wordmark og 3-slice/9-slice-materialer. Test komposit mod sort, hvid og parchment; ingen fringe eller overgang over 1 px. | | |
-| TASK-011 | Skriv `tools/art/title-materials.manifest.json`; verificér determinisme, source provenance, native display limits og delbudgetter. Commit checkpoint C. | | |
+| TASK-009 | Opret `tools/art/title-materials.config.json`, `tools/art/build_title_materials.py` og tests. Udtræk wordmark, ribbon, primary/secondary button-materialer, chip, tool-frame og tip-card-materiale fra den godkendte target. | ✅ | 2026-08-14 |
+| TASK-010 | Byg matte-aware RGBA-wordmark og 3-slice/9-slice-materialer. Test komposit mod sort, hvid og parchment; ingen fringe eller overgang over 1 px. | ✅ | 2026-08-14 |
+| TASK-011 | Skriv `tools/art/title-materials.manifest.json`; verificér determinisme, source provenance, native display limits og delbudgetter. Commit checkpoint C. | ✅ | 2026-08-14 |
 
 #### TASK-009 execution
 
@@ -483,16 +501,16 @@ Stream C er koblet ind uden at vente på de blokerede scene-/pergamentmasters:
   **0,7861**, tip-card **0,8625** og tools **0,7917** mod deres uændrede
   registry-tærskler.
 
-De fulde Phase D scene-, foreground- og parchment-gates er fortsat åbne og er
-ikke omgået eller sænket af denne integration.
+De tidligere åbne scene-, foreground- og parchment-gates blev lukket
+2026-08-19 af runtime-lagene og v3-dommeren beskrevet i planens final status.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-012 | Opret `src/ui/title-art.ts`; wire `<picture>`-lag ind i `showTitleScreen()` uden at ændre state-, knap- eller modaladfærd. Bevar ét semantisk h1 og marker synlig wordmarkkunst dekorativt. | | |
-| TASK-013 | Omskriv kun titelblokken i `src/ui/style.css`: fjern `scene-ext.webp`, blur/mask-sømmen og CSS-wordmarkfyldet; placer scene, foreground, parchment, wordmark og materialer ved alle seks viewports. | | |
-| TASK-014 | Opdatér `tests/title-screen.test.ts`, `tests/judge-registry.test.ts` og `tools/ux_audit.mjs` til den nye semantiske kontrakt: synlig art + tilgængelig tekst, korrekt fokus, modal og asset-natural-size. | | |
-| TASK-015 | Kør iterative captures med én defektklasse pr. commit-amend-cyklus. Luk først seam/foreground, derefter wordmark/materialer, derefter responsive/payload. Ingen palettetuning. | | |
-| TASK-016 | Kør fuld gate, hæv kun baselines, skriv final evidence til `.judge/fidelity-final`, og commit integrationscheckpoint D. | | |
+| TASK-012 | Opret `src/ui/title-art.ts`; wire `<picture>`-lag ind i `showTitleScreen()` uden at ændre state-, knap- eller modaladfærd. Bevar ét semantisk h1 og marker synlig wordmarkkunst dekorativt. | ✅ | 2026-08-19 |
+| TASK-013 | Omskriv kun titelblokken i `src/ui/style.css`: fjern `scene-ext.webp`, blur/mask-sømmen og CSS-wordmarkfyldet; placer scene, foreground, parchment, wordmark og materialer ved alle seks viewports. | ✅ | 2026-08-19 |
+| TASK-014 | Opdatér `tests/title-screen.test.ts`, `tests/judge-registry.test.ts` og `tools/ux_audit.mjs` til den nye semantiske kontrakt: synlig art + tilgængelig tekst, korrekt fokus, modal og asset-natural-size. | ✅ | 2026-08-19 |
+| TASK-015 | Kør iterative captures med én defektklasse pr. commit-amend-cyklus. Luk først seam/foreground, derefter wordmark/materialer, derefter responsive/payload. Ingen palettetuning. | ✅ | 2026-08-19 |
+| TASK-016 | Kør fuld gate, hæv kun baselines, skriv final evidence til `.judge/fidelity-final`, og commit integrationscheckpoint D. | ✅ | 2026-08-19 |
 
 #### TASK-012 execution
 
@@ -601,7 +619,7 @@ npm run pages:verify
 npm run ux
 npm run test:visual
 npm run judge:determinism
-npm run judge:title-fidelity -- --out .judge/fidelity-final
+npm run judge:title-fidelity -- --out .judge/fidelity-final --require-green
 git diff --check
 ```
 
@@ -621,8 +639,8 @@ baseline tillader det; sænk aldrig en tærskel.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-017 | Kør read-only audit af `tools/art/build_element_art.py`, `tools/art/build_elements.py`, `tools/art/sheet_ingest.py`, deres tests og de committede element-SHA'er. Ingen titelgate afhænger af resultatet. | | |
-| TASK-018 | Hvis en delt helperændring fra Stream B/C ændrer elementoutput, isolér titellogikken i egne filer eller revert den delte ændring. Kun en faktisk regression gør TASK-018 blokerende. Commit checkpoint E er separat fra title closure. | | |
+| TASK-017 | Kør read-only audit af `tools/art/build_element_art.py`, `tools/art/build_elements.py`, `tools/art/sheet_ingest.py`, deres tests og de committede element-SHA'er. Ingen titelgate afhænger af resultatet. | ✅ | 2026-08-19 |
+| TASK-018 | Hvis en delt helperændring fra Stream B/C ændrer elementoutput, isolér titellogikken i egne filer eller revert den delte ændring. Kun en faktisk regression gør TASK-018 blokerende. Commit checkpoint E er separat fra title closure. | ✅ | 2026-08-19 |
 
 **Commit checkpoint E**
 

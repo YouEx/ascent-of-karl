@@ -130,11 +130,15 @@ describe("renderReport", () => {
   it("gengiver blokerede/køede fund (asset- og human-queue) som blokerende punkter", () => {
     const html = renderReport({
       run: ".judge/x", ledger, registry: REGISTRY, scores: afterAccept,
-      assetQueue: { items: [{ key: "chip:missing-asset:UI-chip-glow", region: "chip", severity: 4, fix: { kind: "asset", assetId: "UI-chip-glow", spec: "Malet glød-effekt bag chip-ikonet" }, status: "open" }] },
+      assetQueue: { items: [
+        { key: "chip:missing-asset:UI-chip-glow", region: "chip", severity: 4, fix: { kind: "asset", assetId: "UI-chip-glow", spec: "Malet glød-effekt bag chip-ikonet" }, status: "open" },
+        { key: "title:missing-master:old", region: "title", severity: 5, fix: { kind: "asset", assetId: "old-master" }, status: "superseded" },
+      ] },
       humanQueue: { items: [{ key: "chip:extra-element:x", region: "chip", severity: 2, fix: { kind: "structure", file: "src/ui/Chip.tsx", change: "Fjern det ekstra ikon-lag" }, status: "open" }] },
     });
     expect(html).toContain("UI-chip-glow");
     expect(html).toContain("Chip.tsx");
+    expect(html).not.toContain("old-master");
   });
 
   it("gengiver stop-årsag og udfald (success/defeat)", () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 // @ts-expect-error — parityværktøjet er ren JavaScript uden typedeklaration.
-import { FIXTURES, normalizeSave } from "../tools/parity/harness.mjs";
+import { FIXTURES, normalizeParitySnapshot, normalizeSave } from "../tools/parity/harness.mjs";
 import ciSource from "../.github/workflows/ci.yml?raw";
 
 describe("legacy-to-Svelte differential parity harness", () => {
@@ -65,5 +65,51 @@ describe("legacy-to-Svelte differential parity harness", () => {
     expect(uxJob).toContain(
       "RUNTIME_COMMENTARY_BROWSER_TESTS=1 npx vitest run tests/runtime-commentary-browser.test.ts",
     );
+  });
+
+  it("normalizes browser-dependent synthesized/text-only fallback without hiding recorded audio", () => {
+    const base = {
+      productEvents: [
+        { payload: { audioMode: "synthesized" } },
+        { payload: { audioMode: "recorded" } },
+      ],
+      save: null,
+    };
+    const fallback = {
+      productEvents: [
+        { payload: { audioMode: "text-only" } },
+        { payload: { audioMode: "recorded" } },
+      ],
+      save: null,
+    };
+
+    expect(normalizeParitySnapshot(base, base, {})).toEqual(
+      normalizeParitySnapshot(fallback, base, {}),
+    );
+    expect(
+      normalizeParitySnapshot(base, base, {}).productEvents[1].payload.audioMode,
+    ).toBe("recorded");
+  });
+
+  it("ignores the hidden title subtree outside title fixtures", () => {
+    const snapshot = {
+      app: {
+        children: [
+          { attributes: { id: "game" } },
+          { attributes: { id: "title-screen" } },
+        ],
+      },
+      productEvents: [],
+      save: null,
+    };
+
+    expect(
+      normalizeParitySnapshot(snapshot, snapshot, { scope: "#app" })
+        .app.children,
+    ).toEqual([{ attributes: { id: "game" } }]);
+    expect(
+      normalizeParitySnapshot(snapshot, snapshot, { scope: "#title-screen" })
+        .app.children,
+    ).toHaveLength(2);
   });
 });

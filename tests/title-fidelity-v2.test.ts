@@ -41,12 +41,13 @@ function run(args: string[]) {
   }
 }
 
-describe.runIf(E2E)("title-fidelity-v2 — mål og kontrakter", () => {
+describe.runIf(E2E)("title-fidelity-v3 — mål og kontrakter", () => {
   let scratch: string;
   let registryPath: string;
   let verticalPath: string;
   let horizontalPath: string;
   let characterPath: string;
+  let highResCharacterPath: string;
   let flatCharacterPath: string;
   let validContracts: any;
 
@@ -82,7 +83,7 @@ describe.runIf(E2E)("title-fidelity-v2 — mål og kontrakter", () => {
 
   beforeAll(() => {
     mkdirSync(SCRATCH_ROOT, { recursive: true });
-    scratch = mkdtempSync(join(SCRATCH_ROOT, "title-fidelity-v2-"));
+    scratch = mkdtempSync(join(SCRATCH_ROOT, "title-fidelity-v3-"));
     const generator = `
 from pathlib import Path
 import numpy as np
@@ -105,6 +106,7 @@ character = np.stack([
     (xx * 13 + yy * 5) % 256,
 ], axis=-1).astype(np.uint8)
 Image.fromarray(character).save(root / "character.png")
+Image.fromarray(character).resize((64, 64), Image.Resampling.NEAREST).save(root / "character-high.png")
 Image.fromarray(np.full((32, 32, 3), 120, dtype=np.uint8)).save(root / "character-flat.png")
 
 yy, xx = np.mgrid[:64, :64]
@@ -138,6 +140,7 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
     verticalPath = join(scratch, "vertical.png");
     horizontalPath = join(scratch, "horizontal.png");
     characterPath = join(scratch, "character.png");
+    highResCharacterPath = join(scratch, "character-high.png");
     flatCharacterPath = join(scratch, "character-flat.png");
     registryPath = writeJson("registry.json", {
       viewports: [
@@ -145,7 +148,7 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
         { id: "fixture-dpr2", width: 100, height: 80, dpr: 2, payloadClass: "mobile" },
       ],
       goalMetrics: {
-        algorithmVersion: "title-fidelity-v2",
+        algorithmVersion: "title-fidelity-v3",
         capture: {
           canonicalCharacterSize: { width: 32, height: 32 },
           requiredLayers: ["scene", "foreground", "parchment", "wordmark"],
@@ -223,18 +226,46 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
       }),
     );
     const resources = {
-      entries: layers.map((layer) => ({
+      entries: [
+        ...layers.map((layer) => ({
         url: layer.currentSrc,
         transferSize: 100,
         encodedBodySize: 80,
         decodedBodySize: 200,
         initiatorType: "img",
+        criticalPayload: true,
       })),
+        {
+          url: "http://example.test/backdrop.webp",
+          transferSize: 50,
+          encodedBodySize: 40,
+          decodedBodySize: 120,
+          initiatorType: "img",
+          criticalPayload: true,
+        },
+      ],
+    };
+    const backdrop = {
+      selector: "img.title-backdrop-art",
+      currentSrc: "http://example.test/backdrop.webp",
+      naturalWidth: 200,
+      naturalHeight: 160,
+      renderedWidth: 100,
+      renderedHeight: 80,
+      physicalWidth: 100,
+      physicalHeight: 80,
+      titleCritical: true,
     };
     const metrics = {
       viewport: { id: "fixture", width: 100, height: 80, dpr: 1 },
       capture: { pixelWidth: 100, pixelHeight: 80 },
+      images: [...layers, backdrop],
       layers,
+      criticalSources: [
+        ...layers.map((layer) => layer.currentSrc),
+        backdrop.currentSrc,
+        "data:image/webp;base64,AAAA",
+      ],
     };
     validContracts = {
       sceneRetention: [
@@ -302,7 +333,7 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
     ]);
 
     expect(correct.status, correct.stderr).toBe(0);
-    expect(correct.json.algorithmVersion).toBe("title-fidelity-v2");
+    expect(correct.json.algorithmVersion).toBe("title-fidelity-v3");
     expect(correct.json.metrics.sceneSeamGradient).toBe(128);
     expect(shifted.json.metrics.sceneSeamGradient).toBe(0);
     expect(wrongAxis.json.metrics.sceneSeamGradient).toBe(0);
@@ -368,13 +399,25 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
       "--registry", registryPath,
       "--json",
     ]);
+    const highRes = run([
+      "--image", verticalPath,
+      "--geometry", writeJson(
+        "geometry-character-high.json",
+        geometry(100, 80, 50, highResCharacterPath),
+      ),
+      "--viewport", "fixture",
+      "--registry", registryPath,
+      "--json",
+    ]);
     expect(detailed.json.metrics.characterDetailVariance).toBeGreaterThan(
       flat.json.metrics.characterDetailVariance,
     );
     expect(detailed.json.raw.character.measurementSource).toBe("asset");
     expect(detailed.json.raw.character.canonicalSize).toEqual([32, 32]);
+    expect(highRes.json.gates.characterEvidence.pass).toBe(true);
+    expect(highRes.json.raw.character.canonicalSize).toEqual([32, 32]);
     expect(overlap.json.failing).toContain("characterEvidence");
-  });
+  }, 20_000);
 
   it("kræver præcis scene/foreground/parchment/wordmark med reelle bytes og mål", () => {
     const valid = run([
@@ -384,6 +427,8 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
     ]);
     expect(valid.json.captureContracts[0].layerManifest.pass).toBe(true);
     expect(valid.json.captureContracts[0].payloadBytes.pass).toBe(true);
+    expect(valid.json.captureContracts[0].payloadBytes.value).toBe(453);
+    expect(valid.json.captureContracts[0].payloadBytes.resourceCount).toBe(6);
     expect(valid.json.captureContracts[0].noUpscale.pass).toBe(true);
 
     const base = JSON.parse(JSON.stringify(validContracts));
@@ -420,7 +465,43 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
     ]);
     expect(harmless.json.captureContracts[0].layerManifest.pass).toBe(false);
     expect(harmless.json.captureContracts[0].noUpscale.pass).toBe(false);
-  });
+
+    const oversized = JSON.parse(JSON.stringify(validContracts));
+    const oversizedMetrics = JSON.parse(
+      readFileSync(oversized.captureContracts[0].metrics, "utf8"),
+    );
+    oversizedMetrics.images.find(
+      (image: any) => image.selector === "img.title-backdrop-art",
+    ).physicalHeight = 200;
+    oversized.captureContracts[0].metrics = writeJson(
+      "metrics-backdrop-upscaled.json",
+      oversizedMetrics,
+    );
+    const oversizedResult = run([
+      "--contracts", writeJson("contracts-backdrop-upscaled.json", oversized),
+      "--registry", registryPath,
+      "--json",
+    ]);
+    expect(oversizedResult.json.captureContracts[0].noUpscale.pass).toBe(false);
+
+    const missing = JSON.parse(JSON.stringify(validContracts));
+    const missingMetrics = JSON.parse(
+      readFileSync(missing.captureContracts[0].metrics, "utf8"),
+    );
+    missingMetrics.criticalSources.push("http://example.test/missing.webp");
+    missing.captureContracts[0].metrics = writeJson(
+      "metrics-missing-critical.json",
+      missingMetrics,
+    );
+    const missingResult = run([
+      "--contracts", writeJson("contracts-missing-critical.json", missing),
+      "--registry", registryPath,
+      "--json",
+    ]);
+    expect(missingResult.json.captureContracts[0].payloadBytes.pass).toBe(false);
+    expect(missingResult.json.captureContracts[0].payloadBytes.missingSources)
+      .toContain("http://example.test/missing.webp");
+  }, 20_000);
 
   it("afviser zero-byte, CSS- og data-URI-lag", () => {
     const make = (name: string, mutate: (metrics: any, resources: any) => void) => {
@@ -520,7 +601,7 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
       "--fail-on-gate",
     ]);
     expect(result.status, result.stderr).toBe(0);
-    expect(result.json.algorithmVersion).toBe("title-fidelity-v2");
+    expect(result.json.algorithmVersion).toBe("title-fidelity-v3");
     expect(result.json.source.sha256).toBe(
       "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850",
     );
@@ -531,8 +612,10 @@ Image.fromarray(shifted).save(root / "alpha-shifted.png")
       bottomLeftDarkShare: 41.24500864175458,
       characterEvidence: 1,
       characterDetailVariance: 484.75304054892945,
-      globalEdgeDensity: 6.8085033356384494,
     });
+    expect(
+      Math.abs(result.json.metrics.globalEdgeDensity - 13.27),
+    ).toBeLessThanOrEqual(0.02);
     expect(result.json.failing).toEqual([]);
   }, 30_000);
 });

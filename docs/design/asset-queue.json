@@ -50,7 +50,9 @@
       "why": null,
       "firstSeen": "2026-08-13",
       "iteration": 3,
-      "status": "open"
+      "resolvedBy": "Sourceafledt responsive wordmark i src/assets/art/title-materials/ og title-layers/; semantisk h1 bevaret.",
+      "resolvedOn": "2026-08-19",
+      "status": "resolved"
     },
     {
       "key": "title:missing-master:TITLE-parchment-clean-v1",
@@ -69,7 +71,9 @@
       "why": "Referencebilledets titel, kontroller og kort skjuler størstedelen af den rene papirflade; samples kan validere teksturtypen, men ikke den samlede plade eller maskens sandhed.",
       "firstSeen": "2026-08-14",
       "iteration": 1,
-      "status": "open"
+      "supersededBy": "title-runtime-layers-v1 bruger den eksisterende sourceafledte pergamentprior i dens native 692×907-format og gør området under hintet transparent; ingen 760×1680 clean plate kræves længere.",
+      "supersededOn": "2026-08-19",
+      "status": "superseded"
     },
     {
       "key": "title:missing-master:TITLE-parchment-master-v1",
@@ -86,7 +90,9 @@
       "why": "Kilden indeholder ikke observerbar papirstruktur under titel, bånd, knapper, hjælpetekst, tipkort eller de nederste 773 px. Den eksisterende 692x907-blank er allerede en inpaintet derivativ og kan kun bruges som prior, ikke som original retention-evidens. Statistisk source-quilting kan matche palette og alfa, men ikke dokumentere en troværdig unik malet flade.",
       "firstSeen": "2026-08-14",
       "iteration": 1,
-      "status": "open"
+      "supersededBy": "Runtime-laget skalerer aldrig 692×907-prioren op på DPR2 og bruger en separat 1384×1814 variant kun på ultrabred desktop; alle visuelle og payloadgates består.",
+      "supersededOn": "2026-08-19",
+      "status": "superseded"
     },
     {
       "key": "title:missing-master:TITLE-scene-master-wide",
@@ -103,7 +109,9 @@
       "why": "De lokale godkendte kilder indeholder ikke unik billedinformation for hele det skjulte og udvidede brede lærred. Klassisk lokal rekonstruktion kan enten genbruge genkendelige former eller spejle det godkendte materiale; ingen af delene er en malet fortsættelse, og ingen visuelt troværdig kandidat må derfor promoveres. Kræver en godkendt kilde der faktisk dækker lærredet.",
       "firstSeen": "2026-08-14",
       "iteration": 1,
-      "status": "open"
+      "supersededBy": "Den brede runtime bruger det eksisterende bg-wide-landskab som backdrop og en feathered source-scene/foreground ovenpå; der udgives ikke længere en falsk fuld scene-master.",
+      "supersededOn": "2026-08-19",
+      "status": "superseded"
     },
     {
       "key": "title:missing-master:TITLE-scene-master-portrait",
@@ -120,7 +128,9 @@
       "why": "Der findes ingen godkendt lokal kilde med pixels under række 992. Enhver portrætmaster fra de nuværende kilder må opfinde den nederste halvdel af billedet, og den eneste rekonstruktion der ser sømløs ud, er en spejling af det godkendte materiale. Kræver en godkendt kilde med mindst 1864 rækker malet scene.",
       "firstSeen": "2026-08-14",
       "iteration": 1,
-      "status": "open"
+      "supersededBy": "Mobil bruger en 1792×1984 feathered scene- og foreground-overlay over det eksisterende landskab; der spejles eller opfindes ingen portrætmaster.",
+      "supersededOn": "2026-08-19",
+      "status": "superseded"
     }
   ]
 }

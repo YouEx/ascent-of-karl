@@ -210,7 +210,9 @@ function renderRejectedMemory(rejected) {
 }
 
 function renderQueue(title, queue) {
-  const items = queue?.items ?? [];
+  const items = (queue?.items ?? []).filter(
+    (item) => !["resolved", "superseded", "closed"].includes(item.status),
+  );
   if (!items.length) return `<section class="queue"><h3>${escapeHtml(title)}</h3><p class="muted">tom.</p></section>`;
   return `<section class="queue">
     <h3>${escapeHtml(title)} <em>${items.length}</em></h3>

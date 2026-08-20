@@ -1,0 +1,156 @@
+{
+  "algorithm": "title-runtime-layers-v1",
+  "configSha256": "0c2338391457f8c3c562c242568443c3594df9f041270bb48dc51c30af9e5754",
+  "outputs": {
+    "backdrop-large": {
+      "byteBudget": 180000,
+      "bytes": 80408,
+      "dimensions": [
+        2560,
+        1440
+      ],
+      "file": "backdrop-large.webp",
+      "mode": "RGB",
+      "sha256": "32ac81705727784c7ab2038a9aaf26cd37925b0b7ce9653104966c1211b28fcc"
+    },
+    "backdrop-mobile": {
+      "byteBudget": 70000,
+      "bytes": 14464,
+      "dimensions": [
+        896,
+        1984
+      ],
+      "file": "backdrop-mobile.webp",
+      "mode": "RGB",
+      "sha256": "fb3ebaface3b73f213935e0b4b5f1752e82f19667e981c413269900f821a2739"
+    },
+    "foreground": {
+      "byteBudget": 100000,
+      "bytes": 89762,
+      "dimensions": [
+        896,
+        992
+      ],
+      "file": "foreground-overlay.webp",
+      "mode": "RGBA",
+      "sha256": "b84a4c813db95cd06869b0241e8b141759ed12a1328b08c34a2b4983a1215459"
+    },
+    "foreground-large": {
+      "byteBudget": 90000,
+      "bytes": 75890,
+      "dimensions": [
+        1792,
+        1984
+      ],
+      "file": "foreground-overlay-large.webp",
+      "mode": "RGBA",
+      "sha256": "7f0db6c6873fbbfed7c7c8bceb296de280e01d280efe8d65f7c779f9f5ae1865"
+    },
+    "foreground-mobile": {
+      "byteBudget": 33000,
+      "bytes": 31258,
+      "dimensions": [
+        1792,
+        1984
+      ],
+      "file": "foreground-overlay-mobile.webp",
+      "mode": "RGBA",
+      "sha256": "b3cdf55f60f52b892285260d2393fb41e81489d4491f308bc1d13aca4c552c86"
+    },
+    "parchment": {
+      "byteBudget": 80000,
+      "bytes": 42746,
+      "dimensions": [
+        692,
+        907
+      ],
+      "file": "parchment-layer.webp",
+      "mode": "RGBA",
+      "sha256": "ab5cd7da9777e6226d40c04f4a3ea0656d05ad93015c8cf6d2d8bcb1dd180c8e"
+    },
+    "parchment-large": {
+      "byteBudget": 120000,
+      "bytes": 70812,
+      "dimensions": [
+        1384,
+        1814
+      ],
+      "file": "parchment-layer-large.webp",
+      "mode": "RGBA",
+      "sha256": "f6f1710dd35f7101a2593772215f7a15425fc3e56aa9e39a4a030cec01ce9e51"
+    },
+    "scene-desktop": {
+      "byteBudget": 190000,
+      "bytes": 181710,
+      "dimensions": [
+        896,
+        992
+      ],
+      "file": "scene-overlay-desktop.webp",
+      "mode": "RGBA",
+      "sha256": "cd012b813a467e805aaeab4e5fbf2254c2a47591a97a39571b819bd7a2b49a24"
+    },
+    "scene-large": {
+      "byteBudget": 250000,
+      "bytes": 158250,
+      "dimensions": [
+        1792,
+        1984
+      ],
+      "file": "scene-overlay-large.webp",
+      "mode": "RGBA",
+      "sha256": "419dcb67aec868c1a235ca4a730cd30e4fca6bb5154a08f09a2611cbf1ed42ec"
+    },
+    "scene-mobile": {
+      "byteBudget": 155000,
+      "bytes": 149012,
+      "dimensions": [
+        1792,
+        1984
+      ],
+      "file": "scene-overlay-mobile.webp",
+      "mode": "RGBA",
+      "sha256": "2bd43afaa9d0859a5a40b72f47e59f55bf342f8be6c99719ba85975f298365a0"
+    },
+    "wordmark-large": {
+      "byteBudget": 90000,
+      "bytes": 88148,
+      "dimensions": [
+        1090,
+        640
+      ],
+      "file": "wordmark-large.webp",
+      "mode": "RGBA",
+      "sha256": "4d349756c4246bd03aacfb949dbf56720a51d6897c28fd09f954262ee061b49f"
+    }
+  },
+  "sources": {
+    "landscapeDonor": {
+      "path": "docs/design/reference/bg-wide.png",
+      "role": "responsive-backdrop-source",
+      "sha256": "e4c12992241cf6048f07f5fb9ea8ab8443ceee986c78e917d6f6c48576ffd8eb"
+    },
+    "parchmentPrior": {
+      "path": "src/assets/art/title-parchment-692.webp",
+      "role": "existing-source-derived-runtime-parchment",
+      "sha256": "efd1642b54cd1346ac40286c82928729d2da120a4326a58cc2b65420042ab73a"
+    },
+    "titleReference": {
+      "path": "docs/design/reference/title-2026-08-11.webp",
+      "role": "approved-scene-and-karl",
+      "sceneCrop": [
+        690,
+        0,
+        1586,
+        992
+      ],
+      "sha256": "8205f9dd8411be00cefd87c9218b92b3676bbce783e655bf84d0a168cdd74850"
+    },
+    "wordmarkPrior": {
+      "path": "src/assets/art/title-materials/wordmark-desktop.webp",
+      "role": "approved-source-derived-wordmark",
+      "sha256": "e286b12b55929f846647ef8ce9480dbc69b991ff513cc0d5be64d78a5b6ccce9"
+    }
+  },
+  "version": 1
+}
